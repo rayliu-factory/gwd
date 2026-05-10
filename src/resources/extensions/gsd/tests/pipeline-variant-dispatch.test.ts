@@ -28,7 +28,7 @@ const VALIDATE_RULE = "validating-milestone → validate-milestone";
 // ─── Fixture helpers ──────────────────────────────────────────────────────
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-pipeline-variant-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-pipeline-variant-"));
   mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S02", "tasks"), { recursive: true });
   return base;

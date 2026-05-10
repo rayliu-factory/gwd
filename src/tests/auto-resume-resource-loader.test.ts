@@ -61,7 +61,7 @@ test("dev CLI wrapper passes itself as every child-process CLI entrypoint", () =
   );
 });
 
-test("GSD_PKG_ROOT still resolves the deployed resource-loader location", () => {
+test("GWD_PKG_ROOT still resolves the deployed resource-loader location", () => {
   const pkgRoot = process.cwd();
   const resourceLoaderPath = join(pkgRoot, "dist", "resource-loader.js");
   assert.equal(resourceLoaderPath, join(pkgRoot, "dist", "resource-loader.js"));

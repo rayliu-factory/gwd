@@ -1,4 +1,4 @@
-// gsd-pi — Headless Recover entrypoint
+// gwd-pi — Headless Recover entrypoint
 /**
  * Headless Recover — `gsd headless recover`
  *

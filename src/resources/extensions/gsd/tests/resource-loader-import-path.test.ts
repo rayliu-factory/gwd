@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 import { refreshResumeResourcesAndDb } from "../auto.ts";
 
 describe("resource-loader import path", () => {
-  test("refreshResumeResourcesAndDb resolves resource-loader from GSD_PKG_ROOT", async () => {
+  test("refreshResumeResourcesAndDb resolves resource-loader from GWD_PKG_ROOT", async () => {
     const pkgRoot = "/tmp/gsd-pkg-root";
     const agentDir = "/tmp/gsd-agent";
     const basePath = "/tmp/project-root";
@@ -18,7 +18,7 @@ describe("resource-loader import path", () => {
 
     await refreshResumeResourcesAndDb(basePath, {
       env: {
-        GSD_PKG_ROOT: pkgRoot,
+        GWD_PKG_ROOT: pkgRoot,
         GSD_CODING_AGENT_DIR: agentDir,
       } as NodeJS.ProcessEnv,
       importModule: async (specifier: string) => {

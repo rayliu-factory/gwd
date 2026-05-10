@@ -34,11 +34,11 @@ function main() {
 			reasons.push('no *.test.{ts,js,mjs,cjs} files found in source tree')
 		}
 
-		// Rule 2: package.json must have "name" that matches gsd.scope/gsd.name (already enforced by
+		// Rule 2: package.json must have "name" that matches gwd.scope/gwd.name (already enforced by
 		// the manifest loader — but repeat here so CI failures point at the right place).
 		const expectedName = `${pkg.scope}/${pkg.name}`
 		if (pkg.packageName !== expectedName) {
-			reasons.push(`package.json "name" (${pkg.packageName}) must equal gsd.scope/gsd.name (${expectedName})`)
+			reasons.push(`package.json "name" (${pkg.packageName}) must equal gwd.scope/gwd.name (${expectedName})`)
 		}
 
 		if (reasons.length > 0) {
@@ -59,11 +59,11 @@ function main() {
 		}
 	}
 	process.stderr.write(
-		'\nEvery package marked "gsd.linkable: true" must ship with tests.\n' +
+		'\nEvery package marked "gwd.linkable: true" must ship with tests.\n' +
 		'This gate exists because PR #4668 shipped three new @gwd/* packages with zero test\n' +
 		'coverage (the test globs silently excluded them), which hid 14 CRITICAL regressions.\n' +
 		'See PR #4673 revert notes.\n\n' +
-		'To fix: add at least one *.test.ts file to the package, or remove "gsd.linkable" if\n' +
+		'To fix: add at least one *.test.ts file to the package, or remove "gwd.linkable" if\n' +
 		'the package is not meant to be shipped in the global install.\n'
 	)
 	process.exit(1)

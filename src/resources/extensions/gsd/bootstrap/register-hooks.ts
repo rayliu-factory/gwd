@@ -50,7 +50,7 @@ async function loadWelcomeScreenModule(): Promise<WelcomeScreenModule | undefine
     candidates.push(join(dirname(gsdBinPath), "welcome-screen.js"));
   }
 
-  const packageRoot = process.env.GSD_PKG_ROOT;
+  const packageRoot = process.env.GWD_PKG_ROOT;
   if (packageRoot) {
     candidates.push(join(packageRoot, "dist", "welcome-screen.js"));
     candidates.push(join(packageRoot, "src", "welcome-screen.ts"));

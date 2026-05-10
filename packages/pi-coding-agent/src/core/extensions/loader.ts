@@ -1131,7 +1131,7 @@ export async function discoverAndLoadExtensions(
 	const { sortedPaths, warnings: sortWarnings } = sortExtensionPaths(allPaths)
 	// Emit warnings to stderr immediately — loader runs before ctx.ui is ready (D-08)
 	for (const w of sortWarnings) {
-		process.stderr.write(`[gsd] ${w.message}\n`)
+		process.stderr.write(`[gwd] ${w.message}\n`)
 	}
 	const result = await loadExtensions(sortedPaths, cwd, eventBus)
 	result.warnings.push(...sortWarnings)

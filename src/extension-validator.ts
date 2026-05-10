@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 /**
- * Install-time validator for GSD extension packages. Called by the install command
+ * Install-time validator for GWD extension packages. Called by the install command
  * (Phase 8) before writing files. Not called on bundled extensions — they are
  * discovered at load time, not installed.
  */
@@ -10,9 +10,9 @@
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface ValidationError {
-  code: string;    // "MISSING_GSD_MARKER" | "RESERVED_NAMESPACE" | "WRONG_DEP_FIELD"
+  code: string;    // "MISSING_GWD_MARKER" | "RESERVED_NAMESPACE" | "WRONG_DEP_FIELD"
   message: string; // Human-readable, actionable
-  field?: string;  // e.g. "dependencies", "gsd.extension"
+  field?: string;  // e.g. "dependencies", "gwd.extension"
 }
 
 export interface ValidationWarning {
@@ -27,42 +27,42 @@ export interface ValidationResult {
 }
 
 export interface ValidationOptions {
-  allowGsdNamespace?: boolean;  // Per D-05: --allow-gsd-namespace flag pass-through
-  extensionId?: string;         // The manifest ID to check against gsd.* namespace (per D-04)
+  allowGwdNamespace?: boolean;  // Per D-05: --allow-gwd-namespace flag pass-through
+  extensionId?: string;         // The manifest ID to check against gwd.* namespace (per D-04)
 }
 
 // ─── Individual Check Functions ───────────────────────────────────────────────
 
 /**
- * Per D-03: Check that pkg.gsd.extension === true with STRICT equality (not truthiness).
- * Packages without this marker are not recognized as GSD extensions.
+ * Per D-03: Check that pkg.gwd.extension === true with STRICT equality (not truthiness).
+ * Packages without this marker are not recognized as GWD extensions.
  */
 export function checkInstallDiscriminator(pkg: unknown): ValidationError | null {
   if (typeof pkg !== 'object' || pkg === null) {
     return {
-      code: 'MISSING_GSD_MARKER',
-      message: 'package.json must declare "gsd": { "extension": true } to be recognized as a GSD extension.',
-      field: 'gsd.extension',
+      code: 'MISSING_GWD_MARKER',
+      message: 'package.json must declare "gwd": { "extension": true } to be recognized as a GWD extension.',
+      field: 'gwd.extension',
     }
   }
 
   const obj = pkg as Record<string, unknown>
-  const gsd = obj.gsd
+  const gwd = obj.gwd
 
-  if (typeof gsd !== 'object' || gsd === null) {
+  if (typeof gwd !== 'object' || gwd === null) {
     return {
-      code: 'MISSING_GSD_MARKER',
-      message: 'package.json must declare "gsd": { "extension": true } to be recognized as a GSD extension.',
-      field: 'gsd.extension',
+      code: 'MISSING_GWD_MARKER',
+      message: 'package.json must declare "gwd": { "extension": true } to be recognized as a GWD extension.',
+      field: 'gwd.extension',
     }
   }
 
-  const gsdObj = gsd as Record<string, unknown>
-  if (gsdObj.extension !== true) {
+  const gwdObj = gwd as Record<string, unknown>
+  if (gwdObj.extension !== true) {
     return {
-      code: 'MISSING_GSD_MARKER',
-      message: 'package.json must declare "gsd": { "extension": true } to be recognized as a GSD extension.',
-      field: 'gsd.extension',
+      code: 'MISSING_GWD_MARKER',
+      message: 'package.json must declare "gwd": { "extension": true } to be recognized as a GWD extension.',
+      field: 'gwd.extension',
     }
   }
 
@@ -70,19 +70,19 @@ export function checkInstallDiscriminator(pkg: unknown): ValidationError | null 
 }
 
 /**
- * Per D-04/D-05: Check that the extension ID does not use the reserved gsd.* namespace,
- * unless allowGsdNamespace is explicitly set to true.
+ * Per D-04/D-05: Check that the extension ID does not use the reserved gwd.* namespace,
+ * unless allowGwdNamespace is explicitly set to true.
  * Per D-06: Only checks extension manifest ID — not pkg.name.
  */
 export function checkNamespaceReservation(extensionId: string, opts: ValidationOptions): ValidationError | null {
-  if (opts.allowGsdNamespace === true) {
+  if (opts.allowGwdNamespace === true) {
     return null
   }
 
-  if (extensionId.startsWith('gsd.')) {
+  if (extensionId.startsWith('gwd.')) {
     return {
       code: 'RESERVED_NAMESPACE',
-      message: `Extension ID "${extensionId}" is reserved for GSD core extensions. Use a different namespace for community extensions (e.g., "my-tool" or "acme.my-tool"). To override: pass --allow-gsd-namespace (maintainers only).`,
+      message: `Extension ID "${extensionId}" is reserved for GWD core extensions. Use a different namespace for community extensions (e.g., "my-tool" or "acme.my-tool"). To override: pass --allow-gwd-namespace (maintainers only).`,
       field: 'extensionId',
     }
   }
@@ -107,11 +107,11 @@ export function checkDependencyPlacement(pkg: unknown): ValidationError[] {
   const fieldsToCheck: Array<{ field: string; reason: string }> = [
     {
       field: 'dependencies',
-      reason: 'Extensions must not bundle GSD host packages — the host provides them at runtime.',
+      reason: 'Extensions must not bundle GWD host packages — the host provides them at runtime.',
     },
     {
       field: 'devDependencies',
-      reason: 'GSD host packages are provided by the host at runtime; listing them in devDependencies misrepresents the runtime contract.',
+      reason: 'GWD host packages are provided by the host at runtime; listing them in devDependencies misrepresents the runtime contract.',
     },
   ]
 
@@ -137,7 +137,7 @@ export function checkDependencyPlacement(pkg: unknown): ValidationError[] {
 // ─── Composite Validation ─────────────────────────────────────────────────────
 
 /**
- * Run all validation checks for a GSD extension package.json.
+ * Run all validation checks for a GWD extension package.json.
  * - If opts.extensionId is provided, runs namespace reservation check.
  * - If opts.extensionId is not provided, skips namespace check and adds a warning.
  * - valid is ALWAYS derived as errors.length === 0.

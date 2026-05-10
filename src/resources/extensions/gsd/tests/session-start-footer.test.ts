@@ -226,19 +226,19 @@ test("session_start installs the welcome screen as the TUI header", async (t) =>
   );
 
   const originalCwd = process.cwd();
-  const originalGsdPkgRoot = process.env.GSD_PKG_ROOT;
+  const originalGsdPkgRoot = process.env.GWD_PKG_ROOT;
   const originalGsdBinPath = process.env.GSD_BIN_PATH;
   const originalGsdVersion = process.env.GWD_VERSION;
   const originalFirstRunBanner = process.env.GSD_FIRST_RUN_BANNER;
   process.chdir(dir);
-  process.env.GSD_PKG_ROOT = dir;
+  process.env.GWD_PKG_ROOT = dir;
   process.env.GSD_BIN_PATH = join(dir, "bin", "loader.js");
   process.env.GWD_VERSION = "9.9.9-test";
   delete process.env.GSD_FIRST_RUN_BANNER;
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdPkgRoot === undefined) delete process.env.GSD_PKG_ROOT;
-    else process.env.GSD_PKG_ROOT = originalGsdPkgRoot;
+    if (originalGsdPkgRoot === undefined) delete process.env.GWD_PKG_ROOT;
+    else process.env.GWD_PKG_ROOT = originalGsdPkgRoot;
     if (originalGsdBinPath === undefined) delete process.env.GSD_BIN_PATH;
     else process.env.GSD_BIN_PATH = originalGsdBinPath;
     if (originalGsdVersion === undefined) delete process.env.GWD_VERSION;

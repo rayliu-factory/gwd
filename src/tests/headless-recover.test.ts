@@ -1,4 +1,4 @@
-// gsd-pi · headless recover wiring
+// gwd-pi · headless recover wiring
 //
 // Regression test for the headless recover entrypoint introduced to make
 // `gsd headless recover` available to non-TTY callers (CI, automation, the

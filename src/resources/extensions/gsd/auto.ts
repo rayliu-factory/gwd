@@ -707,7 +707,7 @@ export async function refreshResumeResourcesAndDb(
   const env = deps.env ?? process.env;
   const importModule = deps.importModule ?? ((specifier: string) => import(specifier));
   const agentDir = env.GSD_CODING_AGENT_DIR || join(gsdHome(), "agent");
-  const pkgRoot = env.GSD_PKG_ROOT;
+  const pkgRoot = env.GWD_PKG_ROOT;
   const resourceLoaderPath = pkgRoot
     ? pathToFileURL(join(pkgRoot, "dist", "resource-loader.js")).href
     : new URL("../../../resource-loader.js", import.meta.url).href;
@@ -2359,11 +2359,11 @@ export async function startAuto(
     restoreHookState(s.basePath);
     // Re-sync managed resources on resume so long-lived auto sessions pick up
     // bundled extension updates before resume-time verification/state logic runs.
-    // GSD_PKG_ROOT is set by loader.ts and points to the gsd-pi package root.
+    // GWD_PKG_ROOT is set by loader.ts and points to the gwd-pi package root.
     // The relative import ("../../../resource-loader.js") only works from the source
     // tree; deployed extensions live at ~/.gsd/agent/extensions/gsd/ where the
     // relative path resolves to ~/.gsd/agent/resource-loader.js which doesn't exist.
-    // Using GSD_PKG_ROOT constructs a correct absolute path in both contexts (#3949).
+    // Using GWD_PKG_ROOT constructs a correct absolute path in both contexts (#3949).
     await refreshResumeResourcesAndDb(s.basePath);
     try {
       await rebuildState(s.basePath);

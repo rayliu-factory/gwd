@@ -131,9 +131,12 @@ try {
       shell: process.platform === 'win32',
       stdio: ['pipe', 'pipe', 'pipe'],
       maxBuffer: DEFAULT_MAX_BUFFER,
+      timeout: 120000,
       env: {
         ...process.env,
         npm_config_cache: npmCacheDir,
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1',
+        GWD_SKIP_RTK_INSTALL: '1',
       },
     });
     console.log(installOutput);
@@ -149,10 +152,10 @@ try {
   // --- Verify every linkable workspace package resolved correctly post-install ---
   // This catches the Windows-style failure where symlinkSync fails silently and
   // node_modules/@gwd/ is never populated, causing ERR_MODULE_NOT_FOUND at runtime.
-  // Checks every package with `gsd.linkable: true` — not just a hand-picked subset —
+  // Checks every package with `gwd.linkable: true` — not just a hand-picked subset —
   // so any future addition is automatically covered.
   console.log('==> Verifying workspace package resolution (every linkable package)...');
-  const installedRoot = join(installDir, 'node_modules', 'gsd-pi');
+  const installedRoot = join(installDir, 'node_modules', 'gwd-pi');
   let resolutionFailed = false;
   for (const pkg of getLinkablePackages()) {
     const pkgPath = join(installedRoot, 'node_modules', pkg.scope, pkg.name);
@@ -174,7 +177,7 @@ try {
   console.log(`    All ${getLinkablePackages().length} linkable packages are resolvable.`);
 
   // --- Run the binary to confirm end-to-end resolution ---
-  console.log('==> Running installed binary (gsd -v)...');
+  console.log('==> Running installed binary (gwd -v)...');
   const loaderPath = join(installedRoot, 'dist', 'loader.js');
   const bundledWorkflowMcpCliPath = join(installedRoot, 'packages', 'mcp-server', 'dist', 'cli.js');
   if (!existsSync(bundledWorkflowMcpCliPath)) {
@@ -190,13 +193,13 @@ try {
       timeout: 15000,
       maxBuffer: DEFAULT_MAX_BUFFER,
     }).trim();
-    console.log(`    gsd -v => ${versionOutput}`);
+    console.log(`    gwd -v => ${versionOutput}`);
     if (!versionOutput.match(/^\d+\.\d+\.\d+/)) {
-      console.log('ERROR: gsd -v returned unexpected output (expected a version string).');
+      console.log('ERROR: gwd -v returned unexpected output (expected a version string).');
       process.exit(1);
     }
   } catch (err) {
-    console.log('ERROR: Running gsd -v failed after install.');
+    console.log('ERROR: Running gwd -v failed after install.');
     if (err.stdout) console.log(err.stdout);
     if (err.stderr) console.log(err.stderr);
     process.exit(1);

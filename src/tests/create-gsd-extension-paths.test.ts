@@ -6,7 +6,7 @@
  * Bug: https://github.com/gsd-build/gsd-2/issues/3131
  *
  * ~/.gsd/agent/extensions/ is reserved for bundled extensions synced from
- * the gsd-pi package. Community/user extensions must use ~/.pi/agent/extensions/.
+ * the gwd-pi package. Community/user extensions must use ~/.pi/agent/extensions/.
  */
 
 import test from "node:test";

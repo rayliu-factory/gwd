@@ -1,5 +1,5 @@
 /**
- * GSD Extensions Command — /gsd extensions
+ * GWD Extensions Command — /gsd extensions
  *
  * Manage the extension registry: list, enable, disable, info, install.
  * Self-contained — no imports outside the extensions tree (extensions are loaded
@@ -197,10 +197,10 @@ export function validateExtensionPackage(packageDir: string): ValidationResult {
     return { valid: false, errors: ["package.json is invalid JSON"], warnings };
   }
 
-  // (a) gsd.extension: true marker (D-12a)
-  const gsdField = pkg.gsd as Record<string, unknown> | undefined;
-  if (gsdField?.extension !== true) {
-    errors.push('package.json missing "gsd": { "extension": true }');
+  // (a) gwd.extension: true marker (D-12a)
+  const gwdField = pkg.gwd as Record<string, unknown> | undefined;
+  if (gwdField?.extension !== true) {
+    errors.push('package.json missing "gwd": { "extension": true }');
   }
 
   // (b) pi.extensions entry paths exist and are resolvable (D-12b)
@@ -290,23 +290,23 @@ interface ManifestValidationResult {
   errors: ManifestValidationError[];
 }
 
-function validateExtensionManifest(pkg: unknown, opts: { extensionId?: string; allowGsdNamespace?: boolean } = {}): ManifestValidationResult {
+function validateExtensionManifest(pkg: unknown, opts: { extensionId?: string; allowGwdNamespace?: boolean } = {}): ManifestValidationResult {
   const errors: ManifestValidationError[] = [];
 
-  // Check gsd.extension === true (strict)
+  // Check gwd.extension === true (strict)
   if (typeof pkg !== "object" || pkg === null) {
-    errors.push({ code: "MISSING_GSD_MARKER", message: 'package.json must declare "gsd": { "extension": true } to be recognized as a GSD extension.', field: "gsd.extension" });
+    errors.push({ code: "MISSING_GWD_MARKER", message: 'package.json must declare "gwd": { "extension": true } to be recognized as a GWD extension.', field: "gwd.extension" });
   } else {
     const obj = pkg as Record<string, unknown>;
-    const gsd = obj.gsd;
-    if (typeof gsd !== "object" || gsd === null || (gsd as Record<string, unknown>).extension !== true) {
-      errors.push({ code: "MISSING_GSD_MARKER", message: 'package.json must declare "gsd": { "extension": true } to be recognized as a GSD extension.', field: "gsd.extension" });
+    const gwd = obj.gwd;
+    if (typeof gwd !== "object" || gwd === null || (gwd as Record<string, unknown>).extension !== true) {
+      errors.push({ code: "MISSING_GWD_MARKER", message: 'package.json must declare "gwd": { "extension": true } to be recognized as a GWD extension.', field: "gwd.extension" });
     }
   }
 
   // Check namespace reservation
-  if (opts.extensionId && opts.extensionId.startsWith("gsd.") && opts.allowGsdNamespace !== true) {
-    errors.push({ code: "RESERVED_NAMESPACE", message: `Extension ID "${opts.extensionId}" is reserved for GSD core extensions. Use a different namespace for community extensions.`, field: "extensionId" });
+  if (opts.extensionId && opts.extensionId.startsWith("gwd.") && opts.allowGwdNamespace !== true) {
+    errors.push({ code: "RESERVED_NAMESPACE", message: `Extension ID "${opts.extensionId}" is reserved for GWD core extensions. Use a different namespace for community extensions.`, field: "extensionId" });
   }
 
   // Check dependency placement

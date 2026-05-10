@@ -117,10 +117,10 @@ if (!existsSync(appRoot)) {
 // GSD_CODING_AGENT_DIR — tells pi's getAgentDir() to return ~/.gsd/agent/ instead of ~/.gsd/agent/
 process.env.GSD_CODING_AGENT_DIR = agentDir
 
-// GSD_PKG_ROOT — absolute path to the gwd-pi package root. Used by deployed extensions
+// GWD_PKG_ROOT — absolute path to the gwd-pi package root. Used by deployed extensions
 // (e.g. auto.ts resume path) to import modules like resource-loader.js that live
 // in the package tree, not in the deployed ~/.gsd/agent/ tree.
-process.env.GSD_PKG_ROOT = gsdRoot
+process.env.GWD_PKG_ROOT = gsdRoot
 
 // RTK environment — make ~/.gsd/agent/bin visible to all child-process paths,
 // not just the bash tool, and force-disable RTK telemetry for GSD-managed use.

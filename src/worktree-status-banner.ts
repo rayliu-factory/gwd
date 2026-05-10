@@ -141,10 +141,10 @@ export function showWorktreeStatusBanner(basePath: string): void {
 
   const names = withChanges.map((worktree) => chalk.cyan(worktree.name)).join(', ')
   process.stderr.write(
-    chalk.dim('[gsd] ') +
+    chalk.dim('[gwd] ') +
     chalk.yellow(`${withChanges.length} worktree${withChanges.length === 1 ? '' : 's'} with unmerged changes: `) +
     names + '\n' +
-    chalk.dim('[gsd] ') +
+    chalk.dim('[gwd] ') +
     chalk.dim('Resume: gsd -w <name>  |  Merge: gsd worktree merge <name>  |  List: gsd worktree list\n\n'),
   )
 }

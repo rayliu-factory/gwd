@@ -25,7 +25,7 @@ function writeIndexTs(dir: string, content = "export default function() {}"): vo
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 test("validateExtensionPackage: valid package returns { valid: true }", (t) => {
-  // EXTR-02: gsd.extension: true, peerDependencies, pi.extensions
+  // EXTR-02: gwd.extension: true, peerDependencies, pi.extensions
   const dir = makeTempDir();
   t.after(() => rmSync(dir, { recursive: true, force: true }));
 
@@ -33,7 +33,7 @@ test("validateExtensionPackage: valid package returns { valid: true }", (t) => {
   writePackageJson(dir, {
     name: "@gwd-extensions/test",
     version: "1.0.0",
-    gsd: { extension: true },
+    gwd: { extension: true },
     pi: { extensions: ["./index.ts"] },
     peerDependencies: { "@gwd/pi-coding-agent": "*" },
     dependencies: { "some-lib": "^1.0.0" },
@@ -44,7 +44,7 @@ test("validateExtensionPackage: valid package returns { valid: true }", (t) => {
   assert.deepEqual(result.errors, []);
 });
 
-test("validateExtensionPackage: missing gsd.extension marker returns error", (t) => {
+test("validateExtensionPackage: missing gwd.extension marker returns error", (t) => {
   const dir = makeTempDir();
   t.after(() => rmSync(dir, { recursive: true, force: true }));
 
@@ -58,7 +58,7 @@ test("validateExtensionPackage: missing gsd.extension marker returns error", (t)
 
   const result = validateExtensionPackage(dir);
   assert.equal(result.valid, false);
-  assert.ok(result.errors.some(e => e.includes("gsd")), `Expected error about gsd, got: ${JSON.stringify(result.errors)}`);
+  assert.ok(result.errors.some(e => e.includes("gwd")), `Expected error about gwd, got: ${JSON.stringify(result.errors)}`);
 });
 
 test("validateExtensionPackage: missing pi.extensions returns error", (t) => {
@@ -69,7 +69,7 @@ test("validateExtensionPackage: missing pi.extensions returns error", (t) => {
   writePackageJson(dir, {
     name: "@gwd-extensions/test",
     version: "1.0.0",
-    gsd: { extension: true },
+    gwd: { extension: true },
     peerDependencies: { "@gwd/pi-coding-agent": "*" },
   });
 
@@ -86,7 +86,7 @@ test("validateExtensionPackage: pi.extensions entry path not found returns error
   writePackageJson(dir, {
     name: "@gwd-extensions/test",
     version: "1.0.0",
-    gsd: { extension: true },
+    gwd: { extension: true },
     pi: { extensions: ["./index.ts"] },
     peerDependencies: { "@gwd/pi-coding-agent": "*" },
   });
@@ -104,7 +104,7 @@ test("validateExtensionPackage: @gwd/* in dependencies (not peerDependencies) re
   writePackageJson(dir, {
     name: "@gwd-extensions/test",
     version: "1.0.0",
-    gsd: { extension: true },
+    gwd: { extension: true },
     pi: { extensions: ["./index.ts"] },
     dependencies: { "@gwd/pi-coding-agent": "^2.0.0" },
   });
@@ -122,7 +122,7 @@ test("validateExtensionPackage: @gwd/* in devDependencies returns error", (t) =>
   writePackageJson(dir, {
     name: "@gwd-extensions/test",
     version: "1.0.0",
-    gsd: { extension: true },
+    gwd: { extension: true },
     pi: { extensions: ["./index.ts"] },
     peerDependencies: { "@gwd/pi-coding-agent": "*" },
     devDependencies: { "@gwd/pi-tui": "^2.0.0" },
