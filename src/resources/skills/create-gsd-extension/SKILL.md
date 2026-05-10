@@ -1,13 +1,13 @@
 ---
 name: create-gsd-extension
-description: Create, debug, and iterate on GSD extensions (TypeScript modules that add tools, commands, event hooks, custom UI, and providers to GSD). Use when asked to build an extension, add a tool the LLM can call, register a slash command, hook into GSD events, create custom TUI components, or modify GSD behavior. Triggers on "create extension", "build extension", "add a tool", "register command", "hook into gsd", "custom tool", "gsd plugin", "gsd extension".
+description: Create, debug, and iterate on GWD extensions (TypeScript modules that add tools, commands, event hooks, custom UI, and providers to GWD). Use when asked to build an extension, add a tool the LLM can call, register a slash command, hook into GWD events, create custom TUI components, or modify GWD behavior. Triggers on "create extension", "build extension", "add a tool", "register command", "hook into gwd", "custom tool", "gwd plugin", "gwd extension".
 ---
 
 <essential_principles>
 
-**Extensions are TypeScript modules** that hook into GSD's runtime (built on pi). They export a default function receiving `ExtensionAPI` and use it to subscribe to events, register tools/commands/shortcuts, and interact with the session.
+**Extensions are TypeScript modules** that hook into GWD's runtime (built on pi). They export a default function receiving `ExtensionAPI` and use it to subscribe to events, register tools/commands/shortcuts, and interact with the session.
 
-**GSD extension paths (community/user-installed extensions):**
+**GWD extension paths (community/user-installed extensions):**
 - Global: `~/.pi/agent/extensions/*.ts` or `~/.pi/agent/extensions/*/index.ts`
 - Project-local: `.gsd/extensions/*.ts` or `.gsd/extensions/*/index.ts`
 

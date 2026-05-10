@@ -179,7 +179,7 @@ export async function handleOnboarding(rawArgs: string, ctx: ExtensionCommandCon
   if (args.reset) {
     resetOnboarding()
     ctx.ui.notify(
-      "Onboarding state cleared. API keys/credentials are unchanged — manage them with /gsd keys. Restart GSD to re-run the first-run wizard, or pick a step below.",
+      "Onboarding state cleared. API keys/credentials are unchanged — manage them with /gwd keys. Restart GWD to re-run the first-run wizard, or pick a step below.",
       "info",
     )
     await renderSetupHub(ctx)

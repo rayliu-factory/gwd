@@ -90,7 +90,7 @@ function withProject(basePath: string, body: string): string {
 
 function buildHelp(): string {
   return [
-    "GSD Remote Commands:",
+    "GWD Remote Commands:",
     "",
     "/status   — current milestone, unit, and cost",
     "/progress — roadmap overview (done / open milestones)",
@@ -175,7 +175,7 @@ async function buildStatus(basePath: string): Promise<string> {
 async function buildProgress(basePath: string): Promise<string> {
   const milestones = await readMilestonesFromDb();
   if (milestones.length === 0) {
-    return "No milestones found in .gsd database.\n\nRun /gsd to start GSD first.";
+    return "No milestones found in .gsd database.\n\nRun /gwd to start GWD first.";
   }
 
   const done = milestones.filter(m => m.status === "complete");

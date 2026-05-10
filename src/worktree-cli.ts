@@ -206,7 +206,7 @@ async function handleList(basePath: string): Promise<void> {
   const worktrees = ext.listWorktrees(basePath)
 
   if (worktrees.length === 0) {
-    process.stderr.write(chalk.dim('No worktrees. Create one with: gsd -w <name>\n'))
+    process.stderr.write(chalk.dim('No worktrees. Create one with: gwd -w <name>\n'))
     return
   }
 
@@ -230,8 +230,8 @@ async function handleMerge(basePath: string, args: string[]): Promise<void> {
       await doMerge(ext, basePath, worktrees[0].name)
       return
     }
-    process.stderr.write(chalk.red('Usage: gsd worktree merge <name>\n'))
-    process.stderr.write(chalk.dim('Run gsd worktree list to see worktrees.\n'))
+    process.stderr.write(chalk.red('Usage: gwd worktree merge <name>\n'))
+    process.stderr.write(chalk.dim('Run gwd worktree list to see worktrees.\n'))
     process.exit(1)
   }
   await doMerge(ext, basePath, name)
@@ -370,7 +370,7 @@ async function handleStatusBanner(basePath: string): Promise<void> {
     chalk.yellow(`${withChanges.length} worktree${withChanges.length === 1 ? '' : 's'} with unmerged changes: `) +
     names + '\n' +
     chalk.dim('[gwd] ') +
-    chalk.dim('Resume: gsd -w <name>  |  Merge: gsd worktree merge <name>  |  List: gsd worktree list\n\n'),
+    chalk.dim('Resume: gwd -w <name>  |  Merge: gwd worktree merge <name>  |  List: gwd worktree list\n\n'),
   )
 }
 

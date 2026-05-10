@@ -91,18 +91,18 @@ test("buildDesktopNotificationCommand skips unsupported platforms", () => {
 
 // ─── formatNotificationTitle — project context in notifications (#2708) ──────
 
-test("formatNotificationTitle returns 'GSD' when no project name is given", () => {
-  assert.equal(formatNotificationTitle(), "GSD");
-  assert.equal(formatNotificationTitle(undefined), "GSD");
-  assert.equal(formatNotificationTitle(""), "GSD");
+test("formatNotificationTitle returns 'GWD' when no project name is given", () => {
+  assert.equal(formatNotificationTitle(), "GWD");
+  assert.equal(formatNotificationTitle(undefined), "GWD");
+  assert.equal(formatNotificationTitle(""), "GWD");
 });
 
 test("formatNotificationTitle includes project name when provided", () => {
-  assert.equal(formatNotificationTitle("my-app"), "GSD — my-app");
+  assert.equal(formatNotificationTitle("my-app"), "GWD — my-app");
 });
 
 test("formatNotificationTitle trims whitespace from project name", () => {
-  assert.equal(formatNotificationTitle("  spaced  "), "GSD — spaced");
+  assert.equal(formatNotificationTitle("  spaced  "), "GWD — spaced");
 });
 
 test("buildDesktopNotificationCommand includes project name in title on linux", () => {
@@ -113,7 +113,7 @@ test("buildDesktopNotificationCommand includes project name in title on linux", 
     "success",
   );
   assert.ok(command);
-  assert.equal(command.args[2], "GSD — my-project");
+  assert.equal(command.args[2], "GWD — my-project");
   assert.equal(command.args[3], "All milestones complete!");
 });
 
@@ -127,8 +127,8 @@ test("buildDesktopNotificationCommand includes project name in title on macOS", 
   assert.ok(command);
   if (command.file.includes("terminal-notifier")) {
     const titleIdx = command.args.indexOf("-title");
-    assert.equal(command.args[titleIdx + 1], "GSD — my-project");
+    assert.equal(command.args[titleIdx + 1], "GWD — my-project");
   } else {
-    assert.match(command.args[1], /GSD — my-project/);
+    assert.match(command.args[1], /GWD — my-project/);
   }
 });

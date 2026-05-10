@@ -494,7 +494,7 @@ function handleUninstall(id: string | undefined, ctx: ExtensionCommandContext): 
       "warning",
     );
   }
-  ctx.ui.notify(`Uninstalled "${id}". Restart GSD to deactivate.`, "info");
+  ctx.ui.notify(`Uninstalled "${id}". Restart GWD to deactivate.`, "info");
 }
 
 // ─── Update subcommand ───────────────────────────────────────────────────────
@@ -711,7 +711,7 @@ function installFromNpm(specifier: string, installedExtDir: string, ctx: Extensi
 
     // Step 6: Commit the registry entry only after the rename succeeds.
     writeInstalledRegistryEntry(validated.id, validated.manifest, specifier, "npm");
-    ctx.ui.notify(`Installed "${validated.id}" v${validated.manifest.version ?? "unknown"}. Restart GSD to activate.`, "info");
+    ctx.ui.notify(`Installed "${validated.id}" v${validated.manifest.version ?? "unknown"}. Restart GWD to activate.`, "info");
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     ctx.ui.notify(`Failed to install "${specifier}": ${msg}`, "error");
@@ -748,7 +748,7 @@ function installFromGit(gitUrl: string, installedExtDir: string, ctx: ExtensionC
     renameSync(tmpDir, destPath);
 
     writeInstalledRegistryEntry(validated.id, validated.manifest, gitUrl, "git");
-    ctx.ui.notify(`Installed "${validated.id}" v${validated.manifest.version ?? "unknown"}. Restart GSD to activate.`, "info");
+    ctx.ui.notify(`Installed "${validated.id}" v${validated.manifest.version ?? "unknown"}. Restart GWD to activate.`, "info");
   } catch (err) {
     if (existsSync(tmpDir)) rmSync(tmpDir, { recursive: true, force: true });
     const msg = err instanceof Error ? err.message : String(err);
@@ -783,7 +783,7 @@ function installFromLocal(localPath: string, installedExtDir: string, ctx: Exten
     renameSync(tmpDir, destPath);
 
     writeInstalledRegistryEntry(validated.id, validated.manifest, localPath, "local");
-    ctx.ui.notify(`Installed "${validated.id}" v${validated.manifest.version ?? "unknown"}. Restart GSD to activate.`, "info");
+    ctx.ui.notify(`Installed "${validated.id}" v${validated.manifest.version ?? "unknown"}. Restart GWD to activate.`, "info");
   } catch (err) {
     if (existsSync(tmpDir)) rmSync(tmpDir, { recursive: true, force: true });
     const msg = err instanceof Error ? err.message : String(err);
@@ -928,7 +928,7 @@ function handleEnable(id: string | undefined, ctx: ExtensionCommandContext): voi
     ctx.ui.notify(`Extension "${id}" is already enabled.`, "info");
     return;
   }
-  ctx.ui.notify(`Enabled "${id}". Restart GSD to activate.`, "info");
+  ctx.ui.notify(`Enabled "${id}". Restart GWD to activate.`, "info");
 }
 
 function handleDisable(id: string | undefined, reason: string, ctx: ExtensionCommandContext): void {
@@ -972,7 +972,7 @@ function handleDisable(id: string | undefined, reason: string, ctx: ExtensionCom
     ctx.ui.notify(`Extension "${id}" is already disabled.`, "info");
     return;
   }
-  ctx.ui.notify(`Disabled "${id}". Restart GSD to deactivate.`, "info");
+  ctx.ui.notify(`Disabled "${id}". Restart GWD to deactivate.`, "info");
 }
 
 function handleInfo(id: string | undefined, ctx: ExtensionCommandContext): void {

@@ -1450,7 +1450,7 @@ function ChatInputBar({
                 <TooltipTrigger asChild>
                   <PopoverTrigger asChild>
                     <button
-                      aria-label="More GSD commands"
+                      aria-label="More GWD commands"
                       className={cn(
                         "flex flex-shrink-0 items-center justify-center rounded-xl border border-border bg-background p-2.5 text-foreground transition-colors hover:bg-accent",
                         overflowOpen && "bg-accent",
@@ -1571,7 +1571,7 @@ function PlaceholderState({
           </div>
         ) : (
           <p className="max-w-xs text-xs text-muted-foreground">
-            Connected — waiting for GSD output…
+            Connected — waiting for GWD output…
           </p>
         )}
       </div>

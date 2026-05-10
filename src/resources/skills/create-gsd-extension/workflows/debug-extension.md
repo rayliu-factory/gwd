@@ -49,7 +49,7 @@ Read `../references/key-rules-gotchas.md` and verify each rule against the exten
 ## Step 5: Add Debugging
 
 ```typescript
-// Temporary: log to stderr (visible in GSD output)
+// Temporary: log to stderr (visible in GWD output)
 console.error("[my-ext] Loading...");
 
 pi.on("session_start", async (_event, ctx) => {

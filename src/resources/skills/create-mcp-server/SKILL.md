@@ -1,6 +1,6 @@
 ---
 name: create-mcp-server
-description: Build, iterate, and evaluate Model Context Protocol (MCP) servers that expose external services as tools an LLM can call. Use when asked to "build an MCP server", "create an MCP tool", "wrap this API as MCP", "expose X to Claude", or when extending GSD with custom tool integrations. Covers research, schema/tool design, error handling, pagination, testing via MCP Inspector, and producing a 10-question eval set that proves the server actually enables real work.
+description: Build, iterate, and evaluate Model Context Protocol (MCP) servers that expose external services as tools an LLM can call. Use when asked to "build an MCP server", "create an MCP tool", "wrap this API as MCP", "expose X to Claude", or when extending GWD with custom tool integrations. Covers research, schema/tool design, error handling, pagination, testing via MCP Inspector, and producing a 10-question eval set that proves the server actually enables real work.
 ---
 
 <objective>
@@ -8,7 +8,7 @@ Produce a high-quality MCP server that an LLM can actually use — not one that 
 </objective>
 
 <context>
-GSD-2 consumes MCP heavily — see `src/resources/extensions/mcp-client/`, `src/resources/extensions/gsd/mcp-project-config.ts`, `src/resources/extensions/gsd/workflow-mcp.ts`, and `/gsd mcp` commands. Users frequently want to extend GSD with project-specific MCP servers (internal APIs, data sources, domain tools). This skill fills the authoring gap between "MCP exists" and "I have a working server."
+GWD consumes MCP heavily — see `src/resources/extensions/mcp-client/`, `src/resources/extensions/gsd/mcp-project-config.ts`, `src/resources/extensions/gsd/workflow-mcp.ts`, and `/gwd mcp` commands. Users frequently want to extend GWD with project-specific MCP servers (internal APIs, data sources, domain tools). This skill fills the authoring gap between "MCP exists" and "I have a working server."
 
 Invocation points:
 - User describes a service or API they want an LLM to reach

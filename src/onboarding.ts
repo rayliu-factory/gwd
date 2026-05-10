@@ -308,7 +308,7 @@ export async function runOnboarding(
 
   // ── LLM Provider Selection ────────────────────────────────────────────────
   const llmResult = await runStep(p, 'LLM setup failed', () => runLlmStep(p, pc, authStorage), {
-    cancelMessage: 'Setup cancelled — you can run /gsd onboarding --resume later.',
+    cancelMessage: 'Setup cancelled — you can run /gwd onboarding --resume later.',
     errorInfo: `You can configure your LLM provider later with /login inside ${PRODUCT_DISPLAY_NAME}.`,
   })
   if (llmResult === STEP_CANCELLED) return
@@ -1025,7 +1025,7 @@ export async function runRemoteQuestionsStep(
       const res = await fetch(`https://api.telegram.org/bot${trimmed}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: trimmedChatId, text: 'GSD remote questions connected.' }),
+        body: JSON.stringify({ chat_id: trimmedChatId, text: 'GWD remote questions connected.' }),
         signal: AbortSignal.timeout(15_000),
       })
       const data = await res.json() as TelegramGetMeResponse
@@ -1128,7 +1128,7 @@ async function runDiscordChannelStep(p: ClackModule, pc: PicoModule, token: stri
   // Select channel
   const MANUAL_VALUE = '__manual__'
   const channelChoice = await p.select({
-    message: 'Which channel should GSD use for remote questions?',
+    message: 'Which channel should GWD use for remote questions?',
     options: [
       ...channels.map(ch => ({ value: ch.id, label: `#${ch.name}` })),
       { value: MANUAL_VALUE, label: 'Enter channel ID manually' },

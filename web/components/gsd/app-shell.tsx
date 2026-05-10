@@ -299,7 +299,7 @@ function WorkspaceChrome() {
             (including the{" "}
             <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">#token=…</code>{" "}
             part) or restart with{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">gsd --web</code>.
+            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">gwd --web</code>.
           </p>
         </div>
       </div>

@@ -19,10 +19,10 @@ GSD persists a lot of runtime evidence under `.gsd/`:
 - `runtime/paused-session.json` — serialized session when auto-mode paused
 - `doctor-history.jsonl` — doctor check history
 
-The `/gsd forensics` command pre-computes a forensic report with anomalies flagged. This skill is the manual investigation that goes deeper, or runs when the automated report isn't enough.
+The `/gwd forensics` command pre-computes a forensic report with anomalies flagged. This skill is the manual investigation that goes deeper, or runs when the automated report isn't enough.
 
 Invocation points:
-- `/gsd forensics` has been run and user wants deeper analysis
+- `/gwd forensics` has been run and user wants deeper analysis
 - Auto-mode exited unexpectedly, no obvious cause
 - Same unit dispatched multiple times (stuck loop suspected)
 - A session crashed and `auto.lock` is stale

@@ -90,12 +90,12 @@ export function shouldSendDesktopNotification(
 
 /**
  * Format a notification title that includes the project name for context.
- * Returns "GSD — projectName" when a project name is available, otherwise "GSD".
+ * Returns "GWD — projectName" when a project name is available, otherwise "GWD".
  */
 export function formatNotificationTitle(projectName?: string): string {
   const trimmed = projectName?.trim();
-  if (trimmed) return `GSD — ${trimmed}`;
-  return "GSD";
+  if (trimmed) return `GWD — ${trimmed}`;
+  return "GWD";
 }
 
 export function buildDesktopNotificationCommand(
