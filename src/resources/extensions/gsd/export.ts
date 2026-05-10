@@ -1,4 +1,4 @@
-// GSD Extension — Session/Milestone Export
+// GWD Extension — Session/Milestone Export
 // Generate shareable reports of milestone work in JSON or markdown format.
 
 import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
@@ -76,7 +76,7 @@ export function writeExportFile(
     const slices = visualizerData?.bySlice ?? aggregateBySlice(units);
 
     const md = [
-      `# GSD Session Report — ${projectName}`,
+      `# GWD Session Report — ${projectName}`,
       ``,
       `**Generated**: ${new Date().toISOString()}`,
       `**Units completed**: ${totals.units}`,
@@ -268,7 +268,7 @@ export async function handleExport(args: string, ctx: ExtensionCommandContext, b
     const slices = aggregateBySlice(units);
 
     const md = [
-      `# GSD Session Report — ${projectName}`,
+      `# GWD Session Report — ${projectName}`,
       ``,
       `**Generated**: ${new Date().toISOString()}`,
       `**Units completed**: ${totals.units}`,

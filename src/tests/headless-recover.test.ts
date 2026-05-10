@@ -1,7 +1,7 @@
 // gwd-pi · headless recover wiring
 //
 // Regression test for the headless recover entrypoint introduced to make
-// `gsd headless recover` available to non-TTY callers (CI, automation, the
+// `gwd headless recover` available to non-TTY callers (CI, automation, the
 // live-regression suite). The headless dispatcher previously had no
 // `recover` case — the only path was the interactive slash-command
 // (`/gsd recover`), which is gated behind a TTY check (src/cli.ts

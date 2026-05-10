@@ -1,9 +1,9 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Registers memory-layer tools.
 // GSD2 — Memory tool registration
 //
 // Exposes the memory-layer tools (capture_thought, memory_query, gsd_graph)
-// to the LLM over MCP. All three degrade gracefully when the GSD database
+// to the LLM over MCP. All three degrade gracefully when the GWD database
 // is unavailable.
 
 import { Type } from "@sinclair/typebox";
@@ -25,10 +25,10 @@ export function registerMemoryTools(pi: ExtensionAPI): void {
     label: "Capture Thought",
     description:
       "Record a durable piece of project knowledge (decision, convention, gotcha, pattern, " +
-      "preference, or environment detail) into the GSD memory store. Use sparingly — one memory " +
+      "preference, or environment detail) into the GWD memory store. Use sparingly — one memory " +
       "per genuinely reusable insight, not per task.",
     promptSnippet:
-      "Capture a durable project insight into the GSD memory store (categories: architecture, convention, gotcha, pattern, preference, environment)",
+      "Capture a durable project insight into the GWD memory store (categories: architecture, convention, gotcha, pattern, preference, environment)",
     promptGuidelines: [
       "Use capture_thought for insights that will remain useful across future sessions.",
       "Do NOT capture one-off bug fixes, temporary state, secrets, or task-specific details.",
@@ -63,7 +63,7 @@ export function registerMemoryTools(pi: ExtensionAPI): void {
       const ok = await ensureDbOpen(resolveCtxCwd(_ctx));
       if (!ok) {
         return {
-          content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot capture memory." }],
+          content: [{ type: "text" as const, text: "Error: GWD database is not available. Cannot capture memory." }],
           details: { operation: "memory_capture", error: "db_unavailable" },
           isError: true,
         };
@@ -78,10 +78,10 @@ export function registerMemoryTools(pi: ExtensionAPI): void {
     name: "memory_query",
     label: "Query Memory",
     description:
-      "Search the GSD memory store for relevant memories. Phase 1 uses keyword matching ranked " +
+      "Search the GWD memory store for relevant memories. Phase 1 uses keyword matching ranked " +
       "by confidence and reinforcement; future phases add semantic (embedding) retrieval.",
     promptSnippet:
-      "Search the GSD memory store by keyword; returns ranked memories with id, category, and content",
+      "Search the GWD memory store by keyword; returns ranked memories with id, category, and content",
     promptGuidelines: [
       "Use memory_query when you need durable project context that may not be in the current prompt.",
       "Provide a short keyword-style query — not a full question.",
@@ -114,7 +114,7 @@ export function registerMemoryTools(pi: ExtensionAPI): void {
       const ok = await ensureDbOpen(resolveCtxCwd(_ctx));
       if (!ok) {
         return {
-          content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot query memory." }],
+          content: [{ type: "text" as const, text: "Error: GWD database is not available. Cannot query memory." }],
           details: { operation: "memory_query", error: "db_unavailable" },
           isError: true,
         };
@@ -127,7 +127,7 @@ export function registerMemoryTools(pi: ExtensionAPI): void {
 
   pi.registerTool({
     name: "gsd_graph",
-    label: "GSD Knowledge Graph",
+    label: "GWD Knowledge Graph",
     description:
       "Inspect the relationship graph between memories. mode=query walks supersedes edges from a " +
       "given memoryId; mode=build is a placeholder that future phases will use to rebuild graph " +
@@ -155,7 +155,7 @@ export function registerMemoryTools(pi: ExtensionAPI): void {
       const ok = await ensureDbOpen(resolveCtxCwd(_ctx));
       if (!ok) {
         return {
-          content: [{ type: "text" as const, text: "Error: GSD database is not available." }],
+          content: [{ type: "text" as const, text: "Error: GWD database is not available." }],
           details: { operation: "gsd_graph", error: "db_unavailable" },
           isError: true,
         };

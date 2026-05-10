@@ -1,4 +1,4 @@
-// GSD Memory Extractor — Background LLM extraction from activity logs
+// GWD Memory Extractor — Background LLM extraction from activity logs
 //
 // After each unit completes, extracts durable knowledge from the session
 // transcript and stores it as memory entries. One extraction at a time

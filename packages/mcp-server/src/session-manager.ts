@@ -82,7 +82,7 @@ export class SessionManager {
    *
    * Rejects if a session already exists for this projectDir.
    * Creates an RpcClient, starts the process, performs the v2 init handshake,
-   * wires event tracking, and sends '/gsd auto' to begin execution.
+   * wires event tracking, and sends '/gwd auto' to begin execution.
    */
   async startSession(projectDir: string, options: ExecuteOptions = {}): Promise<string> {
     if (!projectDir || projectDir.trim() === '') {
@@ -154,7 +154,7 @@ export class SessionManager {
       });
 
       // Kick off auto-mode
-      const command = options.command ?? '/gsd auto';
+      const command = options.command ?? '/gwd auto';
       await client.prompt(command);
 
       return session.sessionId;
@@ -222,7 +222,7 @@ export class SessionManager {
   /**
    * Cancel a session looked up by project directory.
    *
-   * This is the fallback path for interactive sessions (started via `/gsd auto`
+   * This is the fallback path for interactive sessions (started via `/gwd auto`
    * in the terminal) and sessions from a restarted MCP server that have no
    * registered sessionId. The sessions map is keyed by projectDir, so this
    * lookup always succeeds for any tracked session regardless of sessionId.

@@ -1,5 +1,5 @@
 /**
- * GSD Worktree Utilities
+ * GWD Worktree Utilities
  *
  * Pure utility functions for worktree name detection, legacy branch name
  * parsing, and integration branch capture.
@@ -69,7 +69,7 @@ export function setActiveMilestoneId(basePath: string, milestoneId: string | nul
  * Called once when auto-mode starts — captures where slice branches should
  * merge back to. No-op if the same branch is already recorded. Updates the
  * record when the user starts from a different branch (#300). Always a no-op
- * if on a GSD slice branch.
+ * if on a GWD slice branch.
  */
 export function captureIntegrationBranch(basePath: string, milestoneId: string): void {
   // In a worktree, the base branch is implicit (worktree/<name>).
@@ -84,7 +84,7 @@ export function captureIntegrationBranch(basePath: string, milestoneId: string):
 
 /**
  * Detect the active worktree name from the current working directory.
- * Returns null if not inside a GSD worktree (.gsd/worktrees/<name>/).
+ * Returns null if not inside a GWD worktree (.gsd/worktrees/<name>/).
  */
 export function detectWorktreeName(basePath: string): string | null {
   const normalizedPath = basePath.replaceAll("\\", "/");
@@ -159,7 +159,7 @@ export function parseSliceBranch(branchName: string): {
 // ─── Git-Mutation Functions (delegate to GitServiceImpl) ───────────────────
 
 /**
- * Get the "main" branch for GSD slice operations.
+ * Get the "main" branch for GWD slice operations.
  *
  * In the main working tree: returns main/master (the repo's default branch).
  * In a worktree: returns worktree/<name> — the worktree's own base branch.

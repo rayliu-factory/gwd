@@ -13,7 +13,7 @@ export type BrowserSlashCommandSurface =
   | "logout"
   | "session"
   | "export"
-  // GSD subcommand surfaces (S02)
+  // GWD subcommand surfaces (S02)
   | "gsd-status"
   | "gsd-visualize"
   | "gsd-forensics"
@@ -111,7 +111,7 @@ const SURFACE_COMMANDS = new Map<string, BrowserSlashCommandSurface>([
   ["export", "export"],
 ])
 
-// --- GSD subcommand dispatch (S02) ---
+// --- GWD subcommand dispatch (S02) ---
 
 const GWD_SURFACE_SUBCOMMANDS = new Map<string, BrowserSlashCommandSurface>([
   ["status", "gsd-status"],
@@ -149,7 +149,7 @@ const GWD_PASSTHROUGH_SUBCOMMANDS = new Set<string>([
   "remote",
 ])
 
-export const GWD_HELP_TEXT = `Available /gsd subcommands:
+export const GWD_HELP_TEXT = `Available /gwd subcommands:
 
 Workflow:    next · auto · stop · pause · skip · queue · quick · capture · triage
 Diagnostics: status · visualize · forensics · doctor · skill-health · inspect
@@ -157,7 +157,7 @@ Context:     knowledge · history · undo · discuss
 Settings:    model · prefs · config · hooks · mode · steer
 Advanced:    export · cleanup · run-hook · migrate · remote
 
-Type /gsd <subcommand> to run. Use /gsd help for this message.`
+Type /gwd <subcommand> to run. Use /gwd help for this message.`
 
 function dispatchGSDSubcommand(
   input: string,
@@ -169,12 +169,12 @@ function dispatchGSDSubcommand(
   const subcommand = spaceIndex === -1 ? trimmedArgs : trimmedArgs.slice(0, spaceIndex)
   const subArgs = spaceIndex === -1 ? "" : trimmedArgs.slice(spaceIndex + 1).trim()
 
-  // Bare `/gsd` — equivalent to `/gsd next`, pass through to bridge
+  // Bare `/gwd` — equivalent to `/gwd next`, pass through to bridge
   if (!subcommand) {
     return {
       kind: "prompt",
       input,
-      slashCommandName: "gsd",
+      slashCommandName: "gwd",
       command: {
         type: getPromptCommandType(options),
         message: input,
@@ -182,22 +182,22 @@ function dispatchGSDSubcommand(
     }
   }
 
-  // `/gsd help` — render inline help locally
+  // `/gwd help` — render inline help locally
   if (subcommand === "help") {
     return {
       kind: "local",
       input,
-      commandName: "gsd",
+      commandName: "gwd",
       action: "gsd_help",
     }
   }
 
-  // `/gsd visualize` — navigate to the visualizer view directly
+  // `/gwd visualize` — navigate to the visualizer view directly
   if (subcommand === "visualize") {
     return {
       kind: "view-navigate",
       input,
-      commandName: "gsd",
+      commandName: "gwd",
       view: "visualize",
     }
   }
@@ -208,7 +208,7 @@ function dispatchGSDSubcommand(
     return {
       kind: "surface",
       input,
-      commandName: "gsd",
+      commandName: "gwd",
       surface,
       args: subArgs,
     }
@@ -219,7 +219,7 @@ function dispatchGSDSubcommand(
     return {
       kind: "prompt",
       input,
-      slashCommandName: "gsd",
+      slashCommandName: "gwd",
       command: {
         type: getPromptCommandType(options),
         message: input,
@@ -231,7 +231,7 @@ function dispatchGSDSubcommand(
   return {
     kind: "prompt",
     input,
-    slashCommandName: "gsd",
+    slashCommandName: "gwd",
     command: {
       type: getPromptCommandType(options),
       message: input,
@@ -342,9 +342,9 @@ export function dispatchBrowserSlashCommand(
     }
   }
 
-  // GSD subcommand dispatch — must precede SURFACE_COMMANDS to avoid
-  // `/gsd export` colliding with the built-in `/export` surface.
-  if (parsed.name === "gsd") {
+  // GWD subcommand dispatch — must precede SURFACE_COMMANDS to avoid
+  // `/gwd export` colliding with the built-in `/export` surface.
+  if (parsed.name === "gwd") {
     return dispatchGSDSubcommand(trimmed, parsed.args, options)
   }
 

@@ -1,7 +1,7 @@
 // GSD2 — Ecosystem Extension API wrapper
-// Wraps pi's ExtensionAPI to expose typed GSD context (phase + active unit)
+// Wraps pi's ExtensionAPI to expose typed GWD context (phase + active unit)
 // to extensions loaded from `./.gsd/extensions/`. The wrapper intercepts only
-// `on("before_agent_start", ...)` so GSD can dispatch ecosystem handlers AFTER
+// `on("before_agent_start", ...)` so GWD can dispatch ecosystem handlers AFTER
 // refreshing state — fixing the load-order race where third-party
 // `.pi/extensions/` handlers see a stale module-level snapshot (#3338).
 //
@@ -136,7 +136,7 @@ export function _resetSnapshot(): void {
 /**
  * Build a GSDExtensionAPI by manually delegating every ExtensionAPI method
  * to the underlying pi instance, except `on("before_agent_start", ...)`
- * which is captured into `sharedHandlers` for GSD-owned dispatch.
+ * which is captured into `sharedHandlers` for GWD-owned dispatch.
  *
  * Uses `satisfies GSDExtensionAPI` (NOT `as`) so TypeScript catches drift
  * when pi adds new ExtensionAPI methods.
@@ -224,7 +224,7 @@ export function createGSDExtensionAPI(
     // ── Shared event bus (passthrough property) ────────────────────────
     events: pi.events,
 
-    // ── GSD-specific additions ─────────────────────────────────────────
+    // ── GWD-specific additions ─────────────────────────────────────────
     getPhase: (): Phase | null => _snapshot.phase,
     getActiveUnit: (): GSDActiveUnit | null => _snapshot.activeUnit,
   } satisfies GSDExtensionAPI;

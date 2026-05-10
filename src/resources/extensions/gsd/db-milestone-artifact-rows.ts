@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Milestone and artifact row mappers for the GSD database facade.
+// Project/App: GWD-2
+// File Purpose: Milestone and artifact row mappers for the GWD database facade.
 
 export interface MilestoneRow {
   id: string;

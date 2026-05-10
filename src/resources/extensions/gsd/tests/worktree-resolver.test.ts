@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: WorktreeLifecycle merge/exit unit and regression tests.
 //
 // These tests previously exercised WorktreeResolver, which retired in slice 7
@@ -872,10 +872,10 @@ test("mergeAndExit failure message tells user worktree and branch are preserved 
   );
 });
 
-test("mergeAndExit failure message references /gsd dispatch complete-milestone, not /complete-milestone (#1891)", () => {
+test("mergeAndExit failure message references /gwd dispatch complete-milestone, not /complete-milestone (#1891)", () => {
   // Regression test: the failure notification previously told users to
   // "retry /complete-milestone" — a command that does not exist. The correct
-  // recovery command is "/gsd dispatch complete-milestone".
+  // recovery command is "/gwd dispatch complete-milestone".
   const s = makeSession({
     basePath: "/project/.gsd/worktrees/M001",
     originalBasePath: "/project",
@@ -897,8 +897,8 @@ test("mergeAndExit failure message references /gsd dispatch complete-milestone, 
   assert.ok(warning, "a warning message is emitted");
   // Must reference the correct dispatch command
   assert.ok(
-    warning!.msg.includes("/gsd dispatch complete-milestone"),
-    "warning references /gsd dispatch complete-milestone, not bare /complete-milestone",
+    warning!.msg.includes("/gwd dispatch complete-milestone"),
+    "warning references /gwd dispatch complete-milestone, not bare /complete-milestone",
   );
   // Must NOT contain the bare (incorrect) command without the dispatch prefix
   assert.ok(

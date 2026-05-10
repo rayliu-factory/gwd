@@ -1,8 +1,8 @@
 /**
- * GSD Parallel Monitor Overlay
+ * GWD Parallel Monitor Overlay
  *
  * Full-screen TUI overlay showing real-time parallel worker progress.
- * Opened via `/gsd parallel watch`, Ctrl+Alt+P (⌃⌥P on macOS),
+ * Opened via `/gwd parallel watch`, Ctrl+Alt+P (⌃⌥P on macOS),
  * or Ctrl+Shift+P fallback.
  * Reads the same data sources as `scripts/parallel-monitor.mjs` but
  * renders as a native pi-tui overlay with theme integration.
@@ -392,7 +392,7 @@ export class ParallelMonitorOverlay {
     const aliveCount = this.workers.filter((wk) => wk.alive).length;
     const now = new Date().toLocaleTimeString();
 
-    lines.push(t.bold(t.fg("accent", " GSD Parallel Monitor ")));
+    lines.push(t.bold(t.fg("accent", " GWD Parallel Monitor ")));
     lines.push(
       t.fg("muted", `  ${now}  │  ${aliveCount}/${this.workers.length} alive  │  Total: `) +
       t.bold(`$${totalCost.toFixed(2)}`) +
@@ -403,7 +403,7 @@ export class ParallelMonitorOverlay {
     if (this.workers.length === 0) {
       lines.push("");
       lines.push(t.fg("warning", "  No parallel workers found."));
-      lines.push(t.fg("muted", "  Run /gsd parallel start to begin."));
+      lines.push(t.fg("muted", "  Run /gwd parallel start to begin."));
     } else {
       for (const wk of this.workers) {
         lines.push("");

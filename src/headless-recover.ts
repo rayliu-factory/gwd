@@ -1,8 +1,8 @@
 // gwd-pi — Headless Recover entrypoint
 /**
- * Headless Recover — `gsd headless recover`
+ * Headless Recover — `gwd headless recover`
  *
- * Non-interactive parallel of the `/gsd recover` slash command. Clears the
+ * Non-interactive parallel of the `/gwd recover` slash command. Clears the
  * milestones / slices / tasks tables and re-imports them from the on-disk
  * markdown projections (ROADMAP.md, PLAN.md, SUMMARY.md, …) via
  * migrateHierarchyToDb. Mutating: this is the one headless subcommand that
@@ -83,7 +83,7 @@ export async function handleRecover(basePath: string): Promise<RecoverResult> {
 
   const opened = await modules.ensureDbOpen(basePath)
   if (!opened || !modules.isDbAvailable()) {
-    process.stderr.write(`[headless] recover: failed to open or create the GSD database at ${basePath}\n`)
+    process.stderr.write(`[headless] recover: failed to open or create the GWD database at ${basePath}\n`)
     return { exitCode: 1 }
   }
 

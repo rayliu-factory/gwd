@@ -324,7 +324,7 @@ test("genuinely-impossible (a): workflow tool incompatible with candidate API �
     const err = thrown as ModelPolicyDispatchBlockedError;
     assert.equal(err.unitType, "plan-slice");
     assert.match(err.message, /tool policy denied/, "throw must surface the tool-compatibility deny reason");
-    assert.match(err.message, /gsd_plan_slice/, "throw must name the incompatible tool");
+    assert.match(err.message, /gwd_plan_slice/, "throw must name the incompatible tool");
     assert.match(err.message, /ollama-chat/, "throw must name the api for which the tool was filtered");
   } finally {
     resetToolCompatibilityRegistry();
@@ -512,7 +512,7 @@ test("error carries deny reason fragment from applyModelPolicyFilter", async () 
 // ─── 6. Lifecycle: clearToolBaseline forces recapture (CodeRabbit Major) ─────
 //
 // The WeakMap baseline is keyed per `pi` instance, but auto sessions are NOT
-// 1:1 with `pi` instances — a single `pi` can host multiple `/gsd auto` runs
+// 1:1 with `pi` instances — a single `pi` can host multiple `/gwd auto` runs
 // separated by stops, manual tool edits, or extension toggles.  Without
 // `clearToolBaseline(pi)` at session boundaries, the SECOND auto run on the
 // same `pi` would silently restore the FIRST run's snapshot and undo whatever
@@ -542,7 +542,7 @@ test("lifecycle: clearToolBaseline forces recapture; subsequent runs respect int
       true,
     );
 
-    // ── Simulate `/gsd auto` stop + intervening user tool edit ──
+    // ── Simulate `/gwd auto` stop + intervening user tool edit ──
     // (auto.ts calls clearToolBaseline in stopAuto; the user then mutates
     // tools while auto is paused.)
     clearToolBaseline(pi as unknown as object);

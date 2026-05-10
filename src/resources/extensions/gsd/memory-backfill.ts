@@ -2,7 +2,7 @@
 //
 // Idempotent one-shot migration that copies every active decisions row into
 // the memories table with category="architecture" and a structured_fields
-// payload preserving the original gsd_save_decision schema (when_context,
+// payload preserving the original decision-save schema (when_context,
 // scope, decision, choice, rationale, made_by, revisable, sourceDecisionId).
 //
 // The backfill exists so the cutover in ADR-013 step 6 can drop the

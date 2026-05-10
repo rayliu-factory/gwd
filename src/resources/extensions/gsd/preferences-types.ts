@@ -1,5 +1,5 @@
 /**
- * Type definitions, constants, and configuration shapes for GSD preferences.
+ * Type definitions, constants, and configuration shapes for GWD preferences.
  *
  * All interfaces, type aliases, and static lookup tables live here so that
  * both the validation and runtime modules can import them without pulling
@@ -310,7 +310,7 @@ export interface ExperimentalPreferences {
   rtk?: boolean;
 }
 
-/** Configuration for the codebase map generator (/gsd codebase). */
+/** Configuration for the codebase map generator (/gwd codebase). */
 export interface CodebaseMapPreferences {
   /** Additional directory/file patterns to exclude (e.g. ["docs/", "fixtures/"]). Merged with built-in defaults. */
   exclude_patterns?: string[];
@@ -391,11 +391,11 @@ export interface GSDPreferences {
   reactive_execution?: ReactiveExecutionConfig;
   /** Parallel quality gate evaluation during slice planning. Disabled by default. */
   gate_evaluation?: GateEvaluationConfig;
-  /** GitHub sync configuration. Opt-in: syncs GSD events to GitHub Issues, Milestones, and PRs. */
+  /** GitHub sync configuration. Opt-in: syncs GWD events to GitHub Issues, Milestones, and PRs. */
   github?: GitHubSyncConfig;
   /** OpenAI service tier preference. "priority" = 2x cost, faster. "flex" = 0.5x cost, slower. Only affects gpt-5.4 models. */
   service_tier?: "priority" | "flex";
-  /** Opt-in: search existing issues and PRs before filing from /gsd forensics. Uses additional AI tokens. */
+  /** Opt-in: search existing issues and PRs before filing from /gwd forensics. Uses additional AI tokens. */
   forensics_dedup?: boolean;
   /** Opt-in: show per-prompt and cumulative session token cost in the footer. Default: false. */
   show_token_cost?: boolean;
@@ -413,7 +413,7 @@ export interface GSDPreferences {
    * See the preferences reference for details on each feature.
    */
   experimental?: ExperimentalPreferences;
-  /** Configuration for the codebase map generator (/gsd codebase). */
+  /** Configuration for the codebase map generator (/gwd codebase). */
   codebase?: CodebaseMapPreferences;
   /** Slice-level parallelism within a milestone. Disabled by default. */
   slice_parallel?: { enabled?: boolean; max_workers?: number };
@@ -495,7 +495,7 @@ export interface GSDPreferences {
    */
   flat_rate_providers?: string[];
   /**
-   * Language preference for GSD responses. Accepts any language name or code
+   * Language preference for GWD responses. Accepts any language name or code
    * (e.g. "Chinese", "zh", "German", "de", "日本語"). Persists across /clear.
    */
   language?: string;

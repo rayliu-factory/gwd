@@ -1,4 +1,4 @@
-// GSD Extension — Unified Rule Registry
+// GWD Extension — Unified Rule Registry
 //
 // Holds all dispatch rules and hooks as a flat list of UnifiedRule objects.
 // Provides evaluation methods for each phase (dispatch, post-unit, pre-dispatch)
@@ -136,7 +136,7 @@ export class RuleRegistry {
     }
     return {
       action: "stop",
-      reason: `Unhandled phase "${ctx.state.phase}" — run /gsd doctor to diagnose.`,
+      reason: `Unhandled phase "${ctx.state.phase}" — run /gwd doctor to diagnose.`,
       level: "info",
       matchedRule: "<no-match>",
     };

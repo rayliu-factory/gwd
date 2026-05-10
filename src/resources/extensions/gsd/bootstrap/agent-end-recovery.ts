@@ -1,4 +1,4 @@
-// GSD-2 + src/resources/extensions/gsd/bootstrap/agent-end-recovery.ts - Handles provider and agent-end recovery for GWD auto-mode.
+// GWD-2 + src/resources/extensions/gsd/bootstrap/agent-end-recovery.ts - Handles provider and agent-end recovery for GWD auto-mode.
 
 import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
 
@@ -348,7 +348,7 @@ export async function handleAgentEnd(
 
     // ── 1a. Unsupported-model: provider rejected this model for the current
     //        account/plan at request time (#4513).  Persist a block so the
-    //        same dead model isn't reselected on the next /gsd auto restart,
+    //        same dead model isn't reselected on the next /gwd auto restart,
     //        then try a fallback before pausing.
     if (cls.kind === "unsupported-model") {
       const dash = getAutoDashboardData();
@@ -427,7 +427,7 @@ export async function handleAgentEnd(
 
       // No usable fallback — pause with a clearly named message.
       const blockedLabel = rejectedProvider && rejectedId ? `${rejectedProvider}/${rejectedId}` : "current model";
-      const pauseDetail = `Model ${blockedLabel} blocked for this account${errorDetail}. Configure a different model and restart /gsd auto.`;
+      const pauseDetail = `Model ${blockedLabel} blocked for this account${errorDetail}. Configure a different model and restart /gwd auto.`;
       await pauseAutoForProviderError(ctx.ui, pauseDetail, () =>
         pauseAuto(ctx, pi, {
           message: pauseDetail,

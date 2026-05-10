@@ -7,7 +7,7 @@ export function registerExitCommand(
   deps: { stopAuto?: StopAutoFn } = {},
 ): void {
   pi.registerCommand("exit", {
-    description: "Exit GSD gracefully",
+    description: "Exit GWD gracefully",
     handler: async (_args: string, ctx: ExtensionCommandContext) => {
       // Stop auto-mode first so locks and activity state are cleaned up before shutdown.
       // Wrapped in try/catch: if gwd-pi was updated on disk mid-session, the dynamic

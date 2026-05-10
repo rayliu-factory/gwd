@@ -1,5 +1,5 @@
 /**
- * GSD Doctor — Environment Health Checks (#1221)
+ * GWD Doctor — Environment Health Checks (#1221)
  *
  * Deterministic checks for environment readiness that prevent the model
  * from spinning its wheels on missing tools, port conflicts, stale
@@ -555,7 +555,7 @@ export function runEnvironmentChecks(basePath: string): EnvironmentCheckResult[]
 
 /**
  * Run environment checks with git remote check included.
- * Use this for explicit /gsd doctor invocations, not pre-dispatch gates.
+ * Use this for explicit /gwd doctor invocations, not pre-dispatch gates.
  */
 export function runFullEnvironmentChecks(basePath: string): EnvironmentCheckResult[] {
   const results = runEnvironmentChecks(basePath);
@@ -568,7 +568,7 @@ export function runFullEnvironmentChecks(basePath: string): EnvironmentCheckResu
 
 /**
  * Run slow opt-in checks (build and/or test).
- * These are never run on the pre-dispatch gate — only on explicit /gsd doctor --build/--test.
+ * These are never run on the pre-dispatch gate — only on explicit /gwd doctor --build/--test.
  */
 export function runSlowEnvironmentChecks(
   basePath: string,

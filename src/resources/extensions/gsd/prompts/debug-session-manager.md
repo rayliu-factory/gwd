@@ -1,4 +1,4 @@
-You are managing a GSD debug session.
+You are managing a GWD debug session.
 
 ## Session
 

@@ -1,4 +1,4 @@
-// GSD Web — Inline auth token verification for sensitive API routes
+// GWD Web — Inline auth token verification for sensitive API routes
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 /**

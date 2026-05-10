@@ -69,7 +69,7 @@ test("detectWorkflowMcpLaunchConfig prefers explicit env override", () => {
     GWD_WORKFLOW_MCP_ARGS: JSON.stringify(["dist/cli.js"]),
     GWD_WORKFLOW_MCP_ENV: JSON.stringify({ FOO: "bar" }),
     GWD_WORKFLOW_MCP_CWD: "/tmp/project",
-    GWD_CLI_PATH: "/tmp/gsd",
+    GWD_CLI_PATH: "/tmp/gwd",
   });
 
   assert.deepEqual(launch, {
@@ -80,8 +80,8 @@ test("detectWorkflowMcpLaunchConfig prefers explicit env override", () => {
     env: launch?.env,
   });
   assert.equal(launch?.env?.FOO, "bar");
-  assert.equal(launch?.env?.GWD_CLI_PATH, "/tmp/gsd");
-  assert.equal(launch?.env?.GWD_BIN_PATH, "/tmp/gsd");
+  assert.equal(launch?.env?.GWD_CLI_PATH, "/tmp/gwd");
+  assert.equal(launch?.env?.GWD_BIN_PATH, "/tmp/gwd");
   assert.equal(launch?.env?.GWD_PERSIST_WRITE_GATE_STATE, "1");
   assert.equal(launch?.env?.GWD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
   assert.match(launch?.env?.GWD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
@@ -91,17 +91,17 @@ test("detectWorkflowMcpLaunchConfig prefers explicit env override", () => {
 test("detectWorkflowMcpLaunchConfig normalizes explicit workflow MCP env CLI aliases", () => {
   const binOnly = detectWorkflowMcpLaunchConfig("/tmp/project", {
     GWD_WORKFLOW_MCP_COMMAND: "node",
-    GWD_WORKFLOW_MCP_ENV: JSON.stringify({ GWD_BIN_PATH: "/tmp/gsd-bin" }),
+    GWD_WORKFLOW_MCP_ENV: JSON.stringify({ GWD_BIN_PATH: "/tmp/gwd-bin" }),
   });
-  assert.equal(binOnly?.env?.GWD_CLI_PATH, "/tmp/gsd-bin");
-  assert.equal(binOnly?.env?.GWD_BIN_PATH, "/tmp/gsd-bin");
+  assert.equal(binOnly?.env?.GWD_CLI_PATH, "/tmp/gwd-bin");
+  assert.equal(binOnly?.env?.GWD_BIN_PATH, "/tmp/gwd-bin");
 
   const cliOnly = detectWorkflowMcpLaunchConfig("/tmp/project", {
     GWD_WORKFLOW_MCP_COMMAND: "node",
-    GWD_WORKFLOW_MCP_ENV: JSON.stringify({ GWD_CLI_PATH: "/tmp/gsd-cli" }),
+    GWD_WORKFLOW_MCP_ENV: JSON.stringify({ GWD_CLI_PATH: "/tmp/gwd-cli" }),
   });
-  assert.equal(cliOnly?.env?.GWD_CLI_PATH, "/tmp/gsd-cli");
-  assert.equal(cliOnly?.env?.GWD_BIN_PATH, "/tmp/gsd-cli");
+  assert.equal(cliOnly?.env?.GWD_CLI_PATH, "/tmp/gwd-cli");
+  assert.equal(cliOnly?.env?.GWD_BIN_PATH, "/tmp/gwd-cli");
 });
 
 test("buildWorkflowMcpServers mirrors explicit launch config", () => {
@@ -178,15 +178,15 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from GWD_BIN_PAT
   assert.match(launch?.env?.GWD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
 });
 
-test("detectWorkflowMcpLaunchConfig resolves the bundled server relative to the installed GSD package", () => {
+test("detectWorkflowMcpLaunchConfig resolves the bundled server relative to the installed GWD package", () => {
   const launch = detectWorkflowMcpLaunchConfig("/tmp/project", {
-    GWD_BIN_PATH: "/tmp/gsd-loader.js",
+    GWD_BIN_PATH: "/tmp/gwd-loader.js",
   });
 
   assert.equal(launch?.command, process.execPath);
   assert.equal(launch?.cwd, "/tmp/project");
-  assert.equal(launch?.env?.GWD_CLI_PATH, "/tmp/gsd-loader.js");
-  assert.equal(launch?.env?.GWD_BIN_PATH, "/tmp/gsd-loader.js");
+  assert.equal(launch?.env?.GWD_CLI_PATH, "/tmp/gwd-loader.js");
+  assert.equal(launch?.env?.GWD_BIN_PATH, "/tmp/gwd-loader.js");
   assert.equal(launch?.env?.GWD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
   assert.match(launch?.env?.GWD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
   assert.match(launch?.env?.GWD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
@@ -573,7 +573,7 @@ test("transport compatibility discovers the bundled MCP server without env overr
 test("transport compatibility now allows auto execute-task over workflow MCP surface", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_complete_task"],
+    ["gsd_task_complete"],
     {
       projectRoot: "/tmp/project",
       env: { GWD_WORKFLOW_MCP_COMMAND: "node" },
@@ -624,7 +624,7 @@ test("transport compatibility now allows plan-slice over workflow MCP surface", 
 test("transport compatibility now allows complete-slice over workflow MCP surface", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_complete_slice"],
+    ["gsd_slice_complete"],
     {
       projectRoot: "/tmp/project",
       env: { GWD_WORKFLOW_MCP_COMMAND: "node" },

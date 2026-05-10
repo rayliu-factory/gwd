@@ -1,4 +1,4 @@
-// GSD-2 — Behavioural regression test for #3616.
+// GWD-2 — Behavioural regression test for #3616.
 //
 // Bug: After a discuss session narrows the active tool set via setActiveTools,
 // the narrowed list persisted into the next auto-mode session because newSession()
@@ -29,7 +29,7 @@ describe("#3616 — discuss tool scoping must not leak across sessions", () => {
 	test("DISCUSS_TOOLS_ALLOWLIST is non-empty (sanity)", () => {
 		assert.ok(
 			DISCUSS_TOOLS_ALLOWLIST.length > 0,
-			"discuss scope should include at least one tool — empty allowlist would break /gsd discuss",
+			"discuss scope should include at least one tool — empty allowlist would break /gwd discuss",
 		);
 	});
 });

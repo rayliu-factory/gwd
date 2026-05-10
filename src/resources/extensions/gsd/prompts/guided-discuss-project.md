@@ -1,6 +1,6 @@
 **Working directory:** `{{workingDirectory}}`. All file reads, writes, and shell commands MUST operate relative to this directory. Do NOT `cd` elsewhere. For `.gsd` files, use absolute paths rooted at `{{workingDirectory}}`, not `Glob`.
 
-Discuss the **project** as a whole: vision, users, anti-goals, constraints, and rough milestone sequence. Ask only real gray areas, then write `.gsd/PROJECT.md` with the **Project** template below. If a `GSD Skill Preferences` block exists, use it; artifact rules still apply.
+Discuss the **project** as a whole: vision, users, anti-goals, constraints, and rough milestone sequence. Ask only real gray areas, then write `.gsd/PROJECT.md` with the **Project** template below. If a `GWD Skill Preferences` block exists, use it; artifact rules still apply.
 
 This runs once before milestone discussion. Later milestones, requirements, and roadmaps depend on it.
 

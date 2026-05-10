@@ -79,7 +79,7 @@ describe("require_slice_discussion dispatch rule (#3454)", () => {
       if (action!.action === "stop") {
         assert.match(action!.reason, /S01/);
         assert.match(action!.reason, /require_slice_discussion/);
-        assert.match(action!.reason, /\/gsd discuss/);
+        assert.match(action!.reason, /\/gwd discuss/);
         assert.strictEqual(action!.level, "info");
       }
     } finally {
@@ -139,7 +139,7 @@ describe("require_slice_discussion dispatch rule (#3454)", () => {
   test("falls through (null) when CONTEXT file already exists on disk", async () => {
     const basePath = makeBasePath("ctx-present");
     try {
-      // Seed the CONTEXT file that /gsd discuss would have written.
+      // Seed the CONTEXT file that /gwd discuss would have written.
       const sliceDir = join(basePath, ".gsd", "milestones", "M001", "slices", "S01");
       writeFileSync(join(sliceDir, "S01-CONTEXT.md"), "# Discussion notes\n", "utf-8");
 

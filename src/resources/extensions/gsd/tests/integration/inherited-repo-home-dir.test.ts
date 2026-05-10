@@ -3,10 +3,10 @@
  *
  * When the user's home directory IS a git repo (common with dotfile
  * managers like yadm), isInheritedRepo() must not treat ~/.gwd (the
- * global GSD state directory) as a project .gsd belonging to the home
+ * global GWD state directory) as a project .gsd belonging to the home
  * repo. Without the fix, isInheritedRepo() returns false for project
  * subdirectories because it sees ~/.gwd and concludes the parent repo
- * has already been initialised with GSD — causing the wrong project
+ * has already been initialised with GWD — causing the wrong project
  * state to be loaded.
  */
 
@@ -51,7 +51,7 @@ describe("isInheritedRepo when git root is HOME (#2393)", () => {
     run("git", ["commit", "-m", "init dotfiles"], fakeHome);
 
     // Create a plain ~/.gwd directory at fakeHome — this simulates the
-    // global GSD home directory, NOT a project .gsd.
+    // global GWD home directory, NOT a project .gsd.
     mkdirSync(join(fakeHome, ".gsd", "projects"), { recursive: true });
 
     // Save and override env. Point GWD_HOME at fakeHome/.gsd so the
@@ -140,14 +140,14 @@ describe("isInheritedRepo with stale .gsd at parent git root", () => {
   test("stale .gsd dir at parent git root does not suppress inherited detection", () => {
     // Simulate a stale .gsd directory at the parent git root (e.g. from a
     // prior doctor run or accidental init). This is a real directory, NOT
-    // a symlink, and NOT the global GSD home.
+    // a symlink, and NOT the global GWD home.
     mkdirSync(join(parentRepo, ".gsd"), { recursive: true });
 
     const projectDir = join(parentRepo, "my-project");
     mkdirSync(projectDir, { recursive: true });
 
     // Without fix: isProjectGsd(join(root, ".gsd")) returns true because
-    // the stale .gsd is a real directory that isn't the global GSD home,
+    // the stale .gsd is a real directory that isn't the global GWD home,
     // causing isInheritedRepo to return false (false negative).
     //
     // The stale .gsd at parent is still treated as a "project .gsd" by

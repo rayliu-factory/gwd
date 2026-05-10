@@ -1,5 +1,5 @@
 /**
- * GSD Slice Parallel Orchestrator — Engine for parallel slice execution
+ * GWD Slice Parallel Orchestrator — Engine for parallel slice execution
  * within a single milestone.
  *
  * Mirrors the existing parallel-orchestrator.ts pattern at slice scope
@@ -378,7 +378,7 @@ export function getSliceOrchestratorState(): SliceOrchestratorState | null {
 /**
  * Start parallel execution for eligible slices within a milestone.
  *
- * For each eligible slice: create a worktree, spawn `gsd headless --json auto`
+ * For each eligible slice: create a worktree, spawn `gwd headless --json auto`
  * with env GWD_SLICE_LOCK=<SID> + GWD_MILESTONE_LOCK=<MID> + GWD_PARALLEL_WORKER=1.
  */
 export async function startSliceParallel(
@@ -620,7 +620,7 @@ function resolveGsdBin(): string | null {
 
 /**
  * Spawn a worker process for a slice.
- * The worker runs `gsd headless --json auto` in the slice's worktree
+ * The worker runs `gwd headless --json auto` in the slice's worktree
  * with GWD_SLICE_LOCK, GWD_MILESTONE_LOCK, and GWD_PARALLEL_WORKER set.
  *
  * Print-mode slash commands return after the command handler schedules

@@ -67,7 +67,7 @@ All domain knowledge in `references/`:
 **Infrastructure:** model-provider-management.md, remote-execution-overrides.md, packaging-distribution.md, mode-behavior.md
 **Spec:** `docs/extension-sdk/manifest-spec.md` — manifest format, tiers, validation
 **Testing:** `docs/extension-sdk/testing.md` — mock patterns, test conventions
-**SDK:** `docs/extension-sdk/` — the authoritative GSD-2 extension guide
+**SDK:** `docs/extension-sdk/` — the authoritative GWD-2 extension guide
 **Gotchas:** key-rules-gotchas.md
 </reference_index>
 
@@ -83,7 +83,7 @@ All domain knowledge in `references/`:
 Extension is complete when:
 - `extension-manifest.json` exists with accurate `provides` listing all registered tools/commands/hooks/shortcuts
 - TypeScript compiles without errors (jiti handles this at runtime)
-- Extension loads on GSD startup or `/reload` without errors
+- Extension loads on GWD startup or `/reload` without errors
 - Tools appear in the LLM's system prompt and are callable
 - Commands respond to `/command` input
 - Event hooks fire at the expected lifecycle points

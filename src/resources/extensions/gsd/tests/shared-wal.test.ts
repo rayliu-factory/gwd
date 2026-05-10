@@ -72,7 +72,7 @@ describe('shared-wal', async () => {
   console.log('\n=== shared-wal: resolve external-state worktree path (#2952) ===');
   {
     // External-state layout: ~/.gwd/projects/<hash>/worktrees/<MID>
-    // Should resolve to:     ~/.gwd/projects/<hash>/gsd.db
+    // Should resolve to:     ~/.gwd/projects/<hash>/gwd.db
     const stateRoot = '/home/user/.gsd/projects/a1b2c3d4';
     const worktreePath = join(stateRoot, 'worktrees', 'M002');
     const result = resolveProjectRootDbPath(worktreePath);

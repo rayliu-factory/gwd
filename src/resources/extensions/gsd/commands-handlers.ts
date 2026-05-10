@@ -1,5 +1,5 @@
 /**
- * GSD Command Handlers — fire-and-forget handlers that delegate to other modules.
+ * GWD Command Handlers — fire-and-forget handlers that delegate to other modules.
  *
  * Contains: handleDoctor, handleSteer, handleCapture, handleTriage, handleKnowledge,
  * handleRunHook, handleUpdate, handleSkillHealth
@@ -78,7 +78,7 @@ async function fetchLatestVersionForCommand(): Promise<string | null> {
 }
 
 export function dispatchDoctorHeal(pi: ExtensionAPI, scope: string | undefined, reportText: string, structuredIssues: string): void {
-  const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GSD-WORKFLOW.md");
+  const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GWD-WORKFLOW.md");
   const workflow = readFileSync(workflowPath, "utf-8");
   const prompt = loadPrompt("doctor-heal", {
     doctorSummary: buildDoctorHealSummary(reportText),
@@ -140,7 +140,7 @@ export async function handleDoctor(args: string, ctx: ExtensionCommandContext, p
     scope: effectiveScope,
     includeWarnings: mode === "audit",
     maxIssues: mode === "audit" ? 50 : 12,
-    title: mode === "audit" ? "GSD doctor audit." : mode === "heal" ? "GSD doctor heal prep." : undefined,
+    title: mode === "audit" ? "GWD doctor audit." : mode === "heal" ? "GWD doctor heal prep." : undefined,
   });
 
   ctx.ui.notify(reportText, report.ok ? "info" : "warning");
@@ -270,7 +270,7 @@ export async function handleTriage(ctx: ExtensionCommandContext, pi: ExtensionAP
     roadmapContext: roadmapContext || "(no active roadmap)",
   });
 
-  const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GSD-WORKFLOW.md");
+  const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GWD-WORKFLOW.md");
   const workflow = readFileSync(workflowPath, "utf-8");
   const savedTools = scopeGsdWorkflowToolsForDispatch(pi);
 

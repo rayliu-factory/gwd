@@ -87,7 +87,7 @@ test("formatProviderReport shows error icon and detail for error status", () => 
     category: "llm",
     status: "error",
     message: "Anthropic (Claude) — no API key found",
-    detail: "Set ANTHROPIC_API_KEY or run /gsd keys",
+    detail: "Set ANTHROPIC_API_KEY or run /gwd keys",
     required: true,
   }];
   const out = formatProviderReport(results);

@@ -1,4 +1,4 @@
-// GSD Extension — Interactive Routing Bypass Tests
+// GWD Extension — Interactive Routing Bypass Tests
 
 import test, { describe } from "node:test";
 import assert from "node:assert/strict";

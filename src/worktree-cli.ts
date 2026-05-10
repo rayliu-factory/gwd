@@ -1,16 +1,16 @@
 /**
- * GSD Worktree CLI — standalone subcommand and -w flag handling.
+ * GWD Worktree CLI — standalone subcommand and -w flag handling.
  *
  * Manages the full worktree lifecycle from the command line:
- *   gsd -w                    Create auto-named worktree, start interactive session
- *   gsd -w my-feature         Create/resume named worktree
- *   gsd worktree list         List worktrees with status
- *   gsd worktree merge [name] Squash-merge a worktree into main
- *   gsd worktree clean        Remove all merged/empty worktrees
- *   gsd worktree remove <n>   Remove a specific worktree
+ *   gwd -w                    Create auto-named worktree, start interactive session
+ *   gwd -w my-feature         Create/resume named worktree
+ *   gwd worktree list         List worktrees with status
+ *   gwd worktree merge [name] Squash-merge a worktree into main
+ *   gwd worktree clean        Remove all merged/empty worktrees
+ *   gwd worktree remove <n>   Remove a specific worktree
  *
  * On session exit (via session_shutdown event), auto-commits dirty work
- * so nothing is lost. The GSD extension reads GWD_CLI_WORKTREE to know
+ * so nothing is lost. The GWD extension reads GWD_CLI_WORKTREE to know
  * when a session was launched via -w.
  *
  * Note: Extension modules are .ts files loaded via jiti (not compiled to .js).
@@ -265,7 +265,7 @@ async function doMerge(ext: ExtensionModules, basePath: string, name: string): P
   }
 
   const commitType = ext.inferCommitType(name)
-  const commitMessage = `${commitType}: merge worktree ${name}\n\nGSD-Worktree: ${name}`
+  const commitMessage = `${commitType}: merge worktree ${name}\n\nGWD-Worktree: ${name}`
 
   process.stderr.write(`\nMerging ${chalk.bold.cyan(name)} → ${chalk.magenta(ext.nativeDetectMainBranch(basePath))}\n`)
   process.stderr.write(chalk.dim(`  ${status.filesChanged} files, ${chalk.green(`+${status.linesAdded}`)} ${chalk.red(`-${status.linesRemoved}`)}\n\n`))
@@ -278,7 +278,7 @@ async function doMerge(ext: ExtensionModules, basePath: string, name: string): P
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
     process.stderr.write(chalk.red(`✗ Merge failed: ${msg}\n`))
-    process.stderr.write(chalk.dim('  Resolve conflicts manually, then run gsd worktree merge again.\n'))
+    process.stderr.write(chalk.dim('  Resolve conflicts manually, then run gwd worktree merge again.\n'))
     process.exit(1)
   }
 }
@@ -320,7 +320,7 @@ async function handleRemove(basePath: string, args: string[]): Promise<void> {
   basePath = ext.resolveWorktreeProjectRoot(basePath)
   const name = args[0]
   if (!name) {
-    process.stderr.write(chalk.red('Usage: gsd worktree remove <name>\n'))
+    process.stderr.write(chalk.red('Usage: gwd worktree remove <name>\n'))
     process.exit(1)
   }
 
@@ -334,7 +334,7 @@ async function handleRemove(basePath: string, args: string[]): Promise<void> {
   const status = getWorktreeStatus(ext, basePath, name, wt.path, wt.branch)
   if (status.filesChanged > 0 || status.uncommitted) {
     process.stderr.write(chalk.yellow(`⚠ Worktree "${name}" has unmerged changes (${status.filesChanged} files).\n`))
-    process.stderr.write(chalk.yellow('  Use --force to remove anyway, or merge first: gsd worktree merge ' + name + '\n'))
+    process.stderr.write(chalk.yellow('  Use --force to remove anyway, or merge first: gwd worktree merge ' + name + '\n'))
     if (!process.argv.includes('--force')) {
       process.exit(1)
     }
@@ -380,7 +380,7 @@ async function handleWorktreeFlag(worktreeFlag: boolean | string): Promise<void>
   const ext = await loadExtensionModules()
   const basePath = ext.resolveWorktreeProjectRoot(process.cwd())
 
-  // gsd -w (no name) — resume most recent worktree with changes, or create new
+  // gwd -w (no name) — resume most recent worktree with changes, or create new
   if (worktreeFlag === true) {
     const existing = ext.listWorktrees(basePath)
     const withChanges = existing.filter(wt => {
@@ -412,7 +412,7 @@ async function handleWorktreeFlag(worktreeFlag: boolean | string): Promise<void>
         const status = getWorktreeStatus(ext, basePath, wt.name, wt.path, wt.branch)
         process.stderr.write(formatStatus(status) + '\n\n')
       }
-      process.stderr.write(chalk.dim('Specify which one: gsd -w <name>\n'))
+      process.stderr.write(chalk.dim('Specify which one: gwd -w <name>\n'))
       process.exit(0)
     }
 
@@ -422,7 +422,7 @@ async function handleWorktreeFlag(worktreeFlag: boolean | string): Promise<void>
     return
   }
 
-  // gsd -w <name> — create or resume named worktree
+  // gwd -w <name> — create or resume named worktree
   const name = worktreeFlag as string
   const existing = ext.listWorktrees(basePath)
   const found = existing.find(wt => wt.name === name)

@@ -126,7 +126,7 @@ async function buildStatus(basePath: string): Promise<string> {
     // auto.ts not loaded or available — fall through to disk-based status
   }
 
-  const lines: string[] = ["GSD Status"];
+  const lines: string[] = ["GWD Status"];
   lines.push("");
 
   if (autoData && (autoData.active || autoData.paused)) {
@@ -185,7 +185,7 @@ async function buildProgress(basePath: string): Promise<string> {
   );
   const parked = milestones.filter(m => m.status === "parked");
 
-  const lines: string[] = ["GSD Progress"];
+  const lines: string[] = ["GWD Progress"];
   lines.push(`${done.length}/${milestones.length} milestones complete`);
   lines.push("");
 
@@ -239,7 +239,7 @@ async function buildBudget(basePath: string): Promise<string> {
     return "No metrics data available yet.\n\nMetrics are collected during auto-mode runs.";
   }
 
-  const lines: string[] = ["GSD Budget"];
+  const lines: string[] = ["GWD Budget"];
   lines.push("");
   lines.push(`Cost:    $${totals.cost.toFixed(4)}`);
   lines.push(`Tokens:  ${formatTokens(totals.tokens.total)}`);
@@ -345,7 +345,7 @@ function buildLog(basePath: string, args: string): string {
 /**
  * Attempt a dynamic import, returning null if the module cannot be loaded.
  * Used for optional modules like auto.js and metrics.js that may not be
- * available outside a full GSD process context.
+ * available outside a full GWD process context.
  */
 async function tryImportModule<T>(specifier: string): Promise<T | null> {
   try {

@@ -2,7 +2,7 @@
  * discuss-tool-scoping.test.ts — Tests for #2949.
  *
  * xAI/Grok returns "Grammar is too complex" (400) when the combined tool
- * schemas exceed the provider's grammar limit. The GSD discuss flow only
+ * schemas exceed the provider's grammar limit. The GWD discuss flow only
  * needs a small subset of tools (summary_save, decision_save, etc.), but
  * was sending ALL ~30+ tools to the provider.
  *
@@ -85,22 +85,22 @@ describe("discuss tool scoping (#2949)", () => {
 
   test("DISCUSS_TOOLS_ALLOWLIST is significantly smaller than full tool set", () => {
     // Full set is 27 DB tools + dynamic + journal = 33+
-    // Discuss set should be roughly 10 GSD tools (5 canonical + 5 aliases)
+    // Discuss set should be the canonical tools needed by discuss flows.
     assert.ok(
-      DISCUSS_TOOLS_ALLOWLIST.length <= 12,
-      `allowlist should have at most 12 GSD tools, got ${DISCUSS_TOOLS_ALLOWLIST.length}`,
+      DISCUSS_TOOLS_ALLOWLIST.length <= 6,
+      `allowlist should have at most 6 GWD tools, got ${DISCUSS_TOOLS_ALLOWLIST.length}`,
     );
   });
 
   test("dispatchWorkflow scopes and restores tools for discuss unit types", async () => {
     const originalWorkflowPath = process.env.GWD_WORKFLOW_PATH;
     const tmp = mkdtempSync(join(tmpdir(), "gsd-discuss-tools-"));
-    const workflowPath = join(tmp, "GSD-WORKFLOW.md");
+    const workflowPath = join(tmp, "GWD-WORKFLOW.md");
     writeFileSync(workflowPath, "# Workflow\n");
     const setCalls: string[][] = [];
     const sent: unknown[] = [];
     let sentTools: string[] = [];
-    let activeTools = ["gsd_summary_save", "gsd_complete_task", "bash"];
+    let activeTools = ["gsd_summary_save", "gsd_task_complete", "bash"];
     process.env.GWD_WORKFLOW_PATH = workflowPath;
     try {
       await _dispatchWorkflowForTest(
@@ -127,10 +127,10 @@ describe("discuss tool scoping (#2949)", () => {
     }
 
     assert.deepEqual(setCalls[0], ["gsd_summary_save", "bash"]);
-    assert.deepEqual(setCalls.at(-1), ["gsd_summary_save", "gsd_complete_task", "bash"]);
+    assert.deepEqual(setCalls.at(-1), ["gsd_summary_save", "gsd_task_complete", "bash"]);
     assert.ok(sentTools.length > 0, "dispatch should queue a message");
     assert.ok(sentTools.includes("gsd_summary_save"), "dispatch keeps the discuss save tool");
-    assert.ok(!sentTools.includes("gsd_complete_task"), "dispatch removes heavy completion tools");
+    assert.ok(!sentTools.includes("gsd_task_complete"), "dispatch removes heavy completion tools");
     assert.equal(sent.length, 1);
     assert.match(String((sent[0] as { content?: unknown }).content), /Discuss the project/);
   });

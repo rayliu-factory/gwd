@@ -1,4 +1,4 @@
-// GSD-2 + Regression tests for missing-worktree warning on resume (M4 fix)
+// GWD-2 + Regression tests for missing-worktree warning on resume (M4 fix)
 //
 // When paused-session.json records a worktreePath that no longer exists on disk,
 // the resume path must emit a logWarning("session", ...) describing the situation
@@ -126,7 +126,7 @@ describe("resume: missing worktree warning emission", () => {
     );
     assert.ok(
       logs[0].message.includes("gsd-debug"),
-      "warning should suggest /gsd-debug recovery action",
+      "warning should suggest /gwd-debug recovery action",
     );
   });
 });

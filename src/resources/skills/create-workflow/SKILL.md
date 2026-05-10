@@ -67,7 +67,7 @@ Workflow plugins declare a `mode:` field in their top-level YAML (or
   multiple verification stages.
 - `markdown-phase` — phased markdown-driven workflows with STATE.json and
   phase-approval gates. For multi-session projects. Markdown-only.
-- `auto-milestone` — hooks into the full `/gsd auto` pipeline. Reserved
+- `auto-milestone` — hooks into the full `/gwd auto` pipeline. Reserved
   for the bundled `full-project` template; not normally authored by users.
 
 When helping the user author a new workflow, ask which mode fits their use

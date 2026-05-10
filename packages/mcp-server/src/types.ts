@@ -72,7 +72,7 @@ export interface CostAccumulator {
 // ---------------------------------------------------------------------------
 
 export interface ExecuteOptions {
-  /** Command to send after '/gsd auto' (default: none) */
+  /** Command to send after '/gwd auto' (default: none) */
   command?: string;
 
   /** Model ID override */

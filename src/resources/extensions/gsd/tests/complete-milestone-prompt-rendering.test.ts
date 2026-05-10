@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Verifies the complete milestone prompt renders required completion and verification guardrails.
 
 import test from "node:test";
@@ -33,15 +33,15 @@ test("complete milestone prompt renders compact verification and completion guid
   assert.match(prompt, /Verification Gate/);
   assert.match(prompt, /Do NOT call `gsd_complete_milestone`/);
   assert.match(prompt, /verification FAILED/);
-  assert.match(prompt, /gsd_requirement_update/);
-  assert.match(prompt, /gsd_complete_milestone/);
+  assert.match(prompt, /gwd_requirement_update/);
+  assert.match(prompt, /gwd_complete_milestone/);
   assert.match(prompt, /verificationPassed/);
-  assert.match(prompt, /gsd_milestone_status/);
-  assert.match(prompt, /Do NOT query.*\.gsd\/gsd\.db/i);
+  assert.match(prompt, /gwd_milestone_status/);
+  assert.match(prompt, /Do NOT query.*\.gsd\/gwd\.db/i);
   assert.match(prompt, /Horizontal Checklist/);
   assert.match(prompt, /Decision Re-evaluation/);
   assert.match(prompt, /self-diff/i);
-  assert.match(prompt, /GSD-(?:Task|Unit)/);
+  assert.match(prompt, /GWD-(?:Task|Unit)/);
   assert.match(prompt, /Milestone M001 complete/);
   assert.doesNotMatch(prompt, /\{\{[a-zA-Z][a-zA-Z0-9_]*\}\}/);
 });

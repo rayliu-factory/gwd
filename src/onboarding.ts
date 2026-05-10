@@ -360,7 +360,7 @@ export async function runOnboarding(
   if (remoteConfigured) {
     summaryLines.push(`${pc.green('✓')} Remote questions: ${remoteConfigured}`)
   } else {
-    summaryLines.push(`${pc.dim('↷')} Remote questions: not configured — use /gsd remote inside ${PRODUCT_DISPLAY_NAME}`)
+    summaryLines.push(`${pc.dim('↷')} Remote questions: not configured — use /gwd remote inside ${PRODUCT_DISPLAY_NAME}`)
   }
 
   if (toolKeyCount > 0) {
@@ -375,7 +375,7 @@ export async function runOnboarding(
   markOnboardingComplete(completedSteps)
 
   summaryLines.push('')
-  summaryLines.push(`${pc.dim('Tip:')} re-run anytime with ${pc.cyan('/gsd onboarding')}`)
+  summaryLines.push(`${pc.dim('Tip:')} re-run anytime with ${pc.cyan('/gwd onboarding')}`)
 
   p.note(summaryLines.join('\n'), 'Setup complete')
   p.outro(pc.dim(`Launching ${PRODUCT_DISPLAY_NAME}...`))
@@ -902,7 +902,7 @@ export async function runRemoteQuestionsStep(
     { value: 'discord', label: 'Discord', hint: 'receive questions in a Discord channel' },
     { value: 'slack', label: 'Slack', hint: 'receive questions in a Slack channel' },
     { value: 'telegram', label: 'Telegram', hint: 'receive questions via Telegram bot' },
-    { value: 'skip', label: 'Skip for now', hint: `use /gsd remote inside ${PRODUCT_DISPLAY_NAME} later` },
+    { value: 'skip', label: 'Skip for now', hint: `use /gwd remote inside ${PRODUCT_DISPLAY_NAME} later` },
   )
 
   const choice = await p.select({
@@ -1075,12 +1075,12 @@ async function runDiscordChannelStep(p: ClackModule, pc: PicoModule, token: stri
     const data = await res.json()
     guilds = Array.isArray(data) ? data : []
   } catch {
-    p.log.warn('Could not fetch Discord servers — configure channel later with /gsd remote discord')
+    p.log.warn('Could not fetch Discord servers — configure channel later with /gwd remote discord')
     return null
   }
 
   if (guilds.length === 0) {
-    p.log.warn('Bot is not in any Discord servers — configure channel later with /gsd remote discord')
+    p.log.warn('Bot is not in any Discord servers — configure channel later with /gwd remote discord')
     return null
   }
 
@@ -1116,12 +1116,12 @@ async function runDiscordChannelStep(p: ClackModule, pc: PicoModule, token: stri
         )
       : []
   } catch {
-    p.log.warn('Could not fetch channels — configure later with /gsd remote discord')
+    p.log.warn('Could not fetch channels — configure later with /gwd remote discord')
     return null
   }
 
   if (channels.length === 0) {
-    p.log.warn('No text channels found — configure later with /gsd remote discord')
+    p.log.warn('No text channels found — configure later with /gwd remote discord')
     return null
   }
 

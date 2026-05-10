@@ -1,5 +1,5 @@
 /**
- * GSD Triage Resolution — Execute triage classifications
+ * GWD Triage Resolution — Execute triage classifications
  *
  * Provides resolution executors for each capture classification type:
  *

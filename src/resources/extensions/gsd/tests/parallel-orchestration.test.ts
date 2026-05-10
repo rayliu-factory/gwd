@@ -671,7 +671,7 @@ describe("parallel-merge: formatMergeResults", () => {
     assert.ok(output.includes("CONFLICT (2 file(s))"));
     assert.ok(output.includes("`src/types.ts`"));
     assert.ok(output.includes("`src/utils.ts`"));
-    assert.ok(output.includes("/gsd parallel merge M003"));
+    assert.ok(output.includes("/gwd parallel merge M003"));
   });
 
   it("formats a generic error (no conflict files) with the error message", () => {

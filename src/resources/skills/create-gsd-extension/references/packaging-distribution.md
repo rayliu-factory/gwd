@@ -1,5 +1,5 @@
 <overview>
-Packaging extensions for distribution via npm, git, or local paths. Creating GSD/pi packages.
+Packaging extensions for distribution via npm, git, or local paths. Creating GWD/pi packages.
 </overview>
 
 <package_manifest>

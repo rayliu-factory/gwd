@@ -1,4 +1,4 @@
-// GSD Extension — Tests for DB-authoritative deriveStateFromDb behavior
+// GWD Extension — Tests for DB-authoritative deriveStateFromDb behavior
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 //
 // Private helper behavior is exercised through deriveStateFromDb integration.

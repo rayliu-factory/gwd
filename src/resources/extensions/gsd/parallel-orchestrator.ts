@@ -1,5 +1,5 @@
 /**
- * GSD Parallel Orchestrator — Core engine for parallel milestone orchestration.
+ * GWD Parallel Orchestrator — Core engine for parallel milestone orchestration.
  *
  * Manages worker lifecycle, budget tracking, and coordination. Workers are
  * separate processes spawned via child_process, each running in its own git
@@ -570,10 +570,10 @@ export function _createMilestoneWorktree(basePath: string, milestoneId: string):
 
 /**
  * Spawn a worker process for a milestone.
- * The worker runs `gsd headless --json auto` in the milestone's worktree
+ * The worker runs `gwd headless --json auto` in the milestone's worktree
  * with GWD_MILESTONE_LOCK set to isolate state derivation.
  *
- * IMPORTANT: We use `headless --json auto` instead of `--print "/gsd auto"`.
+ * IMPORTANT: We use `headless --json auto` instead of `--print "/gwd auto"`.
  * --print mode calls session.prompt() which returns immediately after the
  * extension command handler fires, because auto-mode's ctx.newSession()
  * resets the session and unblocks the outer prompt() await. This causes

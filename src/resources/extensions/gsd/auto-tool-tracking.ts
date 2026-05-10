@@ -93,7 +93,7 @@ export function clearInFlightTools(): void {
  * produce the same failure, so the retry loop must be broken.
  */
 const TOOL_INVOCATION_ERROR_RE = /Validation failed for tool|Expected ',' or '\}'(?: after property value)?(?: in JSON)?|Unexpected end of JSON|Unexpected token.*in JSON/i;
-const DETERMINISTIC_POLICY_ERROR_RE = /(?:^|\b)(?:HARD BLOCK:|Blocked: \/gsd queue is a planning tool|Direct writes to \.gsd\/STATE\.md and \.gsd\/gsd\.db are blocked|This is a mechanical gate)/i;
+const DETERMINISTIC_POLICY_ERROR_RE = /(?:^|\b)(?:HARD BLOCK:|Blocked: \/gwd queue is a planning tool|Direct writes to \.gsd\/STATE\.md and \.gsd\/gwd\.db are blocked|This is a mechanical gate)/i;
 
 /**
  * Returns true if the error message indicates a deterministic invocation or

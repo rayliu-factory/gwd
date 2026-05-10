@@ -1,5 +1,5 @@
-// GSD Extension - Steer Worktree Path Resolution Test
-// Worktrees share the canonical project .gsd state root. /gsd steer writes
+// GWD Extension - Steer Worktree Path Resolution Test
+// Worktrees share the canonical project .gsd state root. /gwd steer writes
 // overrides to that canonical root even when invoked with a worktree path.
 
 import { describe, test, beforeEach, afterEach } from "node:test";

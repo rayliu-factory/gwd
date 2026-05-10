@@ -32,11 +32,11 @@ Add to your project's `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "gsd": {
+    "gwd": {
       "command": "npx",
       "args": ["gwd-mcp-server"],
       "env": {
-        "GWD_CLI_PATH": "/path/to/gsd"
+        "GWD_CLI_PATH": "/path/to/gwd"
       }
     }
   }
@@ -48,7 +48,7 @@ Or if installed globally:
 ```json
 {
   "mcpServers": {
-    "gsd": {
+    "gwd": {
       "command": "gwd-mcp-server"
     }
   }
@@ -62,11 +62,11 @@ Add to `.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
-    "gsd": {
+    "gwd": {
       "command": "npx",
       "args": ["gwd-mcp-server"],
       "env": {
-        "GWD_CLI_PATH": "/path/to/gsd"
+        "GWD_CLI_PATH": "/path/to/gwd"
       }
     }
   }
@@ -98,15 +98,13 @@ The workflow MCP surface includes:
 - `gsd_milestone_status`
 - `gsd_journal_query`
 
-**Aliases (kept for backwards compatibility — prefer the canonical name above):** `gsd_save_decision`, `gsd_update_requirement`, `gsd_save_requirement`, `gsd_generate_milestone_id`, `gsd_task_plan`, `gsd_slice_replan`, `gsd_complete_task`, `gsd_complete_slice`, `gsd_milestone_validate`, `gsd_milestone_complete`, `gsd_roadmap_reassess`.
-
 These tools use the same GWD workflow handlers as the native in-process tool path wherever a shared handler exists.
 
 `gsd_summary_save` computes artifact paths from the supplied IDs. `milestone_id` is required for milestone-, slice-, and task-scoped artifact types (`SUMMARY`, `RESEARCH`, `CONTEXT`, `ASSESSMENT`, `CONTEXT-DRAFT`) and should be omitted only for root-level `PROJECT`, `PROJECT-DRAFT`, `REQUIREMENTS`, and `REQUIREMENTS-DRAFT` artifacts. For final `REQUIREMENTS` saves, the tool renders content from active database requirement rows; callers must create those rows with `gsd_requirement_save` first.
 
 ### Interactive tools
 
-The packaged server exposes `ask_user_questions` through MCP form elicitation. This keeps the existing GSD answer payload shape while allowing Claude Code CLI and other elicitation-capable clients to surface structured user choices.
+The packaged server exposes `ask_user_questions` through MCP form elicitation. This keeps the existing GWD answer payload shape while allowing Claude Code CLI and other elicitation-capable clients to surface structured user choices.
 
 The packaged server also exposes `secure_env_collect` through MCP form elicitation. Secret values are written directly to the selected destination and are not included in tool output. For dotenv writes, `envFilePath` must resolve inside the validated project directory; parent traversal and symlink escapes are rejected.
 
@@ -119,7 +117,7 @@ Secret handling differs by destination:
 
 Current support boundary:
 
-- when running inside the GSD monorepo checkout, the MCP server auto-discovers the shared workflow executor module
+- when running inside the GWD monorepo checkout, the MCP server auto-discovers the shared workflow executor module
 - outside the monorepo, set `GWD_WORKFLOW_EXECUTORS_MODULE` to an importable `workflow-tool-executors` module path if you want the mutation tools enabled
 - `ask_user_questions` and `secure_env_collect` require an MCP client that supports form elicitation
 - session/read tools do not depend on this bridge
@@ -133,7 +131,7 @@ Start a GWD auto-mode session for a project directory.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `projectDir` | `string` | ✅ | Absolute path to the project directory |
-| `command` | `string` | | Command to send (default: `"/gsd auto"`) |
+| `command` | `string` | | Command to send (default: `"/gwd auto"`) |
 | `model` | `string` | | Model ID override |
 | `bare` | `boolean` | | Run in bare mode (skip user config) |
 
@@ -234,7 +232,7 @@ Resolve a pending blocker in a session by sending a response to the blocked UI r
 | `GWD_CLI_PATH` | Absolute path to the GWD CLI binary. If not set, the server resolves `gwd` via `which`. |
 | `GWD_WORKFLOW_EXECUTORS_MODULE` | Optional absolute path or `file:` URL for the shared GWD workflow executor module used by workflow mutation tools. |
 
-The server also hydrates supported model-provider and tool credentials from `~/.gwd/agent/auth.json` on startup. Keys saved through `/gsd config` or `/gsd keys` become available to the MCP server process automatically, and any explicitly-set environment variable still wins.
+The server also hydrates supported model-provider and tool credentials from `~/.gwd/agent/auth.json` on startup. Keys saved through `/gwd config` or `/gwd keys` become available to the MCP server process automatically, and any explicitly-set environment variable still wins.
 
 Remote secrets pushed by `secure_env_collect` to Vercel or Convex are not hydrated into the MCP server process after the push. Use explicit MCP `env` configuration or a process restart when an operator-level value must be visible to the running server.
 

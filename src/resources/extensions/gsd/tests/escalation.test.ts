@@ -1,4 +1,4 @@
-// GSD Extension — ADR-011 Phase 2 Mid-Execution Escalation tests
+// GWD Extension — ADR-011 Phase 2 Mid-Execution Escalation tests
 // Covers: artifact write/read, detection, resolution (A|B|accept|reject-blocker),
 // DB claim race, carry-forward injection, schema v16/v17 migration, feature flag.
 

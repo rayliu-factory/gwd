@@ -55,7 +55,7 @@ test("git.merge_to_main produces deprecation warning", () => {
 test("getIsolationMode defaults to none when preferences have no isolation setting", () => {
   // Validate the default via validatePreferences: when no isolation is set,
   // preferences.git.isolation is undefined, and getIsolationMode returns "none".
-  // Default changed from "worktree" to "none" so GSD works out of the box
+  // Default changed from "worktree" to "none" so GWD works out of the box
   // without PREFERENCES.md (#2480).
   const { preferences } = validatePreferences({});
   assert.equal(preferences.git?.isolation, undefined, "no isolation in empty prefs");
@@ -605,7 +605,7 @@ test("unrecognized format warning is emitted at most once (#2373)", () => {
 });
 
 test("parsePreferencesMarkdown parses heading+list format without frontmatter (#2036)", () => {
-  // A GSD agent recovery session wrote preferences in markdown heading+list
+  // A GWD agent recovery session wrote preferences in markdown heading+list
   // format instead of YAML frontmatter. Since the heading+list fallback parser
   // was added, this format is now handled gracefully.
   const content = "## Git\n\n- isolation: none\n";

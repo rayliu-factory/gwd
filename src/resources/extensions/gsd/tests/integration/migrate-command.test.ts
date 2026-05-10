@@ -49,7 +49,7 @@ const SAMPLE_REQUIREMENTS = `# Requirements
 
 ### R002 — Output Format
 - Status: validated
-- Description: Output matches GSD format.
+- Description: Output matches GWD format.
 `;
 
 const SAMPLE_STATE = `# State

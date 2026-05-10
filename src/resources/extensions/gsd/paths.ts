@@ -295,7 +295,7 @@ const LEGACY_GWD_ROOT_FILES: Record<GSDRootFileKey, string> = {
   CODEBASE: "codebase.md",
 };
 
-// ─── GSD Root Discovery ───────────────────────────────────────────────────────
+// ─── GWD Root Discovery ───────────────────────────────────────────────────────
 
 // Process-lifetime cache for gsdRoot() results.
 // Keys are realpath-normalized (via normCacheKey) so /foo and /foo/ share the
@@ -318,7 +318,7 @@ export interface GsdPathContract {
   worktreeGsd: string | null;
   /** Canonical authoritative SQLite DB path. */
   projectDb: string;
-  /** True when workRoot is inside a GSD worktree layout. */
+  /** True when workRoot is inside a GWD worktree layout. */
   isWorktree: boolean;
 }
 
@@ -442,8 +442,8 @@ function assertNotGlobalGsdHome(basePath: string, result: string): void {
   }
   if (baseNorm === homeNorm && resultNorm === gsdHomeNorm) {
     throw new Error(
-      `Refusing to use ${result} as a project .gsd directory — that is the global GSD home. ` +
-      `Run GSD from inside a project directory.`,
+      `Refusing to use ${result} as a project .gsd directory — that is the global GWD home. ` +
+      `Run GWD from inside a project directory.`,
     );
   }
 }
@@ -451,7 +451,7 @@ function assertNotGlobalGsdHome(basePath: string, result: string): void {
 /**
  * Detect if a path is inside a .gsd/worktrees/<name>/ structure.
  *
- * GSD auto-worktrees live at <project>/.gsd/worktrees/<milestoneId>/.
+ * GWD auto-worktrees live at <project>/.gsd/worktrees/<milestoneId>/.
  * When gsdRoot() is called with such a path, we must NOT walk up to the
  * project root's .gsd — each worktree manages its own .gsd state (#2594).
  *
@@ -530,7 +530,7 @@ function probeGsdRoot(rawBasePath: string): string {
 
   if (gitRoot) {
     const candidate = join(gitRoot, ".gsd");
-    // Skip if the candidate resolves to the global GSD home — a subdir basePath
+    // Skip if the candidate resolves to the global GWD home — a subdir basePath
     // must not be anchored to ~/.gwd just because $HOME is a git repo.
     if (existsSync(candidate) && normPath(candidate) !== gsdHomeNorm) return candidate;
   }

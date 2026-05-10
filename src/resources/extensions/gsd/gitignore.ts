@@ -1,5 +1,5 @@
 /**
- * GSD bootstrappers for .gitignore and PREFERENCES.md
+ * GWD bootstrappers for .gitignore and PREFERENCES.md
  *
  * Ensures baseline .gitignore exists with universally-correct patterns.
  * Creates an empty PREFERENCES.md template if it doesn't exist.
@@ -14,7 +14,7 @@ import { gsdRoot } from "./paths.js";
 import { GIT_NO_PROMPT_ENV } from "./git-constants.js";
 
 /**
- * GSD runtime patterns for git index cleanup.
+ * GWD runtime patterns for git index cleanup.
  *
  * CANONICAL SOURCE OF TRUTH: This array is the authoritative list of runtime
  * ignore patterns. Other modules (RUNTIME_EXCLUSION_PATHS in git-service.ts,
@@ -36,7 +36,7 @@ const GWD_RUNTIME_PATTERNS = [
   ".gsd/completed-units*.json", // covers completed-units.json and archived completed-units-{MID}.json
   ".gsd/state-manifest.json",
   ".gsd/STATE.md",
-  ".gsd/gsd.db*",
+  ".gsd/gwd.db*",
   ".gsd/journal/",
   ".gsd/doctor-history.jsonl",
   ".gsd/event-log.jsonl",
@@ -46,7 +46,7 @@ const GWD_RUNTIME_PATTERNS = [
 ] as const;
 
 const BASELINE_PATTERNS = [
-  // ── GSD state directory (symlink to external storage) ──
+  // ── GWD state directory (symlink to external storage) ──
   ".gsd",
   ".gsd-id",
   ".mcp.json",
@@ -218,7 +218,7 @@ export function ensureGitignore(
   // Build the block to append
   const block = [
     "",
-    "# ── GSD baseline (auto-generated) ──",
+    "# ── GWD baseline (auto-generated) ──",
     ...missing,
     "",
   ].join("\n");
@@ -285,7 +285,7 @@ skill_discovery: {}
 auto_supervisor: {}
 ---
 
-# GSD Skill Preferences
+# GWD Skill Preferences
 
 Project-specific guidance for skill selection and execution preferences.
 
@@ -293,7 +293,7 @@ See \`~/.gwd/agent/extensions/gsd/docs/preferences-reference.md\` for full field
 
 ## Fields
 
-- \`always_use_skills\`: Skills that must be available during all GSD operations
+- \`always_use_skills\`: Skills that must be available during all GWD operations
 - \`prefer_skills\`: Skills to prioritize when multiple options exist
 - \`avoid_skills\`: Skills to minimize or avoid (with lower priority than prefer)
 - \`skill_rules\`: Context-specific rules (e.g., "use tool X for Y type of work")

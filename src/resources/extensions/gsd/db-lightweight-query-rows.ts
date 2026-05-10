@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Lightweight DB query row mappers for hot-path status reads.
 
 type DbRow = Record<string, unknown>;

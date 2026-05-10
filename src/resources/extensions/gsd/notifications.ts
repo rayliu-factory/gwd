@@ -1,4 +1,4 @@
-// GSD Extension — Desktop Notification Helper
+// GWD Extension — Desktop Notification Helper
 // Cross-platform desktop notifications for auto-mode events.
 
 import { execFileSync } from "node:child_process";
@@ -25,9 +25,9 @@ export function sendDesktopNotification(
   kind: NotificationKind = "complete",
   projectName?: string,
 ): void {
-  // When a projectName is provided and the title is the default "GSD",
+  // When a projectName is provided and the title is the default "GWD",
   // replace it with a project-qualified title for multi-project clarity.
-  if (projectName && title === "GSD") {
+  if (projectName && title === "GWD") {
     title = formatNotificationTitle(projectName);
   }
   const loaded = loadEffectiveGSDPreferences()?.preferences;

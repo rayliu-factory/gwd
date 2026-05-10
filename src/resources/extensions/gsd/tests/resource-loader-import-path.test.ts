@@ -8,8 +8,8 @@ import { refreshResumeResourcesAndDb } from "../auto.ts";
 
 describe("resource-loader import path", () => {
   test("refreshResumeResourcesAndDb resolves resource-loader from GWD_PKG_ROOT", async () => {
-    const pkgRoot = "/tmp/gsd-pkg-root";
-    const agentDir = "/tmp/gsd-agent";
+    const pkgRoot = "/tmp/gwd-pkg-root";
+    const agentDir = "/tmp/gwd-agent";
     const basePath = "/tmp/project-root";
     const imports: string[] = [];
     const initializedDirs: string[] = [];

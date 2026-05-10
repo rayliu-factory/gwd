@@ -39,5 +39,5 @@ test("checkEngineHealth reports db_unavailable when gsd.db exists but the DB is 
   const dbIssue = issues.find((issue) => issue.code === "db_unavailable");
   assert.ok(dbIssue, "doctor should surface degraded DB mode when a DB file exists");
   assert.equal(dbIssue.unitId, "project");
-  assert.equal(dbIssue.file, ".gsd/gsd.db");
+  assert.equal(dbIssue.file, ".gsd/gwd.db");
 });

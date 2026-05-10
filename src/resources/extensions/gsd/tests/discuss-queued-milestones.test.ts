@@ -1,7 +1,7 @@
 /**
  * discuss-queued-milestones.test.ts — Tests for #2307.
  *
- * /gsd discuss was previously gated on state.activeMilestone, which prevented
+ * /gwd discuss was previously gated on state.activeMilestone, which prevented
  * users from discussing queued (pending) milestones during roadmap grooming.
  *
  * These tests verify:

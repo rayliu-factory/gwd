@@ -1,4 +1,4 @@
-// GSD Dispatch Guard — prevents out-of-order slice dispatch
+// GWD Dispatch Guard — prevents out-of-order slice dispatch
 
 import { resolveMilestoneFile } from "./paths.js";
 import { findMilestoneIds } from "./guided-flow.js";

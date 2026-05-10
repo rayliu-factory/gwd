@@ -1,4 +1,4 @@
-// GSD Extension — Regression test for #4996: ensurePreconditions phantom dir guard
+// GWD Extension — Regression test for #4996: ensurePreconditions phantom dir guard
 // Verifies that ensurePreconditions does not create milestone directories for
 // forward-referenced slice unit IDs when the milestone has no DB row.
 

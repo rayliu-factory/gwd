@@ -5,7 +5,7 @@
  * Body: multipart/form-data with a single `file` field
  *
  * Returns:
- *   200 { ok: true, path: "/tmp/gsd-upload-..." }
+ *   200 { ok: true, path: "/tmp/gwd-upload-..." }
  *   400 { error: "No file provided" }
  *   413 { error: "File too large (...)" }
  *   415 { error: "Unsupported image type: ..." }

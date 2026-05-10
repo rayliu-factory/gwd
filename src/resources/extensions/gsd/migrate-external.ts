@@ -1,5 +1,5 @@
 /**
- * GSD External State Migration
+ * GWD External State Migration
  *
  * Migrates legacy in-project `.gsd/` directories to the external
  * `~/.gwd/projects/<hash>/` state directory. After migration, a

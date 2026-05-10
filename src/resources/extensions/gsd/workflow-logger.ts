@@ -1,4 +1,4 @@
-// GSD Extension — Workflow Logger
+// GWD Extension — Workflow Logger
 // Centralized warning/error accumulator for the workflow engine pipeline.
 // Captures structured entries that the auto-loop can drain after each unit
 // to surface root causes for stuck loops, silent degradation, and blocked writes.
@@ -61,7 +61,7 @@ export type LogComponent =
   | "registry"      // Rule registry hook state
   | "renderer"      // Markdown renderer and projections
   | "safety"        // LLM safety harness
-  | "ecosystem"     // GSD ecosystem extension loader and dispatch
+  | "ecosystem"     // GWD ecosystem extension loader and dispatch
   | "memory-embeddings" // Memory layer embedding generation
   | "memory-ingest"     // Memory layer ingestion pipeline
   | "memory-backfill"   // ADR-013: decisions->memories backfill

@@ -1,4 +1,4 @@
-// GSD Extension - Database regression tests.
+// GWD Extension - Database regression tests.
 
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';

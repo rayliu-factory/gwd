@@ -29,6 +29,14 @@ export function resolve(specifier, context, nextResolve) {
     // Sub-path imports like @gwd/native/fd, @gwd/native/text, etc.
     const subpath = specifier.slice("@gwd/native/".length);
     specifier = new URL(`packages/native/src/${subpath}/index.ts`, ROOT).href;
+  } else if (specifier === "@gwd-build/contracts") {
+    specifier = new URL("packages/contracts/src/index.ts", ROOT).href;
+  } else if (specifier === "@gwd-build/rpc-client") {
+    specifier = new URL("packages/rpc-client/src/index.ts", ROOT).href;
+  } else if (specifier === "@gwd-build/mcp-server") {
+    specifier = new URL("packages/mcp-server/src/index.ts", ROOT).href;
+  } else if (specifier === "@gwd-build/daemon") {
+    specifier = new URL("packages/daemon/src/index.ts", ROOT).href;
   }
   // 2. Redirect packages/*/dist/ → packages/*/src/ with .js→.ts for strip-types
   //    Also handles local imports — skip rewrite for dist/ paths that are real compiled artifacts.

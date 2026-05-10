@@ -1,10 +1,10 @@
 /**
- * GSD Command — /gsd extract-learnings
+ * GWD Command — /gwd extract-learnings
  *
  * Analyses completed milestone artefacts and dispatches an LLM turn that
  * extracts structured knowledge into 4 categories (Decisions · Lessons ·
  * Patterns · Surprises), writes a LEARNINGS.md audit trail, and persists
- * the durable subset into the GSD memory store via capture_thought:
+ * the durable subset into the GWD memory store via capture_thought:
  *
  *   - Patterns  → capture_thought(category="pattern")
  *   - Lessons   → capture_thought(category="gotcha" | "convention")
@@ -13,7 +13,7 @@
  *
  * Per ADR-013 step 6 (cutover), the memories table is the single source of
  * truth for cross-session durable knowledge. The legacy KNOWLEDGE.md table
- * appends and gsd_save_decision call-outs were removed from this flow; the
+ * appends and decision-save call-outs were removed from this flow; the
  * pre-existing decisions table was migrated by the step 5 backfill.
  *
  * The same extraction steps are reused by the complete-milestone prompt
@@ -51,7 +51,7 @@ export interface PhaseArtifacts {
 
 /**
  * Full context required by `buildExtractLearningsPrompt` to construct the
- * manual `/gsd extract-learnings` dispatch prompt. Covers the milestone
+ * manual `/gwd extract-learnings` dispatch prompt. Covers the milestone
  * identity, the output target, the inlined artefact contents, and any
  * missing optional artefacts that should be surfaced to the agent.
  */
@@ -127,7 +127,7 @@ export interface FrontmatterContext {
 // ─── Pure functions ───────────────────────────────────────────────────────────
 
 /**
- * Parses the argument string passed to `/gsd extract-learnings`.
+ * Parses the argument string passed to `/gwd extract-learnings`.
  *
  * Returns `{ milestoneId: null }` for empty / whitespace-only input — the
  * handler surfaces a usage hint in that case. A non-empty trimmed value is
@@ -181,7 +181,7 @@ export function resolvePhaseArtifacts(milestoneDir: string, milestoneId: string)
  * Canonical structured-extraction instructions.
  *
  * Used in two places — kept in sync by construction:
- *   1. /gsd extract-learnings manual path (buildExtractLearningsPrompt).
+ *   1. /gwd extract-learnings manual path (buildExtractLearningsPrompt).
  *   2. complete-milestone auto path ({{extractLearningsSteps}} placeholder,
  *      injected by auto-prompts::buildCompleteMilestonePrompt).
  *
@@ -194,7 +194,7 @@ export function buildExtractionStepsBlock(ctx: ExtractionStepsContext): string {
 
 Perform the following steps IN ORDER. Each step is mandatory unless explicitly
 marked optional. These instructions are the single source of truth shared by
-\`/gsd extract-learnings\` and the auto-mode milestone-completion turn.
+\`/gwd extract-learnings\` and the auto-mode milestone-completion turn.
 
 ### Step 1 — Classify findings into four categories
 
@@ -287,14 +287,14 @@ captured only in the LEARNINGS.md file written in Step 2.`;
 }
 
 /**
- * Build the full dispatch prompt for the manual `/gsd extract-learnings` path.
+ * Build the full dispatch prompt for the manual `/gwd extract-learnings` path.
  *
  * Composes a header block (title, project, output file), the inlined milestone
  * artefacts (roadmap, summary, optional verification and UAT reports), and the
  * canonical {@link buildExtractionStepsBlock} procedure. The same procedure is
  * rendered verbatim in the auto-mode `complete-milestone` turn via the
  * `{{extractLearningsSteps}}` placeholder, guaranteeing a single source of
- * truth for how learnings flow into the GSD memory store via capture_thought.
+ * truth for how learnings flow into the GWD memory store via capture_thought.
  *
  * Missing optional artefacts are surfaced as a note at the end of the artefact
  * section so the LLM can mark them explicitly in the LEARNINGS frontmatter.
@@ -329,7 +329,7 @@ export function buildExtractLearningsPrompt(ctx: ExtractLearningsPromptContext):
 Analyse the milestone artefacts inlined below and follow the Structured
 Learnings Extraction procedure in full. The procedure writes LEARNINGS.md
 as the milestone-local audit trail and persists the durable subset into the
-GSD memory store via \`capture_thought\` (categories: pattern, gotcha or
+GWD memory store via \`capture_thought\` (categories: pattern, gotcha or
 convention, architecture). The memory store is the single source of truth
 for cross-session durable knowledge (ADR-013).
 
@@ -411,13 +411,13 @@ export function extractProjectName(basePath: string): string {
 // ─── Handler ──────────────────────────────────────────────────────────────────
 
 /**
- * Handles the `/gsd extract-learnings <MID>` slash command.
+ * Handles the `/gwd extract-learnings <MID>` slash command.
  *
  * Resolves and reads the milestone artefacts, constructs the dispatch prompt
  * via {@link buildExtractLearningsPrompt}, and triggers a new LLM turn via
  * `pi.sendMessage({ triggerTurn: true })`. Returns quickly with a UI
  * notification (not an error) when the milestone cannot be found or required
- * artefacts are missing, matching the behaviour of sibling `/gsd` commands.
+ * artefacts are missing, matching the behaviour of sibling `/gwd` commands.
  */
 export async function handleExtractLearnings(
   args: string,
@@ -427,7 +427,7 @@ export async function handleExtractLearnings(
   const { milestoneId } = parseExtractLearningsArgs(args);
 
   if (!milestoneId) {
-    ctx.ui.notify("Usage: /gsd extract-learnings <milestoneId>  (e.g. M001)", "warning");
+    ctx.ui.notify("Usage: /gwd extract-learnings <milestoneId>  (e.g. M001)", "warning");
     return;
   }
 

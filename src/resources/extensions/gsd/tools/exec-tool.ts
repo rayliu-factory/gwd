@@ -1,4 +1,4 @@
-// GSD Exec Tool — executor for the gsd_exec MCP tool.
+// GWD Exec Tool — executor for the gsd_exec MCP tool.
 //
 // Thin wrapper around exec-sandbox.ts that reads effective options from
 // the project preferences (context_mode block) and formats the result

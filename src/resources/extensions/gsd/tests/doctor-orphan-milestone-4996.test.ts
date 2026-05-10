@@ -1,4 +1,4 @@
-// GSD Extension — Regression test for #4996: doctor orphan milestone dir check
+// GWD Extension — Regression test for #4996: doctor orphan milestone dir check
 // Verifies that checkRuntimeHealth reports orphan_milestone_dir for empty stub
 // dirs with no DB row, does not report populated dirs, and does not report
 // legitimate in-flight worktree-only milestone dirs.

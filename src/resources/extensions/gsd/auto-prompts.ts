@@ -272,7 +272,7 @@ function formatExecutorConstraints(
 /**
  * Returns a markdown bullet list of known context file paths for the given
  * milestone (and optionally slice). Falls back to a generic tool-agnostic
- * instruction when no GSD artifacts are found.
+ * instruction when no GWD artifacts are found.
  *
  * @param base - Absolute path to the project root.
  * @param mid  - Milestone ID (e.g. `"M001"`).
@@ -2522,7 +2522,7 @@ export async function buildCompleteSlicePrompt(
   // Gates owned by complete-slice (e.g. Q8). Pull from the DB so the
   // prompt only prompts for gates the plan actually seeded. The tool
   // handler closes each gate based on the SUMMARY.md section content
-  // after the assistant calls gsd_complete_slice.
+  // after the assistant calls gsd_slice_complete.
   const csPending = getPendingGatesForTurn(mid, sid, "complete-slice");
   // coverage check: every pending row must be owned by complete-slice.
   // requireAll:false because a slice may have already closed some gates.
@@ -2602,7 +2602,7 @@ export async function buildCompleteMilestonePrompt(
   }
   inlined.unshift(...validationContext);
 
-  // Inline root GSD files (skip for minimal — completion can read these if needed)
+  // Inline root GWD files (skip for minimal — completion can read these if needed)
   if (inlineLevel !== "minimal") {
     const requirementsInline = await inlineRequirementsFromDb(base, mid, undefined, inlineLevel);
     if (requirementsInline) inlined.push(requirementsInline);
@@ -2614,7 +2614,7 @@ export async function buildCompleteMilestonePrompt(
   // Scoped + budgeted — see issue #4719
   const knowledgeInlineCM = await inlineKnowledgeBudgeted(base, extractKeywords(midTitle));
   if (knowledgeInlineCM) inlined.push(knowledgeInlineCM);
-  // Inline milestone context file (milestone-level, not GSD root)
+  // Inline milestone context file (milestone-level, not GWD root)
   const contextPath = resolveMilestoneFile(base, mid, "CONTEXT");
   const contextRel = relMilestoneFile(base, mid, "CONTEXT");
   const contextInline = await inlineFileOptional(contextPath, contextRel, "Milestone Context");
@@ -2744,7 +2744,7 @@ export async function buildValidateMilestonePrompt(
     inlined.push(`### Previous Validation (re-validation round ${remediationRound})\nSource: \`${validationRel}\`\n\n${validationContent.trim()}`);
   }
 
-  // Inline root GSD files
+  // Inline root GWD files
   if (inlineLevel !== "minimal") {
     const requirementsInline = await inlineRequirementsFromDb(base, mid, undefined, inlineLevel);
     if (requirementsInline) inlined.push(requirementsInline);

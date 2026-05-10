@@ -30,7 +30,7 @@ export type {
   ValidationResult,
   ValidationIssue,
   ValidationSeverity,
-  // Output types (GSD-2 format)
+  // Output types (GWD-2 format)
   GSDProject,
   GSDMilestone,
   GSDSlice,

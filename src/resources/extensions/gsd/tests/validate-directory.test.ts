@@ -1,5 +1,5 @@
 /**
- * Unit tests for GSD Directory Validation — safeguards against dangerous directories.
+ * Unit tests for GWD Directory Validation — safeguards against dangerous directories.
  *
  * Exercises validateDirectory() and assertSafeDirectory() with:
  * - Blocked system paths (/, /usr, /etc, $HOME, C:\Windows)

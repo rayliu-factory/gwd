@@ -1,5 +1,5 @@
 /**
- * GSD Crash Recovery (Phase C pt 2 — DB-backed)
+ * GWD Crash Recovery (Phase C pt 2 — DB-backed)
  *
  * Detects interrupted auto-mode sessions via the DB-backed workers +
  * unit_dispatches + runtime_kv tables. The auto.lock file is gone; the
@@ -273,13 +273,13 @@ export function formatCrashInfo(lock: LockData): string {
   ];
 
   if (lock.unitType === "starting" && lock.unitId === "bootstrap") {
-    lines.push(`No work was lost. Run /gsd auto to restart.`);
+    lines.push(`No work was lost. Run /gwd auto to restart.`);
   } else if (lock.unitType.includes("research") || lock.unitType.includes("plan")) {
-    lines.push(`The ${lock.unitType} unit may be incomplete. Run /gsd auto to re-run it.`);
+    lines.push(`The ${lock.unitType} unit may be incomplete. Run /gwd auto to re-run it.`);
   } else if (lock.unitType.includes("execute")) {
-    lines.push(`Task execution was interrupted. Run /gsd auto to resume — completed work is preserved.`);
+    lines.push(`Task execution was interrupted. Run /gwd auto to resume — completed work is preserved.`);
   } else if (lock.unitType.includes("complete")) {
-    lines.push(`Slice/milestone completion was interrupted. Run /gsd auto to finish.`);
+    lines.push(`Slice/milestone completion was interrupted. Run /gwd auto to finish.`);
   }
 
   return lines.join("\n");

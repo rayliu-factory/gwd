@@ -1,5 +1,5 @@
 /**
- * Shared test utilities for GSD extension tests.
+ * Shared test utilities for GWD extension tests.
  *
  * Provides cross-platform helpers for creating temporary git repos,
  * safe cleanup, file creation, and shell-free git operations.
@@ -110,7 +110,7 @@ export function safeReadFile(filePath: string): string | null {
 }
 
 /**
- * Create a minimal GSD milestone structure in a temp directory.
+ * Create a minimal GWD milestone structure in a temp directory.
  *
  * @param base - Base directory (should have .gsd/ or be a temp repo)
  * @param mid - Milestone ID (e.g., "M001")

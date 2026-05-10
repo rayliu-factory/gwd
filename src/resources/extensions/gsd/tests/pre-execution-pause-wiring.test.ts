@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Integration tests for pre-execution check pause wiring.
 /**
  * pre-execution-pause-wiring.test.ts — Integration tests for pre-execution check → pauseAuto wiring.
@@ -98,7 +98,7 @@ function makePostUnitContext(
 }
 
 /**
- * Set up a temp directory with GSD structure and DB.
+ * Set up a temp directory with GWD structure and DB.
  * Also changes cwd so preferences loading finds the right PREFERENCES.md.
  */
 function setupTestEnvironment(): void {
@@ -162,7 +162,7 @@ function writePreferences(prefs: Record<string, unknown>): void {
 ${yamlLines.join("\n")}
 ---
 
-# GSD Preferences
+# GWD Preferences
 `;
   writeFileSync(join(tempDir, ".gsd", "PREFERENCES.md"), prefsContent);
   // Invalidate caches so the new preferences file is found

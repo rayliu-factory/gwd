@@ -17,7 +17,7 @@ test("buildNotificationWidgetLines shows unread count with shortcut pair", () =>
 
     const lines = buildNotificationWidgetLines();
     // Widget must render at least one line; may add secondary lines later
-    // (e.g., "View with /gsd notif") without breaking this assertion.
+    // (e.g., "View with /gwd notif") without breaking this assertion.
     assert.ok(lines.length >= 1, `expected at least 1 widget line, got ${lines.length}`);
     const combined = lines.join("\n");
     assert.match(combined, /🔔\s+1 unread/);

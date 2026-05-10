@@ -4,7 +4,7 @@ How to run and monitor multiple concurrent GWD sessions.
 
 ## Architecture
 
-GSD uses **file-based IPC** — no sockets or ports. All coordination happens through JSON files in `.gsd/parallel/`.
+GWD uses **file-based IPC** — no sockets or ports. All coordination happens through JSON files in `.gsd/parallel/`.
 
 ```
 .gsd/parallel/
@@ -68,7 +68,7 @@ Coordinator writes to `.gsd/parallel/<milestoneId>.signal.json`. Worker consumes
 # Spawn worker in its worktree
 GWD_MILESTONE_LOCK=M001 \
 GWD_PARALLEL_WORKER=1 \
-  gsd headless --json auto 2>logs/M001.log &
+  gwd headless --json auto 2>logs/M001.log &
 WORKER_PID=$!
 ```
 
@@ -113,9 +113,9 @@ send_signal M003 resume
 
 ## Budget Enforcement
 
-Use `gsd headless query` for instant aggregate cost:
+Use `gwd headless query` for instant aggregate cost:
 ```bash
-TOTAL=$(gsd headless query | jq -r '.cost.total')
+TOTAL=$(gwd headless query | jq -r '.cost.total')
 CEILING=50.00
 if (( $(echo "$TOTAL > $CEILING" | bc -l) )); then
   echo "Budget exceeded ($TOTAL > $CEILING) — stopping all"
@@ -160,7 +160,7 @@ Within one project, milestones are tracked automatically in `.gsd/parallel/`. Fo
 }
 ```
 
-Then poll each project's `.gsd/parallel/` directory. GSD has no cross-project awareness — the orchestrator must bridge this gap.
+Then poll each project's `.gsd/parallel/` directory. GWD has no cross-project awareness — the orchestrator must bridge this gap.
 
 ## Built-in Parallel Commands
 
@@ -168,9 +168,9 @@ Inside an interactive GWD session, these commands manage the parallel orchestrat
 
 | Command | Description |
 |---------|-------------|
-| `/gsd parallel start` | Analyze eligibility, spawn workers |
-| `/gsd parallel status` | Show all workers, costs, progress |
-| `/gsd parallel stop [MID]` | Stop one or all workers |
-| `/gsd parallel pause [MID]` | Pause without killing |
-| `/gsd parallel resume [MID]` | Resume paused worker |
-| `/gsd parallel merge [MID]` | Merge completed milestone branch |
+| `/gwd parallel start` | Analyze eligibility, spawn workers |
+| `/gwd parallel status` | Show all workers, costs, progress |
+| `/gwd parallel stop [MID]` | Stop one or all workers |
+| `/gwd parallel pause [MID]` | Pause without killing |
+| `/gwd parallel resume [MID]` | Resume paused worker |
+| `/gwd parallel merge [MID]` | Merge completed milestone branch |

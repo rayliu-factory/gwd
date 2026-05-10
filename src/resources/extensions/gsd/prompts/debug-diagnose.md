@@ -1,4 +1,4 @@
-You are investigating a reported issue in a GSD debug session.
+You are investigating a reported issue in a GWD debug session.
 
 ## Session
 

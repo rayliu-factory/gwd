@@ -270,7 +270,7 @@ export async function recoverTimedOutUnit(
       lastRecoveryReason: reason,
     });
     ctx.ui.notify(
-      `Milestone ${unitId} ${reason}-recovery exhausted ${maxRecoveryAttempts} attempt(s) — worktree branch preserved. Re-run /gsd auto once blockers are resolved.`,
+      `Milestone ${unitId} ${reason}-recovery exhausted ${maxRecoveryAttempts} attempt(s) — worktree branch preserved. Re-run /gwd auto once blockers are resolved.`,
       "error",
     );
     return "paused";

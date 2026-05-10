@@ -139,7 +139,7 @@ export function formatMcpStatusReport(servers: McpServerStatus[]): string {
   }
 
   lines.push("");
-  lines.push("Use /gsd mcp check <server> for details on a specific server.");
+  lines.push("Use /gwd mcp check <server> for details on a specific server.");
   lines.push("Use mcp_discover to connect and list tools for a server.");
 
   return lines.join("\n");
@@ -175,7 +175,7 @@ export function formatMcpServerDetail(server: McpServerDetail): string {
 // ─── Command handler ────────────────────────────────────────────────────────
 
 /**
- * Handle `/gsd mcp [status|check <server>]`.
+ * Handle `/gwd mcp [status|check <server>]`.
  */
 export async function handleMcpStatus(
   args: string,
@@ -203,7 +203,7 @@ export async function handleMcpStatus(
     return;
   }
 
-  // /gsd mcp check <server>
+  // /gwd mcp check <server>
   if (lowered.startsWith("check ")) {
     const serverName = trimmed.slice("check ".length).trim();
     const config = configs.find((c) => c.name === serverName);
@@ -248,7 +248,7 @@ export async function handleMcpStatus(
     return;
   }
 
-  // /gsd mcp or /gsd mcp status
+  // /gwd mcp or /gwd mcp status
   if (!lowered || lowered === "status") {
     // Build status for each server
     const statuses: McpServerStatus[] = [];
@@ -286,7 +286,7 @@ export async function handleMcpStatus(
 
   // Unknown subcommand
   ctx.ui.notify(
-    "Usage: /gsd mcp [status|check <server>|init [dir]]\n\n" +
+    "Usage: /gwd mcp [status|check <server>|init [dir]]\n\n" +
     "  status           Show all MCP server statuses (default)\n" +
     "  check <server>   Detailed status for a specific server\n" +
     "  init [dir]       Write .mcp.json for the local GWD workflow MCP server",

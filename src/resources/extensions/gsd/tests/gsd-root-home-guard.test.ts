@@ -1,7 +1,7 @@
 /**
  * GSD2 — regression tests for #5187 and git-root anchor guard:
  *
- * #5187: gsdRoot() must refuse to use the global GSD home (~/.gwd) as a
+ * #5187: gsdRoot() must refuse to use the global GWD home (~/.gwd) as a
  * project .gsd directory when basePath resolves to $HOME. Paths under
  * ~/.gwd/projects/<hash>/ remain valid.
  *
@@ -59,7 +59,7 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
         assert.ok(err instanceof Error, 'should throw an Error');
         assert.match(
           (err as Error).message,
-          /global GSD home|project .gsd directory/i,
+          /global GWD home|project .gsd directory/i,
           'message should explain the refusal',
         );
         return true;

@@ -986,7 +986,7 @@ test("hasImplementationArtifacts finds implementation commits when .gsd/ is giti
   }
 });
 
-test("hasImplementationArtifacts binds GSD-Task trailer to milestone via DB state when .gsd/ is gitignored", () => {
+test("hasImplementationArtifacts binds GWD-Task trailer to milestone via DB state when .gsd/ is gitignored", () => {
   const base = makeGitBase();
   try {
     writeFileSync(join(base, ".git", "info", "exclude"), ".gsd/\n");
@@ -1029,7 +1029,7 @@ test("hasImplementationArtifacts binds GSD-Task trailer to milestone via DB stat
   }
 });
 
-test("hasImplementationArtifacts does not bind GSD-Task trailer without milestone ownership evidence", () => {
+test("hasImplementationArtifacts does not bind GWD-Task trailer without milestone ownership evidence", () => {
   const base = makeGitBase();
   try {
     writeFileSync(join(base, ".git", "info", "exclude"), ".gsd/\n");

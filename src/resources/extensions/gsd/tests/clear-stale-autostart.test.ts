@@ -1,7 +1,7 @@
 /**
  * clear-stale-autostart.test.ts — #3667
  *
- * Pending auto-start entries carry a createdAt timestamp so later /gsd
+ * Pending auto-start entries carry a createdAt timestamp so later /gwd
  * invocations can distinguish an in-flight discussion from a stale one.
  */
 

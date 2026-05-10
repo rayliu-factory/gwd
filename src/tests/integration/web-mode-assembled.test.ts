@@ -1023,14 +1023,14 @@ test("assembled slash-command behavior keeps built-ins safe while preserving GSD
   assert.match(builtInReject.notice ?? "", /blocked instead of falling through to the model/i);
   assert.equal(builtInReject.status, null);
 
-  // /gsd status is now a browser surface (S02), verify that
-  const gsdSurface = await submitBrowserInput("/gsd status");
+  // /gwd status is now a browser surface (S02), verify that
+  const gsdSurface = await submitBrowserInput("/gwd status");
   assert.equal(gsdSurface.outcome.kind, "surface");
   assert.equal(gsdSurface.outcome.surface, "gsd-status");
   assert.equal(gsdSurface.status, null);
 
-  // /gsd auto is a passthrough subcommand — reaches the bridge as a prompt
-  const gsdPrompt = await submitBrowserInput("/gsd auto");
+  // /gwd auto is a passthrough subcommand — reaches the bridge as a prompt
+  const gsdPrompt = await submitBrowserInput("/gwd auto");
   assert.equal(gsdPrompt.outcome.kind, "prompt");
   assert.equal(gsdPrompt.status, 200);
   assert.equal(gsdPrompt.body.command, "prompt");
@@ -1042,5 +1042,5 @@ test("assembled slash-command behavior keeps built-ins safe while preserving GSD
     "only browser-executable slash commands should reach the live bridge; built-in surfaces/rejects must stay out of prompt text",
   );
   const promptCommand = bridgeCommands.find((command) => command.type === "prompt");
-  assert.equal(promptCommand?.message, "/gsd auto", "GSD passthrough commands must stay on the extension prompt path");
+  assert.equal(promptCommand?.message, "/gwd auto", "GSD passthrough commands must stay on the extension prompt path");
 });

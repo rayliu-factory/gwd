@@ -443,7 +443,7 @@ test("refresh failures keep the workspace locked and expose the failed bridge-re
   assert.match(failedBootPayload.onboarding.bridgeAuthRefresh.error, /could not attach/i);
 });
 
-test("fresh gsd --web browser onboarding stays locked on failed validation and unlocks after a successful retry", async (t) => {
+test("fresh gwd --web browser onboarding stays locked on failed validation and unlocks after a successful retry", async (t) => {
   if (process.platform === "win32") {
     t.skip("runtime launch test uses POSIX browser-open stubs")
     return

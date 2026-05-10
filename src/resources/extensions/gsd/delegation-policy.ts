@@ -1,5 +1,5 @@
-// Delegation policy — codifies which GSD MCP tools are safe to run as
-// background sub-agents while the foreground /gsd flow continues. Verdicts
+// Delegation policy — codifies which GWD MCP tools are safe to run as
+// background sub-agents while the foreground /gwd flow continues. Verdicts
 // are derived from the round-1 and round-2 evaluations recorded in this
 // branch's PR description; the rationale field on each entry preserves
 // the reason so future changes have to revisit the analysis explicitly.
@@ -123,22 +123,8 @@ const POLICY: Record<string, DelegationPolicyEntry> = {
   },
 };
 
-// Alias map keyed on the secondary name; resolves to the canonical entry above.
-// Sourced from packages/mcp-server/src/workflow-tools.ts alias registrations
-// (gsd_milestone_validate, gsd_roadmap_reassess, gsd_slice_replan, gsd_task_plan).
-const ALIASES: Record<string, string> = {
-  gsd_milestone_validate: "gsd_validate_milestone",
-  gsd_roadmap_reassess: "gsd_reassess_roadmap",
-  gsd_slice_replan: "gsd_replan_slice",
-  gsd_task_plan: "gsd_plan_task",
-};
-
-function resolveCanonical(name: string): string {
-  return ALIASES[name] ?? name;
-}
-
 export function getDelegationVerdict(toolName: string): DelegationPolicyEntry | null {
-  return POLICY[resolveCanonical(toolName)] ?? null;
+  return POLICY[toolName] ?? null;
 }
 
 export function isBackgroundable(toolName: string): boolean {

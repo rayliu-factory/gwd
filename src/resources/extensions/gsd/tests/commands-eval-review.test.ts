@@ -1,5 +1,5 @@
 /**
- * Unit tests for `/gsd eval-review` (commands-eval-review.ts).
+ * Unit tests for `/gwd eval-review` (commands-eval-review.ts).
  *
  * Each prior review finding is paired with a regression test that asserts
  * the documented fix behavior. Tests are organized one `describe` per

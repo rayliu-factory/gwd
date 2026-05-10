@@ -32,7 +32,7 @@ Surface technical unknowns, integration surfaces, proof needed before committing
 
 **Then use ask_user_questions** for gray areas: scope boundaries, proof expectations, integration choices, material tech preferences, and in/out scope. Ask 1-3 questions per round, then wait for the user's response before asking the next round.
 
-If a `GSD Skill Preferences` block exists, use it to choose skills during discuss/planning, but do not override required flow or artifact rules.
+If a `GWD Skill Preferences` block exists, use it to choose skills during discuss/planning, but do not override required flow or artifact rules.
 
 **Self-regulate:** Do not ask "ready to queue?" after every round. Continue until enough depth, then use one wrap-up prompt if needed. Never infer permission from silence or partial answers.
 

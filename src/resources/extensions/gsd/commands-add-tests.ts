@@ -1,5 +1,5 @@
 /**
- * GSD Command — /gsd add-tests
+ * GWD Command — /gwd add-tests
  *
  * Generates tests for a completed slice by dispatching an LLM prompt
  * with implementation context (summaries, changed files, test patterns).
@@ -105,7 +105,7 @@ export async function handleAddTests(
   const targetId = args.trim() || findLastCompletedSlice(basePath, milestoneId);
   if (!targetId) {
     ctx.ui.notify(
-      "No completed slices found. Specify a slice ID: /gsd add-tests S03",
+      "No completed slices found. Specify a slice ID: /gwd add-tests S03",
       "warning",
     );
     return;

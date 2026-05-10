@@ -1,7 +1,7 @@
 /**
- * GSD Session Lock — OS-level exclusive locking for auto-mode sessions.
+ * GWD Session Lock — OS-level exclusive locking for auto-mode sessions.
  *
- * Prevents multiple GSD processes from running auto-mode concurrently on
+ * Prevents multiple GWD processes from running auto-mode concurrently on
  * the same project. Uses proper-lockfile for OS-level file locking (flock/
  * lockfile) which eliminates the TOCTOU race condition that existed with
  * the old advisory JSON lock approach.
@@ -304,7 +304,7 @@ export function acquireSessionLock(basePath: string): SessionLockResult {
   // #3218: Pre-flight stale lock cleanup — if the .lock/ directory exists but
   // no auto.lock metadata is present (or the PID is dead), remove the lock
   // directory before attempting acquisition. This prevents the 30-min stale
-  // window from blocking /gsd after crashes, SIGKILL, or laptop sleep.
+  // window from blocking /gwd after crashes, SIGKILL, or laptop sleep.
   const lockDir = lockTarget + ".lock";
   if (existsSync(lockDir)) {
     const existingData = readExistingLockData(lp);

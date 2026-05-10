@@ -1,4 +1,4 @@
-// GSD Extension — sync-lock unit tests
+// GWD Extension — sync-lock unit tests
 // Tests acquireSyncLock() and releaseSyncLock().
 
 import test from 'node:test';

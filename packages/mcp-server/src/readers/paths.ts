@@ -1,4 +1,4 @@
-// GSD MCP Server — .gsd/ directory resolution
+// GWD MCP Server — .gsd/ directory resolution
 
 import { existsSync, statSync, readdirSync } from 'node:fs';
 import { join, resolve, dirname, basename } from 'node:path';

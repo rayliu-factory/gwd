@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Registers workspace-aware dynamic filesystem and shell tools.
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
@@ -32,8 +32,8 @@ export function resolveCtxCwd(ctx?: unknown): string {
 /**
  * Resolve the correct DB path for the current working directory.
  * If `basePath` is inside a `.gsd/worktrees/<MID>/` directory, returns
- * the project root's `.gsd/gsd.db` (shared WAL — R012). Otherwise
- * returns `<basePath>/.gsd/gsd.db`.
+ * the project root's `.gsd/gwd.db` (shared WAL — R012). Otherwise
+ * returns `<basePath>/.gsd/gwd.db`.
  */
 export function resolveProjectRootDbPath(basePath: string): string {
   return resolveGsdPathContract(basePath).projectDb;

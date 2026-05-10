@@ -27,7 +27,7 @@ const MODE_OPTIONS: {
     icon: Code2,
     tagline: "Full control",
     description:
-      "Dashboard metrics, dual-pane power mode, and direct /gsd command access. Built for people who want visibility into every milestone and task.",
+      "Dashboard metrics, dual-pane power mode, and direct /gwd command access. Built for people who want visibility into every milestone and task.",
   },
   {
     id: "vibe-coder",
@@ -35,7 +35,7 @@ const MODE_OPTIONS: {
     icon: MessageCircle,
     tagline: "Just chat",
     description:
-      "Conversational interface with the AI agent. Describe what you want and let GSD handle the structure. Same engine, friendlier surface.",
+      "Conversational interface with the AI agent. Describe what you want and let GWD handle the structure. Same engine, friendlier surface.",
   },
 ]
 

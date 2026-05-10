@@ -1,4 +1,4 @@
-// GSD Exec History — read-side helpers for the exec sandbox.
+// GWD Exec History — read-side helpers for the exec sandbox.
 //
 // Pure I/O: scans `.gsd/exec/*.meta.json` under a base directory and
 // returns lightweight records. Used by the gsd_exec_search tool and

@@ -1,4 +1,4 @@
-// GSD-2 — Regression test for #3615: unstructured "continue" must inject task context
+// GWD-2 — Regression test for #3615: unstructured "continue" must inject task context
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
@@ -36,8 +36,8 @@ describe("#3615 — RESUME_INTENT_PATTERNS behavior", () => {
   const shouldNotMatch = [
     "help",
     "status",
-    "/gsd auto",
-    "/gsd stats",
+    "/gwd auto",
+    "/gwd stats",
     "what's the plan?",
     "show me the logs",
     "abort",

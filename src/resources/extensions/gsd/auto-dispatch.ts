@@ -1,7 +1,7 @@
 /**
  * Auto-mode Dispatch Table — declarative phase → unit mapping.
  *
- * Each rule maps a GSD state to the unit type, unit ID, and prompt builder
+ * Each rule maps a GWD state to the unit type, unit ID, and prompt builder
  * that should be dispatched. Rules are evaluated in order; the first match wins.
  *
  * This replaces the 130-line if-else chain in dispatchNextUnit with a
@@ -231,7 +231,7 @@ export function shouldRunDeepProjectSetup(
 function missingSliceStop(mid: string, phase: string): DispatchAction {
   return {
     action: "stop",
-    reason: `${mid}: phase "${phase}" has no active slice — run /gsd doctor.`,
+    reason: `${mid}: phase "${phase}" has no active slice — run /gwd doctor.`,
     level: "error",
   };
 }
@@ -342,7 +342,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
         action: "stop",
         reason:
           state.nextAction ||
-          `${mid}: task escalation awaits user resolution. Run /gsd escalate list to see pending items.`,
+          `${mid}: task escalation awaits user resolution. Run /gwd escalate list to see pending items.`,
         level: "info",
       };
     },
@@ -383,7 +383,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
     // pre-planning guard at `pre-planning (no context) → discuss-milestone`
     // no longer fires. The plan-v2 gate correctly detects the missing context
     // but can only block — it cannot redispatch. Without this rule the
-    // milestone is stuck until `/gsd doctor heal` repairs it (and heal
+    // milestone is stuck until `/gwd doctor heal` repairs it (and heal
     // historically missed this check too).
     //
     // Fire BEFORE the execution-entry phase rules so we redispatch to
@@ -499,7 +499,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
         if (!isAcceptableUatVerdict(verdict, uatType)) {
           return {
             action: "stop" as const,
-            reason: `UAT verdict for ${sliceId} is "${verdict}" — blocking progression until resolved.\nReview the UAT result and update the verdict to PASS, or re-run /gsd auto after fixing.`,
+            reason: `UAT verdict for ${sliceId} is "${verdict}" — blocking progression until resolved.\nReview the UAT result and update the verdict to PASS, or re-run /gwd auto after fixing.`,
             level: "warning" as const,
           };
         }
@@ -771,7 +771,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
       if (sliceContextFile && existsSync(sliceContextFile)) return null; // discussion already done, proceed
       return {
         action: "stop" as const,
-        reason: `Slice ${state.activeSlice.id} requires discussion before planning (require_slice_discussion is enabled). Run /gsd discuss to discuss this slice, then /gsd auto to resume.`,
+        reason: `Slice ${state.activeSlice.id} requires discussion before planning (require_slice_discussion is enabled). Run /gwd discuss to discuss this slice, then /gwd auto to resume.`,
         level: "info" as const,
       };
     },
@@ -949,7 +949,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
           session.preExecRetryCount?.delete(unitId);
           return {
             action: "stop",
-            reason: `Pre-execution checks failed ${retryCount} times for ${unitId} — manual intervention required. Blocking findings: ${findings}. Fix the plan manually, then run /gsd auto to resume.`,
+            reason: `Pre-execution checks failed ${retryCount} times for ${unitId} — manual intervention required. Blocking findings: ${findings}. Fix the plan manually, then run /gwd auto to resume.`,
             level: "error",
             matchedRule: "planning → plan-slice",
           };
@@ -1343,7 +1343,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
       if (missingSlices.length > 0) {
         return {
           action: "stop",
-          reason: `Cannot complete milestone ${mid}: slices ${missingSlices.join(", ")} are missing SUMMARY files. Run /gsd doctor to diagnose.`,
+          reason: `Cannot complete milestone ${mid}: slices ${missingSlices.join(", ")} are missing SUMMARY files. Run /gwd doctor to diagnose.`,
           level: "error",
         };
       }
@@ -1450,7 +1450,7 @@ export async function resolveDispatch(
       action: "stop",
       reason:
         `Dispatch milestone mismatch: context mid "${ctx.mid}" does not match active milestone "${activeMid}". ` +
-        "This usually means a project-level deep setup pseudo-id leaked into milestone dispatch; rerun /gsd auto after setup state is reconciled.",
+        "This usually means a project-level deep setup pseudo-id leaked into milestone dispatch; rerun /gwd auto after setup state is reconciled.",
       level: "warning",
     };
   }
@@ -1478,7 +1478,7 @@ export async function resolveDispatch(
   // (e.g. after reassessment modifies the roadmap and state needs re-derivation).
   return {
     action: "stop",
-    reason: `Unhandled phase "${ctx.state.phase}" — run /gsd doctor to diagnose.`,
+    reason: `Unhandled phase "${ctx.state.phase}" — run /gwd doctor to diagnose.`,
     level: "warning",
     matchedRule: "<no-match>",
   };

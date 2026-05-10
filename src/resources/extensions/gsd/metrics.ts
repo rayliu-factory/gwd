@@ -1,6 +1,6 @@
-// GSD-2 + metrics.ts: token & cost tracking for auto-mode units
+// GWD-2 + metrics.ts: token & cost tracking for auto-mode units
 /**
- * GSD Metrics — Token & Cost Tracking
+ * GWD Metrics — Token & Cost Tracking
  *
  * Accumulates per-unit usage data across auto-mode sessions.
  * Data is extracted from session entries before each context wipe,

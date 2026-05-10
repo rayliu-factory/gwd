@@ -24,7 +24,7 @@ function run(command: string, cwd: string): string {
 function createTestRepo(): string {
   const repo = mkdtempSync(join(tmpdir(), "gsd-quick-lifecycle-"));
   run("git init -b main", repo);
-  run(`git config user.name "GSD Test"`, repo);
+  run(`git config user.name "GWD Test"`, repo);
   run(`git config user.email "test@gsd.dev"`, repo);
   mkdirSync(join(repo, ".gsd", "runtime"), { recursive: true });
   mkdirSync(join(repo, ".gsd", "milestones", "M001"), { recursive: true });
@@ -48,7 +48,7 @@ test('QUICK_BRANCH_RE: matches quick-task branches', () => {
   assert.ok(!QUICK_BRANCH_RE.test("main"), "rejects main");
   assert.ok(!QUICK_BRANCH_RE.test("gsd/M001/S01"), "rejects slice branch");
   assert.ok(!QUICK_BRANCH_RE.test("gsd/quickly-something"), "rejects non-quick prefix");
-  assert.ok(!QUICK_BRANCH_RE.test("feature/gsd/quick/1"), "rejects nested prefix");
+  assert.ok(!QUICK_BRANCH_RE.test("feature/gwd/quick/1"), "rejects nested prefix");
   // ═══════════════════════════════════════════════════════════════════════
   // captureIntegrationBranch: guard against quick-task branches
   // ═══════════════════════════════════════════════════════════════════════

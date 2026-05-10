@@ -232,7 +232,7 @@ describe("discoverPlugins: error handling", () => {
 
   it("ignores subdirectories under .gsd/workflows/ (artifact dirs)", () => {
     const base = makeTmpBase();
-    // Create a subdir — simulates `/gsd start bugfix` artifact dir
+    // Create a subdir — simulates `/gwd start bugfix` artifact dir
     mkdirSync(join(base, ".gsd", "workflows", "bugfixes", "250101-1-slug"), { recursive: true });
     writeFileSync(join(base, ".gsd", "workflows", "bugfixes", "250101-1-slug", "STATE.json"), "{}", "utf-8");
     const plugins = discoverPlugins(base);

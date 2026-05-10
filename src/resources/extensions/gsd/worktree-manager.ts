@@ -1,5 +1,5 @@
 /**
- * GSD Worktree Manager
+ * GWD Worktree Manager
  *
  * Creates and manages git worktrees under .gsd/worktrees/<name>/.
  * Each worktree gets its own branch (worktree/<name>) and a full
@@ -323,7 +323,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
 }
 
 /**
- * List all GSD-managed worktrees.
+ * List all GWD-managed worktrees.
  * Uses native worktree list and filters to those under .gsd/worktrees/.
  */
 export function listWorktrees(basePath: string): WorktreeInfo[] {
@@ -522,7 +522,7 @@ export function removeWorktree(
     wtPath = gitReportedPath;
   } else if (gitReportedPath) {
     console.error(
-      `[GSD] WARNING: git worktree list reported path outside .gsd/worktrees/: ${gitReportedPath}\n` +
+      `[GWD] WARNING: git worktree list reported path outside .gsd/worktrees/: ${gitReportedPath}\n` +
         `  Refusing to use it for removal — falling back to computed path: ${wtPath}`,
     );
     // Still tell git to unregister the worktree entry via its reported path,
@@ -647,7 +647,7 @@ export function removeWorktree(
     // worktree remove), force-remove the git internal worktree metadata first,
     // then remove the filesystem directory. Without this, the .git/worktrees/<name>
     // lock prevents rmSync from cleaning up, and the orphaned worktree directory
-    // causes every subsequent `/gsd auto` to re-enter the stale worktree.
+    // causes every subsequent `/gwd auto` to re-enter the stale worktree.
     if (existsSync(resolvedWtPath)) {
       try {
         const wtInternalDir = join(basePath, ".git", "worktrees", name);
@@ -671,7 +671,7 @@ export function removeWorktree(
     // Path is outside containment — only do a non-force git worktree remove
     // (which refuses to delete dirty worktrees) and never fall back to rmSync.
     console.error(
-      `[GSD] WARNING: Resolved worktree path is outside .gsd/worktrees/: ${resolvedWtPath}\n` +
+      `[GWD] WARNING: Resolved worktree path is outside .gsd/worktrees/: ${resolvedWtPath}\n` +
         `  Skipping forced removal to prevent data loss.`,
     );
     try { nativeWorktreeRemove(basePath, resolvedWtPath, false); } catch (e) { logWarning("worktree", `non-force worktree remove failed for ${resolvedWtPath}: ${e instanceof Error ? e.message : String(e)}`); }
@@ -712,7 +712,7 @@ const SKIP_EXACT = [
 /** File prefixes to skip (for wildcard patterns like completed-units*.json, gsd.db*). */
 const SKIP_PREFIXES = [
   ".gsd/completed-units",
-  ".gsd/gsd.db",
+  ".gsd/gwd.db",
 ];
 
 function shouldSkipPath(filePath: string): boolean {
@@ -747,7 +747,7 @@ function parseDiffNameStatus(entries: { status: string; path: string }[]): Workt
 
 /**
  * Diff the .gsd/ directory between the worktree branch and main branch.
- * Returns a summary of added, modified, and removed GSD artifacts.
+ * Returns a summary of added, modified, and removed GWD artifacts.
  */
 export function diffWorktreeGSD(basePath: string, name: string): WorktreeDiffSummary {
   basePath = normalizeBasePathForWorktreeOps(basePath);

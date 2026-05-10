@@ -216,7 +216,7 @@ export async function launchPackagedWebHost(options: {
 
     const timeout = setTimeout(() => {
       child.kill("SIGTERM")
-      finish(new Error(`Timed out waiting for gsd --web to exit. stderr so far:\n${stderr}`))
+      finish(new Error(`Timed out waiting for gwd --web to exit. stderr so far:\n${stderr}`))
     }, options.timeoutMs ?? 180_000)
 
     child.stdout.on("data", (chunk: Buffer) => {

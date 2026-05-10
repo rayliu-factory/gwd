@@ -82,7 +82,7 @@ test("logs lists activity logs", async (t) => {
   assert.ok(msg.includes("Activity Logs"), "should show activity logs header");
   assert.ok(msg.includes("execute-task"), "should show unit type");
   assert.ok(msg.includes("complete-slice"), "should show second log");
-  assert.ok(msg.includes("/gsd logs <#>"), "should show usage hint");
+  assert.ok(msg.includes("/gwd logs <#>"), "should show usage hint");
 });
 
 test("logs <N> shows activity log details", async (t) => {

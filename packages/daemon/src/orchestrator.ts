@@ -93,19 +93,19 @@ const TOOLS: Tool[] = [
   },
   {
     name: 'start_session',
-    description: 'Start a new GSD auto-mode session for a project. Provide the absolute project path. Optionally provide a command to run instead of the default "/gsd auto".',
+    description: 'Start a new GWD auto-mode session for a project. Provide the absolute project path. Optionally provide a command to run instead of the default "/gwd auto".',
     input_schema: {
       type: 'object' as const,
       properties: {
         projectPath: { type: 'string', description: 'Absolute path to the project directory' },
-        command: { type: 'string', description: 'Optional command to send instead of "/gsd auto"' },
+        command: { type: 'string', description: 'Optional command to send instead of "/gwd auto"' },
       },
       required: ['projectPath'],
     },
   },
   {
     name: 'get_status',
-    description: 'Get the current status of all active GSD sessions. Shows project name, status, duration, and cost for each.',
+    description: 'Get the current status of all active GWD sessions. Shows project name, status, duration, and cost for each.',
     input_schema: {
       type: 'object' as const,
       properties: {},
@@ -114,7 +114,7 @@ const TOOLS: Tool[] = [
   },
   {
     name: 'stop_session',
-    description: 'Stop a running GSD session. Provide a session ID or project name — fuzzy matching is used to find the session.',
+    description: 'Stop a running GWD session. Provide a session ID or project name — fuzzy matching is used to find the session.',
     input_schema: {
       type: 'object' as const,
       properties: {

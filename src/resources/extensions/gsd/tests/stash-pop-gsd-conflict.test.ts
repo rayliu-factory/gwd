@@ -95,7 +95,7 @@ test("#2766: stash pop conflict on .gsd/ files is auto-resolved", () => {
     // mergeMilestoneToMain should succeed — .gsd/ conflict auto-resolved
     const result = mergeMilestoneToMain(repo, "M300", roadmap);
     assert.ok(
-      result.commitMessage.includes("GSD-Milestone: M300"),
+      result.commitMessage.includes("GWD-Milestone: M300"),
       "merge succeeds despite stash pop conflict on .gsd/ file",
     );
     assert.ok(existsSync(join(repo, "feature.ts")), "milestone code merged to main");
@@ -143,7 +143,7 @@ test("#2766: stash pop conflict on non-.gsd files preserves stash for manual res
     // The merge itself should still succeed (stash pop conflict is non-fatal)
     const result = mergeMilestoneToMain(repo, "M301", roadmap);
     assert.ok(
-      result.commitMessage.includes("GSD-Milestone: M301"),
+      result.commitMessage.includes("GWD-Milestone: M301"),
       "merge succeeds even with non-.gsd stash pop conflict",
     );
   } finally {

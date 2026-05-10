@@ -25,10 +25,10 @@ import { useTerminalFontSize } from "@/lib/use-terminal-font-size"
 
 // ActionPanelConfig removed — all commands now route through the main bridge.
 
-/* ─── GSD Action Definitions ─── */
+/* ─── GWD Action Definitions ─── */
 
 /**
- * Defines every /gsd subcommand available in the chat input bar.
+ * Defines every /gwd subcommand available in the chat input bar.
  * Top 3 are shown as standalone buttons; the rest live in the overflow menu.
  * All commands dispatch through the main bridge session.
  */
@@ -44,33 +44,33 @@ interface GSDActionDef {
 
 const GWD_ACTIONS: GSDActionDef[] = [
   // ── Top 3 (standalone buttons) ──
-  { label: "Discuss",   command: "/gsd discuss",   icon: MessageCircle,     description: "Start guided milestone/slice discussion",                    category: "workflow",    disabledDuringAuto: true },
-  { label: "Next",      command: "/gsd next",      icon: Play,              description: "Execute next task, then pause",                              category: "workflow" },
-  { label: "Auto",      command: "/gsd auto",      icon: Zap,               description: "Run all queued units continuously",                         category: "workflow" },
+  { label: "Discuss",   command: "/gwd discuss",   icon: MessageCircle,     description: "Start guided milestone/slice discussion",                    category: "workflow",    disabledDuringAuto: true },
+  { label: "Next",      command: "/gwd next",      icon: Play,              description: "Execute next task, then pause",                              category: "workflow" },
+  { label: "Auto",      command: "/gwd auto",      icon: Zap,               description: "Run all queued units continuously",                         category: "workflow" },
   // ── Overflow: Workflow ──
-  { label: "Stop",      command: "/gsd stop",      icon: Square,            description: "Stop auto-mode gracefully",                                  category: "workflow" },
-  { label: "Pause",     command: "/gsd pause",     icon: Pause,             description: "Pause auto-mode (preserves state)",                          category: "workflow" },
+  { label: "Stop",      command: "/gwd stop",      icon: Square,            description: "Stop auto-mode gracefully",                                  category: "workflow" },
+  { label: "Pause",     command: "/gwd pause",     icon: Pause,             description: "Pause auto-mode (preserves state)",                          category: "workflow" },
   // ── Overflow: Visibility ──
-  { label: "Status",    command: "/gsd status",    icon: BarChart3,         description: "Show progress dashboard",                                    category: "visibility" },
-  { label: "Visualize", command: "/gsd visualize", icon: LayoutGrid,        description: "Interactive TUI (progress, deps, metrics, timeline)",        category: "visibility" },
-  { label: "Queue",     command: "/gsd queue",     icon: ListOrdered,       description: "Show queued/dispatched units and execution order",            category: "visibility" },
-  { label: "History",   command: "/gsd history",   icon: History,           description: "View execution history with cost/phase/model details",        category: "visibility" },
+  { label: "Status",    command: "/gwd status",    icon: BarChart3,         description: "Show progress dashboard",                                    category: "visibility" },
+  { label: "Visualize", command: "/gwd visualize", icon: LayoutGrid,        description: "Interactive TUI (progress, deps, metrics, timeline)",        category: "visibility" },
+  { label: "Queue",     command: "/gwd queue",     icon: ListOrdered,       description: "Show queued/dispatched units and execution order",            category: "visibility" },
+  { label: "History",   command: "/gwd history",   icon: History,           description: "View execution history with cost/phase/model details",        category: "visibility" },
   // ── Overflow: Course correction ──
-  { label: "Steer",     command: "/gsd steer",     icon: Compass,           description: "Apply user override to active work",                         category: "correction" },
-  { label: "Capture",   command: "/gsd capture",   icon: PenLine,           description: "Quick-capture a thought to CAPTURES.md",                     category: "correction" },
-  { label: "Triage",    command: "/gsd triage",    icon: Inbox,             description: "Classify and route pending captures",                        category: "correction",  disabledDuringAuto: true },
-  { label: "Skip",      command: "/gsd skip",      icon: SkipForward,       description: "Prevent a unit from auto-mode dispatch",                     category: "correction" },
-  { label: "Undo",      command: "/gsd undo",      icon: Undo2,             description: "Revert last completed unit",                                 category: "correction" },
+  { label: "Steer",     command: "/gwd steer",     icon: Compass,           description: "Apply user override to active work",                         category: "correction" },
+  { label: "Capture",   command: "/gwd capture",   icon: PenLine,           description: "Quick-capture a thought to CAPTURES.md",                     category: "correction" },
+  { label: "Triage",    command: "/gwd triage",    icon: Inbox,             description: "Classify and route pending captures",                        category: "correction",  disabledDuringAuto: true },
+  { label: "Skip",      command: "/gwd skip",      icon: SkipForward,       description: "Prevent a unit from auto-mode dispatch",                     category: "correction" },
+  { label: "Undo",      command: "/gwd undo",      icon: Undo2,             description: "Revert last completed unit",                                 category: "correction" },
   // ── Overflow: Knowledge ──
-  { label: "Knowledge", command: "/gsd knowledge", icon: BookOpen,          description: "Add rule, pattern, or lesson to KNOWLEDGE.md",               category: "knowledge" },
+  { label: "Knowledge", command: "/gwd knowledge", icon: BookOpen,          description: "Add rule, pattern, or lesson to KNOWLEDGE.md",               category: "knowledge" },
   // ── Overflow: Configuration ──
-  { label: "Mode",      command: "/gsd mode",      icon: SlidersHorizontal, description: "Set workflow mode (solo/team)",                               category: "config" },
-  { label: "Prefs",     command: "/gsd prefs",     icon: Settings,          description: "Manage preferences (global/project)",                        category: "config" },
+  { label: "Mode",      command: "/gwd mode",      icon: SlidersHorizontal, description: "Set workflow mode (solo/team)",                               category: "config" },
+  { label: "Prefs",     command: "/gwd prefs",     icon: Settings,          description: "Manage preferences (global/project)",                        category: "config" },
   // ── Overflow: Maintenance ──
-  { label: "Doctor",    command: "/gsd doctor",    icon: Stethoscope,       description: "Diagnose and repair .gsd/ state",                            category: "maintenance" },
-  { label: "Export",    command: "/gsd export",    icon: FileOutput,        description: "Export milestone/slice results (JSON or Markdown)",           category: "maintenance" },
-  { label: "Cleanup",   command: "/gsd cleanup",   icon: Trash2,            description: "Remove merged branches or snapshots",                        category: "maintenance" },
-  { label: "Remote",    command: "/gsd remote",    icon: Globe,             description: "Control remote auto-mode (Slack/Discord)",                    category: "maintenance" },
+  { label: "Doctor",    command: "/gwd doctor",    icon: Stethoscope,       description: "Diagnose and repair .gsd/ state",                            category: "maintenance" },
+  { label: "Export",    command: "/gwd export",    icon: FileOutput,        description: "Export milestone/slice results (JSON or Markdown)",           category: "maintenance" },
+  { label: "Cleanup",   command: "/gwd cleanup",   icon: Trash2,            description: "Remove merged branches or snapshots",                        category: "maintenance" },
+  { label: "Remote",    command: "/gwd remote",    icon: Globe,             description: "Control remote auto-mode (Slack/Discord)",                    category: "maintenance" },
 ]
 
 /** Top 3 shown as standalone buttons next to chat input */
@@ -103,7 +103,7 @@ function groupByCategory(actions: GSDActionDef[]): Array<{ category: GSDActionDe
 /**
  * ChatMode — main view for the Chat tab.
  *
- * All /gsd commands dispatch through the main bridge session.
+ * All /gwd commands dispatch through the main bridge session.
  * Commands that inject competing LLM prompts (discuss, triage)
  * are disabled while auto-mode is active.
  *
@@ -187,7 +187,7 @@ function ChatModeHeader({ onPrimaryAction, onSecondaryAction }: ChatModeHeaderPr
     onPrimaryAction(workflowAction.primary.command)
   }
 
-  // Derive a short GSD state badge label
+  // Derive a short GWD state badge label
   const stateBadge = (() => {
     if (state.bootStatus !== "ready") return state.bootStatus
     const phase = workspace?.active.phase
@@ -469,7 +469,7 @@ function MarkdownContent({ content }: { content: string }) {
 /* ─── TuiSelectPrompt ─── */
 
 /**
- * Renders a GSD arrow-key select prompt as a native clickable list.
+ * Renders a GWD arrow-key select prompt as a native clickable list.
  *
  * Clicking an option calculates the arrow-key delta from the current
  * PTY-tracked selection, sends that many \x1b[A/\x1b[B + \r to the PTY,
@@ -612,7 +612,7 @@ function TuiSelectPrompt({
 /* ─── TuiTextPrompt ─── */
 
 /**
- * Renders a GSD text prompt as a native labeled input field.
+ * Renders a GWD text prompt as a native labeled input field.
  *
  * Submitting sends the typed value + "\r" to the PTY (carriage return = Enter).
  * After submission shows a static "✓ Submitted" confirmation (value not echoed).
@@ -708,7 +708,7 @@ function TuiTextPrompt({
 /* ─── TuiPasswordPrompt ─── */
 
 /**
- * Renders a GSD password/API-key prompt as a native masked input field.
+ * Renders a GWD password/API-key prompt as a native masked input field.
  *
  * Submitting sends the typed value + "\r" to the PTY.
  * The entered value is NEVER shown in the DOM, logs, or post-submission text.
@@ -1156,7 +1156,7 @@ function ChatMessageList({
  * - Disabled when disconnected; shows "Disconnected" badge
  * - Send button visible when input has content and connected
  * - Top 3 action buttons (Discuss, Next, Auto) shown standalone
- * - Overflow menu (⋯) contains all remaining /gsd subcommands grouped by category
+ * - Overflow menu (⋯) contains all remaining /gwd subcommands grouped by category
  * - Every action has a tooltip with description on hover
  */
 function ChatInputBar({
@@ -2044,9 +2044,9 @@ export function ChatPane({ className, onOpenAction }: ChatPaneProps) {
     if (!workflowAction.primary || workflowAction.disabled) return null
     const primary = workflowAction.primary
     const iconByCommand: Record<string, LucideIcon> = {
-      "/gsd stop": Square,
-      "/gsd auto": Zap,
-      "/gsd next": Play,
+      "/gwd stop": Square,
+      "/gwd auto": Zap,
+      "/gwd next": Play,
     }
 
     return {

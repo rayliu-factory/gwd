@@ -1,8 +1,8 @@
 /**
- * GSD Guided Flow — Smart Entry Wizard
+ * GWD Guided Flow — Smart Entry Wizard
  *
  * One function: showSmartEntry(). Reads state from disk, shows a contextual
- * wizard via showNextAction(), and dispatches through GSD-WORKFLOW.md.
+ * wizard via showNextAction(), and dispatches through GWD-WORKFLOW.md.
  * No execution state, no hooks, no tools — the LLM does the rest.
  */
 
@@ -154,11 +154,11 @@ export function resolveExpectedArtifactPathForScope(
 
 async function runQuickTaskChoice(ctx: ExtensionCommandContext, pi: ExtensionAPI): Promise<void> {
   if (!ctx.hasUI) {
-    ctx.ui.notify("Run /gsd quick <task> for small bounded work, or /gsd do <task> for natural-language routing.", "info");
+    ctx.ui.notify("Run /gwd quick <task> for small bounded work, or /gwd do <task> for natural-language routing.", "info");
     return;
   }
 
-  const task = (await ctx.ui.input("Quick task", "Describe the small task to run with /gsd quick"))?.trim();
+  const task = (await ctx.ui.input("Quick task", "Describe the small task to run with /gwd quick"))?.trim();
   if (!task) {
     ctx.ui.notify("Quick task cancelled.", "info");
     return;
@@ -201,7 +201,7 @@ function runPlanV2Gate(
     }
     const reason = compiled.reason ?? "plan-v2 compilation failed";
     ctx.ui.notify(
-      `Plan gate failed-closed: ${reason}. Complete plan/discuss artifacts before execution.\n\nIf this keeps happening, try: /gsd doctor heal`,
+      `Plan gate failed-closed: ${reason}. Complete plan/discuss artifacts before execution.\n\nIf this keeps happening, try: /gwd doctor heal`,
       "error",
     );
     return "block";
@@ -260,7 +260,7 @@ interface PendingDeepProjectSetupEntry {
 }
 
 // #4573: cap for how many times we nudge the LLM after a premature ready
-// phrase before giving up and asking the user to re-run /gsd.
+// phrase before giving up and asking the user to re-run /gwd.
 const MAX_READY_REJECTS = 2;
 
 // H1 (#5012): cap for Gate 1b plan-blocked recovery hints. After this many
@@ -295,7 +295,7 @@ const LEGACY_DEEP_SETUP_PSEUDO_MILESTONE_DIRS = new Set([
 ]);
 const FOREGROUND_DEEP_SETUP_QUESTION_POLICY = `## Foreground Deep Setup Question Policy
 
-This stage is running inside the foreground \`/gsd new-project --deep\` interview. Ask user questions in plain chat only.
+This stage is running inside the foreground \`/gwd new-project --deep\` interview. Ask user questions in plain chat only.
 
 - Do NOT call \`ask_user_questions\`, \`AskUserQuestion\`, or ToolSearch to discover user-input tools.
 - Ask one focused round, then stop and wait for the user's normal chat response.`;
@@ -504,7 +504,7 @@ async function dispatchNextDeepProjectSetupStage(entry: PendingDeepProjectSetupE
     // Claude Code currently surfaces workflow-MCP question calls as tool-request
     // UI that can be cancelled outside the normal chat flow. During the
     // foreground deep project setup interview, keep user input in plain chat so
-    // `/gsd new-project --deep` cannot bounce through cancelled tool requests.
+    // `/gwd new-project --deep` cannot bounce through cancelled tool requests.
     structuredQuestionsAvailable: "false" as const,
   };
   let result: Awaited<ReturnType<(typeof DISPATCH_RULES)[number]["match"]>> = null;
@@ -601,7 +601,7 @@ export function checkAutoStartAfterDiscuss(): boolean {
         );
         ctx.ui.notify(
           `Milestone ${milestoneId} plan_milestone has been blocked ${entry.planBlockedRecoveryCount} times. ` +
-          `Re-run /gsd to reset the recovery counter, or run /gsd-debug to diagnose without resetting.`,
+          `Re-run /gwd to reset the recovery counter, or run /gwd-debug to diagnose without resetting.`,
           "error",
         );
         return false;
@@ -720,7 +720,7 @@ export function checkAutoStartAfterDiscuss(): boolean {
   // R3b: belt-and-suspenders for silent registration failure. The discuss flow
   // finished and STATE.md exists, but the milestone may never have landed in
   // the DB. Without this guard, the user sees "Milestone M001 ready." and then
-  // /gsd reports "No Active Milestone".
+  // /gwd reports "No Active Milestone".
   if (isDbAvailable()) {
     const milestoneRow = getMilestone(milestoneId);
     if (!milestoneRow) {
@@ -728,7 +728,7 @@ export function checkAutoStartAfterDiscuss(): boolean {
         `Milestone ${milestoneId}: discuss artifacts on disk but no DB row exists. ` +
         `PROJECT.md may have failed to register milestones. ` +
         `Re-save PROJECT.md with canonical "- [ ] M001: Title — One-liner" lines, ` +
-        `then re-run /gsd to recover.`,
+        `then re-run /gwd to recover.`,
         "error",
       );
       return false;
@@ -790,7 +790,7 @@ function hasToolUse(msg: any): boolean {
  *
  * When the LLM emits "Milestone {{id}} ready." but has not written the
  * milestone CONTEXT/ROADMAP artifacts, `checkAutoStartAfterDiscuss()` silently
- * returns false and the next /gsd invocation loops into the "All milestones
+ * returns false and the next /gwd invocation loops into the "All milestones
  * complete" warning.
  *
  * This function, called from `handleAgentEnd` after `checkAutoStartAfterDiscuss`
@@ -801,7 +801,7 @@ function hasToolUse(msg: any): boolean {
  *   2. Injects a system message via `pi.sendMessage(..., {triggerTurn:true})`
  *      telling the LLM the signal was premature and to emit the writes now.
  *   3. Caps at `MAX_READY_REJECTS` per-entry; beyond that, gives up and asks
- *      the user to re-run /gsd.
+ *      the user to re-run /gwd.
  *
  * Returns true when a nudge (or give-up) was emitted, signaling the caller to
  * skip `resolveAgentEnd`.
@@ -852,12 +852,12 @@ export function maybeHandleReadyPhraseWithoutFiles(event: { messages: any[] }): 
   entry.readyRejectCount = (entry.readyRejectCount ?? 0) + 1;
 
   if (entry.readyRejectCount > MAX_READY_REJECTS) {
-    // Give up: clear state and tell the user to re-run /gsd. Avoids an
+    // Give up: clear state and tell the user to re-run /gwd. Avoids an
     // infinite nudge loop when the LLM never produces the writes.
     pendingAutoStartMap.delete(basePath);
     ctx.ui.notify(
       `Milestone ${milestoneId}: LLM signaled "ready" ${entry.readyRejectCount} times without writing files. ` +
-      `Stopping auto-nudge. Run /gsd to try again.`,
+      `Stopping auto-nudge. Run /gwd to try again.`,
       "error",
     );
     return true;
@@ -937,7 +937,7 @@ export function maybeHandleEmptyIntentTurn(
   isAuto: boolean,
 ): boolean {
   // Gate: only fire when there is system-driven work in flight. Interactive
-  // /gsd discuss (user-driven) produces legitimate text-only turns.
+  // /gwd discuss (user-driven) produces legitimate text-only turns.
   if (!isAuto && pendingAutoStartMap.size === 0) return false;
 
   const lastMsg = event.messages[event.messages.length - 1];
@@ -1025,7 +1025,7 @@ type UIContext = ExtensionContext;
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /**
- * Read GSD-WORKFLOW.md and dispatch it to the LLM with a contextual note.
+ * Read GWD-WORKFLOW.md and dispatch it to the LLM with a contextual note.
  * This is the only way the wizard triggers work — everything else is the LLM's job.
  *
  * When a unitType is provided, resolves the user's model preference for that
@@ -1082,7 +1082,7 @@ async function dispatchWorkflow(
   // Providers with grammar-based constrained decoding (xAI/Grok) return
   // "Grammar is too complex" when the combined tool schema is too large.
   // Guided workflow turns only need the active unit's tool surface; strip
-  // unrelated GSD tools and broad non-GSD tools for this queued turn, then
+  // unrelated GWD tools and broad non-GWD tools for this queued turn, then
   // restore so the narrowed surface does not leak into future dispatches.
   let savedTools: ReturnType<typeof scopeGsdWorkflowToolsForDispatch> = null;
 
@@ -1094,8 +1094,8 @@ async function dispatchWorkflow(
       restoreVisibleSkills: typeof pi.setVisibleSkills === "function",
     };
     if (unitType?.startsWith("discuss-") && !isFullGsdToolSurfaceRequested()) {
-      // Keep all non-GSD tools (builtins, other extensions) and only the
-      // GSD tools on the discuss allowlist.
+      // Keep all non-GWD tools (builtins, other extensions) and only the
+      // GWD tools on the discuss allowlist.
       const scopedTools = currentTools.filter(
         (t) => !t.startsWith("gsd_") || DISCUSS_TOOLS_ALLOWLIST.includes(t),
       );
@@ -1116,7 +1116,7 @@ async function dispatchWorkflow(
       savedTools = scopeGsdWorkflowToolsForDispatch(pi, unitType) ?? savedTools;
     }
 
-    const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GSD-WORKFLOW.md");
+    const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GWD-WORKFLOW.md");
     const workflow = readFileSync(workflowPath, "utf-8");
 
     pi.sendMessage(
@@ -1460,7 +1460,7 @@ async function buildDiscussSlicePrompt(
 }
 
 /**
- * /gsd discuss — show a picker of non-done slices and run a slice interview.
+ * /gwd discuss — show a picker of non-done slices and run a slice interview.
  * Loops back to the picker after each discussion so the user can chain
  * multiple slice interviews in one session.
  */
@@ -1471,7 +1471,7 @@ export async function showDiscuss(
 ): Promise<void> {
   // Guard: no .gsd/ project
   if (!existsSync(gsdRoot(basePath))) {
-    ctx.ui.notify("No GWD project found. Run /gsd to start one first.", "warning");
+    ctx.ui.notify("No GWD project found. Run /gwd to start one first.", "warning");
     return;
   }
 
@@ -1495,7 +1495,7 @@ export async function showDiscuss(
   if (!state.activeMilestone?.id) {
     const pendingMilestones = state.registry.filter(m => m.status === "pending");
     if (pendingMilestones.length === 0) {
-      ctx.ui.notify("No active milestone. Run /gsd to create one first.", "warning");
+      ctx.ui.notify("No active milestone. Run /gwd to create one first.", "warning");
       return;
     }
     await showDiscussQueuedMilestone(ctx, pi, basePath, pendingMilestones);
@@ -1512,7 +1512,7 @@ export async function showDiscuss(
     const draftContent = draftFile ? await loadFile(draftFile) : null;
 
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${mid}: ${milestoneTitle}`,
+      title: `GWD — ${mid}: ${milestoneTitle}`,
       summary: ["This milestone has a draft context from a prior discussion.", "It needs a dedicated discussion before auto-planning can begin."],
       actions: [
         {
@@ -1532,7 +1532,7 @@ export async function showDiscuss(
           description: "Leave this milestone as-is and start something new.",
         },
       ],
-      notYetMessage: "Run /gsd discuss when ready to discuss this milestone.",
+      notYetMessage: "Run /gwd discuss when ready to discuss this milestone.",
     });
 
     if (choice === "discuss_draft") {
@@ -1581,7 +1581,7 @@ export async function showDiscuss(
   const roadmapFile = resolveMilestoneFile(basePath, mid, "ROADMAP");
   const roadmapContent = roadmapFile ? await loadFile(roadmapFile) : null;
   if (!roadmapContent && !isDbAvailable()) {
-    ctx.ui.notify("No roadmap yet for this milestone. Run /gsd to plan first.", "warning");
+    ctx.ui.notify("No roadmap yet for this milestone. Run /gwd to plan first.", "warning");
     return;
   }
 
@@ -1635,8 +1635,8 @@ export async function showDiscuss(
       const lockData = readSessionLockData(basePath);
       const remoteAutoRunning = lockData && lockData.pid !== process.pid && isSessionLockProcessAlive(lockData);
       const nextStep = remoteAutoRunning
-        ? "Auto-mode is already running — use /gsd status to check progress."
-        : "Run /gsd to start planning.";
+        ? "Auto-mode is already running — use /gwd status to check progress."
+        : "Run /gwd to start planning.";
       ctx.ui.notify(
         `All ${pendingSlices.length} slices discussed. ${nextStep}`,
         "info",
@@ -1674,13 +1674,13 @@ export async function showDiscuss(
     }
 
     const choice = await showNextAction(ctx, {
-      title: "GSD — Discuss a slice",
+      title: "GWD — Discuss a slice",
       summary: [
         `${mid}: ${milestoneTitle}`,
         "Pick a slice to interview. Context file will be written when done.",
       ],
       actions,
-      notYetMessage: "Run /gsd discuss when ready.",
+      notYetMessage: "Run /gwd discuss when ready.",
     });
 
     if (choice === "not_yet") return;
@@ -1747,13 +1747,13 @@ async function showDiscussQueuedMilestone(
   });
 
   const choice = await showNextAction(ctx, {
-    title: "GSD — Discuss a queued milestone",
+    title: "GWD — Discuss a queued milestone",
     summary: [
       "Select a queued milestone to discuss.",
       "Discussing will update its context file. It will not be activated.",
     ],
     actions,
-    notYetMessage: "Run /gsd discuss when ready.",
+    notYetMessage: "Run /gwd discuss when ready.",
   });
 
   if (choice === "not_yet") return;
@@ -1784,7 +1784,7 @@ async function showDiscussQueuedMilestone(
           description: "Treat your first message as authoritative seed context; skip scouting",
         },
       ],
-      notYetMessage: "Run /gsd discuss when ready.",
+      notYetMessage: "Run /gwd discuss when ready.",
     });
     if (mode === "not_yet") return;
     fastPath = mode === "fast";
@@ -1843,8 +1843,8 @@ async function dispatchDiscussForMilestone(
 /**
  * Self-heal: scan runtime records and clear stale ones left behind when
  * auto-mode crashed mid-unit. auto.ts has its own selfHealRuntimeRecords()
- * but guided-flow (manual /gsd mode) never called it — meaning stale records
- * persisted until the next /gsd auto run.  This ensures the wizard always
+ * but guided-flow (manual /gwd mode) never called it — meaning stale records
+ * persisted until the next /gwd auto run.  This ensures the wizard always
  * starts from a clean state regardless of how the previous session ended.
  */
 function selfHealRuntimeRecords(basePath: string, ctx: ExtensionContext): { cleared: number } {
@@ -1920,7 +1920,7 @@ async function handleMilestoneActions(
         description: "Return to the previous menu.",
       },
     ],
-    notYetMessage: "Run /gsd when ready.",
+    notYetMessage: "Run /gwd when ready.",
   });
 
   if (choice === "park") {
@@ -1932,7 +1932,7 @@ async function handleMilestoneActions(
         { id: "blocked_external", label: "Blocked externally", description: "Waiting on an external dependency or decision." },
         { id: "needs_rethink", label: "Needs rethinking", description: "The approach needs to be reconsidered." },
       ],
-      notYetMessage: "Run /gsd when ready.",
+      notYetMessage: "Run /gwd when ready.",
     });
 
     // User pressed "Not yet" / Escape — cancel the park operation
@@ -1945,7 +1945,7 @@ async function handleMilestoneActions(
 
     const success = parkMilestone(basePath, milestoneId, reasonText);
     if (success) {
-      ctx.ui.notify(`Parked ${milestoneId}. Run /gsd unpark ${milestoneId} to reactivate.`, "info");
+      ctx.ui.notify(`Parked ${milestoneId}. Run /gwd unpark ${milestoneId} to reactivate.`, "info");
     } else {
       ctx.ui.notify(`Could not park ${milestoneId} — milestone not found or already parked.`, "warning");
     }
@@ -1992,7 +1992,7 @@ export async function showSmartEntry(
   const stepMode = options?.step;
 
   // ── Clear stale milestone ID reservations from previous cancelled sessions ──
-  // Reservations only need to survive within a single /gsd interaction.
+  // Reservations only need to survive within a single /gwd interaction.
   // Without this, each cancelled session permanently bumps the next ID. (#2488)
   clearReservedMilestoneIds();
 
@@ -2004,7 +2004,7 @@ export async function showSmartEntry(
   }
   if (dirCheck.severity === "warning") {
     const proceed = await showConfirm(ctx, {
-      title: "GSD — Unusual Directory",
+      title: "GWD — Unusual Directory",
       message: dirCheck.reason!,
       confirmLabel: "Continue anyway",
       declineLabel: "Cancel",
@@ -2044,7 +2044,7 @@ export async function showSmartEntry(
     // which will detect "no milestones" and start the discuss prompt
   }
 
-  // ── Ensure git repo exists — GSD needs it for worktree isolation ──────
+  // ── Ensure git repo exists — GWD needs it for worktree isolation ──────
   // Also handle inherited repos: if basePath is a subdirectory of another
   // git repo that has no .gsd, create a fresh repo to prevent cross-project
   // state leaks (#1639).
@@ -2100,10 +2100,10 @@ export async function showSmartEntry(
   } else if (interrupted.classification === "recoverable") {
     if (interrupted.lock) clearLock(basePath);
     const resumeLabel = interrupted.pausedSession?.stepMode
-      ? "Resume with /gsd next"
-      : "Resume with /gsd auto";
+      ? "Resume with /gwd next"
+      : "Resume with /gwd auto";
     const resume = await showNextAction(ctx, {
-      title: "GSD — Interrupted Session Detected",
+      title: "GWD — Interrupted Session Detected",
       summary: formatInterruptedSessionSummary(interrupted),
       actions: [
         { id: "resume", label: resumeLabel, description: "Pick up where it left off", recommended: true },
@@ -2131,7 +2131,7 @@ export async function showSmartEntry(
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      ctx.ui.notify(`GSD could not auto-import existing planning state into gsd.db: ${message}`, "warning");
+      ctx.ui.notify(`GWD could not auto-import existing planning state into gsd.db: ${message}`, "warning");
       logWarning("guided", `planning state auto-import failed: ${message}`, { file: "guided-flow.ts" });
     }
   }
@@ -2149,7 +2149,7 @@ export async function showSmartEntry(
   }
 
   // ── Deep planning mode kickoff ────────────────────────────────────────
-  // When `planning_depth: deep` is set (e.g. via `/gsd new-project --deep`)
+  // When `planning_depth: deep` is set (e.g. via `/gwd new-project --deep`)
   // and any project-level stage gate is still pending, keep the user-question
   // stages in the foreground conversation. Auto-mode is resumed only after
   // the project interview artifacts exist, so questions do not look like
@@ -2170,8 +2170,8 @@ export async function showSmartEntry(
 
   if (!state.activeMilestone?.id) {
     // Guard: if a discuss session is already in flight, don't re-inject the prompt.
-    // Both /gsd and /gsd auto reach this branch when no milestone exists yet.
-    // Without this guard, every subsequent /gsd call overwrites the pending auto-start
+    // Both /gwd and /gwd auto reach this branch when no milestone exists yet.
+    // Without this guard, every subsequent /gwd call overwrites the pending auto-start
     // and fires another dispatchWorkflow, resetting the conversation mid-interview.
     if (pendingAutoStartMap.has(basePath)) {
       // #3274: If /clear interrupted the discussion, the pending entry is stale.
@@ -2203,7 +2203,7 @@ export async function showSmartEntry(
           if (entries.length > 0) {
             ctx.ui.notify(
               `Milestone directory has ${entries.length} entries but none were recognized as milestones. ` +
-              `This may indicate a corrupted state or wrong working directory. Run \`/gsd doctor\` to diagnose.`,
+              `This may indicate a corrupted state or wrong working directory. Run \`/gwd doctor\` to diagnose.`,
               "warning",
             );
             return;
@@ -2232,7 +2232,7 @@ export async function showSmartEntry(
           {
             id: "quick_task",
             label: "Quick task",
-            description: "For small bounded work, run /gsd quick <task> or /gsd do <task>.",
+            description: "For small bounded work, run /gwd quick <task> or /gwd do <task>.",
             recommended: true,
           },
           {
@@ -2241,7 +2241,7 @@ export async function showSmartEntry(
             description: "Define a larger body of work with planning artifacts.",
           },
         ],
-        notYetMessage: "Run /gsd when ready.",
+        notYetMessage: "Run /gwd when ready.",
       });
 
       if (choice === "quick_task") {
@@ -2281,7 +2281,7 @@ export async function showSmartEntry(
   // ── All milestones complete → New milestone ──────────────────────────
   if (state.phase === "complete") {
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${milestoneId}: ${milestoneTitle}`,
+      title: `GWD — ${milestoneId}: ${milestoneTitle}`,
       summary: ["All milestones complete."],
       actions: [
         {
@@ -2301,7 +2301,7 @@ export async function showSmartEntry(
           description: "Review what was built.",
         },
       ],
-      notYetMessage: "Run /gsd when ready.",
+      notYetMessage: "Run /gwd when ready.",
     });
 
     if (choice === "quick_task") {
@@ -2329,7 +2329,7 @@ export async function showSmartEntry(
     const draftContent = draftFile ? await loadFile(draftFile) : null;
 
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${milestoneId}: ${milestoneTitle}`,
+      title: `GWD — ${milestoneId}: ${milestoneTitle}`,
       summary: ["This milestone has a draft context from a prior discussion.", "It needs a dedicated discussion before auto-planning can begin."],
       actions: [
         {
@@ -2349,7 +2349,7 @@ export async function showSmartEntry(
           description: "Leave this milestone as-is and start something new.",
         },
       ],
-      notYetMessage: "Run /gsd when ready to discuss this milestone.",
+      notYetMessage: "Run /gwd when ready to discuss this milestone.",
     });
 
     if (choice === "discuss_draft") {
@@ -2440,10 +2440,10 @@ export async function showSmartEntry(
       ];
 
       const choice = await showNextAction(ctx, {
-        title: `GSD — ${milestoneId}: ${milestoneTitle}`,
+        title: `GWD — ${milestoneId}: ${milestoneTitle}`,
         summary: [hasContext ? "Context captured. Ready to create roadmap." : "New milestone — no roadmap yet."],
         actions,
-        notYetMessage: "Run /gsd when ready.",
+        notYetMessage: "Run /gwd when ready.",
       });
 
       if (choice === "quick_task") {
@@ -2509,10 +2509,10 @@ export async function showSmartEntry(
       ];
 
       const choice = await showNextAction(ctx, {
-        title: `GSD — ${milestoneId}: ${milestoneTitle}`,
+        title: `GWD — ${milestoneId}: ${milestoneTitle}`,
         summary: ["Roadmap exists. Ready to execute."],
         actions,
-        notYetMessage: "Run /gsd status for details.",
+        notYetMessage: "Run /gwd status for details.",
       });
 
       if (choice === "auto") {
@@ -2575,10 +2575,10 @@ export async function showSmartEntry(
       : `${sliceId}: ${sliceTitle} — ready for planning.`;
 
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
+      title: `GWD — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
       summary: [summaryLine],
       actions,
-      notYetMessage: "Run /gsd when ready.",
+      notYetMessage: "Run /gwd when ready.",
     });
 
     if (choice === "plan") {
@@ -2621,7 +2621,7 @@ export async function showSmartEntry(
   // ── All tasks done → Complete slice ──────────────────────────────────
   if (state.phase === "summarizing") {
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
+      title: `GWD — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
       summary: ["All tasks complete. Ready for slice summary."],
       actions: [
         {
@@ -2641,7 +2641,7 @@ export async function showSmartEntry(
           description: "Park, discard, or skip this milestone.",
         },
       ],
-      notYetMessage: "Run /gsd when ready.",
+      notYetMessage: "Run /gwd when ready.",
     });
 
     if (choice === "complete") {
@@ -2674,7 +2674,7 @@ export async function showSmartEntry(
       !!(sDir && await loadFile(join(sDir, "continue.md")));
 
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
+      title: `GWD — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
       summary: [
         hasInterrupted
           ? `Resuming: ${taskId} — ${taskTitle}`
@@ -2705,7 +2705,7 @@ export async function showSmartEntry(
           description: "Park, discard, or skip this milestone.",
         },
       ],
-      notYetMessage: "Run /gsd when ready.",
+      notYetMessage: "Run /gwd when ready.",
     });
 
     if (choice === "auto") {

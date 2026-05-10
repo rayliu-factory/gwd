@@ -1,8 +1,8 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Auto-mode worktree lifecycle, merge, and cleanup management.
 
 /**
- * GSD Auto-Worktree -- lifecycle management for auto-mode worktrees.
+ * GWD Auto-Worktree -- lifecycle management for auto-mode worktrees.
  *
  * Auto-mode creates worktrees with `milestone/<MID>` branches (distinct from
  * manual `/worktree` which uses `worktree/<name>` branches). This module
@@ -472,7 +472,7 @@ export function checkResourcesStale(
   const current = readResourceVersion();
   if (current === null) return null;
   if (current !== versionOnStart) {
-    return "GSD resources were updated since this session started. Restart gsd to load the new code.";
+    return "GWD resources were updated since this session started. Restart gsd to load the new code.";
   }
   return null;
 }
@@ -1279,7 +1279,7 @@ export function teardownAutoWorktree(
         }
       } else {
         console.error(
-          `[GSD] REFUSING fallback rmSync — path is outside .gsd/worktrees/: ${wtDir}`,
+          `[GWD] REFUSING fallback rmSync — path is outside .gsd/worktrees/: ${wtDir}`,
         );
       }
     }
@@ -1626,7 +1626,7 @@ export function mergeMilestoneToMain(
       GWD_GIT_ERROR,
       `Resolved integration branch "${mainBranch}" is the same ref as milestone branch ` +
       `"${milestoneBranch}" — refusing to self-merge. Integration branch metadata is invalid; ` +
-      `set a distinct main_branch in GSD preferences or repair the milestone integration record ` +
+      `set a distinct main_branch in GWD preferences or repair the milestone integration record ` +
       `before retrying milestone completion.`,
     );
   }
@@ -1677,9 +1677,9 @@ export function mergeMilestoneToMain(
       .flatMap((s) => s.tasks.map((task) => `- ${s.id}/${task.id}: ${task.title}`))
       .join("\n");
     const taskBlock = taskLines ? `\n\nCompleted tasks:\n${taskLines}` : "";
-    body = `\n\nCompleted slices:\n${sliceLines}${taskBlock}\n\n${milestoneContext}\nGSD-Milestone: ${milestoneId}\nBranch: ${milestoneBranch}`;
+    body = `\n\nCompleted slices:\n${sliceLines}${taskBlock}\n\n${milestoneContext}\nGWD-Milestone: ${milestoneId}\nBranch: ${milestoneBranch}`;
   } else {
-    body = `\n\n${milestoneContext}\nGSD-Milestone: ${milestoneId}\nBranch: ${milestoneBranch}`;
+    body = `\n\n${milestoneContext}\nGWD-Milestone: ${milestoneId}\nBranch: ${milestoneBranch}`;
   }
   const commitMessage = subject + body;
 
@@ -1931,8 +1931,8 @@ export function mergeMilestoneToMain(
         : nativeConflictFiles(originalBasePath_);
 
     if (conflictedFiles.length > 0) {
-      // Separate auto-resolvable conflicts (GSD state files + build artifacts)
-      // from real code conflicts. GSD state files diverge between branches
+      // Separate auto-resolvable conflicts (GWD state files + build artifacts)
+      // from real code conflicts. GWD state files diverge between branches
       // during normal operation. Build artifacts are machine-generated and
       // regenerable. Both are safe to accept from the milestone branch.
       const autoResolvable = conflictedFiles.filter(isSafeToAutoResolve);

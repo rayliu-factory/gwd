@@ -1,4 +1,4 @@
-// GSD Extension — Regression tests for auto-mode warning noise (PR #4294)
+// GWD Extension — Regression tests for auto-mode warning noise (PR #4294)
 //
 // Three independent bug fixes, three regression tests:
 //

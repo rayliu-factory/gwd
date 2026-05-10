@@ -1,6 +1,6 @@
-# GSD Commands Reference
+# GWD Commands Reference
 
-All commands can be run via `gsd headless [command]`.
+All commands can be run via `gwd headless [command]`.
 
 ## Workflow Commands
 

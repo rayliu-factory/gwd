@@ -91,7 +91,7 @@ Format:
 
 Run the evals. If the model can't complete them, the server — not the model — needs work. Iterate on descriptions, error messages, and tool granularity.
 
-## Step 6: Wire into GSD
+## Step 6: Wire into GWD
 
 Write the project's `.mcp.json` entry using `/gwd mcp init` as a starting point. Document env vars and startup in README.md. If the server is globally useful, suggest the user file it as a durable skill via `spike-wrap-up` or publish it.
 
@@ -116,6 +116,6 @@ Write the project's `.mcp.json` entry using `/gwd mcp init` as a starting point.
 - [ ] `evals.xml` has 10 questions; the model completes ≥8 without handholding.
 - [ ] MCP Inspector test passes cleanly.
 - [ ] README documents env, startup, and rate-limit behavior.
-- [ ] Server is reachable from GSD via `.mcp.json` entry.
+- [ ] Server is reachable from GWD via `.mcp.json` entry.
 
 </success_criteria>

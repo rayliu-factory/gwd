@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Registers GSD extension runtime hooks and token-saving tool policies.
+// Project/App: GWD-2
+// File Purpose: Registers GWD extension runtime hooks and token-saving tool policies.
 
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -314,7 +314,7 @@ async function applyDisabledModelProviderPolicy(ctx: ExtensionContext): Promise<
 }
 
 /**
- * Bridge `context_management.compaction_threshold_percent` from GSD preferences
+ * Bridge `context_management.compaction_threshold_percent` from GWD preferences
  * into the agent's runtime compaction settings (#5475). The preference is
  * validated to (0.5, 0.95) at load time, but defense-in-depth normalization
  * here protects against a stale or hand-edited prefs file. Calling with
@@ -504,7 +504,7 @@ export function registerHooks(
     }
     clearDeferredApprovalGate(beforeAgentBasePath);
 
-    // GSD's own context injection (existing behavior — unchanged).
+    // GWD's own context injection (existing behavior — unchanged).
     const { buildBeforeAgentStartResult } = await import("./system-context.js");
     const gsdResult = await buildBeforeAgentStartResult(event, ctx);
 
@@ -623,7 +623,7 @@ export function registerHooks(
         ? "Check the task plan for remaining steps."
         : "Continue this slice from the latest planning/research/discussion artifacts.",
       decisions: "Check task summary files for prior decisions.",
-      context: "Session was auto-compacted by Pi. Resume with /gsd.",
+      context: "Session was auto-compacted by Pi. Resume with /gwd.",
       nextAction: state.activeTask
         ? `Resume task ${taskId}: ${taskTitle}.`
         : `Resume ${phaseLabel} work for slice ${state.activeSlice.id}.`,
@@ -743,7 +743,7 @@ export function registerHooks(
     }
 
     // ── Queue-mode execution guard (#2545): block source-code mutations ──
-    // When /gsd queue is active, the agent should only create milestones,
+    // When /gwd queue is active, the agent should only create milestones,
     // not execute work. Block write/edit to non-.gsd/ paths and bash commands
     // that would modify files.
     if (isQueuePhaseActive(discussionBasePath)) {

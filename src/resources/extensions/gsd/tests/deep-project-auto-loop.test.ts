@@ -191,7 +191,7 @@ async function runNewProjectCommand(base: string, command: string): Promise<unkn
   const previousGsdHome = process.env.GWD_HOME;
   const previousWorkflowPath = process.env.GWD_WORKFLOW_PATH;
   const previousProjectRoot = process.env.GWD_PROJECT_ROOT;
-  const workflowPath = join(base, "GSD-WORKFLOW.md");
+  const workflowPath = join(base, "GWD-WORKFLOW.md");
   writeFileSync(workflowPath, "# Test Workflow\n");
 
   try {
@@ -225,7 +225,7 @@ async function runBareGsdCommand(base: string): Promise<unknown[]> {
   const previousGsdHome = process.env.GWD_HOME;
   const previousWorkflowPath = process.env.GWD_WORKFLOW_PATH;
   const previousProjectRoot = process.env.GWD_PROJECT_ROOT;
-  const workflowPath = join(base, "GSD-WORKFLOW.md");
+  const workflowPath = join(base, "GWD-WORKFLOW.md");
   writeFileSync(workflowPath, "# Test Workflow\n");
 
   try {
@@ -655,7 +655,7 @@ test("deep project setup: new-project command only writes planning_depth with --
       assert.doesNotMatch(
         readFileSync(lightPrefsPath, "utf-8"),
         /planning_depth\s*:/,
-        "plain /gsd new-project must not persist planning_depth",
+        "plain /gwd new-project must not persist planning_depth",
       );
     }
     assert.equal(lightMessages.length, 1, "plain new-project should still dispatch the normal first milestone discussion");
@@ -679,7 +679,7 @@ test("deep project setup: new-project command only writes planning_depth with --
   }
 });
 
-test("deep project setup: bare /gsd ignores global planning_depth without project opt-in", async () => {
+test("deep project setup: bare /gwd ignores global planning_depth without project opt-in", async () => {
   const base = makeCommandBase();
   try {
     writeCommandGlobalDeepPrefs(base);
@@ -691,14 +691,14 @@ test("deep project setup: bare /gsd ignores global planning_depth without projec
       assert.doesNotMatch(
         readFileSync(prefsPath, "utf-8"),
         /planning_depth\s*:/,
-        "bare /gsd must not persist planning_depth from global preferences",
+        "bare /gwd must not persist planning_depth from global preferences",
       );
     }
-    assert.equal(messages.length, 1, "bare /gsd should dispatch the normal first milestone discussion");
+    assert.equal(messages.length, 1, "bare /gwd should dispatch the normal first milestone discussion");
     assert.doesNotMatch(
       String((messages[0] as any).content),
       /Foreground Deep Setup Question Policy/,
-      "global planning_depth must not make bare /gsd take the deep foreground setup path",
+      "global planning_depth must not make bare /gwd take the deep foreground setup path",
     );
   } finally {
     clearPendingAutoStart(base);
@@ -741,11 +741,11 @@ test("deep project setup: new-project --deep uses cwd when nested inside a paren
   execFileSync("git", ["config", "user.email", "test@test.com"], { cwd: parent });
   execFileSync("git", ["config", "user.name", "Test"], { cwd: parent });
   writeFileSync(join(child, "package.json"), '{"name":"nested-app"}\n');
-  writeFileSync(join(child, "GSD-WORKFLOW.md"), "# Test Workflow\n");
+  writeFileSync(join(child, "GWD-WORKFLOW.md"), "# Test Workflow\n");
 
   try {
     process.env.GWD_HOME = join(child, ".test-gsd-home");
-    process.env.GWD_WORKFLOW_PATH = join(child, "GSD-WORKFLOW.md");
+    process.env.GWD_WORKFLOW_PATH = join(child, "GWD-WORKFLOW.md");
     delete process.env.GWD_PROJECT_ROOT;
     process.chdir(child);
 
@@ -800,7 +800,7 @@ test("deep project setup: new-project --deep uses cwd when nested inside a paren
 test("deep project setup: new-project asks interview stages in foreground", async () => {
   const base = makeBase();
   const previousWorkflowPath = process.env.GWD_WORKFLOW_PATH;
-  process.env.GWD_WORKFLOW_PATH = join(base, "GSD-WORKFLOW.md");
+  process.env.GWD_WORKFLOW_PATH = join(base, "GWD-WORKFLOW.md");
   writeFileSync(process.env.GWD_WORKFLOW_PATH, "# Test Workflow\n");
 
   try {
@@ -947,7 +947,7 @@ test("deep project setup: unrelated agent_end sessions do not advance pending se
   const base = makeBase();
   const otherBase = makeBase();
   const previousWorkflowPath = process.env.GWD_WORKFLOW_PATH;
-  process.env.GWD_WORKFLOW_PATH = join(base, "GSD-WORKFLOW.md");
+  process.env.GWD_WORKFLOW_PATH = join(base, "GWD-WORKFLOW.md");
   writeFileSync(process.env.GWD_WORKFLOW_PATH, "# Test Workflow\n");
 
   try {
@@ -995,7 +995,7 @@ test("deep project setup: unrelated agent_end sessions do not advance pending se
 test("deep project setup: same project advances when agent_end session id changes", async () => {
   const base = makeBase();
   const previousWorkflowPath = process.env.GWD_WORKFLOW_PATH;
-  process.env.GWD_WORKFLOW_PATH = join(base, "GSD-WORKFLOW.md");
+  process.env.GWD_WORKFLOW_PATH = join(base, "GWD-WORKFLOW.md");
   writeFileSync(process.env.GWD_WORKFLOW_PATH, "# Test Workflow\n");
 
   try {
@@ -1264,7 +1264,7 @@ test("deep project setup: research-project supervision timeout is capped narrowl
 test("deep project setup: empty legacy pseudo-milestone dirs do not block first real milestone", async () => {
   const base = makeBase();
   const previousWorkflowPath = process.env.GWD_WORKFLOW_PATH;
-  const workflowPath = join(base, "GSD-WORKFLOW.md");
+  const workflowPath = join(base, "GWD-WORKFLOW.md");
   try {
     writeFileSync(workflowPath, "# Test Workflow\n");
     process.env.GWD_WORKFLOW_PATH = workflowPath;

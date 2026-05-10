@@ -41,11 +41,11 @@ describe('prompt step ordering (#3696)', () => {
     const base = makePromptBase();
     try {
       const prompt = await buildCompleteMilestonePrompt('M001', 'Milestone', base, 'minimal');
-      const guardIdx = numberedStepIndex(prompt, /gsd_milestone_status/);
-      const requirementIdx = numberedStepIndex(prompt, /gsd_requirement_update/);
+      const guardIdx = numberedStepIndex(prompt, /gwd_milestone_status/);
+      const requirementIdx = numberedStepIndex(prompt, /gwd_requirement_update/);
       const projectIdx = numberedStepIndex(prompt, /PROJECT\.md/);
       const learningsIdx = numberedStepIndex(prompt, /Extract structured learnings/);
-      const completeIdx = numberedStepIndex(prompt, /gsd_complete_milestone/);
+      const completeIdx = numberedStepIndex(prompt, /gwd_complete_milestone/);
 
       assert.ok(guardIdx < requirementIdx);
       assert.ok(requirementIdx < completeIdx);
@@ -61,7 +61,7 @@ describe('prompt step ordering (#3696)', () => {
     const base = makePromptBase();
     try {
       const prompt = await buildCompleteSlicePrompt('M001', 'Milestone', 'S01', 'Done', base, 'minimal');
-      assert.match(prompt, /gsd_requirement_update/);
+      assert.match(prompt, /gwd_requirement_update/);
     } finally {
       rmSync(base, { recursive: true, force: true });
     }

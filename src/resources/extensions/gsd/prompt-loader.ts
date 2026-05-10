@@ -1,5 +1,5 @@
 /**
- * GSD Prompt Loader
+ * GWD Prompt Loader
  *
  * Reads .md prompt templates from the prompts/ directory and substitutes
  * {{variable}} placeholders with provided values.
@@ -53,7 +53,7 @@ export function resolveExtensionDirFromCandidates(
 }
 
 /**
- * Resolve the GSD extension directory.
+ * Resolve the GWD extension directory.
  *
  * `import.meta.url` resolves to whichever copy of this module is executing.
  * On Windows (npm global install via MSYS2 / Git Bash) this can resolve to
@@ -184,7 +184,7 @@ export function loadPrompt(name: string, vars: Record<string, string> = {}): str
     planTemplatePath: join(getTemplatesDir(), "plan.md"),
     taskPlanTemplatePath: join(getTemplatesDir(), "task-plan.md"),
     taskSummaryTemplatePath: join(getTemplatesDir(), "task-summary.md"),
-    skillActivation: "If a `GSD Skill Preferences` block is present in system context, use it and the `<available_skills>` catalog in your system prompt to decide which skills to load and follow for this unit, without relaxing required verification or artifact rules.",
+    skillActivation: "If a `GWD Skill Preferences` block is present in system context, use it and the `<available_skills>` catalog in your system prompt to decide which skills to load and follow for this unit, without relaxing required verification or artifact rules.",
     ...vars,
   };
 

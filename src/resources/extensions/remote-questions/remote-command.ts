@@ -1,5 +1,5 @@
 /**
- * Remote Questions — /gsd remote command
+ * Remote Questions — /gwd remote command
  */
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
@@ -226,20 +226,20 @@ async function handleRemoteMenu(ctx: ExtensionCommandContext): Promise<void> {
         latestPrompt ? `  Last prompt: ${latestPrompt.id} (${latestPrompt.status})` : "  No remote prompts recorded yet",
         "",
         "Commands:",
-        "  /gsd remote status",
-        "  /gsd remote disconnect",
-        "  /gsd remote slack",
-        "  /gsd remote discord",
-        "  /gsd remote telegram",
+        "  /gwd remote status",
+        "  /gwd remote disconnect",
+        "  /gwd remote slack",
+        "  /gwd remote discord",
+        "  /gwd remote telegram",
       ]
     : [
         "No remote question channel configured.",
         "",
         "Commands:",
-        "  /gsd remote slack",
-        "  /gsd remote discord",
-        "  /gsd remote telegram",
-        "  /gsd remote status",
+        "  /gwd remote slack",
+        "  /gwd remote discord",
+        "  /gwd remote telegram",
+        "  /gwd remote status",
       ];
 
   ctx.ui.notify(lines.join("\n"), "info");

@@ -1,4 +1,4 @@
-// GSD Extension — Core Type Definitions
+// GWD Extension — Core Type Definitions
 // Types consumed by state derivation, file parsing, and status display.
 // Pure interfaces — no logic, no runtime dependencies.
 
@@ -45,7 +45,7 @@ export interface BoundaryMapEntry {
 }
 
 export interface Roadmap {
-  title: string; // e.g. "M001: GSD Extension — Hierarchical Planning with Auto Mode"
+  title: string; // e.g. "M001: GWD Extension — Hierarchical Planning with Auto Mode"
   vision: string;
   successCriteria: string[];
   slices: RoadmapSliceEntry[];
@@ -211,7 +211,7 @@ export interface ManifestStatus {
   existing: string[]; // key present in .env or process.env (regardless of manifest status)
 }
 
-// ─── GSD State (Derived Dashboard) ────────────────────────────────────────
+// ─── GWD State (Derived Dashboard) ────────────────────────────────────────
 
 export interface ActiveRef {
   id: string;
@@ -255,7 +255,7 @@ export interface GSDState {
   lastCompletedMilestone?: ActiveRef | null;
 }
 
-// ─── GSD Ecosystem Extension API Types ────────────────────────────────────
+// ─── GWD Ecosystem Extension API Types ────────────────────────────────────
 // Pure data type — no runtime deps. The GSDExtensionAPI interface itself
 // lives in ecosystem/gsd-extension-api.ts (it imports from pi).
 
@@ -361,7 +361,7 @@ export interface PhaseSkipPreferences {
 // ─── ADR-011 Phase 2 Escalation ──────────────────────────────────────────
 
 export interface EscalationOption {
-  /** Short identifier, e.g. "A", "B". Used as the `choice` value in `/gsd escalate resolve <taskId> <id>`. */
+  /** Short identifier, e.g. "A", "B". Used as the `choice` value in `/gwd escalate resolve <taskId> <id>`. */
   id: string;
   /** One-line label for the option. */
   label: string;
@@ -387,11 +387,11 @@ export interface EscalationArtifact {
    * When true, the executor proceeds with the recommendation as the answer
    * and the loop continues. User's later choice becomes a carry-forward
    * override for the NEXT task. When false, auto-mode pauses until the
-   * user resolves via `/gsd escalate resolve`.
+   * user resolves via `/gwd escalate resolve`.
    */
   continueWithDefault: boolean;
   createdAt: string;
-  /** Populated by `/gsd escalate resolve`. */
+  /** Populated by `/gwd escalate resolve`. */
   respondedAt?: string;
   /** User's choice — either an option id, "accept" (use recommendation), or "reject-blocker". */
   userChoice?: string;
@@ -571,7 +571,7 @@ export interface BrowserFlowResult {
   duration: number;
 }
 
-// ─── Complete Task Params (gsd_complete_task tool input) ─────────────────
+// ─── Complete Task Params (gsd_task_complete tool input) ─────────────────
 
 export interface CompleteTaskParams {
   taskId: string;
@@ -635,7 +635,7 @@ export interface CompleteTaskParams {
   triggerReason?: string;
 }
 
-// ─── Complete Slice Params (gsd_complete_slice tool input) ───────────────
+// ─── Complete Slice Params (gsd_slice_complete tool input) ───────────────
 
 export interface CompleteSliceParams {
   sliceId: string;

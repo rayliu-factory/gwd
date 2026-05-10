@@ -1,6 +1,6 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Runtime state derivation from GWD workflow database and legacy files.
-// GSD Extension — State Derivation
+// GWD Extension — State Derivation
 // DB-authoritative runtime derivation with explicit legacy filesystem fallback.
 // Pure TypeScript, zero Pi dependencies.
 
@@ -288,7 +288,7 @@ export interface DeriveStateOptions {
 }
 
 /**
- * Reconstruct GSD state from the authoritative DB.
+ * Reconstruct GWD state from the authoritative DB.
  * STATE.md is a rendered cache of this output.
  *
  * When DB is available, queries milestone/slice/task tables directly.
@@ -345,7 +345,7 @@ export async function deriveState(
       phase: "pre-planning",
       recentDecisions: [],
       blockers: ["DB unavailable — runtime markdown state derivation is disabled"],
-      nextAction: "Open or create the canonical GSD database before deriving workflow state.",
+      nextAction: "Open or create the canonical GWD database before deriving workflow state.",
       registry: [],
       requirements: { active: 0, validated: 0, deferred: 0, outOfScope: 0, blocked: 0, total: 0 },
       progress: { milestones: { done: 0, total: 0 } },
@@ -385,7 +385,7 @@ function extractContextTitle(content: string | null, fallback: string): string {
 const isStatusDone = isClosedStatus;
 
 /**
- * Derive GSD state from the milestones/slices/tasks DB tables.
+ * Derive GWD state from the milestones/slices/tasks DB tables.
  * Markdown files are projections only in this path; they are never imported,
  * reconciled, or used as completion signals.
  */
@@ -524,7 +524,7 @@ function handleNoActiveMilestone(
       activeMilestone: null, activeSlice: null, activeTask: null,
       phase: 'pre-planning',
       recentDecisions: [], blockers: [],
-      nextAction: `All remaining milestones are parked (${parkedIds}). Run /gsd unpark <id> or create a new milestone.`,
+      nextAction: `All remaining milestones are parked (${parkedIds}). Run /gwd unpark <id> or create a new milestone.`,
       registry, requirements,
       progress: { milestones: milestoneProgress },
     };
@@ -535,7 +535,7 @@ function handleNoActiveMilestone(
       activeMilestone: null, activeSlice: null, activeTask: null,
       phase: 'pre-planning',
       recentDecisions: [], blockers: [],
-      nextAction: 'No milestones found. Run /gsd to create one.',
+      nextAction: 'No milestones found. Run /gwd to create one.',
       registry: [], requirements,
       progress: { milestones: { done: 0, total: 0 } },
     };
@@ -665,7 +665,7 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
     return {
       activeMilestone: null, activeSlice: null, activeTask: null,
       phase: 'pre-planning', recentDecisions: [], blockers: [],
-      nextAction: 'No milestones found. Run /gsd to create one.',
+      nextAction: 'No milestones found. Run /gwd to create one.',
       registry: [], requirements,
       progress: { milestones: { done: 0, total: 0 } },
     };
@@ -829,7 +829,7 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
       activeMilestone, activeSlice, activeTask,
       phase: 'escalating-task', recentDecisions: [],
       blockers: [`Task ${escalatingTaskId} requires a user decision before the loop can proceed`],
-      nextAction: `Run /gsd escalate show ${escalatingTaskId} to review, then /gsd escalate resolve ${escalatingTaskId} <choice> to proceed.`,
+      nextAction: `Run /gwd escalate show ${escalatingTaskId} to review, then /gwd escalate resolve ${escalatingTaskId} <choice> to proceed.`,
       activeWorkspace: undefined,
       registry, requirements,
       progress: { milestones: milestoneProgress, slices: sliceProgress, tasks: taskProgress },
@@ -935,7 +935,7 @@ export async function _deriveStateImpl(
       phase: 'pre-planning',
       recentDecisions: [],
       blockers: [],
-      nextAction: 'No milestones found. Run /gsd to create one.',
+      nextAction: 'No milestones found. Run /gwd to create one.',
       registry: [],
       requirements,
       progress: {
@@ -1176,7 +1176,7 @@ export async function _deriveStateImpl(
         phase: 'pre-planning',
         recentDecisions: [],
         blockers: [],
-        nextAction: `All remaining milestones are parked (${parkedIds}). Run /gsd unpark <id> or create a new milestone.`,
+        nextAction: `All remaining milestones are parked (${parkedIds}). Run /gwd unpark <id> or create a new milestone.`,
         registry,
         requirements,
         progress: {
@@ -1193,7 +1193,7 @@ export async function _deriveStateImpl(
         phase: 'pre-planning',
         recentDecisions: [],
         blockers: [],
-        nextAction: 'No milestones found. Run /gsd to create one.',
+        nextAction: 'No milestones found. Run /gwd to create one.',
         registry: [],
         requirements,
         progress: {
@@ -1571,7 +1571,7 @@ export async function _deriveStateImpl(
   }
 
   // ── REPLAN-TRIGGER detection: triage-initiated replan ──────────────────
-  // Manual `/gsd triage` writes REPLAN-TRIGGER.md when a capture is classified
+  // Manual `/gwd triage` writes REPLAN-TRIGGER.md when a capture is classified
   // as "replan". Detect it here and transition to replanning-slice so the
   // dispatch loop picks it up (instead of silently advancing past it).
   if (!blockerTaskId) {

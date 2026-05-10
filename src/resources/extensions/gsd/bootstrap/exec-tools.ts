@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Registers Context Mode execution tools.
 // GSD2 — Exec (context-mode) tool registration.
 //

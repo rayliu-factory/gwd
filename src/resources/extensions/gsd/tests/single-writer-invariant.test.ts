@@ -1,4 +1,4 @@
-// Structural invariant: gsd-db.ts is the single writer for .gsd/gsd.db.
+// Structural invariant: gsd-db.ts is the single writer for .gsd/gwd.db.
 //
 // No file under src/resources/extensions/gsd/ may issue raw write SQL
 // (INSERT/UPDATE/DELETE/REPLACE) or raw transaction control (BEGIN/COMMIT/

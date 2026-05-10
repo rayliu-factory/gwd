@@ -1,4 +1,4 @@
-// GSD Extension — Regression test for #4996: ghost milestone ID reuse
+// GWD Extension — Regression test for #4996: ghost milestone ID reuse
 // Verifies that isReusableGhostMilestone correctly identifies reclaim-safe stub dirs,
 // and that nextMilestoneIdReserved (guided-flow) prefers the lowest reusable ghost
 // over max+1. Also covers the race-window regression: a queued DB row must NOT be reused.

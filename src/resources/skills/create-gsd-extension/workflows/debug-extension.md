@@ -26,8 +26,8 @@
 # Test in isolation
 gsd -e ./path/to/extension.ts
 
-# Check GSD startup output for errors
-# Extension errors are logged but don't crash GSD
+# Check GWD startup output for errors
+# Extension errors are logged but don't crash GWD
 ```
 
 ## Step 3: Verify File Location

@@ -4,7 +4,7 @@
 // ("gsd doctor surfaces actionable guidance about the stale lock").
 //
 // Before this fix, the headless dispatcher had no `doctor` case — the
-// only path the live-regression test could reach (`gsd headless doctor`)
+// only path the live-regression test could reach (`gwd headless doctor`)
 // fell through to RPC dispatch and tried to launch a TUI subprocess.
 // Now the dispatcher invokes runGSDDoctor directly (mirrors the existing
 // `query` shape), and the resulting report from a stale-lock fixture

@@ -1,5 +1,5 @@
 /**
- * GSD Config — Tool API key management.
+ * GWD Config — Tool API key management.
  *
  * Contains: TOOL_KEYS, loadToolApiKeys, getConfigAuthStorage, handleConfig
  */
@@ -61,7 +61,7 @@ let deprecationWarned = false;
 export async function handleConfig(ctx: ExtensionCommandContext): Promise<void> {
   if (!deprecationWarned) {
     ctx.ui.notify(
-      "/gsd config is deprecated and will be removed. Use /gsd keys (manages both LLM and tool API keys).",
+      "/gwd config is deprecated and will be removed. Use /gwd keys (manages both LLM and tool API keys).",
       "warning",
     );
     deprecationWarned = true;
@@ -70,7 +70,7 @@ export async function handleConfig(ctx: ExtensionCommandContext): Promise<void> 
   const auth = getConfigAuthStorage();
 
   // Show current status
-  const statusLines = ["GSD Tool Configuration\n"];
+  const statusLines = ["GWD Tool Configuration\n"];
   for (const tool of TOOL_KEYS) {
     const hasKey = !!process.env[tool.env] || !!getStoredToolKey(auth, tool.id);
     statusLines.push(`  ${hasKey ? "\u2713" : "\u2717"} ${tool.label}${hasKey ? "" : ` \u2014 get key at ${tool.hint}`}`);

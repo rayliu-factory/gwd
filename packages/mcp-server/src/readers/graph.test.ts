@@ -1,4 +1,4 @@
-// GSD MCP Server — knowledge graph reader tests
+// GWD MCP Server — knowledge graph reader tests
 
 import { describe, it, before, after, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -35,7 +35,7 @@ function writeFixture(base: string, relPath: string, content: string): void {
 
 function makeProjectWithArtifacts(projectDir: string): void {
   writeFixture(projectDir, '.gsd/STATE.md', [
-    '# GSD State',
+    '# GWD State',
     '',
     '**Active Milestone:** M001: Auth System',
     '**Active Slice:** S01: Login flow',

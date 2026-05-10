@@ -1,4 +1,4 @@
-// GSD-2 + src/resources/extensions/gsd/auto-dashboard.ts - Auto-mode progress widget rendering and dashboard helpers.
+// GWD-2 + src/resources/extensions/gsd/auto-dashboard.ts - Auto-mode progress widget rendering and dashboard helpers.
 
 /**
  * Auto-mode Dashboard — progress widget rendering, elapsed time formatting,
@@ -781,7 +781,7 @@ export function updateProgressWidget(
             : "x";
         const healthStr = `  ${theme.fg(healthColor, healthIcon)} ${theme.fg(healthColor, healthSummary)}`;
 
-        const headerLeft = `${pad}${dot} ${theme.fg("accent", theme.bold("GSD"))}  ${theme.fg("success", modeTag)}${healthStr}`;
+        const headerLeft = `${pad}${dot} ${theme.fg("accent", theme.bold("GWD"))}  ${theme.fg("success", modeTag)}${healthStr}`;
 
         // ETA in header right, after elapsed
         const eta = estimateTimeRemaining();
@@ -1071,7 +1071,7 @@ export function updateProgressWidget(
           : "";
         // Step-mode guidance — shown above keyboard hints when auto is paused
         if (accessors.isStepMode()) {
-          lines.push(`${pad}${theme.fg("accent", "→")} ${theme.fg("dim", "Ctrl+N to advance to next step  ·  /gsd status for overview")}`);
+          lines.push(`${pad}${theme.fg("accent", "→")} ${theme.fg("dim", "Ctrl+N to advance to next step  ·  /gwd status for overview")}`);
         }
 
         // Hints line

@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Pre-execution validation checks for GSD task plans.
+// Project/App: GWD-2
+// File Purpose: Pre-execution validation checks for GWD task plans.
 
 /**
  * Pre-Execution Checks — Validate task plans before execution begins.

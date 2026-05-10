@@ -1,7 +1,7 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Auto-mode orchestration, session lifecycle, and stop handling.
 /**
- * GSD Auto Mode — Fresh Session Per Unit
+ * GWD Auto Mode — Fresh Session Per Unit
  *
  * State machine driven by .gsd/ files on disk. Each "unit" of work
  * (plan slice, execute task, complete slice) gets a fresh session via
@@ -514,7 +514,7 @@ export function shouldUseWorktreeIsolation(basePath?: string): boolean {
 
 /**
  * Model captured at auto-mode start. Used to prevent model bleed between
- * concurrent GSD instances sharing the same global settings.json (#650).
+ * concurrent GWD instances sharing the same global settings.json (#650).
  * When preferences don't specify a model for a unit type, this ensures
  * the session's original model is re-applied instead of reading from
  * the shared global settings (which another instance may have overwritten).
@@ -682,7 +682,7 @@ export function _warnIfWorktreeMissingForTest(
   if (worktreePath && !existsSync(worktreePath)) {
     logWarning(
       "session",
-      `Worktree was expected at ${worktreePath} but is missing. Continuing in project-root mode. To restart with a fresh worktree, run /gsd-debug or recreate the milestone.`,
+      `Worktree was expected at ${worktreePath} but is missing. Continuing in project-root mode. To restart with a fresh worktree, run /gwd-debug or recreate the milestone.`,
       { file: "auto.ts", milestoneId },
     );
     return true;
@@ -766,7 +766,7 @@ export function markToolEnd(toolCallId: string): void {
 
 /**
  * Record a tool invocation error on the current session (#2883).
- * Called from tool_execution_end when a GSD tool fails with isError.
+ * Called from tool_execution_end when a GWD tool fails with isError.
  * Stores the error if it matches:
  *   - tool-invocation-error pattern (malformed/truncated JSON)
  *   - queued-user-message skip pattern
@@ -834,8 +834,8 @@ export function stopAutoRemote(projectRoot: string): {
 /**
  * Check if a remote auto-mode session is running (from a different process).
  * Reads the crash lock, checks PID liveness, and returns session details.
- * Used by the guard in commands.ts to prevent bare /gsd, /gsd next, and
- * /gsd auto from stealing the session lock.
+ * Used by the guard in commands.ts to prevent bare /gwd, /gwd next, and
+ * /gwd auto from stealing the session lock.
  */
 export function checkRemoteAutoSession(projectRoot: string): {
   running: boolean;
@@ -949,8 +949,8 @@ function handleLostSessionLock(
   const message =
     lockStatus?.failureReason === "pid-mismatch"
       ? lockStatus.existingPid
-        ? `Session lock (${lockFilePath}) moved to PID ${lockStatus.existingPid} — another GSD process appears to have taken over. Stopping gracefully.${recoverySuggestion}`
-        : `Session lock (${lockFilePath}) moved to a different process — another GSD process appears to have taken over. Stopping gracefully.${recoverySuggestion}`
+        ? `Session lock (${lockFilePath}) moved to PID ${lockStatus.existingPid} — another GWD process appears to have taken over. Stopping gracefully.${recoverySuggestion}`
+        : `Session lock (${lockFilePath}) moved to a different process — another GWD process appears to have taken over. Stopping gracefully.${recoverySuggestion}`
       : lockStatus?.failureReason === "missing-metadata"
         ? `Session lock metadata (${lockFilePath}) disappeared, so ownership could not be confirmed. Stopping gracefully.${recoverySuggestion}`
         : lockStatus?.failureReason === "compromised"
@@ -997,7 +997,7 @@ export async function cleanupAfterLoopExit(ctx: ExtensionContext): Promise<void>
   restoreProjectRootEnv();
   restoreMilestoneLockEnv();
 
-  // Clear crash lock and release session lock so the next `/gsd next` does
+  // Clear crash lock and release session lock so the next `/gwd next` does
   // not see a stale lock with the current PID and treat it as a "remote"
   // session (which would cause it to SIGTERM itself). (#2730)
   try {
@@ -1294,7 +1294,7 @@ export async function stopAuto(
       }
     } catch (e) {
       ctx?.ui.notify(
-        `Worktree cleanup failed for ${s.currentMilestoneId ?? "current milestone"}: ${e instanceof Error ? e.message : String(e)}. Resolve the preserved branch/worktree and run /gsd auto to resume.`,
+        `Worktree cleanup failed for ${s.currentMilestoneId ?? "current milestone"}: ${e instanceof Error ? e.message : String(e)}. Resolve the preserved branch/worktree and run /gwd auto to resume.`,
         "warning",
       );
       debugLog("stop-cleanup-worktree", { error: e instanceof Error ? e.message : String(e) });
@@ -1537,7 +1537,7 @@ export async function stopAuto(
     restoreProjectRootEnv();
     restoreMilestoneLockEnv();
 
-    // Drop the active-tool baseline so a subsequent /gsd auto run on the
+    // Drop the active-tool baseline so a subsequent /gwd auto run on the
     // same `pi` instance recaptures from the live tool set rather than
     // restoring this session's snapshot and silently undoing any tool
     // changes the user made between sessions (#4959 / CodeRabbit).
@@ -1567,7 +1567,7 @@ export function _selectStopAutoWorktreeExit(args: {
 
 /**
  * Pause auto-mode without destroying state. Context is preserved.
- * The user can interact with the agent, then `/gsd auto` resumes
+ * The user can interact with the agent, then `/gwd auto` resumes
  * from disk state. Called when the user presses Escape during auto-mode.
  */
 export async function pauseAuto(
@@ -1675,7 +1675,7 @@ export async function pauseAuto(
   ctx?.ui.setStatus("gsd-auto", "paused");
   ctx?.ui.setWidget("gsd-progress", undefined);
   if (ctx) initHealthWidget(ctx);
-  const resumeCmd = s.stepMode ? "/gsd next" : "/gsd auto";
+  const resumeCmd = s.stepMode ? "/gwd next" : "/gwd auto";
   ctx?.ui.notify(
     `${s.stepMode ? "Step" : "Auto"}-mode paused (Escape). Type to interact, or ${resumeCmd} to resume.`,
     "info",
@@ -2204,7 +2204,7 @@ export async function startAuto(
               if (persistedWorktreePath && !existsSync(persistedWorktreePath)) {
                 logWarning(
                   "session",
-                  `Worktree was expected at ${persistedWorktreePath} but is missing. Continuing in project-root mode. To restart with a fresh worktree, run /gsd-debug or recreate the milestone.`,
+                  `Worktree was expected at ${persistedWorktreePath} but is missing. Continuing in project-root mode. To restart with a fresh worktree, run /gwd-debug or recreate the milestone.`,
                   { file: "auto.ts", milestoneId: meta.milestoneId ?? "" },
                 );
               }
@@ -2299,7 +2299,7 @@ export async function startAuto(
     if (resumeWorktreePath && !existsSync(resumeWorktreePath)) {
       logWarning(
         "session",
-        `Worktree was expected at ${resumeWorktreePath} but is missing. Continuing in project-root mode. To restart with a fresh worktree, run /gsd-debug or recreate the milestone.`,
+        `Worktree was expected at ${resumeWorktreePath} but is missing. Continuing in project-root mode. To restart with a fresh worktree, run /gwd-debug or recreate the milestone.`,
         { file: "auto.ts", milestoneId: s.currentMilestoneId ?? "" },
       );
     }

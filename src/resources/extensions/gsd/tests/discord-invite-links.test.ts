@@ -12,7 +12,7 @@ import { join } from "node:path";
 
 const ROOT = process.cwd();
 
-/** Canonical Discord invite for the GSD community. */
+/** Canonical Discord invite for the GWD community. */
 const VALID_INVITE = "https://discord.com/invite/nKXTsAcmbT";
 
 /** Files that contain user-facing Discord invite links. */

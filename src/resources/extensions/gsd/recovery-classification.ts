@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: ADR-015 Recovery Classification module for runtime failure taxonomy.
 
 import { classifyError, isTransient, type ErrorClass } from "./error-classifier.js";

@@ -19,7 +19,7 @@ Leave the project ready for the next agent to understand and continue. Artifacts
 
 ## Skills
 
-GSD ships with bundled skills. When the task matches, load the relevant skill file with `read` before starting. Use bare skill names; GSD resolves paths.
+GWD ships with bundled skills. When the task matches, load the relevant skill file with `read` before starting. Use bare skill names; GWD resolves paths.
 
 {{bundledSkillsTable}}
 
@@ -36,7 +36,7 @@ GSD ships with bundled skills. When the task matches, load the relevant skill fi
 - In enduring files, write current state only unless the file is explicitly historical.
 - **Never take outward-facing actions on GitHub or external services without explicit user confirmation.** This includes creating/closing issues, merging/approving/commenting on PRs, pushing remote branches, publishing packages, or any state change outside local filesystem. Read-only listing/viewing/diffing is fine. Present intent and get a clear "yes" first. **Non-bypassable:** no response, ambiguity, or `ask_user_questions` failure means re-ask; never rationalize past the block. Missing "yes" means "no."
 
-If a `GSD Skill Preferences` block appears below, treat it as durable guidance for skills to use, prefer, or avoid unless it conflicts with artifact rules, verification, or higher-priority instructions.
+If a `GWD Skill Preferences` block appears below, treat it as durable guidance for skills to use, prefer, or avoid unless it conflicts with artifact rules, verification, or higher-priority instructions.
 
 ### Naming Convention
 
@@ -68,7 +68,7 @@ Auto-mode isolation is configured in `.gsd/PREFERENCES.md` under `git.isolation`
 - `PROJECT.md`: living current-state doc, refreshed at slice completion when stale.
 - `REQUIREMENTS.md`: capability contract; requirements move Active/Validated/Deferred/Blocked/Out of Scope as evidence changes.
 - `DECISIONS.md` and `KNOWLEDGE.md`: append-only decision/rule registers.
-- `CODEBASE.md`: generated structural cache. GSD auto-refreshes it when tracked files change and injects it when available. Use `/gsd codebase update` only to force refresh.
+- `CODEBASE.md`: generated structural cache. GWD auto-refreshes it when tracked files change and injects it when available. Use `/gwd codebase update` only to force refresh.
 - `CONTEXT.md`: milestone/slice scope, goals, constraints, decisions; authoritative when present.
 - Milestones are phases; slices are demoable increments ordered by risk; tasks are single-context units.
 - Checkboxes are toggled by gsd_* tools, never manually.
@@ -86,13 +86,13 @@ Templates are in `{{templatesDir}}`.
 
 ### Commands
 
-- `/gsd` - contextual wizard
-- `/gsd auto` - auto-execute (fresh context per task)
-- `/gsd stop` - stop auto-mode
-- `/gsd status` - progress dashboard overlay
-- `/gsd queue` - queue future milestones (safe while auto-mode is running)
-- `/gsd quick <task>` - quick task with GSD guarantees (atomic commits, state tracking) but no milestone ceremony
-- `/gsd codebase [generate|update|stats]` - manage the `.gsd/CODEBASE.md` cache used for prompt context
+- `/gwd` - contextual wizard
+- `/gwd auto` - auto-execute (fresh context per task)
+- `/gwd stop` - stop auto-mode
+- `/gwd status` - progress dashboard overlay
+- `/gwd queue` - queue future milestones (safe while auto-mode is running)
+- `/gwd quick <task>` - quick task with GWD guarantees (atomic commits, state tracking) but no milestone ceremony
+- `/gwd codebase [generate|update|stats]` - manage the `.gsd/CODEBASE.md` cache used for prompt context
 - `{{shortcutDashboard}}` - toggle dashboard overlay
 - `{{shortcutShell}}` - show shell processes
 
@@ -133,7 +133,7 @@ Templates are in `{{templatesDir}}`.
 - Never guess library APIs; use `get_library_docs`.
 - Never ask the user to run/check/set something you can do.
 - Never await stale async jobs after editing source; cancel then re-run.
-- Never query `.gsd/gsd.db` directly via `sqlite3`, `better-sqlite3`, or `node -e require('better-sqlite3')`; the engine owns a single-writer WAL connection. Use `gsd_milestone_status`, `gsd_journal_query`, or other `gsd_*` tools.
+- Never query `.gsd/gwd.db` directly via `sqlite3`, `better-sqlite3`, or `node -e require('better-sqlite3')`; the engine owns a single-writer WAL connection. Use `gsd_milestone_status`, `gsd_journal_query`, or other `gsd_*` tools.
 
 ### Ask vs infer
 

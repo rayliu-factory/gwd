@@ -1,4 +1,4 @@
-// GSD Extension — Notification Store Tests
+// GWD Extension — Notification Store Tests
 
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";

@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Session-lock validation adapter for auto-mode loop.
 
 import type { SessionLockStatus } from "../session-lock.js";

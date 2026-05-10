@@ -1,9 +1,9 @@
-// gsd-2 / Deep planning mode — Regression coverage for hasPendingDeepStage()
+// gwd-2 / Deep planning mode — Regression coverage for hasPendingDeepStage()
 // being exported and consumed by the showSmartEntry deep-mode kickoff branch.
 //
 // Context: PR #5094 wires a deep-mode branch into showSmartEntry that calls
 // hasPendingDeepStage() to decide whether to hand off to startAutoDetached().
-// Without this guard, /gsd new-project --deep set the planning_depth flag but
+// Without this guard, /gwd new-project --deep set the planning_depth flag but
 // never actually triggered the staged interview because showSmartEntry fell
 // straight through to the standard milestone wizard. These tests pin the
 // exported contract so the kickoff branch can rely on it.
@@ -103,7 +103,7 @@ test("hasPendingDeepStage: returns true in deep mode when only some gates pass",
   }
 });
 
-// Regression test for the bug found while debugging /gsd new-project --deep:
+// Regression test for the bug found while debugging /gwd new-project --deep:
 // `planning_depth` was missing from KNOWN_PREFERENCE_KEYS, validatePreferences,
 // and mergePreferences, so it was stripped on every load. The deep-mode flow
 // silently never triggered because every dispatch saw planning_depth: undefined.

@@ -171,7 +171,7 @@ describe("DevWorkflowEngine", () => {
     assert.ok("currentPhase" in meta, "should have currentPhase");
     assert.ok("progressSummary" in meta, "should have progressSummary");
     assert.ok("stepCount" in meta, "should have stepCount");
-    assert.equal(meta.engineLabel, "GSD Dev");
+    assert.equal(meta.engineLabel, "GWD Dev");
   });
 });
 

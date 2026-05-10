@@ -1,4 +1,4 @@
-// GSD — Onboarding state record tests.
+// GWD — Onboarding state record tests.
 // Verifies the explicit completion record (onboarding-state.ts) and step-evolution
 // behavior in setup-catalog.ts, including stale-resume fallback and version semantics.
 

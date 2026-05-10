@@ -3,7 +3,7 @@ import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent
 import { GWD_COMMAND_DESCRIPTION, getGsdArgumentCompletions } from "./catalog.js";
 
 export function registerGSDCommand(pi: ExtensionAPI): void {
-  pi.registerCommand("gsd", {
+  pi.registerCommand("gwd", {
     description: GWD_COMMAND_DESCRIPTION,
     getArgumentCompletions: getGsdArgumentCompletions,
     handler: async (args: string, ctx: ExtensionCommandContext) => {

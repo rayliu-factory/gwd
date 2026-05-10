@@ -10,8 +10,8 @@
  * `.gsd/workflows/<name>.<ext>` with the `--project` flag.
  *
  * A provenance file `~/.gwd/workflows/.installed.json` (or project equivalent)
- * records source URL, timestamp, and sha256 so `/gsd workflow uninstall` can
- * clean up and future `/gsd workflow update` can refresh.
+ * records source URL, timestamp, and sha256 so `/gwd workflow uninstall` can
+ * clean up and future `/gwd workflow update` can refresh.
  */
 
 import {

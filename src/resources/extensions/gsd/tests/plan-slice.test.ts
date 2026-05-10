@@ -1,4 +1,4 @@
-// GSD Extension — Plan-slice tool integration tests.
+// GWD Extension — Plan-slice tool integration tests.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';

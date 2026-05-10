@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: SQLite schema metadata helpers for the GSD database facade and migrations.
+// Project/App: GWD-2
+// File Purpose: SQLite schema metadata helpers for the GWD database facade and migrations.
 
 import type { DbAdapter } from "./db-adapter.js";
 

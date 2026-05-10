@@ -1,5 +1,5 @@
 /**
- * GSD-2 / guided-flow — regression tests for Gate 1b orphan discrimination
+ * GWD-2 / guided-flow — regression tests for Gate 1b orphan discrimination
  *
  * Gate 1b in checkAutoStartAfterDiscuss discriminates between two "queued" states:
  *   (a) plan-blocked: discuss completed (CONTEXT.md on disk), but gsd_plan_milestone
@@ -130,7 +130,7 @@ describe("Gate 1b orphan discrimination in checkAutoStartAfterDiscuss", () => {
     );
     assert.match(
       cap.messages[0].payload.content,
-      /gsd_plan_milestone/,
+      /gwd_plan_milestone/,
       "recovery message content must mention gsd_plan_milestone",
     );
 

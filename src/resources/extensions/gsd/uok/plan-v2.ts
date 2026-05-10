@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: UOK plan v2 graph compilation from GWD workflow state.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";

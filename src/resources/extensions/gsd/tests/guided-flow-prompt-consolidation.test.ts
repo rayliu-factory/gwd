@@ -12,7 +12,7 @@
  *   - the quality-gate doctrine that was backported into the canonical files
  *     (Q8 Operational Readiness for complete-slice).
  *
- * Failure of this test means the manual `/gsd` flow no longer matches the
+ * Failure of this test means the manual `/gwd` flow no longer matches the
  * doctrine the auto-mode pipeline relies on — exactly the drift the PR is
  * supposed to prevent.
  */

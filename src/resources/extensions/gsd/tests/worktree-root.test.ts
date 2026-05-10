@@ -25,7 +25,7 @@ test("resolveWorktreeProjectRoot: explicit non-worktree cwd beats stale GWD_PROJ
   assert.equal(resolveWorktreeProjectRoot(projectDir), projectDir);
 });
 
-test("resolveWorktreeProjectRoot: external GSD home is not treated as a project root", (t) => {
+test("resolveWorktreeProjectRoot: external GWD home is not treated as a project root", (t) => {
   const previous = process.env.GWD_HOME;
   const dir = mkdtempSync(join(tmpdir(), "gsd-root-"));
   const fakeHome = join(dir, "home");

@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Git service integration and commit-message tests.
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -223,15 +223,15 @@ describe('git-service', async () => {
       keyFiles: ["src/auth.ts", "src/middleware/jwt.ts"],
     });
     assert.ok(msg.startsWith("feat:"), "message starts with type: (no scope)");
-    assert.ok(!msg.includes("(S01/T02)"), "no GSD ID in subject line");
+    assert.ok(!msg.includes("(S01/T02)"), "no GWD ID in subject line");
     assert.ok(msg.includes("JWT-based auth"), "message includes one-liner content");
     assert.ok(msg.includes("- src/auth.ts"), "message body includes key files");
     assert.ok(msg.includes("- src/middleware/jwt.ts"), "message body includes second key file");
-    assert.ok(msg.includes("GSD context:"), "message includes human GSD context block");
+    assert.ok(msg.includes("GWD context:"), "message includes human GWD context block");
     assert.ok(msg.includes("- Milestone: M001 - User management"), "message includes milestone name");
     assert.ok(msg.includes("- Slice: S01 - Authentication"), "message includes slice name");
     assert.ok(msg.includes("- Task: T02 - implement user authentication"), "message includes task name");
-    assert.ok(msg.includes("GSD-Task: S01/T02"), "GSD-Task trailer in body");
+    assert.ok(msg.includes("GWD-Task: S01/T02"), "GWD-Task trailer in body");
     assert.ok(!msg.includes("chore: auto-commit after execute-task"), "message does not use generic fallback");
   });
 
@@ -254,7 +254,7 @@ describe('git-service', async () => {
     });
     assert.ok(msg.startsWith("fix:"), "infers fix type from title");
     assert.ok(msg.includes("fix login redirect bug"), "uses task title when no one-liner");
-    assert.ok(msg.includes("GSD-Task: S02/T01"), "GSD-Task trailer present");
+    assert.ok(msg.includes("GWD-Task: S02/T01"), "GWD-Task trailer present");
   }
 
   {
@@ -264,7 +264,7 @@ describe('git-service', async () => {
       oneLiner: "Unit tests for auth module with coverage",
     });
     assert.ok(msg.startsWith("test:"), "infers test type");
-    assert.ok(msg.includes("GSD-Task: S01/T03"), "GSD-Task trailer present");
+    assert.ok(msg.includes("GWD-Task: S01/T03"), "GWD-Task trailer present");
   }
 
   // ─── RUNTIME_EXCLUSION_PATHS ───────────────────────────────────────────
@@ -288,7 +288,7 @@ describe('git-service', async () => {
     ".gsd/completed-units*.json",
     ".gsd/state-manifest.json",
     ".gsd/STATE.md",
-    ".gsd/gsd.db*",
+    ".gsd/gwd.db*",
     ".gsd/journal/",
     ".gsd/doctor-history.jsonl",
     ".gsd/event-log.jsonl",
@@ -524,7 +524,7 @@ describe('git-service', async () => {
     assert.ok(msg2 !== null, "autoCommit with task context returns a message");
     assert.ok(msg2!.startsWith("feat:"), "meaningful commit uses feat type without scope");
     assert.ok(msg2!.includes("JWT-based auth"), "meaningful commit includes one-liner content");
-    assert.ok(msg2!.includes("GSD-Task: S01/T02"), "meaningful commit has GSD-Task trailer");
+    assert.ok(msg2!.includes("GWD-Task: S01/T02"), "meaningful commit has GWD-Task trailer");
 
     rmSync(repo, { recursive: true, force: true });
   });
@@ -755,9 +755,9 @@ describe('git-service', async () => {
     // Create snapshot ref for this branch
     svc.createSnapshot("gsd/M001/S01");
 
-    // Verify ref exists under refs/gsd/snapshots/
-    const refs = run("git for-each-ref refs/gsd/snapshots/", repo);
-    assert.ok(refs.includes("refs/gsd/snapshots/gsd/M001/S01/"), "snapshot ref created under refs/gsd/snapshots/");
+    // Verify ref exists under refs/gwd/snapshots/
+    const refs = run("git for-each-ref refs/gwd/snapshots/", repo);
+    assert.ok(refs.includes("refs/gwd/snapshots/gwd/M001/S01/"), "snapshot ref created under refs/gwd/snapshots/");
 
     rmSync(repo, { recursive: true, force: true });
   });
@@ -775,7 +775,7 @@ describe('git-service', async () => {
     // createSnapshot should be a no-op when disabled
     svc.createSnapshot("gsd/M001/S01");
 
-    const refs = run("git for-each-ref refs/gsd/snapshots/", repo);
+    const refs = run("git for-each-ref refs/gwd/snapshots/", repo);
     assert.deepStrictEqual(refs, "", "no snapshot ref created when prefs.snapshots is false");
 
     rmSync(repo, { recursive: true, force: true });
@@ -1054,7 +1054,7 @@ describe('git-service', async () => {
     assert.deepStrictEqual(readIntegrationBranch(repo, "M002"), "main", "main branch is recorded");
 
     // User-managed gsd/* integration branches should not be rejected unless
-    // they match a GSD-generated workflow template prefix.
+    // they match a GWD-generated workflow template prefix.
     writeIntegrationBranch(repo, "M003", "gsd/release/2026-q2");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M003"), "gsd/release/2026-q2", "user gsd/* branches are recorded");
 
@@ -1606,11 +1606,11 @@ describe('git-service', async () => {
     });
     assert.ok(msg.includes("Resolves #42"), "buildTaskCommitMessage includes Resolves #N trailer when issueNumber is set");
     assert.ok(msg.startsWith("fix:"), "buildTaskCommitMessage infers fix type");
-    assert.ok(msg.includes("GSD-Task: S01/T03"), "GSD-Task trailer present");
-    // GSD-Task should come before Resolves
-    const taskIdx = msg.indexOf("GSD-Task: S01/T03");
+    assert.ok(msg.includes("GWD-Task: S01/T03"), "GWD-Task trailer present");
+    // GWD-Task should come before Resolves
+    const taskIdx = msg.indexOf("GWD-Task: S01/T03");
     const resolvesIdx = msg.indexOf("Resolves #42");
-    assert.ok(taskIdx < resolvesIdx, "GSD-Task trailer before Resolves trailer");
+    assert.ok(taskIdx < resolvesIdx, "GWD-Task trailer before Resolves trailer");
   });
 
   {
@@ -1620,7 +1620,7 @@ describe('git-service', async () => {
       taskTitle: "add dashboard widget",
     });
     assert.ok(!msg.includes("Resolves"), "buildTaskCommitMessage omits Resolves trailer when issueNumber is absent");
-    assert.ok(msg.includes("GSD-Task: S01/T04"), "GSD-Task trailer still present");
+    assert.ok(msg.includes("GWD-Task: S01/T04"), "GWD-Task trailer still present");
   }
 
   // ─── runPreMergeCheck: skips when no package.json ────────────────────────

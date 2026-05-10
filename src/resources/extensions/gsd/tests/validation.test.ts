@@ -1,4 +1,4 @@
-// GSD — validation unit tests
+// GWD — validation unit tests
 
 import test from 'node:test';
 import assert from 'node:assert/strict';

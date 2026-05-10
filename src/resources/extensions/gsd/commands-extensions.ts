@@ -1,5 +1,5 @@
 /**
- * GWD Extensions Command — /gsd extensions
+ * GWD Extensions Command — /gwd extensions
  *
  * Manage the extension registry: list, enable, disable, info, install.
  * Self-contained — no imports outside the extensions tree (extensions are loaded
@@ -440,7 +440,7 @@ function findDependents(targetId: string, installedExtDir: string): string[] {
 
 function handleUninstall(id: string | undefined, ctx: ExtensionCommandContext): void {
   if (!id) {
-    ctx.ui.notify("Usage: /gsd extensions uninstall <id>", "warning");
+    ctx.ui.notify("Usage: /gwd extensions uninstall <id>", "warning");
     return;
   }
 
@@ -479,7 +479,7 @@ function handleUninstall(id: string | undefined, ctx: ExtensionCommandContext): 
   if (!result.ok) {
     if (result.reason === "not-found") {
       ctx.ui.notify(
-        `Extension "${id}" not found in registry. Run /gsd extensions list to see installed extensions.`,
+        `Extension "${id}" not found in registry. Run /gwd extensions list to see installed extensions.`,
         "warning",
       );
     } else if (result.reason === "rm-failed") {
@@ -533,7 +533,7 @@ async function updateSingleExtension(
 
   if (!entry || entry.source !== "user") {
     ctx.ui.notify(
-      `Extension "${id}" not found in registry. Run /gsd extensions list to see installed extensions.`,
+      `Extension "${id}" not found in registry. Run /gwd extensions list to see installed extensions.`,
       "warning",
     );
     return;
@@ -655,7 +655,7 @@ async function updateAllExtensions(
 
 async function handleInstall(specifier: string | undefined, ctx: ExtensionCommandContext): Promise<void> {
   if (!specifier) {
-    ctx.ui.notify("Usage: /gsd extensions install <npm-package|git-url|local-path>", "warning");
+    ctx.ui.notify("Usage: /gwd extensions install <npm-package|git-url|local-path>", "warning");
     return;
   }
 
@@ -838,7 +838,7 @@ export async function handleExtensions(args: string, ctx: ExtensionCommandContex
   }
 
   ctx.ui.notify(
-    `Unknown: /gsd extensions ${subCmd}. Usage: /gsd extensions [list|enable|disable|info|install|uninstall|update|validate]`,
+    `Unknown: /gwd extensions ${subCmd}. Usage: /gwd extensions [list|enable|disable|info|install|uninstall|update|validate]`,
     "warning",
   );
 }
@@ -902,13 +902,13 @@ function handleList(ctx: ExtensionCommandContext): void {
 
 function handleEnable(id: string | undefined, ctx: ExtensionCommandContext): void {
   if (!id) {
-    ctx.ui.notify("Usage: /gsd extensions enable <id>", "warning");
+    ctx.ui.notify("Usage: /gwd extensions enable <id>", "warning");
     return;
   }
 
   const manifests = discoverManifests();
   if (!manifests.has(id)) {
-    ctx.ui.notify(`Extension "${id}" not found. Run /gsd extensions list to see available extensions.`, "warning");
+    ctx.ui.notify(`Extension "${id}" not found. Run /gwd extensions list to see available extensions.`, "warning");
     return;
   }
 
@@ -933,7 +933,7 @@ function handleEnable(id: string | undefined, ctx: ExtensionCommandContext): voi
 
 function handleDisable(id: string | undefined, reason: string, ctx: ExtensionCommandContext): void {
   if (!id) {
-    ctx.ui.notify("Usage: /gsd extensions disable <id>", "warning");
+    ctx.ui.notify("Usage: /gwd extensions disable <id>", "warning");
     return;
   }
 
@@ -941,7 +941,7 @@ function handleDisable(id: string | undefined, reason: string, ctx: ExtensionCom
   const manifest = manifests.get(id) ?? null;
 
   if (!manifests.has(id)) {
-    ctx.ui.notify(`Extension "${id}" not found. Run /gsd extensions list to see available extensions.`, "warning");
+    ctx.ui.notify(`Extension "${id}" not found. Run /gwd extensions list to see available extensions.`, "warning");
     return;
   }
 
@@ -977,7 +977,7 @@ function handleDisable(id: string | undefined, reason: string, ctx: ExtensionCom
 
 function handleInfo(id: string | undefined, ctx: ExtensionCommandContext): void {
   if (!id) {
-    ctx.ui.notify("Usage: /gsd extensions info <id>", "warning");
+    ctx.ui.notify("Usage: /gwd extensions info <id>", "warning");
     return;
   }
 
@@ -1051,7 +1051,7 @@ function handleInfo(id: string | undefined, ctx: ExtensionCommandContext): void 
 
 function handleValidate(path: string | undefined, ctx: ExtensionCommandContext): void {
   if (!path) {
-    ctx.ui.notify("Usage: /gsd extensions validate <path>", "warning");
+    ctx.ui.notify("Usage: /gwd extensions validate <path>", "warning");
     return;
   }
   const resolved = resolve(path);

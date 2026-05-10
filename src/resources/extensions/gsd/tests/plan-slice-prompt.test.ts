@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Verifies GSD planning prompt placeholder rendering and DB-backed tool guidance.
+// Project/App: GWD-2
+// File Purpose: Verifies GWD planning prompt placeholder rendering and DB-backed tool guidance.
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -36,7 +36,7 @@ const BASE_VARS = {
   skillActivation: "Load the relevant skills.",
 };
 
-const DEFAULT_SKILL_ACTIVATION = "If a `GSD Skill Preferences` block is present in system context, use it and the `<available_skills>` catalog in your system prompt to decide which skills to load and follow for this unit, without relaxing required verification or artifact rules.";
+const DEFAULT_SKILL_ACTIVATION = "If a `GWD Skill Preferences` block is present in system context, use it and the `<available_skills>` catalog in your system prompt to decide which skills to load and follow for this unit, without relaxing required verification or artifact rules.";
 
 function loadPromptWithDefaultSkillActivation(name: string, vars: Record<string, string> = {}): string {
   return loadPrompt(name, { skillActivation: DEFAULT_SKILL_ACTIVATION, ...vars });

@@ -1,4 +1,4 @@
-// GSD-2 — UnitContextManifest (#4782 phase 1).
+// GWD-2 — UnitContextManifest (#4782 phase 1).
 //
 // Declarative description of what context each auto-mode unit type needs
 // in its system prompt. Establishes the contract that later phases will
@@ -104,7 +104,7 @@ export type ContextModePolicy =
 /**
  * Tool-access policy per unit type (#4934).
  *
- * Runtime-enforced by the GSD write gate for active auto-mode units. The
+ * Runtime-enforced by the GWD write gate for active auto-mode units. The
  * manifest declares the allowed tool surface; register-hooks.ts resolves the
  * active unit's manifest before each tool call and write-gate.ts rejects
  * violations before the tool executes.

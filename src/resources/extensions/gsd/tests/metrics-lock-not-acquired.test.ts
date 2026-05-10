@@ -1,4 +1,4 @@
-// GSD-2 + metrics saveLedger fallback: when lock is not acquired, falls back to direct write (safe, no torn write)
+// GWD-2 + metrics saveLedger fallback: when lock is not acquired, falls back to direct write (safe, no torn write)
 
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";

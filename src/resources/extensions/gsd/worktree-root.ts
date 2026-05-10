@@ -20,7 +20,7 @@ export function normalizeWorktreePathForCompare(path: string): string {
 }
 
 /**
- * Find the GSD worktree segment in both direct project layout and the
+ * Find the GWD worktree segment in both direct project layout and the
  * symlink-resolved external-state layout used by ~/.gwd/projects/<hash>.
  */
 export function findWorktreeSegment(normalizedPath: string): WorktreeSegment | null {

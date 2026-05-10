@@ -57,7 +57,7 @@ test("handleUndo without --force only warns and leaves completed units intact", 
 
     assert.equal(notifications.length, 1);
     assert.equal(notifications[0]?.level, "warning");
-    assert.match(notifications[0]?.message ?? "", /Run \/gsd undo --force to confirm\./);
+    assert.match(notifications[0]?.message ?? "", /Run \/gwd undo --force to confirm\./);
     assert.deepEqual(
       JSON.parse(readFileSync(join(base, ".gsd", "completed-units.json"), "utf-8")),
       ["execute-task/M001/S01/T01"],
@@ -293,7 +293,7 @@ test("handleUndoTask accepts partial ID (T01) and resolves from state", async ()
     writeFileSync(
       join(base, ".gsd", "STATE.md"),
       [
-        "# GSD State",
+        "# GWD State",
         "",
         "- Phase: executing",
         "- Active Milestone: M001",

@@ -1,19 +1,19 @@
-// Behavioural contract for GSD extension bootstrap isolation (#4168, #4172).
+// Behavioural contract for GWD extension bootstrap isolation (#4168, #4172).
 //
-// Guarantee: the `/gsd` slash command must be registered on pi even if the
+// Guarantee: the `/gwd` slash command must be registered on pi even if the
 // full bootstrap (shortcuts, tools, hooks, ecosystem) throws during import or
 // execution. Prior regressions: a Windows-specific failure in register-
-// shortcuts.ts silently prevented /gsd from being registered at all because
+// shortcuts.ts silently prevented /gwd from being registered at all because
 // registerGSDCommand was called inside the same try that loaded shortcuts.
 //
 // These tests exercise the real default export of index.ts (which calls
 // registerGSDCommand via dynamic import, then attempts the full bootstrap)
 // with a minimal mock ExtensionAPI and verify the observable behaviour
-// directly: /gsd is registered in both the happy path and the degraded path.
+// directly: /gwd is registered in both the happy path and the degraded path.
 //
 // Anti-regression proof (documented in commit):
-//   neuter index.ts to register /gsd inside the same try{} as
-//   register-extension → the degraded-path test fails (no /gsd command
+//   neuter index.ts to register /gwd inside the same try{} as
+//   register-extension → the degraded-path test fails (no /gwd command
 //   registered when register-extension throws). Restore → passes.
 
 import { describe, test } from "node:test";
@@ -45,7 +45,7 @@ function makePi(overrides: Partial<Record<string, unknown>> = {}) {
 }
 
 describe("extension bootstrap isolation (#4168, #4172)", () => {
-  test("happy path: /gsd command is registered", async () => {
+  test("happy path: /gwd command is registered", async () => {
     const { pi, registered } = makePi();
     await registerExtension(pi as any);
     const names = registered.map(([n]) => n);
@@ -55,16 +55,16 @@ describe("extension bootstrap isolation (#4168, #4172)", () => {
     );
   });
 
-  test("degraded path: /gsd still registered when registerCommand throws for non-core commands", async () => {
+  test("degraded path: /gwd still registered when registerCommand throws for non-core commands", async () => {
     // Simulate the Windows-style failure: pi.registerCommand throws for a
     // specific non-core command ('kill' is a simple target registered by
-    // the full bootstrap) — the full bootstrap must fail but /gsd must
+    // the full bootstrap) — the full bootstrap must fail but /gwd must
     // already be registered before the failure occurs.
     const registered: Array<[string, unknown]> = [];
     const pi = {
       registerCommand: (name: string, def: unknown) => {
         if (name !== "gsd" && name !== "worktree" && name !== "exit") {
-          // Let /gsd, /worktree, /exit succeed (they precede the non-core
+          // Let /gwd, /worktree, /exit succeed (they precede the non-core
           // loop); throw when the first non-core registration fires.
         }
         if (name === "kill") throw new Error("simulated windows failure");
@@ -77,7 +77,7 @@ describe("extension bootstrap isolation (#4168, #4172)", () => {
     };
 
     // registerExtension must not throw — the outer try/catch in index.ts
-    // swallows bootstrap failures after /gsd is already registered.
+    // swallows bootstrap failures after /gwd is already registered.
     await registerExtension(pi as any);
 
     const names = registered.map(([n]) => n);
@@ -87,12 +87,12 @@ describe("extension bootstrap isolation (#4168, #4172)", () => {
     );
   });
 
-  test("degraded path: /gsd registered BEFORE any non-core command", async () => {
+  test("degraded path: /gwd registered BEFORE any non-core command", async () => {
     // Ordering guard: the first registerCommand call must be for 'gsd',
     // because index.ts awaits registerGSDCommand(pi) before importing
     // register-extension. Regression scenario: if a future refactor moves
     // registerGSDCommand into the try block or after other registrations,
-    // a failure in those earlier registrations would take /gsd down too.
+    // a failure in those earlier registrations would take /gwd down too.
     const calls: string[] = [];
     const pi = {
       registerCommand: (name: string) => {
@@ -144,7 +144,7 @@ describe("registerGsdExtension defensive registration", () => {
     );
   });
 
-  test("does NOT register /gsd (caller's responsibility, avoids double-registration)", () => {
+  test("does NOT register /gwd (caller's responsibility, avoids double-registration)", () => {
     const registered: string[] = [];
     const pi = {
       registerCommand: (name: string) => {

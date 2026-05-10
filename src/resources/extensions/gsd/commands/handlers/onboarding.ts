@@ -1,4 +1,4 @@
-// GSD — /gsd onboarding command handler (re-entry hub)
+// GWD — /gwd onboarding command handler (re-entry hub)
 //
 // The first-run wizard in src/onboarding.ts uses @clack/prompts and takes over
 // raw stdin. Running it from inside the pi-coding-agent TUI wedges the TUI
@@ -8,7 +8,7 @@
 //
 // Clack-only steps (llm/search/remote/tool-keys via the first-run wizard) are
 // surfaced as notifications pointing the user at the canonical per-step
-// commands (/login, /gsd keys, /gsd remote) that are already ctx.ui-safe.
+// commands (/login, /gwd keys, /gwd remote) that are already ctx.ui-safe.
 
 import type { ExtensionCommandContext } from "@gwd/pi-coding-agent"
 import {
@@ -63,25 +63,25 @@ async function runStep(ctx: ExtensionCommandContext, stepId: OnboardingStepId): 
   switch (stepId) {
     case "llm":
       ctx.ui.notify(
-        "LLM provider setup: run /login to sign in via OAuth, or /gsd keys add to paste an API key.",
+        "LLM provider setup: run /login to sign in via OAuth, or /gwd keys add to paste an API key.",
         "info",
       )
       return
     case "search":
       ctx.ui.notify(
-        "Web search setup: run /gsd keys add and pick a search provider (brave, tavily, etc.).",
+        "Web search setup: run /gwd keys add and pick a search provider (brave, tavily, etc.).",
         "info",
       )
       return
     case "remote":
       ctx.ui.notify(
-        "Remote questions setup: run /gsd remote to configure Discord / Slack / Telegram notifications.",
+        "Remote questions setup: run /gwd remote to configure Discord / Slack / Telegram notifications.",
         "info",
       )
       return
     case "tool-keys":
       ctx.ui.notify(
-        "Tool keys setup: run /gsd keys add to save API keys for Context7, Jina, Groq voice, etc.",
+        "Tool keys setup: run /gwd keys add to save API keys for Context7, Jina, Groq voice, etc.",
         "info",
       )
       return
@@ -105,11 +105,11 @@ async function runStep(ctx: ExtensionCommandContext, stepId: OnboardingStepId): 
           return
         }
       } catch { /* fall through */ }
-      ctx.ui.notify("Run /gsd doctor to validate your setup.", "info")
+      ctx.ui.notify("Run /gwd doctor to validate your setup.", "info")
       return
     }
     case "skills":
-      ctx.ui.notify("Skill install runs during /gsd init. Use /gsd init or /skill manage.", "info")
+      ctx.ui.notify("Skill install runs during /gwd init. Use /gwd init or /skill manage.", "info")
       return
     case "project": {
       const { handleCoreCommand } = await import("./core.js")
@@ -133,7 +133,7 @@ async function renderSetupHub(ctx: ExtensionCommandContext): Promise<void> {
   })
   const labelToStep = new Map(labels.map((label, i) => [label, ONBOARDING_STEPS[i].id]))
 
-  const choice = await ctx.ui.select("GSD Setup — pick a step to configure", labels)
+  const choice = await ctx.ui.select("GWD Setup — pick a step to configure", labels)
   if (typeof choice !== "string") return
   const stepId = labelToStep.get(choice)
   if (!stepId) return
@@ -142,7 +142,7 @@ async function renderSetupHub(ctx: ExtensionCommandContext): Promise<void> {
 
 function renderStatus(): string {
   const r = readOnboardingRecord()
-  const lines: string[] = ["GSD Onboarding\n"]
+  const lines: string[] = ["GWD Onboarding\n"]
   if (r.completedAt) {
     lines.push(`  Completed: ${r.completedAt}`)
   } else {

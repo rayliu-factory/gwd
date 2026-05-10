@@ -1,4 +1,4 @@
-// GSD Extension — /gsd escalate Command Handler (ADR-011 Phase 2)
+// GWD Extension — /gwd escalate Command Handler (ADR-011 Phase 2)
 // Surface and resolve mid-execution escalations from the CLI.
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
@@ -19,7 +19,7 @@ import { emitUokAuditEvent, buildAuditEnvelope } from "../../uok/audit.js";
 
 function helpMessage(): string {
   return [
-    "/gsd escalate — manage mid-execution escalations (ADR-011 Phase 2)",
+    "/gwd escalate — manage mid-execution escalations (ADR-011 Phase 2)",
     "",
     "Subcommands:",
     "  list [--all]           show pending escalations (use --all to include resolved)",
@@ -31,7 +31,7 @@ function helpMessage(): string {
     "",
     "Note: disabling `phases.mid_execution_escalation` does NOT clear pending",
     "escalations. If you need to drain them, re-enable the flag, resolve via",
-    "`/gsd escalate resolve`, then disable.",
+    "`/gwd escalate resolve`, then disable.",
   ].join("\n");
 }
 
@@ -139,7 +139,7 @@ export async function handleEscalateCommand(
     const choice = parts[1];
     const rationale = parts.slice(2).join(" ").trim();
     if (!ref || !choice) {
-      ctx.ui.notify("Usage: /gsd escalate resolve <taskId|Sxx/Tyy> <choice> [rationale...]", "warning");
+      ctx.ui.notify("Usage: /gwd escalate resolve <taskId|Sxx/Tyy> <choice> [rationale...]", "warning");
       return;
     }
 
@@ -195,7 +195,7 @@ export async function handleEscalateCommand(
         }));
 
         ctx.ui.notify(
-          `${result.message}\nDecision recorded as ${decisionId}. Run /gsd auto to continue.`,
+          `${result.message}\nDecision recorded as ${decisionId}. Run /gwd auto to continue.`,
           "success",
         );
       } catch (decErr) {
@@ -208,7 +208,7 @@ export async function handleEscalateCommand(
     }
 
     // rejected-to-blocker path
-    ctx.ui.notify(`${result.message} Run /gsd auto to trigger the replan.`, "success");
+    ctx.ui.notify(`${result.message} Run /gwd auto to trigger the replan.`, "success");
     return;
   }
 

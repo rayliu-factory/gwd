@@ -51,5 +51,5 @@ export async function handleGSDCommand(
     return;
   }
 
-  ctx.ui.notify(`Unknown: /gsd ${trimmed}. Run /gsd help for available commands.`, "warning");
+  ctx.ui.notify(`Unknown: /gwd ${trimmed}. Run /gwd help for available commands.`, "warning");
 }

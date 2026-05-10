@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Post-unit verification gate for GWD auto-mode units.
 
 /**

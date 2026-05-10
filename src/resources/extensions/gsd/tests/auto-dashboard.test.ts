@@ -388,7 +388,7 @@ test("last commit refresh still returns commit info for a valid git repo", (t) =
   mkdirSync(dir, { recursive: true });
 
   execFileSync("git", ["init", "-b", "main"], { cwd: dir, stdio: "pipe" });
-  execFileSync("git", ["config", "user.name", "GSD Test"], { cwd: dir, stdio: "pipe" });
+  execFileSync("git", ["config", "user.name", "GWD Test"], { cwd: dir, stdio: "pipe" });
   execFileSync("git", ["config", "user.email", "gsd@example.com"], { cwd: dir, stdio: "pipe" });
   writeFileSync(join(dir, "README.md"), "hello\n", "utf-8");
   execFileSync("git", ["add", "README.md"], { cwd: dir, stdio: "pipe" });

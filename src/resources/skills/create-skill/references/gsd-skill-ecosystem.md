@@ -1,16 +1,16 @@
 <overview>
-GSD-specific skill ecosystem details: directory conventions, discovery mechanics, telemetry, and health monitoring. Read this reference when creating or auditing skills within GSD.
+GWD-specific skill ecosystem details: directory conventions, discovery mechanics, telemetry, and health monitoring. Read this reference when creating or auditing skills within GWD.
 </overview>
 
 <skill_directories>
-GSD supports two skill directories, checked in order:
+GWD supports two skill directories, checked in order:
 
 **User-scope (global):** `~/.agents/skills/`
 - Available in every GWD session regardless of working directory
 - Installed via [skills.sh](https://skills.sh) or manually
 
 **Project-scope (local):** `.agents/skills/`
-- Available only when GSD runs inside the project directory
+- Available only when GWD runs inside the project directory
 - Committable to version control so team members share the same skill set
 - Ideal for project-specific workflows, deploy scripts, or conventions
 
@@ -18,7 +18,7 @@ Skills in both directories follow the same SKILL.md format and router pattern co
 </skill_directories>
 
 <skill_discovery>
-GSD auto-discovers skills at session start and during auto-mode:
+GWD auto-discovers skills at session start and during auto-mode:
 
 **Session start:** All skills in both directories are enumerated and their names + descriptions are injected into the system prompt as `<available_skills>`.
 

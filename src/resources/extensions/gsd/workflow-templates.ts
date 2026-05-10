@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Workflow template registry loading, matching, and display helpers.
 
 /**
@@ -17,7 +17,7 @@ import { formatRecommendedProcessPaths } from "./process-task-path.js";
 const __extensionDir = resolveGsdExtensionDir();
 const registryPath = join(__extensionDir, "workflow-templates", "registry.json");
 
-/** Resolve the GSD extension dir with fallback to ~/.gwd/agent/extensions/gsd/. */
+/** Resolve the GWD extension dir with fallback to ~/.gwd/agent/extensions/gsd/. */
 function resolveGsdExtensionDir(): string {
   const moduleDir = dirname(fileURLToPath(import.meta.url));
   if (existsSync(join(moduleDir, "workflow-templates"))) return moduleDir;
@@ -219,8 +219,8 @@ export function listTemplates(): string {
     lines.push("");
   }
 
-  lines.push("Usage: /gsd start <template> [description]");
-  lines.push("       /gsd templates info <name>");
+  lines.push("Usage: /gwd start <template> [description]");
+  lines.push("       /gwd templates info <name>");
   lines.push("");
   lines.push("Recommended Task Paths:");
   lines.push(formatRecommendedProcessPaths());

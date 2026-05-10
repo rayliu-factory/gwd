@@ -1,4 +1,4 @@
-// GSD — Onboarding completion record (~/.gwd/agent/onboarding.json)
+// GWD — Onboarding completion record (~/.gwd/agent/onboarding.json)
 //
 // First-class state for the onboarding wizard so re-entry, resume, and the
 // web boot probe all read the same source of truth. Replaces the implicit

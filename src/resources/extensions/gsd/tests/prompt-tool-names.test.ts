@@ -1,8 +1,8 @@
 // prompt-tool-names — Ensures prompt files reference correct tool names.
 //
-// The registered GSD tool is `search-the-web`, not `web_search`.
+// The registered GWD tool is `search-the-web`, not `web_search`.
 // `web_search` is an Anthropic API implementation detail that should
-// never appear in GSD prompts or agent frontmatter.
+// never appear in GWD prompts or agent frontmatter.
 // See: https://github.com/gwd-build/gwd-2/issues/2920
 
 import test from "node:test";

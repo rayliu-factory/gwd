@@ -1,5 +1,5 @@
 /**
- * Tests for /gsd scan command — pure functions + handler integration
+ * Tests for /gwd scan command — pure functions + handler integration
  */
 
 import { describe, test, afterEach } from "node:test";

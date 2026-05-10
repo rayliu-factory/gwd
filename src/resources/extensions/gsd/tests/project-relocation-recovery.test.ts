@@ -110,7 +110,7 @@ describe("project-relocation-recovery (#2750)", () => {
     const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-reuse-a-")));
     initRepo(repoA, "https://github.com/example/reloc-reuse.git");
 
-    // Initialize GSD state with some planning data
+    // Initialize GWD state with some planning data
     const externalA = ensureGsdSymlink(repoA);
     const milestonesPath = join(externalA, "milestones");
     mkdirSync(milestonesPath, { recursive: true });
@@ -209,7 +209,7 @@ describe("project-relocation-recovery (#2750)", () => {
     initRepo(repoA);
     // No remote — identity includes gitRoot
 
-    // Initialize GSD state
+    // Initialize GWD state
     const externalA = ensureGsdSymlink(repoA);
     mkdirSync(join(externalA, "milestones"), { recursive: true });
     writeFileSync(

@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Unit tests for workflow journal event emission adapter.
 
 import assert from "node:assert/strict";

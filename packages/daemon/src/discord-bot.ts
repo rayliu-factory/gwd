@@ -256,7 +256,7 @@ export class DiscordBot {
   }
 
   /**
-   * Set the EventBridge reference so the bot can dispatch /gsd-verbose commands.
+   * Set the EventBridge reference so the bot can dispatch /gwd-verbose commands.
    * Called by Daemon after creating the EventBridge.
    */
   setEventBridge(bridge: EventBridge): void {
@@ -340,7 +340,7 @@ export class DiscordBot {
   }
 
   // ---------------------------------------------------------------------------
-  // Private: /gsd-start handler
+  // Private: /gwd-start handler
   // ---------------------------------------------------------------------------
 
   private async handleGsdStart(interaction: import('discord.js').ChatInputCommandInteraction): Promise<void> {
@@ -397,7 +397,7 @@ export class DiscordBot {
       const projectPath = collected.values[0];
       this.logger.info('gsd-start: project selected', { projectPath });
 
-      // Defer the update immediately — startSession can take 10-30s to spawn the GSD process,
+      // Defer the update immediately — startSession can take 10-30s to spawn the GWD process,
       // and Discord's component interaction token expires in 3 seconds without deferral.
       await collected.deferUpdate();
 
@@ -423,7 +423,7 @@ export class DiscordBot {
   }
 
   // ---------------------------------------------------------------------------
-  // Private: /gsd-stop handler
+  // Private: /gwd-stop handler
   // ---------------------------------------------------------------------------
 
   private async handleGsdStop(interaction: import('discord.js').ChatInputCommandInteraction): Promise<void> {

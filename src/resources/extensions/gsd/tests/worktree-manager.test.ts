@@ -166,7 +166,7 @@ describe("diffWorktreeGSD and getWorktreeGSDDiff", () => {
   });
   afterEach(() => { rmSync(base, { recursive: true, force: true }); });
 
-  test("detects added and modified GSD files", () => {
+  test("detects added and modified GWD files", () => {
     const diff = diffWorktreeGSD(base, "feature-x");
     assert.ok(diff.added.length > 0, "should have added files");
     assert.ok(

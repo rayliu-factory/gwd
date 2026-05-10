@@ -1,4 +1,4 @@
-// gsd-2 + Milestone leases tests (Phase B coordination — fencing semantics)
+// gwd-2 + Milestone leases tests (Phase B coordination — fencing semantics)
 
 import test from "node:test";
 import assert from "node:assert/strict";

@@ -358,7 +358,7 @@ function formatToolList(serverName: string, tools: McpToolSchema[]): string {
 	return lines.join("\n");
 }
 
-// ─── Status helper (consumed by /gsd mcp) ─────────────────────────────────────
+// ─── Status helper (consumed by /gwd mcp) ─────────────────────────────────────
 
 /**
  * Return the live connection status for a named MCP server.

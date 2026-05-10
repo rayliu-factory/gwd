@@ -1,9 +1,9 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Git operations, commit-message formatting, and turn git actions.
 /**
- * GSD Git Service
+ * GWD Git Service
  *
- * Core git operations for GSD: types, constants, and pure helpers.
+ * Core git operations for GWD: types, constants, and pure helpers.
  * Higher-level operations (commit, staging, branching) build on these.
  *
  * This module centralizes the GitPreferences interface, runtime exclusion
@@ -62,10 +62,10 @@ export interface GitPreferences {
    *  - "none": (default) no git isolation — commits land on the user's current branch directly
    */
   isolation?: "worktree" | "branch" | "none";
-  /** When false, GSD will not modify .gitignore at all — no baseline patterns
+  /** When false, GWD will not modify .gitignore at all — no baseline patterns
    *  are added and no self-healing occurs. Use this if you manage your own
-   *  .gitignore and don't want GSD touching it.
-   *  Default: true (GSD ensures baseline patterns are present).
+   *  .gitignore and don't want GWD touching it.
+   *  Default: true (GWD ensures baseline patterns are present).
    */
   manage_gitignore?: boolean;
   /** Script to run after a worktree is created (#597).
@@ -146,9 +146,9 @@ export interface TaskCommitContext {
 
 /**
  * Build a meaningful conventional commit message from task execution context.
- * Format: `{type}: {description}` (clean conventional commit — no GSD IDs in subject).
+ * Format: `{type}: {description}` (clean conventional commit — no GWD IDs in subject).
  *
- * GSD metadata is placed in a `GSD-Task:` git trailer at the end of the body,
+ * GWD metadata is placed in a `GWD-Task:` git trailer at the end of the body,
  * following the same convention as `Signed-off-by:` or `Co-Authored-By:`.
  *
  * The description is the task summary one-liner if available (it describes
@@ -179,11 +179,11 @@ export function buildTaskCommitMessage(ctx: TaskCommitContext): string {
 
   const contextLines = buildTaskCommitContextLines(ctx);
   if (contextLines.length > 0) {
-    bodyParts.push(`GSD context:\n${contextLines.join("\n")}`);
+    bodyParts.push(`GWD context:\n${contextLines.join("\n")}`);
   }
 
-  // Trailers: GSD-Task first, then Resolves
-  bodyParts.push(`GSD-Task: ${ctx.taskId}`);
+  // Trailers: GWD-Task first, then Resolves
+  bodyParts.push(`GWD-Task: ${ctx.taskId}`);
 
   if (ctx.issueNumber) {
     bodyParts.push(`Resolves #${ctx.issueNumber}`);
@@ -309,7 +309,7 @@ export interface PreMergeCheckResult {
 // ─── Constants ─────────────────────────────────────────────────────────────
 
 /**
- * GSD runtime paths that should be excluded from smart staging.
+ * GWD runtime paths that should be excluded from smart staging.
  * These are transient/generated artifacts that should never be committed.
  *
  * NOTE: GWD_RUNTIME_PATTERNS in gitignore.ts is the canonical source of truth.
@@ -327,7 +327,7 @@ export const RUNTIME_EXCLUSION_PATHS: readonly string[] = [
   ".gsd/completed-units*.json", // covers completed-units.json and archived completed-units-{MID}.json
   ".gsd/state-manifest.json",
   ".gsd/STATE.md",
-  ".gsd/gsd.db*",
+  ".gsd/gwd.db*",
   ".gsd/journal/",
   ".gsd/doctor-history.jsonl",
   ".gsd/event-log.jsonl",
@@ -681,7 +681,7 @@ export class GitServiceImpl {
   }
 
   /**
-   * Smart staging: `git add -A` excluding GSD runtime paths via pathspec.
+   * Smart staging: `git add -A` excluding GWD runtime paths via pathspec.
    * Falls back to plain `git add -A` if the exclusion pathspec fails.
    * @param extraExclusions Additional pathspec exclusions beyond RUNTIME_EXCLUSION_PATHS.
    */
@@ -856,7 +856,7 @@ export class GitServiceImpl {
 
     const message = taskContext
       ? buildTaskCommitMessage(taskContext)
-      : `chore: auto-commit after ${unitType}\n\nGSD-Unit: ${unitId}`;
+      : `chore: auto-commit after ${unitType}\n\nGWD-Unit: ${unitId}`;
     nativeCommit(this.basePath, message, { allowEmpty: false });
 
     // Absorb any preceding gsd snapshot commits into this real commit.
@@ -954,7 +954,7 @@ export class GitServiceImpl {
    * branches are created from and merged back into.
    *
    * This is often `main` or `master`, but not necessarily. When a user
-   * starts GSD on a feature branch like `f-123-new-thing`, that branch
+   * starts GWD on a feature branch like `f-123-new-thing`, that branch
    * is recorded as the integration target, and all slice branches merge
    * back into it — not the repo's default branch. The name "main branch"
    * in variable names is historical; think of it as "integration branch".
@@ -1010,7 +1010,7 @@ export class GitServiceImpl {
   /**
    * Create a snapshot ref for the given label (typically a slice branch name).
    * Enabled by default; opt out with prefs.snapshots === false.
-   * Ref path: refs/gsd/snapshots/<label>/<timestamp>
+   * Ref path: refs/gwd/snapshots/<label>/<timestamp>
    * The ref points at HEAD, capturing the current commit before destructive operations.
    */
   createSnapshot(label: string): void {
@@ -1025,7 +1025,7 @@ export class GitServiceImpl {
       + String(now.getMinutes()).padStart(2, "0")
       + String(now.getSeconds()).padStart(2, "0");
 
-    const refPath = `refs/gsd/snapshots/${label}/${ts}`;
+    const refPath = `refs/gwd/snapshots/${label}/${ts}`;
     nativeUpdateRef(this.basePath, refPath, "HEAD");
   }
 

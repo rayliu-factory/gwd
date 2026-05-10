@@ -32,19 +32,19 @@ function createMockCtx() {
   };
 }
 
-test("/gsd description includes discuss", () => {
+test("/gwd description includes discuss", () => {
   const pi = createMockPi();
   registerGSDCommand(pi as any);
 
   const gsd = pi.commands.get("gsd");
-  assert.ok(gsd, "registerGSDCommand should register /gsd");
+  assert.ok(gsd, "registerGSDCommand should register /gwd");
   assert.ok(
     gsd.description.includes("discuss"),
     "description should include discuss",
   );
 });
 
-test("/gsd description includes debug", () => {
+test("/gwd description includes debug", () => {
   const pi = createMockPi();
   registerGSDCommand(pi as any);
 
@@ -52,7 +52,7 @@ test("/gsd description includes debug", () => {
   assert.ok(gsd.description.includes("debug"), "description should include debug");
 });
 
-test("/gsd next completions include --debug", () => {
+test("/gwd next completions include --debug", () => {
   const pi = createMockPi();
   registerGSDCommand(pi as any);
 
@@ -62,7 +62,7 @@ test("/gsd next completions include --debug", () => {
   assert.ok(debug, "next --debug should appear in completions");
 });
 
-test("/gsd debug completions include list|status|continue|--diagnose", () => {
+test("/gwd debug completions include list|status|continue|--diagnose", () => {
   const pi = createMockPi();
   registerGSDCommand(pi as any);
 
@@ -74,7 +74,7 @@ test("/gsd debug completions include list|status|continue|--diagnose", () => {
   }
 });
 
-test("/gsd widget completions include full|small|min|off", () => {
+test("/gwd widget completions include full|small|min|off", () => {
   const pi = createMockPi();
   registerGSDCommand(pi as any);
 
@@ -86,7 +86,7 @@ test("/gsd widget completions include full|small|min|off", () => {
   }
 });
 
-test("/gsd logs completions still include debug after adding /gsd debug", () => {
+test("/gwd logs completions still include debug after adding /gwd debug", () => {
   const pi = createMockPi();
   registerGSDCommand(pi as any);
 
@@ -96,26 +96,26 @@ test("/gsd logs completions still include debug after adding /gsd debug", () => 
   assert.ok(values.includes("logs debug"), "logs debug completion should remain available");
 });
 
-test("/gsd help full includes /gsd debug command", async () => {
+test("/gwd help full includes /gwd debug command", async () => {
   const ctx = createMockCtx();
 
   await handleGSDCommand("help full", ctx as any, {} as any);
 
   const helpText = ctx.notifications.map((n) => n.message).join("\n");
-  assert.match(helpText, /\/gsd debug\s+Create\/list\/continue persistent debug sessions/);
+  assert.match(helpText, /\/gwd debug\s+Create\/list\/continue persistent debug sessions/);
 });
 
-test("bare /gsd skip shows usage and does not fall through to unknown-command warning", async () => {
+test("bare /gwd skip shows usage and does not fall through to unknown-command warning", async () => {
   const ctx = createMockCtx();
 
   await handleGSDCommand("skip", ctx as any, {} as any);
 
   assert.ok(
-    ctx.notifications.some((n) => n.message.includes("Usage: /gsd skip <unit-id>")),
+    ctx.notifications.some((n) => n.message.includes("Usage: /gwd skip <unit-id>")),
     "should show skip usage guidance",
   );
   assert.ok(
-    !ctx.notifications.some((n) => n.message.startsWith("Unknown: /gsd skip")),
+    !ctx.notifications.some((n) => n.message.startsWith("Unknown: /gwd skip")),
     "should not emit unknown-command warning for bare skip",
   );
 });

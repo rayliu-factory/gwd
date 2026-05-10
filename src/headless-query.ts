@@ -1,5 +1,5 @@
 /**
- * Headless Query — `gsd headless query`
+ * Headless Query — `gwd headless query`
  *
  * Single read-only command that returns the full project snapshot as JSON
  * to stdout, without spawning an LLM session. Instant (~50ms).

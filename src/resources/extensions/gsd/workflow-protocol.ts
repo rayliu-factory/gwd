@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Shared capped workflow protocol and doctor-heal prompt payload helpers.
 
 const DEFAULT_WORKFLOW_PROTOCOL_EXCERPT_CHARS = 4_000;
@@ -76,7 +76,7 @@ export function buildDoctorHealIssuePayload(
     capText(block, maxIssueChars, "Issue details truncated; inspect the relevant artifact before editing."),
   );
   if (blocks.length > maxIssues) {
-    topBlocks.push(`[${blocks.length - maxIssues} additional actionable issue(s) omitted from prompt. Re-run /gsd doctor heal after this repair pass.]`);
+    topBlocks.push(`[${blocks.length - maxIssues} additional actionable issue(s) omitted from prompt. Re-run /gwd doctor heal after this repair pass.]`);
   }
   return capText(topBlocks.join("\n\n"), maxChars, "Structured issue list truncated; repair top actionable issues first and re-run doctor heal.");
 }

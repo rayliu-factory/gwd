@@ -25,7 +25,7 @@ describe("AdaptiveLayoutComponent", () => {
 		}));
 
 		const output = render(component, 132);
-		assert.match(output, /GSD Command Center/);
+		assert.match(output, /GWD Command Center/);
 		assert.match(output, /signals/);
 		assert.match(output, /2 running/);
 	});

@@ -1,5 +1,5 @@
 /**
- * GSD Detection — Project state and ecosystem detection.
+ * GWD Detection — Project state and ecosystem detection.
  *
  * Pure functions, zero UI dependencies, zero side effects.
  * Used by init-wizard.ts and guided-flow.ts to determine what onboarding
@@ -340,7 +340,7 @@ export function detectProjectState(basePath: string): ProjectDetection {
 // ─── V1 Planning Detection ──────────────────────────────────────────────────────
 
 /**
- * Detect a v1 .planning/ directory with GSD v1 markers.
+ * Detect a v1 .planning/ directory with GWD v1 markers.
  * Returns null if no .planning/ directory found.
  */
 export function detectV1Planning(basePath: string): V1Detection | null {
@@ -377,7 +377,7 @@ export function detectV1Planning(basePath: string): V1Detection | null {
   };
 }
 
-// ─── V2 GSD Detection ──────────────────────────────────────────────────────────
+// ─── V2 GWD Detection ──────────────────────────────────────────────────────────
 
 function detectV2Gsd(basePath: string): V2Detection | null {
   const gsdPath = gsdRoot(basePath);

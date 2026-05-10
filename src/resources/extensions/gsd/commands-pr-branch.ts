@@ -1,5 +1,5 @@
 /**
- * GSD Command — /gsd pr-branch
+ * GWD Command — /gwd pr-branch
  *
  * Creates a clean PR branch by cherry-picking commits while stripping
  * any changes to .gsd/, .planning/, and PLAN.md paths. Useful for

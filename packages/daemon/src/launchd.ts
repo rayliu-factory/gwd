@@ -1,4 +1,4 @@
-import { writeFileSync, unlinkSync, existsSync, chmodSync } from 'node:fs';
+import { writeFileSync, unlinkSync, existsSync, chmodSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { execSync } from 'node:child_process';
@@ -154,6 +154,7 @@ export function install(
     }
   }
 
+  mkdirSync(dirname(plistPath), { recursive: true });
   writeFileSync(plistPath, xml, 'utf-8');
   chmodSync(plistPath, 0o644);
 

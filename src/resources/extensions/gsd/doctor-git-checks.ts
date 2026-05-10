@@ -433,7 +433,7 @@ export async function checkGitHealth(
   }
 
   // ── Worktree lifecycle checks ──────────────────────────────────────────
-  // Check GSD-managed worktrees for: merged branches, stale work, dirty
+  // Check GWD-managed worktrees for: merged branches, stale work, dirty
   // state, and unpushed commits. Only worktrees under .gsd/worktrees/.
   try {
     const healthStatuses = getAllWorktreeHealth(basePath);

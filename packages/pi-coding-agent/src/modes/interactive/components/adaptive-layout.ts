@@ -53,7 +53,7 @@ export class AdaptiveLayoutComponent implements Component {
 				this.metric("Mode", state.override === "auto" ? "auto workflow" : state.override, "modeWorkflow"),
 			],
 			leftWidth,
-			"GSD Command Center",
+			"GWD Command Center",
 			"workflow",
 			"modeWorkflow",
 		);

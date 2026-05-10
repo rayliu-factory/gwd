@@ -1,6 +1,6 @@
-// GSD Extension — Unified Cache Invalidation
+// GWD Extension — Unified Cache Invalidation
 //
-// Three module-scoped read caches exist across the GSD extension:
+// Three module-scoped read caches exist across the GWD extension:
 //   1. State cache (state.ts)  — memoized deriveState() result
 //   2. Path cache  (paths.ts)  — directory listing results (readdirSync)
 //   3. Parse cache (files.ts)  — parsed markdown file results
@@ -27,7 +27,7 @@ import { clearPathCache } from './paths.js';
 import { clearParseCache } from './files.js';
 
 /**
- * Invalidate all GSD runtime read caches in one call.
+ * Invalidate all GWD runtime read caches in one call.
  *
  * Call this after file writes, milestone transitions, merge reconciliation,
  * or any operation that changes .gsd/ contents on disk. Forgetting to clear

@@ -73,7 +73,7 @@ function createFeatureBranchRepo(featureBranch: string): string {
 
   // Initial commit on main
   writeFileSync(join(dir, "README.md"), "# project\n");
-  // Mirror production: GSD runtime dirs are gitignored so autoCommitDirtyState
+  // Mirror production: GWD runtime dirs are gitignored so autoCommitDirtyState
   // doesn't pick up the worktrees directory as dirty state (#1127 fix).
   writeFileSync(join(dir, ".gitignore"), ".gsd/worktrees/\n");
   mkdirSync(join(dir, ".gsd"), { recursive: true });
@@ -183,7 +183,7 @@ describe('feature-branch-lifecycle-integration', async () => {
       // In production, the first dispatch unit (research-milestone) would
       // auto-commit via autoCommitCurrentBranch. But the worktree is created
       // BEFORE any unit runs. So we simulate the pre-worktree state:
-      // GSD bootstraps .gsd/ and captureIntegrationBranch commits metadata.
+      // GWD bootstraps .gsd/ and captureIntegrationBranch commits metadata.
       // The user's dirty files are NOT auto-committed pre-worktree — they
       // stay in the original working directory.
 

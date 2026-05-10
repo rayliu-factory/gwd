@@ -19,7 +19,7 @@
  * 10. Worktree disappearance detection
  */
 
-// GSD State Machine Runtime Failure Tests
+// GWD State Machine Runtime Failure Tests
 
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";

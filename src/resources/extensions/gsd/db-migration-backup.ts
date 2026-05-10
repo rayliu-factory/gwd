@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Pre-migration backup helper for GSD database schema upgrades.
+// Project/App: GWD-2
+// File Purpose: Pre-migration backup helper for GWD database schema upgrades.
 
 import type { DbAdapter } from "./db-adapter.js";
 

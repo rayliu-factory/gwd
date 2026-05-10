@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: System prompt and hidden context bootstrap for GWD sessions.
 import { existsSync, readFileSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
@@ -65,8 +65,8 @@ export const BUNDLED_SKILL_TRIGGERS: Array<{ trigger: string; skill: string }> =
   { trigger: "Browser automation — open sites, fill forms, click, screenshot, scrape, or test web apps programmatically", skill: "agent-browser" },
   { trigger: "Review UI code for Web Interface Guidelines compliance — UX, design, and accessibility patterns", skill: "web-design-guidelines" },
   { trigger: "UI/UX patterns reference — animations, CSS, typography, prefetching, icons (file:line findings)", skill: "userinterface-wiki" },
-  { trigger: "Author or refine a GSD skill — SKILL.md structure, frontmatter, and best practices", skill: "create-skill" },
-  { trigger: "Create or debug a GSD extension — tools, commands, event hooks, custom TUI, providers", skill: "create-gsd-extension" },
+  { trigger: "Author or refine a GWD skill — SKILL.md structure, frontmatter, and best practices", skill: "create-skill" },
+  { trigger: "Create or debug a GWD extension — tools, commands, event hooks, custom TUI, providers", skill: "create-gsd-extension" },
   { trigger: "Author a YAML workflow definition — steps, triggers, and templates", skill: "create-workflow" },
   { trigger: "Deep code optimization audit — perf anti-patterns, memory leaks, algorithmic complexity, bundle size, I/O, caching, dead code (parallel pattern-based hunt)", skill: "code-optimizer" },
 ];
@@ -93,7 +93,7 @@ function warnDeprecatedAgentInstructions(): void {
   for (const path of paths) {
     if (existsSync(path)) {
       console.warn(
-        `[GSD] DEPRECATED: ${path} is no longer loaded. ` +
+        `[GWD] DEPRECATED: ${path} is no longer loaded. ` +
         `Migrate your instructions to AGENTS.md (or CLAUDE.md) in the same directory. ` +
         `See https://github.com/gwd-build/gwd-2/issues/1492`,
       );
@@ -122,7 +122,7 @@ export async function buildBeforeAgentStartResult(
       if (autoEnableCmuxPreferences()) {
         loadedPreferences = loadEffectiveGSDPreferences();
         ctx.ui.notify(
-          "cmux detected — auto-enabled. Run /gsd cmux off to disable.",
+          "cmux detected — auto-enabled. Run /gwd cmux off to disable.",
           "info",
         );
       }
@@ -138,7 +138,7 @@ export async function buildBeforeAgentStartResult(
     preferenceBlock = `\n\n${renderPreferencesForSystemPrompt(loadedPreferences.preferences, report.resolutions)}`;
     if (report.warnings.length > 0) {
       ctx.ui.notify(
-        `GSD skill preferences: ${report.warnings.length} unresolved skill${report.warnings.length === 1 ? "" : "s"}: ${report.warnings.join(", ")}`,
+        `GWD skill preferences: ${report.warnings.length} unresolved skill${report.warnings.length === 1 ? "" : "s"}: ${report.warnings.join(", ")}`,
         "warning",
       );
     }
@@ -147,7 +147,7 @@ export async function buildBeforeAgentStartResult(
   const { block: knowledgeBlock, globalSizeKb } = loadKnowledgeBlock(gsdHome(), process.cwd());
   if (globalSizeKb > 4) {
     ctx.ui.notify(
-      `GSD: ~/.gwd/agent/KNOWLEDGE.md is ${globalSizeKb.toFixed(1)}KB — consider trimming to keep system prompt lean.`,
+      `GWD: ~/.gwd/agent/KNOWLEDGE.md is ${globalSizeKb.toFixed(1)}KB — consider trimming to keep system prompt lean.`,
       "warning",
     );
   }
@@ -159,7 +159,7 @@ export async function buildBeforeAgentStartResult(
     const { backfillDecisionsToMemories } = await import("../memory-backfill.js");
     const written = backfillDecisionsToMemories();
     if (written > 0) {
-      ctx.ui.notify(`GSD: backfilled ${written} decision${written === 1 ? "" : "s"} into the memory store (ADR-013).`, "info");
+      ctx.ui.notify(`GWD: backfilled ${written} decision${written === 1 ? "" : "s"} into the memory store (ADR-013).`, "info");
     }
   } catch (e) {
     logWarning("bootstrap", `decisions backfill failed: ${(e as Error).message}`);
@@ -200,7 +200,7 @@ export async function buildBeforeAgentStartResult(
         const content = rawContent.length > DEFAULT_CODEBASE_MAX_CHARS
           ? rawContent.slice(0, DEFAULT_CODEBASE_MAX_CHARS) + "\n\n*(truncated — see .gsd/CODEBASE.md for full map)*"
           : rawContent;
-        codebaseBlock = `\n\n[PROJECT CODEBASE — File structure and descriptions (generated ${generatedAt}, auto-refreshed when GSD detects tracked file changes; use /gsd codebase stats for status)]\n\n${content}`;
+        codebaseBlock = `\n\n[PROJECT CODEBASE — File structure and descriptions (generated ${generatedAt}, auto-refreshed when GWD detects tracked file changes; use /gwd codebase stats for status)]\n\n${content}`;
       }
     } catch (e) {
       logWarning("bootstrap", `CODEBASE file read failed: ${(e as Error).message}`);
@@ -228,7 +228,7 @@ export async function buildBeforeAgentStartResult(
   // Keeping it out of `fullSystem` preserves provider prompt-cache stability
   // for the static system/tool prefix. The dynamic memory block rides the
   // volatile context message instead. (#5019)
-  const fullSystem = `${event.systemPrompt}\n\n[SYSTEM CONTEXT — GSD]\n\n${systemContent}${preferenceBlock}${knowledgeBlock}${codebaseBlock}${newSkillsBlock}${worktreeBlock}${subagentModelBlock}`;
+  const fullSystem = `${event.systemPrompt}\n\n[SYSTEM CONTEXT — GWD]\n\n${systemContent}${preferenceBlock}${knowledgeBlock}${codebaseBlock}${newSkillsBlock}${worktreeBlock}${subagentModelBlock}`;
 
   stopContextTimer({
     systemPromptSize: fullSystem.length,
@@ -298,14 +298,14 @@ function getContextMessageCharLimit(): number | null {
 
 function limitContextMessageContent(content: string, limit: number | null): string {
   if (!limit || content.length <= limit) return content;
-  const suffix = "\n\n[GSD Context Truncated]\nFull context is available from the referenced .gsd files and tools; read on demand only if this excerpt lacks required evidence.";
+  const suffix = "\n\n[GWD Context Truncated]\nFull context is available from the referenced .gsd files and tools; read on demand only if this excerpt lacks required evidence.";
   const headBudget = Math.max(0, limit - suffix.length);
   return `${content.slice(0, headBudget).trimEnd()}${suffix}`;
 }
 
 function markMemoryContextSupplied(memoryContent: string): string {
   if (!memoryContent) return "";
-  return `[GSD Context Metadata]\n- Memory supplied: yes\n\n${memoryContent}`;
+  return `[GWD Context Metadata]\n- Memory supplied: yes\n\n${memoryContent}`;
 }
 
 /**
@@ -315,7 +315,7 @@ function markMemoryContextSupplied(memoryContent: string): string {
  * combining two memory sets:
  *
  * 1. Always-on "critical" set — top-ranked active memories in categories
- *    that future GSD turns generally want without asking. After ADR-013
+ *    that future GWD turns generally want without asking. After ADR-013
  *    expands this to include "architecture", these memories serve as the
  *    auto-injected replacement for inlineDecisionsFromDb when the cutover
  *    in step 6 lands.
@@ -362,7 +362,7 @@ export async function loadMemoryBlock(
     const formatted = formatMemoriesForPrompt(merged, CHAR_BUDGET);
     if (!formatted) return "";
 
-    return `\n\n[MEMORY — Critical and prompt-relevant memories from the GSD memory store]\n\n${formatted}`;
+    return `\n\n[MEMORY — Critical and prompt-relevant memories from the GWD memory store]\n\n${formatted}`;
   } catch (e) {
     logWarning("bootstrap", `memory block fetch failed: ${(e as Error).message}`);
     return "";
@@ -447,13 +447,13 @@ function buildWorktreeContextBlock(): string {
       `IMPORTANT: Ignore the "Current working directory" shown earlier in this prompt.`,
       `The actual current working directory is: ${toPosixPath(process.cwd())}`,
       "",
-      `You are working inside a GSD worktree.`,
+      `You are working inside a GWD worktree.`,
       `- Worktree name: ${worktreeName}`,
       `- Worktree path (this is the real cwd): ${toPosixPath(process.cwd())}`,
       `- Main project: ${toPosixPath(worktreeMainCwd)}`,
       `- Branch: worktree/${worktreeName}`,
       "",
-      "All file operations, bash commands, and GSD state resolve against the worktree path above.",
+      "All file operations, bash commands, and GWD state resolve against the worktree path above.",
       "Use /worktree merge to merge changes back. Use /worktree return to switch back to the main tree.",
     ].join("\n");
   }
@@ -466,13 +466,13 @@ function buildWorktreeContextBlock(): string {
       `IMPORTANT: Ignore the "Current working directory" shown earlier in this prompt.`,
       `The actual current working directory is: ${toPosixPath(process.cwd())}`,
       "",
-      "You are working inside a GSD auto-worktree.",
+      "You are working inside a GWD auto-worktree.",
       `- Milestone worktree: ${autoWorktree.worktreeName}`,
       `- Worktree path (this is the real cwd): ${toPosixPath(process.cwd())}`,
       `- Main project: ${toPosixPath(autoWorktree.originalBase)}`,
       `- Branch: ${autoWorktree.branch}`,
       "",
-      "All file operations, bash commands, and GSD state resolve against the worktree path above.",
+      "All file operations, bash commands, and GWD state resolve against the worktree path above.",
       "Write every .gsd artifact in the worktree path above, never in the main project tree.",
     ].join("\n");
   }
@@ -562,7 +562,7 @@ async function buildTaskExecutionContextInjection(
   const overridesSection = formatOverridesSection(activeOverrides);
 
   return [
-    "[GSD Guided Execute Context]",
+    "[GWD Guided Execute Context]",
     "Use this injected context as startup context for guided task execution. Treat the inlined task plan as the authoritative local execution contract. Use source artifacts to verify details and run checks.",
     overridesSection, "",
     "",

@@ -215,7 +215,7 @@ test("postflightPopStash conflict warning names the exact stash ref", () => {
   }
 });
 
-test("postflightPopStash restores the matching GSD stash, not stash@{0}", () => {
+test("postflightPopStash restores the matching GWD stash, not stash@{0}", () => {
   const repo = createTempRepo();
   try {
     writeFileSync(join(repo, "README.md"), "# target stash\n");

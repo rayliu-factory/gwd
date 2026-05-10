@@ -1,12 +1,12 @@
 /**
  * enhanced-verification-integration.test.ts — Integration tests for enhanced verification.
  *
- * Exercises all 7 enhanced verification checks against GSD-2's actual source files.
+ * Exercises all 7 enhanced verification checks against GWD-2's actual source files.
  * This proves:
  *   - R012: No false positives on production code
  *   - R013: Speed targets met (<2000ms pre-execution, <1000ms post-execution per task)
  *
- * The test constructs realistic TaskRow fixtures that reference real GSD source files,
+ * The test constructs realistic TaskRow fixtures that reference real GWD source files,
  * then runs both pre-execution and post-execution checks against them.
  */
 
@@ -31,7 +31,7 @@ import type { TaskRow } from "../gsd-db.ts";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Path to the GSD extension source directory (relative to test file)
+// Path to the GWD extension source directory (relative to test file)
 const GWD_SRC_DIR = join(__dirname, "..");
 
 // Speed targets from R013
@@ -79,9 +79,9 @@ function createTask(overrides: Partial<TaskRow> = {}): TaskRow {
   };
 }
 
-// ─── Real GSD Source Files for Testing ───────────────────────────────────────
+// ─── Real GWD Source Files for Testing ───────────────────────────────────────
 
-// These are actual GSD extension source files that exist in the codebase
+// These are actual GWD extension source files that exist in the codebase
 const REAL_GWD_FILES = [
   "gsd-db.ts",
   "auto-verification.ts",
@@ -112,9 +112,9 @@ describe("Enhanced Verification Integration Tests", () => {
     verifyTestFixturesExist();
   });
 
-  describe("Pre-Execution Checks on Real GSD Code", () => {
+  describe("Pre-Execution Checks on Real GWD Code", () => {
     test("runs pre-execution checks on realistic tasks referencing real files", async () => {
-      // Simulate tasks that reference real GSD source files
+      // Simulate tasks that reference real GWD source files
       const tasks: TaskRow[] = [
         createTask({
           id: "T01",
@@ -151,7 +151,7 @@ describe("Enhanced Verification Integration Tests", () => {
       );
 
       // Overall status should not be fail
-      assert.notEqual(result.status, "fail", "Pre-execution checks should not fail on real GSD code");
+      assert.notEqual(result.status, "fail", "Pre-execution checks should not fail on real GWD code");
 
       // R013: Speed target met
       assert.ok(
@@ -175,7 +175,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { existsSync } from "node:fs";
 
-// Use existing GSD types
+// Use existing GWD types
 import type { TaskRow } from "./gsd-db.ts";
 \`\`\`
 
@@ -246,8 +246,8 @@ Read the types from src/resources/extensions/gsd/types.ts and use them.
     });
   });
 
-  describe("Post-Execution Checks on Real GSD Code", () => {
-    test("runs post-execution checks on real GSD source files", () => {
+  describe("Post-Execution Checks on Real GWD Code", () => {
+    test("runs post-execution checks on real GWD source files", () => {
       // Simulate a completed task that modified real files
       const completedTask = createTask({
         id: "T01",
@@ -272,7 +272,7 @@ Read the types from src/resources/extensions/gsd/types.ts and use them.
       );
 
       // Overall status should not be fail
-      assert.notEqual(result.status, "fail", "Post-execution checks should not fail on real GSD code");
+      assert.notEqual(result.status, "fail", "Post-execution checks should not fail on real GWD code");
 
       // R013: Speed target met
       assert.ok(
@@ -282,7 +282,7 @@ Read the types from src/resources/extensions/gsd/types.ts and use them.
     });
 
     test("analyzes imports in real TypeScript files", () => {
-      // Use auto-verification.ts which imports from multiple other GSD files
+      // Use auto-verification.ts which imports from multiple other GWD files
       const completedTask = createTask({
         id: "T02",
         title: "Verify auto-verification imports",
@@ -458,7 +458,7 @@ import { runPostExecutionChecks } from "./post-execution-checks.ts";
     });
 
     test("handles large number of files without timeout", () => {
-      // Use all available GSD source files to stress test
+      // Use all available GWD source files to stress test
       const allGsdFiles = REAL_GWD_FILES.map((f) => join(GWD_SRC_DIR, f));
 
       const task = createTask({

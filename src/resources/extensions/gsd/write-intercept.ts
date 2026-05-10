@@ -90,7 +90,7 @@ function matchesBlockedPattern(path: string): boolean {
  * Error message returned when an agent attempts to directly write an authoritative .gsd/ state file.
  * Directs the agent to use engine tool calls instead.
  */
-export const BLOCKED_WRITE_ERROR = `Direct writes to .gsd/STATE.md and .gsd/gsd.db are blocked. Use engine tool calls instead:
+export const BLOCKED_WRITE_ERROR = `Direct writes to .gsd/STATE.md and .gsd/gwd.db are blocked. Use engine tool calls instead:
 - To complete a task: call gsd_task_complete(milestone_id, slice_id, task_id, summary)
 - To complete a slice: call gsd_slice_complete(milestone_id, slice_id, summary, uat_result)
 - To save a decision: call gsd_decision_save(scope, decision, choice, rationale)

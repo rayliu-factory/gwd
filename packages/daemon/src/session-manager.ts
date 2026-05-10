@@ -67,11 +67,11 @@ export class SessionManager extends EventEmitter {
   }
 
   /**
-   * Start a new GSD auto-mode session for the given project directory.
+   * Start a new GWD auto-mode session for the given project directory.
    *
    * Rejects if a session already exists for this projectDir.
    * Creates an RpcClient, starts the process, performs the v2 init handshake,
-   * wires event tracking, and sends '/gsd auto' to begin execution.
+   * wires event tracking, and sends '/gwd auto' to begin execution.
    */
   async startSession(options: StartSessionOptions): Promise<string> {
     const { projectDir } = options;
@@ -140,7 +140,7 @@ export class SessionManager extends EventEmitter {
       });
 
       // Kick off auto-mode
-      const command = options.command ?? '/gsd auto';
+      const command = options.command ?? '/gwd auto';
       await client.prompt(command);
 
       this.logger.info('session started', { sessionId: session.sessionId, projectDir: resolvedDir });

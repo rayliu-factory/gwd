@@ -8,7 +8,7 @@ Produce a security review that names specific exploit paths through the actual c
 </objective>
 
 <context>
-GSD-2's general `review` skill covers security as one of several categories. This skill is the deeper pass — triggered deliberately when security is the primary concern. It complements v1's `/gsd-secure-phase` concept, adapted to the gsd-2 artifact model.
+GWD-2's general `review` skill covers security as one of several categories. This skill is the deeper pass — triggered deliberately when security is the primary concern. It complements v1's `/gwd-secure-phase` concept, adapted to the gwd-2 artifact model.
 
 Invocation points:
 - Any change touching authentication, authorization, session handling
@@ -153,7 +153,7 @@ Offer to file as a GitHub issue — requires explicit confirmation per the outwa
 
 If the review found CRITICAL or HIGH issues:
 - Recommend filing a private security advisory (not a public issue) if the repo is public.
-- Flag the finding for `/gsd start hotfix` if it's in the scope of active work.
+- Flag the finding for `/gwd start hotfix` if it's in the scope of active work.
 - Append one line to `.gsd/DECISIONS.md` if the remediation involves an architectural change.
 
 </process>

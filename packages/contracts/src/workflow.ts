@@ -15,7 +15,7 @@ export interface WorkflowToolContractMetadata {
 export const WORKFLOW_TOOL_CONTRACTS = [
 	{
 		canonicalName: "gsd_decision_save",
-		aliases: ["gsd_save_decision"],
+		aliases: [],
 		schemaId: "workflow.decision.save",
 		executorId: "executeDecisionSave",
 		writePolicy: "write",
@@ -23,7 +23,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 	},
 	{
 		canonicalName: "gsd_requirement_update",
-		aliases: ["gsd_update_requirement"],
+		aliases: [],
 		schemaId: "workflow.requirement.update",
 		executorId: "executeRequirementUpdate",
 		writePolicy: "write",
@@ -31,7 +31,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 	},
 	{
 		canonicalName: "gsd_requirement_save",
-		aliases: ["gsd_save_requirement"],
+		aliases: [],
 		schemaId: "workflow.requirement.save",
 		executorId: "executeRequirementSave",
 		writePolicy: "write",
@@ -39,7 +39,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 	},
 	{
 		canonicalName: "gsd_milestone_generate_id",
-		aliases: ["gsd_generate_milestone_id"],
+		aliases: [],
 		schemaId: "workflow.milestone.generate_id",
 		executorId: "executeMilestoneGenerateId",
 		writePolicy: "read",
@@ -63,7 +63,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 	},
 	{
 		canonicalName: "gsd_plan_task",
-		aliases: ["gsd_task_plan"],
+		aliases: [],
 		schemaId: "workflow.task.plan",
 		executorId: "executePlanTask",
 		writePolicy: "write",
@@ -71,7 +71,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 	},
 	{
 		canonicalName: "gsd_replan_slice",
-		aliases: ["gsd_slice_replan"],
+		aliases: [],
 		schemaId: "workflow.slice.replan",
 		executorId: "executeReplanSlice",
 		writePolicy: "write",
@@ -79,7 +79,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 	},
 	{
 		canonicalName: "gsd_slice_complete",
-		aliases: ["gsd_complete_slice"],
+		aliases: [],
 		schemaId: "workflow.slice.complete",
 		executorId: "executeSliceComplete",
 		writePolicy: "write",
@@ -95,7 +95,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 	},
 	{
 		canonicalName: "gsd_complete_milestone",
-		aliases: ["gsd_milestone_complete"],
+		aliases: [],
 		schemaId: "workflow.milestone.complete",
 		executorId: "executeCompleteMilestone",
 		writePolicy: "write",
@@ -103,7 +103,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 	},
 	{
 		canonicalName: "gsd_validate_milestone",
-		aliases: ["gsd_milestone_validate"],
+		aliases: [],
 		schemaId: "workflow.milestone.validate",
 		executorId: "executeValidateMilestone",
 		writePolicy: "write",
@@ -111,7 +111,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 	},
 	{
 		canonicalName: "gsd_reassess_roadmap",
-		aliases: ["gsd_roadmap_reassess"],
+		aliases: [],
 		schemaId: "workflow.roadmap.reassess",
 		executorId: "executeReassessRoadmap",
 		writePolicy: "write",
@@ -135,7 +135,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 	},
 	{
 		canonicalName: "gsd_task_complete",
-		aliases: ["gsd_complete_task"],
+		aliases: [],
 		schemaId: "workflow.task.complete",
 		executorId: "executeTaskComplete",
 		writePolicy: "write",

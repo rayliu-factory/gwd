@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Regression tests for the TUI header lifecycle fixes —
 // header is suppressed (zero lines) when auto-mode activates, the wizard
 // step status badge is cleared, the NEXT-mode footer hint renders when
@@ -267,7 +267,7 @@ test("completion dashboard keeps final milestone roll-up in the progress widget"
   assert.match(output, /Users can see what shipped/);
   assert.match(output, /Keep completion closeout/);
   assert.match(output, /Verification/);
-  assert.match(output, /Files: src\/resources\/extensions\/gsd\/auto-dashboard\.ts/);
+  assert.match(output, /Files: src\/resources\/extensions\/gwd\/auto-dashboard\.ts/);
   assert.match(output, /Run totals 3\/3 slices/);
   assert.match(output, /100% cache hit/);
   assert.match(output, /\$21\.29/);

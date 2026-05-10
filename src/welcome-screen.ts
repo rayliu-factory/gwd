@@ -131,7 +131,7 @@ export function buildWelcomeScreenLines(opts: WelcomeScreenOptions): string[] {
   const footerFill = RIGHT_INNER - visLen(toolsLeft) - visLen(hintRight)
   const footerRow  = toolsLeft + ' '.repeat(Math.max(1, footerFill)) + hintRight
 
-  // "Welcome back" context lines — GSD state if available, else hint.
+  // "Welcome back" context lines — GWD state if available, else hint.
   // Intentionally avoids data already shown in the footer (model, provider,
   // pwd, branch).
   const state = readGsdState()
@@ -149,7 +149,7 @@ export function buildWelcomeScreenLines(opts: WelcomeScreenOptions): string[] {
       : ''
   } else {
     line1 = `  Status     ${chalk.dim('No active GWD project')}`
-    line2 = `             ${chalk.dim('/gsd to begin')}`
+    line2 = `             ${chalk.dim('/gwd to begin')}`
   }
   const sessionLine = line1
   const projectLine = line2

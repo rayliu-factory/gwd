@@ -1,4 +1,4 @@
-// GSD-2 + Integration regression suite for workspace collapse (feat/workspace-collapse)
+// GWD-2 + Integration regression suite for workspace collapse (feat/workspace-collapse)
 
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
@@ -51,7 +51,7 @@ function makeGitRepo(): string {
   const dir = makeProjectDir();
   git(["init"], dir);
   git(["config", "user.email", "test@gsd.test"], dir);
-  git(["config", "user.name", "GSD Test"], dir);
+  git(["config", "user.name", "GWD Test"], dir);
   writeFileSync(join(dir, "README.md"), "# test\n");
   git(["add", "README.md"], dir);
   git(["commit", "-m", "init"], dir);

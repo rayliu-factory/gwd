@@ -1,10 +1,10 @@
 /**
- * GSD Dashboard Overlay
+ * GWD Dashboard Overlay
  *
  * Full-screen overlay showing auto-mode progress: milestone/slice/task
  * breakdown, current unit, completed units, timing, and activity log.
  * Toggled with Ctrl+Alt+G (⌃⌥G on macOS), Ctrl+Shift+G fallback,
- * or opened from /gsd status.
+ * or opened from /gwd status.
  */
 
 import type { Theme } from "@gwd/pi-coding-agent";
@@ -297,7 +297,7 @@ export class GSDDashboardOverlay {
     const hr = () => row(th.fg("dim", "─".repeat(contentWidth)));
     const centered = (content: string) => row(centerLine(content, contentWidth));
 
-    const title = th.fg("accent", th.bold("GSD Dashboard"));
+    const title = th.fg("accent", th.bold("GWD Dashboard"));
     const isRemote = !!this.dashData.remoteSession;
     const status = this.dashData.active
       ? `${Date.now() % 2000 < 1000 ? th.fg("success", "●") : th.fg("dim", "○")} ${th.fg("success", "AUTO")}`
@@ -354,7 +354,7 @@ export class GSDDashboardOverlay {
       )));
       lines.push(blank());
     } else if (this.dashData.paused) {
-      lines.push(row(th.fg("dim", "/gsd auto to resume")));
+      lines.push(row(th.fg("dim", "/gwd auto to resume")));
       lines.push(blank());
     } else if (isRemote) {
       const rs = this.dashData.remoteSession!;
@@ -364,7 +364,7 @@ export class GSDDashboardOverlay {
       lines.push(row(th.fg("text", `Remote session: ${unitDisplay}`)));
       lines.push(blank());
     } else {
-      lines.push(row(th.fg("dim", "No unit running · /gsd auto to start")));
+      lines.push(row(th.fg("dim", "No unit running · /gwd auto to start")));
       lines.push(blank());
     }
 

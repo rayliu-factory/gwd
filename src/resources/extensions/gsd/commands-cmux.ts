@@ -176,7 +176,7 @@ export async function handleCmux(args: string, ctx: ExtensionCommandContext): Pr
   }
 
   ctx.ui.notify(
-    "Usage: /gsd cmux <status|on|off|notifications on|notifications off|sidebar on|sidebar off|splits on|splits off|browser on|browser off>",
+    "Usage: /gwd cmux <status|on|off|notifications on|notifications off|sidebar on|sidebar off|splits on|splits off|browser on|browser off>",
     "info",
   );
 }

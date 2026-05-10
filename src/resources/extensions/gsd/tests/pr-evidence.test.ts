@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Tests for the shared GSD pull request evidence generator.
+// Project/App: GWD-2
+// File Purpose: Tests for the shared GWD pull request evidence generator.
 
 import test from "node:test";
 import assert from "node:assert/strict";

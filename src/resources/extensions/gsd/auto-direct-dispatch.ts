@@ -1,5 +1,5 @@
 /**
- * Direct phase dispatch — handles manual /gsd dispatch commands.
+ * Direct phase dispatch — handles manual /gwd dispatch commands.
  * Resolves phase name → unit type + prompt, creates a session, and sends the message.
  */
 
@@ -54,7 +54,7 @@ export async function dispatchDirectPhase(
   const projectRoot = base;
 
   // Switch the dispatch base to the canonical milestone worktree if one
-  // exists. Without this, /gsd dispatch invoked from the project root would
+  // exists. Without this, /gwd dispatch invoked from the project root would
   // build prompts and create a session anchored to the project root even
   // though the milestone's actual code lives in the worktree.
   const dispatchBase = resolveCanonicalMilestoneRoot(base, mid);
@@ -83,7 +83,7 @@ export async function dispatchDirectPhase(
         const requireDiscussion = loadEffectiveGSDPreferences()?.preferences?.phases?.require_slice_discussion;
         if (requireDiscussion && !sliceContextFile) {
           ctx.ui.notify(
-            `Slice ${sid} requires discussion before planning. Run /gsd discuss to discuss this slice, then /gsd auto to resume.`,
+            `Slice ${sid} requires discussion before planning. Run /gwd discuss to discuss this slice, then /gwd auto to resume.`,
             "info",
           );
           await pauseAuto(ctx, pi);

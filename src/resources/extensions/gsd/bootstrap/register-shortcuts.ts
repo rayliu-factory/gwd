@@ -26,7 +26,7 @@ export function registerShortcuts(pi: ExtensionAPI): void {
       getProjectRoot(),
     ]);
     if (!existsSync(join(basePath, ".gsd"))) {
-      ctx.ui.notify("No .gsd/ directory found. Run /gsd to start.", "info");
+      ctx.ui.notify("No .gsd/ directory found. Run /gwd to start.", "info");
       return;
     }
     await ctx.ui.custom<boolean>(
@@ -59,7 +59,7 @@ export function registerShortcuts(pi: ExtensionAPI): void {
     const basePath = await getProjectRoot();
     const parallelDir = join(basePath, ".gsd", "parallel");
     if (!existsSync(parallelDir)) {
-      ctx.ui.notify("No parallel workers found. Run /gsd parallel start first.", "info");
+      ctx.ui.notify("No parallel workers found. Run /gwd parallel start first.", "info");
       return;
     }
     const { ParallelMonitorOverlay } = await import("../parallel-monitor-overlay.js");
@@ -100,5 +100,5 @@ export function registerShortcuts(pi: ExtensionAPI): void {
   });
 
   // No Ctrl+Shift+P fallback — conflicts with cycleModelBackward (shift+ctrl+p).
-  // Use Ctrl+Alt+P or /gsd parallel watch instead.
+  // Use Ctrl+Alt+P or /gwd parallel watch instead.
 }

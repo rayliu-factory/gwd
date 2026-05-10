@@ -1,4 +1,4 @@
-// GSD DB Writer — Markdown generators + DB-first write helpers
+// GWD DB Writer — Markdown generators + DB-first write helpers
 //
 // The missing DB→markdown direction. S03 established markdown→DB (md-importer.ts).
 // This module generates DECISIONS.md and REQUIREMENTS.md from DB state,
@@ -539,9 +539,7 @@ export async function saveDecisionToDb(
     clearParseCache();
 
     // ADR-013 dual-write: keep the memory store in sync with every decision
-    // persisted via the legacy gsd_save_decision path. Without this, prompts
-    // that still call gsd_save_decision (discuss.md, plan-milestone.md,
-    // plan-slice.md, et al.) would create decisions rows invisible to
+    // persisted through gsd_decision_save so decision rows stay visible to
     // memory_query and loadMemoryBlock.
     // Best-effort — never throw, never roll back the decision on failure.
     try {

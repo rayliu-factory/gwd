@@ -1,4 +1,4 @@
-// GSD-2 — write-gate predicate coverage (#4950).
+// GWD-2 — write-gate predicate coverage (#4950).
 //
 // Covers five predicates that had no dedicated tests:
 //   shouldBlockQueueExecution, shouldBlockPendingGate,

@@ -1,4 +1,4 @@
-// GSD Extension — Debug Logger
+// GWD Extension — Debug Logger
 // Structured JSONL debug logging for diagnosing stuck/slow GWD sessions.
 // Zero overhead when disabled — all public functions are no-ops.
 
@@ -98,7 +98,7 @@ export function debugLog(event: string, data?: Record<string, unknown>): void {
   try {
     appendFileSync(_logPath, JSON.stringify(entry) + '\n');
   } catch {
-    // Silently ignore write failures — debug logging must never break GSD
+    // Silently ignore write failures — debug logging must never break GWD
   }
 }
 

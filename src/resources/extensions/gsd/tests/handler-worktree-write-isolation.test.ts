@@ -1,5 +1,5 @@
 /**
- * Regression: when /gsd handlers run with cwd inside a worktree, writes must
+ * Regression: when /gwd handlers run with cwd inside a worktree, writes must
  * land in the worktree's .gsd/, not the parent project's .gsd/.
  *
  * The fix in 01464a97 replaced `process.cwd()` with `projectRoot()` to block

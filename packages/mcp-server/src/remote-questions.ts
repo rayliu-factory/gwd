@@ -833,7 +833,7 @@ function formatForTool(answer: RemoteAnswer): Record<string, { answers: string[]
 }
 
 /**
- * Normalize a `RemoteAnswer` into the `RoundResult` shape the GSD
+ * Normalize a `RemoteAnswer` into the `RoundResult` shape the GWD
  * discussion-gate hook reads from `tool_result` `details.response`. Mirrors
  * `src/resources/extensions/remote-questions/manager.ts:toRoundResultResponse`
  * and the local-path helper `buildAskUserQuestionsRoundResult` in server.ts.

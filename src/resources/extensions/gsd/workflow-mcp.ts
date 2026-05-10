@@ -27,16 +27,11 @@ const MCP_WORKFLOW_TOOL_SURFACE = new Set([
   "gsd_exec_search",
   "gsd_resume",
   "gsd_complete_milestone",
-  "gsd_complete_task",
-  "gsd_complete_slice",
-  "gsd_generate_milestone_id",
   "gsd_journal_query",
-  "gsd_milestone_complete",
   "gsd_milestone_generate_id",
   "gsd_milestone_reopen",
   "gsd_checkpoint_db",
   "gsd_milestone_status",
-  "gsd_milestone_validate",
   "gsd_plan_task",
   "gsd_plan_milestone",
   "gsd_plan_slice",
@@ -47,19 +42,13 @@ const MCP_WORKFLOW_TOOL_SURFACE = new Set([
   "gsd_reopen_task",
   "gsd_requirement_save",
   "gsd_requirement_update",
-  "gsd_roadmap_reassess",
-  "gsd_save_decision",
   "gsd_save_gate_result",
-  "gsd_save_requirement",
   "gsd_skip_slice",
-  "gsd_slice_replan",
   "gsd_slice_complete",
   "gsd_slice_reopen",
   "gsd_summary_save",
-  "gsd_task_plan",
   "gsd_task_complete",
   "gsd_task_reopen",
-  "gsd_update_requirement",
   "gsd_validate_milestone",
 ]);
 
@@ -395,7 +384,7 @@ export function supportsStructuredQuestions(
   if (!hasAskUserQuestionsTool(activeTools)) return false;
   if (usesWorkflowMcpTransport(options.authMode, options.baseUrl)) {
     // Claude Code local workflow-MCP exposes ask_user_questions, but form
-    // elicitation can return an immediate cancel outside GSD's chat turn. Keep
+    // elicitation can return an immediate cancel outside GWD's chat turn. Keep
     // checkpoints in plain chat unless a caller deliberately opts into testing
     // that transport.
     return workflowMcpStructuredQuestionsOptIn(options.env);

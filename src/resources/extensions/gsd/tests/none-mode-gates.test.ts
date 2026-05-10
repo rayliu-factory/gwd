@@ -120,7 +120,7 @@ test('worktree isolation is disabled for an unborn repo until the first commit',
 });
 
 // Test 4: shouldUseWorktreeIsolation returns false for no prefs (default: none)
-// Worktree isolation requires explicit opt-in — default is "none" so GSD
+// Worktree isolation requires explicit opt-in — default is "none" so GWD
 // works out of the box without PREFERENCES.md (#2480).
 // Skip if global prefs exist — they override the default and this test
 // cannot control ~/.gwd/PREFERENCES.md.

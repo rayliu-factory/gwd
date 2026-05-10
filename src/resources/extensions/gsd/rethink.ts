@@ -1,5 +1,5 @@
 /**
- * GSD Rethink — Conversational project reorganization.
+ * GWD Rethink — Conversational project reorganization.
  *
  * Collects a snapshot of all milestones (status, dependencies, slice progress,
  * queue order) and dispatches a prompt that turns Claude into a reorganization
@@ -37,7 +37,7 @@ export async function handleRethink(
   const basePath = currentDirectoryRoot();
   const root = gsdRoot(basePath);
   if (!existsSync(root)) {
-    ctx.ui.notify("No GWD project found. Run /gsd init first.", "warning");
+    ctx.ui.notify("No GWD project found. Run /gwd init first.", "warning");
     return;
   }
 

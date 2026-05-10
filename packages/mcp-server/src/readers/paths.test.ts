@@ -1,4 +1,4 @@
-// GSD MCP Server — .gsd/ path cache tests
+// GWD MCP Server — .gsd/ path cache tests
 
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';

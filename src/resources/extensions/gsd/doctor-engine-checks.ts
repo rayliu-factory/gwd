@@ -22,7 +22,7 @@ export async function checkEngineHealth(
       scope: "project",
       unitId: "project",
       message: "Database unavailable — using filesystem state derivation (degraded mode). State queries may be slower and less reliable.",
-      file: ".gsd/gsd.db",
+      file: ".gsd/gwd.db",
       fixable: false,
     });
   }

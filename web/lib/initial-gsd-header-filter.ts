@@ -99,7 +99,7 @@ function isLogoLine(line: string | undefined): boolean {
 }
 
 /**
- * Strip the decorative GSD startup banner from the beginning of a PTY stream.
+ * Strip the decorative GWD startup banner from the beginning of a PTY stream.
  *
  * Power User Mode now renders both panes without a separate wrapper header. The
  * main-session pane never replays the native banner reliably, while the right

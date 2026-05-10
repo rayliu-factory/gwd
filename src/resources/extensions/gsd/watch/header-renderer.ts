@@ -1,4 +1,4 @@
-// GSD Watch — Header renderer: ASCII logo, session info, MCP status, remote questions
+// GWD Watch — Header renderer: ASCII logo, session info, MCP status, remote questions
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { execFileSync } from "node:child_process";
@@ -12,7 +12,7 @@ import { gsdHome } from "../gsd-home.js";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 /**
- * GSD ASCII logo — inlined here because the canonical src/logo.ts is outside
+ * GWD ASCII logo — inlined here because the canonical src/logo.ts is outside
  * the resources rootDir and cannot be imported directly.
  */
 const GWD_LOGO: readonly string[] = [
@@ -36,7 +36,7 @@ const LABEL_COL_WIDTH = 10;
 // ─── Data Readers ─────────────────────────────────────────────────────────────
 
 /**
- * Read the configured execution model from GSD preferences.
+ * Read the configured execution model from GWD preferences.
  * Falls back through execution -> planning -> research -> first found.
  * Returns "default" if nothing is configured.
  */
@@ -194,7 +194,7 @@ export function formatMcpRow(servers: string[], width: number): string {
 /**
  * Render the full header as an array of terminal-safe strings.
  *
- * Layout: GSD ASCII logo on the left, info panel on the right separated by │.
+ * Layout: GWD ASCII logo on the left, info panel on the right separated by │.
  * Below: MCP server row, remote questions row, separator line.
  */
 export function renderHeaderLines(data: HeaderData, width: number): string[] {

@@ -1,5 +1,5 @@
 /**
- * GSD Repo Identity — external state directory primitives.
+ * GWD Repo Identity — external state directory primitives.
  *
  * Computes a stable per-repo identity hash, resolves the external
  * `~/.gwd/projects/<hash>/` state directory, and manages the
@@ -112,7 +112,7 @@ export function readRepoMeta(externalPath: string): RepoMeta | null {
  * cross-project state leaks (#1639).
  *
  * When the git root already has a project `.gsd`, the directory is a
- * legitimate subdirectory of an existing GWD project — `cd src/ && /gsd`
+ * legitimate subdirectory of an existing GWD project — `cd src/ && /gwd`
  * should still load the parent project's milestones.
  */
 export function isInheritedRepo(basePath: string): boolean {
@@ -128,7 +128,7 @@ export function isInheritedRepo(basePath: string): boolean {
 
     // Walk up from basePath's parent to the git root checking for .gsd.
     // Start at dirname(normalizedBase), NOT normalizedBase itself — finding
-    // .gsd at basePath means GSD state is set up for THIS project, which
+    // .gsd at basePath means GWD state is set up for THIS project, which
     // says nothing about whether the git repo is inherited from an ancestor.
     let dir = dirname(normalizedBase);
     while (dir !== normalizedRoot && dir !== dirname(dir)) {
@@ -147,7 +147,7 @@ export function isInheritedRepo(basePath: string): boolean {
  *
  * A project `.gsd` is either:
  *   - A symlink to an external state directory (normal post-migration layout)
- *   - A legacy real directory that is NOT the global GSD home
+ *   - A legacy real directory that is NOT the global GWD home
  *
  * When the user's home directory is itself a git repo (e.g. dotfile managers),
  * `~/.gwd` exists but is the global state directory — not a project `.gsd`.
@@ -163,7 +163,7 @@ function isProjectGsd(gsdPath: string): boolean {
     // Symlinks are always project .gsd (created by ensureGsdSymlink).
     if (stat.isSymbolicLink()) return true;
 
-    // For real directories, check that this isn't the global GSD home.
+    // For real directories, check that this isn't the global GWD home.
     // Recompute gsdHome dynamically so env overrides (GWD_HOME) are
     // picked up at call time, not just at module load time.
     if (stat.isDirectory()) {
@@ -304,7 +304,7 @@ export function repoIdentity(basePath: string): string {
 // ─── External State Directory ───────────────────────────────────────────────
 
 /**
- * Compute the external GSD state directory for a repository.
+ * Compute the external GWD state directory for a repository.
  *
  * Returns `$GWD_STATE_DIR/projects/<hash>` if `GWD_STATE_DIR` is set,
  * otherwise `~/.gwd/projects/<hash>`.
@@ -330,7 +330,7 @@ export function externalProjectsRoot(): string {
  *
  * When `symlinkSync` (or Finder) tries to create `.gsd` but a real directory
  * already exists at that path, macOS APFS silently renames the new entry to
- * `.gsd 2`, then `.gsd 3`, and so on. These numbered variants confuse GSD
+ * `.gsd 2`, then `.gsd 3`, and so on. These numbered variants confuse GWD
  * because the canonical `.gsd` path no longer resolves to the external state
  * directory, making tracked planning files appear deleted.
  *
@@ -506,7 +506,7 @@ function ensureGsdSymlinkCore(projectPath: string): string {
   const localGsd = join(projectPath, ".gsd");
   const inWorktree = isInsideWorktree(projectPath);
 
-  // Guard: Never create a symlink at ~/.gwd — that's the user-level GSD home,
+  // Guard: Never create a symlink at ~/.gwd — that's the user-level GWD home,
   // not a project .gsd. This can happen if resolveProjectRoot() or
   // escapeStaleWorktree() returned ~ as the project root (#1676).
   // Canonical normalization: resolve symlinks, trim trailing slashes, case-fold on Windows.

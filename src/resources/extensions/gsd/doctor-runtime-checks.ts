@@ -247,7 +247,7 @@ export async function checkRuntimeHealth(
           code: "uat_retry_exhausted",
           scope: "slice",
           unitId: `${mid}/${sid}`,
-          message: `run-uat for ${mid}/${sid} exhausted ${count - 1} retry attempt(s) without an ASSESSMENT verdict. Reset the retry counter after fixing the underlying UAT/tool issue, then rerun /gsd auto.`,
+          message: `run-uat for ${mid}/${sid} exhausted ${count - 1} retry attempt(s) without an ASSESSMENT verdict. Reset the retry counter after fixing the underlying UAT/tool issue, then rerun /gwd auto.`,
           file: `.gsd/runtime/${fileName}`,
           fixable: true,
         });
@@ -380,7 +380,7 @@ export async function checkRuntimeHealth(
         ".gsd/activity/",
         ".gsd/runtime/",
         ".gsd/auto.lock",
-        ".gsd/gsd.db*",
+        ".gsd/gwd.db*",
         ".gsd/completed-units*.json",
         ".gsd/event-log.jsonl",
       ];
@@ -396,14 +396,14 @@ export async function checkRuntimeHealth(
             code: "gitignore_missing_patterns",
             scope: "project",
             unitId: "project",
-            message: `${missing.length} critical GSD runtime pattern(s) missing from .gitignore: ${missing.join(", ")}`,
+            message: `${missing.length} critical GWD runtime pattern(s) missing from .gitignore: ${missing.join(", ")}`,
             file: ".gitignore",
             fixable: true,
           });
 
           if (shouldFix("gitignore_missing_patterns")) {
             ensureGitignore(basePath);
-            fixesApplied.push("added missing GSD runtime patterns to .gitignore");
+            fixesApplied.push("added missing GWD runtime patterns to .gitignore");
           }
         }
       }
@@ -494,7 +494,7 @@ export async function checkRuntimeHealth(
           code: "numbered_gsd_variant",
           scope: "project",
           unitId: "project",
-          message: `Found macOS collision variant "${v}" — this can cause GSD state to appear deleted.`,
+          message: `Found macOS collision variant "${v}" — this can cause GWD state to appear deleted.`,
           file: v,
           fixable: true,
         });
@@ -563,7 +563,7 @@ export async function checkRuntimeHealth(
             code: "metrics_ledger_bloat",
             scope: "project",
             unitId: "project",
-            message: `metrics.json has ${parsed.units.length} unit entries (${fileSizeMB}MB) — threshold is ${BLOAT_UNITS_THRESHOLD}. Run /gsd doctor --fix to prune to the newest 1500 entries.`,
+            message: `metrics.json has ${parsed.units.length} unit entries (${fileSizeMB}MB) — threshold is ${BLOAT_UNITS_THRESHOLD}. Run /gwd doctor --fix to prune to the newest 1500 entries.`,
             file: ".gsd/metrics.json",
             fixable: true,
           });
@@ -623,18 +623,18 @@ export async function checkRuntimeHealth(
   }
 
   // ── Snapshot ref bloat ────────────────────────────────────────────────
-  // refs/gsd/snapshots/ accumulate over time. Prune to newest 5 per label
+  // refs/gwd/snapshots/ accumulate over time. Prune to newest 5 per label
   // when total count exceeds threshold.
   try {
     if (nativeIsRepo(basePath)) {
-      const refs = nativeForEachRef(basePath, "refs/gsd/snapshots/");
+      const refs = nativeForEachRef(basePath, "refs/gwd/snapshots/");
       if (refs.length > 50) {
         issues.push({
           severity: "warning",
           code: "snapshot_ref_bloat",
           scope: "project",
           unitId: "project",
-          message: `${refs.length} snapshot refs found under refs/gsd/snapshots/ — pruning to newest 5 per label will reclaim git storage`,
+          message: `${refs.length} snapshot refs found under refs/gwd/snapshots/ — pruning to newest 5 per label will reclaim git storage`,
           fixable: true,
         });
 
@@ -710,7 +710,7 @@ export async function checkRuntimeHealth(
  */
 function buildStateMarkdownForCheck(state: Awaited<ReturnType<typeof deriveState>>): string {
   const lines: string[] = [];
-  lines.push("# GSD State", "");
+  lines.push("# GWD State", "");
 
   const activeMilestone = state.activeMilestone
     ? `${state.activeMilestone.id}: ${state.activeMilestone.title}`

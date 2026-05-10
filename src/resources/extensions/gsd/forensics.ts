@@ -1,5 +1,5 @@
 /**
- * GSD Forensics — Post-mortem investigation of auto-mode failures
+ * GWD Forensics — Post-mortem investigation of auto-mode failures
  *
  * Programmatically scans activity logs, metrics, crash locks, and doctor
  * diagnostics for anomalies, then hands a structured report to the LLM
@@ -197,7 +197,7 @@ export async function handleForensics(
   const basePath = process.cwd();
   const root = gsdRoot(basePath);
   if (!existsSync(root)) {
-    ctx.ui.notify("No GSD state found. Run /gsd auto first.", "warning");
+    ctx.ui.notify("No GWD state found. Run /gwd auto first.", "warning");
     return;
   }
 
@@ -321,7 +321,7 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
     }
   }
 
-  // 8. GSD version — use GWD_VERSION env var set by the loader at startup.
+  // 8. GWD version — use GWD_VERSION env var set by the loader at startup.
   // Extensions run from ~/.gwd/agent/extensions/gsd/ at runtime, so path-traversal
   // from import.meta.url would resolve to ~/package.json (wrong on every system).
   const gsdVersion = process.env.GWD_VERSION || "unknown";
@@ -820,9 +820,9 @@ export function detectWorktreeOrphans(
       summary: `${count} worktree orphan(s) detected (${reason})`,
       details:
         reason === "in-progress-unmerged"
-          ? "Auto-mode exited without completing a milestone; live work sits on an unmerged milestone branch. Run `/gsd auto` to resume, or merge manually."
+          ? "Auto-mode exited without completing a milestone; live work sits on an unmerged milestone branch. Run `/gwd auto` to resume, or merge manually."
           : reason === "complete-unmerged"
-            ? "A completed milestone's branch was never merged back to main. Run `/gsd doctor fix` to resolve."
+            ? "A completed milestone's branch was never merged back to main. Run `/gwd doctor fix` to resolve."
             : `Reason: ${reason}.`,
     });
   }
@@ -956,10 +956,10 @@ function saveForensicReport(basePath: string, report: ForensicReport, problemDes
   const redact = (s: string) => redactForGitHub(s, basePath);
 
   const sections: string[] = [
-    `# GSD Forensic Report`,
+    `# GWD Forensic Report`,
     ``,
     `**Generated:** ${report.timestamp}`,
-    `**GSD Version:** ${report.gsdVersion}`,
+    `**GWD Version:** ${report.gsdVersion}`,
     `**Active Milestone:** ${report.activeMilestone ?? "none"}`,
     `**Active Slice:** ${report.activeSlice ?? "none"}`,
     `**Active Worktree:** ${report.activeWorktree ?? "none"}`,
@@ -1279,7 +1279,7 @@ function formatReportForPrompt(report: ForensicReport): string {
   } else {
     sections.push(`### Completed Keys: ${report.completedKeys.length}`);
   }
-  sections.push(`### GSD Version: ${report.gsdVersion}`);
+  sections.push(`### GWD Version: ${report.gsdVersion}`);
   sections.push(`### Active Milestone: ${report.activeMilestone ?? "none"}`);
   sections.push(`### Active Slice: ${report.activeSlice ?? "none"}`);
   if (report.activeWorktree) {

@@ -1,5 +1,5 @@
 /**
- * GSD Health Widget — always-on ambient health signal rendered belowEditor.
+ * GWD Health Widget — always-on ambient health signal rendered belowEditor.
  *
  * Shows a compact 1-2 line summary: progress score, budget, provider key
  * status, and doctor/environment issue count. Refreshes every 60 seconds.
@@ -136,7 +136,7 @@ export function initHealthWidget(ctx: ExtensionContext): void {
         if (!cachedLines || cachedWidth !== width) {
           cachedLines = buildHealthLines(data, width);
           if (data.projectState === "active") {
-            cachedLines = [...cachedLines, _theme.fg("dim", "  /gsd auto to run  ·  /gsd status for overview  ·  /gsd help")];
+            cachedLines = [...cachedLines, _theme.fg("dim", "  /gwd auto to run  ·  /gwd status for overview  ·  /gwd help")];
           }
           cachedWidth = width;
         }

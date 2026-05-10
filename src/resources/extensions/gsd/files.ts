@@ -1,4 +1,4 @@
-// GSD Extension - File Parsing and I/O
+// GWD Extension - File Parsing and I/O
 // Parsers for roadmap, plan, summary, and continue files.
 // Used by state derivation and the status widget.
 // Pure functions, zero Pi dependencies - uses only Node built-ins.
@@ -814,7 +814,7 @@ export async function appendOverride(basePath: string, change: string, appliedAt
     await saveFile(overridesPath, existing.trimEnd() + "\n\n" + entry);
   } else {
     const header = [
-      "# GSD Overrides",
+      "# GWD Overrides",
       "",
       "User-issued overrides that supersede plan document content.",
       "",

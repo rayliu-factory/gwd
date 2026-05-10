@@ -1,5 +1,5 @@
 /**
- * Unit tests for GSD Captures — file I/O, parsing, and worktree path resolution.
+ * Unit tests for GWD Captures — file I/O, parsing, and worktree path resolution.
  *
  * Exercises the boundary contract that S02 (auto-mode dispatch) depends on:
  * - appendCapture creates/appends entries to CAPTURES.md

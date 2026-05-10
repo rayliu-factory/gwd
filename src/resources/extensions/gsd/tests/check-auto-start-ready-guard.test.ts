@@ -1,8 +1,8 @@
-// GSD-2 + Regression tests for checkAutoStartAfterDiscuss "ready" notify guard (R3b)
+// GWD-2 + Regression tests for checkAutoStartAfterDiscuss "ready" notify guard (R3b)
 //
 // Belt-and-suspenders: even when CONTEXT.md and STATE.md exist on disk, the
 // "Milestone X ready." success notify must not fire when the milestone DB row
-// is absent. Otherwise the user sees "ready" and then /gsd reports
+// is absent. Otherwise the user sees "ready" and then /gwd reports
 // "No Active Milestone" because the milestone was never registered.
 
 import { describe, test, beforeEach, afterEach } from "node:test";

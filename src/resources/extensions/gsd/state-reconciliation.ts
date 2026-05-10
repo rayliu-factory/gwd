@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: ADR-015 State Reconciliation module for pre-dispatch runtime invariants.
 
 import { deriveState, invalidateStateCache, type DeriveStateOptions } from "./state.js";

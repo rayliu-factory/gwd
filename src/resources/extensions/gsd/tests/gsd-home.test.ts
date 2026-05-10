@@ -32,9 +32,9 @@ describe("gsdHome", () => {
   });
 
   it("uses GWD_HOME env var when set", () => {
-    process.env.GWD_HOME = "/custom/gsd/home";
+    process.env.GWD_HOME = "/custom/gwd/home";
     // resolve() normalizes to platform absolute path on Windows
-    assert.equal(gsdHome(), resolve("/custom/gsd/home"));
+    assert.equal(gsdHome(), resolve("/custom/gwd/home"));
   });
 
   it("returns a non-empty string", () => {

@@ -150,7 +150,7 @@ gsd -e ./path/to/my-extension.ts
 ```
 
 Verify:
-- Extension loads without errors (check GSD startup output)
+- Extension loads without errors (check GWD startup output)
 - Tools appear when LLM is asked to use them
 - Commands respond to `/mycommand`
 - Event hooks trigger at expected points

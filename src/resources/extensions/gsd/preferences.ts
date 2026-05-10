@@ -1,5 +1,5 @@
 /**
- * GSD Preferences -- loading, merging, and rendering.
+ * GWD Preferences -- loading, merging, and rendering.
  *
  * This module is the primary entry point for preference operations.
  * Type definitions live in ./preferences-types.js, validation in
@@ -213,7 +213,7 @@ function stripInheritedPlanningDepth(
 
   // planning_depth is a project bootstrap routing flag, not a user-global
   // preference. A global ~/.gwd/PREFERENCES.md value should not make every
-  // fresh repo behave like `/gsd new-project --deep`.
+  // fresh repo behave like `/gwd new-project --deep`.
   const preferences: GSDPreferences = { ...loaded.preferences };
   delete preferences.planning_depth;
   return { ...loaded, preferences };
@@ -260,7 +260,7 @@ export function parsePreferencesMarkdown(content: string): GSDPreferences | null
   }
 
   // Fallback: heading+list format (e.g. "## Git\n- isolation: none") (#2036)
-  // GSD agents may write preferences files without frontmatter delimiters.
+  // GWD agents may write preferences files without frontmatter delimiters.
   if (/^##\s+\w/m.test(content)) {
     return parseHeadingListFormat(content);
   }
@@ -269,7 +269,7 @@ export function parsePreferencesMarkdown(content: string): GSDPreferences | null
   if (content.trim().length > 0 && !_warnedUnrecognizedFormat) {
     _warnedUnrecognizedFormat = true;
     console.warn(
-      "[GSD] Warning: preferences file has unrecognized format — content does not use YAML frontmatter delimiters (---). " +
+      "[GWD] Warning: preferences file has unrecognized format — content does not use YAML frontmatter delimiters (---). " +
       "Wrap your preferences in --- fences. See https://github.com/gwd-build/gwd-2/issues/2036",
     );
   }
@@ -532,7 +532,7 @@ function mergePreDispatchHooks(
 
 export function renderPreferencesForSystemPrompt(preferences: GSDPreferences, resolutions?: Map<string, SkillResolution>): string {
   const validated = validatePreferences(preferences);
-  const lines: string[] = ["## GSD Skill Preferences"];
+  const lines: string[] = ["## GWD Skill Preferences"];
 
   if (validated.errors.length > 0) {
     lines.push("- Validation: some preference values were ignored because they were invalid.");
@@ -544,7 +544,7 @@ export function renderPreferencesForSystemPrompt(preferences: GSDPreferences, re
   preferences = validated.preferences;
 
   lines.push(
-    "- Treat these as explicit skill-selection policy for GSD work.",
+    "- Treat these as explicit skill-selection policy for GWD work.",
     "- If a listed skill exists and is relevant, load and follow it instead of treating it as a vague suggestion.",
     "- Current user instructions still override these defaults.",
   );
@@ -631,7 +631,7 @@ export function resolvePreDispatchHooks(): PreDispatchHookConfig[] {
  * Resolve the effective git isolation mode from preferences.
  * Returns "none" (default), "worktree", or "branch".
  *
- * Default is "none" so GSD works out of the box without preferences.md.
+ * Default is "none" so GWD works out of the box without preferences.md.
  * Worktree isolation requires explicit opt-in because it depends on git
  * branch infrastructure that must be set up before use.
  */

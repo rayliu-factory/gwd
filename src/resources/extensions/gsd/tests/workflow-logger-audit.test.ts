@@ -1,4 +1,4 @@
-// GSD Extension — Workflow Logger Audit Persistence Tests
+// GWD Extension — Workflow Logger Audit Persistence Tests
 // Validates error-only persistence, sanitization, and warning ephemeral behavior.
 
 import { describe, test, beforeEach, afterEach } from "node:test";
@@ -82,7 +82,7 @@ describe("workflow-logger audit persistence", () => {
       fn: "saveDecisionToDb",
       tool: "gsd_decision_save",
       error: "SQLITE_BUSY: database is locked",
-      file: "/home/user/project/gsd.db",
+      file: "/home/user/project/gwd.db",
     });
     const lines = readAuditLines(tmp);
     assert.equal(lines.length, 1);

@@ -174,8 +174,8 @@ describe("complete-milestone", () => {
     );
     assert.match(
       prompt,
-      /GSD-(?:Task|Unit)/,
-      "prompt should direct main-branch retries toward milestone-scoped GSD commit evidence",
+      /GWD-(?:Task|Unit)/,
+      "prompt should direct main-branch retries toward milestone-scoped GWD commit evidence",
     );
   });
 
@@ -577,7 +577,7 @@ describe("complete-milestone", () => {
     const successCriteria = findStep(/Verify every \*\*success criterion\*\*/);
     const defOfDone = findStep(/Verify \*\*definition of done\*\*/);
     const completeMilestone = findStep(/Persist completion through `gsd_complete_milestone`/);
-    const requirementUpdate = findStep(/gsd_requirement_update/);
+    const requirementUpdate = findStep(/gwd_requirement_update/);
 
     // Gate clause references the verification steps.
     const gateLine = prompt.split("\n").find(l => l.includes("Verification failure was recorded") || l.includes("verification failure was recorded"));

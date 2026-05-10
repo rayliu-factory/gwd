@@ -35,9 +35,9 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
       return {
         icon: <FolderOpen className="h-8 w-8 text-foreground" strokeWidth={1.5} />,
         headline: "Existing project detected",
-        body: "GSD will map your codebase and ask a few questions about what you want to build. From there it generates structured milestones and deliverable slices.",
+        body: "GWD will map your codebase and ask a few questions about what you want to build. From there it generates structured milestones and deliverable slices.",
         primaryLabel: "Map & Initialize",
-        primaryCommand: "/gsd",
+        primaryCommand: "/gwd",
         secondary: {
           label: "Browse files first",
           action: "files-view",
@@ -47,15 +47,15 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
     case "v1-legacy":
       return {
         icon: <ArrowUpCircle className="h-8 w-8 text-foreground" strokeWidth={1.5} />,
-        headline: "GSD v1 project found",
-        body: "This project has a .planning/ folder from an earlier GSD version. Migration converts your existing planning data into the new .gsd/ format.",
+        headline: "GWD v1 project found",
+        body: "This project has a .planning/ folder from an earlier GWD version. Migration converts your existing planning data into the new .gsd/ format.",
         detail: "Your original files will be preserved — migration creates the new structure alongside them.",
         primaryLabel: "Migrate to v2",
-        primaryCommand: "/gsd migrate",
+        primaryCommand: "/gwd migrate",
         secondary: {
           label: "Start fresh instead",
           action: "command",
-          command: "/gsd",
+          command: "/gwd",
         },
       }
 
@@ -63,9 +63,9 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
       return {
         icon: <Sparkles className="h-8 w-8 text-foreground" strokeWidth={1.5} />,
         headline: "Start a new project",
-        body: "This folder is empty. GSD will ask what you want to build, then generate a structured plan — milestones broken into deliverable slices with risk-ordered execution.",
+        body: "This folder is empty. GWD will ask what you want to build, then generate a structured plan — milestones broken into deliverable slices with risk-ordered execution.",
         primaryLabel: "Start Project Setup",
-        primaryCommand: "/gsd",
+        primaryCommand: "/gwd",
       }
 
     // active-gsd and empty-gsd shouldn't reach here, but handle gracefully
@@ -73,9 +73,9 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
       return {
         icon: <Folder className="h-8 w-8 text-foreground" strokeWidth={1.5} />,
         headline: "Set up your project",
-        body: "Run the GSD wizard to get started.",
+        body: "Run the GWD wizard to get started.",
         primaryLabel: "Get Started",
-        primaryCommand: "/gsd",
+        primaryCommand: "/gwd",
       }
   }
 }
@@ -233,7 +233,7 @@ export function ProjectWelcome({
             </p>
             <ul className="mt-2.5 space-y-2">
               {[
-                "GSD scans your codebase and asks about your goals",
+                "GWD scans your codebase and asks about your goals",
                 "You discuss scope, constraints, and priorities",
                 "A milestone with risk-ordered slices is generated",
               ].map((step, i) => (

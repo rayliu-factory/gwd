@@ -1,9 +1,9 @@
 /**
  * Service Tier — gating, status formatting, icon resolution, and
- * the /gsd fast command handler.
+ * the /gwd fast command handler.
  *
  * Service tiers (priority/flex) are an OpenAI feature that currently only
- * applies to gpt-5.4 variants in GSD. This module centralizes the model-gating logic
+ * applies to gpt-5.4 variants in GWD. This module centralizes the model-gating logic
  * so that icons, preferences, and the before_provider_request hook all
  * use a single source of truth.
  */
@@ -64,9 +64,9 @@ export function formatServiceTierStatus(tier: ServiceTierSetting): string {
       "Service tier: disabled",
       "",
       "Usage:",
-      "  /gsd fast on     Set to priority (2x cost, faster)",
-      "  /gsd fast flex   Set to flex (0.5x cost, slower)",
-      "  /gsd fast off    Disable service tier",
+      "  /gwd fast on     Set to priority (2x cost, faster)",
+      "  /gwd fast flex   Set to flex (0.5x cost, slower)",
+      "  /gwd fast off    Disable service tier",
       "",
       SERVICE_TIER_SCOPE_NOTE,
     ].join("\n");
@@ -77,9 +77,9 @@ export function formatServiceTierStatus(tier: ServiceTierSetting): string {
     `Service tier: ${label}`,
     "",
     "Usage:",
-    "  /gsd fast on     Set to priority (2x cost, faster)",
-    "  /gsd fast flex   Set to flex (0.5x cost, slower)",
-    "  /gsd fast off    Disable service tier",
+    "  /gwd fast on     Set to priority (2x cost, faster)",
+    "  /gwd fast flex   Set to flex (0.5x cost, slower)",
+    "  /gwd fast off    Disable service tier",
     "",
     SERVICE_TIER_SCOPE_NOTE,
   ].join("\n");
@@ -160,7 +160,7 @@ async function writeGlobalServiceTier(
 // ─── Command Handler ─────────────────────────────────────────────────────────
 
 /**
- * Handle `/gsd fast [on|off|flex|status]`.
+ * Handle `/gwd fast [on|off|flex|status]`.
  */
 export async function handleFast(args: string, ctx: ExtensionCommandContext): Promise<void> {
   const trimmed = args.trim().toLowerCase();
@@ -193,7 +193,7 @@ export async function handleFast(args: string, ctx: ExtensionCommandContext): Pr
   }
 
   ctx.ui.notify(
-    "Usage: /gsd fast [on|off|flex|status]\n\n  on    Priority tier (2x cost, faster)\n  off   Disable service tier\n  flex  Flex tier (0.5x cost, slower)\n  status Show current setting",
+    "Usage: /gwd fast [on|off|flex|status]\n\n  on    Priority tier (2x cost, faster)\n  off   Disable service tier\n  flex  Flex tier (0.5x cost, slower)\n  status Show current setting",
     "warning",
   );
 }

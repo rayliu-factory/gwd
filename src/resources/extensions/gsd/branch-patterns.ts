@@ -1,5 +1,5 @@
 /**
- * GSD branch naming patterns — single source of truth.
+ * GWD branch naming patterns — single source of truth.
  *
  * gsd/<worktree>/<milestone>/<slice>  → SLICE_BRANCH_RE
  * gsd/quick/<id>-<slug>               → QUICK_BRANCH_RE
@@ -12,5 +12,5 @@ export const SLICE_BRANCH_RE = /^gsd\/(?:([a-zA-Z0-9_-]+)\/)?(M\d+(?:-[a-z0-9]{6
 /** Matches gsd/quick/ task branches */
 export const QUICK_BRANCH_RE = /^gsd\/quick\//;
 
-/** Matches GSD-generated workflow template branches, not arbitrary user gsd/* branches. */
+/** Matches GWD-generated workflow template branches, not arbitrary user gsd/* branches. */
 export const WORKFLOW_BRANCH_RE = /^gsd\/(?:hotfix|bugfix|small-feature|refactor|spike|security-audit|dep-upgrade|full-project)\//;

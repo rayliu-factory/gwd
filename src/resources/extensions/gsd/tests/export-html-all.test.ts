@@ -96,7 +96,7 @@ test("export completions include --html and --html --all", async () => {
 
   registerGSDCommand(pi as any);
   const gsd = commands.get("gsd");
-  assert.ok(gsd, "should register /gsd command");
+  assert.ok(gsd, "should register /gwd command");
 
   const completions = gsd.getArgumentCompletions("export --");
   const labels = completions.map((c: any) => c.label);

@@ -1,7 +1,7 @@
 /**
- * Headless Orchestrator — `gsd headless`
+ * Headless Orchestrator — `gwd headless`
  *
- * Runs any /gsd subcommand without a TUI by spawning a child process in
+ * Runs any /gwd subcommand without a TUI by spawning a child process in
  * RPC mode, auto-responding to extension UI requests, and streaming
  * progress to stderr.
  *
@@ -364,7 +364,7 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
   }
 
   // Doctor: read-only health check, no RPC child needed (#4904 live-regression).
-  // The interactive `/gsd doctor` command lives in the GSD extension; this CLI
+  // The interactive `/gwd doctor` command lives in the GWD extension; this CLI
   // path lets non-interactive callers (CI, recovery scripts, the live-regression
   // suite) get the same diagnostic without a TTY.
   if (options.command === 'doctor') {
@@ -405,7 +405,7 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
   if (injector) {
     clientOptions.env = injector.getSecretEnvVars()
   }
-  // Signal headless mode to the GSD extension (skips UAT human pause, etc.)
+  // Signal headless mode to the GWD extension (skips UAT human pause, etc.)
   clientOptions.env = { ...(clientOptions.env as Record<string, string> || {}), GWD_HEADLESS: '1' }
   // Propagate --bare to the child process
   if (options.bare) {
@@ -903,11 +903,11 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
   }
 
   if (!options.json) {
-    process.stderr.write(`[headless] Running /gsd ${options.command}${options.commandArgs.length > 0 ? ' ' + options.commandArgs.join(' ') : ''}...\n`)
+    process.stderr.write(`[headless] Running /gwd ${options.command}${options.commandArgs.length > 0 ? ' ' + options.commandArgs.join(' ') : ''}...\n`)
   }
 
   // Send the command
-  const command = `/gsd ${options.command}${options.commandArgs.length > 0 ? ' ' + options.commandArgs.join(' ') : ''}`
+  const command = `/gwd ${options.command}${options.commandArgs.length > 0 ? ' ' + options.commandArgs.join(' ') : ''}`
   try {
     await client.prompt(command)
   } catch (err) {
@@ -920,7 +920,7 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
     await completionPromise
   }
 
-  // Auto-mode chaining: if --auto and milestone creation succeeded, send /gsd auto
+  // Auto-mode chaining: if --auto and milestone creation succeeded, send /gwd auto
   if (isNewMilestone && options.auto && milestoneReady && !blocked && exitCode === EXIT_SUCCESS) {
     if (!options.json) {
       process.stderr.write('[headless] Milestone ready — chaining into auto-mode...\n')
@@ -937,7 +937,7 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
     })
 
     try {
-      await client.prompt('/gsd auto')
+      await client.prompt('/gwd auto')
     } catch (err) {
       process.stderr.write(`[headless] Error: Failed to start auto-mode: ${err instanceof Error ? err.message : String(err)}\n`)
       exitCode = EXIT_ERROR

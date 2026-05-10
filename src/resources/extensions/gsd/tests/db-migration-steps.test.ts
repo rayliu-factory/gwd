@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Tests for extracted GSD database migration DDL steps.
+// Project/App: GWD-2
+// File Purpose: Tests for extracted GWD database migration DDL steps.
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";

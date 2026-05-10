@@ -1,4 +1,4 @@
-// GSD-2 — ADR-003 §4 behavior contract: reassess-roadmap is opt-in.
+// GWD-2 — ADR-003 §4 behavior contract: reassess-roadmap is opt-in.
 // Companion to (eventually replacing) the source-grep assertions in
 // token-profile.test.ts. This file verifies the dispatch rule's guard
 // behavior directly rather than inspecting source text.
@@ -136,7 +136,7 @@ test("ADR-003 §4: rendered plan-slice prompt documents reassess sliceChanges sh
     const msDir = join(base, ".gsd", "milestones", "M001");
     writeFileSync(join(msDir, "M001-ROADMAP.md"), "# Roadmap\n\n## Slices\n\n- [ ] **S01: First** `risk:low` `depends:[]`\n");
     const prompt = await buildPlanSlicePrompt("M001", "Test", "S01", "First", base, "minimal");
-    assert.match(prompt, /gsd_reassess_roadmap/);
+    assert.match(prompt, /gwd_reassess_roadmap/);
     assert.match(prompt, /sliceChanges\.modified/);
     assert.match(prompt, /sliceChanges\.added/);
     assert.match(prompt, /sliceChanges\.removed/);

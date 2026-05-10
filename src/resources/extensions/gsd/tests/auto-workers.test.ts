@@ -1,4 +1,4 @@
-// gsd-2 + Auto-mode worker registry tests (Phase B coordination)
+// gwd-2 + Auto-mode worker registry tests (Phase B coordination)
 
 import test from "node:test";
 import assert from "node:assert/strict";

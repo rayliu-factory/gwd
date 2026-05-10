@@ -69,7 +69,7 @@ const SAMPLE_DECISIONS: Decision[] = [
     when_context: 'M001',
     scope: 'arch',
     decision: 'DB location',
-    choice: '.gsd/gsd.db',
+    choice: '.gsd/gwd.db',
     rationale: 'Derived state',
     revisable: 'No',
     made_by: 'agent',
