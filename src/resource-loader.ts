@@ -8,6 +8,7 @@ import { compareSemver } from './update-check.js'
 import { discoverExtensionEntryPaths } from './extension-discovery.js'
 import { loadRegistry, readManifestFromEntryPath, isExtensionEnabled, ensureRegistryEntries } from './extension-registry.js'
 import { resolveBundledResourcesDirFromPackageRoot } from './bundled-resource-path.js'
+import { GWD_VERSION_ENV } from './namespace.js'
 
 type PiCodingAgentModule = typeof import('@gsd/pi-coding-agent')
 
@@ -67,9 +68,10 @@ function getManagedResourceManifestPath(agentDir: string): string {
 }
 
 function getBundledGsdVersion(): string {
-  // Prefer GSD_VERSION env var (set once by loader.ts) to avoid re-reading package.json
-  if (process.env.GSD_VERSION && process.env.GSD_VERSION !== '0.0.0') {
-    return process.env.GSD_VERSION
+  // Prefer GWD_VERSION env var (set once by loader.ts) to avoid re-reading package.json.
+  const envVersion = process.env[GWD_VERSION_ENV]
+  if (envVersion && envVersion !== '0.0.0') {
+    return envVersion
   }
   try {
     const pkg = JSON.parse(readFileSync(join(packageRoot, 'package.json'), 'utf-8'))
@@ -433,7 +435,7 @@ export function reconcileMergedNodeModules(
   // Symlink entries from the hoisted node_modules (external deps)
   try {
     for (const entry of readdirSync(hoisted, { withFileTypes: true })) {
-      // Skip the gsd-pi package itself and dotfiles
+      // Skip the gwd-pi package itself and dotfiles
       if (entry.name === basename(packageRoot)) continue
       if (entry.name.startsWith('.')) continue
       try { symlinkSync(join(hoisted, entry.name), join(agentNodeModules, entry.name), 'junction'); linkedCount++ } catch { /* skip individual */ }
