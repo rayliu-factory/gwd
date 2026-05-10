@@ -5,11 +5,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gwd-build/gwd-2.git"
+    "url": "https://github.com/rayliu-factory/gwd.git"
   },
-  "homepage": "https://github.com/gwd-build/gwd-2#readme",
+  "homepage": "https://github.com/rayliu-factory/gwd#readme",
   "bugs": {
-    "url": "https://github.com/gwd-build/gwd-2/issues"
+    "url": "https://github.com/rayliu-factory/gwd/issues"
   },
   "type": "module",
   "workspaces": [
@@ -100,8 +100,8 @@
     "release:changelog": "node scripts/generate-changelog.mjs",
     "release:bump": "node scripts/bump-version.mjs",
     "release:update-changelog": "node scripts/update-changelog.mjs",
-    "docker:build-runtime": "docker build --target runtime -t ghcr.io/gwd-build/gwd-pi .",
-    "docker:build-builder": "docker build --target builder -t ghcr.io/gwd-build/gwd-ci-builder .",
+    "docker:build-runtime": "docker build --target runtime -t ghcr.io/rayliu-factory/gwd-pi .",
+    "docker:build-builder": "docker build --target builder -t ghcr.io/rayliu-factory/gwd-ci-builder .",
     "prepublishOnly": "npm run sync-pkg-version && npm run sync-platform-versions && node scripts/prepublish-check.mjs && npm run build && npm run typecheck:extensions && npm run validate-pack",
     "test:live-regression": "node --experimental-strip-types tests/live-regression/run.ts",
     "test:e2e": "node --experimental-strip-types --test \"tests/e2e/*.e2e.test.ts\"",

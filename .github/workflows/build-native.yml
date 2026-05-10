@@ -98,7 +98,7 @@ jobs:
   publish:
     needs: build
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.publish == 'true'
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     name: Publish platform packages
 
     steps:
@@ -258,7 +258,7 @@ jobs:
               RAW=$(node node_modules/gwd-pi/dist/loader.js --version 2>&1 || echo "FAILED")
               ACTUAL=$(echo "$RAW" | sed 's/\x1b\[[0-9;]*m//g' | grep -oE "^${VERSION}$" | head -1)
               if [ "$ACTUAL" = "$VERSION" ]; then
-                echo "  ✓ gsd --version = ${VERSION}"
+                echo "  ✓ gwd --version = ${VERSION}"
                 echo "Published package is functional"
                 exit 0
               else

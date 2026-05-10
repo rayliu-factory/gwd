@@ -2,7 +2,7 @@
 
 <!--
 PRs without a linked issue will be closed.
-Open or find an issue first: https://github.com/gwd-build/gwd-2/issues
+Open or find an issue first: https://github.com/rayliu-factory/gwd/issues
 -->
 
 Closes #<!-- issue number — required -->
@@ -44,7 +44,7 @@ Closes #<!-- issue number — required -->
 - [ ] `pi-ai` — AI/LLM layer
 - [ ] `pi-agent-core` — Agent orchestration
 - [ ] `pi-coding-agent` — Coding agent
-- [ ] `gsd extension` — GSD workflow
+- [ ] `gwd extension` — GWD workflow
 - [ ] `native` — Native bindings
 - [ ] `ci/build` — Workflows, scripts, config
 

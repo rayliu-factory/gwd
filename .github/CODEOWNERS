@@ -6,31 +6,31 @@
 # Last matching rule wins.
 
 # Default: maintainers review everything not explicitly matched below
-*                                   @gsd-build/maintainers
+*                                   @rayliu-factory
 
 # Core agent orchestration — RFC required, senior review only
-packages/pi-agent-core/             @gsd-build/maintainers
-src/resources/extensions/gsd/       @gsd-build/maintainers
+packages/pi-agent-core/             @rayliu-factory
+src/resources/extensions/gsd/       @rayliu-factory
 
 # AI/LLM provider integrations
-packages/pi-ai/                     @gsd-build/maintainers
+packages/pi-ai/                     @rayliu-factory
 
 # Terminal UI
-packages/pi-tui/                    @gsd-build/maintainers
+packages/pi-tui/                    @rayliu-factory
 
 # Native bindings — platform-specific, needs careful review
-native/                             @gsd-build/maintainers
+native/                             @rayliu-factory
 
 # CI/CD and release pipeline — high blast radius
-.github/                            @gsd-build/maintainers
-scripts/                            @gsd-build/maintainers
-Dockerfile                          @gsd-build/maintainers
+.github/                            @rayliu-factory
+scripts/                            @rayliu-factory
+Dockerfile                          @rayliu-factory
 
 # Security-sensitive files — always require maintainer sign-off
-.secretscanignore                   @gsd-build/maintainers
-scripts/secret-scan.sh              @gsd-build/maintainers
-scripts/install-hooks.sh            @gsd-build/maintainers
+.secretscanignore                   @rayliu-factory
+scripts/secret-scan.sh              @rayliu-factory
+scripts/install-hooks.sh            @rayliu-factory
 
 # Contributor-facing docs — keep accurate, maintainers approve
-CONTRIBUTING.md                     @gsd-build/maintainers
-VISION.md                           @gsd-build/maintainers
+CONTRIBUTING.md                     @rayliu-factory
+VISION.md                           @rayliu-factory

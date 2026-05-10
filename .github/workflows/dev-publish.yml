@@ -24,15 +24,8 @@ permissions:
 jobs:
   dev-publish:
     name: Dev Publish
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     environment: dev
-    container:
-      image: ghcr.io/gwd-build/gsd-ci-builder:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-      env:
-        GITHUB_REPO_NAME: ${{ github.repository }}
     outputs:
       dev-version: ${{ steps.stamp.outputs.version }}
     steps:
@@ -58,7 +51,7 @@ jobs:
         run: npm --prefix web ci
 
       - name: Cache Next.js build
-        uses: useblacksmith/cache@v5
+        uses: actions/cache@v4
         with:
           path: web/.next/cache
           key: nextjs-${{ runner.os }}-${{ hashFiles('web/package-lock.json') }}-${{ hashFiles('web/app/**', 'web/components/**', 'web/lib/**', 'web/hooks/**') }}
@@ -110,7 +103,7 @@ jobs:
   dev-verify:
     name: Dev Verify (installed package)
     needs: dev-publish
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -137,7 +130,7 @@ jobs:
 
       - name: Run smoke tests (against installed binary)
         run: |
-          export GWD_SMOKE_BINARY=$(which gsd)
+          export GWD_SMOKE_BINARY=$(which gwd)
           npm run test:smoke
 
       - name: Install repo dependencies (for regression harness)
@@ -145,7 +138,7 @@ jobs:
 
       - name: Run live regression tests (against installed binary)
         run: |
-          export GWD_SMOKE_BINARY=$(which gsd)
+          export GWD_SMOKE_BINARY=$(which gwd)
           npm run test:live-regression
 
       - name: Warn on verify failure

@@ -19,7 +19,7 @@ permissions:
 jobs:
   prod-release:
     name: Production Release
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     environment: prod
     steps:
       - uses: actions/checkout@v6
@@ -38,7 +38,7 @@ jobs:
         run: npm ci
 
       - name: Cache Next.js build
-        uses: useblacksmith/cache@v5
+        uses: actions/cache@v4
         with:
           path: web/.next/cache
           key: nextjs-${{ runner.os }}-${{ hashFiles('web/package-lock.json') }}-${{ hashFiles('web/app/**', 'web/components/**', 'web/lib/**', 'web/hooks/**') }}
@@ -139,7 +139,7 @@ jobs:
           NOTES=$(cat /tmp/release-notes.md)
           curl -s -X POST "$DISCORD_WEBHOOK" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg c "**GSD v${RELEASE_VERSION} Released**\n\n${NOTES}\n\n\`npm i gwd-pi@${RELEASE_VERSION}\`" '{content:$c}')"
+            -d "$(jq -n --arg c "**GWD v${RELEASE_VERSION} Released**\n\n${NOTES}\n\n\`npm i gwd-pi@${RELEASE_VERSION}\`" '{content:$c}')"
 
       - name: Log in to GHCR
         uses: docker/login-action@v4
@@ -153,11 +153,11 @@ jobs:
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
           docker build --target runtime \
-            -t ghcr.io/gwd-build/gwd-pi:latest \
-            -t "ghcr.io/gwd-build/gwd-pi:${RELEASE_VERSION}" \
+            -t ghcr.io/${{ github.repository_owner }}/gwd-pi:latest \
+            -t "ghcr.io/${{ github.repository_owner }}/gwd-pi:${RELEASE_VERSION}" \
             .
-          docker push "ghcr.io/gwd-build/gwd-pi:${RELEASE_VERSION}"
-          docker push ghcr.io/gwd-build/gwd-pi:latest
+          docker push "ghcr.io/${{ github.repository_owner }}/gwd-pi:${RELEASE_VERSION}"
+          docker push ghcr.io/${{ github.repository_owner }}/gwd-pi:latest
 
       - name: Open back-merge PR main→next if behind
         env:
