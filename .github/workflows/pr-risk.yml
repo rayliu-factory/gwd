@@ -44,6 +44,8 @@ jobs:
         id: risk
         run: |
           REPORT=$(cat /tmp/changed-files.txt | node scripts/pr-risk-check.mjs --github || true)
+          printf '%s\n' "$REPORT" >> "$GITHUB_STEP_SUMMARY"
+
           echo "report<<EOF" >> "$GITHUB_OUTPUT"
           echo "$REPORT" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
@@ -52,9 +54,6 @@ jobs:
             | node -e "let d=''; process.stdin.on('data',c=>d+=c); process.stdin.on('end',()=>{ try { console.log(JSON.parse(d).risk) } catch { console.log('low') } })" \
             || echo "low")
           echo "level=$RISK_LEVEL" >> "$GITHUB_OUTPUT"
-
-      - name: Write step summary
-        run: echo "${{ steps.risk.outputs.report }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Find existing risk comment
         id: find-comment
