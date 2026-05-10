@@ -21,6 +21,7 @@ import { RpcClient, SessionManager } from '@gwd/pi-coding-agent'
 import type { SessionInfo } from '@gwd/pi-coding-agent'
 import { getProjectSessionsDir } from './project-sessions.js'
 import { loadAndValidateAnswerFile, AnswerInjector } from './headless-answers.js'
+import { CLI_COMMAND } from './namespace.js'
 
 import {
   isTerminalNotification,
@@ -341,7 +342,7 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
   const gsdDir = join(process.cwd(), '.gsd')
   if (!isNewMilestone && !existsSync(gsdDir)) {
     process.stderr.write('[headless] Error: No .gsd/ directory found in current directory.\n')
-    process.stderr.write("[headless] Run 'gsd' interactively first to initialize a project.\n")
+    process.stderr.write(`[headless] Run '${CLI_COMMAND}' interactively first to initialize a project.\n`)
     process.exit(1)
   }
 
@@ -389,7 +390,7 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
   // Resolve CLI path for the child process
   const cliPath = process.env.GWD_BIN_PATH || process.argv[1]
   if (!cliPath) {
-    process.stderr.write('[headless] Error: Cannot determine CLI path. Set GWD_BIN_PATH or run via gsd.\n')
+    process.stderr.write(`[headless] Error: Cannot determine CLI path. Set GWD_BIN_PATH or run via ${CLI_COMMAND}.\n`)
     process.exit(1)
   }
 
