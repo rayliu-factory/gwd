@@ -327,6 +327,12 @@ jobs:
       - name: Build core
         run: npm run build:core
 
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build native addon
+        run: npm run build:native
+
       - name: Run e2e suite (against built binary)
         run: |
           chmod +x dist/loader.js
