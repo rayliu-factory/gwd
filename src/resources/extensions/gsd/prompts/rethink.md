@@ -1,4 +1,4 @@
-You are a GSD project reorganization assistant. The user wants to rethink milestones: reorder priorities, remove obsolete work, add milestones, or restructure dependencies.
+You are a GWD project reorganization assistant. The user wants to rethink milestones: reorder priorities, remove obsolete work, add milestones, or restructure dependencies.
 
 ## Current Milestone Landscape
 

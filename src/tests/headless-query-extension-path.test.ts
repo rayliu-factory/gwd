@@ -28,8 +28,8 @@ function makeTempDir(): string {
   return dir
 }
 
-test('GSD_AGENT_DIR overrides homedir-based agent dir resolution', () => {
-  const root = resolveGsdAgentExtensionsDir({ GSD_AGENT_DIR: '/some/agent' })
+test('GWD_AGENT_DIR overrides homedir-based agent dir resolution', () => {
+  const root = resolveGsdAgentExtensionsDir({ GWD_AGENT_DIR: '/some/agent' })
   assert.equal(root, join('/some/agent', 'extensions', 'gsd'))
 })
 
@@ -40,7 +40,7 @@ test('agent dir is selected when state.ts exists under it (#3471)', (t) => {
   mkdirSync(extDir, { recursive: true })
   writeFileSync(join(extDir, 'state.ts'), '// fixture')
 
-  const result = shouldUseAgentExtensionsDir({ env: { GSD_AGENT_DIR: root } })
+  const result = shouldUseAgentExtensionsDir({ env: { GWD_AGENT_DIR: root } })
   assert.equal(result.agentDir, extDir)
   assert.equal(result.useAgentDir, true)
 })
@@ -52,29 +52,29 @@ test('agent dir is selected when synced JS state exists under it', (t) => {
   mkdirSync(extDir, { recursive: true })
   writeFileSync(join(extDir, 'state.js'), '// fixture')
 
-  const result = shouldUseAgentExtensionsDir({ env: { GSD_AGENT_DIR: root } })
+  const result = shouldUseAgentExtensionsDir({ env: { GWD_AGENT_DIR: root } })
   assert.equal(result.agentDir, extDir)
   assert.equal(result.useAgentDir, true)
 })
 
-test('GSD_HOME drives default agent dir when GSD_AGENT_DIR is absent', () => {
-  const root = resolveGsdAgentExtensionsDir({ GSD_HOME: '/custom/gsd-home' })
+test('GWD_HOME drives default agent dir when GWD_AGENT_DIR is absent', () => {
+  const root = resolveGsdAgentExtensionsDir({ GWD_HOME: '/custom/gsd-home' })
   assert.equal(root, join('/custom/gsd-home', 'agent', 'extensions', 'gsd'))
 })
 
 test('agent dir is rejected when state.ts is absent (falls back to bundled)', (t) => {
   const root = makeTempDir()
   t.after(() => rmSync(root, { recursive: true, force: true }))
-  // GSD_AGENT_DIR exists but is unpopulated — exactly the state pre-#3471
+  // GWD_AGENT_DIR exists but is unpopulated — exactly the state pre-#3471
   // where headless-query silently fell back to src/resources.
-  const result = shouldUseAgentExtensionsDir({ env: { GSD_AGENT_DIR: root } })
+  const result = shouldUseAgentExtensionsDir({ env: { GWD_AGENT_DIR: root } })
   assert.equal(result.useAgentDir, false)
 })
 
 test('fileExists callback drives the decision (no real fs required)', () => {
   const calls: string[] = []
   const result = shouldUseAgentExtensionsDir({
-    env: { GSD_AGENT_DIR: '/agent' },
+    env: { GWD_AGENT_DIR: '/agent' },
     fileExists: (p) => {
       calls.push(p)
       return p.endsWith('state.js')

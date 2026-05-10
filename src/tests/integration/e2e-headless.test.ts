@@ -1,7 +1,7 @@
 /**
- * E2E integration tests for `gsd headless` runtime behavior.
+ * E2E integration tests for `gwd headless` runtime behavior.
  *
- * Spawns real `gsd headless` child processes and asserts on
+ * Spawns real `gwd headless` child processes and asserts on
  * stdout/stderr/exit-code for: JSON batch mode, SIGINT exit code,
  * stream-json NDJSON output, --resume error path, and invalid
  * --output-format handling.

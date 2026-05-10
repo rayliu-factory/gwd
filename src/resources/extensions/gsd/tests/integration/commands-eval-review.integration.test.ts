@@ -1,7 +1,7 @@
-// Project/App: GSD-2
-// File Purpose: Integration tests for the /gsd eval-review helper chain.
+// Project/App: GWD-2
+// File Purpose: Integration tests for the /gwd eval-review helper chain.
 /**
- * Integration test for `/gsd eval-review` .
+ * Integration test for `/gwd eval-review` .
  *
  * Walks the helper chain end-to-end (parseArgs → detectState → buildContext
  * → buildPrompt) against a real on-disk slice fixture, then validates the
@@ -92,7 +92,7 @@ function buildLayout(opts: { withSpec?: boolean; summaryBytes?: number } = {}): 
 
 // ─── End-to-end helper-chain pass ─────────────────────────────────────────────
 
-describe("integration: /gsd eval-review helper chain on a real on-disk slice", () => {
+describe("integration: /gwd eval-review helper chain on a real on-disk slice", () => {
   let layout: Layout;
   let cwd: string;
 

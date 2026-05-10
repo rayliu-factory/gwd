@@ -5,7 +5,7 @@ import { join } from "node:path";
 // The file-lock module is loaded in both CJS builds and ESM sources. Under ESM
 // the bare `require` identifier is not defined, so we always go through
 // createRequire. We try the current module's resolution context first and fall
-// back to the installed gsd-pi package if we are running from a consumer
+// back to the installed gwd-pi package if we are running from a consumer
 // project that does not hoist proper-lockfile.
 const localRequire = createRequire(import.meta.url);
 
@@ -15,7 +15,7 @@ function _require(name: string): any {
   } catch {
     try {
       const gsdPiRequire = createRequire(
-        join(process.cwd(), "node_modules", "gsd-pi", "index.js"),
+        join(process.cwd(), "node_modules", "gwd-pi", "index.js"),
       );
       return gsdPiRequire(name);
     } catch {

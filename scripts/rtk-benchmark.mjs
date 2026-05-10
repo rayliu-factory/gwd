@@ -6,7 +6,7 @@ import { join, dirname } from 'node:path'
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 
 function getManagedRtkPath() {
-  return join(homedir(), '.gsd', 'agent', 'bin', process.platform === 'win32' ? 'rtk.exe' : 'rtk')
+  return join(homedir(), '.gwd', 'agent', 'bin', process.platform === 'win32' ? 'rtk.exe' : 'rtk')
 }
 
 function run(command, args, options = {}) {
@@ -108,7 +108,7 @@ function renderMarkdown({ summary, history, binaryPath }) {
 function main() {
   const outputIndex = process.argv.indexOf('--output')
   const outputPath = outputIndex !== -1 ? process.argv[outputIndex + 1] : null
-  const binaryPath = process.env.GSD_RTK_PATH || getManagedRtkPath()
+  const binaryPath = process.env.GWD_RTK_PATH || getManagedRtkPath()
 
   if (!binaryPath) {
     throw new Error('RTK binary path not resolved')

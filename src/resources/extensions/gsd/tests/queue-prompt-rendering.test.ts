@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Verifies the queue prompt renders compact discussion and write-gate guidance.
 
 import test from "node:test";
@@ -8,13 +8,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test("queue prompt renders compact draft, verification, and persistence guidance", async (t) => {
-  const previousGsdHome = process.env.GSD_HOME;
-  const providedGsdHome = process.env.GSD_TEST_HOME;
+  const previousGsdHome = process.env.GWD_HOME;
+  const providedGsdHome = process.env.GWD_TEST_HOME;
   const isolatedHome = providedGsdHome ?? mkdtempSync(join(tmpdir(), "gsd-queue-render-"));
-  process.env.GSD_HOME = isolatedHome;
+  process.env.GWD_HOME = isolatedHome;
   t.after(() => {
-    if (previousGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = previousGsdHome;
+    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGsdHome;
     if (!providedGsdHome) rmSync(isolatedHome, { recursive: true, force: true });
   });
 
@@ -23,7 +23,7 @@ test("queue prompt renders compact draft, verification, and persistence guidance
     preamble: "Queue preamble.",
     existingMilestonesContext: "No existing milestones.",
     commitInstruction: "Commit queued milestone artifacts.",
-    inlinedTemplates: "## Context Template\n\nUse standard GSD context.",
+    inlinedTemplates: "## Context Template\n\nUse standard GWD context.",
   });
 
   assert.match(prompt, /Draft Awareness/);

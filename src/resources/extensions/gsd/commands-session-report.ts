@@ -1,11 +1,11 @@
 /**
- * GSD Command — /gsd session-report
+ * GWD Command — /gwd session-report
  *
  * Summarizes the current session: tasks completed, cost, tokens,
  * duration, model usage breakdown.
  */
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

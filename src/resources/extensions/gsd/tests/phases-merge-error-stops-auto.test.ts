@@ -16,7 +16,7 @@ console.log("\n=== #2766: Non-MergeConflictError stops auto mode ===");
 
 const notifications: Array<{ message: string; level?: string }> = [];
 const calls: string[] = [];
-const basePath = "/tmp/gsd-test";
+const basePath = "/tmp/gwd-test";
 const ic = {
   ctx: {
     ui: {
@@ -106,7 +106,7 @@ if (result.action === "break") {
   assertTrue(result.reason === "merge-failed", "non-conflict merge error uses merge-failed reason");
 }
 assertTrue(
-  calls.join(" > ") === "invalidate > health > derive:/tmp/gsd-test > sync-sidebar > set-active:M001 > reconcile > preflight > merge > postflight > stop:Merge error on milestone M001: Error: remote rejected push",
+  calls.join(" > ") === "invalidate > health > derive:/tmp/gwd-test > sync-sidebar > set-active:M001 > reconcile > preflight > merge > postflight > stop:Merge error on milestone M001: Error: remote rejected push",
   `pre-dispatch stops immediately after non-conflict merge failure (${calls.join(" > ")})`,
 );
 assertTrue(

@@ -1,5 +1,5 @@
 /**
- * GSD Doctor — Environment Health Checks (#1221)
+ * GWD Doctor — Environment Health Checks (#1221)
  *
  * Deterministic checks for environment readiness that prevent the model
  * from spinning its wheels on missing tools, port conflicts, stale
@@ -46,11 +46,11 @@ const WORKTREE_PATH_SEGMENT = `${join(".gsd", "worktrees")}/`;
  * auto-worktree. Returns `null` if not in a worktree.
  *
  * Detection order:
- *   1. `GSD_WORKTREE` env var (set by the worktree launcher)
+ *   1. `GWD_WORKTREE` env var (set by the worktree launcher)
  *   2. `.gsd/worktrees/` segment in basePath
  */
 function resolveWorktreeProjectRoot(basePath: string): string | null {
-  const envRoot = process.env.GSD_WORKTREE;
+  const envRoot = process.env.GWD_WORKTREE;
   if (envRoot) return envRoot;
 
   const normalised = basePath.replace(/\\/g, "/");
@@ -555,7 +555,7 @@ export function runEnvironmentChecks(basePath: string): EnvironmentCheckResult[]
 
 /**
  * Run environment checks with git remote check included.
- * Use this for explicit /gsd doctor invocations, not pre-dispatch gates.
+ * Use this for explicit /gwd doctor invocations, not pre-dispatch gates.
  */
 export function runFullEnvironmentChecks(basePath: string): EnvironmentCheckResult[] {
   const results = runEnvironmentChecks(basePath);
@@ -568,7 +568,7 @@ export function runFullEnvironmentChecks(basePath: string): EnvironmentCheckResu
 
 /**
  * Run slow opt-in checks (build and/or test).
- * These are never run on the pre-dispatch gate — only on explicit /gsd doctor --build/--test.
+ * These are never run on the pre-dispatch gate — only on explicit /gwd doctor --build/--test.
  */
 export function runSlowEnvironmentChecks(
   basePath: string,

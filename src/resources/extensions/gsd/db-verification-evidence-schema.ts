@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Verification evidence SQLite schema helpers for the GSD database facade.
+// Project/App: GWD-2
+// File Purpose: Verification evidence SQLite schema helpers for the GWD database facade.
 
 import type { DbAdapter } from "./db-adapter.js";
 import { indexExists } from "./db-schema-metadata.js";

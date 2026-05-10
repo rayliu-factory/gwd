@@ -6,13 +6,13 @@
  *   - Session lifecycle → Discord channel creation and cleanup
  *   - Event streaming → format + verbosity filter + batcher
  *   - Blocker resolution → interactive buttons + text relay
- *   - Conversation relay → Discord messages forwarded to GSD sessions
+ *   - Conversation relay → Discord messages forwarded to GWD sessions
  *   - DM backup → owner gets DM on blocker when dm_on_blocker configured
  */
 
 import type { Client, Message, TextChannel, MessageComponentInteraction } from 'discord.js';
 import { EmbedBuilder, ComponentType } from 'discord.js';
-import type { SdkAgentEvent } from '@gsd-build/contracts';
+import type { SdkAgentEvent } from '@gwd-build/contracts';
 import type { Logger } from './logger.js';
 import type { DaemonConfig, PendingBlocker } from './types.js';
 import type { SessionManager } from './session-manager.js';
@@ -383,7 +383,7 @@ export class EventBridge {
   }
 
   // -----------------------------------------------------------------------
-  // Conversation relay — Discord → GSD
+  // Conversation relay — Discord → GWD
   // -----------------------------------------------------------------------
 
   private async handleMessageCreate(message: Message): Promise<void> {
@@ -417,7 +417,7 @@ export class EventBridge {
       return;
     }
 
-    // Otherwise, relay the message to the GSD session
+    // Otherwise, relay the message to the GWD session
     // Use steer() when running (injects mid-turn), prompt() otherwise (starts new turn)
     try {
       if (session.status === 'running') {

@@ -2,7 +2,7 @@
  * Remote Questions — configuration resolution and validation
  */
 
-import { AuthStorage } from "@gsd/pi-coding-agent";
+import { AuthStorage } from "@gwd/pi-coding-agent";
 import { loadEffectiveGSDPreferences, type RemoteQuestionsConfig } from "../gsd/preferences.js";
 import type { RemoteChannel } from "./types.js";
 
@@ -44,7 +44,7 @@ const AUTH_PROVIDER_ENV_MAP: Record<string, string> = {
 /**
  * Populate remote channel env vars from auth.json when they are not already
  * set in the environment. Called before every config resolution so that tokens
- * saved via `/gsd remote discord` (or `/gsd keys add discord_bot`) survive
+ * saved via `/gwd remote discord` (or `/gwd keys add discord_bot`) survive
  * process restarts without requiring the user to export env vars manually.
  *
  * Silently no-ops if auth.json is absent, unreadable, or malformed.

@@ -12,7 +12,7 @@ function findRepoRoot(start: string): string {
 	for (let i = 0; i < 10; i++) {
 		try {
 			const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
-			if (pkg.name === "gsd-pi" && pkg.workspaces) return dir;
+			if (pkg.name === "gwd-pi" && pkg.workspaces) return dir;
 		} catch {
 			// Keep walking.
 		}
@@ -33,18 +33,18 @@ function assertContractsBefore(scriptName: string, laterCommand: string): void {
 	assert.ok(script, `${scriptName} script must exist`);
 	const contractsIndex = script.indexOf("npm run build:contracts");
 	const laterIndex = script.indexOf(laterCommand);
-	assert.ok(contractsIndex >= 0, `${scriptName} must build @gsd-build/contracts`);
+	assert.ok(contractsIndex >= 0, `${scriptName} must build @gwd-build/contracts`);
 	assert.ok(laterIndex >= 0, `${scriptName} must include ${laterCommand}`);
 	assert.ok(
 		contractsIndex < laterIndex,
-		`${scriptName} must build @gsd-build/contracts before ${laterCommand}`,
+		`${scriptName} must build @gwd-build/contracts before ${laterCommand}`,
 	);
 }
 
 test("pi build scripts compile contracts before pi-coding-agent", () => {
 	assertContractsBefore("build:pi", "npm run build:pi-coding-agent");
-	assertContractsBefore("build:pi-coding-agent", "npm run build -w @gsd/pi-coding-agent");
-	assertContractsBefore("gsd:web", "npm run copy-resources");
+	assertContractsBefore("build:pi-coding-agent", "npm run build -w @gwd/pi-coding-agent");
+	assertContractsBefore("gwd:web", "npm run copy-resources");
 });
 
 test("contracts build emits dist even when incremental metadata is stale", () => {

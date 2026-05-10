@@ -1,7 +1,7 @@
 import { describe, it, before } from "node:test";
 import assert from "node:assert/strict";
-import { Markdown, visibleWidth } from "@gsd/pi-tui";
-import { getMarkdownTheme, initTheme } from "@gsd/pi-coding-agent";
+import { Markdown, visibleWidth } from "@gwd/pi-tui";
+import { getMarkdownTheme, initTheme } from "@gwd/pi-coding-agent";
 import type { QuestionOption, Question } from "../interview-ui.js";
 
 // Theme must be initialized before Markdown rendering

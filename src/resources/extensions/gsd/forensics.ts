@@ -1,5 +1,5 @@
 /**
- * GSD Forensics — Post-mortem investigation of auto-mode failures
+ * GWD Forensics — Post-mortem investigation of auto-mode failures
  *
  * Programmatically scans activity logs, metrics, crash locks, and doctor
  * diagnostics for anomalies, then hands a structured report to the LLM
@@ -8,7 +8,7 @@
  * Entry point: handleForensics() called from commands.ts
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -124,7 +124,7 @@ interface ForensicReport {
 const DEDUP_PROMPT_SECTION = `
 ## Pre-Investigation: Duplicate Check (REQUIRED)
 
-Before reading GSD source code or performing deep analysis, you MUST search for existing issues and PRs that may already address this bug. This avoids wasting tokens on already-fixed bugs.
+Before reading GWD source code or performing deep analysis, you MUST search for existing issues and PRs that may already address this bug. This avoids wasting tokens on already-fixed bugs.
 
 ### Search Steps
 
@@ -132,17 +132,17 @@ Use keywords from the user's problem description and the anomaly summaries in th
 
 1. **Search closed issues** for similar keywords:
    \`\`\`
-   gh issue list --repo gsd-build/gsd-2 --state closed --search "<keywords from root cause>" --limit 20
+   gh issue list --repo gwd-build/gwd-2 --state closed --search "<keywords from root cause>" --limit 20
    \`\`\`
 
 2. **Search open PRs** that might contain the fix:
    \`\`\`
-   gh pr list --repo gsd-build/gsd-2 --state open --search "<keywords>" --limit 10
+   gh pr list --repo gwd-build/gwd-2 --state open --search "<keywords>" --limit 10
    \`\`\`
 
 3. **Search merged PRs** that may have already fixed this:
    \`\`\`
-   gh pr list --repo gsd-build/gsd-2 --state merged --search "<keywords>" --limit 10
+   gh pr list --repo gwd-build/gwd-2 --state merged --search "<keywords>" --limit 10
    \`\`\`
 
 ### Analysis
@@ -169,7 +169,7 @@ async function writeForensicsDedupPref(ctx: ExtensionCommandContext, enabled: bo
 
   const frontmatter = serializePreferencesToFrontmatter(prefs);
   const raw = existsSync(prefsPath) ? readFileSync(prefsPath, "utf-8") : "";
-  let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# GWD Skill Preferences\n\nSee `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
   const start = raw.startsWith("---\n") ? 4 : raw.startsWith("---\r\n") ? 5 : -1;
   if (start !== -1) {
     const closingIdx = raw.indexOf("\n---", start);
@@ -197,7 +197,7 @@ export async function handleForensics(
   const basePath = process.cwd();
   const root = gsdRoot(basePath);
   if (!existsSync(root)) {
-    ctx.ui.notify("No GSD state found. Run /gsd auto first.", "warning");
+    ctx.ui.notify("No GWD state found. Run /gwd auto first.", "warning");
     return;
   }
 
@@ -241,7 +241,7 @@ export async function handleForensics(
   const report = await buildForensicReport(basePath);
   const savedPath = saveForensicReport(basePath, report, problemDescription);
 
-  // Derive GSD source dir for prompt — fall back to ~/.gsd/agent/extensions/gsd/
+  // Derive GWD source dir for prompt — fall back to ~/.gwd/agent/extensions/gsd/
   // when import.meta.url resolves to the npm-global install path (Windows).
   let gsdSourceDir = dirname(fileURLToPath(import.meta.url));
   if (!existsSync(join(gsdSourceDir, "prompts"))) {
@@ -321,10 +321,10 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
     }
   }
 
-  // 8. GSD version — use GSD_VERSION env var set by the loader at startup.
-  // Extensions run from ~/.gsd/agent/extensions/gsd/ at runtime, so path-traversal
+  // 8. GWD version — use GWD_VERSION env var set by the loader at startup.
+  // Extensions run from ~/.gwd/agent/extensions/gsd/ at runtime, so path-traversal
   // from import.meta.url would resolve to ~/package.json (wrong on every system).
-  const gsdVersion = process.env.GSD_VERSION || "unknown";
+  const gsdVersion = process.env.GWD_VERSION || "unknown";
 
   // 9. Scan journal for flow timeline and structured events
   const journalSummary = scanJournalForForensics(basePath);
@@ -820,9 +820,9 @@ export function detectWorktreeOrphans(
       summary: `${count} worktree orphan(s) detected (${reason})`,
       details:
         reason === "in-progress-unmerged"
-          ? "Auto-mode exited without completing a milestone; live work sits on an unmerged milestone branch. Run `/gsd auto` to resume, or merge manually."
+          ? "Auto-mode exited without completing a milestone; live work sits on an unmerged milestone branch. Run `/gwd auto` to resume, or merge manually."
           : reason === "complete-unmerged"
-            ? "A completed milestone's branch was never merged back to main. Run `/gsd doctor fix` to resolve."
+            ? "A completed milestone's branch was never merged back to main. Run `/gwd doctor fix` to resolve."
             : `Reason: ${reason}.`,
     });
   }
@@ -956,10 +956,10 @@ function saveForensicReport(basePath: string, report: ForensicReport, problemDes
   const redact = (s: string) => redactForGitHub(s, basePath);
 
   const sections: string[] = [
-    `# GSD Forensic Report`,
+    `# GWD Forensic Report`,
     ``,
     `**Generated:** ${report.timestamp}`,
-    `**GSD Version:** ${report.gsdVersion}`,
+    `**GWD Version:** ${report.gsdVersion}`,
     `**Active Milestone:** ${report.activeMilestone ?? "none"}`,
     `**Active Slice:** ${report.activeSlice ?? "none"}`,
     `**Active Worktree:** ${report.activeWorktree ?? "none"}`,
@@ -1279,7 +1279,7 @@ function formatReportForPrompt(report: ForensicReport): string {
   } else {
     sections.push(`### Completed Keys: ${report.completedKeys.length}`);
   }
-  sections.push(`### GSD Version: ${report.gsdVersion}`);
+  sections.push(`### GWD Version: ${report.gsdVersion}`);
   sections.push(`### Active Milestone: ${report.activeMilestone ?? "none"}`);
   sections.push(`### Active Slice: ${report.activeSlice ?? "none"}`);
   if (report.activeWorktree) {
@@ -1307,11 +1307,11 @@ function redactForGitHub(text: string, basePath: string): string {
 
   // Replace absolute paths
   result = result.replace(pathRe(basePath), ".");
-  // Redact GSD_HOME first (when it's outside ~), then OS home.
+  // Redact GWD_HOME first (when it's outside ~), then OS home.
   // Order matters: longer path must be replaced before the shorter prefix.
   const gsdHomePath = gsdHome();
   if (!gsdHomePath.startsWith(homedir())) {
-    result = result.replace(pathRe(gsdHomePath), "~/.gsd");
+    result = result.replace(pathRe(gsdHomePath), "~/.gwd");
   }
   result = result.replace(pathRe(homedir()), "~");
 

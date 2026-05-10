@@ -1,4 +1,4 @@
-// GSD Extension — Write Intercept for Agent State File Blocks
+// GWD Extension — Write Intercept for Agent State File Blocks
 // Detects agent attempts to write authoritative state files and returns
 // an error directing the agent to use the engine tool API instead.
 
@@ -22,11 +22,11 @@ const BLOCKED_PATTERNS: RegExp[] = [
   // (^|[/\\]) matches both absolute paths (/project/.gsd/…) and bare relative
   // paths (.gsd/STATE.md) so a path without a leading separator is also blocked.
   /(^|[/\\])\.gsd[/\\]STATE\.md$/i,
-  // Also match resolved symlink paths under ~/.gsd/projects/ (Pitfall #6)
-  /(^|[/\\])\.gsd[/\\]projects[/\\][^/\\]+[/\\]STATE\.md$/i,
-  // gsd.db and WAL/SHM files — single-writer WAL connection managed by engine (#3625)
-  /(^|[/\\])\.gsd[/\\]gsd\.db(-wal|-shm)?$/i,
-  /(^|[/\\])\.gsd[/\\]projects[/\\][^/\\]+[/\\]gsd\.db(-wal|-shm)?$/i,
+  // Also match resolved symlink paths under ~/.gwd/projects/ (Pitfall #6)
+  /(^|[/\\])\.gwd[/\\]projects[/\\][^/\\]+[/\\]STATE\.md$/i,
+  // GWD DB and legacy gsd.db WAL/SHM files — single-writer WAL connection managed by engine (#3625)
+  /(^|[/\\])\.gsd[/\\](?:gwd|gsd)\.db(-wal|-shm)?$/i,
+  /(^|[/\\])\.gwd[/\\]projects[/\\][^/\\]+[/\\](?:gwd|gsd)\.db(-wal|-shm)?$/i,
 ];
 
 /**
@@ -44,12 +44,12 @@ const BASH_STATE_PATTERNS: RegExp[] = [
   /\bsed\b.*-i.*STATE\.md/i,
   // dd output to STATE.md
   /\bdd\b.*of=\S*STATE\.md/i,
-  // Direct DB access via sqlite3/sql.js/better-sqlite3 targeting gsd.db (#3625)
-  /\b(sqlite3|sql\.js|better-sqlite3|node:sqlite)\b.*gsd\.db/i,
-  /\bgsd\.db\b.*\b(sqlite3|sql\.js|better-sqlite3)\b/i,
-  // Shell writes targeting gsd.db files
-  /[>|]+\s*\S*gsd\.db/i,
-  /\b(cp|mv|dd)\b.*gsd\.db/i,
+  // Direct DB access via sqlite3/sql.js/better-sqlite3 targeting GWD DB files (#3625)
+  /\b(sqlite3|sql\.js|better-sqlite3|node:sqlite)\b.*(?:gwd|gsd)\.db/i,
+  /\b(?:gwd|gsd)\.db\b.*\b(sqlite3|sql\.js|better-sqlite3)\b/i,
+  // Shell writes targeting GWD DB files
+  /[>|]+\s*\S*(?:gwd|gsd)\.db/i,
+  /\b(cp|mv|dd)\b.*(?:gwd|gsd)\.db/i,
 ];
 
 /**
@@ -90,7 +90,7 @@ function matchesBlockedPattern(path: string): boolean {
  * Error message returned when an agent attempts to directly write an authoritative .gsd/ state file.
  * Directs the agent to use engine tool calls instead.
  */
-export const BLOCKED_WRITE_ERROR = `Direct writes to .gsd/STATE.md and .gsd/gsd.db are blocked. Use engine tool calls instead:
+export const BLOCKED_WRITE_ERROR = `Direct writes to .gsd/STATE.md and .gsd/gwd.db are blocked. Use engine tool calls instead:
 - To complete a task: call gsd_task_complete(milestone_id, slice_id, task_id, summary)
 - To complete a slice: call gsd_slice_complete(milestone_id, slice_id, summary, uat_result)
 - To save a decision: call gsd_decision_save(scope, decision, choice, rationale)

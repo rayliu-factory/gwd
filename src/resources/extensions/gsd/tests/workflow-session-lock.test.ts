@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Unit tests for auto-mode session-lock validation adapter.
 
 import assert from "node:assert/strict";
@@ -22,7 +22,7 @@ function makeDeps(overrides?: Partial<WorkflowSessionLockDeps>): {
   const exitDetails: unknown[] = [];
   const handledStatuses: SessionLockStatus[] = [];
   const deps: WorkflowSessionLockDeps = {
-    lockBase: () => "/tmp/gsd-lock",
+    lockBase: () => "/tmp/gwd-lock",
     validateSessionLock: () => ({ valid: true }),
     handleLostSessionLock: status => {
       calls.push("handleLostSessionLock");

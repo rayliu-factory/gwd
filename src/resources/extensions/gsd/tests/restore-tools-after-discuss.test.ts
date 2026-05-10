@@ -12,8 +12,8 @@ import { _dispatchWorkflowForTest } from "../guided-flow.ts";
 
 test("discuss workflow scopes tools for the queued turn and restores the full tool set", async () => {
   const dir = mkdtempSync(join(tmpdir(), "gsd-discuss-tools-"));
-  const workflowPath = join(dir, "GSD-WORKFLOW.md");
-  const originalWorkflowPath = process.env.GSD_WORKFLOW_PATH;
+  const workflowPath = join(dir, "GWD-WORKFLOW.md");
+  const originalWorkflowPath = process.env.GWD_WORKFLOW_PATH;
   const originalTools = [
     "gsd_task_complete",
     "gsd_summary_save",
@@ -37,7 +37,7 @@ test("discuss workflow scopes tools for the queued turn and restores the full to
 
   try {
     writeFileSync(workflowPath, "# Workflow\n", "utf-8");
-    process.env.GSD_WORKFLOW_PATH = workflowPath;
+    process.env.GWD_WORKFLOW_PATH = workflowPath;
 
     await _dispatchWorkflowForTest(
       pi as any,
@@ -52,9 +52,9 @@ test("discuss workflow scopes tools for the queued turn and restores the full to
     assert.equal(triggerTurn, true);
   } finally {
     if (originalWorkflowPath === undefined) {
-      delete process.env.GSD_WORKFLOW_PATH;
+      delete process.env.GWD_WORKFLOW_PATH;
     } else {
-      process.env.GSD_WORKFLOW_PATH = originalWorkflowPath;
+      process.env.GWD_WORKFLOW_PATH = originalWorkflowPath;
     }
     rmSync(dir, { recursive: true, force: true });
   }

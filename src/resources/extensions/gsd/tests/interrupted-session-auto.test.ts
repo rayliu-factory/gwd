@@ -128,7 +128,7 @@ function writeCompleteArtifacts(base: string): void {
   writeFileSync(join(milestoneDir, "M001-SUMMARY.md"), "# Milestone Summary\nDone.\n", "utf-8");
 }
 
-test("direct /gsd auto stale complete repo yields stale classification with no recovery payload", async () => {
+test("direct /gwd auto stale complete repo yields stale classification with no recovery payload", async () => {
   const base = makeTmpBase();
   try {
     writeRoadmap(base, true);
@@ -144,7 +144,7 @@ test("direct /gsd auto stale complete repo yields stale classification with no r
   }
 });
 
-test("direct /gsd auto paused-session metadata remains recoverable when work is unfinished", async () => {
+test("direct /gwd auto paused-session metadata remains recoverable when work is unfinished", async () => {
   const base = makeTmpBase();
   try {
     writeRoadmap(base, false);
@@ -159,7 +159,7 @@ test("direct /gsd auto paused-session metadata remains recoverable when work is 
   }
 });
 
-test("direct /gsd auto stale paused-session metadata is treated as stale when no resumable work remains", async () => {
+test("direct /gwd auto stale paused-session metadata is treated as stale when no resumable work remains", async () => {
   const base = makeTmpBase();
   try {
     writeRoadmap(base, true);
@@ -174,7 +174,7 @@ test("direct /gsd auto stale paused-session metadata is treated as stale when no
   }
 });
 
-test("direct /gsd auto source only resumes paused-session metadata for recoverable state with real recovery signals", async () => {
+test("direct /gwd auto source only resumes paused-session metadata for recoverable state with real recovery signals", async () => {
   const source = await import(`node:fs/promises`).then((fs) =>
     fs.readFile(new URL("../auto.ts", import.meta.url), "utf-8")
   );

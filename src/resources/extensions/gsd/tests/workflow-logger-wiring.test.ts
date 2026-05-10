@@ -1,4 +1,4 @@
-// GSD-2 — workflow-logger behavior regression tests.
+// GWD-2 — workflow-logger behavior regression tests.
 
 import test from "node:test";
 import assert from "node:assert/strict";

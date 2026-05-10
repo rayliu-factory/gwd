@@ -1,0 +1,19 @@
+export const PRODUCT_SHORT_NAME = "gwd";
+export const PRODUCT_DISPLAY_NAME = "GWD";
+export const PRODUCT_FULL_NAME = "Get Work Done";
+export const PRODUCT_PACKAGE_NAME = "gwd-pi";
+export const GLOBAL_STATE_DIR_NAME = ".gwd";
+export const PROJECT_STATE_DIR_NAME = ".gwd";
+export const RUNTIME_DB_FILE_NAME = "gwd.db";
+export const ENV_PREFIX = "GWD";
+export const CLI_COMMAND = "gwd";
+export const SLASH_COMMAND_PREFIX = "/gwd";
+export const TOOL_PREFIX = "gwd_";
+
+export const GWD_HOME_ENV = "GWD_HOME";
+export const GWD_BIN_PATH_ENV = "GWD_BIN_PATH";
+export const GWD_VERSION_ENV = "GWD_VERSION";
+export const GWD_HEADLESS_ENV = "GWD_HEADLESS";
+export const GWD_RTK_DISABLED_ENV = "GWD_RTK_DISABLED";
+export const GWD_RTK_PATH_ENV = "GWD_RTK_PATH";
+export const GWD_SKIP_RTK_INSTALL_ENV = "GWD_SKIP_RTK_INSTALL";

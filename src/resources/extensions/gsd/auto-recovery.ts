@@ -7,7 +7,7 @@
  * globals or AutoContext dependency.
  */
 
-import type { ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionContext } from "@gwd/pi-coding-agent";
 import { parseUnitId } from "./unit-id.js";
 import { MILESTONE_ID_RE } from "./milestone-ids.js";
 import { appendEvent } from "./workflow-events.js";
@@ -166,7 +166,7 @@ function hasCheckedTaskCompletionOnDisk(base: string, mid: string, sid: string, 
  * files) in git history. The primary signal is the branch diff against the
  * integration branch. When a retry is already on the integration branch, that
  * diff is a self-diff; if a milestone ID is available, fall back to recent
- * GSD-tagged commits for that milestone.
+ * GWD-tagged commits for that milestone.
  *
  * Returns "present" if implementation files found, "absent" if only .gsd/ files,
  * "unknown" if git is unavailable or check failed (callers decide how to handle).
@@ -197,7 +197,7 @@ export function hasImplementationArtifacts(basePath: string, milestoneId?: strin
     const changedFiles = branchDiff.files;
 
     // No branch-diff files can mean the unit retried on main after milestone
-    // commits already landed there. In that topology, inspect GSD-tagged
+    // commits already landed there. In that topology, inspect GWD-tagged
     // milestone commits instead of treating the self-diff as proof of no work.
     if (changedFiles.length === 0) {
       if (milestoneId && currentBranch === integrationBranch) {
@@ -338,7 +338,7 @@ function getChangedFilesFromMilestoneTaggedCommits(
   if (scoped.matched && classifyImplementationFiles(scoped.files) === "present") return scoped;
 
   // Fallback (#5033): when .gsd/ is gitignored / external / untracked, the
-  // path-scoped scan matches no commits even though GSD-tagged commits
+  // path-scoped scan matches no commits even though GWD-tagged commits
   // referencing the milestone exist on the integration branch. Re-scan all
   // of HEAD's history and rely on commitMatchesMilestone to bind by
   // explicit milestone mention in the message body.
@@ -533,7 +533,7 @@ function getChangedFilesForCommit(basePath: string, hash: string): string[] {
 }
 
 function commitMessageHasGsdTrailer(message: string): boolean {
-  return /^GSD-(?:Task|Unit):\s*\S+/m.test(message);
+  return /^GWD-(?:Task|Unit):\s*\S+/m.test(message);
 }
 
 function commitMatchesMilestone(basePath: string, message: string, milestoneId: string, files: readonly string[]): boolean {
@@ -543,8 +543,8 @@ function commitMatchesMilestone(basePath: string, message: string, milestoneId: 
   // rather than Mxx/Sxx/Tyy. Bind those commits back to the milestone when
   // either the commit touched this milestone's artifacts, or — for projects
   // where .gsd/ is gitignored/external (#5033) — the message explicitly
-  // names the milestone or local GSD state proves the task belongs here.
-  if (/^GSD-Task:\s*S[^/\s]+\/T\S+/m.test(message)) {
+  // names the milestone or local GWD state proves the task belongs here.
+  if (/^GWD-Task:\s*S[^/\s]+\/T\S+/m.test(message)) {
     if (files.some((file) => isMilestoneArtifactPath(file, milestoneId))) return true;
     if (commitMessageMentionsMilestone(message, milestoneId)) return true;
     if (commitTaskTrailerBelongsToMilestone(basePath, message, milestoneId)) return true;
@@ -554,7 +554,7 @@ function commitMatchesMilestone(basePath: string, message: string, milestoneId: 
 }
 
 function commitTaskTrailerBelongsToMilestone(basePath: string, message: string, milestoneId: string): boolean {
-  const match = message.match(/^GSD-Task:\s*(S[^/\s]+)\/(T[^\s]+)/m);
+  const match = message.match(/^GWD-Task:\s*(S[^/\s]+)\/(T[^\s]+)/m);
   if (!match) return false;
   const [, sliceId, taskId] = match;
 
@@ -576,7 +576,7 @@ function commitMessageMentionsMilestone(message: string, milestoneId: string): b
 function commitTrailerStartsWithMilestone(message: string, milestoneId: string): boolean {
   const escapedMilestone = milestoneId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const trailerPattern = new RegExp(
-    `^GSD-(?:Task|Unit):\\s*${escapedMilestone}(?:$|[\\s/])`,
+    `^GWD-(?:Task|Unit):\\s*${escapedMilestone}(?:$|[\\s/])`,
     "m",
   );
   return trailerPattern.test(message);
@@ -854,7 +854,7 @@ export function verifyExpectedArtifact(
       } else if (!isDbAvailable()) {
         // LEGACY: Pre-migration fallback for projects without DB.
         // Require a CHECKED checkbox — a bare heading or unchecked checkbox
-        // does not prove gsd_complete_task ran. Summary file on disk alone
+        // does not prove gsd_task_complete ran. Summary file on disk alone
         // is not sufficient evidence (could be a rogue write) (#3607).
         if (!hasCheckedTaskCompletionOnDisk(base, mid, sid, tid)) return false;
       } else {

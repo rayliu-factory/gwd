@@ -1,4 +1,4 @@
-// GSD-2 worktree-isolation write gate (#5199).
+// GWD-2 worktree-isolation write gate (#5199).
 //
 // Regression coverage for shouldBlockWorktreeWrite — the helper that prevents
 // the LLM from authoring code at the project root when `git.isolation: worktree`
@@ -39,8 +39,8 @@ describe("shouldBlockWorktreeWrite (#5199)", () => {
   let prevDisableEnv: string | undefined;
 
   beforeEach(() => {
-    prevDisableEnv = process.env.GSD_DISABLE_WORKTREE_WRITE_GUARD;
-    delete process.env.GSD_DISABLE_WORKTREE_WRITE_GUARD;
+    prevDisableEnv = process.env.GWD_DISABLE_WORKTREE_WRITE_GUARD;
+    delete process.env.GWD_DISABLE_WORKTREE_WRITE_GUARD;
   });
 
   afterEach(() => {
@@ -48,9 +48,9 @@ describe("shouldBlockWorktreeWrite (#5199)", () => {
       try { rmSync(projectRoot, { recursive: true, force: true }); } catch { /* best-effort */ }
     }
     if (prevDisableEnv === undefined) {
-      delete process.env.GSD_DISABLE_WORKTREE_WRITE_GUARD;
+      delete process.env.GWD_DISABLE_WORKTREE_WRITE_GUARD;
     } else {
-      process.env.GSD_DISABLE_WORKTREE_WRITE_GUARD = prevDisableEnv;
+      process.env.GWD_DISABLE_WORKTREE_WRITE_GUARD = prevDisableEnv;
     }
     invalidateAllCaches();
   });
@@ -150,9 +150,9 @@ describe("shouldBlockWorktreeWrite (#5199)", () => {
     }
   });
 
-  test("Case 9: GSD_DISABLE_WORKTREE_WRITE_GUARD=1 → allow", () => {
+  test("Case 9: GWD_DISABLE_WORKTREE_WRITE_GUARD=1 → allow", () => {
     projectRoot = makeProject("worktree");
-    process.env.GSD_DISABLE_WORKTREE_WRITE_GUARD = "1";
+    process.env.GWD_DISABLE_WORKTREE_WRITE_GUARD = "1";
     const result = shouldBlockWorktreeWrite(
       "write",
       join(projectRoot, "app.js"),

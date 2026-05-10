@@ -603,7 +603,7 @@ describe('doctor-git', async () => {
       cleanups.push(dir);
 
       // Move .gsd to an external location and replace with a symlink.
-      // This simulates the ~/.gsd/projects/<hash> layout where .gsd is a symlink.
+      // This simulates the ~/.gwd/projects/<hash> layout where .gsd is a symlink.
       const externalGsd = join(realpathSync(mkdtempSync(join(tmpdir(), "doc-git-symlink-"))), "gsd-data");
       cleanups.push(externalGsd);
       renameSync(join(dir, ".gsd"), externalGsd);

@@ -12,7 +12,7 @@
 ## Step 1: Determine Scope and Placement
 
 Ask the user:
-- **Global** (`~/.pi/agent/extensions/`) — Available in all GSD sessions
+- **Global** (`~/.pi/agent/extensions/`) — Available in all GWD sessions
 - **Project-local** (`.gsd/extensions/`) — Available only in this project
 
 ## Step 2: Determine Extension Capabilities
@@ -88,7 +88,7 @@ Only include non-empty arrays in `provides`. See `docs/extension-sdk/manifest-sp
 Start with the skeleton:
 
 ```typescript
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 
 export default function (pi: ExtensionAPI) {
   // Register events, tools, commands here
@@ -100,7 +100,7 @@ Then add capabilities based on Step 2. Reference the appropriate reference files
 **Tool registration pattern:**
 ```typescript
 import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@gsd/pi-ai";
+import { StringEnum } from "@gwd/pi-ai";
 
 pi.registerTool({
   name: "my_tool",
@@ -150,7 +150,7 @@ gsd -e ./path/to/my-extension.ts
 ```
 
 Verify:
-- Extension loads without errors (check GSD startup output)
+- Extension loads without errors (check GWD startup output)
 - Tools appear when LLM is asked to use them
 - Commands respond to `/mycommand`
 - Event hooks trigger at expected points

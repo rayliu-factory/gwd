@@ -1,10 +1,10 @@
 /**
  * Regression test for #4757 — readConfigs() must also read the global
- * ~/.gsd/mcp.json (resolved as $GSD_HOME/mcp.json when GSD_HOME is set).
+ * ~/.gwd/mcp.json (resolved as $GWD_HOME/mcp.json when GWD_HOME is set).
  *
  * Behaviour test against the exported getServerConfig — no source grep.
- * The fixture is anchored via $GSD_HOME so the test never touches the
- * developer's real ~/.gsd directory.
+ * The fixture is anchored via $GWD_HOME so the test never touches the
+ * developer's real ~/.gwd directory.
  */
 
 import test, { before, after } from "node:test";
@@ -22,7 +22,7 @@ let originalGsdHome: string | undefined;
 
 before(() => {
 	originalCwd = process.cwd();
-	originalGsdHome = process.env.GSD_HOME;
+	originalGsdHome = process.env.GWD_HOME;
 
 	// realpathSync resolves any symlink in tmpdir() — on macOS /var → /private/var
 	// so process.cwd() after chdir matches what mkdtempSync returned.
@@ -41,7 +41,7 @@ before(() => {
 		"utf-8",
 	);
 
-	// Global fixture rooted at $GSD_HOME (also defines `shared-server` to test
+	// Global fixture rooted at $GWD_HOME (also defines `shared-server` to test
 	// that project-local takes precedence on name collision)
 	writeFileSync(
 		join(gsdHomeDir, "mcp.json"),
@@ -55,20 +55,20 @@ before(() => {
 	);
 
 	process.chdir(cwdDir);
-	process.env.GSD_HOME = gsdHomeDir;
+	process.env.GWD_HOME = gsdHomeDir;
 });
 
 after(() => {
 	process.chdir(originalCwd);
-	if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-	else process.env.GSD_HOME = originalGsdHome;
+	if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+	else process.env.GWD_HOME = originalGsdHome;
 	try { rmSync(cwdDir, { recursive: true, force: true }); } catch { /* best-effort */ }
 	try { rmSync(gsdHomeDir, { recursive: true, force: true }); } catch { /* best-effort */ }
 });
 
-test("#4757: getServerConfig resolves servers declared in $GSD_HOME/mcp.json", () => {
+test("#4757: getServerConfig resolves servers declared in $GWD_HOME/mcp.json", () => {
 	const cfg = getServerConfig("global-server");
-	assert.ok(cfg, "server defined in $GSD_HOME/mcp.json must resolve");
+	assert.ok(cfg, "server defined in $GWD_HOME/mcp.json must resolve");
 	assert.equal(cfg?.name, "global-server");
 	assert.equal(cfg?.sourcePath, join(gsdHomeDir, "mcp.json"));
 });
@@ -85,7 +85,7 @@ test("#4757: project-local config wins on server-name collision", () => {
 	assert.equal(
 		cfg?.sourcePath,
 		join(cwdDir, ".mcp.json"),
-		"project-local config must take precedence over $GSD_HOME on name collision",
+		"project-local config must take precedence over $GWD_HOME on name collision",
 	);
 	assert.deepEqual(cfg?.args, ["from-project"]);
 });

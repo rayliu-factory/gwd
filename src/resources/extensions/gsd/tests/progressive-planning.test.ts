@@ -1,4 +1,4 @@
-// GSD Extension — ADR-011 Progressive Planning tests
+// GWD Extension — ADR-011 Progressive Planning tests
 // Sketch detection → refining phase, dispatch routing, auto-heal, migration idempotency.
 
 import test from "node:test";

@@ -41,16 +41,14 @@ test("listBackgroundableTools returns exactly the four GOOD tools, sorted", () =
   assert.deepEqual(listBackgroundableTools(), EXPECTED_BACKGROUNDABLE);
 });
 
-test("getDelegationVerdict resolves alias names to canonical entries", () => {
-  for (const [alias, canonical] of [
-    ["gsd_milestone_validate", "gsd_validate_milestone"],
-    ["gsd_roadmap_reassess", "gsd_reassess_roadmap"],
-    ["gsd_slice_replan", "gsd_replan_slice"],
-    ["gsd_task_plan", "gsd_plan_task"],
+test("getDelegationVerdict does not resolve removed alias names", () => {
+  for (const alias of [
+    "gsd_milestone_validate",
+    "gsd_roadmap_reassess",
+    "gsd_slice_replan",
+    "gsd_task_plan",
   ] as const) {
-    const entry = getDelegationVerdict(alias);
-    assert.ok(entry, `alias ${alias} should resolve`);
-    assert.equal(entry.toolName, canonical, `${alias} should resolve to ${canonical}`);
+    assert.equal(getDelegationVerdict(alias), null, `${alias} should not resolve after hard cutover`);
   }
 });
 

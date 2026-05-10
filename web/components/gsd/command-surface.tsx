@@ -2160,12 +2160,12 @@ export function CommandSurface() {
       case "gsd-queue": return <QueuePanel />
       case "gsd-status": return <StatusPanel />
       default:
-        // Safety net for any unknown GSD surface
+        // Safety net for any unknown GWD surface
         if (commandSurface.section?.startsWith("gsd-")) {
           return (
             <div className="p-4 text-sm text-muted-foreground" data-testid={`gsd-surface-${commandSurface.section}`}>
-              <p className="font-medium text-foreground">/gsd {commandSurface.section.slice(4)}</p>
-              <p className="mt-1">Unknown GSD surface.</p>
+              <p className="font-medium text-foreground">/gwd {commandSurface.section.slice(4)}</p>
+              <p className="mt-1">Unknown GWD surface.</p>
             </div>
           )
         }

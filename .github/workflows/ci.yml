@@ -25,7 +25,7 @@ concurrency:
 jobs:
   detect-changes:
     timeout-minutes: 2
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     outputs:
       heavy-code-changed: ${{ steps.check.outputs.heavy-code-changed }}
       portability-changed: ${{ steps.check.outputs.portability-changed }}
@@ -139,7 +139,7 @@ jobs:
 
   docs-check:
     timeout-minutes: 5
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -150,7 +150,7 @@ jobs:
 
   lint:
     timeout-minutes: 5
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -162,10 +162,10 @@ jobs:
       - name: Scan for base64-encoded secrets
         run: bash scripts/base64-scan.sh --diff origin/main
 
-      - name: Ensure .gsd/ is not checked in
+      - name: Ensure .gwd/ is not checked in
         run: |
-          if [ -d ".gsd" ]; then
-            echo "::error::.gsd/ directory must not be checked in"
+          if [ -d ".gwd" ]; then
+            echo "::error::.gwd/ directory must not be checked in"
             exit 1
           fi
 
@@ -199,10 +199,10 @@ jobs:
         run: node scripts/check-coderabbit-themes.mjs
 
   build:
-    timeout-minutes: 25
+    timeout-minutes: 90
     needs: [detect-changes, docs-check, lint]
     if: needs.detect-changes.outputs.heavy-code-changed == 'true'
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -221,7 +221,7 @@ jobs:
         run: npm --prefix web ci
 
       - name: Cache Next.js build
-        uses: useblacksmith/cache@v5
+        uses: actions/cache@v4
         with:
           path: web/.next/cache
           key: nextjs-${{ runner.os }}-${{ hashFiles('web/package-lock.json') }}-${{ hashFiles('web/app/**', 'web/components/**', 'web/lib/**', 'web/hooks/**') }}
@@ -259,7 +259,7 @@ jobs:
     timeout-minutes: 15
     needs: [detect-changes, build]
     if: needs.detect-changes.outputs.heavy-code-changed == 'true'
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -283,7 +283,7 @@ jobs:
         run: npm --prefix web ci
 
       - name: Cache Next.js build
-        uses: useblacksmith/cache@v5
+        uses: actions/cache@v4
         with:
           path: web/.next/cache
           key: nextjs-${{ runner.os }}-${{ hashFiles('web/package-lock.json') }}-${{ hashFiles('web/app/**', 'web/components/**', 'web/lib/**', 'web/hooks/**') }}
@@ -293,6 +293,9 @@ jobs:
 
       - name: Build core
         run: npm run build:core
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
 
       - name: Run integration tests
         run: npm run test:integration
@@ -306,7 +309,7 @@ jobs:
     timeout-minutes: 15
     needs: [detect-changes, build]
     if: needs.detect-changes.outputs.heavy-code-changed == 'true'
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -324,10 +327,16 @@ jobs:
       - name: Build core
         run: npm run build:core
 
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build native addon
+        run: npm run build:native
+
       - name: Run e2e suite (against built binary)
         run: |
           chmod +x dist/loader.js
-          export GSD_SMOKE_BINARY="$(pwd)/dist/loader.js"
+          export GWD_SMOKE_BINARY="$(pwd)/dist/loader.js"
           npm run test:e2e
 
       - name: Upload e2e artifacts on failure
@@ -341,7 +350,7 @@ jobs:
 
   docker-e2e:
     # Builds the runtime-local Dockerfile target from the current source
-    # (npm pack + COPY into image) and runs `gsd --version` inside the
+    # (npm pack + COPY into image) and runs `gwd --version` inside the
     # container. Catches missing system deps, broken postinstall, missing
     # tarball files. Gated by detect-changes so doc-only PRs skip it.
     # No untrusted GitHub event input is consumed in run: blocks.
@@ -350,7 +359,7 @@ jobs:
     if: >-
       needs.detect-changes.outputs.heavy-code-changed == 'true' &&
       needs.detect-changes.outputs.docker-changed == 'true'
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -384,7 +393,7 @@ jobs:
       needs.detect-changes.outputs.heavy-code-changed == 'true' &&
       (needs.detect-changes.outputs.portability-changed == 'true' ||
        needs.detect-changes.outputs.windows-e2e-changed == 'true')
-    runs-on: blacksmith-4vcpu-windows-2025
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
@@ -400,7 +409,7 @@ jobs:
         env:
           ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
-          GSD_SKIP_RTK_INSTALL: '1'
+          GWD_SKIP_RTK_INSTALL: '1'
         run: npm ci
 
       - name: Build core
@@ -430,7 +439,7 @@ jobs:
         shell: bash
         continue-on-error: true
         run: |
-          export GSD_SMOKE_BINARY="$(pwd)/dist/loader.js"
+          export GWD_SMOKE_BINARY="$(pwd)/dist/loader.js"
           npm run test:e2e:windows-smoke
 
       - name: Upload Windows e2e artifacts on failure

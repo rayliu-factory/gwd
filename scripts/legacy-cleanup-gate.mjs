@@ -14,7 +14,7 @@ export const LEGACY_COUNTERS = [
 
 export function parseArgs(argv = process.argv.slice(2), env = process.env) {
   const opts = {
-    file: env.GSD_LEGACY_TELEMETRY_FILE ?? "",
+    file: env.GWD_LEGACY_TELEMETRY_FILE ?? "",
     json: false,
   };
 
@@ -39,7 +39,7 @@ export function parseArgs(argv = process.argv.slice(2), env = process.env) {
   }
 
   if (!opts.file.trim()) {
-    throw new Error("No telemetry file provided. Pass --file or set GSD_LEGACY_TELEMETRY_FILE.");
+    throw new Error("No telemetry file provided. Pass --file or set GWD_LEGACY_TELEMETRY_FILE.");
   }
   return opts;
 }

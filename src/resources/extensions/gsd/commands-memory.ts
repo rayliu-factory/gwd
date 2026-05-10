@@ -1,5 +1,5 @@
 /**
- * GSD Command — `/gsd memory`
+ * GWD Command — `/gwd memory`
  *
  * Subcommands:
  *   list            — show recent active memories
@@ -15,7 +15,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve as resolvePath } from "node:path";
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { projectRoot } from "./commands/context.js";
 import { ingestFile, ingestNote, ingestUrl, summarizeIngest } from "./memory-ingest.js";
@@ -104,7 +104,7 @@ export async function handleMemory(
 ): Promise<void> {
   const parsed = parseArgs(args);
 
-  // `/gsd memory` or `/gsd memory help`
+  // `/gwd memory` or `/gwd memory help`
   if (parsed.sub === "" || parsed.sub === "help") {
     ctx.ui.notify(usage(), "info");
     return;
@@ -158,7 +158,7 @@ export async function handleMemory(
 
 function usage(): string {
   return [
-    "Usage: /gsd memory <subcommand>",
+    "Usage: /gwd memory <subcommand>",
     "  list                    list recent active memories",
     "  show <MEM###>           print one memory",
     "  forget <MEM###>         supersede a memory",
@@ -184,7 +184,7 @@ async function ensureDb(): Promise<void> {
 
 function handleList(ctx: ExtensionCommandContext): void {
   if (!isDbAvailable()) {
-    ctx.ui.notify("No GSD database available.", "warning");
+    ctx.ui.notify("No GWD database available.", "warning");
     return;
   }
   const memories = getActiveMemoriesRanked(50);
@@ -201,12 +201,12 @@ function handleList(ctx: ExtensionCommandContext): void {
 
 function handleShow(ctx: ExtensionCommandContext, id: string | undefined): void {
   if (!id) {
-    ctx.ui.notify("Usage: /gsd memory show <MEM###>", "warning");
+    ctx.ui.notify("Usage: /gwd memory show <MEM###>", "warning");
     return;
   }
   const adapter = _getAdapter();
   if (!adapter) {
-    ctx.ui.notify("No GSD database available.", "warning");
+    ctx.ui.notify("No GWD database available.", "warning");
     return;
   }
   const row = adapter.prepare("SELECT * FROM memories WHERE id = :id").get({ ":id": id });
@@ -236,7 +236,7 @@ function handleShow(ctx: ExtensionCommandContext, id: string | undefined): void 
 
 function handleForget(ctx: ExtensionCommandContext, id: string | undefined): void {
   if (!id) {
-    ctx.ui.notify("Usage: /gsd memory forget <MEM###>", "warning");
+    ctx.ui.notify("Usage: /gwd memory forget <MEM###>", "warning");
     return;
   }
   const ok = supersedeMemory(id, "CAP_EXCEEDED");
@@ -250,7 +250,7 @@ function handleForget(ctx: ExtensionCommandContext, id: string | undefined): voi
 function handleStats(ctx: ExtensionCommandContext): void {
   const adapter = _getAdapter();
   if (!adapter) {
-    ctx.ui.notify("No GSD database available.", "warning");
+    ctx.ui.notify("No GWD database available.", "warning");
     return;
   }
   try {
@@ -316,7 +316,7 @@ function handleStats(ctx: ExtensionCommandContext): void {
 
 function handleExport(ctx: ExtensionCommandContext, target: string | undefined): void {
   if (!target) {
-    ctx.ui.notify("Usage: /gsd memory export <path.json>", "warning");
+    ctx.ui.notify("Usage: /gwd memory export <path.json>", "warning");
     return;
   }
   try {
@@ -378,7 +378,7 @@ interface ExportedRelation {
 
 function handleImport(ctx: ExtensionCommandContext, target: string | undefined): void {
   if (!target) {
-    ctx.ui.notify("Usage: /gsd memory import <path.json>", "warning");
+    ctx.ui.notify("Usage: /gwd memory import <path.json>", "warning");
     return;
   }
   try {
@@ -430,7 +430,7 @@ function handleDecay(ctx: ExtensionCommandContext): void {
 function handleCap(ctx: ExtensionCommandContext, arg: string | undefined): void {
   const max = arg ? Number.parseInt(arg, 10) : 50;
   if (!Number.isFinite(max) || max < 1) {
-    ctx.ui.notify("Usage: /gsd memory cap <max>  (default 50)", "warning");
+    ctx.ui.notify("Usage: /gwd memory cap <max>  (default 50)", "warning");
     return;
   }
   enforceMemoryCap(max);
@@ -440,7 +440,7 @@ function handleCap(ctx: ExtensionCommandContext, arg: string | undefined): void 
 function handleSources(ctx: ExtensionCommandContext): void {
   const sources = listMemorySources(30);
   if (sources.length === 0) {
-    ctx.ui.notify("No memory sources yet. Use `/gsd memory ingest <path|url>` to add one.", "info");
+    ctx.ui.notify("No memory sources yet. Use `/gwd memory ingest <path|url>` to add one.", "info");
     return;
   }
   const lines = sources.map(
@@ -453,7 +453,7 @@ function handleSources(ctx: ExtensionCommandContext): void {
 async function handleNote(ctx: ExtensionCommandContext, args: MemoryCmdArgs): Promise<void> {
   const text = args.positional.join(" ").trim();
   if (!text) {
-    ctx.ui.notify('Usage: /gsd memory note "your note"', "warning");
+    ctx.ui.notify('Usage: /gwd memory note "your note"', "warning");
     return;
   }
   try {
@@ -471,7 +471,7 @@ async function handleNote(ctx: ExtensionCommandContext, args: MemoryCmdArgs): Pr
 async function handleIngest(ctx: ExtensionCommandContext, args: MemoryCmdArgs): Promise<void> {
   const target = args.positional[0];
   if (!target) {
-    ctx.ui.notify("Usage: /gsd memory ingest <path|url> [--tag a,b] [--scope project|global]", "warning");
+    ctx.ui.notify("Usage: /gwd memory ingest <path|url> [--tag a,b] [--scope project|global]", "warning");
     return;
   }
   try {
@@ -483,7 +483,7 @@ async function handleIngest(ctx: ExtensionCommandContext, args: MemoryCmdArgs): 
     if (args.extract && result.sourceId) {
       // TODO (P3): dispatch agent turn to extract memories once source is stored.
       ctx.ui.notify(
-        `(Dispatching extraction turn — use \`/gsd memory extract ${result.sourceId}\` to trigger manually.)`,
+        `(Dispatching extraction turn — use \`/gwd memory extract ${result.sourceId}\` to trigger manually.)`,
         "info",
       );
     }
@@ -498,7 +498,7 @@ function handleExtractSource(
   id: string | undefined,
 ): void {
   if (!id) {
-    ctx.ui.notify("Usage: /gsd memory extract <SRC-xxx>", "warning");
+    ctx.ui.notify("Usage: /gwd memory extract <SRC-xxx>", "warning");
     return;
   }
   const source = getMemorySource(id);

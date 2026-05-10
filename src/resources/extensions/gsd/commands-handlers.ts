@@ -1,11 +1,11 @@
 /**
- * GSD Command Handlers — fire-and-forget handlers that delegate to other modules.
+ * GWD Command Handlers — fire-and-forget handlers that delegate to other modules.
  *
  * Contains: handleDoctor, handleSteer, handleCapture, handleTriage, handleKnowledge,
  * handleRunHook, handleUpdate, handleSkillHealth
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, readFileSync, mkdirSync } from "node:fs";
 import { join, resolve as resolvePath, sep } from "node:path";
 import { homedir } from "node:os";
@@ -36,10 +36,10 @@ import {
   scopeGsdWorkflowToolsForDispatch,
 } from "./bootstrap/register-hooks.js";
 
-const UPDATE_REGISTRY_URL = "https://registry.npmjs.org/gsd-pi/latest";
+const UPDATE_REGISTRY_URL = "https://registry.npmjs.org/gwd-pi/latest";
 const UPDATE_FETCH_TIMEOUT_MS = 5000;
 
-// Detects a bun-installed gsd via `process.argv[1]`. Mirrors isBunInstall in
+// Detects a bun-installed gwd via `process.argv[1]`. Mirrors isBunInstall in
 // src/update-check.ts — duplicated because tsconfig.resources.json rootDir
 // prevents importing from src/. See #4145 for why the runtime-only check
 // (process.versions.bun) is insufficient: bun's global bin shims are plain
@@ -78,7 +78,7 @@ async function fetchLatestVersionForCommand(): Promise<string | null> {
 }
 
 export function dispatchDoctorHeal(pi: ExtensionAPI, scope: string | undefined, reportText: string, structuredIssues: string): void {
-  const workflowPath = process.env.GSD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GSD-WORKFLOW.md");
+  const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GWD-WORKFLOW.md");
   const workflow = readFileSync(workflowPath, "utf-8");
   const prompt = loadPrompt("doctor-heal", {
     doctorSummary: buildDoctorHealSummary(reportText),
@@ -140,7 +140,7 @@ export async function handleDoctor(args: string, ctx: ExtensionCommandContext, p
     scope: effectiveScope,
     includeWarnings: mode === "audit",
     maxIssues: mode === "audit" ? 50 : 12,
-    title: mode === "audit" ? "GSD doctor audit." : mode === "heal" ? "GSD doctor heal prep." : undefined,
+    title: mode === "audit" ? "GWD doctor audit." : mode === "heal" ? "GWD doctor heal prep." : undefined,
   });
 
   ctx.ui.notify(reportText, report.ok ? "info" : "warning");
@@ -171,7 +171,7 @@ export async function handleSkillHealth(args: string, ctx: ExtensionCommandConte
 
   const basePath = projectRoot();
 
-  // /gsd skill-health <skill-name> — detail view
+  // /gwd skill-health <skill-name> — detail view
   if (args && !args.startsWith("--")) {
     const detail = formatSkillDetail(basePath, args);
     ctx.ui.notify(detail, "info");
@@ -205,7 +205,7 @@ export async function handleCapture(args: string, ctx: ExtensionCommandContext):
   // Strip surrounding quotes from the argument
   let text = args.trim();
   if (!text) {
-    ctx.ui.notify('Usage: /gsd capture "your thought here"', "warning");
+    ctx.ui.notify('Usage: /gwd capture "your thought here"', "warning");
     return;
   }
   // Remove wrapping quotes (single or double)
@@ -213,7 +213,7 @@ export async function handleCapture(args: string, ctx: ExtensionCommandContext):
     text = text.slice(1, -1);
   }
   if (!text) {
-    ctx.ui.notify('Usage: /gsd capture "your thought here"', "warning");
+    ctx.ui.notify('Usage: /gwd capture "your thought here"', "warning");
     return;
   }
 
@@ -270,7 +270,7 @@ export async function handleTriage(ctx: ExtensionCommandContext, pi: ExtensionAP
     roadmapContext: roadmapContext || "(no active roadmap)",
   });
 
-  const workflowPath = process.env.GSD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GSD-WORKFLOW.md");
+  const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GWD-WORKFLOW.md");
   const workflow = readFileSync(workflowPath, "utf-8");
   const savedTools = scopeGsdWorkflowToolsForDispatch(pi);
 
@@ -349,7 +349,7 @@ export async function handleKnowledge(args: string, ctx: ExtensionCommandContext
 
   if (!typeArg || !["rule", "pattern", "lesson"].includes(typeArg)) {
     ctx.ui.notify(
-      "Usage: /gsd knowledge <rule|pattern|lesson> <description>\nExample: /gsd knowledge rule Use real DB for integration tests",
+      "Usage: /gwd knowledge <rule|pattern|lesson> <description>\nExample: /gwd knowledge rule Use real DB for integration tests",
       "warning",
     );
     return;
@@ -357,7 +357,7 @@ export async function handleKnowledge(args: string, ctx: ExtensionCommandContext
 
   const entryText = parts.slice(1).join(" ").trim();
   if (!entryText) {
-    ctx.ui.notify(`Usage: /gsd knowledge ${typeArg} <description>`, "warning");
+    ctx.ui.notify(`Usage: /gwd knowledge ${typeArg} <description>`, "warning");
     return;
   }
 
@@ -375,7 +375,7 @@ export async function handleKnowledge(args: string, ctx: ExtensionCommandContext
 export async function handleRunHook(args: string, ctx: ExtensionCommandContext, pi: ExtensionAPI): Promise<void> {
   const parts = args.trim().split(/\s+/);
   if (parts.length < 3) {
-    ctx.ui.notify(`Usage: /gsd run-hook <hook-name> <unit-type> <unit-id>
+    ctx.ui.notify(`Usage: /gwd run-hook <hook-name> <unit-type> <unit-id>
 
 Unit types:
   execute-task   - Task execution (unit-id: M001/S01/T01)
@@ -385,8 +385,8 @@ Unit types:
   complete-milestone - Milestone completion (unit-id: M001)
 
 Examples:
-  /gsd run-hook code-review execute-task M001/S01/T01
-  /gsd run-hook lint-check plan-slice M001/S01`, "warning");
+  /gwd run-hook code-review execute-task M001/S01/T01
+  /gwd run-hook lint-check plan-slice M001/S01`, "warning");
     return;
   }
 
@@ -455,8 +455,8 @@ function compareSemverLocal(a: string, b: string): number {
 export async function handleUpdate(ctx: ExtensionCommandContext): Promise<void> {
   const { execSync } = await import("node:child_process");
 
-  const NPM_PACKAGE = "gsd-pi";
-  const current = process.env.GSD_VERSION || "0.0.0";
+  const NPM_PACKAGE = "gwd-pi";
+  const current = process.env.GWD_VERSION || "0.0.0";
 
   ctx.ui.notify(`Current version: v${current}\nChecking npm registry...`, "info");
 
@@ -479,7 +479,7 @@ export async function handleUpdate(ctx: ExtensionCommandContext): Promise<void> 
       stdio: ["ignore", "pipe", "ignore"],
     });
     ctx.ui.notify(
-      `Updated to v${latest}. Restart your GSD session to use the new version.`,
+      `Updated to v${latest}. Restart your GWD session to use the new version.`,
       "info",
     );
   } catch {

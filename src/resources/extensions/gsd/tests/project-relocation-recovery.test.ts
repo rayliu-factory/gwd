@@ -1,7 +1,7 @@
 /**
  * Project Relocation Recovery Tests (#2750)
  *
- * Verifies that moving/renaming a GSD project directory does not cause
+ * Verifies that moving/renaming a GWD project directory does not cause
  * silent data loss. When a repo has a remote URL, the identity hash
  * should be based solely on the remote — making moves transparent.
  *
@@ -66,16 +66,16 @@ describe("project-relocation-recovery (#2750)", () => {
   let savedStateDir: string | undefined;
 
   before(() => {
-    savedStateDir = process.env.GSD_STATE_DIR;
+    savedStateDir = process.env.GWD_STATE_DIR;
     stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-state-")));
-    process.env.GSD_STATE_DIR = stateDir;
+    process.env.GWD_STATE_DIR = stateDir;
   });
 
   after(() => {
     if (savedStateDir !== undefined) {
-      process.env.GSD_STATE_DIR = savedStateDir;
+      process.env.GWD_STATE_DIR = savedStateDir;
     } else {
-      delete process.env.GSD_STATE_DIR;
+      delete process.env.GWD_STATE_DIR;
     }
     rmSync(stateDir, { recursive: true, force: true });
   });
@@ -110,7 +110,7 @@ describe("project-relocation-recovery (#2750)", () => {
     const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-reuse-a-")));
     initRepo(repoA, "https://github.com/example/reloc-reuse.git");
 
-    // Initialize GSD state with some planning data
+    // Initialize GWD state with some planning data
     const externalA = ensureGsdSymlink(repoA);
     const milestonesPath = join(externalA, "milestones");
     mkdirSync(milestonesPath, { recursive: true });
@@ -209,7 +209,7 @@ describe("project-relocation-recovery (#2750)", () => {
     initRepo(repoA);
     // No remote — identity includes gitRoot
 
-    // Initialize GSD state
+    // Initialize GWD state
     const externalA = ensureGsdSymlink(repoA);
     mkdirSync(join(externalA, "milestones"), { recursive: true });
     writeFileSync(

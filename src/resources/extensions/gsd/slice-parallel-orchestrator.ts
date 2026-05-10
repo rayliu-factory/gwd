@@ -1,15 +1,15 @@
 /**
- * GSD Slice Parallel Orchestrator — Engine for parallel slice execution
+ * GWD Slice Parallel Orchestrator — Engine for parallel slice execution
  * within a single milestone.
  *
  * Mirrors the existing parallel-orchestrator.ts pattern at slice scope
  * instead of milestone scope. Workers are separate processes spawned via
- * child_process, each running in its own git worktree with GSD_SLICE_LOCK
- * + GSD_MILESTONE_LOCK env vars set.
+ * child_process, each running in its own git worktree with GWD_SLICE_LOCK
+ * + GWD_MILESTONE_LOCK env vars set.
  *
  * Key differences from milestone-level parallelism:
  * - Scope: slices within one milestone, not milestones within a project
- * - Lock env: GSD_SLICE_LOCK (in addition to GSD_MILESTONE_LOCK)
+ * - Lock env: GWD_SLICE_LOCK (in addition to GWD_MILESTONE_LOCK)
  * - Conflict check: file overlap between slice plans (slice-parallel-conflict.ts)
  */
 
@@ -97,11 +97,11 @@ export function _buildSliceWorkerEnvForTest(
 ): NodeJS.ProcessEnv {
   return {
     ...sourceEnv,
-    GSD_SLICE_LOCK: sliceId,
-    GSD_MILESTONE_LOCK: milestoneId,
-    GSD_PROJECT_ROOT: basePath,
-    GSD_PARALLEL_WORKER: "1",
-    GSD_SLICE_WORKER_TOKEN: workerToken,
+    GWD_SLICE_LOCK: sliceId,
+    GWD_MILESTONE_LOCK: milestoneId,
+    GWD_PROJECT_ROOT: basePath,
+    GWD_PARALLEL_WORKER: "1",
+    GWD_SLICE_WORKER_TOKEN: workerToken,
   };
 }
 
@@ -202,7 +202,7 @@ function isRecoveredSliceWorkerAlive(worker: {
   if (worker.workerToken) {
     const envMatches = linuxProcessEnvContains(
       worker.pid,
-      "GSD_SLICE_WORKER_TOKEN",
+      "GWD_SLICE_WORKER_TOKEN",
       worker.workerToken,
     );
     if (envMatches === false) return false;
@@ -378,8 +378,8 @@ export function getSliceOrchestratorState(): SliceOrchestratorState | null {
 /**
  * Start parallel execution for eligible slices within a milestone.
  *
- * For each eligible slice: create a worktree, spawn `gsd headless --json auto`
- * with env GSD_SLICE_LOCK=<SID> + GSD_MILESTONE_LOCK=<MID> + GSD_PARALLEL_WORKER=1.
+ * For each eligible slice: create a worktree, spawn `gwd headless --json auto`
+ * with env GWD_SLICE_LOCK=<SID> + GWD_MILESTONE_LOCK=<MID> + GWD_PARALLEL_WORKER=1.
  */
 export async function startSliceParallel(
   basePath: string,
@@ -388,7 +388,7 @@ export async function startSliceParallel(
   opts: StartSliceParallelOpts = {},
 ): Promise<{ started: string[]; errors: Array<{ sid: string; error: string }> }> {
   // Prevent nesting: if already a parallel worker, refuse
-  if (process.env.GSD_PARALLEL_WORKER) {
+  if (process.env.GWD_PARALLEL_WORKER) {
     return { started: [], errors: [{ sid: "all", error: "Cannot start slice-parallel from within a parallel worker" }] };
   }
 
@@ -593,12 +593,12 @@ function filterConflictingSlices(
 // ─── Internal: Worker Spawning ─────────────────────────────────────────────
 
 /**
- * Resolve the GSD CLI binary path.
+ * Resolve the GWD CLI binary path.
  * Same logic as parallel-orchestrator.ts resolveGsdBin().
  */
 function resolveGsdBin(): string | null {
-  if (process.env.GSD_BIN_PATH && existsSync(process.env.GSD_BIN_PATH)) {
-    return process.env.GSD_BIN_PATH;
+  if (process.env.GWD_BIN_PATH && existsSync(process.env.GWD_BIN_PATH)) {
+    return process.env.GWD_BIN_PATH;
   }
 
   let thisDir: string;
@@ -620,8 +620,8 @@ function resolveGsdBin(): string | null {
 
 /**
  * Spawn a worker process for a slice.
- * The worker runs `gsd headless --json auto` in the slice's worktree
- * with GSD_SLICE_LOCK, GSD_MILESTONE_LOCK, and GSD_PARALLEL_WORKER set.
+ * The worker runs `gwd headless --json auto` in the slice's worktree
+ * with GWD_SLICE_LOCK, GWD_MILESTONE_LOCK, and GWD_PARALLEL_WORKER set.
  *
  * Print-mode slash commands return after the command handler schedules
  * auto-mode, so the worker process can exit before doing any LLM work. The

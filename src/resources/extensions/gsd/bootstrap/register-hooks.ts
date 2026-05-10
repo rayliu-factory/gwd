@@ -1,12 +1,12 @@
-// Project/App: GSD-2
-// File Purpose: Registers GSD extension runtime hooks and token-saving tool policies.
+// Project/App: GWD-2
+// File Purpose: Registers GWD extension runtime hooks and token-saving tool policies.
 
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
-import { isToolCallEventType } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
+import { isToolCallEventType } from "@gwd/pi-coding-agent";
 
 import type { GSDEcosystemBeforeAgentStartHandler } from "../ecosystem/gsd-extension-api.js";
 import { updateSnapshot } from "../ecosystem/gsd-extension-api.js";
@@ -45,12 +45,12 @@ type WelcomeScreenModule = {
 
 async function loadWelcomeScreenModule(): Promise<WelcomeScreenModule | undefined> {
   const candidates: string[] = [];
-  const gsdBinPath = process.env.GSD_BIN_PATH;
+  const gsdBinPath = process.env.GWD_BIN_PATH;
   if (gsdBinPath) {
     candidates.push(join(dirname(gsdBinPath), "welcome-screen.js"));
   }
 
-  const packageRoot = process.env.GSD_PKG_ROOT;
+  const packageRoot = process.env.GWD_PKG_ROOT;
   if (packageRoot) {
     candidates.push(join(packageRoot, "dist", "welcome-screen.js"));
     candidates.push(join(packageRoot, "src", "welcome-screen.ts"));
@@ -91,7 +91,7 @@ async function installWelcomeHeader(ctx: ExtensionContext): Promise<void> {
         render(width: number): string[] {
           if (cachedLines !== undefined && cachedWidth === width) return cachedLines;
           cachedLines = welcome.buildWelcomeScreenLines({
-            version: process.env.GSD_VERSION || "0.0.0",
+            version: process.env.GWD_VERSION || "0.0.0",
             remoteChannel,
             width,
           });
@@ -111,7 +111,7 @@ async function installWelcomeHeader(ctx: ExtensionContext): Promise<void> {
 
 let deferredApprovalGate: DeferredApprovalGate | null = null;
 
-export const MINIMAL_GSD_TOOL_NAMES = [
+export const MINIMAL_GWD_TOOL_NAMES = [
   "gsd_exec",
   "gsd_exec_search",
   "gsd_resume",
@@ -158,8 +158,8 @@ const AUTO_UNIT_SCOPED_TOOLS: Record<string, readonly string[]> = {
   "research-project": ["gsd_summary_save", "gsd_decision_save"],
 };
 
-const WORKFLOW_GSD_TOOL_NAMES = [
-  ...MINIMAL_GSD_TOOL_NAMES,
+const WORKFLOW_GWD_TOOL_NAMES = [
+  ...MINIMAL_GWD_TOOL_NAMES,
   ...Object.values(AUTO_UNIT_SCOPED_TOOLS).flat(),
 ].filter(isGsdManagedTool);
 
@@ -170,7 +170,7 @@ function isGsdManagedTool(name: string): boolean {
 export function buildMinimalGsdToolSet(activeToolNames: readonly string[]): string[] {
   const active = new Set(activeToolNames);
   const preserved = activeToolNames.filter((name) => !isGsdManagedTool(name));
-  const minimal = MINIMAL_GSD_TOOL_NAMES.filter((name) => active.has(name));
+  const minimal = MINIMAL_GWD_TOOL_NAMES.filter((name) => active.has(name));
   return [...new Set([...preserved, ...minimal])];
 }
 
@@ -182,7 +182,7 @@ export function buildMinimalAutoGsdToolSet(
   const unitTools = unitType ? AUTO_UNIT_SCOPED_TOOLS[unitType] ?? [] : [];
   const autoBaseTools = new Set<string>(MINIMAL_AUTO_BASE_TOOL_NAMES);
   const preserved = activeToolNames.filter((name) => autoBaseTools.has(name));
-  const scoped = [...MINIMAL_GSD_TOOL_NAMES, ...unitTools].filter((name) => active.has(name));
+  const scoped = [...MINIMAL_GWD_TOOL_NAMES, ...unitTools].filter((name) => active.has(name));
   return [...new Set([...preserved, ...scoped])];
 }
 
@@ -190,7 +190,7 @@ export function buildMinimalGsdWorkflowToolSet(activeToolNames: readonly string[
   const active = new Set(activeToolNames);
   const autoBaseTools = new Set<string>(MINIMAL_AUTO_BASE_TOOL_NAMES);
   const preserved = activeToolNames.filter((name) => autoBaseTools.has(name));
-  const scoped = WORKFLOW_GSD_TOOL_NAMES.filter((name) => active.has(name));
+  const scoped = WORKFLOW_GWD_TOOL_NAMES.filter((name) => active.has(name));
   return [...new Set([...preserved, ...scoped])];
 }
 
@@ -213,11 +213,11 @@ export function buildRequestScopedGsdToolSet(
 }
 
 export function isFullGsdToolSurfaceRequested(): boolean {
-  return process.env.PI_GSD_FULL_TOOLS === "1";
+  return process.env.PI_GWD_FULL_TOOLS === "1";
 }
 
 function isGeneralGsdToolScopingRequested(): boolean {
-  return process.env.PI_GSD_MINIMAL_TOOLS === "1";
+  return process.env.PI_GWD_MINIMAL_TOOLS === "1";
 }
 
 export interface ScopedGsdWorkflowState {
@@ -314,7 +314,7 @@ async function applyDisabledModelProviderPolicy(ctx: ExtensionContext): Promise<
 }
 
 /**
- * Bridge `context_management.compaction_threshold_percent` from GSD preferences
+ * Bridge `context_management.compaction_threshold_percent` from GWD preferences
  * into the agent's runtime compaction settings (#5475). The preference is
  * validated to (0.5, 0.95) at load time, but defense-in-depth normalization
  * here protects against a stale or hand-edited prefs file. Calling with
@@ -449,7 +449,7 @@ export function registerHooks(
     try {
       const { loadEffectiveGSDPreferences } = await import("../preferences.js");
       const prefs = loadEffectiveGSDPreferences(basePath);
-      process.env.GSD_SHOW_TOKEN_COST = prefs?.preferences.show_token_cost ? "1" : "";
+      process.env.GWD_SHOW_TOKEN_COST = prefs?.preferences.show_token_cost ? "1" : "";
     } catch { /* non-fatal */ }
     await installWelcomeHeader(ctx);
     await loadToolApiKeysForSession();
@@ -504,7 +504,7 @@ export function registerHooks(
     }
     clearDeferredApprovalGate(beforeAgentBasePath);
 
-    // GSD's own context injection (existing behavior — unchanged).
+    // GWD's own context injection (existing behavior — unchanged).
     const { buildBeforeAgentStartResult } = await import("./system-context.js");
     const gsdResult = await buildBeforeAgentStartResult(event, ctx);
 
@@ -623,7 +623,7 @@ export function registerHooks(
         ? "Check the task plan for remaining steps."
         : "Continue this slice from the latest planning/research/discussion artifacts.",
       decisions: "Check task summary files for prior decisions.",
-      context: "Session was auto-compacted by Pi. Resume with /gsd.",
+      context: "Session was auto-compacted by Pi. Resume with /gwd.",
       nextAction: state.activeTask
         ? `Resume task ${taskId}: ${taskTitle}.`
         : `Resume ${phaseLabel} work for slice ${state.activeSlice.id}.`,
@@ -743,7 +743,7 @@ export function registerHooks(
     }
 
     // ── Queue-mode execution guard (#2545): block source-code mutations ──
-    // When /gsd queue is active, the agent should only create milestones,
+    // When /gwd queue is active, the agent should only create milestones,
     // not execute work. Block write/edit to non-.gsd/ paths and bash commands
     // that would modify files.
     if (isQueuePhaseActive(discussionBasePath)) {

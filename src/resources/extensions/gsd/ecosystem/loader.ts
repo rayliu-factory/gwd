@@ -1,14 +1,14 @@
 // GSD2 — Ecosystem extension loader for ./.gsd/extensions/
 // Discovers and registers single-file extensions that consume GSDExtensionAPI.
 // Trust-gated (mirrors pi's `.pi/extensions/` model) and isolated from pi's
-// own loader chain — handlers run in GSD's own dispatch step, not pi's.
+// own loader chain — handlers run in GWD's own dispatch step, not pi's.
 
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
 
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
-import { getAgentDir } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
+import { getAgentDir } from "@gwd/pi-coding-agent";
 
 import { logWarning } from "../workflow-logger.js";
 import {

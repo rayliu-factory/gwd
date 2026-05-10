@@ -19,7 +19,7 @@ const { join, resolve } = require('node:path')
 
 // Skip on Windows — Next.js webpack build hits EPERM scanning system dirs
 if (process.platform === 'win32') {
-  console.log('[gsd] Web build skipped on Windows.')
+  console.log('[gwd] Web build skipped on Windows.')
   process.exit(0)
 }
 
@@ -83,7 +83,7 @@ function ensureWebBuildDependencies() {
     return
   }
 
-  console.log('[gsd] Web build dependencies are missing or incomplete — running npm --prefix web ci...')
+  console.log('[gwd] Web build dependencies are missing or incomplete — running npm --prefix web ci...')
   execSync('npm --prefix web ci', { cwd: root, stdio: 'inherit' })
 }
 
@@ -91,20 +91,20 @@ const sourceMtime = Math.max(newestMtime(webRoot), newestMtime(srcRoot))
 const builtMtime = sentinelMtime()
 
 if (builtMtime > 0 && builtMtime >= sourceMtime) {
-  console.log('[gsd] Web build is up-to-date, skipping rebuild.')
+  console.log('[gwd] Web build is up-to-date, skipping rebuild.')
   process.exit(0)
 }
 
 if (builtMtime === 0) {
-  console.log('[gsd] No staged web build found — building now...')
+  console.log('[gwd] No staged web build found — building now...')
 } else {
-  console.log('[gsd] Web/src source has changed since last build — rebuilding...')
+  console.log('[gwd] Web/src source has changed since last build — rebuilding...')
 }
 
 try {
   ensureWebBuildDependencies()
   execSync('npm run build:web-host', { cwd: root, stdio: 'inherit' })
 } catch (err) {
-  console.error('[gsd] Web build failed:', err.message)
+  console.error('[gwd] Web build failed:', err.message)
   process.exit(1)
 }

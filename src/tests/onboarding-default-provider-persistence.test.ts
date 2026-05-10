@@ -42,7 +42,7 @@ function runOnboardingFlow(gsdHome: string, answers: string[]): void {
         if (!configured) throw new Error("onboarding flow did not complete");
       `,
     ],
-    { env: { ...process.env, GSD_HOME: gsdHome }, stdio: "pipe" },
+    { env: { ...process.env, GWD_HOME: gsdHome }, stdio: "pipe" },
   )
 }
 

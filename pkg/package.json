@@ -1,8 +1,8 @@
 {
-  "name": "@glittercowboy/gsd",
+  "name": "@glittercowboy/gwd",
   "version": "2.81.0",
   "piConfig": {
-    "name": "gsd",
-    "configDir": ".gsd"
+    "name": "gwd",
+    "configDir": ".gwd"
   }
 }

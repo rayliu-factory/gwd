@@ -1,7 +1,7 @@
 /**
- * GSD Session Lock — OS-level exclusive locking for auto-mode sessions.
+ * GWD Session Lock — OS-level exclusive locking for auto-mode sessions.
  *
- * Prevents multiple GSD processes from running auto-mode concurrently on
+ * Prevents multiple GWD processes from running auto-mode concurrently on
  * the same project. Uses proper-lockfile for OS-level file locking (flock/
  * lockfile) which eliminates the TOCTOU race condition that existed with
  * the old advisory JSON lock approach.
@@ -97,12 +97,12 @@ const LOCK_FILE = "auto.lock";
 
 /**
  * Derive the effective lock file name for the current process.
- * In parallel worker mode (GSD_PARALLEL_WORKER + GSD_MILESTONE_LOCK),
+ * In parallel worker mode (GWD_PARALLEL_WORKER + GWD_MILESTONE_LOCK),
  * each worker uses a per-milestone lock file (`auto-<milestoneId>.lock`)
  * to avoid contending on the shared `.gsd/auto.lock` (#2184).
  */
 export function effectiveLockFile(): string {
-  const mid = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_MILESTONE_LOCK : null;
+  const mid = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_MILESTONE_LOCK : null;
   return mid ? `auto-${mid}.lock` : LOCK_FILE;
 }
 
@@ -112,7 +112,7 @@ export function effectiveLockFile(): string {
  * `.gsd/` so workers don't contend on the same proper-lockfile directory (#2184).
  */
 export function effectiveLockTarget(gsdDir: string): string {
-  const mid = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_MILESTONE_LOCK : null;
+  const mid = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_MILESTONE_LOCK : null;
   return mid ? join(gsdDir, "parallel", mid) : gsdDir;
 }
 
@@ -223,14 +223,14 @@ function createLockCompromisedHandler(lockFilePath: string): () => void {
     const elapsed = Date.now() - _lockAcquiredAt;
     if (elapsed < 1_800_000) {
       process.stderr.write(
-        `[gsd] Lock heartbeat caught up after ${Math.round(elapsed / 1000)}s — long LLM call, no action needed.\n`,
+        `[gwd] Lock heartbeat caught up after ${Math.round(elapsed / 1000)}s — long LLM call, no action needed.\n`,
       );
       return;
     }
     const existing = readExistingLockDataWithRetry(lockFilePath);
     if (existing && existing.pid === process.pid) {
       process.stderr.write(
-        `[gsd] Lock heartbeat mismatch after ${Math.round(elapsed / 1000)}s — lock file still owned by PID ${process.pid}, treating as false positive.\n`,
+        `[gwd] Lock heartbeat mismatch after ${Math.round(elapsed / 1000)}s — lock file still owned by PID ${process.pid}, treating as false positive.\n`,
       );
       return;
     }
@@ -304,7 +304,7 @@ export function acquireSessionLock(basePath: string): SessionLockResult {
   // #3218: Pre-flight stale lock cleanup — if the .lock/ directory exists but
   // no auto.lock metadata is present (or the PID is dead), remove the lock
   // directory before attempting acquisition. This prevents the 30-min stale
-  // window from blocking /gsd after crashes, SIGKILL, or laptop sleep.
+  // window from blocking /gwd after crashes, SIGKILL, or laptop sleep.
   const lockDir = lockTarget + ".lock";
   if (existsSync(lockDir)) {
     const existingData = readExistingLockData(lp);
@@ -464,7 +464,7 @@ export function getSessionLockStatus(basePath: string): SessionLockStatus {
         const result = acquireSessionLock(basePath);
         if (result.acquired) {
           process.stderr.write(
-            `[gsd] Lock recovered after onCompromised — lock file PID matched, re-acquired.\n`,
+            `[gwd] Lock recovered after onCompromised — lock file PID matched, re-acquired.\n`,
           );
           return { valid: true, recovered: true };
         }

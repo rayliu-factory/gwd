@@ -86,5 +86,5 @@ test("notifications tail caps inline output and hints to open overlay", async (t
 
   assert.equal(notices.length, 1);
   assert.match(notices[0].message, /Last 40 notification\(s\):/);
-  assert.match(notices[0].message, /\.\.\. and \d+ more \(open \/gsd notifications to browse all\)/);
+  assert.match(notices[0].message, /\.\.\. and \d+ more \(open \/gwd notifications to browse all\)/);
 });

@@ -6,7 +6,7 @@
 2. references/skill-structure.md
 3. references/core-principles.md
 4. references/use-xml-tags.md
-5. references/gsd-skill-ecosystem.md
+5. references/gwd-skill-ecosystem.md
 </required_reading>
 
 <process>
@@ -15,7 +15,7 @@
 **Ask the user:**
 "Should this skill be global or project-local?"
 
-1. **Global** (`~/.agents/skills/`) — Available in all GSD sessions
+1. **Global** (`~/.agents/skills/`) — Available in all GWD sessions
 2. **Project-local** (`.agents/skills/`) — Available only in this project
 
 ## Step 2: Adaptive Requirements Gathering

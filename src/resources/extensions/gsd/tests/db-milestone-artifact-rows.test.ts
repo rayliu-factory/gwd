@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Tests for milestone and artifact database row mappers.
 
 import { describe, test } from "node:test";

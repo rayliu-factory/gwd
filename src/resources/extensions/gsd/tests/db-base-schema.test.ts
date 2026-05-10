@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Tests for base GSD database schema DDL helper.
+// Project/App: GWD-2
+// File Purpose: Tests for base GWD database schema DDL helper.
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";

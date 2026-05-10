@@ -5,8 +5,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export function GET(): Response {
-  const hostKind = process.env.GSD_WEB_HOST_KIND ?? "unknown";
-  const packageRoot = process.env.GSD_WEB_PACKAGE_ROOT ?? "";
+  const hostKind = process.env.GWD_WEB_HOST_KIND ?? "unknown";
+  const packageRoot = process.env.GWD_WEB_PACKAGE_ROOT ?? "";
   const isSourceDev = hostKind === "source-dev";
 
   // When running via `npm run gsd:web` from the monorepo, the host resolves

@@ -66,21 +66,21 @@ test("detectHealthWidgetProjectState: milestone without metrics returns active",
   assert.equal(detectHealthWidgetProjectState(dir), "active");
 });
 
-test("buildHealthLines: none state shows single onboarding line pointing at /gsd", (t) => {
+test("buildHealthLines: none state shows single onboarding line pointing at /gwd", (t) => {
   const lines = buildHealthLines(activeData({ projectState: "none" }));
   assert.equal(lines.length, 1, "renders exactly one line");
   // Should not show System OK / Budget / Last commit chrome when there's no project.
   assert.ok(!/System OK|Budget|Last commit/.test(lines[0]!), "no active-project chrome");
-  // Should direct user to bootstrap via /gsd.
-  assert.match(lines[0]!, /\/gsd/);
+  // Should direct user to bootstrap via /gwd.
+  assert.match(lines[0]!, /\/gwd/);
 });
 
-test("buildHealthLines: initialized state shows single setup line pointing at /gsd", (t) => {
+test("buildHealthLines: initialized state shows single setup line pointing at /gwd", (t) => {
   const lines = buildHealthLines(activeData({ projectState: "initialized" }));
   assert.equal(lines.length, 1, "renders exactly one line");
   assert.ok(!/System OK|Budget|Last commit/.test(lines[0]!), "no active-project chrome");
-  // Distinct from "none" — must mention initialized/setup language and /gsd.
-  assert.match(lines[0]!, /\/gsd/);
+  // Distinct from "none" — must mention initialized/setup language and /gwd.
+  assert.match(lines[0]!, /\/gwd/);
   assert.match(lines[0]!, /initiali[sz]ed|setup/i);
 });
 

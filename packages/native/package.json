@@ -1,11 +1,11 @@
 {
-  "name": "@gsd/native",
+  "name": "@gwd/native",
   "version": "2.81.0",
   "description": "Native Rust bindings for GSD — high-performance native modules via N-API",
   "type": "commonjs",
-  "gsd": {
+  "gwd": {
     "linkable": true,
-    "scope": "@gsd",
+    "scope": "@gwd",
     "name": "native"
   },
   "main": "./dist/index.js",

@@ -7,7 +7,7 @@ import fs from "node:fs";
 import { handleInspect } from "../commands-inspect.ts";
 import { closeDatabase, openDatabase } from "../gsd-db.ts";
 
-test("/gsd inspect opens existing database when it was not yet opened in session", async (t) => {
+test("/gwd inspect opens existing database when it was not yet opened in session", async (t) => {
   closeDatabase();
 
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "gsd-inspect-db-"));
@@ -41,6 +41,6 @@ test("/gsd inspect opens existing database when it was not yet opened in session
 
   assert.equal(notifications.length, 1);
   assert.equal(notifications[0].level, "info");
-  assert.match(notifications[0].message, /=== GSD Database Inspect ===/);
-  assert.doesNotMatch(notifications[0].message, /No GSD database available/);
+  assert.match(notifications[0].message, /=== GWD Database Inspect ===/);
+  assert.doesNotMatch(notifications[0].message, /No GWD database available/);
 });

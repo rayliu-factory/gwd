@@ -1,6 +1,6 @@
-// Project/App: GSD-2
-// File Purpose: Runtime state derivation from GSD workflow database and legacy files.
-// GSD Extension — State Derivation
+// Project/App: GWD-2
+// File Purpose: Runtime state derivation from GWD workflow database and legacy files.
+// GWD Extension — State Derivation
 // DB-authoritative runtime derivation with explicit legacy filesystem fallback.
 // Pure TypeScript, zero Pi dependencies.
 
@@ -222,7 +222,7 @@ export function invalidateStateCache(): void {
 export async function getActiveMilestoneId(basePath: string): Promise<string | null> {
   // Parallel worker isolation. Normal DB state derivation remains DB-only;
   // lock env vars are execution routing for explicit worker processes.
-  const milestoneLock = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_MILESTONE_LOCK : undefined;
+  const milestoneLock = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_MILESTONE_LOCK : undefined;
   if (milestoneLock) {
     if (isDbAvailable()) {
       const locked = getAllMilestones().find(m => m.id === milestoneLock);
@@ -288,7 +288,7 @@ export interface DeriveStateOptions {
 }
 
 /**
- * Reconstruct GSD state from the authoritative DB.
+ * Reconstruct GWD state from the authoritative DB.
  * STATE.md is a rendered cache of this output.
  *
  * When DB is available, queries milestone/slice/task tables directly.
@@ -327,7 +327,7 @@ export async function deriveState(
     result = await deriveStateFromDb(basePath);
     stopDbTimer({ phase: result.phase, milestone: result.activeMilestone?.id });
     _telemetry.dbDeriveCount++;
-  } else if (process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK === "1") {
+  } else if (process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK === "1") {
     if (wasDbOpenAttempted()) {
       logWarning("state", "DB unavailable — using explicit legacy filesystem state derivation");
     }
@@ -345,7 +345,7 @@ export async function deriveState(
       phase: "pre-planning",
       recentDecisions: [],
       blockers: ["DB unavailable — runtime markdown state derivation is disabled"],
-      nextAction: "Open or create the canonical GSD database before deriving workflow state.",
+      nextAction: "Open or create the canonical GWD database before deriving workflow state.",
       registry: [],
       requirements: { active: 0, validated: 0, deferred: 0, outOfScope: 0, blocked: 0, total: 0 },
       progress: { milestones: { done: 0, total: 0 } },
@@ -385,7 +385,7 @@ function extractContextTitle(content: string | null, fallback: string): string {
 const isStatusDone = isClosedStatus;
 
 /**
- * Derive GSD state from the milestones/slices/tasks DB tables.
+ * Derive GWD state from the milestones/slices/tasks DB tables.
  * Markdown files are projections only in this path; they are never imported,
  * reconciled, or used as completion signals.
  */
@@ -524,7 +524,7 @@ function handleNoActiveMilestone(
       activeMilestone: null, activeSlice: null, activeTask: null,
       phase: 'pre-planning',
       recentDecisions: [], blockers: [],
-      nextAction: `All remaining milestones are parked (${parkedIds}). Run /gsd unpark <id> or create a new milestone.`,
+      nextAction: `All remaining milestones are parked (${parkedIds}). Run /gwd unpark <id> or create a new milestone.`,
       registry, requirements,
       progress: { milestones: milestoneProgress },
     };
@@ -535,7 +535,7 @@ function handleNoActiveMilestone(
       activeMilestone: null, activeSlice: null, activeTask: null,
       phase: 'pre-planning',
       recentDecisions: [], blockers: [],
-      nextAction: 'No milestones found. Run /gsd to create one.',
+      nextAction: 'No milestones found. Run /gwd to create one.',
       registry: [], requirements,
       progress: { milestones: { done: 0, total: 0 } },
     };
@@ -614,13 +614,13 @@ function resolveSliceDependencies(activeMilestoneSlices: SliceRow[]): { activeSl
     activeMilestoneSlices.filter(s => isStatusDone(s.status)).map(s => s.id)
   );
 
-  const sliceLock = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_SLICE_LOCK : undefined;
+  const sliceLock = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_SLICE_LOCK : undefined;
   if (sliceLock) {
     const lockedSlice = activeMilestoneSlices.find(s => s.id === sliceLock);
     if (lockedSlice) {
       return { activeSlice: { id: lockedSlice.id, title: lockedSlice.title }, activeSliceRow: lockedSlice };
     } else {
-      logWarning("state", `GSD_SLICE_LOCK=${sliceLock} not found in active slices — worker has no assigned work`);
+      logWarning("state", `GWD_SLICE_LOCK=${sliceLock} not found in active slices — worker has no assigned work`);
       return { activeSlice: null, activeSliceRow: null };
     }
   }
@@ -656,7 +656,7 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
 
   const allMilestones = getAllMilestones();
 
-  const milestoneLock = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_MILESTONE_LOCK : undefined;
+  const milestoneLock = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_MILESTONE_LOCK : undefined;
   const milestones = milestoneLock
     ? allMilestones.filter(m => m.id === milestoneLock)
     : allMilestones;
@@ -665,7 +665,7 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
     return {
       activeMilestone: null, activeSlice: null, activeTask: null,
       phase: 'pre-planning', recentDecisions: [], blockers: [],
-      nextAction: 'No milestones found. Run /gsd to create one.',
+      nextAction: 'No milestones found. Run /gwd to create one.',
       registry: [], requirements,
       progress: { milestones: { done: 0, total: 0 } },
     };
@@ -711,11 +711,11 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
   const activeSliceContext = resolveSliceDependencies(activeMilestoneSlices);
   if (!activeSliceContext.activeSlice) {
     // If locked slice wasn't found, it returns null but logs warning, we need to return 'blocked'
-    const sliceLock = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_SLICE_LOCK : undefined;
+    const sliceLock = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_SLICE_LOCK : undefined;
     if (sliceLock) {
       return {
         activeMilestone, activeSlice: null, activeTask: null,
-        phase: 'blocked', recentDecisions: [], blockers: [`GSD_SLICE_LOCK=${sliceLock} not found in active milestone slices`],
+        phase: 'blocked', recentDecisions: [], blockers: [`GWD_SLICE_LOCK=${sliceLock} not found in active milestone slices`],
         nextAction: 'Slice lock references a non-existent slice — check orchestrator dispatch.',
         registry, requirements,
         progress: { milestones: milestoneProgress, slices: sliceProgress },
@@ -829,7 +829,7 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
       activeMilestone, activeSlice, activeTask,
       phase: 'escalating-task', recentDecisions: [],
       blockers: [`Task ${escalatingTaskId} requires a user decision before the loop can proceed`],
-      nextAction: `Run /gsd escalate show ${escalatingTaskId} to review, then /gsd escalate resolve ${escalatingTaskId} <choice> to proceed.`,
+      nextAction: `Run /gwd escalate show ${escalatingTaskId} to review, then /gwd escalate resolve ${escalatingTaskId} <choice> to proceed.`,
       activeWorkspace: undefined,
       registry, requirements,
       progress: { milestones: milestoneProgress, slices: sliceProgress, tasks: taskProgress },
@@ -885,12 +885,12 @@ export async function _deriveStateImpl(
   const milestoneIds = sortByQueueOrder(diskIds, customOrder);
 
   // ── Parallel worker isolation ──────────────────────────────────────────
-  // When GSD_PARALLEL_WORKER and GSD_MILESTONE_LOCK are set, this process is a parallel worker
+  // When GWD_PARALLEL_WORKER and GWD_MILESTONE_LOCK are set, this process is a parallel worker
   // scoped to a single milestone. Filter the milestone list so this worker
   // only sees its assigned milestone (all others are treated as if they
   // don't exist). This gives each worker complete isolation without
   // modifying any other state derivation logic.
-  const milestoneLock = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_MILESTONE_LOCK : undefined;
+  const milestoneLock = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_MILESTONE_LOCK : undefined;
   if (milestoneLock && milestoneIds.includes(milestoneLock)) {
     milestoneIds.length = 0;
     milestoneIds.push(milestoneLock);
@@ -935,7 +935,7 @@ export async function _deriveStateImpl(
       phase: 'pre-planning',
       recentDecisions: [],
       blockers: [],
-      nextAction: 'No milestones found. Run /gsd to create one.',
+      nextAction: 'No milestones found. Run /gwd to create one.',
       registry: [],
       requirements,
       progress: {
@@ -1176,7 +1176,7 @@ export async function _deriveStateImpl(
         phase: 'pre-planning',
         recentDecisions: [],
         blockers: [],
-        nextAction: `All remaining milestones are parked (${parkedIds}). Run /gsd unpark <id> or create a new milestone.`,
+        nextAction: `All remaining milestones are parked (${parkedIds}). Run /gwd unpark <id> or create a new milestone.`,
         registry,
         requirements,
         progress: {
@@ -1193,7 +1193,7 @@ export async function _deriveStateImpl(
         phase: 'pre-planning',
         recentDecisions: [],
         blockers: [],
-        nextAction: 'No milestones found. Run /gsd to create one.',
+        nextAction: 'No milestones found. Run /gwd to create one.',
         registry: [],
         requirements,
         progress: {
@@ -1353,21 +1353,21 @@ export async function _deriveStateImpl(
   let activeSlice: ActiveRef | null = null;
 
   // ── Slice-level parallel worker isolation ─────────────────────────────
-  // When GSD_PARALLEL_WORKER and GSD_SLICE_LOCK are set, override activeSlice to only the locked slice.
-  const sliceLockLegacy = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_SLICE_LOCK : undefined;
+  // When GWD_PARALLEL_WORKER and GWD_SLICE_LOCK are set, override activeSlice to only the locked slice.
+  const sliceLockLegacy = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_SLICE_LOCK : undefined;
   if (sliceLockLegacy) {
     const lockedSlice = activeRoadmap.slices.find(s => s.id === sliceLockLegacy);
     if (lockedSlice) {
       activeSlice = { id: lockedSlice.id, title: lockedSlice.title };
     } else {
-      logWarning("state", `GSD_SLICE_LOCK=${sliceLockLegacy} not found in active slices — worker has no assigned work`);
+      logWarning("state", `GWD_SLICE_LOCK=${sliceLockLegacy} not found in active slices — worker has no assigned work`);
       return {
         activeMilestone,
         activeSlice: null,
         activeTask: null,
         phase: 'blocked',
         recentDecisions: [],
-        blockers: [`GSD_SLICE_LOCK=${sliceLockLegacy} not found in active milestone slices`],
+        blockers: [`GWD_SLICE_LOCK=${sliceLockLegacy} not found in active milestone slices`],
         nextAction: 'Slice lock references a non-existent slice — check orchestrator dispatch.',
         registry,
         requirements,
@@ -1571,7 +1571,7 @@ export async function _deriveStateImpl(
   }
 
   // ── REPLAN-TRIGGER detection: triage-initiated replan ──────────────────
-  // Manual `/gsd triage` writes REPLAN-TRIGGER.md when a capture is classified
+  // Manual `/gwd triage` writes REPLAN-TRIGGER.md when a capture is classified
   // as "replan". Detect it here and transition to replanning-slice so the
   // dispatch loop picks it up (instead of silently advancing past it).
   if (!blockerTaskId) {

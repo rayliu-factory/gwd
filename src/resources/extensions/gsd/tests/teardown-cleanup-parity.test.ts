@@ -1,5 +1,5 @@
 /**
- * GSD Auto-Worktree -- teardown-cleanup-parity.test.ts
+ * GWD Auto-Worktree -- teardown-cleanup-parity.test.ts
  *
  * Regression test: teardownAutoWorktree (abort path) must call
  * clearProjectRootStateFiles, removing STATE.md, auto.lock, and

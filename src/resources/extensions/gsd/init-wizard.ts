@@ -1,12 +1,12 @@
 /**
- * GSD Init Wizard — Per-project onboarding.
+ * GWD Init Wizard — Per-project onboarding.
  *
  * Guides users through project setup when entering a directory without .gsd/.
  * Detects project ecosystem, offers v1 migration, configures project preferences,
  * bootstraps .gsd/ structure, and transitions to the first milestone discussion.
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { showNextAction } from "../shared/tui.js";
@@ -62,7 +62,7 @@ const DEFAULT_PREFS: ProjectPreferences = {
 
 /**
  * Run the project init wizard.
- * Called when entering a directory without .gsd/ (or via /gsd init).
+ * Called when entering a directory without .gsd/ (or via /gwd init).
  */
 export async function showProjectInit(
   ctx: ExtensionCommandContext,
@@ -84,13 +84,13 @@ export async function showProjectInit(
   let gitEnabled = signals.isGitRepo;
   if (!signals.isGitRepo) {
     const gitChoice = await showNextAction(ctx, {
-      title: "GSD — Project Setup",
-      summary: ["This folder is not a git repository. GSD uses git for version control and isolation."],
+      title: "GWD — Project Setup",
+      summary: ["This folder is not a git repository. GWD uses git for version control and isolation."],
       actions: [
         { id: "init_git", label: "Initialize git", description: "Create a git repo in this folder", recommended: true },
         { id: "skip_git", label: "Skip", description: "Continue without git (limited functionality)" },
       ],
-      notYetMessage: "Run /gsd init when ready.",
+      notYetMessage: "Run /gwd init when ready.",
     });
 
     if (gitChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -108,7 +108,7 @@ export async function showProjectInit(
 
   // ── Step 3: Mode selection ─────────────────────────────────────────────────
   const modeChoice = await showNextAction(ctx, {
-    title: "GSD — Workflow Mode",
+    title: "GWD — Workflow Mode",
     summary: ["How are you working on this project?"],
     actions: [
       {
@@ -123,7 +123,7 @@ export async function showProjectInit(
         description: "Multiple contributors — branch-based, PR-friendly workflow",
       },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /gwd init when ready.",
   });
 
   if (modeChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -140,18 +140,18 @@ export async function showProjectInit(
   if (signals.verificationCommands.length > 0) {
     const verifyLines = signals.verificationCommands.map((cmd, i) => `  ${i + 1}. ${cmd}`);
     const verifyChoice = await showNextAction(ctx, {
-      title: "GSD — Verification Commands",
+      title: "GWD — Verification Commands",
       summary: [
         "Auto-detected verification commands:",
         ...verifyLines,
         "",
-        "GSD runs these after each code change to verify nothing is broken.",
+        "GWD runs these after each code change to verify nothing is broken.",
       ],
       actions: [
         { id: "accept", label: "Use these commands", description: "Accept auto-detected commands", recommended: true },
         { id: "skip", label: "Skip verification", description: "Don't verify after changes" },
       ],
-      notYetMessage: "Run /gsd init when ready.",
+      notYetMessage: "Run /gwd init when ready.",
     });
 
     if (verifyChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -164,13 +164,13 @@ export async function showProjectInit(
   gitSummary.push(`Main branch: ${prefs.mainBranch}`);
 
   const gitChoice = await showNextAction(ctx, {
-    title: "GSD — Git Settings",
+    title: "GWD — Git Settings",
     summary: ["Default git settings for this project:", ...gitSummary],
     actions: [
       { id: "accept", label: "Accept defaults", description: "Use standard git settings", recommended: true },
       { id: "customize", label: "Customize", description: "Change git settings" },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /gwd init when ready.",
   });
 
   if (gitChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -181,22 +181,22 @@ export async function showProjectInit(
 
   // ── Step 6: Custom instructions ────────────────────────────────────────────
   const instructionChoice = await showNextAction(ctx, {
-    title: "GSD — Project Instructions",
+    title: "GWD — Project Instructions",
     summary: [
-      "Any rules GSD should follow for this project?",
+      "Any rules GWD should follow for this project?",
       "",
       "Examples:",
       '  - "Use TypeScript strict mode"',
       '  - "Always write tests for new code"',
       '  - "This is a monorepo, only touch packages/api"',
       "",
-      "You can always add more later via /gsd prefs project.",
+      "You can always add more later via /gwd prefs project.",
     ],
     actions: [
       { id: "skip", label: "Skip for now", description: "No special instructions", recommended: true },
       { id: "add", label: "Add instructions", description: "Enter project-specific rules" },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /gwd init when ready.",
   });
 
   if (instructionChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -217,7 +217,7 @@ export async function showProjectInit(
 
   // ── Step 7: Advanced (optional) ────────────────────────────────────────────
   const advancedChoice = await showNextAction(ctx, {
-    title: "GSD — Advanced Settings",
+    title: "GWD — Advanced Settings",
     summary: [
       `Token profile: ${prefs.tokenProfile}`,
       `Skip research phase: ${prefs.skipResearch ? "yes" : "no"}`,
@@ -227,7 +227,7 @@ export async function showProjectInit(
       { id: "accept", label: "Accept defaults", description: "Use standard settings", recommended: true },
       { id: "customize", label: "Customize", description: "Change advanced settings" },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /gwd init when ready.",
   });
 
   if (advancedChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -250,18 +250,18 @@ export async function showProjectInit(
   // wizard share one serializer. The "Open full wizard" branch surfaces every
   // configurable preference, prefilled with the init answers.
   const reviewChoice = await showNextAction(ctx, {
-    title: "GSD — Review All Preferences (Optional)",
+    title: "GWD — Review All Preferences (Optional)",
     summary: [
       "Open the full preferences wizard now? It includes models, timeouts,",
       "budget, notifications, and skills — all pre-filled with your answers.",
       "",
-      "Skip if you just want sensible defaults; you can always run /gsd prefs project later.",
+      "Skip if you just want sensible defaults; you can always run /gwd prefs project later.",
     ],
     actions: [
       { id: "skip", label: "Skip — use defaults", description: "Save preferences and continue", recommended: true },
       { id: "review", label: "Open full wizard", description: "Tweak any category before saving" },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /gwd init when ready.",
   });
 
   if (reviewChoice === "not_yet") {
@@ -291,8 +291,8 @@ export async function showProjectInit(
     });
   }
 
-  // Initialize SQLite database so GSD starts in full-capability mode (#3880).
-  // Without this, isDbAvailable() returns false and GSD enters degraded
+  // Initialize SQLite database so GWD starts in full-capability mode (#3880).
+  // Without this, isDbAvailable() returns false and GWD enters degraded
   // markdown-only mode until a tool handler happens to call ensureDbOpen().
   try {
     const { ensureDbOpen } = await import("./bootstrap/dynamic-tools.js");
@@ -331,8 +331,8 @@ export async function showProjectInit(
     // Non-fatal — codebase map generation failure should never block project init
   }
 
-  // Write initial STATE.md so it exists before the first /gsd invocation.
-  // The explicit /gsd init path (ops.ts) returns without entering showSmartEntry(),
+  // Write initial STATE.md so it exists before the first /gwd invocation.
+  // The explicit /gwd init path (ops.ts) returns without entering showSmartEntry(),
   // which would otherwise generate STATE.md at guided-flow.ts:1358.
   try {
     const { deriveState } = await import("./state.js");
@@ -342,7 +342,7 @@ export async function showProjectInit(
     const state = await deriveState(basePath);
     await saveFile(resolveGsdRootFile(basePath, "STATE"), buildStateMarkdown(state));
   } catch {
-    // Non-fatal — STATE.md will be regenerated on next /gsd invocation
+    // Non-fatal — STATE.md will be regenerated on next /gwd invocation
   }
 
   {
@@ -350,7 +350,7 @@ export async function showProjectInit(
     prepareWorkflowMcpForProject(ctx, basePath);
   }
 
-  ctx.ui.notify("GSD initialized. Starting your first milestone...", "info");
+  ctx.ui.notify("GWD initialized. Starting your first milestone...", "info");
 
   return { completed: true, bootstrapped: true, gitEnabled };
 }
@@ -366,7 +366,7 @@ export async function offerMigration(
   v1: NonNullable<ProjectDetection["v1"]>,
 ): Promise<"migrate" | "fresh" | "cancel"> {
   const summary = [
-    "Found .planning/ directory (GSD v1 format)",
+    "Found .planning/ directory (GWD v1 format)",
   ];
   if (v1.phaseCount > 0) {
     summary.push(`${v1.phaseCount} phase${v1.phaseCount > 1 ? "s" : ""} detected`);
@@ -376,12 +376,12 @@ export async function offerMigration(
   }
 
   const choice = await showNextAction(ctx, {
-    title: "GSD — Legacy Project Detected",
+    title: "GWD — Legacy Project Detected",
     summary,
     actions: [
       {
         id: "migrate",
-        label: "Migrate to GSD v2",
+        label: "Migrate to GWD v2",
         description: "Convert .planning/ to .gsd/ format",
         recommended: true,
       },
@@ -391,7 +391,7 @@ export async function offerMigration(
         description: "Ignore .planning/ and create new .gsd/",
       },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /gwd init when ready.",
   });
 
   if (choice === "not_yet") return "cancel";
@@ -401,21 +401,21 @@ export async function offerMigration(
 // ─── Re-init Handler ────────────────────────────────────────────────────────────
 
 /**
- * Handle /gsd init when .gsd/ already exists.
+ * Handle /gwd init when .gsd/ already exists.
  * Offers preference reset without destructive milestone deletion.
  */
 export async function handleReinit(
   ctx: ExtensionCommandContext,
   detection: ProjectDetection,
 ): Promise<void> {
-  const summary = ["GSD is already initialized in this project."];
+  const summary = ["GWD is already initialized in this project."];
   if (detection.v2) {
     summary.push(`${detection.v2.milestoneCount} milestone(s) found`);
     summary.push(`Preferences: ${detection.v2.hasPreferences ? "configured" : "not set"}`);
   }
 
   const choice = await showNextAction(ctx, {
-    title: "GSD — Already Initialized",
+    title: "GWD — Already Initialized",
     summary,
     actions: [
       {
@@ -430,11 +430,11 @@ export async function handleReinit(
         description: "Keep everything as-is",
       },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /gwd init when ready.",
   });
 
   if (choice === "prefs") {
-    ctx.ui.notify("Use /gsd prefs project to update project preferences.", "info");
+    ctx.ui.notify("Use /gwd prefs project to update project preferences.", "info");
   }
 }
 
@@ -477,7 +477,7 @@ async function customizeAdvancedPrefs(
   const profileChoice = await showNextAction(ctx, {
     title: "Token usage profile",
     summary: [
-      "Controls how much context GSD uses per task.",
+      "Controls how much context GWD uses per task.",
       "Budget: cheaper, faster. Quality: thorough, more expensive.",
     ],
     actions: [
@@ -495,7 +495,7 @@ async function customizeAdvancedPrefs(
   const researchChoice = await showNextAction(ctx, {
     title: "Research phase",
     summary: [
-      "GSD can research the codebase before planning each milestone.",
+      "GWD can research the codebase before planning each milestone.",
       "Small projects may not need this step.",
     ],
     actions: [
@@ -581,11 +581,11 @@ export function mapInitPrefsToWizardShape(prefs: ProjectPreferences): Record<str
 function buildInitPreferencesBody(): string {
   return [
     "",
-    "# GSD Project Preferences",
+    "# GWD Project Preferences",
     "",
-    "Generated by `/gsd init`. Edit directly or use `/gsd prefs project` to modify.",
+    "Generated by `/gwd init`. Edit directly or use `/gwd prefs project` to modify.",
     "",
-    "See `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation.",
+    "See `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation.",
     "",
   ].join("\n");
 }
@@ -599,7 +599,7 @@ function buildContextSeed(signals: ProjectSignals): string | null {
 
   lines.push("# Project Context");
   lines.push("");
-  lines.push("Auto-detected by GSD init wizard. Edit or expand as needed.");
+  lines.push("Auto-detected by GWD init wizard. Edit or expand as needed.");
   lines.push("");
 
   if (signals.primaryLanguage) {

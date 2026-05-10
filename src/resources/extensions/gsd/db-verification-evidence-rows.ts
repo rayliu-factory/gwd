@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Verification evidence row contract for GSD workflow database consumers.
+// Project/App: GWD-2
+// File Purpose: Verification evidence row contract for GWD workflow database consumers.
 
 export interface VerificationEvidenceRow {
   id: number;

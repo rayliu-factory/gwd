@@ -12,15 +12,15 @@ export interface GsdCommandDefinition {
 
 type CompletionMap = Record<string, readonly GsdCommandDefinition[]>;
 
-export const GSD_COMMAND_DESCRIPTION =
-  "GSD — Get Shit Done: /gsd help|start|templates|next|auto|stop|pause|status|widget|visualize|queue|quick|discuss|capture|triage|dispatch|history|undo|undo-task|reset-slice|rate|skip|export|cleanup|model|mode|prefs|config|keys|hooks|run-hook|skill-health|doctor|debug|logs|forensics|changelog|migrate|remote|steer|knowledge|new-milestone|new-project|parallel|cmux|park|unpark|init|setup|onboarding|inspect|extensions|update|fast|mcp|rethink|workflow|codebase|notifications|ship|do|session-report|backlog|pr-branch|add-tests|scan|language|worktree|eval-review";
+export const GWD_COMMAND_DESCRIPTION =
+  "GWD — Get Work Done: /gwd help|start|templates|next|auto|stop|pause|status|widget|visualize|queue|quick|discuss|capture|triage|dispatch|history|undo|undo-task|reset-slice|rate|skip|export|cleanup|model|mode|prefs|config|keys|hooks|run-hook|skill-health|doctor|debug|logs|forensics|changelog|migrate|remote|steer|knowledge|new-milestone|new-project|parallel|cmux|park|unpark|init|setup|onboarding|inspect|extensions|update|fast|mcp|rethink|workflow|codebase|notifications|ship|do|session-report|backlog|pr-branch|add-tests|scan|language|worktree|eval-review";
 
 export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "help", desc: "Categorized command reference with descriptions" },
-  { cmd: "next", desc: "Explicit step mode (same as /gsd)" },
+  { cmd: "next", desc: "Explicit step mode (same as /gwd)" },
   { cmd: "auto", desc: "Autonomous mode — research, plan, execute, commit, repeat" },
   { cmd: "stop", desc: "Stop auto mode gracefully" },
-  { cmd: "pause", desc: "Pause auto-mode (preserves state, /gsd auto to resume)" },
+  { cmd: "pause", desc: "Pause auto-mode (preserves state, /gwd auto to resume)" },
   { cmd: "status", desc: "Progress dashboard" },
   { cmd: "widget", desc: "Cycle widget: full → small → min → off" },
   { cmd: "visualize", desc: "Open 10-tab workflow visualizer (progress, timeline, deps, metrics, health, agent, changes, knowledge, captures, export)" },
@@ -42,7 +42,7 @@ export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "model", desc: "Switch the active session model or open a picker" },
   { cmd: "mode", desc: "Switch workflow mode (solo/team)" },
   { cmd: "prefs", desc: "Manage preferences (model selection, timeouts, etc.)" },
-  { cmd: "config", desc: "(deprecated) Set tool API keys — use /gsd keys instead" },
+  { cmd: "config", desc: "(deprecated) Set tool API keys — use /gwd keys instead" },
   { cmd: "keys", desc: "API key manager — list, add, remove, test, rotate, doctor" },
   { cmd: "hooks", desc: "Show configured post-unit and pre-dispatch hooks" },
   { cmd: "run-hook", desc: "Manually trigger a specific hook" },
@@ -50,7 +50,7 @@ export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "notifications", desc: "View, filter, and clear persistent notification history" },
   { cmd: "doctor", desc: "Runtime health checks with auto-fix" },
   { cmd: "logs", desc: "Browse activity logs, debug logs, and metrics" },
-  { cmd: "debug", desc: "Create and inspect persistent /gsd debug sessions" },
+  { cmd: "debug", desc: "Create and inspect persistent /gwd debug sessions" },
   { cmd: "forensics", desc: "Examine execution logs" },
   { cmd: "init", desc: "Project init wizard — detect, configure, bootstrap .gsd/" },
   { cmd: "setup", desc: "Configuration hub: status + sub-routes (llm, model, search, remote, keys, prefs, onboarding)" },
@@ -66,7 +66,7 @@ export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "cmux", desc: "Manage cmux integration (status, sidebar, notifications, splits)" },
   { cmd: "park", desc: "Park a milestone — skip without deleting" },
   { cmd: "unpark", desc: "Reactivate a parked milestone" },
-  { cmd: "update", desc: "Update GSD to the latest version" },
+  { cmd: "update", desc: "Update GWD to the latest version" },
   { cmd: "start", desc: "Start a workflow template (bugfix, spike, feature, etc.)" },
   { cmd: "templates", desc: "List available workflow templates" },
   { cmd: "extensions", desc: "Manage extensions (list, enable, disable, info)" },
@@ -76,13 +76,13 @@ export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "workflow", desc: "Custom workflow lifecycle (new, run, list, info, install, uninstall, validate, pause, resume) or run <name> directly" },
   { cmd: "codebase", desc: "Generate, refresh, and inspect the codebase map cache (.gsd/CODEBASE.md)" },
   { cmd: "ship", desc: "Create PR from milestone artifacts and open for review" },
-  { cmd: "do", desc: "Route freeform text to the right GSD command" },
+  { cmd: "do", desc: "Route freeform text to the right GWD command" },
   { cmd: "session-report", desc: "Session cost, tokens, and work summary" },
   { cmd: "backlog", desc: "Manage backlog items (add, promote, remove, list)" },
   { cmd: "pr-branch", desc: "Create clean PR branch filtering .gsd/ commits" },
   { cmd: "add-tests", desc: "Generate tests for completed slices" },
   { cmd: "scan", desc: "Rapid codebase assessment — lightweight alternative to full map (--focus tech|arch|quality|concerns|tech+arch)" },
-  { cmd: "language", desc: "Set or clear the global response language (e.g. /gsd language Chinese)" },
+  { cmd: "language", desc: "Set or clear the global response language (e.g. /gwd language Chinese)" },
   { cmd: "worktree", desc: "Manage worktrees from the TUI (list, merge, clean, remove)" },
   { cmd: "eval-review", desc: "Audit a slice's AI evaluation strategy and write a scored EVAL-REVIEW.md (--force, --show)" },
 ];
@@ -121,9 +121,9 @@ const NESTED_COMPLETIONS: CompletionMap = {
     { cmd: "model", desc: "Pick default model for the active provider" },
     { cmd: "search", desc: "Configure web search provider" },
     { cmd: "remote", desc: "Configure remote integrations (Discord/Slack/Telegram)" },
-    { cmd: "keys", desc: "Manage API keys (alias for /gsd keys)" },
-    { cmd: "prefs", desc: "Global preferences wizard (alias for /gsd prefs)" },
-    { cmd: "onboarding", desc: "Run the full onboarding wizard (alias for /gsd onboarding)" },
+    { cmd: "keys", desc: "Manage API keys (alias for /gwd keys)" },
+    { cmd: "prefs", desc: "Global preferences wizard (alias for /gwd prefs)" },
+    { cmd: "onboarding", desc: "Run the full onboarding wizard (alias for /gwd onboarding)" },
   ],
   onboarding: [
     { cmd: "--resume", desc: "Resume from the last completed step" },
@@ -186,7 +186,7 @@ const NESTED_COMPLETIONS: CompletionMap = {
     { cmd: "branches", desc: "Remove merged milestone and legacy branches" },
     { cmd: "snapshots", desc: "Remove old execution snapshots" },
     { cmd: "worktrees", desc: "Remove merged/safe-to-delete worktrees" },
-    { cmd: "projects", desc: "Audit orphaned ~/.gsd/projects/ state directories" },
+    { cmd: "projects", desc: "Audit orphaned ~/.gwd/projects/ state directories" },
     { cmd: "projects --fix", desc: "Delete orphaned project state directories (cannot be undone)" },
   ],
   knowledge: [
@@ -202,7 +202,7 @@ const NESTED_COMPLETIONS: CompletionMap = {
     { cmd: "refactor", desc: "Inventory, plan waves, migrate, verify" },
     { cmd: "security-audit", desc: "Scan, triage, remediate, re-scan" },
     { cmd: "dep-upgrade", desc: "Assess, upgrade, fix breaks, verify" },
-    { cmd: "full-project", desc: "Complete GSD workflow with full ceremony" },
+    { cmd: "full-project", desc: "Complete GWD workflow with full ceremony" },
     { cmd: "resume", desc: "Resume an in-progress workflow" },
     { cmd: "--list", desc: "List all available templates" },
     { cmd: "--dry-run", desc: "Preview workflow without executing" },
@@ -225,7 +225,7 @@ const NESTED_COMPLETIONS: CompletionMap = {
   mcp: [
     { cmd: "status", desc: "Show all MCP server statuses (default)" },
     { cmd: "check", desc: "Detailed status for a specific server" },
-    { cmd: "init", desc: "Write .mcp.json for the local GSD workflow MCP server" },
+    { cmd: "init", desc: "Write .mcp.json for the local GWD workflow MCP server" },
   ],
   doctor: [
     { cmd: "fix", desc: "Auto-fix detected issues" },
@@ -404,7 +404,7 @@ function resolveProjectRootFromGitFile(worktreePath: string): string | null {
 }
 
 function resolveProjectRootForCompletion(basePath: string): string {
-  if (process.env.GSD_PROJECT_ROOT) return process.env.GSD_PROJECT_ROOT;
+  if (process.env.GWD_PROJECT_ROOT) return process.env.GWD_PROJECT_ROOT;
 
   const normalizedPath = normalizePathForCompare(basePath);
   const segment = findWorktreeSegment(normalizedPath);
@@ -503,7 +503,7 @@ export function getGsdArgumentCompletions(prefix: string) {
     return [];
   }
 
-  // Completion for `/gsd workflow info <name>` — list all discoverable plugins (project + global).
+  // Completion for `/gwd workflow info <name>` — list all discoverable plugins (project + global).
   if (command === "workflow" && subcommand === "info" && parts.length <= 3) {
     const results: GsdCommandDefinition[] = [];
     const seen = new Set<string>();

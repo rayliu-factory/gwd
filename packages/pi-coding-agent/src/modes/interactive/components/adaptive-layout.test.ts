@@ -25,7 +25,7 @@ describe("AdaptiveLayoutComponent", () => {
 		}));
 
 		const output = render(component, 132);
-		assert.match(output, /GSD Command Center/);
+		assert.match(output, /GWD Command Center/);
 		assert.match(output, /signals/);
 		assert.match(output, /2 running/);
 	});
@@ -47,7 +47,7 @@ describe("AdaptiveLayoutComponent", () => {
 		const component = new AdaptiveLayoutComponent(() => ({
 			override: "auto",
 			activeToolCount: 0,
-			lastError: "Cannot find module @gsd/native",
+			lastError: "Cannot find module @gwd/native",
 			cwd: "/tmp/demo",
 		}));
 

@@ -24,7 +24,7 @@ jobs:
     if: >-
       ${{ github.event.workflow_run.conclusion == 'success' &&
           github.event.workflow_run.head_branch == 'main' }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -51,6 +51,6 @@ jobs:
         if: steps.check.outputs.changed == 'true'
         run: |
           docker build --target builder \
-            -t ghcr.io/gsd-build/gsd-ci-builder:latest \
+            -t ghcr.io/${{ github.repository_owner }}/gwd-ci-builder:latest \
             .
-          docker push ghcr.io/gsd-build/gsd-ci-builder:latest
+          docker push ghcr.io/${{ github.repository_owner }}/gwd-ci-builder:latest

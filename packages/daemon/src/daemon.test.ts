@@ -41,26 +41,26 @@ describe('resolveConfigPath', () => {
     assert.ok(p.endsWith('my-daemon.yaml'));
   });
 
-  it('falls back to GSD_DAEMON_CONFIG env var', () => {
-    const prev = process.env['GSD_DAEMON_CONFIG'];
+  it('falls back to GWD_DAEMON_CONFIG env var', () => {
+    const prev = process.env['GWD_DAEMON_CONFIG'];
     try {
-      process.env['GSD_DAEMON_CONFIG'] = '/env/path.yaml';
+      process.env['GWD_DAEMON_CONFIG'] = '/env/path.yaml';
       const p = resolveConfigPath();
       assert.equal(p, '/env/path.yaml');
     } finally {
-      if (prev === undefined) delete process.env['GSD_DAEMON_CONFIG'];
-      else process.env['GSD_DAEMON_CONFIG'] = prev;
+      if (prev === undefined) delete process.env['GWD_DAEMON_CONFIG'];
+      else process.env['GWD_DAEMON_CONFIG'] = prev;
     }
   });
 
-  it('defaults to ~/.gsd/daemon.yaml', () => {
-    const prev = process.env['GSD_DAEMON_CONFIG'];
+  it('defaults to ~/.gwd/daemon.yaml', () => {
+    const prev = process.env['GWD_DAEMON_CONFIG'];
     try {
-      delete process.env['GSD_DAEMON_CONFIG'];
+      delete process.env['GWD_DAEMON_CONFIG'];
       const p = resolveConfigPath();
-      assert.equal(p, join(homedir(), '.gsd', 'daemon.yaml'));
+      assert.equal(p, join(homedir(), '.gwd', 'daemon.yaml'));
     } finally {
-      if (prev !== undefined) process.env['GSD_DAEMON_CONFIG'] = prev;
+      if (prev !== undefined) process.env['GWD_DAEMON_CONFIG'] = prev;
     }
   });
 });
@@ -529,7 +529,7 @@ describe('CLI integration', () => {
       [join(__dirname, 'cli.js'), '--help'],
       { encoding: 'utf-8', timeout: 5000 },
     );
-    assert.ok(result.includes('Usage: gsd-daemon'));
+    assert.ok(result.includes('Usage: gwd-daemon'));
     assert.ok(result.includes('--config'));
     assert.ok(result.includes('--verbose'));
   });

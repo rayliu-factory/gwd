@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Auto-loop pipeline phases, merge closeout, and finalize handling.
 /**
  * auto/phases.ts — Pipeline phases for the auto-loop.
@@ -9,7 +9,7 @@
  * Imports from: auto/types, auto/detect-stuck, auto/run-unit, auto/loop-deps
  */
 
-import { importExtensionModule, type ExtensionAPI, type ExtensionContext } from "@gsd/pi-coding-agent";
+import { importExtensionModule, type ExtensionAPI, type ExtensionContext } from "@gwd/pi-coding-agent";
 
 import type { AutoSession, SidecarItem } from "./session.js";
 import type { LoopDeps } from "./loop-deps.js";
@@ -124,9 +124,9 @@ async function validateSourceWriteWorktreeSafety(
   if (!s.basePath) return null;
 
   // Custom engine workflows (graph-driven, registered via run dirs) define
-  // their own step ids that are not in the GSD UnitContextManifest. Don't
+  // their own step ids that are not in the GWD UnitContextManifest. Don't
   // fail closed for those — the custom engine owns its own dispatch
-  // contract. The fail-closed safety check applies only to built-in GSD
+  // contract. The fail-closed safety check applies only to built-in GWD
   // units whose Tool Contract is registered in the manifest. Use a truthy
   // check so undefined (test sessions that never set the field) routes
   // through the safety check, matching the regression test contract.
@@ -264,7 +264,7 @@ async function generateMilestoneReport(
     (m: { id: string }) => m.id === milestoneId,
   );
   const msTitle = completedMs?.title ?? milestoneId;
-  const gsdVersion = process.env.GSD_VERSION ?? "0.0.0";
+  const gsdVersion = process.env.GWD_VERSION ?? "0.0.0";
   const projName = basename(reportBasePath);
   const doneSlices = snapData.milestones.reduce(
     (acc: number, m: { slices: { done: boolean }[] }) =>
@@ -421,7 +421,7 @@ export async function _runMilestoneMergeWithStashRestore(
   if (mergeError) {
     if (mergeError instanceof MergeConflictError) {
       ctx.ui.notify(
-        `Merge conflict: ${mergeError.conflictedFiles.join(", ")}. Resolve conflicts manually and run /gsd auto to resume.`,
+        `Merge conflict: ${mergeError.conflictedFiles.join(", ")}. Resolve conflicts manually and run /gwd auto to resume.`,
         "error",
       );
       await deps.stopAuto(ctx, pi, `Merge conflict on milestone ${milestoneId}`);
@@ -432,7 +432,7 @@ export async function _runMilestoneMergeWithStashRestore(
       error: String(mergeError),
     });
     ctx.ui.notify(
-      `Merge failed: ${mergeError instanceof Error ? mergeError.message : String(mergeError)}. Resolve and run /gsd auto to resume.`,
+      `Merge failed: ${mergeError instanceof Error ? mergeError.message : String(mergeError)}. Resolve and run /gwd auto to resume.`,
       "error",
     );
     await deps.stopAuto(
@@ -660,7 +660,7 @@ export async function runPreDispatch(
         findings: healthGate.reason,
       });
       ctx.ui.notify(
-        healthGate.reason || "Pre-dispatch health check failed — run /gsd doctor for details.",
+        healthGate.reason || "Pre-dispatch health check failed — run /gwd doctor for details.",
         "error",
       );
       await deps.pauseAuto(ctx, pi);
@@ -769,7 +769,7 @@ export async function runPreDispatch(
           findings: reason,
           milestoneId: state.activeMilestone?.id ?? undefined,
         });
-        ctx.ui.notify(`Plan gate failed-closed: ${reason}\n\nIf this keeps happening, try: /gsd doctor heal`, "error");
+        ctx.ui.notify(`Plan gate failed-closed: ${reason}\n\nIf this keeps happening, try: /gwd doctor heal`, "error");
         await deps.pauseAuto(ctx, pi);
         return { action: "break", reason: "plan-v2-gate-failed" };
       }
@@ -802,7 +802,7 @@ export async function runPreDispatch(
   if (
     prefs?.slice_parallel?.enabled &&
     mid &&
-    !process.env.GSD_PARALLEL_WORKER &&
+    !process.env.GWD_PARALLEL_WORKER &&
     isDbAvailable()
   ) {
     try {
@@ -863,7 +863,7 @@ export async function runPreDispatch(
       "info",
     );
     deps.sendDesktopNotification(
-      "GSD",
+      "GWD",
       `Milestone ${s.currentMilestoneId} complete!`,
       "success",
       "milestone",
@@ -877,7 +877,7 @@ export async function runPreDispatch(
 
     const vizPrefs = prefs;
     if (vizPrefs?.auto_visualize) {
-      ctx.ui.notify("Run /gsd visualize to see progress overview.", "info");
+      ctx.ui.notify("Run /gwd visualize to see progress overview.", "info");
     }
     if (vizPrefs?.auto_report !== false) {
       try {
@@ -997,7 +997,7 @@ export async function runPreDispatch(
         // PR creation (auto_pr) is handled inside mergeMilestoneToMain (#2302)
       }
       deps.sendDesktopNotification(
-        "GSD",
+        "GWD",
         "All milestones complete!",
         "success",
         "milestone",
@@ -1029,12 +1029,12 @@ export async function runPreDispatch(
       );
     } else if (state.phase === "blocked") {
       const blockerMsg = `Blocked: ${state.blockers.join(", ")}`;
-      // Pause instead of hard-stop so the session is resumable with `/gsd auto`.
+      // Pause instead of hard-stop so the session is resumable with `/gwd auto`.
       // Hard-stop here was causing premature termination when slice dependencies
       // were temporarily unresolvable (e.g. after reassessment added new slices).
       await deps.pauseAuto(ctx, pi);
-      ctx.ui.notify(`${blockerMsg}. Fix and run /gsd auto to resume.`, "warning");
-      deps.sendDesktopNotification("GSD", blockerMsg, "warning", "attention", basename(s.originalBasePath || s.basePath));
+      ctx.ui.notify(`${blockerMsg}. Fix and run /gwd auto to resume.`, "warning");
+      deps.sendDesktopNotification("GWD", blockerMsg, "warning", "attention", basename(s.originalBasePath || s.basePath));
       deps.logCmuxEvent(prefs, blockerMsg, "warning");
     } else {
       const ids = incomplete.map((m: { id: string }) => m.id).join(", ");
@@ -1098,7 +1098,7 @@ export async function runPreDispatch(
       // PR creation (auto_pr) is handled inside mergeMilestoneToMain (#2302)
     }
     deps.sendDesktopNotification(
-      "GSD",
+      "GWD",
       `Milestone ${mid} complete!`,
       "success",
       "milestone",
@@ -1145,8 +1145,8 @@ export async function runPreDispatch(
       );
     }
     await deps.pauseAuto(ctx, pi);
-    ctx.ui.notify(`${blockerMsg}. Fix and run /gsd auto to resume.`, "warning");
-    deps.sendDesktopNotification("GSD", blockerMsg, "warning", "attention", basename(s.originalBasePath || s.basePath));
+    ctx.ui.notify(`${blockerMsg}. Fix and run /gwd auto to resume.`, "warning");
+    deps.sendDesktopNotification("GWD", blockerMsg, "warning", "attention", basename(s.originalBasePath || s.basePath));
     deps.logCmuxEvent(prefs, blockerMsg, "warning");
     debugLog("autoLoop", { phase: "exit", reason: "blocked" });
     deps.emitJournalEvent({ ts: new Date().toISOString(), flowId: ic.flowId, seq: ic.nextSeq(), eventType: "terminal", data: { reason: "blocked", blockers: state.blockers } });
@@ -1204,9 +1204,9 @@ export async function runDispatch(
     deps.emitJournalEvent({ ts: new Date().toISOString(), flowId: ic.flowId, seq: ic.nextSeq(), eventType: "dispatch-stop", rule: dispatchResult.matchedRule, data: { reason: dispatchResult.reason } });
     // Warning-level stops are recoverable human checkpoints (e.g. UAT verdict
     // gate) — pause instead of hard-stopping so the session is resumable with
-    // `/gsd auto`. Error/info-level stops remain hard stops for infrastructure
+    // `/gwd auto`. Error/info-level stops remain hard stops for infrastructure
     // failures and terminal conditions respectively.
-    // See: https://github.com/gsd-build/gsd-2/issues/2474
+    // See: https://github.com/gwd-build/gwd-2/issues/2474
     if (dispatchResult.level === "warning") {
       ctx.ui.notify(dispatchResult.reason, "warning");
       await deps.pauseAuto(ctx, pi, {
@@ -1467,7 +1467,7 @@ export async function runGuards(
 
       ctx.ui.notify(label, "warning");
       deps.sendDesktopNotification(
-        "GSD", label, "warning", "stop-directive",
+        "GWD", label, "warning", "stop-directive",
         basename(s.originalBasePath || s.basePath),
       );
 
@@ -1506,7 +1506,7 @@ export async function runGuards(
     // In parallel worker mode, only count cost from the current auto-mode session
     // to avoid hitting the ceiling due to historical project-wide spend (#2184).
     let costUnits = currentLedger?.units;
-    if (process.env.GSD_PARALLEL_WORKER && s.autoStartTime && Array.isArray(costUnits)) {
+    if (process.env.GWD_PARALLEL_WORKER && s.autoStartTime && Array.isArray(costUnits)) {
       const sessionStartISO = new Date(s.autoStartTime).toISOString();
       costUnits = costUnits.filter(
         (u: { startedAt?: string }) => u.startedAt != null && u.startedAt >= sessionStartISO,
@@ -1565,31 +1565,31 @@ export async function runGuards(
         // 100% — special enforcement logic (halt/pause/warn)
         const msg = `Budget ceiling ${deps.formatCost(budgetCeiling)} reached (spent ${deps.formatCost(totalCost)}).`;
         if (effectiveAction === "halt") {
-          deps.sendDesktopNotification("GSD", msg, "error", "budget", basename(s.originalBasePath || s.basePath));
+          deps.sendDesktopNotification("GWD", msg, "error", "budget", basename(s.originalBasePath || s.basePath));
           await deps.stopAuto(ctx, pi, "Budget ceiling reached");
           debugLog("autoLoop", { phase: "exit", reason: "budget-halt" });
           return { action: "break", reason: "budget-halt" };
         }
         if (effectiveAction === "pause") {
           ctx.ui.notify(
-            `${msg} Pausing auto-mode — /gsd auto to override and continue.`,
+            `${msg} Pausing auto-mode — /gwd auto to override and continue.`,
             "warning",
           );
-          deps.sendDesktopNotification("GSD", msg, "warning", "budget", basename(s.originalBasePath || s.basePath));
+          deps.sendDesktopNotification("GWD", msg, "warning", "budget", basename(s.originalBasePath || s.basePath));
           deps.logCmuxEvent(prefs, msg, "warning");
           await deps.pauseAuto(ctx, pi);
           debugLog("autoLoop", { phase: "exit", reason: "budget-pause" });
           return { action: "break", reason: "budget-pause" };
         }
         ctx.ui.notify(`${msg} Continuing (enforcement: warn).`, "warning");
-        deps.sendDesktopNotification("GSD", msg, "warning", "budget", basename(s.originalBasePath || s.basePath));
+        deps.sendDesktopNotification("GWD", msg, "warning", "budget", basename(s.originalBasePath || s.basePath));
         deps.logCmuxEvent(prefs, msg, "warning");
       } else if (threshold.pct < 100) {
         // Sub-100% — simple notification
         const msg = `${threshold.label}: ${deps.formatCost(totalCost)} / ${deps.formatCost(budgetCeiling)}`;
         ctx.ui.notify(msg, threshold.notifyLevel);
         deps.sendDesktopNotification(
-          "GSD",
+          "GWD",
           msg,
           threshold.notifyLevel,
           "budget",
@@ -1615,11 +1615,11 @@ export async function runGuards(
     ) {
       const msg = `Context window at ${contextUsage.percent}% (threshold: ${contextThreshold}%). Pausing to prevent truncated output.`;
       ctx.ui.notify(
-        `${msg} Run /gsd auto to continue (will start fresh session).`,
+        `${msg} Run /gwd auto to continue (will start fresh session).`,
         "warning",
       );
       deps.sendDesktopNotification(
-        "GSD",
+        "GWD",
         `Context ${contextUsage.percent}% — paused`,
         "warning",
         "attention",

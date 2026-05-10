@@ -20,8 +20,8 @@ export function normalizeWorktreePathForCompare(path: string): string {
 }
 
 /**
- * Find the GSD worktree segment in both direct project layout and the
- * symlink-resolved external-state layout used by ~/.gsd/projects/<hash>.
+ * Find the GWD worktree segment in both direct project layout and the
+ * symlink-resolved external-state layout used by ~/.gwd/projects/<hash>.
  */
 export function findWorktreeSegment(normalizedPath: string): WorktreeSegment | null {
   const directMarker = "/.gsd/worktrees/";
@@ -50,9 +50,9 @@ export function isGsdWorktreePath(path: string): boolean {
  * Resolve the canonical project root for worktree operations.
  *
  * `originalBasePath` wins when available because session state already knows the
- * root. `GSD_PROJECT_ROOT` is the next strongest signal for worker processes.
+ * root. `GWD_PROJECT_ROOT` is the next strongest signal for worker processes.
  * Otherwise, derive the root from direct `.gsd/worktrees` paths, or recover it
- * from the worktree `.git` file for symlink-resolved ~/.gsd/project paths.
+ * from the worktree `.git` file for symlink-resolved ~/.gwd/project paths.
  */
 export function resolveWorktreeProjectRoot(
   basePath: string,
@@ -61,7 +61,7 @@ export function resolveWorktreeProjectRoot(
   const explicitOriginal = originalBasePath?.trim();
   if (explicitOriginal) return resolveProjectRootFromPath(explicitOriginal);
 
-  const envProjectRoot = process.env.GSD_PROJECT_ROOT?.trim();
+  const envProjectRoot = process.env.GWD_PROJECT_ROOT?.trim();
   if (envProjectRoot && isGsdWorktreePath(basePath)) {
     return resolveProjectRootFromPath(envProjectRoot);
   }

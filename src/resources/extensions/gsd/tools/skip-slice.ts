@@ -87,7 +87,7 @@ export function handleSkipSlice(params: SkipSliceParams): SkipSliceResult {
   // The MCP wrapper in bootstrap/db-tools.ts runs ensureDbOpen() before calling
   // this helper; this guard protects direct callers (tests, future code).
   if (!isDbAvailable()) {
-    throw new Error("handleSkipSlice: GSD database is not available");
+    throw new Error("handleSkipSlice: GWD database is not available");
   }
 
   // ── Guards + DB writes inside a single transaction (prevents TOCTOU) ────

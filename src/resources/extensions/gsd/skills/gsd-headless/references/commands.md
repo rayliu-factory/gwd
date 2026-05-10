@@ -1,6 +1,6 @@
-# GSD Commands Reference
+# GWD Commands Reference
 
-All commands can be run via `gsd headless [command]`.
+All commands can be run via `gwd headless [command]`.
 
 ## Workflow Commands
 
@@ -52,7 +52,7 @@ All commands can be run via `gsd headless [command]`.
 
 ## Phases
 
-GSD workflows progress through these phases:
+GWD workflows progress through these phases:
 `pre-planning` → `needs-discussion` → `discussing` → `researching` → `planning` → `executing` → `verifying` → `summarizing` → `advancing` → `validating-milestone` → `completing-milestone` → `complete`
 
 Special phases: `paused`, `blocked`, `replanning-slice`

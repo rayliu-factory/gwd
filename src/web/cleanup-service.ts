@@ -8,7 +8,7 @@ import { resolveTypeStrippingFlag, resolveSubprocessModule, buildSubprocessPrefi
 import type { CleanupData, CleanupResult } from "../../web/lib/remaining-command-types.ts"
 
 const CLEANUP_MAX_BUFFER = 2 * 1024 * 1024
-const CLEANUP_MODULE_ENV = "GSD_CLEANUP_MODULE"
+const CLEANUP_MODULE_ENV = "GWD_CLEANUP_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
   return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
@@ -39,7 +39,7 @@ export async function collectCleanupData(projectCwdOverride?: string): Promise<C
   const script = [
     'const { pathToFileURL } = await import("node:url");',
     `const mod = await import(pathToFileURL(process.env.${CLEANUP_MODULE_ENV}).href);`,
-    'const basePath = process.env.GSD_CLEANUP_BASE;',
+    'const basePath = process.env.GWD_CLEANUP_BASE;',
     // Get all GSD branches
     'let branches = [];',
     'try { branches = mod.nativeBranchList(basePath, "gsd/*"); } catch {}',
@@ -75,7 +75,7 @@ export async function collectCleanupData(projectCwdOverride?: string): Promise<C
         env: {
           ...process.env,
           [CLEANUP_MODULE_ENV]: cleanupModulePath,
-          GSD_CLEANUP_BASE: projectCwd,
+          GWD_CLEANUP_BASE: projectCwd,
         },
         maxBuffer: CLEANUP_MAX_BUFFER,
         windowsHide: true,
@@ -129,9 +129,9 @@ export async function executeCleanup(
   const script = [
     'const { pathToFileURL } = await import("node:url");',
     `const mod = await import(pathToFileURL(process.env.${CLEANUP_MODULE_ENV}).href);`,
-    'const basePath = process.env.GSD_CLEANUP_BASE;',
-    'const branches = JSON.parse(process.env.GSD_CLEANUP_BRANCHES || "[]");',
-    'const snapshots = JSON.parse(process.env.GSD_CLEANUP_SNAPSHOTS || "[]");',
+    'const basePath = process.env.GWD_CLEANUP_BASE;',
+    'const branches = JSON.parse(process.env.GWD_CLEANUP_BRANCHES || "[]");',
+    'const snapshots = JSON.parse(process.env.GWD_CLEANUP_SNAPSHOTS || "[]");',
     'let deletedBranches = 0;',
     'let prunedSnapshots = 0;',
     'const errors = [];',
@@ -166,9 +166,9 @@ export async function executeCleanup(
         env: {
           ...process.env,
           [CLEANUP_MODULE_ENV]: cleanupModulePath,
-          GSD_CLEANUP_BASE: projectCwd,
-          GSD_CLEANUP_BRANCHES: JSON.stringify(deleteBranches),
-          GSD_CLEANUP_SNAPSHOTS: JSON.stringify(pruneSnapshots),
+          GWD_CLEANUP_BASE: projectCwd,
+          GWD_CLEANUP_BRANCHES: JSON.stringify(deleteBranches),
+          GWD_CLEANUP_SNAPSHOTS: JSON.stringify(pruneSnapshots),
         },
         maxBuffer: CLEANUP_MAX_BUFFER,
         windowsHide: true,

@@ -69,7 +69,7 @@ test("dashboard shortcut resolves the project root instead of the current worktr
 
   assert.ok(customCalls > 0, "shortcut opens the dashboard overlay when project root is resolved");
   assert.equal(notices.length, 0, "shortcut does not fall back to the missing-.gsd warning");
-  assert.equal(shortcuts.length, 5, "all GSD shortcuts are still registered");
+  assert.equal(shortcuts.length, 5, "all GWD shortcuts are still registered");
   const keys = shortcuts.map((shortcut) => shortcut.key);
   assert.ok(keys.includes("ctrl+alt+g"), "primary dashboard shortcut is registered");
   assert.ok(keys.includes("ctrl+shift+g"), "fallback dashboard shortcut is registered");

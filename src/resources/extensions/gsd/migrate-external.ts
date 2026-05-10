@@ -1,8 +1,8 @@
 /**
- * GSD External State Migration
+ * GWD External State Migration
  *
  * Migrates legacy in-project `.gsd/` directories to the external
- * `~/.gsd/projects/<hash>/` state directory. After migration, a
+ * `~/.gwd/projects/<hash>/` state directory. After migration, a
  * symlink replaces the original directory so all paths remain valid.
  */
 

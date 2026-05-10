@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Unit tests for pre-execution validation checks.
 
 /**
@@ -1471,8 +1471,8 @@ describe("normalizeFilePath tilde expansion (#4446)", () => {
 
   test("expands ~/ prefixed paths to homedir", () => {
     assert.equal(
-      normalizeFilePath("~/.gsd/agent/extensions/gsd/native-git-bridge.js"),
-      join(homedir(), ".gsd/agent/extensions/gsd/native-git-bridge.js"),
+      normalizeFilePath("~/.gwd/agent/extensions/gsd/native-git-bridge.js"),
+      join(homedir(), ".gwd/agent/extensions/gsd/native-git-bridge.js"),
     );
   });
 });
@@ -1569,8 +1569,8 @@ describe("checkFilePathConsistency directory inputs (#4446)", () => {
   test("tilde-prefixed input is matched against $HOME, not the project basePath", (t) => {
     const fakeHome = join(tmpdir(), `pre-exec-tilde-home-${Date.now()}`);
     const projectDir = join(tmpdir(), `pre-exec-tilde-proj-${Date.now()}`);
-    mkdirSync(join(fakeHome, ".gsd"), { recursive: true });
-    writeFileSync(join(fakeHome, ".gsd/tool.js"), "// present");
+    mkdirSync(join(fakeHome, ".gwd"), { recursive: true });
+    writeFileSync(join(fakeHome, ".gwd/tool.js"), "// present");
     mkdirSync(projectDir, { recursive: true });
 
     const originalHome = process.env.HOME;
@@ -1590,7 +1590,7 @@ describe("checkFilePathConsistency directory inputs (#4446)", () => {
     const tasks = [
       createTask({
         id: "T01",
-        inputs: ["~/.gsd/tool.js"],
+        inputs: ["~/.gwd/tool.js"],
         expected_output: [],
       }),
     ];

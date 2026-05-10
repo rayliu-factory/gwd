@@ -1169,7 +1169,7 @@ function OnboardingStatusSection() {
             {completedAt
               ? `Last completed ${formatCompletionDate(completedAt)}.`
               : lastResume
-                ? `Paused at "${ONBOARDING_STEP_LABELS[lastResume] ?? lastResume}". Re-run /gsd onboarding --resume to continue.`
+                ? `Paused at "${ONBOARDING_STEP_LABELS[lastResume] ?? lastResume}". Re-run /gwd onboarding --resume to continue.`
                 : "You haven't completed the onboarding wizard yet."}
           </p>
         </div>
@@ -1186,7 +1186,7 @@ function OnboardingStatusSection() {
           </Button>
           {!canForceReentry && (
             <span className="text-[10px] text-muted-foreground">
-              Run <code className="rounded bg-muted px-1 font-mono">/gsd onboarding</code> in your terminal
+              Run <code className="rounded bg-muted px-1 font-mono">/gwd onboarding</code> in your terminal
             </span>
           )}
         </div>
@@ -1407,7 +1407,7 @@ export function ExperimentalPanel() {
       {data && (
         <p className="text-[11px] text-muted-foreground">
           Changes are written to{" "}
-          <span className="font-mono">{prefs?.path ?? "~/.gsd/PREFERENCES.md"}</span>
+          <span className="font-mono">{prefs?.path ?? "~/.gwd/PREFERENCES.md"}</span>
           {" "}and take effect on the next session.
         </p>
       )}

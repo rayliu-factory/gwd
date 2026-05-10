@@ -87,10 +87,10 @@ test('runExecSandbox: forwards only allowlisted env vars', async () => {
   const base = freshBase();
   try {
     const result = await runExecSandbox(
-      { runtime: 'bash', script: 'echo PATH=$PATH SECRET=$GSD_TEST_SECRET' },
+      { runtime: 'bash', script: 'echo PATH=$PATH SECRET=$GWD_TEST_SECRET' },
       baseOpts(base, {
         env_allowlist: [],
-        env: { PATH: '/usr/bin:/bin', HOME: '/tmp', GSD_TEST_SECRET: 'should-be-blocked' },
+        env: { PATH: '/usr/bin:/bin', HOME: '/tmp', GWD_TEST_SECRET: 'should-be-blocked' },
       }),
     );
     const stdout = readFileSync(result.stdout_path, 'utf-8');
@@ -181,21 +181,21 @@ test('executeGsdExec: forwards custom exec_env_allowlist from preferences', asyn
     const result = await executeGsdExec(
       {
         runtime: 'bash',
-        script: 'printf "allowed=%s blocked=%s\\n" "$GSD_ALLOWED" "$GSD_BLOCKED"',
+        script: 'printf "allowed=%s blocked=%s\\n" "$GWD_ALLOWED" "$GWD_BLOCKED"',
       },
       {
         baseDir: base,
         preferences: {
           context_mode: {
             enabled: true,
-            exec_env_allowlist: ['GSD_ALLOWED'],
+            exec_env_allowlist: ['GWD_ALLOWED'],
           },
         },
         env: {
           PATH: '/usr/bin:/bin',
           HOME: '/tmp',
-          GSD_ALLOWED: 'yes',
-          GSD_BLOCKED: 'no',
+          GWD_ALLOWED: 'yes',
+          GWD_BLOCKED: 'no',
         },
       },
     );

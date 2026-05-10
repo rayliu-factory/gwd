@@ -157,7 +157,7 @@ function WorkspaceChrome() {
 
   useEffect(() => {
     if (typeof document === "undefined") return
-    const base = projectLabel ? `GSD - ${projectLabel}` : "GSD"
+    const base = projectLabel ? `GWD - ${projectLabel}` : "GWD"
     document.title = titleOverride ? `${titleOverride} · ${base}` : base
   }, [titleOverride, projectLabel])
 
@@ -176,7 +176,7 @@ function WorkspaceChrome() {
     return () => window.removeEventListener("gsd:open-file", handler)
   }, [])
 
-  // Listen for cross-component view navigation events (e.g. /gsd visualize dispatch)
+  // Listen for cross-component view navigation events (e.g. /gwd visualize dispatch)
   useEffect(() => {
     const handler = (e: CustomEvent<{ view: string }>) => {
       if (KNOWN_VIEWS.has(e.detail.view)) {
@@ -280,14 +280,14 @@ function WorkspaceChrome() {
       <div className="flex h-dvh flex-col items-center justify-center gap-6 bg-background p-8 text-center">
         <Image
           src="/logo-black.svg"
-          alt="GSD"
+          alt="GWD"
           width={57}
           height={16}
           className="shrink-0 h-4 w-auto dark:hidden"
         />
         <Image
           src="/logo-white.svg"
-          alt="GSD"
+          alt="GWD"
           width={57}
           height={16}
           className="shrink-0 h-4 w-auto hidden dark:block"
@@ -299,7 +299,7 @@ function WorkspaceChrome() {
             (including the{" "}
             <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">#token=…</code>{" "}
             part) or restart with{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">gsd --web</code>.
+            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">gwd --web</code>.
           </p>
         </div>
       </div>
@@ -322,14 +322,14 @@ function WorkspaceChrome() {
           <div className="flex items-center gap-2">
             <Image
               src="/logo-black.svg"
-              alt="GSD"
+              alt="GWD"
               width={57}
               height={16}
               className="shrink-0 h-4 w-auto dark:hidden"
             />
             <Image
               src="/logo-white.svg"
-              alt="GSD"
+              alt="GWD"
               width={57}
               height={16}
               className="shrink-0 h-4 w-auto hidden dark:block"

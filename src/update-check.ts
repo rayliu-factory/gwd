@@ -4,9 +4,10 @@ import { homedir } from 'node:os'
 import chalk from 'chalk'
 import { appRoot } from './app-paths.js'
 import { execSync } from 'node:child_process'
+import { CLI_COMMAND, GWD_VERSION_ENV, PRODUCT_PACKAGE_NAME, SLASH_COMMAND_PREFIX } from './namespace.js'
 
 const CACHE_FILE = join(appRoot, '.update-check')
-const NPM_PACKAGE_NAME = 'gsd-pi'
+const NPM_PACKAGE_NAME = PRODUCT_PACKAGE_NAME
 const CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000 // 24 hours
 const FETCH_TIMEOUT_MS = 5000
 const DEFAULT_REGISTRY_URL = `https://registry.npmjs.org/${NPM_PACKAGE_NAME}/latest`
@@ -76,7 +77,7 @@ export async function fetchLatestVersionFromRegistry(
 }
 
 /**
- * Detects whether the currently-running gsd binary was installed via `bun add -g`.
+ * Detects whether the currently-running gwd binary was installed via `bun add -g`.
  *
  * Bun's global bin entries on macOS/Linux are plain symlinks that point at the
  * package's bin file. The OS honors the target file's shebang, so a bin with
@@ -102,10 +103,10 @@ export function resolveInstallCommand(pkg: string): string {
 }
 
 function printUpdateBanner(current: string, latest: string): void {
-  const installCmd = resolveInstallCommand('gsd-pi')
+  const installCmd = resolveInstallCommand(PRODUCT_PACKAGE_NAME)
   process.stderr.write(
     `  ${chalk.yellow('Update available:')} ${chalk.dim(`v${current}`)} → ${chalk.bold(`v${latest}`)}\n` +
-    `  ${chalk.dim('Run')} ${installCmd} ${chalk.dim('or')} /gsd update ${chalk.dim('to upgrade')}\n\n`,
+    `  ${chalk.dim('Run')} ${installCmd} ${chalk.dim('or')} ${SLASH_COMMAND_PREFIX} update ${chalk.dim('to upgrade')}\n\n`,
   )
 }
 
@@ -123,7 +124,7 @@ export interface UpdateCheckOptions {
  * caches the result, and prints a banner if a newer version is available.
  */
 export async function checkForUpdates(options: UpdateCheckOptions = {}): Promise<void> {
-  const currentVersion = options.currentVersion || process.env.GSD_VERSION || '0.0.0'
+  const currentVersion = options.currentVersion || process.env[GWD_VERSION_ENV] || '0.0.0'
   const cachePath = options.cachePath || CACHE_FILE
   const registryUrl = options.registryUrl || DEFAULT_REGISTRY_URL
   const checkIntervalMs = options.checkIntervalMs ?? CHECK_INTERVAL_MS
@@ -164,7 +165,7 @@ const PROMPT_TIMEOUT_MS = 30_000
  * Returns true if an update was performed, false otherwise.
  */
 export async function checkAndPromptForUpdates(options: UpdateCheckOptions = {}): Promise<boolean> {
-  const currentVersion = options.currentVersion || process.env.GSD_VERSION || '0.0.0'
+  const currentVersion = options.currentVersion || process.env[GWD_VERSION_ENV] || '0.0.0'
   const cachePath = options.cachePath || CACHE_FILE
   const registryUrl = options.registryUrl || DEFAULT_REGISTRY_URL
   const checkIntervalMs = options.checkIntervalMs ?? CHECK_INTERVAL_MS
@@ -248,7 +249,7 @@ export async function checkAndPromptForUpdates(options: UpdateCheckOptions = {})
       process.stderr.write(`\n  ${chalk.yellow(`Update failed. You can run: ${installCmd}`)}\n\n`)
     }
   } else {
-    process.stderr.write(`  ${chalk.dim('Skipped. Run')} gsd update ${chalk.dim('anytime to upgrade.')}\n\n`)
+    process.stderr.write(`  ${chalk.dim('Skipped. Run')} ${CLI_COMMAND} update ${chalk.dim('anytime to upgrade.')}\n\n`)
   }
 
   return false

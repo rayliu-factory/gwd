@@ -1,6 +1,6 @@
-// Project/App: GSD-2
-// File Purpose: Mid-execution escalation artifact and state helpers for GSD tasks.
-// GSD Extension — ADR-011 Phase 2 Mid-Execution Escalation
+// Project/App: GWD-2
+// File Purpose: Mid-execution escalation artifact and state helpers for GWD tasks.
+// GWD Extension — ADR-011 Phase 2 Mid-Execution Escalation
 //
 // A single module that owns: escalation artifact I/O, detection, resolution,
 // carry-forward injection lookup, and audit-event emission. Scoped to
@@ -42,7 +42,7 @@ export function escalationArtifactPath(
 
 // ─── Artifact I/O ─────────────────────────────────────────────────────────
 
-/** Build an EscalationArtifact from a gsd_complete_task escalation payload. */
+/** Build an EscalationArtifact from a gsd_task_complete escalation payload. */
 export function buildEscalationArtifact(params: {
   taskId: string;
   sliceId: string;
@@ -243,7 +243,7 @@ export function resolveEscalation(
     }));
     return {
       status: "rejected-to-blocker",
-      message: `Escalation rejected. Task ${taskId} now flagged as a blocker — next /gsd auto will replan slice ${sliceId}.`,
+      message: `Escalation rejected. Task ${taskId} now flagged as a blocker — next /gwd auto will replan slice ${sliceId}.`,
       artifactPath: task.escalation_artifact_path,
     };
   }
@@ -335,7 +335,7 @@ function formatOverrideBlock(art: EscalationArtifact): string {
 
 // ─── Display ──────────────────────────────────────────────────────────────
 
-/** Human-readable summary of an artifact for `/gsd escalate show`. */
+/** Human-readable summary of an artifact for `/gwd escalate show`. */
 export function formatEscalationForDisplay(art: EscalationArtifact): string {
   const resolved = art.respondedAt
     ? `\nResolved: ${art.respondedAt} — user chose "${art.userChoice}"${art.userRationale ? ` (rationale: ${art.userRationale})` : ""}`
@@ -354,16 +354,16 @@ export function formatEscalationForDisplay(art: EscalationArtifact): string {
     `Recommendation: ${art.recommendation} — ${art.recommendationRationale}`,
     resolved,
     "",
-    `Resolve with: /gsd escalate resolve ${art.taskId} <${art.options.map((o) => o.id).join("|")}|accept|reject-blocker> [rationale...]`,
+    `Resolve with: /gwd escalate resolve ${art.taskId} <${art.options.map((o) => o.id).join("|")}|accept|reject-blocker> [rationale...]`,
   ].join("\n");
 }
 
-/** List actionable (unresolved) escalations for `/gsd escalate list`. */
+/** List actionable (unresolved) escalations for `/gwd escalate list`. */
 export function listActionableEscalations(milestoneId: string): TaskRow[] {
   return listEscalationArtifacts(milestoneId, /* includeResolved */ false);
 }
 
-/** List every escalation (including resolved) for `/gsd escalate list --all`. */
+/** List every escalation (including resolved) for `/gwd escalate list --all`. */
 export function listAllEscalations(milestoneId: string): TaskRow[] {
   return listEscalationArtifacts(milestoneId, /* includeResolved */ true);
 }

@@ -5,7 +5,7 @@
  * the heavy tool-registration modules.
  */
 
-import { isAnthropicApi } from "@gsd/pi-ai";
+import { isAnthropicApi } from "@gwd/pi-ai";
 import { resolveSearchProviderFromPreferences } from "../gsd/preferences.js";
 
 /** Tool names for the Brave-backed custom search tools */

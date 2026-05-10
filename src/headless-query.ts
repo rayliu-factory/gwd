@@ -1,5 +1,5 @@
 /**
- * Headless Query — `gsd headless query`
+ * Headless Query — `gwd headless query`
  *
  * Single read-only command that returns the full project snapshot as JSON
  * to stdout, without spawning an LLM session. Instant (~50ms).
@@ -34,7 +34,7 @@ const { existsSync } = await import('node:fs')
  * #3471 contract can be exercised in tests without spawning a subprocess.
  */
 export function resolveGsdAgentExtensionsDir(env: NodeJS.ProcessEnv = process.env): string {
-  const agentRoot = env.GSD_AGENT_DIR || join(env.GSD_HOME || join(homedir(), '.gsd'), 'agent')
+  const agentRoot = env.GWD_AGENT_DIR || join(env.GWD_HOME || join(homedir(), '.gwd'), 'agent')
   return join(agentRoot, 'extensions', 'gsd')
 }
 

@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * GSD Interactive Installer
+ * GWD Interactive Installer
  *
- * Entry point for `npx gsd-pi` or `npx gsd-pi@latest`.
+ * Entry point for `npx gwd-pi` or `npx gwd-pi@latest`.
  * When invoked directly (not as a postinstall hook), runs the visual
  * installer with full terminal access — banner, spinners, progress.
  *
- * If GSD is already installed and the user runs `gsd`, this script
- * is NOT invoked — the normal loader.js handles that via the "gsd" bin.
- * This script only fires for `npx gsd-pi` (the package name bin).
+ * If GWD is already installed and the user runs `gwd`, this script
+ * is NOT invoked — the normal loader.js handles that via the "gwd" bin.
+ * This script only fires for `npx gwd-pi` (the package name bin).
  */
 
 import { execSync, spawnSync, exec as execCb } from 'child_process'
@@ -24,8 +24,8 @@ import { createInterface } from 'readline'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-// packageRoot is always relative to this script — it's the gsd-pi package directory.
-// This is correct whether running as postinstall (inside node_modules/gsd-pi) or
+// packageRoot is always relative to this script — it's the gwd-pi package directory.
+// This is correct whether running as postinstall (inside node_modules/gwd-pi) or
 // via npx (inside a transient cache), since __dirname resolves to the script's location.
 const IS_POSTINSTALL = !!process.env.npm_lifecycle_event
 const packageRoot = resolve(__dirname, '..')
@@ -45,24 +45,24 @@ const c = supportsColor
 
 // ── Version ────────────────────────────────────────────────────────────────
 
-let gsdVersion = '0.0.0'
+let gwdVersion = '0.0.0'
 try {
   const pkg = JSON.parse(readFileSync(join(packageRoot, 'package.json'), 'utf-8'))
-  gsdVersion = pkg.version || '0.0.0'
+  gwdVersion = pkg.version || '0.0.0'
 } catch { /* ignore */ }
 
 if (HAS_VERSION) {
-  process.stdout.write(gsdVersion + '\n')
+  process.stdout.write(gwdVersion + '\n')
   process.exit(0)
 }
 
 if (HAS_HELP) {
   process.stdout.write(`
-  ${c.bold}GSD Installer${c.reset} ${c.dim}v${gsdVersion}${c.reset}
+  ${c.bold}GWD Installer${c.reset} ${c.dim}v${gwdVersion}${c.reset}
 
   ${c.yellow}Usage:${c.reset}
-    npx gsd-pi@latest          Install GSD globally (recommended)
-    npx gsd-pi@latest --local  Install GSD to current project
+    npx gwd-pi@latest          Install GWD globally (recommended)
+    npx gwd-pi@latest --local  Install GWD to current project
 
   ${c.yellow}Options:${c.reset}
     ${c.cyan}--local${c.reset}     Install to current directory instead of globally
@@ -73,8 +73,8 @@ if (HAS_HELP) {
 
   ${c.yellow}Environment:${c.reset}
     PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1  Skip Chromium
-    GSD_SKIP_RTK_INSTALL=1              Skip RTK
-    GSD_RTK_DISABLED=1                  Disable RTK integration
+    GWD_SKIP_RTK_INSTALL=1              Skip RTK
+    GWD_RTK_DISABLED=1                  Disable RTK integration
 
 `)
   process.exit(0)
@@ -120,7 +120,7 @@ ${c.cyan}   ██████╗ ███████╗██████╗
   ╚██████╔╝███████║██████╔╝
    ╚═════╝ ╚══════╝╚═════╝${c.reset}
 
-  ${c.bold}Get Shit Done${c.reset} ${c.dim}v${gsdVersion}${c.reset}
+  ${c.bold}Get Work Done${c.reset} ${c.dim}v${gwdVersion}${c.reset}
 `)
 }
 
@@ -151,26 +151,26 @@ const PLAYWRIGHT_SKIP =
   args.includes('--skip-chromium')
 
 const RTK_SKIP =
-  process.env.GSD_SKIP_RTK_INSTALL === '1' ||
-  process.env.GSD_SKIP_RTK_INSTALL === 'true' ||
-  process.env.GSD_RTK_DISABLED === '1' ||
-  process.env.GSD_RTK_DISABLED === 'true' ||
+  process.env.GWD_SKIP_RTK_INSTALL === '1' ||
+  process.env.GWD_SKIP_RTK_INSTALL === 'true' ||
+  process.env.GWD_RTK_DISABLED === '1' ||
+  process.env.GWD_RTK_DISABLED === 'true' ||
   args.includes('--skip-rtk')
 
 const RTK_VERSION = '0.33.1'
 const RTK_REPO = 'rtk-ai/rtk'
 const RTK_ENV = { ...process.env, RTK_TELEMETRY_DISABLED: '1' }
-const managedBinDir = join(process.env.GSD_HOME || join(homedir(), '.gsd'), 'agent', 'bin')
+const managedBinDir = join(process.env.GWD_HOME || join(homedir(), '.gwd'), 'agent', 'bin')
 const managedBinaryPath = join(managedBinDir, platform() === 'win32' ? 'rtk.exe' : 'rtk')
 
 // ── Step: npm install -g ───────────────────────────────────────────────────
 
 async function installGlobally() {
-  startSpinner('Installing gsd-pi globally...             ')
+  startSpinner('Installing gwd-pi globally...             ')
   try {
     const result = await new Promise((res) => {
       execCb(
-        `npm install -g gsd-pi@${gsdVersion}`,
+        `npm install -g gwd-pi@${gwdVersion}`,
         { timeout: 300_000 },
         (error, stdout, stderr) => {
           res({ ok: !error, stdout: stdout || '', stderr: stderr || '', error })
@@ -185,11 +185,11 @@ async function installGlobally() {
         .filter(l => !l.includes('npm warn') && !l.includes('npm WARN') && l.trim())
         .slice(-3)
         .join('; ')
-      printFail('Global install failed', meaningful || 'run npm install -g gsd-pi manually')
+      printFail('Global install failed', meaningful || 'run npm install -g gwd-pi manually')
       return false
     }
 
-    printStep('Installed globally', 'npm install -g gsd-pi')
+    printStep('Installed globally', 'npm install -g gwd-pi')
     return true
   } catch (err) {
     stopSpinner()
@@ -199,11 +199,11 @@ async function installGlobally() {
 }
 
 async function installLocally() {
-  startSpinner('Installing gsd-pi locally...              ')
+  startSpinner('Installing gwd-pi locally...              ')
   try {
     const result = await new Promise((res) => {
       execCb(
-        `npm install gsd-pi@${gsdVersion}`,
+        `npm install gwd-pi@${gwdVersion}`,
         { cwd: process.cwd(), timeout: 300_000 },
         (error, stdout, stderr) => {
           res({ ok: !error, stdout: stdout || '', stderr: stderr || '', error })
@@ -218,11 +218,11 @@ async function installLocally() {
         .filter(l => !l.includes('npm warn') && !l.includes('npm WARN') && l.trim())
         .slice(-3)
         .join('; ')
-      printFail('Local install failed', meaningful || 'run npm install gsd-pi manually')
+      printFail('Local install failed', meaningful || 'run npm install gwd-pi manually')
       return false
     }
 
-    printStep('Installed locally', 'npm install gsd-pi')
+    printStep('Installed locally', 'npm install gwd-pi')
     return true
   } catch (err) {
     stopSpinner()
@@ -297,7 +297,7 @@ function sha256File(filePath) {
 }
 
 async function downloadToFile(url, destination) {
-  const response = await fetch(url, { headers: { 'User-Agent': 'gsd-pi-installer' } })
+  const response = await fetch(url, { headers: { 'User-Agent': 'gwd-pi-installer' } })
   if (!response.ok) throw new Error(`download failed (${response.status})`)
   if (!response.body) throw new Error('no response body')
   const output = createWriteStream(destination)
@@ -358,7 +358,7 @@ async function installRtk() {
 
   try {
     const checksumsResponse = await fetch(`${releaseBase}/checksums.txt`, {
-      headers: { 'User-Agent': 'gsd-pi-installer' },
+      headers: { 'User-Agent': 'gwd-pi-installer' },
     })
     if (!checksumsResponse.ok) throw new Error(`checksums fetch failed (${checksumsResponse.status})`)
 
@@ -452,9 +452,9 @@ function linkWorkspacePackages() {
 // ── Step: Verify installation ──────────────────────────────────────────────
 
 function verifyInstall(local) {
-  let bin = 'gsd'
+  let bin = 'gwd'
   if (local) {
-    const localBin = resolve(process.cwd(), 'node_modules', '.bin', 'gsd')
+    const localBin = resolve(process.cwd(), 'node_modules', '.bin', 'gwd')
     if (existsSync(localBin)) {
       bin = localBin
     } else if (platform() === 'win32' && existsSync(localBin + '.cmd')) {
@@ -519,8 +519,8 @@ if (IS_POSTINSTALL) {
   // Verify
   const version = verifyInstall(isLocal)
   if (version) {
-    printStep('Verified', `gsd v${version}`)
+    printStep('Verified', `gwd v${version}`)
   }
 }
 
-process.stdout.write(`\n  ${c.green}Ready.${c.reset} Run: ${c.bold}gsd${c.reset}\n\n`)
+process.stdout.write(`\n  ${c.green}Ready.${c.reset} Run: ${c.bold}gwd${c.reset}\n\n`)

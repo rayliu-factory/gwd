@@ -146,13 +146,13 @@ describe("auto-worktree lifecycle", () => {
 
   test("symlink-resolved auto worktree is detected after module state reset", () => {
     tempDir = createTempRepo();
-    const savedGsdHome = process.env.GSD_HOME;
+    const savedGsdHome = process.env.GWD_HOME;
     const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "auto-wt-home-")));
     const storage = join(fakeHome, ".gsd", "projects", "abc123def456");
     mkdirSync(join(storage, "milestones", "M001"), { recursive: true });
     writeFileSync(join(storage, "milestones", "M001", "CONTEXT.md"), "# M001\n");
     symlinkSync(storage, join(tempDir, ".gsd"));
-    process.env.GSD_HOME = join(fakeHome, ".gsd");
+    process.env.GWD_HOME = join(fakeHome, ".gsd");
 
     try {
       const wtPath = createAutoWorktree(tempDir, "M001");
@@ -186,8 +186,8 @@ describe("auto-worktree lifecycle", () => {
       } catch {
         // Best-effort cleanup for partially-created temp worktrees.
       }
-      if (savedGsdHome === undefined) delete process.env.GSD_HOME;
-      else process.env.GSD_HOME = savedGsdHome;
+      if (savedGsdHome === undefined) delete process.env.GWD_HOME;
+      else process.env.GWD_HOME = savedGsdHome;
       rmSync(fakeHome, { recursive: true, force: true });
     }
   });
@@ -418,7 +418,7 @@ describe("auto-worktree lifecycle", () => {
       (err: unknown) => {
         assert.ok(err instanceof Error, "should throw an Error");
         assert.ok("code" in err, "should have a code property (GSDError)");
-        assert.strictEqual((err as { code: string }).code, "GSD_GIT_ERROR");
+        assert.strictEqual((err as { code: string }).code, "GWD_GIT_ERROR");
         assert.ok(
           err.message.includes("repository has no commits yet"),
           `message should mention no commits, got: ${err.message}`,

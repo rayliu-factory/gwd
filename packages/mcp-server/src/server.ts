@@ -1,5 +1,5 @@
 /**
- * MCP Server — registers GSD orchestration, project-state, and workflow tools.
+ * MCP Server — registers GWD orchestration, project-state, and workflow tools.
  *
  * Session tools (6): gsd_execute, gsd_status, gsd_result, gsd_cancel, gsd_query, gsd_resolve_blocker
  * Interactive tools (2): ask_user_questions, secure_env_collect via MCP form elicitation
@@ -36,7 +36,7 @@ import { applySecrets, checkExistingEnvKeys, detectDestination, resolveProjectEn
 // ---------------------------------------------------------------------------
 
 const MCP_PKG = '@modelcontextprotocol/sdk';
-const SERVER_NAME = 'gsd';
+const SERVER_NAME = 'gwd';
 
 /**
  * Read the version from this package's package.json so the MCP handshake
@@ -334,7 +334,7 @@ interface AskUserQuestionsElicitRequest {
  * Structured payload mirrored to the MCP `structuredContent` field on
  * `ask_user_questions` results. Mirrors the `LocalResultDetails` shape that
  * src/resources/extensions/ask-user-questions.ts already produces, so the
- * GSD discussion-gate hook in register-hooks.ts can treat the MCP path
+ * GWD discussion-gate hook in register-hooks.ts can treat the MCP path
  * identically to the in-process extension path. Without this, the bridge
  * surfaces `details = undefined` and the gate hook's
  * `if (details?.cancelled || !details?.response)` branch HARD-BLOCKs every
@@ -473,7 +473,7 @@ export function formatAskUserQuestionsElicitResult(
 
 /**
  * Normalize an MCP elicitation form result into the `RoundResult` shape the
- * GSD discussion-gate hook reads from `tool_result` `details.response`. The
+ * GWD discussion-gate hook reads from `tool_result` `details.response`. The
  * elicitation `content` map carries `{ [id]: label, [id]__note?: string }`;
  * the hook expects `{ answers: { [id]: { selected, notes } } }`. Mirrored into
  * `structuredContent` by `askUserQuestionsHandler`. See #5267.
@@ -533,13 +533,13 @@ function isAskUserQuestionsWriteGateModule(value: unknown): value is AskUserQues
 async function loadAskUserQuestionsWriteGateModule(): Promise<AskUserQuestionsWriteGateModule | null> {
   if (!askUserQuestionsWriteGateModulePromise) {
     askUserQuestionsWriteGateModulePromise = (async () => {
-      const modulePath = process.env.GSD_WORKFLOW_WRITE_GATE_MODULE?.trim();
+      const modulePath = process.env.GWD_WORKFLOW_WRITE_GATE_MODULE?.trim();
       if (!modulePath) return null;
       try {
         if (/^[a-z]{2,}:/i.test(modulePath) && !modulePath.startsWith('file:')) {
-          throw new Error('GSD_WORKFLOW_WRITE_GATE_MODULE only supports file: URLs or filesystem paths.');
+          throw new Error('GWD_WORKFLOW_WRITE_GATE_MODULE only supports file: URLs or filesystem paths.');
         }
-        const baseRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT?.trim() || process.cwd();
+        const baseRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT?.trim() || process.cwd();
         const specifier = modulePath.startsWith('file:') ? modulePath : pathToFileURL(resolve(baseRoot, modulePath)).href;
         const loaded = await import(specifier);
         return isAskUserQuestionsWriteGateModule(loaded) ? loaded : null;
@@ -553,7 +553,7 @@ async function loadAskUserQuestionsWriteGateModule(): Promise<AskUserQuestionsWr
 }
 
 function askUserQuestionsWriteGateBasePath(deps: AskUserQuestionsHandlerDeps): string {
-  return deps.writeGateBasePath ?? process.env.GSD_WORKFLOW_PROJECT_ROOT?.trim() ?? process.cwd();
+  return deps.writeGateBasePath ?? process.env.GWD_WORKFLOW_PROJECT_ROOT?.trim() ?? process.cwd();
 }
 
 async function resolveAskUserQuestionsWriteGate(deps: AskUserQuestionsHandlerDeps): Promise<AskUserQuestionsWriteGateModule | null> {
@@ -886,7 +886,7 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_execute — start a new GSD auto-mode session.
+  // gsd_execute — start a new GWD auto-mode session.
   //
   // If the JSON-RPC request is aborted while the session is starting (or
   // immediately after), we cancel the session so we don't leak a background
@@ -895,10 +895,10 @@ export async function createMcpServer(
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_execute',
-    'Start a GSD auto-mode session for a project directory. Returns a sessionId for tracking.',
+    'Start a GWD auto-mode session for a project directory. Returns a sessionId for tracking.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
-      command: z.string().optional().describe('Command to send (default: "/gsd auto")'),
+      command: z.string().optional().describe('Command to send (default: "/gwd auto")'),
       model: z.string().optional().describe('Model ID override'),
       bare: z.boolean().optional().describe('Run in bare mode (skip user config)'),
     },
@@ -928,7 +928,7 @@ export async function createMcpServer(
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_status',
-    'Get the current status of a GSD session including progress, recent events, and pending blockers.',
+    'Get the current status of a GWD session including progress, recent events, and pending blockers.',
     {
       sessionId: z.string().describe('Session ID returned from gsd_execute'),
     },
@@ -972,7 +972,7 @@ export async function createMcpServer(
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_result',
-    'Get the result of a GSD session. Returns partial results if the session is still running.',
+    'Get the result of a GWD session. Returns partial results if the session is still running.',
     {
       sessionId: z.string().describe('Session ID returned from gsd_execute'),
     },
@@ -995,12 +995,12 @@ export async function createMcpServer(
   //   2. projectDir — absolute path to the project directory (fallback)
   //
   // The projectDir fallback handles interactive sessions (started via
-  // `/gsd auto` in the terminal) and post-restart MCP sessions that were
+  // `/gwd auto` in the terminal) and post-restart MCP sessions that were
   // never registered with a sessionId in this server instance.
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_cancel',
-    'Cancel a running GSD session. Aborts the current operation and stops the process. Provide sessionId (from gsd_execute) or projectDir as a fallback for interactive/restarted sessions.',
+    'Cancel a running GWD session. Aborts the current operation and stops the process. Provide sessionId (from gsd_execute) or projectDir as a fallback for interactive/restarted sessions.',
     {
       sessionId: z.string().optional().describe('Session ID returned from gsd_execute'),
       projectDir: z.string().optional().describe('Absolute path to the project directory (fallback when sessionId is unavailable)'),
@@ -1040,7 +1040,7 @@ export async function createMcpServer(
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_query',
-    'Query GSD project state from the filesystem. By default returns STATE.md, PROJECT.md, requirements, and milestone listing. Pass `query` to narrow the response (accepted: "state"/"status", "project", "requirements", "milestones", "all"). Does not require an active session.',
+    'Query GWD project state from the filesystem. By default returns STATE.md, PROJECT.md, requirements, and milestone listing. Pass `query` to narrow the response (accepted: "state"/"status", "project", "requirements", "milestones", "all"). Does not require an active session.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
       query: z
@@ -1065,7 +1065,7 @@ export async function createMcpServer(
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_resolve_blocker',
-    'Resolve a pending blocker in a GSD session by sending a response to the UI request.',
+    'Resolve a pending blocker in a GWD session by sending a response to the UI request.',
     {
       sessionId: z.string().describe('Session ID returned from gsd_execute'),
       response: z.string().describe('Response to send for the pending blocker'),
@@ -1255,7 +1255,7 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_graph — knowledge graph for GSD projects
+  // gsd_graph — knowledge graph for GWD projects
   //
   // Modes:
   //   build   Parse .gsd/ artifacts and write graph.json atomically.
@@ -1266,7 +1266,7 @@ export async function createMcpServer(
   server.tool(
     'gsd_graph',
     [
-      'Manage the GSD project knowledge graph. No session required.',
+      'Manage the GWD project knowledge graph. No session required.',
       '',
       'Modes:',
       '  build   Parse .gsd/ artifacts (STATE.md, milestone ROADMAPs, slice PLANs,',

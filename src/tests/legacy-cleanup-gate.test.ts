@@ -22,7 +22,7 @@ test("parseArgs accepts file path from flag or environment", () => {
     file: "/tmp/legacy.json",
     json: false,
   });
-  assert.deepEqual(parseArgs(["--json"], { GSD_LEGACY_TELEMETRY_FILE: "/tmp/from-env.json" }), {
+  assert.deepEqual(parseArgs(["--json"], { GWD_LEGACY_TELEMETRY_FILE: "/tmp/from-env.json" }), {
     file: "/tmp/from-env.json",
     json: true,
   });

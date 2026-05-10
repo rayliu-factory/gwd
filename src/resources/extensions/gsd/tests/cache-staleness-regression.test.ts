@@ -1,7 +1,7 @@
 /**
  * cache-staleness-regression.test.ts — Regression tests for stale cache bugs.
  *
- * The GSD parser caches are critical for performance but have caused multiple
+ * The GWD parser caches are critical for performance but have caused multiple
  * production bugs when not invalidated at the right time.
  *
  * Regression coverage for:

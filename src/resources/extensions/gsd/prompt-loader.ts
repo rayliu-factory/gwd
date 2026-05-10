@@ -1,5 +1,5 @@
 /**
- * GSD Prompt Loader
+ * GWD Prompt Loader
  *
  * Reads .md prompt templates from the prompts/ directory and substitutes
  * {{variable}} placeholders with provided values.
@@ -17,7 +17,7 @@
  */
 
 import { readFileSync, readdirSync, existsSync } from "node:fs";
-import { GSDError, GSD_PARSE_ERROR } from "./errors.js";
+import { GSDError, GWD_PARSE_ERROR } from "./errors.js";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { logWarning } from "./workflow-logger.js";
@@ -53,7 +53,7 @@ export function resolveExtensionDirFromCandidates(
 }
 
 /**
- * Resolve the GSD extension directory.
+ * Resolve the GWD extension directory.
  *
  * `import.meta.url` resolves to whichever copy of this module is executing.
  * On Windows (npm global install via MSYS2 / Git Bash) this can resolve to
@@ -184,7 +184,7 @@ export function loadPrompt(name: string, vars: Record<string, string> = {}): str
     planTemplatePath: join(getTemplatesDir(), "plan.md"),
     taskPlanTemplatePath: join(getTemplatesDir(), "task-plan.md"),
     taskSummaryTemplatePath: join(getTemplatesDir(), "task-summary.md"),
-    skillActivation: "If a `GSD Skill Preferences` block is present in system context, use it and the `<available_skills>` catalog in your system prompt to decide which skills to load and follow for this unit, without relaxing required verification or artifact rules.",
+    skillActivation: "If a `GWD Skill Preferences` block is present in system context, use it and the `<available_skills>` catalog in your system prompt to decide which skills to load and follow for this unit, without relaxing required verification or artifact rules.",
     ...vars,
   };
 
@@ -199,7 +199,7 @@ export function loadPrompt(name: string, vars: Record<string, string> = {}): str
       .filter(key => !(key in effectiveVars));
     if (missing.length > 0) {
       throw new GSDError(
-        GSD_PARSE_ERROR,
+        GWD_PARSE_ERROR,
         `loadPrompt("${name}"): template declares {{${missing.join("}}, {{")}}}} but no value was provided. ` +
         `This usually means the extension code in memory is older than the template on disk. ` +
         `Restart pi to reload the extension.`,
@@ -215,7 +215,7 @@ export function loadPrompt(name: string, vars: Record<string, string> = {}): str
 
     // Use split/join instead of replaceAll to avoid JavaScript's special
     // replacement patterns ($', $`, $&) being interpreted in the value.
-    // See: https://github.com/gsd-build/gsd-2/issues/2968
+    // See: https://github.com/gwd-build/gwd-2/issues/2968
     content = content.split(`{{${key}}}`).join(safeValue);
   }
 

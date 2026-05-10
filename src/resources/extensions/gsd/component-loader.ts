@@ -1,10 +1,10 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Loads modern component.yaml definitions and legacy skill/agent formats.
 
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { parse as parseYaml } from 'yaml';
-import { parseFrontmatter } from '@gsd/pi-coding-agent';
+import { parseFrontmatter } from '@gwd/pi-coding-agent';
 import { incrementLegacyTelemetry } from './legacy-telemetry.js';
 import type {
 	Component,

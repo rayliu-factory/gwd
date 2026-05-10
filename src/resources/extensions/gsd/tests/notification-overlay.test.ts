@@ -1,4 +1,4 @@
-// GSD Extension — Notification Overlay Tests
+// GWD Extension — Notification Overlay Tests
 // Tests for message wrapping in the notification panel.
 // Mirrors the private wrapText from notification-overlay.ts so its contract
 // can be exercised without exporting internals.
@@ -6,7 +6,7 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
-import { truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@gsd/pi-tui";
+import { truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@gwd/pi-tui";
 
 // ── wrapText logic (mirrors the private function in notification-overlay.ts) ──
 
@@ -62,7 +62,7 @@ describe("notification overlay — wrapText", () => {
   // for the real-world long multi-provider notification payload.
   test("regression #4465: long notification stays within column budget", () => {
     const msg =
-      "GSD API Key Manager LLM Providers ✗ anthropic — not configured " +
+      "GWD API Key Manager LLM Providers ✗ anthropic — not configured " +
       "(console.anthropic.com) ✗ openai — not configured " +
       "(platform.openai.com/api-keys) ✓ github-copilot — OAuth (expires in 13m) " +
       "✓ openai-codex — OAuth (expires in 99h 9m) ✓ google-gemini-cli — OAuth " +

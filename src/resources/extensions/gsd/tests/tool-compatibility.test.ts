@@ -1,4 +1,4 @@
-// GSD-2 — Tool Compatibility + Model Router Tool Filtering Tests (ADR-005 Phases 2-3)
+// GWD-2 — Tool Compatibility + Model Router Tool Filtering Tests (ADR-005 Phases 2-3)
 import { describe, test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 
@@ -8,7 +8,7 @@ import {
   getAllToolCompatibility,
   registerMcpToolCompatibility,
   resetToolCompatibilityRegistry,
-} from "@gsd/pi-coding-agent";
+} from "@gwd/pi-coding-agent";
 
 import {
   isToolCompatibleWithProvider,
@@ -19,7 +19,7 @@ import {
 
 import {
   getProviderCapabilities,
-} from "@gsd/pi-ai";
+} from "@gwd/pi-ai";
 
 // ─── Tool Compatibility Registry ────────────────────────────────────────────
 

@@ -17,11 +17,11 @@ import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@gsd/pi-agent-core";
-import type { Message } from "@gsd/pi-ai";
-import { StringEnum } from "@gsd/pi-ai";
-import { type ExtensionAPI, getMarkdownTheme } from "@gsd/pi-coding-agent";
-import { Container, Markdown, Spacer, Text } from "@gsd/pi-tui";
+import type { AgentToolResult } from "@gwd/pi-agent-core";
+import type { Message } from "@gwd/pi-ai";
+import { StringEnum } from "@gwd/pi-ai";
+import { type ExtensionAPI, getMarkdownTheme } from "@gwd/pi-coding-agent";
+import { Container, Markdown, Spacer, Text } from "@gwd/pi-tui";
 import { Type } from "@sinclair/typebox";
 import { formatTokenCount } from "../shared/mod.js";
 import { getCurrentPhase } from "../shared/gsd-phase-state.js";
@@ -357,7 +357,7 @@ async function runSingleAgent(
 		};
 	}
 
-	// GSD phase guard: block agents that conflict with the active GSD phase
+	// GWD phase guard: block agents that conflict with the active GWD phase
 	if (agent.conflictsWith && agent.conflictsWith.length > 0) {
 		const activePhase = getCurrentPhase();
 		if (activePhase && agent.conflictsWith.includes(activePhase)) {
@@ -367,7 +367,7 @@ async function runSingleAgent(
 				task,
 				exitCode: 1,
 				messages: [],
-				stderr: `Agent "${agentName}" is blocked: it conflicts with the active GSD phase "${activePhase}". Use the built-in GSD workflow instead.`,
+				stderr: `Agent "${agentName}" is blocked: it conflicts with the active GWD phase "${activePhase}". Use the built-in GWD workflow instead.`,
 				usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, contextTokens: 0, turns: 0 },
 				step,
 			};
@@ -408,11 +408,11 @@ async function runSingleAgent(
 		let wasAborted = false;
 
 		const exitCode = await new Promise<number>((resolve) => {
-			const bundledPaths = (process.env.GSD_BUNDLED_EXTENSION_PATHS ?? "").split(path.delimiter).map(s => s.trim()).filter(Boolean);
+			const bundledPaths = (process.env.GWD_BUNDLED_EXTENSION_PATHS ?? "").split(path.delimiter).map(s => s.trim()).filter(Boolean);
 			const extensionArgs = bundledPaths.flatMap(p => ["--extension", p]);
 			const proc = spawn(
 				process.execPath,
-				[process.env.GSD_BIN_PATH!, ...extensionArgs, ...args],
+				[process.env.GWD_BIN_PATH!, ...extensionArgs, ...args],
 				{ cwd: cwd ?? defaultCwd, shell: false, stdio: ["ignore", "pipe", "pipe"] },
 			);
 			liveSubagentProcesses.add(proc);
@@ -536,9 +536,9 @@ async function runSingleAgentInCmuxSplit(
 			return runSingleAgent(defaultCwd, agents, agentName, task, cwd, step, signal, onUpdate, makeDetails, modelOverride);
 		}
 
-		const bundledPaths = (process.env.GSD_BUNDLED_EXTENSION_PATHS ?? "").split(path.delimiter).map((s) => s.trim()).filter(Boolean);
+		const bundledPaths = (process.env.GWD_BUNDLED_EXTENSION_PATHS ?? "").split(path.delimiter).map((s) => s.trim()).filter(Boolean);
 		const extensionArgs = bundledPaths.flatMap((p) => ["--extension", p]);
-		const processArgs = [process.env.GSD_BIN_PATH!, ...extensionArgs, ...buildSubagentProcessArgs(agent, task, tmpPromptPath, modelOverride)];
+		const processArgs = [process.env.GWD_BIN_PATH!, ...extensionArgs, ...buildSubagentProcessArgs(agent, task, tmpPromptPath, modelOverride)];
 		// Normalize all paths to forward slashes before embedding in bash strings.
 		// On Windows, backslashes are interpreted as escape characters by bash,
 		// mangling paths like C:\Users\user into C:Useruser (#1436).
@@ -648,7 +648,7 @@ export default function (pi: ExtensionAPI) {
 		handler: async (_args, ctx) => {
 			const discovery = discoverAgents(ctx.cwd, "both");
 			if (discovery.agents.length === 0) {
-				ctx.ui.notify("No agents found. Add .md files to ~/.gsd/agent/agents/ or .gsd/agents/", "warning");
+				ctx.ui.notify("No agents found. Add .md files to ~/.gwd/agent/agents/ or .gsd/agents/", "warning");
 				return;
 			}
 			const lines = discovery.agents.map(
@@ -665,7 +665,7 @@ export default function (pi: ExtensionAPI) {
 			"Delegate tasks to specialized subagents with isolated context windows.",
 			"Each subagent is a separate pi process with its own tools, model, and system prompt.",
 			"Modes: single ({ agent, task }), parallel ({ tasks: [{agent, task},...] }), chain ({ chain: [{agent, task},...] } with {previous} placeholder).",
-			"Agents are defined as .md files in ~/.gsd/agent/agents/ (user) or .gsd/agents/ (project).",
+			"Agents are defined as .md files in ~/.gwd/agent/agents/ (user) or .gsd/agents/ (project).",
 			"Use the /subagent command to list available agents and their descriptions.",
 			"Use chain mode to pipeline: scout finds context, planner designs, worker implements.",
 		].join(" "),

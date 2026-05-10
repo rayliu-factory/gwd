@@ -1,4 +1,4 @@
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import {
   getOrchestratorState,
@@ -129,7 +129,7 @@ export async function handleParallelCommand(trimmed: string, _ctx: ExtensionComm
     return true;
   }
 
-  emitParallelMessage(pi, `Unknown parallel subcommand "${subcommand}". Usage: /gsd parallel [start|status|stop|pause|resume|merge|watch]`);
+  emitParallelMessage(pi, `Unknown parallel subcommand "${subcommand}". Usage: /gwd parallel [start|status|stop|pause|resume|merge|watch]`);
   return true;
 }
 

@@ -13,7 +13,7 @@ const onboarding = await import("../../web/onboarding-service.ts");
 const bootRoute = await import("../../../web/app/api/boot/route.ts");
 const onboardingRoute = await import("../../../web/app/api/onboarding/route.ts");
 const commandRoute = await import("../../../web/app/api/session/command/route.ts");
-const { AuthStorage } = await import("@gsd/pi-coding-agent");
+const { AuthStorage } = await import("@gwd/pi-coding-agent");
 
 const ONBOARDING_ENV_KEYS = [
   "GITHUB_TOKEN",
@@ -292,9 +292,9 @@ function configureBridgeFixture(fixture: { projectCwd: string; sessionsDir: stri
 
   bridge.configureBridgeServiceForTests({
     env: {
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      GWD_WEB_PROJECT_CWD: fixture.projectCwd,
+      GWD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      GWD_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),

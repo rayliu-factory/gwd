@@ -1,4 +1,4 @@
-// GSD-2 — Tests for google-search deprecation stub (STUB-01, STUB-02)
+// GWD-2 — Tests for google-search deprecation stub (STUB-01, STUB-02)
 import test from "node:test";
 import assert from "node:assert/strict";
 
@@ -67,7 +67,7 @@ test("google-search stub: does not emit any notifications", async (_t) => {
 });
 
 test("google-search stub: is a complete no-op (no handlers, no tools, no notifications)", async (_t) => {
-  // STUB-01: the deprecation notice is suppressed until @gsd-extensions/google-search
+  // STUB-01: the deprecation notice is suppressed until @gwd-extensions/google-search
   // ships. The stub must call nothing on the ExtensionAPI.
   const mod = await import("../../google-search/index.ts");
   const stubFn = mod.default;

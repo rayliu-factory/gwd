@@ -8,11 +8,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gsd-build/gsd-2"
+    "url": "https://github.com/gwd-build/gwd-2"
   },
-  "homepage": "https://github.com/gsd-build/gsd-2/blob/main/vscode-extension/README.md",
+  "homepage": "https://github.com/gwd-build/gwd-2/blob/main/vscode-extension/README.md",
   "bugs": {
-    "url": "https://github.com/gsd-build/gsd-2/issues"
+    "url": "https://github.com/gwd-build/gwd-2/issues"
   },
   "keywords": [
     "ai",
@@ -418,6 +418,6 @@
     "typescript": "^5.7.0"
   },
   "dependencies": {
-    "@gsd-build/contracts": "file:../packages/contracts"
+    "@gwd-build/contracts": "file:../packages/contracts"
   }
 }

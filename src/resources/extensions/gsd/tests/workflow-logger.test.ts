@@ -1,4 +1,4 @@
-// GSD Extension — Workflow Logger Tests
+// GWD Extension — Workflow Logger Tests
 // Tests for the centralized warning/error accumulator.
 
 import { describe, test, beforeEach, afterEach } from "node:test";

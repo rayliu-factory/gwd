@@ -1,4 +1,4 @@
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { GSDNoProjectError, withCommandCwd } from "./context.js";
 import { handleAutoCommand } from "./handlers/auto.js";
@@ -51,5 +51,5 @@ export async function handleGSDCommand(
     return;
   }
 
-  ctx.ui.notify(`Unknown: /gsd ${trimmed}. Run /gsd help for available commands.`, "warning");
+  ctx.ui.notify(`Unknown: /gwd ${trimmed}. Run /gwd help for available commands.`, "warning");
 }

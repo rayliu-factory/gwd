@@ -2,12 +2,12 @@
  * MCP Server types — session lifecycle and orchestration.
  */
 
-import type { RpcClient } from '@gsd-build/rpc-client';
+import type { RpcClient } from '@gwd-build/rpc-client';
 import type {
   McpPendingBlocker as PendingBlocker,
   RpcCostUpdateEvent,
   SdkAgentEvent,
-} from '@gsd-build/contracts';
+} from '@gwd-build/contracts';
 
 // ---------------------------------------------------------------------------
 // Session Status
@@ -72,7 +72,7 @@ export interface CostAccumulator {
 // ---------------------------------------------------------------------------
 
 export interface ExecuteOptions {
-  /** Command to send after '/gsd auto' (default: none) */
+  /** Command to send after '/gwd auto' (default: none) */
   command?: string;
 
   /** Model ID override */
@@ -81,7 +81,7 @@ export interface ExecuteOptions {
   /** Run in bare mode (skip user config) */
   bare?: boolean;
 
-  /** Path to CLI binary (overrides GSD_CLI_PATH and which resolution) */
+  /** Path to CLI binary (overrides GWD_CLI_PATH and which resolution) */
   cliPath?: string;
 }
 

@@ -1,6 +1,6 @@
 ---
 name: spike-wrap-up
-description: Package findings from a completed spike into a durable, project-local skill that auto-loads on future similar work. Reads the most recent `.gsd/workflows/spikes/` directory, interviews the user briefly on what's reusable, then writes `.claude/skills/<name>/SKILL.md`. Use when asked to "wrap up the spike", "package this as a skill", "make this reusable", "turn findings into a skill", or at the end of the synthesize phase of `/gsd start spike`. Closes the parity gap with GSD v1's `/gsd-spike-wrap-up`.
+description: Package findings from a completed spike into a durable, project-local skill that auto-loads on future similar work. Reads the most recent `.gsd/workflows/spikes/` directory, interviews the user briefly on what's reusable, then writes `.claude/skills/<name>/SKILL.md`. Use when asked to "wrap up the spike", "package this as a skill", "make this reusable", "turn findings into a skill", or at the end of the synthesize phase of `/gwd start spike`. Closes the parity gap with GWD v1's `/gwd-spike-wrap-up`.
 ---
 
 <objective>
@@ -8,12 +8,12 @@ Convert the output of a research spike (`SCOPE.md`, `research/*.md`, `RECOMMENDA
 </objective>
 
 <context>
-GSD's spike workflow (`src/resources/extensions/gsd/workflow-templates/spike.md`) produces documents in `.gsd/workflows/spikes/<slug>/`. Those documents are useful once and then forgotten unless something packages them for reuse.
+GWD's spike workflow (`src/resources/extensions/gsd/workflow-templates/spike.md`) produces documents in `.gsd/workflows/spikes/<slug>/`. Those documents are useful once and then forgotten unless something packages them for reuse.
 
-GSD already watches `.claude/skills/` (and `.agents/skills/`) at both user and project levels — see `src/resources/extensions/gsd/skill-discovery.ts`. Any skill written there is picked up on the next session without further wiring. This skill is the bridge from "spike done" to "skill available."
+GWD already watches `.claude/skills/` (and `.agents/skills/`) at both user and project levels — see `src/resources/extensions/gsd/skill-discovery.ts`. Any skill written there is picked up on the next session without further wiring. This skill is the bridge from "spike done" to "skill available."
 
 Invocation points:
-- End of Phase 3 (synthesize) in `/gsd start spike` — prompt suggests running this skill
+- End of Phase 3 (synthesize) in `/gwd start spike` — prompt suggests running this skill
 - User has a spike directory and wants to harvest it
 - Pre-existing `RECOMMENDATION.md` that deserves a permanent home
 </context>

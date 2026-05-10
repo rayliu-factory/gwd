@@ -1,4 +1,4 @@
-// GSD-2 — Tests for step-mode completion messages in auto-post-unit
+// GWD-2 — Tests for step-mode completion messages in auto-post-unit
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -23,7 +23,7 @@ function makeState(overrides: Partial<GSDState>): GSDState {
 test("buildStepCompleteMessage: milestone complete surfaces review guidance", () => {
   const msg = buildStepCompleteMessage(makeState({ phase: "complete" }));
   assert.match(msg, /milestone finished/);
-  assert.match(msg, /\/gsd status/);
+  assert.match(msg, /\/gwd status/);
   assert.doesNotMatch(msg, /Next:/);
 });
 
@@ -36,7 +36,7 @@ test("buildStepCompleteMessage: mid-flight step includes next unit label and /cl
   const msg = buildStepCompleteMessage(state);
   assert.match(msg, /Next: Execute T03: Wire notify/);
   assert.match(msg, /\/clear/);
-  assert.match(msg, /\/gsd to continue/);
+  assert.match(msg, /\/gwd to continue/);
 });
 
 test("buildStepCompleteMessage: unknown phase falls back to generic continue label", () => {
@@ -47,7 +47,7 @@ test("buildStepCompleteMessage: unknown phase falls back to generic continue lab
   assert.match(msg, /\/clear/);
 });
 
-test("STEP_COMPLETE_FALLBACK_MESSAGE: used when deriveState throws, still points users at /clear + /gsd", () => {
+test("STEP_COMPLETE_FALLBACK_MESSAGE: used when deriveState throws, still points users at /clear + /gwd", () => {
   assert.match(STEP_COMPLETE_FALLBACK_MESSAGE, /\/clear/);
-  assert.match(STEP_COMPLETE_FALLBACK_MESSAGE, /\/gsd/);
+  assert.match(STEP_COMPLETE_FALLBACK_MESSAGE, /\/gwd/);
 });

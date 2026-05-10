@@ -1,5 +1,5 @@
-import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@gsd/pi-coding-agent";
-import type { Model } from "@gsd/pi-ai";
+import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@gwd/pi-coding-agent";
+import type { Model } from "@gwd/pi-ai";
 import type { GSDState } from "../../types.js";
 
 import { computeProgressScore, formatProgressLine } from "../../progress-score.js";
@@ -14,130 +14,130 @@ import { formattedShortcutPair } from "../../shortcut-defs.js";
 
 export function showHelp(ctx: ExtensionCommandContext, args = ""): void {
   const summaryLines = [
-    "GSD — Get Shit Done\n",
+    "GWD — Get Work Done\n",
     "QUICK START",
-    "  /gsd start <tpl>   Start a workflow template",
-    "  /gsd               Run next unit (same as /gsd next)",
-    "  /gsd auto          Run all queued units continuously",
-    "  /gsd pause         Pause auto-mode",
-    "  /gsd stop          Stop auto-mode gracefully",
+    "  /gwd start <tpl>   Start a workflow template",
+    "  /gwd               Run next unit (same as /gwd next)",
+    "  /gwd auto          Run all queued units continuously",
+    "  /gwd pause         Pause auto-mode",
+    "  /gwd stop          Stop auto-mode gracefully",
     "",
     "VISIBILITY",
-    `  /gsd status         Dashboard  (${formattedShortcutPair("dashboard")})`,
-    `  /gsd parallel watch Parallel monitor  (${formattedShortcutPair("parallel")})`,
-    `  /gsd notifications  Notification history  (${formattedShortcutPair("notifications")})`,
-    "  /gsd visualize      Interactive 10-tab TUI",
-    "  /gsd queue          Show queued/dispatched units",
+    `  /gwd status         Dashboard  (${formattedShortcutPair("dashboard")})`,
+    `  /gwd parallel watch Parallel monitor  (${formattedShortcutPair("parallel")})`,
+    `  /gwd notifications  Notification history  (${formattedShortcutPair("notifications")})`,
+    "  /gwd visualize      Interactive 10-tab TUI",
+    "  /gwd queue          Show queued/dispatched units",
     "",
     "COURSE CORRECTION",
-    "  /gsd steer <desc>   Apply user override to active work",
-    "  /gsd capture <text> Quick-capture a thought to CAPTURES.md",
-    "  /gsd triage         Classify and route pending captures",
-    "  /gsd undo           Revert last completed unit  [--force]",
-    "  /gsd rethink        Conversational project reorganization",
+    "  /gwd steer <desc>   Apply user override to active work",
+    "  /gwd capture <text> Quick-capture a thought to CAPTURES.md",
+    "  /gwd triage         Classify and route pending captures",
+    "  /gwd undo           Revert last completed unit  [--force]",
+    "  /gwd rethink        Conversational project reorganization",
     "",
     "OBSERVABILITY",
-    "  /gsd logs           Browse activity and debug logs",
-    "  /gsd debug          Create/list/continue persistent debug sessions",
+    "  /gwd logs           Browse activity and debug logs",
+    "  /gwd debug          Create/list/continue persistent debug sessions",
     "",
     "SETUP",
-    "  /gsd onboarding     Re-run setup wizard  [--resume|--reset|--step <name>]",
-    "  /gsd setup          Configuration hub  [llm|model|search|remote|keys|prefs|onboarding]",
-    "  /gsd init           Project init wizard",
-    "  /gsd model          Switch active session model",
-    "  /gsd prefs          Manage preferences (alias for /gsd setup prefs)",
-    "  /gsd keys           API key manager (LLM + tool keys)",
-    "  /gsd doctor         Diagnose and repair .gsd/ state",
+    "  /gwd onboarding     Re-run setup wizard  [--resume|--reset|--step <name>]",
+    "  /gwd setup          Configuration hub  [llm|model|search|remote|keys|prefs|onboarding]",
+    "  /gwd init           Project init wizard",
+    "  /gwd model          Switch active session model",
+    "  /gwd prefs          Manage preferences (alias for /gwd setup prefs)",
+    "  /gwd keys           API key manager (LLM + tool keys)",
+    "  /gwd doctor         Diagnose and repair .gsd/ state",
     "",
-    "Use /gsd help full for the complete command reference.",
+    "Use /gwd help full for the complete command reference.",
   ];
 
   const fullLines = [
-    "GSD — Get Shit Done\n",
+    "GWD — Get Work Done\n",
     "WORKFLOW",
-    "  /gsd start <tpl>   Start a workflow template (bugfix, spike, feature, hotfix, etc.)",
-    "  /gsd templates     List available workflow templates  [info <name>]",
-    "  /gsd               Run next unit in step mode (same as /gsd next)",
-    "  /gsd next           Execute next task, then pause  [--dry-run] [--verbose]",
-    "  /gsd auto           Run all queued units continuously  [--verbose]",
-    "  /gsd stop           Stop auto-mode gracefully",
-    "  /gsd pause          Pause auto-mode (preserves state, /gsd auto to resume)",
-    "  /gsd discuss        Start guided milestone/slice discussion",
-    "  /gsd new-milestone  Create milestone from headless context (used by gsd headless)",
-    "  /gsd new-project    Bootstrap a new project (use --deep for staged project-level discovery)",
-    "  /gsd quick          Execute a quick task without full planning overhead",
-    "  /gsd dispatch       Dispatch a specific phase directly  [research|plan|execute|complete|uat|replan]",
-    "  /gsd parallel       Parallel milestone orchestration  [start|status|stop|pause|resume|merge|watch]",
-    "  /gsd workflow       Custom workflow lifecycle  [new|run|list|validate|pause|resume]",
+    "  /gwd start <tpl>   Start a workflow template (bugfix, spike, feature, hotfix, etc.)",
+    "  /gwd templates     List available workflow templates  [info <name>]",
+    "  /gwd               Run next unit in step mode (same as /gwd next)",
+    "  /gwd next           Execute next task, then pause  [--dry-run] [--verbose]",
+    "  /gwd auto           Run all queued units continuously  [--verbose]",
+    "  /gwd stop           Stop auto-mode gracefully",
+    "  /gwd pause          Pause auto-mode (preserves state, /gwd auto to resume)",
+    "  /gwd discuss        Start guided milestone/slice discussion",
+    "  /gwd new-milestone  Create milestone from headless context (used by gwd headless)",
+    "  /gwd new-project    Bootstrap a new project (use --deep for staged project-level discovery)",
+    "  /gwd quick          Execute a quick task without full planning overhead",
+    "  /gwd dispatch       Dispatch a specific phase directly  [research|plan|execute|complete|uat|replan]",
+    "  /gwd parallel       Parallel milestone orchestration  [start|status|stop|pause|resume|merge|watch]",
+    "  /gwd workflow       Custom workflow lifecycle  [new|run|list|validate|pause|resume]",
     "",
     "VISIBILITY",
-    `  /gsd status         Show progress dashboard  (${formattedShortcutPair("dashboard")})`,
-    `  /gsd parallel watch Open parallel worker monitor  (${formattedShortcutPair("parallel")})`,
-    "  /gsd widget         Cycle status widget  [full|small|min|off]",
-    "  /gsd visualize      Interactive 10-tab TUI (progress, timeline, deps, metrics, health, agent, changes, knowledge, captures, export)",
-    "  /gsd queue          Show queued/dispatched units and execution order",
-    "  /gsd history        View execution history  [--cost] [--phase] [--model] [N]",
-    "  /gsd changelog      Show categorized release notes  [version]",
-    `  /gsd notifications  View persistent notification history  [clear|tail|filter]  (${formattedShortcutPair("notifications")})`,
-    "  /gsd logs           Browse activity logs, debug logs, and metrics  [debug|tail|clear]",
-    "  /gsd debug          Create/list/continue persistent debug sessions",
+    `  /gwd status         Show progress dashboard  (${formattedShortcutPair("dashboard")})`,
+    `  /gwd parallel watch Open parallel worker monitor  (${formattedShortcutPair("parallel")})`,
+    "  /gwd widget         Cycle status widget  [full|small|min|off]",
+    "  /gwd visualize      Interactive 10-tab TUI (progress, timeline, deps, metrics, health, agent, changes, knowledge, captures, export)",
+    "  /gwd queue          Show queued/dispatched units and execution order",
+    "  /gwd history        View execution history  [--cost] [--phase] [--model] [N]",
+    "  /gwd changelog      Show categorized release notes  [version]",
+    `  /gwd notifications  View persistent notification history  [clear|tail|filter]  (${formattedShortcutPair("notifications")})`,
+    "  /gwd logs           Browse activity logs, debug logs, and metrics  [debug|tail|clear]",
+    "  /gwd debug          Create/list/continue persistent debug sessions",
     "",
     "COURSE CORRECTION",
-    "  /gsd steer <desc>   Apply user override to active work",
-    "  /gsd capture <text> Quick-capture a thought to CAPTURES.md",
-    "  /gsd triage         Classify and route pending captures",
-    "  /gsd skip <unit>    Prevent a unit from auto-mode dispatch",
-    "  /gsd undo           Revert last completed unit  [--force]",
-    "  /gsd undo-task      Reset a specific task's completion state  [DB + markdown]",
-    "  /gsd reset-slice    Reset a slice and all its tasks  [DB + markdown]",
-    "  /gsd rate           Rate last unit's model tier  [over|ok|under]",
-    "  /gsd rethink        Conversational project reorganization — reorder, park, discard, add milestones",
-    "  /gsd park [id]      Park a milestone — skip without deleting  [reason]",
-    "  /gsd unpark [id]    Reactivate a parked milestone",
+    "  /gwd steer <desc>   Apply user override to active work",
+    "  /gwd capture <text> Quick-capture a thought to CAPTURES.md",
+    "  /gwd triage         Classify and route pending captures",
+    "  /gwd skip <unit>    Prevent a unit from auto-mode dispatch",
+    "  /gwd undo           Revert last completed unit  [--force]",
+    "  /gwd undo-task      Reset a specific task's completion state  [DB + markdown]",
+    "  /gwd reset-slice    Reset a slice and all its tasks  [DB + markdown]",
+    "  /gwd rate           Rate last unit's model tier  [over|ok|under]",
+    "  /gwd rethink        Conversational project reorganization — reorder, park, discard, add milestones",
+    "  /gwd park [id]      Park a milestone — skip without deleting  [reason]",
+    "  /gwd unpark [id]    Reactivate a parked milestone",
     "",
     "PROJECT KNOWLEDGE",
-    "  /gsd knowledge <type> <text>   Add rule, pattern, or lesson to KNOWLEDGE.md",
-    "  /gsd codebase [generate|update|stats]   Manage the CODEBASE.md cache used in prompt context",
+    "  /gwd knowledge <type> <text>   Add rule, pattern, or lesson to KNOWLEDGE.md",
+    "  /gwd codebase [generate|update|stats]   Manage the CODEBASE.md cache used in prompt context",
     "",
     "SHIPPING & BACKLOG",
-    "  /gsd ship           Create a PR from milestone artifacts  [--dry-run|--draft|--base|--force]",
-    "  /gsd do <text>      Route freeform text to the right GSD command",
-    "  /gsd session-report Show session cost, tokens, and work summary  [--json|--save]",
-    "  /gsd backlog        Manage backlog items  [add|promote|remove|list]",
-    "  /gsd pr-branch      Create a clean PR branch filtering .gsd/ commits  [--dry-run|--name]",
-    "  /gsd add-tests      Generate tests for completed slices",
-    "  /gsd eval-review <sliceId>  Audit a slice's AI evaluation strategy  [--force|--show]",
-    "  /gsd scan           Rapid codebase assessment  [--focus tech|arch|quality|concerns|tech+arch]",
+    "  /gwd ship           Create a PR from milestone artifacts  [--dry-run|--draft|--base|--force]",
+    "  /gwd do <text>      Route freeform text to the right GWD command",
+    "  /gwd session-report Show session cost, tokens, and work summary  [--json|--save]",
+    "  /gwd backlog        Manage backlog items  [add|promote|remove|list]",
+    "  /gwd pr-branch      Create a clean PR branch filtering .gsd/ commits  [--dry-run|--name]",
+    "  /gwd add-tests      Generate tests for completed slices",
+    "  /gwd eval-review <sliceId>  Audit a slice's AI evaluation strategy  [--force|--show]",
+    "  /gwd scan           Rapid codebase assessment  [--focus tech|arch|quality|concerns|tech+arch]",
     "",
     "SETUP & CONFIGURATION",
-    "  /gsd onboarding     Re-run setup wizard  [--resume|--reset|--step <name>]",
-    "  /gsd setup          Configuration hub  [llm|model|search|remote|keys|prefs|onboarding]",
-    "  /gsd init           Project init wizard — detect, configure, bootstrap .gsd/",
-    "  /gsd model          Switch active session model  [provider/model|model-id]",
-    "  /gsd mode           Set workflow mode (solo/team)  [global|project]",
-    "  /gsd prefs          Manage preferences  [global|project|status|wizard|setup|import-claude]  (alias for /gsd setup prefs)",
-    "  /gsd cmux           Manage cmux integration  [status|on|off|notifications|sidebar|splits|browser]",
-    "  /gsd keys           API key manager (LLM + tool keys)  [list|add|remove|test|rotate|doctor]",
-    "  /gsd config         (deprecated) Set tool API keys — use /gsd keys instead",
-    "  /gsd show-config    Show effective configuration (models, routing, toggles)",
-    "  /gsd hooks          Show post-unit hook configuration",
-    "  /gsd run-hook       Manually trigger a specific hook",
-    "  /gsd skill-health   Skill lifecycle dashboard",
-    "  /gsd extensions     Manage extensions  [list|enable|disable|info]",
-    "  /gsd fast           Toggle OpenAI service tier  [on|off|flex|status]",
-    "  /gsd mcp            MCP server status and connectivity  [status|check <server>|init [dir]]",
+    "  /gwd onboarding     Re-run setup wizard  [--resume|--reset|--step <name>]",
+    "  /gwd setup          Configuration hub  [llm|model|search|remote|keys|prefs|onboarding]",
+    "  /gwd init           Project init wizard — detect, configure, bootstrap .gsd/",
+    "  /gwd model          Switch active session model  [provider/model|model-id]",
+    "  /gwd mode           Set workflow mode (solo/team)  [global|project]",
+    "  /gwd prefs          Manage preferences  [global|project|status|wizard|setup|import-claude]  (alias for /gwd setup prefs)",
+    "  /gwd cmux           Manage cmux integration  [status|on|off|notifications|sidebar|splits|browser]",
+    "  /gwd keys           API key manager (LLM + tool keys)  [list|add|remove|test|rotate|doctor]",
+    "  /gwd config         (deprecated) Set tool API keys — use /gwd keys instead",
+    "  /gwd show-config    Show effective configuration (models, routing, toggles)",
+    "  /gwd hooks          Show post-unit hook configuration",
+    "  /gwd run-hook       Manually trigger a specific hook",
+    "  /gwd skill-health   Skill lifecycle dashboard",
+    "  /gwd extensions     Manage extensions  [list|enable|disable|info]",
+    "  /gwd fast           Toggle OpenAI service tier  [on|off|flex|status]",
+    "  /gwd mcp            MCP server status and connectivity  [status|check <server>|init [dir]]",
     "",
     "MAINTENANCE",
-    "  /gsd doctor         Diagnose and repair .gsd/ state  [audit|fix|heal] [scope]",
-    "  /gsd forensics      Examine execution logs and post-mortem analysis",
-    "  /gsd export         Export milestone/slice results  [--json|--markdown|--html] [--all]",
-    "  /gsd cleanup        Remove merged branches or snapshots  [branches|snapshots]",
-    "  /gsd worktree       Manage worktrees from the TUI  [list|merge|clean|remove]",
-    "  /gsd migrate        Migrate .planning/ (v1) to .gsd/ (v2) format",
-    "  /gsd remote         Control remote auto-mode  [slack|discord|status|disconnect]",
-    "  /gsd inspect        Show SQLite DB diagnostics (schema, row counts, recent entries)",
-    "  /gsd update         Update GSD to the latest version via npm",
-    "  /gsd language       Set or clear the global response language  [off|clear|<language>]",
+    "  /gwd doctor         Diagnose and repair .gsd/ state  [audit|fix|heal] [scope]",
+    "  /gwd forensics      Examine execution logs and post-mortem analysis",
+    "  /gwd export         Export milestone/slice results  [--json|--markdown|--html] [--all]",
+    "  /gwd cleanup        Remove merged branches or snapshots  [branches|snapshots]",
+    "  /gwd worktree       Manage worktrees from the TUI  [list|merge|clean|remove]",
+    "  /gwd migrate        Migrate .planning/ (v1) to .gsd/ (v2) format",
+    "  /gwd remote         Control remote auto-mode  [slack|discord|status|disconnect]",
+    "  /gwd inspect        Show SQLite DB diagnostics (schema, row counts, recent entries)",
+    "  /gwd update         Update GWD to the latest version via npm",
+    "  /gwd language       Set or clear the global response language  [off|clear|<language>]",
   ];
   const full = ["full", "--full", "all"].includes(args.trim().toLowerCase());
   ctx.ui.notify((full ? fullLines : summaryLines).join("\n"), "info");
@@ -151,7 +151,7 @@ export async function handleStatus(ctx: ExtensionCommandContext): Promise<void> 
   const state = await deriveState(basePath);
 
   if (state.registry.length === 0) {
-    ctx.ui.notify("No GSD milestones found. Run /gsd to start.", "info");
+    ctx.ui.notify("No GWD milestones found. Run /gwd to start.", "info");
     return;
   }
 
@@ -199,7 +199,7 @@ export async function handleVisualize(ctx: ExtensionCommandContext): Promise<voi
   );
 
   if (result === undefined) {
-    ctx.ui.notify("Visualizer requires an interactive terminal. Use /gsd status for a text-based overview.", "warning");
+    ctx.ui.notify("Visualizer requires an interactive terminal. Use /gwd status for a text-based overview.", "warning");
   }
 }
 
@@ -207,8 +207,8 @@ export async function handleSetup(args: string, ctx: ExtensionCommandContext, pi
   const { detectProjectState, hasGlobalSetup } = await import("../../detection.js");
   const { isOnboardingComplete, readOnboardingRecord } = await import("../../onboarding-state.js");
 
-  // Sub-route dispatch — keep redirects but route the canonical work to /gsd
-  // onboarding (single source for wizard steps) and /gsd keys (single source
+  // Sub-route dispatch — keep redirects but route the canonical work to /gwd
+  // onboarding (single source for wizard steps) and /gwd keys (single source
   // for credentials).
   if (args === "onboarding" || args === "wizard") {
     const { handleOnboarding } = await import("./onboarding.js");
@@ -235,7 +235,7 @@ export async function handleSetup(args: string, ctx: ExtensionCommandContext, pi
     return;
   }
   if (args === "keys") {
-    ctx.ui.notify("Tip: /gsd keys is the canonical command for API key management.", "info");
+    ctx.ui.notify("Tip: /gwd keys is the canonical command for API key management.", "info");
     const { handleKeys } = await import("../../key-manager.js");
     await handleKeys("", ctx);
     return;
@@ -246,17 +246,17 @@ export async function handleSetup(args: string, ctx: ExtensionCommandContext, pi
     return;
   }
 
-  // Bare /gsd setup — render the hub: status + actions
+  // Bare /gwd setup — render the hub: status + actions
   const globalConfigured = hasGlobalSetup();
   const detection = detectProjectState(projectRoot());
   const onboardingDone = isOnboardingComplete();
   const record = readOnboardingRecord();
 
-  const statusLines: string[] = ["GSD Setup\n"];
+  const statusLines: string[] = ["GWD Setup\n"];
   statusLines.push(
     onboardingDone
       ? `  Onboarding:         ✓ complete${record.completedAt ? ` (${record.completedAt.slice(0, 10)})` : ""}`
-      : `  Onboarding:         ○ not complete  —  /gsd onboarding to start`,
+      : `  Onboarding:         ○ not complete  —  /gwd onboarding to start`,
   );
   statusLines.push(`  Global preferences: ${globalConfigured ? "configured" : "not set"}`);
   statusLines.push(`  Project state:      ${detection.state}`);
@@ -267,14 +267,14 @@ export async function handleSetup(args: string, ctx: ExtensionCommandContext, pi
   ctx.ui.notify(statusLines.join("\n"), "info");
   ctx.ui.notify(
     "Configuration hub:\n" +
-    "  /gsd setup llm        — LLM provider & auth\n" +
-    "  /gsd setup model      — Default model picker\n" +
-    "  /gsd setup search     — Web search provider\n" +
-    "  /gsd setup remote     — Remote questions (Discord/Slack/Telegram)\n" +
-    "  /gsd setup keys       — API keys (alias for /gsd keys)\n" +
-    "  /gsd setup prefs      — Global preferences (alias for /gsd prefs)\n" +
-    "  /gsd setup onboarding — Full wizard (alias for /gsd onboarding)\n\n" +
-    "Tip: /gsd onboarding --resume to continue an incomplete setup.",
+    "  /gwd setup llm        — LLM provider & auth\n" +
+    "  /gwd setup model      — Default model picker\n" +
+    "  /gwd setup search     — Web search provider\n" +
+    "  /gwd setup remote     — Remote questions (Discord/Slack/Telegram)\n" +
+    "  /gwd setup keys       — API keys (alias for /gwd keys)\n" +
+    "  /gwd setup prefs      — Global preferences (alias for /gwd prefs)\n" +
+    "  /gwd setup onboarding — Full wizard (alias for /gwd onboarding)\n\n" +
+    "Tip: /gwd onboarding --resume to continue an incomplete setup.",
     "info",
   );
 }
@@ -378,7 +378,7 @@ async function handleModel(trimmedArgs: string, ctx: ExtensionCommandContext, pi
   if (!trimmed) {
     if (!ctx.hasUI) {
       const current = ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : "(none)";
-      ctx.ui.notify(`Current model: ${current}\nUsage: /gsd model <provider/model|model-id>`, "info");
+      ctx.ui.notify(`Current model: ${current}\nUsage: /gwd model <provider/model|model-id>`, "info");
       return;
     }
 
@@ -388,7 +388,7 @@ async function handleModel(trimmedArgs: string, ctx: ExtensionCommandContext, pi
   }
 
   if (!targetModel) {
-    ctx.ui.notify(`Model "${trimmed}" not found. Use /gsd model with an exact provider/model or a unique model ID.`, "warning");
+    ctx.ui.notify(`Model "${trimmed}" not found. Use /gwd model with an exact provider/model or a unique model ID.`, "warning");
     return;
   }
 
@@ -398,9 +398,9 @@ async function handleModel(trimmedArgs: string, ctx: ExtensionCommandContext, pi
     return;
   }
 
-  // /gsd model is an explicit per-session pin for GSD dispatches.
+  // /gwd model is an explicit per-session pin for GWD dispatches.
   // This is captured at auto bootstrap so it survives internal session
-  // switches during /gsd auto and /gsd next runs.
+  // switches during /gwd auto and /gwd next runs.
   const sessionId = ctx.sessionManager?.getSessionId?.();
   if (sessionId) {
     setSessionModelOverride(sessionId, {
@@ -496,7 +496,7 @@ export async function handleCoreCommand(
 }
 
 export function formatTextStatus(state: GSDState): string {
-  const lines: string[] = ["GSD Status\n"];
+  const lines: string[] = ["GWD Status\n"];
   lines.push(formatProgressLine(computeProgressScore()));
   lines.push("");
   lines.push(`Phase: ${state.phase}`);

@@ -74,7 +74,7 @@ reviewers: 3
 Call `gsd_validate_milestone` with the camelCase fields `milestoneId`, `verdict`, `remediationRound`, `successCriteriaChecklist`, `sliceDeliveryAudit`, `crossSliceIntegration`, `requirementCoverage`, `verdictRationale`, and `remediationPlan` when needed. If you include verification-class analysis, pass it in `verificationClasses`.
 Extract the `Verification Classes` subsection from Reviewer C and pass it verbatim in `verificationClasses` so the persisted validation output uses the canonical class names `Contract`, `Integration`, `Operational`, and `UAT`.
 
-**DB access safety:** Do NOT query `.gsd/gsd.db` directly via `sqlite3` or `node -e require('better-sqlite3')` - the engine owns the WAL connection. Use `gsd_milestone_status` for milestone and slice state. Data is already inlined or available via `gsd_*` tools. Direct DB access risks WAL corruption and bypasses validation.
+**DB access safety:** Do NOT query `.gsd/gwd.db` directly via `sqlite3` or `node -e require('better-sqlite3')` - the engine owns the WAL connection. Use `gsd_milestone_status` for milestone and slice state. Data is already inlined or available via `gsd_*` tools. Direct DB access risks WAL corruption and bypasses validation.
 
 If verdict is `needs-remediation`:
 - Use `gsd_reassess_roadmap` to add remediation slices instead of editing `{{roadmapPath}}` manually.

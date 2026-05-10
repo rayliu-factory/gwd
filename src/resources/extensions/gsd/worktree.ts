@@ -1,5 +1,5 @@
 /**
- * GSD Worktree Utilities
+ * GWD Worktree Utilities
  *
  * Pure utility functions for worktree name detection, legacy branch name
  * parsing, and integration branch capture.
@@ -69,7 +69,7 @@ export function setActiveMilestoneId(basePath: string, milestoneId: string | nul
  * Called once when auto-mode starts — captures where slice branches should
  * merge back to. No-op if the same branch is already recorded. Updates the
  * record when the user starts from a different branch (#300). Always a no-op
- * if on a GSD slice branch.
+ * if on a GWD slice branch.
  */
 export function captureIntegrationBranch(basePath: string, milestoneId: string): void {
   // In a worktree, the base branch is implicit (worktree/<name>).
@@ -84,7 +84,7 @@ export function captureIntegrationBranch(basePath: string, milestoneId: string):
 
 /**
  * Detect the active worktree name from the current working directory.
- * Returns null if not inside a GSD worktree (.gsd/worktrees/<name>/).
+ * Returns null if not inside a GWD worktree (.gsd/worktrees/<name>/).
  */
 export function detectWorktreeName(basePath: string): string | null {
   const normalizedPath = basePath.replaceAll("\\", "/");
@@ -100,11 +100,11 @@ export function detectWorktreeName(basePath: string): string | null {
  * If the path contains a worktrees segment, returns the portion before
  * `/.gsd/`. Otherwise returns the input unchanged.
  *
- * When the worker was spawned with GSD_PROJECT_ROOT set, use that directly —
+ * When the worker was spawned with GWD_PROJECT_ROOT set, use that directly —
  * the coordinator already knows the real project root unambiguously.
  *
- * When `/.gsd/` in the resolved path is actually the user-level `~/.gsd/`
- * (common when `.gsd` is a symlink into `~/.gsd/projects/<hash>`), the
+ * When `/.gsd/` in the resolved path is actually the user-level `~/.gwd/`
+ * (common when `.gsd` is a symlink into `~/.gwd/projects/<hash>`), the
  * string-slice heuristic would return `~` — which is catastrophically wrong.
  * In that case, fall back to reading the worktree's `.git` file, which
  * contains a `gitdir:` pointer to the real project's `.git/worktrees/<name>`,
@@ -159,7 +159,7 @@ export function parseSliceBranch(branchName: string): {
 // ─── Git-Mutation Functions (delegate to GitServiceImpl) ───────────────────
 
 /**
- * Get the "main" branch for GSD slice operations.
+ * Get the "main" branch for GWD slice operations.
  *
  * In the main working tree: returns main/master (the repo's default branch).
  * In a worktree: returns worktree/<name> — the worktree's own base branch.

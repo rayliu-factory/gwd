@@ -2,7 +2,7 @@
  * Unit tests for KNOWLEDGE.md integration.
  *
  * Tests:
- * - KNOWLEDGE is registered in GSD_ROOT_FILES
+ * - KNOWLEDGE is registered in GWD_ROOT_FILES
  * - resolveGsdRootFile resolves KNOWLEDGE paths correctly
  * - inlineGsdRootFile works with the KNOWLEDGE key
  * - before_agent_start hook includes/omits knowledge block appropriately
@@ -14,16 +14,16 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { GSD_ROOT_FILES, resolveGsdRootFile } from '../paths.ts';
+import { GWD_ROOT_FILES, resolveGsdRootFile } from '../paths.ts';
 import { inlineGsdRootFile, inlineKnowledgeBudgeted } from '../auto-prompts.ts';
 import { appendKnowledge } from '../files.ts';
 import { loadKnowledgeBlock } from '../bootstrap/system-context.ts';
 
-// ─── KNOWLEDGE is registered in GSD_ROOT_FILES ─────────────────────────────
+// ─── KNOWLEDGE is registered in GWD_ROOT_FILES ─────────────────────────────
 
-test('knowledge: KNOWLEDGE key exists in GSD_ROOT_FILES', () => {
-  assert.ok('KNOWLEDGE' in GSD_ROOT_FILES, 'GSD_ROOT_FILES should have KNOWLEDGE key');
-  assert.strictEqual(GSD_ROOT_FILES.KNOWLEDGE, 'KNOWLEDGE.md');
+test('knowledge: KNOWLEDGE key exists in GWD_ROOT_FILES', () => {
+  assert.ok('KNOWLEDGE' in GWD_ROOT_FILES, 'GWD_ROOT_FILES should have KNOWLEDGE key');
+  assert.strictEqual(GWD_ROOT_FILES.KNOWLEDGE, 'KNOWLEDGE.md');
 });
 
 // ─── resolveGsdRootFile resolves KNOWLEDGE.md ───────────────────────────────
@@ -257,16 +257,16 @@ test('loadKnowledgeBlock: caps repeated system prompt knowledge by default with 
   mkdirSync(join(gsdHome, 'agent'), { recursive: true });
   writeFileSync(join(cwd, '.gsd', 'KNOWLEDGE.md'), `K001: ${'large project knowledge '.repeat(1200)}`);
 
-  const original = process.env.PI_GSD_KNOWLEDGE_MAX_CHARS;
-  delete process.env.PI_GSD_KNOWLEDGE_MAX_CHARS;
+  const original = process.env.PI_GWD_KNOWLEDGE_MAX_CHARS;
+  delete process.env.PI_GWD_KNOWLEDGE_MAX_CHARS;
   try {
     const result = loadKnowledgeBlock(gsdHome, cwd);
     assert.ok(result.block.includes('Source: `'));
     assert.ok(result.block.length <= 12_500, `knowledge block ${result.block.length} should stay near default cap`);
     assert.ok(result.block.includes('[Knowledge Truncated]'));
   } finally {
-    if (original === undefined) delete process.env.PI_GSD_KNOWLEDGE_MAX_CHARS;
-    else process.env.PI_GSD_KNOWLEDGE_MAX_CHARS = original;
+    if (original === undefined) delete process.env.PI_GWD_KNOWLEDGE_MAX_CHARS;
+    else process.env.PI_GWD_KNOWLEDGE_MAX_CHARS = original;
     rmSync(tmp, { recursive: true, force: true });
   }
 });

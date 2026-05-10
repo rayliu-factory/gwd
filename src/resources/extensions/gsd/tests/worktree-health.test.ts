@@ -1,7 +1,7 @@
 /**
  * worktree-health.test.ts — Unit tests for worktree health status computation.
  *
- * Creates real temp git repos with GSD worktrees in various states and verifies
+ * Creates real temp git repos with GWD worktrees in various states and verifies
  * that getWorktreeHealth and formatWorktreeStatusLine return correct results.
  */
 

@@ -11,70 +11,70 @@ import {
 } from '../extension-validator.ts'
 
 describe('checkInstallDiscriminator', () => {
-  test('returns null for valid gsd.extension === true', () => {
-    const result = checkInstallDiscriminator({ gsd: { extension: true }, pi: { extensions: ['./index.ts'] } })
+  test('returns null for valid gwd.extension === true', () => {
+    const result = checkInstallDiscriminator({ gwd: { extension: true }, pi: { extensions: ['./index.ts'] } })
     assert.equal(result, null)
   })
 
-  test('returns error when gsd section is missing', () => {
+  test('returns error when gwd section is missing', () => {
     const result = checkInstallDiscriminator({ pi: { extensions: ['./index.ts'] } })
     assert.ok(result !== null)
-    assert.equal(result.code, 'MISSING_GSD_MARKER')
-    assert.equal(result.field, 'gsd.extension')
+    assert.equal(result.code, 'MISSING_GWD_MARKER')
+    assert.equal(result.field, 'gwd.extension')
   })
 
-  test('returns error when gsd.extension is number 1 (not boolean true)', () => {
-    const result = checkInstallDiscriminator({ gsd: { extension: 1 } })
+  test('returns error when gwd.extension is number 1 (not boolean true)', () => {
+    const result = checkInstallDiscriminator({ gwd: { extension: 1 } })
     assert.ok(result !== null)
-    assert.equal(result.code, 'MISSING_GSD_MARKER', 'strict === true check must reject numeric 1')
+    assert.equal(result.code, 'MISSING_GWD_MARKER', 'strict === true check must reject numeric 1')
   })
 
-  test("returns error when gsd.extension is string 'true'", () => {
-    const result = checkInstallDiscriminator({ gsd: { extension: 'true' } })
+  test("returns error when gwd.extension is string 'true'", () => {
+    const result = checkInstallDiscriminator({ gwd: { extension: 'true' } })
     assert.ok(result !== null)
-    assert.equal(result.code, 'MISSING_GSD_MARKER', "strict === true check must reject string 'true'")
+    assert.equal(result.code, 'MISSING_GWD_MARKER', "strict === true check must reject string 'true'")
   })
 
   test('returns error for null input', () => {
     const result = checkInstallDiscriminator(null)
     assert.ok(result !== null)
-    assert.equal(result.code, 'MISSING_GSD_MARKER')
+    assert.equal(result.code, 'MISSING_GWD_MARKER')
   })
 
-  test('returns error when gsd.extension is undefined', () => {
-    const result = checkInstallDiscriminator({ gsd: {} })
+  test('returns error when gwd.extension is undefined', () => {
+    const result = checkInstallDiscriminator({ gwd: {} })
     assert.ok(result !== null)
-    assert.equal(result.code, 'MISSING_GSD_MARKER')
-    assert.equal(result.field, 'gsd.extension')
+    assert.equal(result.code, 'MISSING_GWD_MARKER')
+    assert.equal(result.field, 'gwd.extension')
   })
 
-  test('returns error when gsd is an array (not object)', () => {
-    const result = checkInstallDiscriminator({ gsd: ['extension'] })
+  test('returns error when gwd is an array (not object)', () => {
+    const result = checkInstallDiscriminator({ gwd: ['extension'] })
     assert.ok(result !== null)
-    assert.equal(result.code, 'MISSING_GSD_MARKER')
+    assert.equal(result.code, 'MISSING_GWD_MARKER')
   })
 
   test('returns error when input is a string (not object)', () => {
-    const result = checkInstallDiscriminator('{"gsd":{"extension":true}}')
+    const result = checkInstallDiscriminator('{"gwd":{"extension":true}}')
     assert.ok(result !== null)
-    assert.equal(result.code, 'MISSING_GSD_MARKER')
+    assert.equal(result.code, 'MISSING_GWD_MARKER')
   })
 })
 
 describe('checkNamespaceReservation', () => {
-  test('returns error for gsd. prefixed extension ID', () => {
-    const result = checkNamespaceReservation('gsd.my-tool', {})
+  test('returns error for gwd. prefixed extension ID', () => {
+    const result = checkNamespaceReservation('gwd.my-tool', {})
     assert.ok(result !== null)
     assert.equal(result.code, 'RESERVED_NAMESPACE')
-    assert.ok(result.message.includes('gsd.my-tool'), 'error message should name the conflicting ID')
+    assert.ok(result.message.includes('gwd.my-tool'), 'error message should name the conflicting ID')
   })
 
-  test('returns null when allowGsdNamespace is true', () => {
-    const result = checkNamespaceReservation('gsd.my-tool', { allowGsdNamespace: true })
+  test('returns null when allowGwdNamespace is true', () => {
+    const result = checkNamespaceReservation('gwd.my-tool', { allowGwdNamespace: true })
     assert.equal(result, null)
   })
 
-  test('returns null for non-gsd namespace', () => {
+  test('returns null for non-gwd namespace', () => {
     const result = checkNamespaceReservation('acme.my-tool', {})
     assert.equal(result, null)
   })
@@ -86,34 +86,34 @@ describe('checkNamespaceReservation', () => {
 })
 
 describe('checkDependencyPlacement', () => {
-  test('returns error for @gsd/ package in dependencies', () => {
-    const errors = checkDependencyPlacement({ dependencies: { '@gsd/pi-coding-agent': '^2.0.0' } })
+  test('returns error for @gwd/ package in dependencies', () => {
+    const errors = checkDependencyPlacement({ dependencies: { '@gwd/pi-coding-agent': '^2.0.0' } })
     assert.equal(errors.length, 1)
     assert.equal(errors[0].code, 'WRONG_DEP_FIELD')
-    assert.ok(errors[0].message.includes('@gsd/pi-coding-agent'), 'message must name exact package')
+    assert.ok(errors[0].message.includes('@gwd/pi-coding-agent'), 'message must name exact package')
     assert.ok(errors[0].message.includes('dependencies'), 'message must name exact field')
     assert.ok(errors[0].message.includes('peerDependencies'), 'message must suggest the fix')
     assert.equal(errors[0].field, 'dependencies')
   })
 
-  test('returns error for @gsd/ package in devDependencies', () => {
-    const errors = checkDependencyPlacement({ devDependencies: { '@gsd/pi-ai': '^1.0.0' } })
+  test('returns error for @gwd/ package in devDependencies', () => {
+    const errors = checkDependencyPlacement({ devDependencies: { '@gwd/pi-ai': '^1.0.0' } })
     assert.equal(errors.length, 1)
     assert.equal(errors[0].code, 'WRONG_DEP_FIELD')
-    assert.ok(errors[0].message.includes('@gsd/pi-ai'), 'message must name exact package')
+    assert.ok(errors[0].message.includes('@gwd/pi-ai'), 'message must name exact package')
     assert.ok(errors[0].message.includes('devDependencies'), 'message must name exact field')
     assert.equal(errors[0].field, 'devDependencies')
   })
 
-  test('does not flag @gsd/ in peerDependencies', () => {
-    const errors = checkDependencyPlacement({ peerDependencies: { '@gsd/pi-coding-agent': '>=2.50.0' } })
+  test('does not flag @gwd/ in peerDependencies', () => {
+    const errors = checkDependencyPlacement({ peerDependencies: { '@gwd/pi-coding-agent': '>=2.50.0' } })
     assert.equal(errors.length, 0, 'peerDependencies is the correct placement — must not be flagged')
   })
 
   test('returns multiple errors for violations in both dependencies and devDependencies', () => {
     const errors = checkDependencyPlacement({
-      dependencies: { '@gsd/pi-coding-agent': '^2.0.0' },
-      devDependencies: { '@gsd/pi-ai': '^1.0.0' },
+      dependencies: { '@gwd/pi-coding-agent': '^2.0.0' },
+      devDependencies: { '@gwd/pi-ai': '^1.0.0' },
     })
     assert.equal(errors.length, 2)
     const fields = errors.map(e => e.field)
@@ -121,7 +121,7 @@ describe('checkDependencyPlacement', () => {
     assert.ok(fields.includes('devDependencies'))
   })
 
-  test('does not flag non-gsd packages', () => {
+  test('does not flag non-GWD host packages', () => {
     const errors = checkDependencyPlacement({ dependencies: { 'lodash': '^4.0.0' } })
     assert.equal(errors.length, 0)
   })
@@ -132,7 +132,7 @@ describe('checkDependencyPlacement', () => {
   })
 
   test('returns empty errors when dependencies is a string instead of object', () => {
-    const errors = checkDependencyPlacement({ dependencies: '@gsd/pi-coding-agent' })
+    const errors = checkDependencyPlacement({ dependencies: '@gwd/pi-coding-agent' })
     assert.equal(errors.length, 0, 'string in dependencies field should be gracefully skipped')
   })
 
@@ -142,7 +142,7 @@ describe('checkDependencyPlacement', () => {
   })
 
   test('returns empty errors when dependencies is an array', () => {
-    const errors = checkDependencyPlacement({ dependencies: ['@gsd/pi-coding-agent'] })
+    const errors = checkDependencyPlacement({ dependencies: ['@gwd/pi-coding-agent'] })
     assert.equal(errors.length, 0, 'array in dependencies field should be gracefully skipped')
   })
 })
@@ -150,7 +150,7 @@ describe('checkDependencyPlacement', () => {
 describe('validateExtensionPackage', () => {
   test('returns valid for conforming package', () => {
     const result = validateExtensionPackage(
-      { gsd: { extension: true }, peerDependencies: { '@gsd/pi-coding-agent': '>=2.50.0' } },
+      { gwd: { extension: true }, peerDependencies: { '@gwd/pi-coding-agent': '>=2.50.0' } },
       { extensionId: 'acme.browser' }
     )
     assert.equal(result.valid, true)
@@ -160,32 +160,32 @@ describe('validateExtensionPackage', () => {
 
   test('aggregates errors from multiple checks', () => {
     const result = validateExtensionPackage(
-      { dependencies: { '@gsd/pi-ai': '^1.0.0' } },
-      { extensionId: 'gsd.bad' }
+      { dependencies: { '@gwd/pi-ai': '^1.0.0' } },
+      { extensionId: 'gwd.bad' }
     )
     assert.equal(result.valid, false)
-    // Expects at least: MISSING_GSD_MARKER + RESERVED_NAMESPACE + WRONG_DEP_FIELD
+    // Expects at least: MISSING_GWD_MARKER + RESERVED_NAMESPACE + WRONG_DEP_FIELD
     assert.ok(result.errors.length >= 3, `expected >= 3 errors, got ${result.errors.length}: ${JSON.stringify(result.errors.map(e => e.code))}`)
     const codes = result.errors.map(e => e.code)
-    assert.ok(codes.includes('MISSING_GSD_MARKER'))
+    assert.ok(codes.includes('MISSING_GWD_MARKER'))
     assert.ok(codes.includes('RESERVED_NAMESPACE'))
     assert.ok(codes.includes('WRONG_DEP_FIELD'))
   })
 
   test('valid is always errors.length === 0', () => {
-    const validPkg = { gsd: { extension: true } }
+    const validPkg = { gwd: { extension: true } }
     const validResult = validateExtensionPackage(validPkg, { extensionId: 'acme.tool' })
     assert.equal(validResult.valid, true)
     assert.equal(validResult.errors.length, 0)
 
-    const invalidPkg = { gsd: { extension: 1 } }
+    const invalidPkg = { gwd: { extension: 1 } }
     const invalidResult = validateExtensionPackage(invalidPkg, { extensionId: 'acme.tool' })
     assert.equal(invalidResult.valid, false)
     assert.ok(invalidResult.errors.length > 0)
   })
 
   test('adds warning when extensionId is not provided', () => {
-    const result = validateExtensionPackage({ gsd: { extension: true } }, {})
+    const result = validateExtensionPackage({ gwd: { extension: true } }, {})
     assert.equal(result.valid, true)
     assert.equal(result.warnings.length, 1)
     assert.equal(result.warnings[0].code, 'NAMESPACE_CHECK_SKIPPED')
@@ -193,11 +193,11 @@ describe('validateExtensionPackage', () => {
 })
 
 describe('edge cases — field types', () => {
-  test('does not flag @gsd/ package nested in sub-object of dependencies (only top-level keys matter)', () => {
+  test('does not flag @gwd/ package nested in sub-object of dependencies (only top-level keys matter)', () => {
     // The checker iterates Object.keys(deps) — a sub-object value is a value, not a key name
     const errors = checkDependencyPlacement({
-      dependencies: { nested: { '@gsd/foo': '1.0' } },
+      dependencies: { nested: { '@gwd/foo': '1.0' } },
     })
-    assert.equal(errors.length, 0, 'nested @gsd/ in a sub-object value should not be flagged')
+    assert.equal(errors.length, 0, 'nested @gwd/ in a sub-object value should not be flagged')
   })
 })

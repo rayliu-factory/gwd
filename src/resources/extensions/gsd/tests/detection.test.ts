@@ -1,5 +1,5 @@
 /**
- * Unit tests for GSD Detection — project state and ecosystem detection.
+ * Unit tests for GWD Detection — project state and ecosystem detection.
  *
  * Exercises the pure detection functions in detection.ts:
  * - detectProjectState() with various folder layouts

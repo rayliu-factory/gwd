@@ -10,7 +10,7 @@ import {
 	Spacer,
 	Text,
 	type TUI,
-} from "@gsd/pi-tui";
+} from "@gwd/pi-tui";
 import type { AuthStorage } from "../../../core/auth-storage.js";
 import { getDiscoverableProviders, getDiscoveryAdapter } from "../../../core/model-discovery.js";
 import { providerDisplayName } from "./model-selector.js";

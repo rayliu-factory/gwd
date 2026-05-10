@@ -99,7 +99,7 @@ export async function autoImportMarkdownHierarchyIfDbMismatch(
 
   const opened = await ensureDbOpen(basePath);
   if (!opened || !isDbAvailable()) {
-    throw new Error(`failed to open or create the GSD database at ${basePath}`);
+    throw new Error(`failed to open or create the GWD database at ${basePath}`);
   }
 
   const beforeDb = countDbHierarchy();

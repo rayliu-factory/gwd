@@ -8,7 +8,7 @@ Decompose an approved plan into the smallest useful vertical slices that each cu
 </objective>
 
 <context>
-This skill runs after the brief is stable — `M###-CONTEXT.md` exists and the user has signed off on scope. It's the bridge from "we know what we're building" to "we know in what order and chunks." The vertical-slice discipline (tracer bullets) is non-negotiable here — it's the core of what makes GSD slices demoable and parallel-safe.
+This skill runs after the brief is stable — `M###-CONTEXT.md` exists and the user has signed off on scope. It's the bridge from "we know what we're building" to "we know in what order and chunks." The vertical-slice discipline (tracer bullets) is non-negotiable here — it's the core of what makes GWD slices demoable and parallel-safe.
 
 Typical invocation points:
 - After `write-milestone-brief` (or after a `discuss` phase that produced a brief)
@@ -21,7 +21,7 @@ Typical invocation points:
 
 **MANY THIN, NOT FEW THICK.** If a slice could be split into two demoable pieces, split it. Thin slices retire risk earlier, parallelize better, and give the user faster feedback on whether the direction is right.
 
-**DEPENDENCY GRAPH, NOT LINEAR LIST.** Slices that don't depend on each other should be marked that way — `depends:[]` means the slice can start immediately. The GSD engine uses this to parallelize.
+**DEPENDENCY GRAPH, NOT LINEAR LIST.** Slices that don't depend on each other should be marked that way — `depends:[]` means the slice can start immediately. The GWD engine uses this to parallelize.
 </core_principle>
 
 <process>
@@ -118,7 +118,7 @@ Do NOT close or modify any parent issue.
 <anti_patterns>
 
 - **Horizontal slices.** "S01: All schemas" / "S02: All APIs" / "S03: All UI" — destroys demoability.
-- **Research-only slices.** A slice whose deliverable is a document, not working code, is a spike. Use `/gsd start spike`.
+- **Research-only slices.** A slice whose deliverable is a document, not working code, is a spike. Use `/gwd start spike`.
 - **Foundation slices with no demo.** "Set up the base class for X" is a layer, not a slice.
 - **Auto-filing GitHub issues.** Requires explicit user confirmation every time.
 - **Editing roadmap checkboxes by hand later.** `gsd_*` tools own that state during execution.

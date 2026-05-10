@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Verifies the headless discussion prompt renders compact required guidance.
 
 import test from "node:test";
@@ -8,13 +8,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test("discuss-headless prompt renders compact investigation and audit guidance", async (t) => {
-  const previousGsdHome = process.env.GSD_HOME;
-  const providedGsdHome = process.env.GSD_TEST_HOME;
+  const previousGsdHome = process.env.GWD_HOME;
+  const providedGsdHome = process.env.GWD_TEST_HOME;
   const isolatedHome = providedGsdHome ?? mkdtempSync(join(tmpdir(), "gsd-discuss-headless-render-"));
-  process.env.GSD_HOME = isolatedHome;
+  process.env.GWD_HOME = isolatedHome;
   t.after(() => {
-    if (previousGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = previousGsdHome;
+    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGsdHome;
     if (!providedGsdHome) rmSync(isolatedHome, { recursive: true, force: true });
   });
 
@@ -25,7 +25,7 @@ test("discuss-headless prompt renders compact investigation and audit guidance",
     contextPath: ".gsd/milestones/M001/M001-CONTEXT.md",
     commitInstruction: "Commit the created milestone artifacts.",
     multiMilestoneCommitInstruction: "Commit the created milestone artifacts.",
-    inlinedTemplates: "## Template\n\nUse standard GSD artifacts.",
+    inlinedTemplates: "## Template\n\nUse standard GWD artifacts.",
   });
 
   assert.match(prompt, /Investigate before making decisions:/);

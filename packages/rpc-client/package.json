@@ -1,16 +1,16 @@
 {
-  "name": "@gsd-build/rpc-client",
+  "name": "@gwd-build/rpc-client",
   "version": "2.81.0",
   "description": "Standalone RPC client SDK for GSD — zero internal dependencies",
   "license": "MIT",
-  "gsd": {
+  "gwd": {
     "linkable": true,
-    "scope": "@gsd-build",
+    "scope": "@gwd-build",
     "name": "rpc-client"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gsd-build/gsd-2.git",
+    "url": "https://github.com/gwd-build/gwd-2.git",
     "directory": "packages/rpc-client"
   },
   "publishConfig": {
@@ -34,7 +34,7 @@
     "test": "node --test dist/rpc-client.test.js"
   },
   "dependencies": {
-    "@gsd-build/contracts": "^2.80.0"
+    "@gwd-build/contracts": "^2.80.0"
   },
   "engines": {
     "node": ">=22.0.0"

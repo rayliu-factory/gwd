@@ -1,4 +1,4 @@
-// GSD-2 — Verify /gsd help menu covers all registered commands
+// GWD-2 — Verify /gwd help menu covers all registered commands
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { describe, test } from "node:test";
@@ -8,12 +8,12 @@ import { TOP_LEVEL_SUBCOMMANDS } from "../commands/catalog.ts";
 
 /**
  * Extracts command names from the showHelp("full") lines array.
- * Each help line follows the pattern: "  /gsd <cmd>  ..."
+ * Each help line follows the pattern: "  /gwd <cmd>  ..."
  */
 function extractHelpCommands(lines: string[]): Set<string> {
   const cmds = new Set<string>();
   for (const line of lines) {
-    const m = line.match(/^\s+\/gsd\s+(\S+)/);
+    const m = line.match(/^\s+\/gwd\s+(\S+)/);
     if (m) cmds.add(m[1]);
   }
   return cmds;
@@ -51,7 +51,7 @@ describe("help menu coverage", () => {
     assert.deepStrictEqual(
       missing,
       [],
-      `Commands registered in TOP_LEVEL_SUBCOMMANDS but missing from /gsd help full:\n  ${missing.join(", ")}`,
+      `Commands registered in TOP_LEVEL_SUBCOMMANDS but missing from /gwd help full:\n  ${missing.join(", ")}`,
     );
   });
 });

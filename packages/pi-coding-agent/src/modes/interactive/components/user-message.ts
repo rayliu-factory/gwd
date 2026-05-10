@@ -1,4 +1,4 @@
-import { Container, Markdown, type MarkdownTheme } from "@gsd/pi-tui";
+import { Container, Markdown, type MarkdownTheme } from "@gwd/pi-tui";
 import { getMarkdownTheme } from "../theme/theme.js";
 import { type TimestampFormat } from "./timestamp.js";
 import { renderChatFrame } from "./chat-frame.js";

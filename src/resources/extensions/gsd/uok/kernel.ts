@@ -1,6 +1,6 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Selects the UOK kernel path and records parity diagnostics.
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
 import { appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 

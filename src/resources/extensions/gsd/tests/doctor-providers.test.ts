@@ -87,7 +87,7 @@ test("formatProviderReport shows error icon and detail for error status", () => 
     category: "llm",
     status: "error",
     message: "Anthropic (Claude) — no API key found",
-    detail: "Set ANTHROPIC_API_KEY or run /gsd keys",
+    detail: "Set ANTHROPIC_API_KEY or run /gwd keys",
     required: true,
   }];
   const out = formatProviderReport(results);
@@ -275,7 +275,7 @@ test("runProviderChecks optional providers show ok when key set", () => {
 test("runProviderChecks detects key from auth.json", () => {
   withEnv({ ANTHROPIC_API_KEY: undefined }, () => {
     const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-test-")));
-    const agentDir = join(tmpHome, ".gsd", "agent");
+    const agentDir = join(tmpHome, ".gwd", "agent");
     mkdirSync(agentDir, { recursive: true });
 
     // AuthStorage persists credentials with provider ID as the top-level key:
@@ -299,7 +299,7 @@ test("runProviderChecks detects key from auth.json", () => {
 
 test("runProviderChecks ignores empty placeholder keys in auth.json", () => {
   const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-test-")));
-  const agentDir = join(tmpHome, ".gsd", "agent");
+  const agentDir = join(tmpHome, ".gwd", "agent");
   mkdirSync(agentDir, { recursive: true });
 
   // Empty key — what onboarding writes when user skips
@@ -330,7 +330,7 @@ test("runProviderChecks ignores empty placeholder keys in auth.json", () => {
 test("runProviderChecks detects custom provider keys from models.json", () => {
   const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-custom-home-")));
   const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-custom-repo-")));
-  const agentDir = join(tmpHome, ".gsd", "agent");
+  const agentDir = join(tmpHome, ".gwd", "agent");
   mkdirSync(agentDir, { recursive: true });
   mkdirSync(join(repo, ".gsd"), { recursive: true });
 
@@ -485,7 +485,7 @@ test("runProviderChecks reports ok via Copilot auth.json for Anthropic", () => {
     GITHUB_TOKEN: undefined,
   }, () => {
     const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-copilot-auth-test-")));
-    const agentDir = join(tmpHome, ".gsd", "agent");
+    const agentDir = join(tmpHome, ".gwd", "agent");
     mkdirSync(agentDir, { recursive: true });
 
     // GitHub Copilot OAuth in auth.json
@@ -594,7 +594,7 @@ test("runProviderChecks reports ok for Google via google-gemini-cli auth.json (#
   );
 
   const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-gemini-cli-home-")));
-  const agentDir = join(tmpHome, ".gsd", "agent");
+  const agentDir = join(tmpHome, ".gwd", "agent");
   mkdirSync(agentDir, { recursive: true });
 
   // google-gemini-cli OAuth in auth.json (no google API key)
@@ -636,7 +636,7 @@ test("runProviderChecks reports ok for OpenAI via openai-codex auth.json (#2922)
   );
 
   const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-codex-home-")));
-  const agentDir = join(tmpHome, ".gsd", "agent");
+  const agentDir = join(tmpHome, ".gwd", "agent");
   mkdirSync(agentDir, { recursive: true });
 
   // openai-codex OAuth in auth.json (no openai API key)

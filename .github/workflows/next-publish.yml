@@ -23,15 +23,8 @@ permissions:
 jobs:
   next-publish:
     name: Next Publish
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     environment: next
-    container:
-      image: ghcr.io/gsd-build/gsd-ci-builder:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-      env:
-        GITHUB_REPO_NAME: ${{ github.repository }}
     outputs:
       next-version: ${{ steps.stamp.outputs.version }}
     steps:
@@ -57,7 +50,7 @@ jobs:
         run: npm --prefix web ci
 
       - name: Cache Next.js build
-        uses: useblacksmith/cache@v5
+        uses: actions/cache@v4
         with:
           path: web/.next/cache
           key: nextjs-${{ runner.os }}-${{ hashFiles('web/package-lock.json') }}-${{ hashFiles('web/app/**', 'web/components/**', 'web/lib/**', 'web/hooks/**') }}
@@ -83,7 +76,7 @@ jobs:
       - name: Smoke test
         run: |
           chmod +x dist/loader.js
-          export GSD_SMOKE_BINARY="$(pwd)/dist/loader.js"
+          export GWD_SMOKE_BINARY="$(pwd)/dist/loader.js"
           npm run test:smoke
 
       - name: Publish @next
@@ -91,9 +84,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           VERSION=$(node -e 'process.stdout.write(require("./package.json").version)')
-          if npm view "gsd-pi@${VERSION}" version 2>/dev/null; then
+          if npm view "gwd-pi@${VERSION}" version 2>/dev/null; then
             echo "Version ${VERSION} already published — moving @next tag"
-            npm dist-tag add "gsd-pi@${VERSION}" next
+            npm dist-tag add "gwd-pi@${VERSION}" next
           else
             npm publish --tag next
           fi
@@ -101,7 +94,7 @@ jobs:
   next-verify:
     name: Next Verify (installed package)
     needs: next-publish
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -113,23 +106,23 @@ jobs:
           registry-url: https://registry.npmjs.org
           cache: 'npm'
 
-      - name: Install published gsd-pi@next globally (with registry propagation retry)
+      - name: Install published gwd-pi@next globally (with registry propagation retry)
         env:
           NEXT_VERSION: ${{ needs.next-publish.outputs.next-version }}
         run: |
           for i in 1 2 3 4 5 6; do
-            npm install -g "gsd-pi@${NEXT_VERSION}" && exit 0
+            npm install -g "gwd-pi@${NEXT_VERSION}" && exit 0
             echo "Attempt $i failed — waiting 10s for npm registry propagation..."
             sleep 10
           done
-          echo "::error::Failed to install gsd-pi@${NEXT_VERSION} after 6 attempts. The @next tag may point at a broken artifact — deprecate it with: npm deprecate gsd-pi@${NEXT_VERSION} 'broken build'"
+          echo "::error::Failed to install gwd-pi@${NEXT_VERSION} after 6 attempts. The @next tag may point at a broken artifact — deprecate it with: npm deprecate gwd-pi@${NEXT_VERSION} 'broken build'"
           exit 1
 
       - name: Run smoke tests (against installed binary)
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          export GSD_SMOKE_BINARY=$(which gsd)
+          export GWD_SMOKE_BINARY=$(which gwd)
           npm run test:smoke
 
       - name: Install repo dependencies (for regression harness)
@@ -137,7 +130,7 @@ jobs:
 
       - name: Run live regression tests (against installed binary)
         run: |
-          export GSD_SMOKE_BINARY=$(which gsd)
+          export GWD_SMOKE_BINARY=$(which gwd)
           npm run test:live-regression
 
       - name: Warn on verify failure
@@ -145,6 +138,6 @@ jobs:
         env:
           NEXT_VERSION: ${{ needs.next-publish.outputs.next-version }}
         run: |
-          echo "::error::Post-publish verification failed for gsd-pi@${NEXT_VERSION}. The @next tag still points at this version on npm."
-          echo "::error::Recommended actions: (1) investigate the failing step above, (2) deprecate the broken version with 'npm deprecate gsd-pi@${NEXT_VERSION} \"broken build; see Actions run\"', (3) cut a fix and re-run Next Publish."
+          echo "::error::Post-publish verification failed for gwd-pi@${NEXT_VERSION}. The @next tag still points at this version on npm."
+          echo "::error::Recommended actions: (1) investigate the failing step above, (2) deprecate the broken version with 'npm deprecate gwd-pi@${NEXT_VERSION} \"broken build; see Actions run\"', (3) cut a fix and re-run Next Publish."
           exit 1

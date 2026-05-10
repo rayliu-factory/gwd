@@ -1,9 +1,9 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Registers read-only DB query tools.
 // GSD2 — Read-only query tools exposing DB state to the LLM via the WAL connection
 
 import { Type } from "@sinclair/typebox";
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 import { ensureDbOpen, resolveCtxCwd } from "./dynamic-tools.js";
 
 
@@ -12,9 +12,9 @@ export function registerQueryTools(pi: ExtensionAPI): void {
     name: "gsd_milestone_status",
     label: "Milestone Status",
     description:
-      "Read the current status of a milestone and all its slices from the GSD database. " +
+      "Read the current status of a milestone and all its slices from the GWD database. " +
       "Returns milestone metadata, per-slice status, and task counts per slice. " +
-      "Use this instead of querying .gsd/gsd.db directly via sqlite3 or better-sqlite3.",
+      "Use this instead of querying .gsd/gwd.db directly via sqlite3 or better-sqlite3.",
     promptSnippet: "Get milestone status, slice statuses, and task counts for a given milestoneId",
     promptGuidelines: [
       "Use this tool — not sqlite3 or better-sqlite3 — to inspect milestone or slice state from the DB.",
@@ -26,7 +26,7 @@ export function registerQueryTools(pi: ExtensionAPI): void {
       const dbAvailable = await ensureDbOpen(resolveCtxCwd(_ctx));
       if (!dbAvailable) {
         return {
-          content: [{ type: "text", text: "Error: GSD database is not available. Cannot read milestone status." }],
+          content: [{ type: "text", text: "Error: GWD database is not available. Cannot read milestone status." }],
           details: { operation: "milestone_status", error: "db_unavailable" },
         };
       }
@@ -37,15 +37,15 @@ export function registerQueryTools(pi: ExtensionAPI): void {
 
   pi.registerTool({
     name: "gsd_checkpoint_db",
-    label: "Checkpoint GSD Database",
+    label: "Checkpoint GWD Database",
     description:
       "Flush the SQLite WAL (Write-Ahead Log) into the base gsd.db file. " +
-      "Call this before `git add .gsd/gsd.db` to ensure the committed database " +
+      "Call this before `git add .gsd/gwd.db` to ensure the committed database " +
       "contains current milestone/slice/task state rather than stale pre-session content. " +
-      "Safe to call at any time while GSD is running.",
+      "Safe to call at any time while GWD is running.",
     promptSnippet: "Flush WAL into gsd.db so git add stages current state",
     promptGuidelines: [
-      "Call gsd_checkpoint_db immediately before staging .gsd/gsd.db with git add.",
+      "Call gsd_checkpoint_db immediately before staging .gsd/gwd.db with git add.",
       "Do not use sqlite3 or shell commands to checkpoint — they are blocked. Use this tool instead.",
     ],
     parameters: Type.Object({}),
@@ -53,7 +53,7 @@ export function registerQueryTools(pi: ExtensionAPI): void {
       const dbAvailable = await ensureDbOpen(resolveCtxCwd(_ctx));
       if (!dbAvailable) {
         return {
-          content: [{ type: "text", text: "Error: GSD database is not available. Cannot checkpoint." }],
+          content: [{ type: "text", text: "Error: GWD database is not available. Cannot checkpoint." }],
           details: { operation: "checkpoint_db", error: "db_unavailable" },
         };
       }

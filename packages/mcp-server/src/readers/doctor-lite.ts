@@ -1,4 +1,4 @@
-// GSD MCP Server — lightweight structural health checks
+// GWD MCP Server — lightweight structural health checks
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { existsSync, readFileSync } from 'node:fs';
@@ -62,7 +62,7 @@ function checkProjectLevel(gsdRoot: string, issues: DoctorIssue[]): void {
         code: 'missing_state_md',
         scope: 'project',
         unitId: '',
-        message: 'STATE.md is missing — run /gsd status to regenerate',
+        message: 'STATE.md is missing — run /gwd status to regenerate',
         file: statePath,
       });
     }

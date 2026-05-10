@@ -27,16 +27,11 @@ const MCP_WORKFLOW_TOOL_SURFACE = new Set([
   "gsd_exec_search",
   "gsd_resume",
   "gsd_complete_milestone",
-  "gsd_complete_task",
-  "gsd_complete_slice",
-  "gsd_generate_milestone_id",
   "gsd_journal_query",
-  "gsd_milestone_complete",
   "gsd_milestone_generate_id",
   "gsd_milestone_reopen",
   "gsd_checkpoint_db",
   "gsd_milestone_status",
-  "gsd_milestone_validate",
   "gsd_plan_task",
   "gsd_plan_milestone",
   "gsd_plan_slice",
@@ -47,19 +42,13 @@ const MCP_WORKFLOW_TOOL_SURFACE = new Set([
   "gsd_reopen_task",
   "gsd_requirement_save",
   "gsd_requirement_update",
-  "gsd_roadmap_reassess",
-  "gsd_save_decision",
   "gsd_save_gate_result",
-  "gsd_save_requirement",
   "gsd_skip_slice",
-  "gsd_slice_replan",
   "gsd_slice_complete",
   "gsd_slice_reopen",
   "gsd_summary_save",
-  "gsd_task_plan",
   "gsd_task_complete",
   "gsd_task_reopen",
-  "gsd_update_requirement",
   "gsd_validate_milestone",
 ]);
 
@@ -107,9 +96,9 @@ function findWorkflowCliFromAncestorPath(startPath: string): string | null {
 
 function getBundledWorkflowMcpCliPath(env: NodeJS.ProcessEnv): string | null {
   const envAnchors = [
-    env.GSD_BIN_PATH?.trim(),
-    env.GSD_CLI_PATH?.trim(),
-    env.GSD_WORKFLOW_PATH?.trim(),
+    env.GWD_BIN_PATH?.trim(),
+    env.GWD_CLI_PATH?.trim(),
+    env.GWD_WORKFLOW_PATH?.trim(),
   ].filter((value): value is string => typeof value === "string" && value.length > 0);
 
   for (const anchor of envAnchors) {
@@ -207,12 +196,12 @@ function buildWorkflowLaunchEnv(
 
   return {
     ...(explicitEnv ?? {}),
-    ...(gsdCliPath ? { GSD_CLI_PATH: gsdCliPath, GSD_BIN_PATH: gsdCliPath } : {}),
-    ...(executorModulePath ? { GSD_WORKFLOW_EXECUTORS_MODULE: executorModulePath } : {}),
-    ...(writeGateModulePath ? { GSD_WORKFLOW_WRITE_GATE_MODULE: writeGateModulePath } : {}),
+    ...(gsdCliPath ? { GWD_CLI_PATH: gsdCliPath, GWD_BIN_PATH: gsdCliPath } : {}),
+    ...(executorModulePath ? { GWD_WORKFLOW_EXECUTORS_MODULE: executorModulePath } : {}),
+    ...(writeGateModulePath ? { GWD_WORKFLOW_WRITE_GATE_MODULE: writeGateModulePath } : {}),
     ...(nodeOptions ? { NODE_OPTIONS: nodeOptions } : {}),
-    GSD_PERSIST_WRITE_GATE_STATE: "1",
-    GSD_WORKFLOW_PROJECT_ROOT: projectRoot,
+    GWD_PERSIST_WRITE_GATE_STATE: "1",
+    GWD_WORKFLOW_PROJECT_ROOT: projectRoot,
   };
 }
 
@@ -220,20 +209,20 @@ export function detectWorkflowMcpLaunchConfig(
   projectRoot = process.cwd(),
   env: NodeJS.ProcessEnv = process.env,
 ): WorkflowMcpLaunchConfig | null {
-  const name = env.GSD_WORKFLOW_MCP_NAME?.trim() || "gsd-workflow";
-  const explicitCommand = env.GSD_WORKFLOW_MCP_COMMAND?.trim();
-  const explicitArgs = parseJsonEnv<unknown>(env, "GSD_WORKFLOW_MCP_ARGS");
-  const explicitEnv = parseJsonEnv<Record<string, string>>(env, "GSD_WORKFLOW_MCP_ENV");
-  const explicitCwd = env.GSD_WORKFLOW_MCP_CWD?.trim();
+  const name = env.GWD_WORKFLOW_MCP_NAME?.trim() || "gsd-workflow";
+  const explicitCommand = env.GWD_WORKFLOW_MCP_COMMAND?.trim();
+  const explicitArgs = parseJsonEnv<unknown>(env, "GWD_WORKFLOW_MCP_ARGS");
+  const explicitEnv = parseJsonEnv<Record<string, string>>(env, "GWD_WORKFLOW_MCP_ENV");
+  const explicitCwd = env.GWD_WORKFLOW_MCP_CWD?.trim();
   const gsdCliPath =
-    explicitEnv?.GSD_CLI_PATH?.trim()
-    || explicitEnv?.GSD_BIN_PATH?.trim()
-    || env.GSD_CLI_PATH?.trim()
-    || env.GSD_BIN_PATH?.trim();
+    explicitEnv?.GWD_CLI_PATH?.trim()
+    || explicitEnv?.GWD_BIN_PATH?.trim()
+    || env.GWD_CLI_PATH?.trim()
+    || env.GWD_BIN_PATH?.trim();
   const workflowProjectRoot =
-    explicitEnv?.GSD_WORKFLOW_PROJECT_ROOT?.trim() ||
-    env.GSD_WORKFLOW_PROJECT_ROOT?.trim() ||
-    env.GSD_PROJECT_ROOT?.trim() ||
+    explicitEnv?.GWD_WORKFLOW_PROJECT_ROOT?.trim() ||
+    env.GWD_WORKFLOW_PROJECT_ROOT?.trim() ||
+    env.GWD_PROJECT_ROOT?.trim() ||
     explicitCwd ||
     projectRoot;
   const resolvedWorkflowProjectRoot = resolve(workflowProjectRoot);
@@ -271,7 +260,7 @@ export function detectWorkflowMcpLaunchConfig(
     };
   }
 
-  const binPath = lookupCommand("gsd-mcp-server");
+  const binPath = lookupCommand("gwd-mcp-server");
   if (binPath) {
     return {
       name,
@@ -384,7 +373,7 @@ function hasAskUserQuestionsTool(activeTools: string[]): boolean {
 }
 
 function workflowMcpStructuredQuestionsOptIn(env: NodeJS.ProcessEnv = process.env): boolean {
-  const value = env.GSD_WORKFLOW_MCP_STRUCTURED_QUESTIONS;
+  const value = env.GWD_WORKFLOW_MCP_STRUCTURED_QUESTIONS;
   return value === "1" || value === "true";
 }
 
@@ -395,7 +384,7 @@ export function supportsStructuredQuestions(
   if (!hasAskUserQuestionsTool(activeTools)) return false;
   if (usesWorkflowMcpTransport(options.authMode, options.baseUrl)) {
     // Claude Code local workflow-MCP exposes ask_user_questions, but form
-    // elicitation can return an immediate cancel outside GSD's chat turn. Keep
+    // elicitation can return an immediate cancel outside GWD's chat turn. Keep
     // checkpoints in plain chat unless a caller deliberately opts into testing
     // that transport.
     return workflowMcpStructuredQuestionsOptIn(options.env);
@@ -420,7 +409,7 @@ export function getWorkflowTransportSupportError(
   const providerLabel = `"${provider}"`;
 
   if (!launch) {
-    return `Provider ${providerLabel} cannot run ${surface}${unitLabel}: the GSD workflow MCP server is not configured or discoverable. Detected Claude Code model but no workflow MCP. Please run /gsd mcp init . from your project root. You can also configure GSD_WORKFLOW_MCP_COMMAND, build packages/mcp-server/dist/cli.js, or install gsd-mcp-server on PATH.`;
+    return `Provider ${providerLabel} cannot run ${surface}${unitLabel}: the GWD workflow MCP server is not configured or discoverable. Detected Claude Code model but no workflow MCP. Please run /gwd mcp init . from your project root. You can also configure GWD_WORKFLOW_MCP_COMMAND, build packages/mcp-server/dist/cli.js, or install gwd-mcp-server on PATH.`;
   }
 
   const missing = [...new Set(requiredTools)].filter((tool) => !MCP_WORKFLOW_TOOL_SURFACE.has(tool));

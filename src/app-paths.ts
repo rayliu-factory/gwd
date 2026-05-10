@@ -1,7 +1,8 @@
 import { homedir } from 'os'
 import { join } from 'path'
+import { GLOBAL_STATE_DIR_NAME, GWD_HOME_ENV } from './namespace.js'
 
-export const appRoot = process.env.GSD_HOME || join(homedir(), '.gsd')
+export const appRoot = process.env[GWD_HOME_ENV] || join(homedir(), GLOBAL_STATE_DIR_NAME)
 export const agentDir = join(appRoot, 'agent')
 export const sessionsDir = join(appRoot, 'sessions')
 export const authFilePath = join(agentDir, 'auth.json')

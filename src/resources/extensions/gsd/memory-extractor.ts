@@ -1,12 +1,12 @@
-// GSD Memory Extractor — Background LLM extraction from activity logs
+// GWD Memory Extractor — Background LLM extraction from activity logs
 //
 // After each unit completes, extracts durable knowledge from the session
 // transcript and stores it as memory entries. One extraction at a time
 // (mutex guard). Fire-and-forget — never blocks auto-mode.
 
 import { readFileSync, statSync } from 'node:fs';
-import type { ExtensionContext } from '@gsd/pi-coding-agent';
-import type { Api, AssistantMessage, Model } from '@gsd/pi-ai';
+import type { ExtensionContext } from '@gwd/pi-coding-agent';
+import type { Api, AssistantMessage, Model } from '@gwd/pi-ai';
 import {
   getActiveMemories,
   isUnitProcessed,
@@ -93,12 +93,12 @@ export function buildMemoryLLMCall(ctx: ExtensionContext): LLMCallFn | null {
     // Resolve API key via modelRegistry so OAuth tokens (auth.json) are used.
     // Without this, streamSimpleAnthropic only checks env vars via getEnvApiKey,
     // which returns undefined for OAuth users (Claude Max / Claude Pro).
-    // See: https://github.com/gsd-build/gsd-2/issues/2959
+    // See: https://github.com/gwd-build/gwd-2/issues/2959
     const resolvedKeyPromise = ctx.modelRegistry.getApiKey(selectedModel).catch(() => undefined);
     // Expose on the returned fn so tests can await resolution deterministically
     // (avoids arbitrary setTimeout polling for an internal microtask).
     const llmCall = async (system: string, user: string): Promise<string> => {
-      const { completeSimple } = await import('@gsd/pi-ai');
+      const { completeSimple } = await import('@gwd/pi-ai');
       const resolvedApiKey = await resolvedKeyPromise;
       const result: AssistantMessage = await completeSimple(selectedModel, {
         systemPrompt: system,

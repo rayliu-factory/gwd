@@ -2,7 +2,7 @@
  * Remote Questions — self-contained MCP-server adapter
  *
  * Mirrors the routing logic from src/resources/extensions/ask-user-questions.ts
- * but without any dependency on @gsd/pi-coding-agent or the main src/ tree.
+ * but without any dependency on @gwd/pi-coding-agent or the main src/ tree.
  * All channel adapters (Discord, Slack, Telegram), config resolution, HTTP
  * calls, and polling are inlined here so packages/mcp-server remains a
  * standalone package.
@@ -104,7 +104,7 @@ const ENV_KEYS: Record<RemoteChannel, string> = {
 };
 
 // ---------------------------------------------------------------------------
-// Config resolution — reads ~/.gsd/PREFERENCES.md YAML frontmatter
+// Config resolution — reads ~/.gwd/PREFERENCES.md YAML frontmatter
 // ---------------------------------------------------------------------------
 
 function clampNumber(value: unknown, fallback: number, min: number, max: number): number {
@@ -182,7 +182,7 @@ function loadPreferencesFromFile(path: string): Record<string, unknown> | null {
 }
 
 function resolveRemoteConfig(): ResolvedConfig | null {
-  const gsdHome = process.env['GSD_HOME'] ?? join(homedir(), '.gsd');
+  const gsdHome = process.env['GWD_HOME'] ?? join(homedir(), '.gwd');
   const globalPath = join(gsdHome, 'PREFERENCES.md');
 
   const prefs = loadPreferencesFromFile(globalPath);
@@ -291,7 +291,7 @@ function formatForDiscord(prompt: RemotePrompt): { embeds: unknown[]; reactionEm
 
 function formatForSlack(prompt: RemotePrompt): unknown[] {
   const blocks: unknown[] = [
-    { type: 'header', text: { type: 'plain_text', text: 'GSD needs your input' } },
+    { type: 'header', text: { type: 'plain_text', text: 'GWD needs your input' } },
   ];
 
   if (prompt.questions.length > 1) {
@@ -327,7 +327,7 @@ function formatForSlack(prompt: RemotePrompt): unknown[] {
 
 function formatForTelegram(prompt: RemotePrompt): { text: string; parse_mode: 'HTML'; reply_markup?: unknown } {
   const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const lines: string[] = ['<b>GSD needs your input</b>', ''];
+  const lines: string[] = ['<b>GWD needs your input</b>', ''];
 
   for (let qi = 0; qi < prompt.questions.length; qi++) {
     const q = prompt.questions[qi];
@@ -499,7 +499,7 @@ async function discordSend(prompt: RemotePrompt, token: string, channelId: strin
   const res = await apiRequest(
     `${DISCORD_API}/channels/${channelId}/messages`,
     'POST',
-    { content: '**GSD needs your input** — reply to this message with your answer', embeds },
+    { content: '**GWD needs your input** — reply to this message with your answer', embeds },
     'Bot', token, 'Discord API',
   ) as Record<string, unknown>;
 
@@ -582,7 +582,7 @@ async function slackSend(prompt: RemotePrompt, token: string, channelId: string)
   const res = await apiRequest(
     `${SLACK_API}/chat.postMessage`,
     'POST',
-    { channel: channelId, text: 'GSD needs your input', blocks: formatForSlack(prompt) },
+    { channel: channelId, text: 'GWD needs your input', blocks: formatForSlack(prompt) },
     'Bearer', token, 'Slack API',
   ) as Record<string, unknown>;
 
@@ -833,7 +833,7 @@ function formatForTool(answer: RemoteAnswer): Record<string, { answers: string[]
 }
 
 /**
- * Normalize a `RemoteAnswer` into the `RoundResult` shape the GSD
+ * Normalize a `RemoteAnswer` into the `RoundResult` shape the GWD
  * discussion-gate hook reads from `tool_result` `details.response`. Mirrors
  * `src/resources/extensions/remote-questions/manager.ts:toRoundResultResponse`
  * and the local-path helper `buildAskUserQuestionsRoundResult` in server.ts.

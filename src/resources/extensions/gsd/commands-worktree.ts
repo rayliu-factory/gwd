@@ -1,11 +1,11 @@
-// GSD-2 — In-TUI handler for /gsd worktree commands (list, merge, clean, remove).
+// GWD-2 — In-TUI handler for /gwd worktree commands (list, merge, clean, remove).
 //
 // Mirrors the CLI subcommands in src/worktree-cli.ts but emits results via
 // ctx.ui.notify() instead of writing colored output to stderr. Reuses the
 // same extension modules (worktree-manager, native-git-bridge, etc.) so the
 // behavior is identical to the CLI surface.
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync } from "node:fs";
 
 import { projectRoot } from "./commands/context.js";
@@ -24,7 +24,7 @@ import {
 } from "./native-git-bridge.js";
 import { inferCommitType } from "./git-service.js";
 import { autoCommitCurrentBranch } from "./worktree.js";
-import { GSDError, GSD_GIT_ERROR } from "./errors.js";
+import { GSDError, GWD_GIT_ERROR } from "./errors.js";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -106,9 +106,9 @@ export function formatWorktreeList(statuses: WorktreeStatus[]): string {
     lines.push("");
   }
   lines.push("Commands:");
-  lines.push("  /gsd worktree merge <name>   Merge into main and clean up");
-  lines.push("  /gsd worktree remove <name>  Remove a worktree (--force to skip safety checks)");
-  lines.push("  /gsd worktree clean          Remove all merged/empty worktrees");
+  lines.push("  /gwd worktree merge <name>   Merge into main and clean up");
+  lines.push("  /gwd worktree remove <name>  Remove a worktree (--force to skip safety checks)");
+  lines.push("  /gwd worktree clean          Remove all merged/empty worktrees");
   return lines.join("\n");
 }
 
@@ -149,7 +149,7 @@ async function handleMerge(args: string, ctx: ExtensionCommandContext): Promise<
       return;
     } else {
       const names = worktrees.map((w) => w.name).join(", ");
-      ctx.ui.notify(`Usage: /gsd worktree merge <name>\n\nWorktrees: ${names}`, "warning");
+      ctx.ui.notify(`Usage: /gwd worktree merge <name>\n\nWorktrees: ${names}`, "warning");
       return;
     }
   }
@@ -185,7 +185,7 @@ async function handleMerge(args: string, ctx: ExtensionCommandContext): Promise<
         [
           `Auto-commit before merge failed: ${msg}`,
           "",
-          `Commit or stash changes in ${wt.path}, then re-run /gsd worktree merge ${target}.`,
+          `Commit or stash changes in ${wt.path}, then re-run /gwd worktree merge ${target}.`,
         ].join("\n"),
         "error",
       );
@@ -195,20 +195,20 @@ async function handleMerge(args: string, ctx: ExtensionCommandContext): Promise<
 
   const commitType = inferCommitType(target);
   const mainBranch = nativeDetectMainBranch(basePath);
-  const commitMessage = `${commitType}: merge worktree ${target}\n\nGSD-Worktree: ${target}`;
+  const commitMessage = `${commitType}: merge worktree ${target}\n\nGWD-Worktree: ${target}`;
 
   try {
     mergeWorktreeToMain(basePath, target, commitMessage);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    if (err instanceof GSDError && err.code === GSD_GIT_ERROR) {
+    if (err instanceof GSDError && err.code === GWD_GIT_ERROR) {
       ctx.ui.notify(
-        `Merge requires the main branch to be checked out: ${msg}\n\nSwitch to ${mainBranch} (e.g. 'git checkout ${mainBranch}'), then re-run /gsd worktree merge ${target}.`,
+        `Merge requires the main branch to be checked out: ${msg}\n\nSwitch to ${mainBranch} (e.g. 'git checkout ${mainBranch}'), then re-run /gwd worktree merge ${target}.`,
         "error",
       );
     } else {
       ctx.ui.notify(
-        `Merge failed: ${msg}\n\nResolve conflicts manually, then run /gsd worktree merge ${target} again.`,
+        `Merge failed: ${msg}\n\nResolve conflicts manually, then run /gwd worktree merge ${target} again.`,
         "error",
       );
     }
@@ -230,9 +230,9 @@ async function handleMerge(args: string, ctx: ExtensionCommandContext): Promise<
       ...successLines,
       "",
       `Cleanup failed after the merge succeeded: ${msg}`,
-      err instanceof GSDError && err.code === GSD_GIT_ERROR
-        ? `Switch to ${mainBranch} (e.g. 'git checkout ${mainBranch}'), then remove the worktree manually with /gsd worktree remove ${target} --force.`
-        : `Remove the worktree manually with /gsd worktree remove ${target} --force, or run 'git worktree prune' to clean up dangling registrations.`,
+      err instanceof GSDError && err.code === GWD_GIT_ERROR
+        ? `Switch to ${mainBranch} (e.g. 'git checkout ${mainBranch}'), then remove the worktree manually with /gwd worktree remove ${target} --force.`
+        : `Remove the worktree manually with /gwd worktree remove ${target} --force, or run 'git worktree prune' to clean up dangling registrations.`,
     ];
     ctx.ui.notify(cleanupLines.join("\n"), "warning");
   }
@@ -286,7 +286,7 @@ async function handleRemove(args: string, ctx: ExtensionCommandContext): Promise
   const force = tokens.includes("--force");
   const name = tokens.find((t) => t !== "--force");
   if (!name) {
-    ctx.ui.notify("Usage: /gsd worktree remove <name> [--force]", "warning");
+    ctx.ui.notify("Usage: /gwd worktree remove <name> [--force]", "warning");
     return;
   }
 
@@ -304,8 +304,8 @@ async function handleRemove(args: string, ctx: ExtensionCommandContext): Promise
       [
         `Worktree "${name}" has pending changes (${formatCleanKeepReason(status)}).`,
         "",
-        `  Merge first:     /gsd worktree merge ${name}`,
-        `  Or force-remove: /gsd worktree remove ${name} --force`,
+        `  Merge first:     /gwd worktree merge ${name}`,
+        `  Or force-remove: /gwd worktree remove ${name} --force`,
       ].join("\n"),
       "warning",
     );
@@ -327,7 +327,7 @@ async function handleRemove(args: string, ctx: ExtensionCommandContext): Promise
 // ─── Help text ──────────────────────────────────────────────────────────────
 
 const HELP_TEXT = [
-  "Usage: /gsd worktree <command> [args]",
+  "Usage: /gwd worktree <command> [args]",
   "",
   "Commands:",
   "  list                       Show all worktrees with status",

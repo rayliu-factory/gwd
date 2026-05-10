@@ -11,7 +11,7 @@ import {
 import {
   dispatchBrowserSlashCommand,
   getBrowserSlashCommandTerminalNotice,
-  GSD_HELP_TEXT,
+  GWD_HELP_TEXT,
   type BrowserSlashCommandDispatchResult,
   type BrowserSlashCommandSurface,
 } from "./browser-slash-command-dispatch"
@@ -72,7 +72,7 @@ import type {
   WorkspaceSliceTarget,
   WorkspaceValidationIssue,
 } from "../../src/shared/workspace-types.ts"
-import type { RpcExtensionUIRequest } from "@gsd-build/contracts"
+import type { RpcExtensionUIRequest } from "@gwd-build/contracts"
 
 export type WorkspaceStatus = "idle" | "loading" | "ready" | "error" | "unauthenticated"
 export type WorkspaceConnectionState =
@@ -249,7 +249,7 @@ export interface WorkspaceOnboardingCompletionRecord {
   completedSteps: string[]
   /** Step IDs that were explicitly skipped. */
   skippedSteps: string[]
-  /** Last step the wizard was on, used by /gsd onboarding --resume. */
+  /** Last step the wizard was on, used by /gwd onboarding --resume. */
   lastResumePoint: string | null
   /** Bumped on the CLI side when a new required step is added; signals re-onboarding need. */
   flowVersion: number
@@ -596,7 +596,7 @@ const IMPLEMENTED_BROWSER_COMMAND_SURFACES = new Set<BrowserSlashCommandSurface>
   "logout",
   "session",
   "export",
-  // GSD subcommand surfaces (S02)
+  // GWD subcommand surfaces (S02)
   "gsd-status",
   "gsd-visualize",
   "gsd-forensics",
@@ -999,7 +999,7 @@ function summarizeOnboardingState(onboarding: WorkspaceOnboardingState): { type:
 
 function bootSeedLines(boot: WorkspaceBootPayload): WorkspaceTerminalLine[] {
   const lines = [
-    createTerminalLine("system", `GSD web workspace attached to ${boot.project.cwd}`),
+    createTerminalLine("system", `GWD web workspace attached to ${boot.project.cwd}`),
     createTerminalLine("system", `Workspace scope: ${getCurrentScopeLabel(boot.workspace)}`),
   ]
 
@@ -1808,7 +1808,7 @@ function createInitialState(): WorkspaceStoreState {
     connectionState: "idle",
     boot: null,
     live: createInitialWorkspaceLiveState(),
-    terminalLines: [createTerminalLine("system", "Preparing the live GSD workspace…")],
+    terminalLines: [createTerminalLine("system", "Preparing the live GWD workspace…")],
     lastClientError: null,
     lastBridgeError: null,
     sessionAttached: false,
@@ -4073,7 +4073,7 @@ export class GSDWorkspaceStore {
           this.patchState({
             terminalLines: withTerminalLine(
               withTerminalLine(this.state.terminalLines, createTerminalLine("input", trimmed)),
-              createTerminalLine("system", GSD_HELP_TEXT),
+              createTerminalLine("system", GWD_HELP_TEXT),
             ),
           })
           return outcome
@@ -5249,7 +5249,7 @@ export function GSDWorkspaceProvider({ children, store: externalStore }: { child
 function useWorkspaceStore(): GSDWorkspaceStore {
   const store = useContext(WorkspaceStoreContext)
   if (!store) {
-    throw new Error("useWorkspaceStore must be used within GSDWorkspaceProvider")
+    throw new Error("useWorkspaceStore must be used within GWDWorkspaceProvider")
   }
   return store
 }

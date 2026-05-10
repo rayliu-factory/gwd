@@ -23,12 +23,12 @@ describe('gsdRootCache key normalization', () => {
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
-    savedGsdHome = process.env.GSD_HOME;
+    savedGsdHome = process.env.GWD_HOME;
 
-    // Point HOME and GSD_HOME at an unrelated temp dir to prevent ~/.gsd interference.
+    // Point HOME and GWD_HOME at an unrelated temp dir to prevent ~/.gwd interference.
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
-    process.env.GSD_HOME = join(fakeHome, '.gsd');
+    process.env.GWD_HOME = join(fakeHome, '.gsd');
 
     _clearGsdRootCache();
   });
@@ -38,8 +38,8 @@ describe('gsdRootCache key normalization', () => {
     else process.env.HOME = savedHome;
     if (savedUserProfile === undefined) delete process.env.USERPROFILE;
     else process.env.USERPROFILE = savedUserProfile;
-    if (savedGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = savedGsdHome;
+    if (savedGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = savedGsdHome;
 
     clearPathCache();
     rmSync(projectDir, { recursive: true, force: true });
@@ -96,11 +96,11 @@ describe('clearPathCache() does NOT invalidate gsdRootCache (process-lifetime se
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
-    savedGsdHome = process.env.GSD_HOME;
+    savedGsdHome = process.env.GWD_HOME;
 
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
-    process.env.GSD_HOME = join(fakeHome, '.gsd');
+    process.env.GWD_HOME = join(fakeHome, '.gsd');
 
     _clearGsdRootCache();
   });
@@ -110,8 +110,8 @@ describe('clearPathCache() does NOT invalidate gsdRootCache (process-lifetime se
     else process.env.HOME = savedHome;
     if (savedUserProfile === undefined) delete process.env.USERPROFILE;
     else process.env.USERPROFILE = savedUserProfile;
-    if (savedGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = savedGsdHome;
+    if (savedGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = savedGsdHome;
 
     _clearGsdRootCache();
     clearPathCache();

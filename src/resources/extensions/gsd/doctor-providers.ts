@@ -1,5 +1,5 @@
 /**
- * GSD Doctor — Provider & Integration Health Checks
+ * GWD Doctor — Provider & Integration Health Checks
  *
  * Fast, deterministic checks for external service configuration.
  * Checks key presence in auth.json and environment variables — no HTTP calls,
@@ -13,8 +13,8 @@
 
 import { existsSync, readFileSync } from "node:fs";
 import { delimiter, join } from "node:path";
-import { AuthStorage } from "@gsd/pi-coding-agent";
-import { getEnvApiKey } from "@gsd/pi-ai";
+import { AuthStorage } from "@gwd/pi-coding-agent";
+import { getEnvApiKey } from "@gwd/pi-ai";
 import { loadEffectiveGSDPreferences } from "./preferences.js";
 import { getAuthPath, PROVIDER_REGISTRY, type ProviderCategory } from "./key-manager.js";
 import { homedir } from "node:os";
@@ -197,7 +197,7 @@ function isCliBinaryInPath(providerId: string): boolean {
 function modelsJsonPaths(): string[] {
   const home = homedir();
   return [
-    join(home, ".gsd", "agent", "models.json"),
+    join(home, ".gwd", "agent", "models.json"),
     // Keep parity with custom-provider discovery during auto bootstrap.
     join(home, ".pi", "agent", "models.json"),
   ];
@@ -224,7 +224,7 @@ function hasModelsJsonApiKey(providerId: string): boolean {
 function resolveKey(providerId: string): KeyLookup {
   const info = PROVIDER_REGISTRY.find(p => p.id === providerId);
 
-  // claude-code never stores credentials in auth.json — GSD delegates entirely to
+  // claude-code never stores credentials in auth.json — GWD delegates entirely to
   // the local CLI binary. Presence of the binary in PATH is the only signal.
   if (providerId === "claude-code") {
     return { found: isCliBinaryInPath("claude-code"), source: "env", backedOff: false };
@@ -334,8 +334,8 @@ function checkLlmProviders(): ProviderCheckResult[] {
         detail: providerId === "anthropic-vertex"
           ? "Set ANTHROPIC_VERTEX_PROJECT_ID and authenticate with Google ADC"
           : info?.hasOAuth
-          ? `Run /gsd keys to authenticate`
-          : `Set ${envVar} or run /gsd keys`,
+          ? `Run /gwd keys to authenticate`
+          : `Set ${envVar} or run /gwd keys`,
         required: true,
       });
     } else if (lookup.backedOff) {
@@ -345,7 +345,7 @@ function checkLlmProviders(): ProviderCheckResult[] {
         category: "llm",
         status: "warning",
         message: `${label} — all credentials backed off (rate limited)`,
-        detail: `GSD will retry automatically`,
+        detail: `GWD will retry automatically`,
         required: true,
       });
     } else {
@@ -392,7 +392,7 @@ function checkRemoteQuestionsProvider(): ProviderCheckResult | null {
         category: "remote",
         status: "warning",
         message: `${label} — channel configured but token not found`,
-        detail: info?.envVar ? `Set ${info.envVar} or run /gsd keys` : `Run /gsd keys to configure`,
+        detail: info?.envVar ? `Set ${info.envVar} or run /gwd keys` : `Run /gwd keys to configure`,
         required: true,
       };
     }

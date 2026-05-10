@@ -196,7 +196,7 @@ export function Dashboard({ onSwitchView, onExpandTerminal }: DashboardProps = {
   const rtkMetric = deriveDashboardRtkMetric(auto, isConnecting, formatTokens)
 
   // ─── Project Welcome Gate ───────────────────────────────────────────
-  // Show welcome screen for projects that aren't initialized with GSD yet
+  // Show welcome screen for projects that aren't initialized with GWD yet
   const detection = boot?.projectDetection
   const showWelcome =
     !isConnecting &&

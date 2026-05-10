@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Tests for capped GSD workflow protocol and doctor-heal payload helpers.
+// Project/App: GWD-2
+// File Purpose: Tests for capped GWD workflow protocol and doctor-heal payload helpers.
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -13,9 +13,9 @@ import {
 
 test("workflow protocol helper emits capped excerpt plus source path", () => {
   const workflow = `# Protocol\n${"FULL_WORKFLOW_BODY ".repeat(500)}`;
-  const excerpt = buildWorkflowProtocolExcerpt(workflow, "/tmp/GSD-WORKFLOW.md", { maxChars: 1200 });
+  const excerpt = buildWorkflowProtocolExcerpt(workflow, "/tmp/GWD-WORKFLOW.md", { maxChars: 1200 });
 
-  assert.match(excerpt, /Source: `\/tmp\/GSD-WORKFLOW\.md`/);
+  assert.match(excerpt, /Source: `\/tmp\/GWD-WORKFLOW\.md`/);
   assert.match(excerpt, /\[Workflow Protocol Truncated\]/);
   assert.ok(excerpt.length < workflow.length);
   assert.ok(excerpt.length < 1600);
@@ -25,12 +25,12 @@ test("workflow dispatch uses excerpt instead of full workflow body", () => {
   const workflow = `# Protocol\n${"FULL_WORKFLOW_BODY ".repeat(500)}`;
   const content = buildWorkflowDispatchContent({
     workflow,
-    workflowPath: "/tmp/GSD-WORKFLOW.md",
+    workflowPath: "/tmp/GWD-WORKFLOW.md",
     task: "Run the selected unit.",
     maxProtocolChars: 1200,
   });
 
-  assert.match(content, /## GSD Workflow Protocol Excerpt/);
+  assert.match(content, /## GWD Workflow Protocol Excerpt/);
   assert.match(content, /## Your Task/);
   assert.match(content, /Run the selected unit/);
   assert.ok(content.length < workflow.length);
@@ -38,7 +38,7 @@ test("workflow dispatch uses excerpt instead of full workflow body", () => {
 
 test("workflow protocol excerpt includes late verification and advance rules", () => {
   const workflow = [
-    "# GSD Workflow",
+    "# GWD Workflow",
     "intro",
     "## Quick Start",
     "quick",
@@ -54,7 +54,7 @@ test("workflow protocol excerpt includes late verification and advance rules", (
     "advance rules",
   ].join("\n");
 
-  const excerpt = buildWorkflowProtocolExcerpt(workflow, "/tmp/GSD-WORKFLOW.md", { maxChars: 1300 });
+  const excerpt = buildWorkflowProtocolExcerpt(workflow, "/tmp/GWD-WORKFLOW.md", { maxChars: 1300 });
 
   assert.match(excerpt, /Quick Start/);
   assert.match(excerpt, /Phase 5: Verify/);
@@ -64,7 +64,7 @@ test("workflow protocol excerpt includes late verification and advance rules", (
 
 test("doctor heal summary omits duplicated full report body", () => {
   const report = [
-    "# GSD doctor heal prep.",
+    "# GWD doctor heal prep.",
     "Scope: M001",
     "Status: warning",
     "Warnings: 9",
@@ -74,7 +74,7 @@ test("doctor heal summary omits duplicated full report body", () => {
 
   const summary = buildDoctorHealSummary(report, { maxChars: 900 });
 
-  assert.match(summary, /GSD doctor heal prep/);
+  assert.match(summary, /GWD doctor heal prep/);
   assert.match(summary, /Warnings: 9/);
   assert.ok(summary.length <= 900);
   assert.doesNotMatch(summary, /VERY_LONG_FULL_REPORT_BODY VERY_LONG_FULL_REPORT_BODY VERY_LONG_FULL_REPORT_BODY/);

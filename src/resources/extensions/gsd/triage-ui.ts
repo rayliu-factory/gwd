@@ -1,15 +1,15 @@
 /**
- * GSD Triage UI — Confirmation flow for programmatic triage results
+ * GWD Triage UI — Confirmation flow for programmatic triage results
  *
  * Used by auto-mode dispatch (S02) when triage fires between tasks.
- * For manual `/gsd triage`, the LLM session handles confirmation directly.
+ * For manual `/gwd triage`, the LLM session handles confirmation directly.
  *
  * This module provides `showTriageConfirmation` which presents each
  * triage result to the user via `showNextAction` and returns the
  * confirmed classifications.
  */
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { showNextAction } from "../shared/tui.js";
 import type { CaptureEntry, Classification, TriageResult } from "./captures.js";
 import { markCaptureResolved } from "./captures.js";

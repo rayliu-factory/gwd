@@ -1,4 +1,4 @@
-// GSD-2 write-gate bootstrap — regression tests for basePath threading on
+// GWD-2 write-gate bootstrap — regression tests for basePath threading on
 // shouldBlockContextWrite / shouldBlockPendingGate (R1).
 //
 // The underlying bug: readers defaulted to process.cwd() and so missed the
@@ -42,16 +42,16 @@ describe("write-gate shouldBlock readers respect explicit basePath", () => {
   before(() => {
     baseDirA = makeTempDir();
     baseDirB = makeTempDir();
-    prevPersist = process.env.GSD_PERSIST_WRITE_GATE_STATE;
-    process.env.GSD_PERSIST_WRITE_GATE_STATE = "1";
+    prevPersist = process.env.GWD_PERSIST_WRITE_GATE_STATE;
+    process.env.GWD_PERSIST_WRITE_GATE_STATE = "1";
   });
 
   after(() => {
     process.chdir(originalCwd);
     if (prevPersist === undefined) {
-      delete process.env.GSD_PERSIST_WRITE_GATE_STATE;
+      delete process.env.GWD_PERSIST_WRITE_GATE_STATE;
     } else {
-      process.env.GSD_PERSIST_WRITE_GATE_STATE = prevPersist;
+      process.env.GWD_PERSIST_WRITE_GATE_STATE = prevPersist;
     }
     rmSync(baseDirA, { recursive: true, force: true });
     rmSync(baseDirB, { recursive: true, force: true });

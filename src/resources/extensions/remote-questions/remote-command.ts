@@ -1,10 +1,10 @@
 /**
- * Remote Questions — /gsd remote command
+ * Remote Questions — /gwd remote command
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
-import { AuthStorage } from "@gsd/pi-coding-agent";
-import { Editor, type EditorTheme, Key, matchesKey, truncateToWidth } from "@gsd/pi-tui";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
+import { AuthStorage } from "@gwd/pi-coding-agent";
+import { Editor, type EditorTheme, Key, matchesKey, truncateToWidth } from "@gwd/pi-tui";
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { getGlobalGSDPreferencesPath, loadEffectiveGSDPreferences } from "../gsd/preferences.js";
@@ -64,7 +64,7 @@ async function handleSetupSlack(ctx: ExtensionCommandContext): Promise<void> {
   const send = await fetchJson("https://slack.com/api/chat.postMessage", {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json; charset=utf-8" },
-    body: JSON.stringify({ channel: channelId, text: "GSD remote questions connected." }),
+    body: JSON.stringify({ channel: channelId, text: "GWD remote questions connected." }),
   });
   if (!send?.ok) return void ctx.ui.notify(`Could not send to channel: ${send?.error ?? "unknown error"}`, "error");
 
@@ -143,7 +143,7 @@ async function handleSetupDiscord(ctx: ExtensionCommandContext): Promise<void> {
   const sendResponse = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
     method: "POST",
     headers: { ...headers, "Content-Type": "application/json" },
-    body: JSON.stringify({ content: "GSD remote questions connected." }),
+    body: JSON.stringify({ content: "GWD remote questions connected." }),
     signal: AbortSignal.timeout(15_000),
   });
   if (!sendResponse.ok) {
@@ -173,7 +173,7 @@ async function handleSetupTelegram(ctx: ExtensionCommandContext): Promise<void> 
   const send = await fetchJson(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, text: "GSD remote questions connected." }),
+    body: JSON.stringify({ chat_id: chatId, text: "GWD remote questions connected." }),
   });
   if (!send?.ok) return void ctx.ui.notify(`Could not send to chat: ${send?.description ?? "unknown error"}`, "error");
 
@@ -226,20 +226,20 @@ async function handleRemoteMenu(ctx: ExtensionCommandContext): Promise<void> {
         latestPrompt ? `  Last prompt: ${latestPrompt.id} (${latestPrompt.status})` : "  No remote prompts recorded yet",
         "",
         "Commands:",
-        "  /gsd remote status",
-        "  /gsd remote disconnect",
-        "  /gsd remote slack",
-        "  /gsd remote discord",
-        "  /gsd remote telegram",
+        "  /gwd remote status",
+        "  /gwd remote disconnect",
+        "  /gwd remote slack",
+        "  /gwd remote discord",
+        "  /gwd remote telegram",
       ]
     : [
         "No remote question channel configured.",
         "",
         "Commands:",
-        "  /gsd remote slack",
-        "  /gsd remote discord",
-        "  /gsd remote telegram",
-        "  /gsd remote status",
+        "  /gwd remote slack",
+        "  /gwd remote discord",
+        "  /gwd remote telegram",
+        "  /gwd remote status",
       ];
 
   ctx.ui.notify(lines.join("\n"), "info");

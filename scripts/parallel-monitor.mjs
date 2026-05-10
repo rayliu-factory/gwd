@@ -2,7 +2,7 @@
 /**
  * GSD Parallel Worker Monitor
  * 
- * Real-time TUI dashboard for monitoring parallel GSD auto-mode workers.
+ * Real-time TUI dashboard for monitoring parallel GWD auto-mode workers.
  * Zero dependencies — uses raw ANSI escape codes, Node.js builtins only.
  * 
  * Usage:
@@ -274,9 +274,9 @@ function extractCostFromNdjson(mid) {
 
 // ─── Self-Healing ────────────────────────────────────────────────────────────
 
-// Auto-detect the GSD loader path — works across npm global, homebrew, and local installs
-function findGsdLoader() {
-  // 1. Check if we're running from inside the gsd-2 repo itself
+// Auto-detect the GWD loader path — works across npm global, homebrew, and local installs
+function findGwdLoader() {
+  // 1. Check if we're running from inside the gwd-2 repo itself
   const repoLoader = path.resolve(import.meta.dirname, '..', 'dist', 'loader.js');
   if (fs.existsSync(repoLoader)) return repoLoader;
   
@@ -284,18 +284,17 @@ function findGsdLoader() {
   try {
     const globalRoot = execSync('npm root -g', { encoding: 'utf-8', timeout: 3000 }).trim();
     const candidates = [
-      path.join(globalRoot, 'gsd-pi', 'dist', 'loader.js'),
-      path.join(globalRoot, '@gsd', 'pi', 'dist', 'loader.js'),
+      path.join(globalRoot, 'gwd-pi', 'dist', 'loader.js'),
     ];
     for (const c of candidates) {
       if (fs.existsSync(c)) return c;
     }
   } catch { /* skip */ }
   
-  // 3. Try `which gsd` and resolve symlink
+  // 3. Try `which gwd` and resolve symlink
   try {
     const pathLookup = process.platform === 'win32' ? 'where.exe' : 'which';
-    const lookupArgs = ['gsd'];
+    const lookupArgs = ['gwd'];
     const result = spawnSync(pathLookup, lookupArgs, { encoding: 'utf-8', timeout: 3000 });
     const bin = result.status === 0 ? result.stdout.trim().split(/\r?\n/)[0]?.trim() : '';
     if (bin) {
@@ -308,7 +307,7 @@ function findGsdLoader() {
   return null;
 }
 
-const GSD_LOADER = findGsdLoader();
+const GWD_LOADER = findGwdLoader();
 
 /**
  * Respawn a dead worker. Returns the new PID or null on failure.
@@ -317,7 +316,7 @@ const GSD_LOADER = findGsdLoader();
 function respawnWorker(mid) {
   const worktreeDir = path.resolve(PROJECT_ROOT, `.gsd/worktrees/${mid}`);
   if (!fs.existsSync(worktreeDir)) return null;
-  if (!fs.existsSync(GSD_LOADER)) return null;
+  if (!fs.existsSync(GWD_LOADER)) return null;
   
   const stdoutLog = path.resolve(PROJECT_ROOT, PARALLEL_DIR, `${mid}.stdout.log`);
   const stderrLog = path.resolve(PROJECT_ROOT, PARALLEL_DIR, `${mid}.stderr.log`);
@@ -329,14 +328,14 @@ function respawnWorker(mid) {
     stdoutFd = fs.openSync(stdoutLog, 'a');
     stderrFd = fs.openSync(stderrLog, 'a');
 
-    const child = spawn(process.execPath, [GSD_LOADER, 'headless', '--json', 'auto'], {
+    const child = spawn(process.execPath, [GWD_LOADER, 'headless', '--json', 'auto'], {
       cwd: worktreeDir,
       detached: true,
       env: {
         ...process.env,
-        GSD_MILESTONE_LOCK: mid,
-        GSD_PROJECT_ROOT: PROJECT_ROOT,
-        GSD_PARALLEL_WORKER: '1',
+        GWD_MILESTONE_LOCK: mid,
+        GWD_PROJECT_ROOT: PROJECT_ROOT,
+        GWD_PARALLEL_WORKER: '1',
       },
       stdio: ['ignore', stdoutFd, stderrFd],
       windowsHide: true,

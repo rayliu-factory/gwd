@@ -56,28 +56,28 @@ test('secrets gate: no manifest exists — getManifestStatus returns null', asyn
 
 test('secrets gate: pending keys exist — gate triggers collection, manifest updated on disk', async (t) => {
   const tmp = makeTempDir('gate-pending');
-  const savedA = process.env.GSD_GATE_TEST_EXISTING;
+  const savedA = process.env.GWD_GATE_TEST_EXISTING;
   t.after(() => {
-    delete process.env.GSD_GATE_TEST_EXISTING;
-    if (savedA !== undefined) process.env.GSD_GATE_TEST_EXISTING = savedA;
-    delete process.env.GSD_GATE_TEST_PEND_A;
-    delete process.env.GSD_GATE_TEST_PEND_B;
+    delete process.env.GWD_GATE_TEST_EXISTING;
+    if (savedA !== undefined) process.env.GWD_GATE_TEST_EXISTING = savedA;
+    delete process.env.GWD_GATE_TEST_PEND_A;
+    delete process.env.GWD_GATE_TEST_PEND_B;
     rmSync(tmp, { recursive: true, force: true });
   });
 
   // Simulate one key already in env
-  process.env.GSD_GATE_TEST_EXISTING = 'already-here';
+  process.env.GWD_GATE_TEST_EXISTING = 'already-here';
 
   // Ensure pending keys are NOT in env
-  delete process.env.GSD_GATE_TEST_PEND_A;
-  delete process.env.GSD_GATE_TEST_PEND_B;
+  delete process.env.GWD_GATE_TEST_PEND_A;
+  delete process.env.GWD_GATE_TEST_PEND_B;
 
   writeManifest(tmp, `# Secrets Manifest
 
 **Milestone:** M001
 **Generated:** 2025-06-20T10:00:00Z
 
-### GSD_GATE_TEST_PEND_A
+### GWD_GATE_TEST_PEND_A
 
 **Service:** ServiceA
 **Status:** pending
@@ -85,7 +85,7 @@ test('secrets gate: pending keys exist — gate triggers collection, manifest up
 
 1. Get key A from dashboard
 
-### GSD_GATE_TEST_PEND_B
+### GWD_GATE_TEST_PEND_B
 
 **Service:** ServiceB
 **Status:** pending
@@ -93,7 +93,7 @@ test('secrets gate: pending keys exist — gate triggers collection, manifest up
 
 1. Get key B from dashboard
 
-### GSD_GATE_TEST_EXISTING
+### GWD_GATE_TEST_EXISTING
 
 **Service:** ServiceC
 **Status:** pending
@@ -106,8 +106,8 @@ test('secrets gate: pending keys exist — gate triggers collection, manifest up
   const status = await getManifestStatus(tmp, 'M001');
   assert.notStrictEqual(status, null, 'manifest should exist');
   assert.ok(status!.pending.length > 0, 'should have pending keys');
-  assert.deepStrictEqual(status!.pending, ['GSD_GATE_TEST_PEND_A', 'GSD_GATE_TEST_PEND_B'], 'pending keys');
-  assert.deepStrictEqual(status!.existing, ['GSD_GATE_TEST_EXISTING'], 'existing keys');
+  assert.deepStrictEqual(status!.pending, ['GWD_GATE_TEST_PEND_A', 'GWD_GATE_TEST_PEND_B'], 'pending keys');
+  assert.deepStrictEqual(status!.existing, ['GWD_GATE_TEST_EXISTING'], 'existing keys');
 
   // (b) Call collectSecretsFromManifest with no-UI context
   // With hasUI: false, collectOneSecret returns null → pending keys become "skipped"
@@ -115,9 +115,9 @@ test('secrets gate: pending keys exist — gate triggers collection, manifest up
 
   // (c) Verify return shape
   assert.deepStrictEqual(result.applied, [], 'no keys applied (no UI to enter values)');
-  assert.ok(result.skipped.includes('GSD_GATE_TEST_PEND_A'), 'PEND_A should be skipped');
-  assert.ok(result.skipped.includes('GSD_GATE_TEST_PEND_B'), 'PEND_B should be skipped');
-  assert.deepStrictEqual(result.existingSkipped, ['GSD_GATE_TEST_EXISTING']);
+  assert.ok(result.skipped.includes('GWD_GATE_TEST_PEND_A'), 'PEND_A should be skipped');
+  assert.ok(result.skipped.includes('GWD_GATE_TEST_PEND_B'), 'PEND_B should be skipped');
+  assert.deepStrictEqual(result.existingSkipped, ['GWD_GATE_TEST_EXISTING']);
 
   // (d) Verify manifest on disk was updated — pending entries that went through
   // collection are now "skipped". The existing-in-env entry retains its manifest
@@ -146,14 +146,14 @@ test('secrets gate: pending keys exist — gate triggers collection, manifest up
 
 test('secrets gate: no pending keys — getManifestStatus shows pending.length === 0', async (t) => {
   const tmp = makeTempDir('gate-no-pending');
-  const savedKey = process.env.GSD_GATE_TEST_ENVKEY;
+  const savedKey = process.env.GWD_GATE_TEST_ENVKEY;
   t.after(() => {
-    delete process.env.GSD_GATE_TEST_ENVKEY;
-    if (savedKey !== undefined) process.env.GSD_GATE_TEST_ENVKEY = savedKey;
+    delete process.env.GWD_GATE_TEST_ENVKEY;
+    if (savedKey !== undefined) process.env.GWD_GATE_TEST_ENVKEY = savedKey;
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  process.env.GSD_GATE_TEST_ENVKEY = 'some-value';
+  process.env.GWD_GATE_TEST_ENVKEY = 'some-value';
 
   writeManifest(tmp, `# Secrets Manifest
 
@@ -176,7 +176,7 @@ test('secrets gate: no pending keys — getManifestStatus shows pending.length =
 
 1. Not needed
 
-### GSD_GATE_TEST_ENVKEY
+### GWD_GATE_TEST_ENVKEY
 
 **Service:** ServiceZ
 **Status:** pending
@@ -190,5 +190,5 @@ test('secrets gate: no pending keys — getManifestStatus shows pending.length =
   assert.deepStrictEqual(result!.pending, [], 'no pending keys — gate would skip');
   assert.deepStrictEqual(result!.collected, ['ALREADY_COLLECTED']);
   assert.deepStrictEqual(result!.skipped, ['ALREADY_SKIPPED']);
-  assert.deepStrictEqual(result!.existing, ['GSD_GATE_TEST_ENVKEY']);
+  assert.deepStrictEqual(result!.existing, ['GWD_GATE_TEST_ENVKEY']);
 });

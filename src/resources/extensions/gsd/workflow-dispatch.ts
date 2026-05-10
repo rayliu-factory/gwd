@@ -1,12 +1,12 @@
 /**
  * workflow-dispatch.ts — Shared dispatchers for workflow plugins.
  *
- * Called by both `/gsd start <template>` (existing markdown path) and
- * `/gsd workflow <name>` (new direct dispatch). Keeps the prompt-build
+ * Called by both `/gwd start <template>` (existing markdown path) and
+ * `/gwd workflow <name>` (new direct dispatch). Keeps the prompt-build
  * logic in one place so md template behavior stays consistent.
  */
 
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 import { readFileSync } from "node:fs";
 
 import { loadPrompt } from "./prompt-loader.js";

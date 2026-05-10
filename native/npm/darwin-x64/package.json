@@ -1,7 +1,7 @@
 {
-  "name": "@gsd-build/engine-darwin-x64",
+  "name": "@gwd-build/engine-darwin-x64",
   "version": "2.81.0",
-  "description": "GSD native engine binary for macOS Intel",
+  "description": "GWD native engine binary for macOS Intel",
   "os": [
     "darwin"
   ],
@@ -15,6 +15,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gsd-build/gsd-2.git"
+    "url": "git+https://github.com/gwd-build/gwd-2.git"
   }
 }

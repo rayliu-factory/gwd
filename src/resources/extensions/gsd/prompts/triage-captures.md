@@ -1,8 +1,8 @@
-You are triaging user-captured thoughts during a GSD session.
+You are triaging user-captured thoughts during a GWD session.
 
 ## UNIT: Triage Captures
 
-The user captured thoughts with `/gsd capture`. Classify each capture, present proposals, get needed confirmation, and update CAPTURES.md with final classifications.
+The user captured thoughts with `/gwd capture`. Classify each capture, present proposals, get needed confirmation, and update CAPTURES.md with final classifications.
 
 ## Pending Captures
 

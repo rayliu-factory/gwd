@@ -1,4 +1,4 @@
-// GSD Extension — write-intercept unit tests
+// GWD Extension — write-intercept unit tests
 // Tests isBlockedStateFile() and BLOCKED_WRITE_ERROR constant.
 
 import test from 'node:test';
@@ -25,8 +25,8 @@ test('write-intercept: blocks nested project .gsd/STATE.md path', () => {
   assert.strictEqual(isBlockedStateFile('/Users/dev/my-project/.gsd/STATE.md'), true);
 });
 
-test('write-intercept: blocks .gsd/projects/<name>/STATE.md (symlinked projects path)', () => {
-  assert.strictEqual(isBlockedStateFile('/home/user/.gsd/projects/my-project/STATE.md'), true);
+test('write-intercept: blocks .gwd/projects/<name>/STATE.md (symlinked projects path)', () => {
+  assert.strictEqual(isBlockedStateFile('/home/user/.gwd/projects/my-project/STATE.md'), true);
 });
 
 // ─── isBlockedStateFile: allowed paths ───────────────────────────────────

@@ -1,4 +1,4 @@
-// gsd-2 / merge-self-branch-guard.test.ts — regression for #5024
+// gwd-2 / merge-self-branch-guard.test.ts — regression for #5024
 //
 // mergeMilestoneToMain() must fail closed when the resolved integration
 // branch is the same ref as the milestone branch. Stale or corrupt

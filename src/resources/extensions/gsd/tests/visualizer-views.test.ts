@@ -1,4 +1,4 @@
-// Tests for GSD visualizer view renderers.
+// Tests for GWD visualizer view renderers.
 // Tests the pure view functions with mock data — no file I/O.
 
 import {

@@ -3,7 +3,7 @@
 # Rename a symbol across the codebase. Inventories call sites, renames each
 # file atomically, and verifies the project still builds and tests pass.
 #
-# Run with: /gsd workflow rename-symbol old_name=foo new_name=bar
+# Run with: /gwd workflow rename-symbol old_name=foo new_name=bar
 
 version: 1
 name: rename-symbol

@@ -1,15 +1,15 @@
 /**
- * /gsd migrate — one-shot migration from .planning to .gsd
+ * /gwd migrate — one-shot migration from .planning to .gsd
  *
  * Thin UX orchestrator: resolves paths, runs the validate → parse → transform →
  * preview → write pipeline, and shows confirmation UI via showNextAction.
  * All business logic lives in the pipeline modules (S01–S03).
  *
  * After a successful write, offers an agent-driven review that audits the
- * output for GSD-2 standards compliance.
+ * output for GWD-2 standards compliance.
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve, join, dirname } from "node:path";
 import { gsdRoot } from "../paths.js";
@@ -57,7 +57,7 @@ export async function importWrittenMigrationToDb(
 ): Promise<MigrationImportCounts> {
   const opened = await ensureDbOpen(basePath);
   if (!opened) {
-    throw new Error(`failed to open or create the GSD database at ${basePath}`);
+    throw new Error(`failed to open or create the GWD database at ${basePath}`);
   }
 
   const counts = transaction(() => {
@@ -143,8 +143,8 @@ export async function handleMigrate(
   if (!existsSync(sourcePath)) {
     ctx.ui.notify(
       `Directory not found: ${sourcePath}\n\n` +
-      'Migration converts a .planning/ directory (from older GSD versions) into .gsd/ format.\n' +
-      'If you are starting a new project, use /gsd:new-project instead.\n' +
+      'Migration converts a .planning/ directory (from older GWD versions) into .gsd/ format.\n' +
+      'If you are starting a new project, use /gwd:new-project instead.\n' +
       'If migrating, ensure the path contains a .planning/ directory.',
       "error",
     );
@@ -213,7 +213,7 @@ export async function handleMigrate(
         description: "Exit without writing anything",
       },
     ],
-    notYetMessage: "Run /gsd migrate again when ready.",
+    notYetMessage: "Run /gwd migrate again when ready.",
   });
 
   if (choice !== "confirm") {
@@ -240,7 +240,7 @@ export async function handleMigrate(
       `${result.paths.length} files written to .gsd/`,
       `${imported.hierarchy.milestones} milestone(s), ${imported.hierarchy.slices} slice(s), and ${imported.hierarchy.tasks} task(s) imported to gsd.db`,
       "",
-      "The agent can now review the migrated output against GSD-2 standards —",
+      "The agent can now review the migrated output against GWD-2 standards —",
       "checking structure, content quality, deriveState() round-trip, and",
       "requirement statuses. It will fix minor issues in-place.",
     ],
@@ -257,7 +257,7 @@ export async function handleMigrate(
         description: "Trust the migration output as-is",
       },
     ],
-    notYetMessage: "Run /gsd migrate again to re-migrate, or review .gsd manually.",
+    notYetMessage: "Run /gwd migrate again to re-migrate, or review .gsd manually.",
   });
 
   if (reviewChoice === "review") {

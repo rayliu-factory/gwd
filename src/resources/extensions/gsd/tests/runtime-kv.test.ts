@@ -1,4 +1,4 @@
-// gsd-2 + runtime_kv non-correctness-critical key-value storage tests (Phase C)
+// gwd-2 + runtime_kv non-correctness-critical key-value storage tests (Phase C)
 
 import test from "node:test";
 import assert from "node:assert/strict";

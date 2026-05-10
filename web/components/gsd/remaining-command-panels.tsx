@@ -164,7 +164,7 @@ export function QuickPanel() {
         <div className="space-y-2">
           <h4 className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Usage</h4>
           <div className="rounded-md border border-border/50 bg-background/50 px-3 py-2 font-mono text-[11px] text-foreground/80">
-            /gsd quick &lt;description&gt;
+            /gwd quick &lt;description&gt;
           </div>
         </div>
 
@@ -179,7 +179,7 @@ export function QuickPanel() {
             ].map((example) => (
               <div key={example} className="flex items-center gap-2 text-[11px]">
                 <span className="text-muted-foreground">$</span>
-                <code className="font-mono text-muted-foreground">/gsd quick {example}</code>
+                <code className="font-mono text-muted-foreground">/gwd quick {example}</code>
               </div>
             ))}
           </div>
@@ -695,7 +695,7 @@ export function HooksPanel() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// 6. INSPECT PANEL — GSD database overview
+// 6. INSPECT PANEL — GWD database overview
 // ═══════════════════════════════════════════════════════════════════════
 
 export function InspectPanel() {
@@ -1257,7 +1257,7 @@ export function StatusPanel() {
       )}
 
       {milestones.length === 0 && (
-        <PanelEmpty message="No plan loaded — run /gsd to initialize" />
+        <PanelEmpty message="No plan loaded — run /gwd to initialize" />
       )}
     </div>
   )

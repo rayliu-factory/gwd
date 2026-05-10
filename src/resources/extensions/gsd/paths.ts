@@ -1,6 +1,6 @@
-// GSD-2 — ID-based path resolution for GSD project files and directories
+// GWD-2 — ID-based path resolution for GWD project files and directories
 /**
- * GSD Paths — ID-based path resolution
+ * GWD Paths — ID-based path resolution
  *
  * Directories use bare IDs: M001/, S01/, etc.
  * Files use ID-SUFFIX: M001-ROADMAP.md, S01-PLAN.md, T01-PLAN.md
@@ -271,7 +271,7 @@ export function resolveTaskJsonFiles(tasksDir: string, suffix: string): string[]
 
 // ─── Full Path Builders ────────────────────────────────────────────────────
 
-export const GSD_ROOT_FILES = {
+export const GWD_ROOT_FILES = {
   PROJECT: "PROJECT.md",
   DECISIONS: "DECISIONS.md",
   QUEUE: "QUEUE.md",
@@ -282,9 +282,9 @@ export const GSD_ROOT_FILES = {
   CODEBASE: "CODEBASE.md",
 } as const;
 
-export type GSDRootFileKey = keyof typeof GSD_ROOT_FILES;
+export type GSDRootFileKey = keyof typeof GWD_ROOT_FILES;
 
-const LEGACY_GSD_ROOT_FILES: Record<GSDRootFileKey, string> = {
+const LEGACY_GWD_ROOT_FILES: Record<GSDRootFileKey, string> = {
   PROJECT: "project.md",
   DECISIONS: "decisions.md",
   QUEUE: "queue.md",
@@ -295,13 +295,13 @@ const LEGACY_GSD_ROOT_FILES: Record<GSDRootFileKey, string> = {
   CODEBASE: "codebase.md",
 };
 
-// ─── GSD Root Discovery ───────────────────────────────────────────────────────
+// ─── GWD Root Discovery ───────────────────────────────────────────────────────
 
 // Process-lifetime cache for gsdRoot() results.
 // Keys are realpath-normalized (via normCacheKey) so /foo and /foo/ share the
 // same entry and so do case-variant paths on case-insensitive volumes. This
 // normalization is the safety net that prevents cache poisoning from the
-// ~/.gsd walk-up bug (fixed in c46cf4786 + b35e070eb), making it safe to
+// ~/.gwd walk-up bug (fixed in c46cf4786 + b35e070eb), making it safe to
 // hold this cache for the entire process lifetime.
 // Use _clearGsdRootCache() only at session-reset boundaries (workspace switch,
 // process exit) — NOT inside clearPathCache(), which runs on every agent turn.
@@ -318,7 +318,7 @@ export interface GsdPathContract {
   worktreeGsd: string | null;
   /** Canonical authoritative SQLite DB path. */
   projectDb: string;
-  /** True when workRoot is inside a GSD worktree layout. */
+  /** True when workRoot is inside a GWD worktree layout. */
   isWorktree: boolean;
 }
 
@@ -413,7 +413,7 @@ export function gsdRoot(basePath: string): string {
 
   // Defense-in-depth: if basePath resolves to the user's home directory and
   // the result equals gsdHome(), refuse — project-scoped writes must never
-  // land in the global ~/.gsd. Paths under ~/.gsd/projects/<hash>/ are still
+  // land in the global ~/.gwd. Paths under ~/.gwd/projects/<hash>/ are still
   // valid (their basePath does not equal homedir).
   assertNotGlobalGsdHome(basePath, result);
 
@@ -442,8 +442,8 @@ function assertNotGlobalGsdHome(basePath: string, result: string): void {
   }
   if (baseNorm === homeNorm && resultNorm === gsdHomeNorm) {
     throw new Error(
-      `Refusing to use ${result} as a project .gsd directory — that is the global GSD home. ` +
-      `Run GSD from inside a project directory.`,
+      `Refusing to use ${result} as a project .gsd directory — that is the global GWD home. ` +
+      `Run GWD from inside a project directory.`,
     );
   }
 }
@@ -451,7 +451,7 @@ function assertNotGlobalGsdHome(basePath: string, result: string): void {
 /**
  * Detect if a path is inside a .gsd/worktrees/<name>/ structure.
  *
- * GSD auto-worktrees live at <project>/.gsd/worktrees/<milestoneId>/.
+ * GWD auto-worktrees live at <project>/.gsd/worktrees/<milestoneId>/.
  * When gsdRoot() is called with such a path, we must NOT walk up to the
  * project root's .gsd — each worktree manages its own .gsd state (#2594).
  *
@@ -530,8 +530,8 @@ function probeGsdRoot(rawBasePath: string): string {
 
   if (gitRoot) {
     const candidate = join(gitRoot, ".gsd");
-    // Skip if the candidate resolves to the global GSD home — a subdir basePath
-    // must not be anchored to ~/.gsd just because $HOME is a git repo.
+    // Skip if the candidate resolves to the global GWD home — a subdir basePath
+    // must not be anchored to ~/.gwd just because $HOME is a git repo.
     if (existsSync(candidate) && normPath(candidate) !== gsdHomeNorm) return candidate;
   }
 
@@ -560,15 +560,15 @@ export function resolveRuntimeFile(basePath: string): string {
 
 export function resolveGsdRootFile(basePath: string, key: GSDRootFileKey): string {
   const root = gsdRoot(basePath);
-  const canonical = join(root, GSD_ROOT_FILES[key]);
+  const canonical = join(root, GWD_ROOT_FILES[key]);
   if (existsSync(canonical)) return canonical;
-  const legacy = join(root, LEGACY_GSD_ROOT_FILES[key]);
+  const legacy = join(root, LEGACY_GWD_ROOT_FILES[key]);
   if (existsSync(legacy)) return legacy;
   return canonical;
 }
 
 export function relGsdRootFile(key: GSDRootFileKey): string {
-  return `.gsd/${GSD_ROOT_FILES[key]}`;
+  return `.gsd/${GWD_ROOT_FILES[key]}`;
 }
 
 /**

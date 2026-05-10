@@ -1,8 +1,8 @@
-// Project/App: GSD-2
-// File Purpose: Complete-task tool handler for GSD workflow state and summaries.
+// Project/App: GWD-2
+// File Purpose: Complete-task tool handler for GWD workflow state and summaries.
 
 /**
- * complete-task handler — the core operation behind gsd_complete_task.
+ * complete-task handler — the core operation behind gsd_task_complete.
  *
  * Validates inputs, writes task row and rendered SUMMARY.md to DB in a
  * transaction, then renders projections to disk and invalidates caches.
@@ -225,7 +225,7 @@ export async function handleCompleteTask(
     if (existingTask && isClosedStatus(existingTask.status)) {
       // Stale-turn path: a timed-out turn that was superseded by recovery
       // can still reach this code when its LLM call eventually returns and
-      // invokes gsd_complete_task. Returning an error would produce noisy
+      // invokes gsd_task_complete. Returning an error would produce noisy
       // "already complete — use reopen first" logs in the orphaned turn.
       // Instead, signal the duplicate via a non-mutating success shape that
       // callers can detect via `duplicate: true` / `stale: true`.

@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Tracks database open attempt and error status for the GSD database facade.
+// Project/App: GWD-2
+// File Purpose: Tracks database open attempt and error status for the GWD database facade.
 
 export type DbOpenPhase = "open" | "initSchema" | "vacuum-recovery";
 

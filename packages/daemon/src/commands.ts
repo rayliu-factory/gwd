@@ -25,15 +25,15 @@ export function buildCommands(): RESTPostAPIChatInputApplicationCommandsJSONBody
   return [
     new SlashCommandBuilder()
       .setName('gsd-status')
-      .setDescription('Show status of all active GSD sessions')
+      .setDescription('Show status of all active GWD sessions')
       .toJSON(),
     new SlashCommandBuilder()
       .setName('gsd-start')
-      .setDescription('Start a new GSD session')
+      .setDescription('Start a new GWD session')
       .toJSON(),
     new SlashCommandBuilder()
       .setName('gsd-stop')
-      .setDescription('Stop a running GSD session')
+      .setDescription('Stop a running GWD session')
       .toJSON(),
     new SlashCommandBuilder()
       .setName('gsd-verbose')
@@ -90,7 +90,7 @@ export async function registerGuildCommands(
 // ---------------------------------------------------------------------------
 
 /**
- * Format session list for /gsd-status reply.
+ * Format session list for /gwd-status reply.
  * Shows projectName, status, duration, and cost for each session.
  * Returns 'No active sessions.' if the array is empty.
  */

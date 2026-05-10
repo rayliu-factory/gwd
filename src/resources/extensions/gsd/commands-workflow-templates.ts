@@ -1,14 +1,14 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Workflow template commands for starting, listing, and dispatching workflows.
 
 /**
- * GSD Workflow Template Commands — /gsd start, /gsd templates
+ * GWD Workflow Template Commands — /gwd start, /gwd templates
  *
- * Handles the `/gsd start [template] [description]` and `/gsd templates` commands.
+ * Handles the `/gwd start [template] [description]` and `/gwd templates` commands.
  * Resolves templates by name or auto-detection, then dispatches the workflow prompt.
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -165,7 +165,7 @@ function findInProgressWorkflows(basePath: string): WorkflowState[] {
   return results;
 }
 
-// ─── /gsd start ──────────────────────────────────────────────────────────────
+// ─── /gwd start ──────────────────────────────────────────────────────────────
 
 export async function handleStart(
   args: string,
@@ -174,7 +174,7 @@ export async function handleStart(
 ): Promise<void> {
   const trimmed = args.trim();
 
-  // /gsd start --list → same as /gsd templates
+  // /gwd start --list → same as /gwd templates
   if (trimmed === "--list" || trimmed === "list") {
     ctx.ui.notify(listTemplates(), "info");
     return;
@@ -186,7 +186,7 @@ export async function handleStart(
   if (isAutoActive()) {
     ctx.ui.notify(
       "Cannot start a workflow template while auto-mode is running.\n" +
-      "Run /gsd pause first, then /gsd start.",
+      "Run /gwd pause first, then /gwd start.",
       "warning",
     );
     return;
@@ -195,13 +195,13 @@ export async function handleStart(
   if (isAutoPaused()) {
     ctx.ui.notify(
       "Auto-mode is paused. Starting a workflow template will run independently.\n" +
-      "The paused auto-mode session can be resumed later with /gsd auto.",
+      "The paused auto-mode session can be resumed later with /gwd auto.",
       "info",
     );
   }
 
   // ─── Resume detection ───────────────────────────────────────────────────
-  // /gsd start --resume or /gsd start resume → resume in-progress workflow
+  // /gwd start --resume or /gwd start resume → resume in-progress workflow
   if (trimmed === "--resume" || trimmed === "resume") {
     const basePath = currentDirectoryRoot();
     const inProgress = findInProgressWorkflows(basePath);
@@ -252,7 +252,7 @@ export async function handleStart(
     return;
   }
 
-  // Show in-progress workflows when /gsd start is called with no args
+  // Show in-progress workflows when /gwd start is called with no args
   if (!trimmed) {
     const basePath = currentDirectoryRoot();
     const inProgress = findInProgressWorkflows(basePath);
@@ -264,13 +264,13 @@ export async function handleStart(
         `In-progress workflow found:\n` +
         `  ${wf.templateName}: "${wf.description}"\n` +
         `  Phase ${completedCount + 1}/${wf.phases.length}: ${activePhase?.name ?? "unknown"}\n\n` +
-        `Run /gsd start resume to continue it.\n`,
+        `Run /gwd start resume to continue it.\n`,
         "info",
       );
     }
   }
 
-  // /gsd start --dry-run <template> → preview without executing
+  // /gwd start --dry-run <template> → preview without executing
   const dryRun = trimmed.includes("--dry-run");
   const cleanedArgs = trimmed.replace(/--dry-run\s*/, "").trim();
 
@@ -306,10 +306,10 @@ export async function handleStart(
       );
     } else if (detected.length > 1) {
       const choices = detected.slice(0, 4).map(
-        (m) => `  /gsd start ${m.id} ${cleanedArgs}`
+        (m) => `  /gwd start ${m.id} ${cleanedArgs}`
       );
       ctx.ui.notify(
-        `Multiple templates could match. Pick one:\n\n${choices.join("\n")}\n\nOr specify explicitly: /gsd start <template> <description>`,
+        `Multiple templates could match. Pick one:\n\n${choices.join("\n")}\n\nOr specify explicitly: /gwd start <template> <description>`,
         "info",
       );
       return;
@@ -320,7 +320,7 @@ export async function handleStart(
   if (!match) {
     if (!trimmed) {
       ctx.ui.notify(
-        "Usage: /gsd start <template> [description]\n\n" +
+        "Usage: /gwd start <template> [description]\n\n" +
         "Templates:\n" +
         "  bugfix          Triage → fix → verify → ship\n" +
         "  small-feature   Scope → plan → implement → verify\n" +
@@ -329,23 +329,23 @@ export async function handleStart(
         "  refactor        Inventory → plan → migrate → verify\n" +
         "  security-audit  Scan → triage → remediate → re-scan\n" +
         "  dep-upgrade     Assess → upgrade → fix → verify\n" +
-        "  full-project    Complete GSD with full ceremony\n\n" +
+        "  full-project    Complete GWD with full ceremony\n\n" +
         "Examples:\n" +
-        "  /gsd start bugfix fix login button not responding\n" +
-        "  /gsd start spike evaluate auth libraries\n" +
-        "  /gsd start hotfix critical: API returns 500\n\n" +
+        "  /gwd start bugfix fix login button not responding\n" +
+        "  /gwd start spike evaluate auth libraries\n" +
+        "  /gwd start hotfix critical: API returns 500\n\n" +
         "Recommended task paths:\n" +
         formatRecommendedProcessPaths() +
         "\n\n" +
         "Flags:\n" +
         "  --dry-run       Preview what would happen without executing\n" +
         "  --issue <ref>   Link to a GitHub issue\n\n" +
-        "Run /gsd templates for detailed template info.",
+        "Run /gwd templates for detailed template info.",
         "info",
       );
     } else {
       ctx.ui.notify(
-        `No template matched "${firstWord}". Run /gsd start to see available templates.`,
+        `No template matched "${firstWord}". Run /gwd start to see available templates.`,
         "warning",
       );
     }
@@ -404,27 +404,27 @@ export async function handleStart(
     return;
   }
 
-  // ─── Route full-project to standard GSD workflow ────────────────────────
+  // ─── Route full-project to standard GWD workflow ────────────────────────
 
   if (templateId === "full-project") {
     const root = gsdRoot(basePath);
     if (!existsSync(root)) {
       ctx.ui.notify(
-        "Routing to /gsd init for full project setup...",
+        "Routing to /gwd init for full project setup...",
         "info",
       );
-      // Trigger /gsd init by dispatching to the handler
+      // Trigger /gwd init by dispatching to the handler
       pi.sendMessage(
         {
           customType: "gsd-workflow-template",
-          content: "The user wants to start a full GSD project. Run `/gsd init` to bootstrap the project, then `/gsd auto` to begin execution.",
+          content: "The user wants to start a full GWD project. Run `/gwd init` to bootstrap the project, then `/gwd auto` to begin execution.",
           display: false,
         },
         { triggerTurn: true },
       );
     } else {
       ctx.ui.notify(
-        "Project already initialized. Use `/gsd auto` to continue or `/gsd discuss` to start a new milestone.",
+        "Project already initialized. Use `/gwd auto` to continue or `/gwd discuss` to start a new milestone.",
         "info",
       );
     }
@@ -521,7 +521,7 @@ export async function handleStart(
   );
 }
 
-// ─── /gsd templates ──────────────────────────────────────────────────────────
+// ─── /gwd templates ──────────────────────────────────────────────────────────
 
 export async function handleTemplates(
   args: string,
@@ -529,7 +529,7 @@ export async function handleTemplates(
 ): Promise<void> {
   const trimmed = args.trim();
 
-  // /gsd templates info <name>
+  // /gwd templates info <name>
   if (trimmed.startsWith("info ")) {
     const name = trimmed.replace(/^info\s+/, "").trim();
     const info = getTemplateInfo(name);
@@ -537,19 +537,19 @@ export async function handleTemplates(
       ctx.ui.notify(info, "info");
     } else {
       ctx.ui.notify(
-        `Unknown template "${name}". Run /gsd templates to see available templates.`,
+        `Unknown template "${name}". Run /gwd templates to see available templates.`,
         "warning",
       );
     }
     return;
   }
 
-  // /gsd templates — list all
+  // /gwd templates — list all
   ctx.ui.notify(listTemplates(), "info");
 }
 
 /**
- * Return template IDs for autocomplete in /gsd templates info <name>.
+ * Return template IDs for autocomplete in /gwd templates info <name>.
  */
 export function getTemplateCompletions(prefix: string): Array<{ value: string; label: string; description: string }> {
   try {
@@ -566,7 +566,7 @@ export function getTemplateCompletions(prefix: string): Array<{ value: string; l
   }
 }
 
-// ─── Shared markdown-phase dispatcher (used by /gsd workflow <name>) ────────
+// ─── Shared markdown-phase dispatcher (used by /gwd workflow <name>) ────────
 
 /**
  * Dispatch a markdown-phase workflow plugin. Mirrors `handleStart`'s execution
@@ -587,7 +587,7 @@ export function dispatchMarkdownPhasePlugin(
   if (isAutoActive()) {
     ctx.ui.notify(
       "Cannot start a markdown-phase workflow while auto-mode is running.\n" +
-      "Run /gsd pause first.",
+      "Run /gwd pause first.",
       "warning",
     );
     return;

@@ -1,10 +1,10 @@
 /**
- * GSD Maintenance — cleanup, skip, dry-run, and recover handlers.
+ * GWD Maintenance — cleanup, skip, dry-run, and recover handlers.
  *
  * Contains: handleCleanupBranches, handleCleanupSnapshots, handleCleanupWorktrees, handleSkip, handleDryRun, handleRecover
  */
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { deriveState } from "./state.js";
 import { nativeBranchList, nativeDetectMainBranch, nativeBranchListMerged, nativeBranchDelete, nativeForEachRef, nativeUpdateRef } from "./native-git-bridge.js";
 import { logWarning } from "./workflow-logger.js";
@@ -15,7 +15,7 @@ export async function handleCleanupBranches(ctx: ExtensionCommandContext, basePa
     branches = nativeBranchList(basePath, "gsd/*");
   } catch (e) {
     logWarning("command", `branch list failed: ${(e as Error).message}`);
-    ctx.ui.notify("No GSD branches to clean up.", "info");
+    ctx.ui.notify("No GWD branches to clean up.", "info");
     return;
   }
 
@@ -112,8 +112,8 @@ export async function handleCleanupBranches(ctx: ExtensionCommandContext, basePa
     const nonQuickCount = branches.filter((b) => !b.startsWith("gsd/quick/")).length;
     ctx.ui.notify(
       nonQuickCount > 0
-        ? `${nonQuickCount} GSD branch${nonQuickCount === 1 ? "" : "es"} found, none merged into ${mainBranch} yet.`
-        : "No non-quick GSD branches to clean up.",
+        ? `${nonQuickCount} GWD branch${nonQuickCount === 1 ? "" : "es"} found, none merged into ${mainBranch} yet.`
+        : "No non-quick GWD branches to clean up.",
       "info",
     );
     return;
@@ -125,7 +125,7 @@ export async function handleCleanupBranches(ctx: ExtensionCommandContext, basePa
 export async function handleCleanupSnapshots(ctx: ExtensionCommandContext, basePath: string): Promise<void> {
   let refs: string[];
   try {
-    refs = nativeForEachRef(basePath, "refs/gsd/snapshots/");
+    refs = nativeForEachRef(basePath, "refs/gwd/snapshots/");
   } catch (e) {
     logWarning("command", `snapshot ref list failed: ${(e as Error).message}`);
     ctx.ui.notify("No snapshot refs to clean up.", "info");
@@ -176,7 +176,7 @@ export async function handleCleanupWorktrees(ctx: ExtensionCommandContext, baseP
   }
 
   if (statuses.length === 0) {
-    ctx.ui.notify("No GSD worktrees found.", "info");
+    ctx.ui.notify("No GWD worktrees found.", "info");
     return;
   }
 
@@ -240,7 +240,7 @@ export async function handleCleanupWorktrees(ctx: ExtensionCommandContext, baseP
 
 export async function handleSkip(unitArg: string, ctx: ExtensionCommandContext, basePath: string): Promise<void> {
   if (!unitArg) {
-    ctx.ui.notify("Usage: /gsd skip <unit-id>  (e.g., /gsd skip execute-task/M001/S01/T03 or /gsd skip T03)", "info");
+    ctx.ui.notify("Usage: /gwd skip <unit-id>  (e.g., /gwd skip execute-task/M001/S01/T03 or /gwd skip T03)", "info");
     return;
   }
 
@@ -436,7 +436,7 @@ export async function handleCleanupProjects(args: string, ctx: ExtensionCommandC
   if (unknown.length > 0) {
     lines.push(`Unknown (${unknown.length}) — no metadata yet:`);
     for (const h of unknown) {
-      lines.push(`  ? ${h}  (open that project in GSD once to register metadata)`);
+      lines.push(`  ? ${h}  (open that project in GWD once to register metadata)`);
     }
     lines.push("");
   }
@@ -450,7 +450,7 @@ export async function handleCleanupProjects(args: string, ctx: ExtensionCommandC
   }
 
   if (!fix && orphaned.length > 0) {
-    lines.push(`Run /gsd cleanup projects --fix to permanently delete ${pl(orphaned.length, "orphaned director")}${orphaned.length === 1 ? "y" : "ies"}.`);
+    lines.push(`Run /gwd cleanup projects --fix to permanently delete ${pl(orphaned.length, "orphaned director")}${orphaned.length === 1 ? "y" : "ies"}.`);
     ctx.ui.notify(lines.join("\n"), "warning");
     return;
   }
@@ -493,7 +493,7 @@ export async function handleRecover(ctx: ExtensionCommandContext, basePath: stri
   const { invalidateStateCache } = await import("./state.js");
 
   if (!dbAvailable()) {
-    ctx.ui.notify("gsd recover: No database open. Run a GSD command first to initialize the DB.", "error");
+    ctx.ui.notify("gsd recover: No database open. Run a GWD command first to initialize the DB.", "error");
     return;
   }
 

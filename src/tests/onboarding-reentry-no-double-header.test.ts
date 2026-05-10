@@ -5,7 +5,7 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 
 const gsdHome = mkdtempSync(join(tmpdir(), "gsd-onboarding-reentry-"))
-process.env.GSD_HOME = gsdHome
+process.env.GWD_HOME = gsdHome
 const { handleOnboarding } = await import("../resources/extensions/gsd/commands/handlers/onboarding.ts")
 
 after(() => rmSync(gsdHome, { recursive: true, force: true }))
@@ -31,7 +31,7 @@ test("re-entry onboarding handler opens the TUI setup hub and routes selected st
   await handleOnboarding("", ctx as any)
 
   assert.equal(selections.length, 1)
-  assert.equal(selections[0].message, "GSD Setup — pick a step to configure")
+  assert.equal(selections[0].message, "GWD Setup — pick a step to configure")
   assert.ok(selections[0].options.some((option) => option.includes("LLM")))
   assert.equal(notifications.length, 1)
   assert.match(notifications[0].message, /LLM provider setup/)

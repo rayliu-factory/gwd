@@ -1,4 +1,4 @@
-// GSD-2 + Integration regression suite for workspace collapse (feat/workspace-collapse)
+// GWD-2 + Integration regression suite for workspace collapse (feat/workspace-collapse)
 
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
@@ -51,7 +51,7 @@ function makeGitRepo(): string {
   const dir = makeProjectDir();
   git(["init"], dir);
   git(["config", "user.email", "test@gsd.test"], dir);
-  git(["config", "user.name", "GSD Test"], dir);
+  git(["config", "user.name", "GWD Test"], dir);
   writeFileSync(join(dir, "README.md"), "# test\n");
   git(["add", "README.md"], dir);
   git(["commit", "-m", "init"], dir);
@@ -312,12 +312,12 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
-    savedGsdHome = process.env.GSD_HOME;
+    savedGsdHome = process.env.GWD_HOME;
 
-    // Prevent ~/.gsd interference
+    // Prevent ~/.gwd interference
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
-    process.env.GSD_HOME = join(fakeHome, ".gsd");
+    process.env.GWD_HOME = join(fakeHome, ".gsd");
 
     clearPathCache();
   });
@@ -327,8 +327,8 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
     else process.env.HOME = savedHome;
     if (savedUserProfile === undefined) delete process.env.USERPROFILE;
     else process.env.USERPROFILE = savedUserProfile;
-    if (savedGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = savedGsdHome;
+    if (savedGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = savedGsdHome;
 
     clearPathCache();
     rmSync(projectDir, { recursive: true, force: true });

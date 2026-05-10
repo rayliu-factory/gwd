@@ -1,4 +1,4 @@
-// GSD-2 — #4781 phase 2: dispatch-rule gates read pipeline variant from DB.
+// GWD-2 — #4781 phase 2: dispatch-rule gates read pipeline variant from DB.
 // Behavior tests (not source-grep) — construct a real tmpdir DB, insert a
 // milestone whose planning fields classify to the target variant, exercise
 // DISPATCH_RULES.match(), assert the gate result.
@@ -28,7 +28,7 @@ const VALIDATE_RULE = "validating-milestone → validate-milestone";
 // ─── Fixture helpers ──────────────────────────────────────────────────────
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-pipeline-variant-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-pipeline-variant-"));
   mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S02", "tasks"), { recursive: true });
   return base;

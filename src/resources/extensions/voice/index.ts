@@ -1,7 +1,7 @@
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
 import { shortcutDesc } from "../shared/mod.js";
-import type { AssistantMessage } from "@gsd/pi-ai";
-import { isKeyRelease, Key, matchesKey, truncateToWidth, visibleWidth } from "@gsd/pi-tui";
+import type { AssistantMessage } from "@gwd/pi-ai";
+import { isKeyRelease, Key, matchesKey, truncateToWidth, visibleWidth } from "@gwd/pi-tui";
 import { spawn, execFileSync, type ChildProcess } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
@@ -36,7 +36,7 @@ function ensureLinuxReady(ctx: ExtensionContext): boolean {
 
 	// Check GROQ_API_KEY is available
 	if (!process.env.GROQ_API_KEY) {
-		ctx.ui.notify("Voice: GROQ_API_KEY not set — run 'gsd config' to configure", "error");
+		ctx.ui.notify("Voice: GROQ_API_KEY not set — run 'gwd config' to configure", "error");
 		return false;
 	}
 

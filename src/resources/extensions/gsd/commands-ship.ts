@@ -1,14 +1,14 @@
-// Project/App: GSD-2
-// File Purpose: Ship command for creating pull requests from GSD milestone evidence.
+// Project/App: GWD-2
+// File Purpose: Ship command for creating pull requests from GWD milestone evidence.
 
 /**
- * GSD Command — /gsd ship
+ * GWD Command — /gwd ship
  *
  * Creates a PR from milestone artifacts: generates title + body from
  * roadmap, slice summaries, and metrics, then opens via `gh pr create`.
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -187,7 +187,7 @@ function generatePRContent(basePath: string, milestoneId: string, milestoneTitle
     metrics,
     testsRun: ["Run `npm run verify:pr` before marking this PR ready."],
     rollbackNotes: ["Revert the merge commit or close the PR before merge if review finds a regression."],
-    how: "Generated from GSD milestone slice summaries, roadmap status, and local metrics.",
+    how: "Generated from GWD milestone slice summaries, roadmap status, and local metrics.",
   });
 }
 
@@ -218,7 +218,7 @@ export async function handleShip(
   const milestoneId = state.activeMilestone.id;
   const milestoneTitle = state.activeMilestone.title ?? "";
 
-  // 2. Check for incomplete work (use GSD phase as proxy — no phase field on ActiveRef)
+  // 2. Check for incomplete work (use GWD phase as proxy — no phase field on ActiveRef)
   if (state.phase !== "complete" && !force) {
     ctx.ui.notify(
       `Milestone ${milestoneId} may not be complete (phase: ${state.phase}). Use --force to ship anyway.`,
@@ -239,7 +239,7 @@ export async function handleShip(
     }
     if (result.kind === "absent") {
       ctx.ui.notify(
-        `Slice ${sliceId} has no EVAL-REVIEW.md — consider /gsd eval-review ${sliceId} (non-blocking).`,
+        `Slice ${sliceId} has no EVAL-REVIEW.md — consider /gwd eval-review ${sliceId} (non-blocking).`,
         "warning",
       );
     } else if (result.kind === "malformed") {

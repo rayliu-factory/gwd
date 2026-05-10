@@ -1,4 +1,4 @@
-// GSD Extension — Regression tests for #1714: retry_on signal state reset
+// GWD Extension — Regression tests for #1714: retry_on signal state reset
 //
 // Verifies that when a post_unit_hook writes a retry_on artifact, the
 // consuming code properly resets all completion state so deriveState

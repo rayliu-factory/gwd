@@ -1,4 +1,4 @@
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -11,7 +11,7 @@ import { findMilestoneIds } from "../../milestone-id-utils.js";
 
 /**
  * Parse --yolo flag and optional file path from the auto command string.
- * Supports: `/gsd auto --yolo path/to/file.md` or `/gsd auto -y path/to/file.md`
+ * Supports: `/gwd auto --yolo path/to/file.md` or `/gwd auto -y path/to/file.md`
  */
 function parseYoloFlag(trimmed: string): { yoloSeedFile: string | null; rest: string } {
   const yoloRe = /(?:--yolo|-y)\s+("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\S+)/;
@@ -133,7 +133,7 @@ export async function handleAutoCommand(trimmed: string, ctx: ExtensionCommandCo
   if (trimmed === "pause") {
     if (!isAutoActive()) {
       if (isAutoPaused()) {
-        ctx.ui.notify("Auto-mode is already paused. /gsd auto to resume.", "info");
+        ctx.ui.notify("Auto-mode is already paused. /gwd auto to resume.", "info");
       } else {
         ctx.ui.notify("Auto-mode is not running.", "info");
       }

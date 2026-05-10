@@ -1,5 +1,5 @@
 /**
- * GSD Detection — Project state and ecosystem detection.
+ * GWD Detection — Project state and ecosystem detection.
  *
  * Pure functions, zero UI dependencies, zero side effects.
  * Used by init-wizard.ts and guided-flow.ts to determine what onboarding
@@ -17,13 +17,13 @@ import { gsdHome } from "./gsd-home.js";
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
 export interface ProjectDetection {
-  /** What kind of GSD state exists in this directory */
+  /** What kind of GWD state exists in this directory */
   state: "none" | "v1-planning" | "v2-gsd" | "v2-gsd-empty";
 
-  /** Is this the first time GSD has been used on this machine? */
+  /** Is this the first time GWD has been used on this machine? */
   isFirstEverLaunch: boolean;
 
-  /** Does ~/.gsd/ exist with preferences? */
+  /** Does ~/.gwd/ exist with preferences? */
   hasGlobalSetup: boolean;
 
   /** v1 details (only when state === 'v1-planning') */
@@ -340,7 +340,7 @@ export function detectProjectState(basePath: string): ProjectDetection {
 // ─── V1 Planning Detection ──────────────────────────────────────────────────────
 
 /**
- * Detect a v1 .planning/ directory with GSD v1 markers.
+ * Detect a v1 .planning/ directory with GWD v1 markers.
  * Returns null if no .planning/ directory found.
  */
 export function detectV1Planning(basePath: string): V1Detection | null {
@@ -377,7 +377,7 @@ export function detectV1Planning(basePath: string): V1Detection | null {
   };
 }
 
-// ─── V2 GSD Detection ──────────────────────────────────────────────────────────
+// ─── V2 GWD Detection ──────────────────────────────────────────────────────────
 
 function detectV2Gsd(basePath: string): V2Detection | null {
   const gsdPath = gsdRoot(basePath);
@@ -844,7 +844,7 @@ function detectVerificationCommands(
 // ─── Global Setup Detection ─────────────────────────────────────────────────────
 
 /**
- * Check if global GSD setup exists (has ~/.gsd/ with preferences).
+ * Check if global GWD setup exists (has ~/.gwd/ with preferences).
  */
 export function hasGlobalSetup(): boolean {
   return (
@@ -854,8 +854,8 @@ export function hasGlobalSetup(): boolean {
 }
 
 /**
- * Check if this is the very first time GSD has been used on this machine.
- * Returns true if ~/.gsd/ doesn't exist or has no preferences or auth.
+ * Check if this is the very first time GWD has been used on this machine.
+ * Returns true if ~/.gwd/ doesn't exist or has no preferences or auth.
  */
 export function isFirstEverLaunch(): boolean {
   if (!existsSync(gsdHome())) return true;

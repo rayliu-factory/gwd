@@ -192,8 +192,8 @@ export async function collectBaseline(root, commandSpecs = []) {
     },
     commands: commandTimings,
     startup: {
-      timingEnv: "GSD_STARTUP_TIMING=1",
-      note: "Run a command spec such as --command startup='GSD_STARTUP_TIMING=1 node dist/loader.js --version' after build output exists.",
+      timingEnv: "GWD_STARTUP_TIMING=1",
+      note: "Run a command spec such as --command startup='GWD_STARTUP_TIMING=1 node dist/loader.js --version' after build output exists.",
     },
   };
 
@@ -320,7 +320,7 @@ export async function collectContractsMetrics(root) {
     surfaces.push({
       ...surface,
       exists: true,
-      usesSharedContracts: content.includes("@gsd-build/contracts"),
+      usesSharedContracts: content.includes("@gwd-build/contracts"),
       legacyTypeImports: countLegacyContractImports(content),
     });
   }
@@ -584,7 +584,7 @@ export function countLegacyContractImports(value) {
     value,
     /(?:packages\/pi-coding-agent\/src\/modes\/rpc\/rpc-types|src\/modes\/rpc\/rpc-types)/g,
   );
-  const importPattern = /import\s+type\s+\{([^}]+)\}\s+from\s+["']@gsd-build\/rpc-client["']/g;
+  const importPattern = /import\s+type\s+\{([^}]+)\}\s+from\s+["']@gwd-build\/rpc-client["']/g;
   for (const match of value.matchAll(importPattern)) {
     const names = match[1]
       .split(",")

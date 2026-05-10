@@ -9,12 +9,12 @@ artifact_dir: .gsd/
 </template_meta>
 
 <purpose>
-The complete GSD workflow with full ceremony: roadmap, milestones, slices, tasks,
+The complete GWD workflow with full ceremony: roadmap, milestones, slices, tasks,
 research, planning, execution, and verification. Use for greenfield projects or
 major features that need the full planning apparatus.
 
-This template wraps the existing GSD workflow for registry completeness.
-When selected, it routes to the standard /gsd init → /gsd auto pipeline.
+This template wraps the existing GWD workflow for registry completeness.
+When selected, it routes to the standard /gwd init → /gwd auto pipeline.
 </purpose>
 
 <phases>
@@ -27,16 +27,16 @@ When selected, it routes to the standard /gsd init → /gsd auto pipeline.
 
 <process>
 
-## Routing to Standard GSD
+## Routing to Standard GWD
 
-This template is a convenience entry point. When selected via `/gsd start full-project`,
-it should route to the standard GSD workflow:
+This template is a convenience entry point. When selected via `/gwd start full-project`,
+it should route to the standard GWD workflow:
 
-1. If `.gsd/` doesn't exist: Run `/gsd init` to bootstrap the project
-2. If `.gsd/` exists but no milestones: Start the discuss phase via `/gsd discuss`
-3. If milestones exist: Resume via `/gsd auto` or `/gsd next`
+1. If `.gsd/` doesn't exist: Run `/gwd init` to bootstrap the project
+2. If `.gsd/` exists but no milestones: Start the discuss phase via `/gwd discuss`
+3. If milestones exist: Resume via `/gwd auto` or `/gwd next`
 
-The full GSD workflow protocol is defined in `GSD-WORKFLOW.md` and handles all
+The full GWD workflow protocol is defined in `GWD-WORKFLOW.md` and handles all
 phases, state tracking, and agent orchestration.
 
 </process>

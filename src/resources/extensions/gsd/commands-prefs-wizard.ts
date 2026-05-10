@@ -1,12 +1,12 @@
 /**
- * GSD Preferences Wizard — TUI wizard for configuring GSD preferences.
+ * GWD Preferences Wizard — TUI wizard for configuring GWD preferences.
  *
  * Contains: handlePrefsWizard, buildCategorySummaries, all configure* functions,
  * serializePreferencesToFrontmatter, yamlSafeString, ensurePreferencesFile,
  * handlePrefsMode, handleImportClaude, handlePrefs
  */
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -248,7 +248,7 @@ export async function handlePrefs(args: string, ctx: ExtensionCommandContext): P
       : `missing: ${canonicalGlobal}`;
     const projectStatus = projectPrefs ? `present: ${projectPrefs.path}` : `missing: ${getProjectGSDPreferencesPath()}`;
 
-    const lines = [`GSD skill prefs — global ${globalStatus}; project ${projectStatus}`];
+    const lines = [`GWD skill prefs — global ${globalStatus}; project ${projectStatus}`];
 
     const effective = loadEffectiveGSDPreferences();
     let hasUnresolved = false;
@@ -268,7 +268,7 @@ export async function handlePrefs(args: string, ctx: ExtensionCommandContext): P
     return;
   }
 
-  ctx.ui.notify("Usage: /gsd prefs [global|project|status|wizard|setup|import-claude [global|project]]", "info");
+  ctx.ui.notify("Usage: /gwd prefs [global|project|status|wizard|setup|import-claude [global|project]]", "info");
 }
 
 export async function handleImportClaude(ctx: ExtensionCommandContext, scope: "global" | "project"): Promise<void> {
@@ -287,7 +287,7 @@ export async function handleImportClaude(ctx: ExtensionCommandContext, scope: "g
   const writePrefs = async (prefs: Record<string, unknown>): Promise<void> => {
     prefs.version = prefs.version || 1;
     const frontmatter = serializePreferencesToFrontmatter(prefs);
-    let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+    let body = "\n# GWD Skill Preferences\n\nSee `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
     if (existsSync(path)) {
       const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
       if (preserved) body = preserved;
@@ -309,7 +309,7 @@ export async function handlePrefsMode(ctx: ExtensionCommandContext, scope: "glob
   prefs.version = prefs.version || 1;
   const frontmatter = serializePreferencesToFrontmatter(prefs);
 
-  let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# GWD Skill Preferences\n\nSee `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
   if (existsSync(path)) {
     const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
     if (preserved) body = preserved;
@@ -1554,21 +1554,21 @@ export async function handlePrefsWizard(
   prefill?: Record<string, unknown>,
   opts?: { pathOverride?: string },
 ): Promise<void> {
-  // pathOverride lets callers like /gsd init pass a basePath-derived target
+  // pathOverride lets callers like /gwd init pass a basePath-derived target
   // path so the wizard doesn't fall back to cwd-based getProjectGSDPreferencesPath
   // when the init target diverges from the current working directory.
   const path = opts?.pathOverride
     ?? (scope === "project" ? getProjectGSDPreferencesPath() : getGlobalGSDPreferencesPath());
   const existing = scope === "project" ? loadProjectGSDPreferences() : loadGlobalGSDPreferences();
   // Order: existing-on-disk values, overlaid with prefill (caller's seeded answers).
-  // Callers like /gsd init pass freshly-collected init answers as prefill so the
+  // Callers like /gwd init pass freshly-collected init answers as prefill so the
   // wizard menu shows them populated and writeable in one place.
   const prefs: Record<string, unknown> = {
     ...(existing?.preferences ?? {}),
     ...(prefill ?? {}),
   };
 
-  ctx.ui.notify(`GSD preferences (${scope}) — pick a category to configure.`, "info");
+  ctx.ui.notify(`GWD preferences (${scope}) — pick a category to configure.`, "info");
 
   while (true) {
     const summaries = buildCategorySummaries(prefs);
@@ -1592,7 +1592,7 @@ export async function handlePrefsWizard(
       `── Save & Exit ──`,
     ];
 
-    const raw = await ctx.ui.select("GSD Preferences", options);
+    const raw = await ctx.ui.select("GWD Preferences", options);
     const choice = typeof raw === "string" ? raw : "";
     if (!choice || choice.includes("Save & Exit")) break;
 
@@ -1620,7 +1620,7 @@ export async function handlePrefsWizard(
 /**
  * Single source of truth for writing a PREFERENCES.md file.
  *
- * Both `/gsd init` and the prefs wizard route through this helper so we can't
+ * Both `/gwd init` and the prefs wizard route through this helper so we can't
  * drift on serialization, body preservation, or post-write reload. Callers
  * pass `ctx` for the reload/notify side effects; the function is safe to call
  * without a full UI context for tests via `ctx: null` (skips reload/notify).
@@ -1635,7 +1635,7 @@ export async function writePreferencesFile(
   const frontmatter = serializePreferencesToFrontmatter(next);
 
   const fallbackBody = opts?.defaultBody
-    ?? "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+    ?? "\n# GWD Skill Preferences\n\nSee `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
 
   // Preserve existing body content (everything after closing ---) so users
   // who edited the markdown body don't lose their notes.
@@ -1770,18 +1770,18 @@ export async function ensurePreferencesFile(
   if (!existsSync(path)) {
     const template = await loadFile(join(dirname(fileURLToPath(import.meta.url)), "templates", "PREFERENCES.md"));
     if (!template) {
-      ctx.ui.notify("Could not load GSD preferences template.", "error");
+      ctx.ui.notify("Could not load GWD preferences template.", "error");
       return;
     }
     await saveFile(path, template);
-    ctx.ui.notify(`Created ${scope} GSD skill preferences at ${path}`, "info");
+    ctx.ui.notify(`Created ${scope} GWD skill preferences at ${path}`, "info");
   } else {
-    ctx.ui.notify(`Using existing ${scope} GSD skill preferences at ${path}`, "info");
+    ctx.ui.notify(`Using existing ${scope} GWD skill preferences at ${path}`, "info");
   }
 }
 
 /**
- * Handle `/gsd language [code]` — set or clear the global language preference.
+ * Handle `/gwd language [code]` — set or clear the global language preference.
  * Without an argument, shows the current setting.
  * Project-level override can be set by editing `.gsd/PREFERENCES.md` directly
  * (project language overrides global when both are set).
@@ -1795,9 +1795,9 @@ export async function handleLanguage(args: string, ctx: ExtensionCommandContext)
     const loaded = loadGlobalGSDPreferences();
     const current = loaded?.preferences.language;
     if (current) {
-      ctx.ui.notify(`Current language preference: ${current}\nUse /gsd language <name> to change, or /gsd language off to clear.`, "info");
+      ctx.ui.notify(`Current language preference: ${current}\nUse /gwd language <name> to change, or /gwd language off to clear.`, "info");
     } else {
-      ctx.ui.notify("No language preference set. Use /gsd language <name> to set one (e.g. /gsd language Chinese).", "info");
+      ctx.ui.notify("No language preference set. Use /gwd language <name> to set one (e.g. /gwd language Chinese).", "info");
     }
     return;
   }
@@ -1811,24 +1811,24 @@ export async function handleLanguage(args: string, ctx: ExtensionCommandContext)
 
   if (lang === "off" || lang === "none" || lang === "clear") {
     delete prefs.language;
-    ctx.ui.notify("Language preference cleared. GSD will use the default language.", "info");
+    ctx.ui.notify("Language preference cleared. GWD will use the default language.", "info");
   } else {
     // Validate before writing — reject values that would fail on next load
     if (lang.length > 50 || /[\r\n]/.test(lang)) {
       ctx.ui.notify(
-        "Language value must be 50 characters or fewer with no newlines (e.g. /gsd language Chinese).",
+        "Language value must be 50 characters or fewer with no newlines (e.g. /gwd language Chinese).",
         "warning",
       );
       return;
     }
     prefs.language = lang;
-    ctx.ui.notify(`Language preference set to: ${lang}\nGSD will now respond in ${lang} across all sessions.`, "info");
+    ctx.ui.notify(`Language preference set to: ${lang}\nGWD will now respond in ${lang} across all sessions.`, "info");
   }
 
   const rawContent = existsSync(path) ? readFileSync(path, "utf-8") : `---\nversion: 1\n---\n`;
   const frontmatter = serializePreferencesToFrontmatter(prefs);
   const body = extractBodyAfterFrontmatter(rawContent)
-    ?? "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+    ?? "\n# GWD Skill Preferences\n\nSee `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
   await saveFile(path, `---\n${frontmatter}---${body}`);
   await ctx.waitForIdle();
   await ctx.reload();

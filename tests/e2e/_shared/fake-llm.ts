@@ -76,7 +76,7 @@ export function runWithFakeLlm(transcriptPath: string, opts: FakeRunOptions): Sp
 		cwd: opts.cwd,
 		timeoutMs: opts.timeoutMs ?? 30_000,
 		env: {
-			GSD_FAKE_LLM_TRANSCRIPT: transcriptPath,
+			GWD_FAKE_LLM_TRANSCRIPT: transcriptPath,
 			...(opts.extraEnv ?? {}),
 		},
 	});

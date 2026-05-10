@@ -214,7 +214,7 @@ describe('doctor-runtime', async () => {
 
       // Verify content has expected structure
       const content = readFileSync(stateFilePath, "utf-8");
-      assert.ok(content.includes("# GSD State"), "STATE.md has header");
+      assert.ok(content.includes("# GWD State"), "STATE.md has header");
       assert.ok(content.includes("M001"), "STATE.md references milestone");
     });
 
@@ -225,7 +225,7 @@ describe('doctor-runtime', async () => {
 
       // Write a STATE.md with wrong phase/milestone info
       const stateFilePath = join(dir, ".gsd", "STATE.md");
-      writeFileSync(stateFilePath, `# GSD State
+      writeFileSync(stateFilePath, `# GWD State
 
 **Active Milestone:** None
 **Active Slice:** None
@@ -265,7 +265,7 @@ None
       // Create .gsd dir so checks can run
       mkdirSync(join(dir, ".gsd"), { recursive: true });
 
-      // Write a .gitignore missing GSD runtime patterns
+      // Write a .gitignore missing GWD runtime patterns
       writeFileSync(join(dir, ".gitignore"), `node_modules/
 .env
 `);
@@ -276,7 +276,7 @@ None
       assert.ok(gitignoreIssues[0]?.message.includes(".gsd"), "message lists missing .gsd pattern");
 
       const fixed = await runGSDDoctor(dir, { fix: true });
-      assert.ok(fixed.fixesApplied.some(f => f.includes("added missing GSD runtime patterns")), "fix adds patterns");
+      assert.ok(fixed.fixesApplied.some(f => f.includes("added missing GWD runtime patterns")), "fix adds patterns");
 
       // Verify .gsd entry was added (external state symlink)
       const content = readFileSync(join(dir, ".gitignore"), "utf-8");

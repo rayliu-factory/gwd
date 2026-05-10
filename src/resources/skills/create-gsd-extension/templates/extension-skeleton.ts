@@ -5,9 +5,9 @@
  * {{CAPABILITIES_LIST}}
  */
 
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@gsd/pi-ai";
+import { StringEnum } from "@gwd/pi-ai";
 
 export default function (pi: ExtensionAPI) {
   // === Events ===

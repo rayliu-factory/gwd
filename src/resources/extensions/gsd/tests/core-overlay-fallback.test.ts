@@ -40,7 +40,7 @@ test("show-config only falls back when ctx.ui.custom() is unavailable", async ()
   const fallback = await handleCoreCommand("show-config", fallbackCtx as any);
   assert.equal(fallback, true);
   assert.equal(fallbackCtx.notices.length, 1, "unavailable overlay triggers text fallback");
-  assert.match(fallbackCtx.notices[0]!.message, /GSD Configuration/);
+  assert.match(fallbackCtx.notices[0]!.message, /GWD Configuration/);
 });
 
 test("model command resolves and persists exact provider-qualified selection", async () => {

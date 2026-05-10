@@ -7,7 +7,7 @@
  *      self-identify (Stream 2: actor identity passthrough).
  *
  *   2. The 3 reversibility handlers (reopen-task/slice/milestone) are
- *      registered as MCP tools with both canonical and alias names
+ *      registered as canonical MCP tools after the namespace hard cutover
  *      (Stream 3: reversibility tools).
  *
  *   3. The reopen tools accept the documented core params plus optional
@@ -70,22 +70,19 @@ for (const name of ACTOR_TOOLS) {
   });
 }
 
-// ─── Stream 3: reopen tools registered with canonical + alias names ─────────
+// ─── Stream 3: reopen tools registered with canonical names ─────────────────
 
 const REOPEN_TOOLS = [
-  { canonical: "gsd_task_reopen", alias: "gsd_reopen_task" },
-  { canonical: "gsd_slice_reopen", alias: "gsd_reopen_slice" },
-  { canonical: "gsd_milestone_reopen", alias: "gsd_reopen_milestone" },
+  "gsd_task_reopen",
+  "gsd_slice_reopen",
+  "gsd_milestone_reopen",
 ];
 
-for (const { canonical, alias } of REOPEN_TOOLS) {
-  test(`${canonical} — registered with alias ${alias}`, () => {
-    const canonicalTool = getTool(canonical);
-    const aliasTool = getTool(alias);
-    assert.ok(canonicalTool, `${canonical} must be registered`);
-    assert.ok(aliasTool, `${alias} must be registered as alias`);
-    assert.ok(typeof canonicalTool.execute === "function", `${canonical} must have an execute function`);
-    assert.ok(typeof aliasTool.execute === "function", `${alias} must have an execute function`);
+for (const name of REOPEN_TOOLS) {
+  test(`${name} — registered as canonical reopen tool`, () => {
+    const tool = getTool(name);
+    assert.ok(tool, `${name} must be registered`);
+    assert.ok(typeof tool.execute === "function", `${name} must have an execute function`);
   });
 }
 

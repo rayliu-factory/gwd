@@ -1,6 +1,6 @@
-# GSD Preferences Reference
+# GWD Preferences Reference
 
-Full documentation for `~/.gsd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md` (project).
+Full documentation for `~/.gwd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md` (project).
 
 ---
 
@@ -9,8 +9,8 @@ Full documentation for `~/.gsd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md
 - Keep this skill-first.
 - Prefer explicit skill names or absolute paths.
 - Use absolute paths for personal/local skills when you want zero ambiguity.
-- These preferences guide which skills GSD should load and follow; they do not override higher-priority instructions in the current conversation.
-- For Claude marketplace/plugin import behavior, see `~/.gsd/agent/extensions/gsd/docs/claude-marketplace-import.md`.
+- These preferences guide which skills GWD should load and follow; they do not override higher-priority instructions in the current conversation.
+- For Claude marketplace/plugin import behavior, see `~/.gwd/agent/extensions/gsd/docs/claude-marketplace-import.md`.
 
 ---
 
@@ -18,7 +18,7 @@ Full documentation for `~/.gsd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md
 
 ### Empty Arrays vs Omitted Fields
 
-**Empty arrays (`[]`) are equivalent to omitting the field entirely.** During validation, GSD deletes empty arrays from the preferences object (see `validatePreferences()` in `preferences.ts`):
+**Empty arrays (`[]`) are equivalent to omitting the field entirely.** During validation, GWD deletes empty arrays from the preferences object (see `validatePreferences()` in `preferences.ts`):
 
 ```typescript
 for (const key of [
@@ -51,7 +51,7 @@ skill_rules: []
 
 Preferences are loaded from two locations and merged:
 
-1. **Global:** `~/.gsd/PREFERENCES.md` — applies to all projects
+1. **Global:** `~/.gwd/PREFERENCES.md` — applies to all projects
 2. **Project:** `.gsd/PREFERENCES.md` — applies to the current project only
 
 **Merge behavior** (see `mergePreferences()` in `preferences.ts`):
@@ -68,7 +68,7 @@ These are **separate concerns**:
 
 | Field                                                | What it controls                                          | Code reference                                           |
 | ---------------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------- |
-| `skill_discovery`                                    | **Whether** GSD looks for relevant skills during research | `resolveSkillDiscoveryMode()` in `preferences.ts`        |
+| `skill_discovery`                                    | **Whether** GWD looks for relevant skills during research | `resolveSkillDiscoveryMode()` in `preferences.ts`        |
 | `always_use_skills`, `prefer_skills`, `avoid_skills` | **Which** skills to use when they're found relevant       | `renderPreferencesForSystemPrompt()` in `preferences.ts` |
 
 Setting `prefer_skills: []` does **not** disable skill discovery — it just means you have no preference overrides. Use `skill_discovery: off` to disable discovery entirely.
@@ -90,19 +90,19 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   | `git.isolation`        | `"none"`     | `"none"`     |
   | `unique_milestone_ids` | `false`      | `true`       |
 
-  Quick setup: `/gsd mode` (global) or `/gsd mode project` (project-level).
+  Quick setup: `/gwd mode` (global) or `/gwd mode project` (project-level).
 
-- `always_use_skills`: skills GSD should use whenever they are relevant.
+- `always_use_skills`: skills GWD should use whenever they are relevant.
 
-- `prefer_skills`: soft defaults GSD should prefer when relevant.
+- `prefer_skills`: soft defaults GWD should prefer when relevant.
 
-- `avoid_skills`: skills GSD should avoid unless clearly needed.
+- `avoid_skills`: skills GWD should avoid unless clearly needed.
 
 - `skill_rules`: situational rules with a human-readable `when` trigger and one or more of `use`, `prefer`, or `avoid`.
 
 - `custom_instructions`: extra durable instructions related to skill use. For operational project knowledge (recurring rules, gotchas, patterns), use `.gsd/KNOWLEDGE.md` instead — it's injected into every agent prompt automatically and agents can append to it during execution.
 
-- `language`: preferred response language for all GSD interactions. Accepts any language name or code — `"Chinese"`, `"zh"`, `"German"`, `"de"`, `"日本語"`, etc. When set, GSD injects "Always respond in \<language\>" into every agent's system prompt, including after `/clear`. Quickest way to set it: `/gsd language <name>`. To clear: `/gsd language off`.
+- `language`: preferred response language for all GWD interactions. Accepts any language name or code — `"Chinese"`, `"zh"`, `"German"`, `"de"`, `"日本語"`, etc. When set, GWD injects "Always respond in \<language\>" into every agent's system prompt, including after `/clear`. Quickest way to set it: `/gwd language <name>`. To clear: `/gwd language off`.
 
 - `models`: per-stage model selection (applies to both auto-mode and guided-flow dispatches). Keys: `research`, `planning`, `discuss`, `execution`, `execution_simple`, `completion`, `validation`, `subagent`. Values can be:
   - Simple string: `"claude-sonnet-4-6"` — single model, no fallbacks
@@ -115,7 +115,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 
 - `skill_staleness_days`: number — skills unused for this many days get deprioritized during discovery. Set to `0` to disable staleness tracking. Default: `60`.
 
-- `skill_discovery`: controls how GSD discovers and applies skills during auto-mode. Valid values:
+- `skill_discovery`: controls how GWD discovers and applies skills during auto-mode. Valid values:
   - `auto` — skills are found and applied automatically without prompting.
   - `suggest` — (default) skills are identified during research but not installed automatically.
   - `off` — skill discovery is disabled entirely.
@@ -128,7 +128,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 
 - `min_request_interval_ms`: number — minimum integer milliseconds between auto-mode LLM request dispatches. Non-integer values are rounded down (e.g., `1000.9 → 1000`). Use this to proactively slow auto-mode on rate-limited providers and reduce 429 errors. Set to `0` to disable. Default: `0` (disabled).
 
-- `git`: configures GSD's git behavior. All fields are optional — omit any to use defaults. Keys:
+- `git`: configures GWD's git behavior. All fields are optional — omit any to use defaults. Keys:
   - `auto_push`: boolean — automatically push commits to the remote after committing. Default: `false`.
   - `push_branches`: boolean — push the milestone branch to the remote after commits. Default: `false`.
   - `remote`: string — git remote name to push to. Default: `"origin"`.
@@ -137,8 +137,8 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `commit_type`: string — override the conventional commit type prefix. Must be one of: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`, `build`, `style`. Default: inferred from diff content.
   - `main_branch`: string — the primary branch name for new git repos (e.g., `"main"`, `"master"`, `"trunk"`). Also used by `getMainBranch()` as the preferred branch when auto-detection is ambiguous. Default: `"main"`.
   - `merge_strategy`: `"squash"` or `"merge"` — controls how worktree branches are merged back. `"squash"` combines all commits into one; `"merge"` preserves individual commits. Default: `"squash"`.
-  - `isolation`: `"none"`, `"worktree"`, or `"branch"` — controls auto-mode git isolation strategy. `"none"` works directly on the current branch with no worktree or milestone branch (default, ideal for step-mode with hot reloads); `"worktree"` creates a milestone worktree for isolated work; `"branch"` works directly in the project root but creates a milestone branch (useful for submodule-heavy repos). `worktree` requires a committed `HEAD`; in a zero-commit repo, GSD temporarily treats it as `none` until the first commit exists. Default: `"none"`.
-  - `manage_gitignore`: boolean — when `false`, GSD will not touch `.gitignore` at all. Useful when your project has a strictly managed `.gitignore` and you don't want GSD adding entries. Default: `true`.
+  - `isolation`: `"none"`, `"worktree"`, or `"branch"` — controls auto-mode git isolation strategy. `"none"` works directly on the current branch with no worktree or milestone branch (default, ideal for step-mode with hot reloads); `"worktree"` creates a milestone worktree for isolated work; `"branch"` works directly in the project root but creates a milestone branch (useful for submodule-heavy repos). `worktree` requires a committed `HEAD`; in a zero-commit repo, GWD temporarily treats it as `none` until the first commit exists. Default: `"none"`.
+  - `manage_gitignore`: boolean — when `false`, GWD will not touch `.gitignore` at all. Useful when your project has a strictly managed `.gitignore` and you don't want GWD adding entries. Default: `true`.
   - `worktree_post_create`: string — script to run after a worktree is created (both auto-mode and manual `/worktree`). Receives `SOURCE_DIR` and `WORKTREE_DIR` as environment variables. Can be absolute or relative to project root. Runs with 30-second timeout. Failure is non-fatal (logged as warning). Default: none.
   - `auto_pr`: boolean — automatically create a GitHub pull request after a milestone branch is merged. Requires `gh` CLI to be installed. Default: `false`.
   - `pr_target_branch`: string — branch to target when `auto_pr` is enabled. Defaults to `main_branch` when omitted.
@@ -159,7 +159,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 
 - `token_profile`: `"budget"`, `"balanced"`, `"quality"`, or `"burn-max"` — coordinates model selection, phase skipping, and context compression. `budget` skips research/reassessment and uses cheaper models; `balanced` (default) skips research/reassessment to reduce token burn; `quality` prefers higher-quality models; `burn-max` keeps full-context defaults, disables downgrade routing, and keeps phase skips off.
 
-- `planning_depth`: `"light"` or `"deep"` — controls project-level discovery before milestone planning. `"light"` is the default milestone discussion flow. `"deep"` runs workflow preferences, project discussion, requirements discussion, a research-decision gate, and optional project research before milestone planning. Enable it with `/gsd new-project --deep`, `/gsd new-milestone --deep`, or by setting `planning_depth: deep` in project-local `.gsd/PREFERENCES.md`. Global `~/.gsd/PREFERENCES.md` does not opt every fresh repo into deep mode. Deep mode writes `.gsd/PROJECT.md`, `.gsd/REQUIREMENTS.md`, `.gsd/runtime/research-decision.json`, and, when research is approved, `.gsd/research/STACK.md`, `FEATURES.md`, `ARCHITECTURE.md`, and `PITFALLS.md`.
+- `planning_depth`: `"light"` or `"deep"` — controls project-level discovery before milestone planning. `"light"` is the default milestone discussion flow. `"deep"` runs workflow preferences, project discussion, requirements discussion, a research-decision gate, and optional project research before milestone planning. Enable it with `/gwd new-project --deep`, `/gwd new-milestone --deep`, or by setting `planning_depth: deep` in project-local `.gsd/PREFERENCES.md`. Global `~/.gwd/PREFERENCES.md` does not opt every fresh repo into deep mode. Deep mode writes `.gsd/PROJECT.md`, `.gsd/REQUIREMENTS.md`, `.gsd/runtime/research-decision.json`, and, when research is approved, `.gsd/research/STACK.md`, `FEATURES.md`, `ARCHITECTURE.md`, and `PITFALLS.md`.
 
 - `phases`: fine-grained control over which phases run. Usually set by `token_profile`, but can be overridden. Keys:
   - `skip_research`: boolean — skip milestone-level research. Default: `false`.
@@ -167,7 +167,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `skip_reassess`: boolean — force-disable roadmap reassessment even if `reassess_after_slice` is enabled. Default: `false`.
   - `skip_slice_research`: boolean — skip per-slice research. Default: `false`.
 
-- `reactive_execution`: controls automatic parallel task dispatch inside a slice. Reactive execution is enabled by default when omitted; set `enabled: false` to opt out. With default-on behavior, GSD only attempts a reactive batch when at least three ready tasks are available and the task-plan IO graph is non-ambiguous. If you set `enabled: true` explicitly, GSD uses the earlier opt-in threshold of two ready tasks. Keys:
+- `reactive_execution`: controls automatic parallel task dispatch inside a slice. Reactive execution is enabled by default when omitted; set `enabled: false` to opt out. With default-on behavior, GWD only attempts a reactive batch when at least three ready tasks are available and the task-plan IO graph is non-ambiguous. If you set `enabled: true` explicitly, GWD uses the earlier opt-in threshold of two ready tasks. Keys:
   - `enabled`: boolean — set `false` to force sequential task execution. Default: `true`.
   - `max_parallel`: number — maximum tasks to dispatch in one batch, range `1`-`8`. Default: `2`.
   - `isolation_mode`: `"same-tree"` — currently the only supported value.
@@ -187,7 +187,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `on_milestone`: boolean — notify when a milestone finishes. Default: `true`.
   - `on_attention`: boolean — notify when manual attention is needed. Default: `true`.
 
-- `cmux`: configures cmux terminal integration when GSD is running inside a cmux workspace. Keys:
+- `cmux`: configures cmux terminal integration when GWD is running inside a cmux workspace. Keys:
   - `enabled`: boolean — master toggle for cmux integration. Default: `false`.
   - `notifications`: boolean — route desktop notifications through cmux. Default: `true` when enabled.
   - `sidebar`: boolean — publish status, progress, and log metadata to the cmux sidebar. Default: `true` when enabled.
@@ -208,7 +208,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 - `uok`: Unified Orchestration Kernel controls. Keys:
   - `enabled`: boolean — enable kernel wrappers and contract observers. Default: `true`.
   - `legacy_fallback.enabled`: boolean — emergency release fallback that forces legacy orchestration behavior even when `uok.enabled` is `true`. Default: `false`.
-    - Runtime override: set `GSD_UOK_FORCE_LEGACY=1` (or `GSD_UOK_LEGACY_FALLBACK=1`) to force legacy behavior for the current process.
+    - Runtime override: set `GWD_UOK_FORCE_LEGACY=1` (or `GWD_UOK_LEGACY_FALLBACK=1`) to force legacy behavior for the current process.
   - `gates.enabled`: boolean — route checks through the unified gate runner and persist `gate_runs`. Default: `true`.
   - `model_policy.enabled`: boolean — enforce policy filtering before model capability scoring. Default: `true`.
   - `execution_graph.enabled`: boolean — enable DAG scheduler facade/adapters for execution. Default: `true`.
@@ -222,7 +222,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `observation_masking`: boolean — mask old tool results to reduce context bloat. Default: `true`.
   - `observation_mask_turns`: number — keep this many recent turns verbatim (1-50). Default: `8`.
   - `compaction_threshold_percent`: number — trigger compaction at this % of context window (0.5-0.95). Lower values fire compaction earlier, reducing drift. Default: `0.70`.
-  - `tool_result_max_chars`: number — max chars per tool result in GSD sessions (200-10000). Default: `800`.
+  - `tool_result_max_chars`: number — max chars per tool result in GWD sessions (200-10000). Default: `800`.
 
 - `auto_visualize`: boolean — show a visualizer hint after each milestone completion in auto-mode. Default: `false`.
 
@@ -279,7 +279,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   **Known unit types for `before`/`after`:** `research-milestone`, `plan-milestone`, `research-slice`, `plan-slice`, `execute-task`, `complete-slice`, `replan-slice`, `reassess-roadmap`, `run-uat`.
 
 - `experimental`: opt-in experimental features. All features here are **off by default** — you must explicitly set each one to `true` to enable it. Features in this block may change or be removed without a deprecation cycle while in experimental status. Keys:
-  - `rtk`: boolean — enable RTK (Real-Time Kompression) shell-command compression. When enabled, GSD wraps shell commands through the RTK binary to reduce token usage during command execution. RTK is downloaded automatically on first use if not already installed. **Default: `false`** (opt-in required). Set `GSD_RTK_DISABLED=1` in the environment to force-disable regardless of this preference.
+  - `rtk`: boolean — enable RTK (Real-Time Kompression) shell-command compression. When enabled, GWD wraps shell commands through the RTK binary to reduce token usage during command execution. RTK is downloaded automatically on first use if not already installed. **Default: `false`** (opt-in required). Set `GWD_RTK_DISABLED=1` in the environment to force-disable regardless of this preference.
 
 ---
 
@@ -390,7 +390,7 @@ models:
 ---
 ```
 
-When a model fails to switch (provider unavailable, rate limited, credits exhausted), GSD automatically tries the next model in the `fallbacks` list. This ensures auto-mode continues even when your preferred provider hits limits.
+When a model fails to switch (provider unavailable, rate limited, credits exhausted), GWD automatically tries the next model in the `fallbacks` list. This ensures auto-mode continues even when your preferred provider hits limits.
 
 ## Provider Targeting
 
@@ -413,7 +413,7 @@ models:
 ---
 ```
 
-If you use a bare model ID (no provider prefix) and it exists in multiple providers, GSD will warn you and resolve to the first available match. Use `provider/model` format to avoid ambiguity.
+If you use a bare model ID (no provider prefix) and it exists in multiple providers, GWD will warn you and resolve to the first available match. Use `provider/model` format to avoid ambiguity.
 
 **Cost-optimized example** — use cheap models with expensive ones as fallback for critical phases:
 
@@ -536,7 +536,7 @@ cmux:
 ---
 ```
 
-Enables cmux-aware notifications, sidebar metadata, and visible subagent splits when GSD is running inside a cmux terminal.
+Enables cmux-aware notifications, sidebar metadata, and visible subagent splits when GWD is running inside a cmux terminal.
 
 ---
 
@@ -703,4 +703,4 @@ experimental:
 ---
 ```
 
-Opts in to RTK shell-command compression. RTK is downloaded automatically on first use. Set `GSD_RTK_DISABLED=1` to force-disable at the environment level regardless of this setting.
+Opts in to RTK shell-command compression. RTK is downloaded automatically on first use. Set `GWD_RTK_DISABLED=1` to force-disable at the environment level regardless of this setting.

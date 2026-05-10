@@ -65,7 +65,7 @@ function lastNotification(ctx: MockCtx): { message: string; level: string } {
   return ctx.notifications.at(-1)!;
 }
 
-test("/gsd debug lifecycle integration covers start/list/status/continue across multiple sessions", async () => {
+test("/gwd debug lifecycle integration covers start/list/status/continue across multiple sessions", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -132,7 +132,7 @@ test("/gsd debug lifecycle integration covers start/list/status/continue across 
   }
 });
 
-test("/gsd debug lifecycle integration handles invalid slugs and malformed artifacts with actionable diagnostics", async () => {
+test("/gwd debug lifecycle integration handles invalid slugs and malformed artifacts with actionable diagnostics", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -149,7 +149,7 @@ test("/gsd debug lifecycle integration handles invalid slugs and malformed artif
     const missingStatus = lastNotification(ctx);
     assert.equal(missingStatus.level, "warning");
     assert.match(missingStatus.message, /Unknown debug session slug 'no-such-session'/);
-    assert.match(missingStatus.message, /Run \/gsd debug list/);
+    assert.match(missingStatus.message, /Run \/gwd debug list/);
 
     await handleGSDCommand("debug continue no-such-session", ctx as any, {} as any);
     const missingContinue = lastNotification(ctx);
@@ -163,14 +163,14 @@ test("/gsd debug lifecycle integration handles invalid slugs and malformed artif
     const corruptedStatus = lastNotification(ctx);
     assert.equal(corruptedStatus.level, "warning");
     assert.match(corruptedStatus.message, /Unable to load debug session 'broken-session'/);
-    assert.match(corruptedStatus.message, /Try \/gsd debug --diagnose broken-session/);
+    assert.match(corruptedStatus.message, /Try \/gwd debug --diagnose broken-session/);
 
     await handleGSDCommand("debug list", ctx as any, {} as any);
     const listed = lastNotification(ctx);
     assert.equal(listed.level, "info");
     assert.match(listed.message, /Malformed artifacts: 1/);
     assert.match(listed.message, /broken-session\.json/);
-    assert.match(listed.message, /Run \/gsd debug --diagnose for remediation guidance/);
+    assert.match(listed.message, /Run \/gwd debug --diagnose for remediation guidance/);
 
     await handleGSDCommand("debug --diagnose", ctx as any, {} as any);
     const diagnosed = lastNotification(ctx);
@@ -184,7 +184,7 @@ test("/gsd debug lifecycle integration handles invalid slugs and malformed artif
   }
 });
 
-test("/gsd debug lifecycle integration keeps session artifacts isolated from debug logs and preserves slug determinism", async () => {
+test("/gwd debug lifecycle integration keeps session artifacts isolated from debug logs and preserves slug determinism", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -230,7 +230,7 @@ test("/gsd debug lifecycle integration keeps session artifacts isolated from deb
   }
 });
 
-test("/gsd debug --diagnose <issue> dispatches find_root_cause_only goal and records mode=diagnose session", async () => {
+test("/gwd debug --diagnose <issue> dispatches find_root_cause_only goal and records mode=diagnose session", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -259,7 +259,7 @@ test("/gsd debug --diagnose <issue> dispatches find_root_cause_only goal and rec
   }
 });
 
-test("/gsd debug continue <slug> dispatches find_and_fix goal scoped to target slug", async () => {
+test("/gwd debug continue <slug> dispatches find_and_fix goal scoped to target slug", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -296,7 +296,7 @@ test("/gsd debug continue <slug> dispatches find_and_fix goal scoped to target s
   }
 });
 
-test("/gsd debug --diagnose (zero-arg) with no pi still reports malformed artifact counts without dispatch", async () => {
+test("/gwd debug --diagnose (zero-arg) with no pi still reports malformed artifact counts without dispatch", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -329,7 +329,7 @@ test("/gsd debug --diagnose (zero-arg) with no pi still reports malformed artifa
   }
 });
 
-test("/gsd debug negative: continue unknown slug emits warning, continue resolved session emits warning", async () => {
+test("/gwd debug negative: continue unknown slug emits warning, continue resolved session emits warning", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -356,7 +356,7 @@ test("/gsd debug negative: continue unknown slug emits warning, continue resolve
   }
 });
 
-test("/gsd debug negative: multiple sessions with similar slugs — status and continue target exact match only", async () => {
+test("/gwd debug negative: multiple sessions with similar slugs — status and continue target exact match only", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -391,7 +391,7 @@ test("/gsd debug negative: multiple sessions with similar slugs — status and c
 
 // ── S03 tests: checkpoint/TDD gate dispatch and backward compat ──────────────
 
-test("/gsd debug S03: checkpoint resume dispatches enriched payload via debug-session-manager template", async () => {
+test("/gwd debug S03: checkpoint resume dispatches enriched payload via debug-session-manager template", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -436,7 +436,7 @@ test("/gsd debug S03: checkpoint resume dispatches enriched payload via debug-se
   }
 });
 
-test("/gsd debug S03: TDD gate pending dispatches find_root_cause_only with TDD instructions", async () => {
+test("/gwd debug S03: TDD gate pending dispatches find_root_cause_only with TDD instructions", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -478,7 +478,7 @@ test("/gsd debug S03: TDD gate pending dispatches find_root_cause_only with TDD 
   }
 });
 
-test("/gsd debug S03: TDD gate red dispatches find_and_fix and advances phase to green", async () => {
+test("/gwd debug S03: TDD gate red dispatches find_and_fix and advances phase to green", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -527,7 +527,7 @@ test("/gsd debug S03: TDD gate red dispatches find_and_fix and advances phase to
   }
 });
 
-test("/gsd debug S03: backward compat — legacy session without checkpoint/TDD uses debug-diagnose template", async () => {
+test("/gwd debug S03: backward compat — legacy session without checkpoint/TDD uses debug-diagnose template", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -563,7 +563,7 @@ test("/gsd debug S03: backward compat — legacy session without checkpoint/TDD 
   }
 });
 
-test("/gsd debug S03: round-trip — checkpoint with userResponse dispatches response and session transitions to continued", async () => {
+test("/gwd debug S03: round-trip — checkpoint with userResponse dispatches response and session transitions to continued", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -614,7 +614,7 @@ test("/gsd debug S03: round-trip — checkpoint with userResponse dispatches res
 
 // ── S04 tests: specialist review dispatch and disk-reload verification ────────
 
-test("/gsd debug S04: specialist review round-trip through continue dispatch", async () => {
+test("/gwd debug S04: specialist review round-trip through continue dispatch", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -668,7 +668,7 @@ test("/gsd debug S04: specialist review round-trip through continue dispatch", a
   }
 });
 
-test("/gsd debug S04: backward compat — session without specialistReview continues normally", async () => {
+test("/gwd debug S04: backward compat — session without specialistReview continues normally", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -712,7 +712,7 @@ test("/gsd debug S04: backward compat — session without specialistReview conti
   }
 });
 
-test("/gsd debug S04: specialist review persists through continue with disk reload", async () => {
+test("/gwd debug S04: specialist review persists through continue with disk reload", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -761,7 +761,7 @@ test("/gsd debug S04: specialist review persists through continue with disk relo
 
 // ── S05 tests: full lifecycle end-to-end parity ──────────────────────────────
 
-test("/gsd debug S05: full happy-path lifecycle — start → list → status → continue → resolve → continue-blocked", async () => {
+test("/gwd debug S05: full happy-path lifecycle — start → list → status → continue → resolve → continue-blocked", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -823,7 +823,7 @@ test("/gsd debug S05: full happy-path lifecycle — start → list → status �
   }
 });
 
-test("/gsd debug S05: diagnose-only full lifecycle — start → status(mode=diagnose) → continue uses debug-diagnose template", async () => {
+test("/gwd debug S05: diagnose-only full lifecycle — start → status(mode=diagnose) → continue uses debug-diagnose template", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -877,7 +877,7 @@ test("/gsd debug S05: diagnose-only full lifecycle — start → status(mode=dia
   }
 });
 
-test("/gsd debug S05: TDD full cycle — pending → red → green with disk-reload verification at each phase", async () => {
+test("/gwd debug S05: TDD full cycle — pending → red → green with disk-reload verification at each phase", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -952,7 +952,7 @@ test("/gsd debug S05: TDD full cycle — pending → red → green with disk-rel
   }
 });
 
-test("/gsd debug S05: combined checkpoint + specialist review + TDD gate — all three sections present in dispatch payload", async () => {
+test("/gwd debug S05: combined checkpoint + specialist review + TDD gate — all three sections present in dispatch payload", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -1027,7 +1027,7 @@ test("/gsd debug S05: combined checkpoint + specialist review + TDD gate — all
   }
 });
 
-test("/gsd debug S05: multi-session concurrent lifecycle — 3 sessions continue independently and list shows all as continued", async () => {
+test("/gwd debug S05: multi-session concurrent lifecycle — 3 sessions continue independently and list shows all as continued", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -1080,7 +1080,7 @@ test("/gsd debug S05: multi-session concurrent lifecycle — 3 sessions continue
   }
 });
 
-test("/gsd debug S05: resolved session blocks continue via dispatcher route — warning emitted, zero dispatches", async () => {
+test("/gwd debug S05: resolved session blocks continue via dispatcher route — warning emitted, zero dispatches", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -1113,7 +1113,7 @@ test("/gsd debug S05: resolved session blocks continue via dispatcher route — 
   }
 });
 
-test("/gsd debug S05: TDD gate green-phase continue dispatches find_and_fix with green context and 'test is now passing' text", async () => {
+test("/gwd debug S05: TDD gate green-phase continue dispatches find_and_fix with green context and 'test is now passing' text", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);
@@ -1169,7 +1169,7 @@ test("/gsd debug S05: TDD gate green-phase continue dispatches find_and_fix with
   }
 });
 
-test("/gsd debug S05: dispatch failure resilience — sendMessage throws, session remains resumable and retry succeeds", async () => {
+test("/gwd debug S05: dispatch failure resilience — sendMessage throws, session remains resumable and retry succeeds", async () => {
   const base = makeBase();
   const saved = process.cwd();
   process.chdir(base);

@@ -120,14 +120,14 @@ test('worktree isolation is disabled for an unborn repo until the first commit',
 });
 
 // Test 4: shouldUseWorktreeIsolation returns false for no prefs (default: none)
-// Worktree isolation requires explicit opt-in — default is "none" so GSD
+// Worktree isolation requires explicit opt-in — default is "none" so GWD
 // works out of the box without PREFERENCES.md (#2480).
 // Skip if global prefs exist — they override the default and this test
-// cannot control ~/.gsd/PREFERENCES.md.
+// cannot control ~/.gwd/PREFERENCES.md.
 
 test('shouldUseWorktreeIsolation returns false for no prefs (default: none)', () => {
-  const globalPrefsExist = existsSync(join(homedir(), ".gsd", "PREFERENCES.md"))
-    || existsSync(join(homedir(), ".gsd", "PREFERENCES.md"));
+  const globalPrefsExist = existsSync(join(homedir(), ".gwd", "PREFERENCES.md"))
+    || existsSync(join(homedir(), ".gwd", "PREFERENCES.md"));
   if (!globalPrefsExist) {
     try {
       removeRunnerPreferences(); // ensure no prefs file
@@ -142,8 +142,8 @@ test('shouldUseWorktreeIsolation returns false for no prefs (default: none)', ()
 
 // Test 5: getIsolationMode returns "none" when no PREFERENCES.md exists (#2480)
 test('getIsolationMode returns "none" with no prefs (default)', () => {
-  const globalPrefsExist = existsSync(join(homedir(), ".gsd", "PREFERENCES.md"))
-    || existsSync(join(homedir(), ".gsd", "PREFERENCES.md"));
+  const globalPrefsExist = existsSync(join(homedir(), ".gwd", "PREFERENCES.md"))
+    || existsSync(join(homedir(), ".gwd", "PREFERENCES.md"));
   if (!globalPrefsExist) {
     try {
       removeRunnerPreferences();

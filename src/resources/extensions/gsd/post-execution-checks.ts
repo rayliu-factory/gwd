@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Post-execution validation checks for completed GSD task output.
+// Project/App: GWD-2
+// File Purpose: Post-execution validation checks for completed GWD task output.
 
 /**
  * Post-Execution Checks — Validate task output after execution completes.

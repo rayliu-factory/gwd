@@ -30,7 +30,7 @@ describe('repo-identity-worktree', () => {
   before(() => {
     base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-repo-identity-")));
     stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-state-")));
-    process.env.GSD_STATE_DIR = stateDir;
+    process.env.GWD_STATE_DIR = stateDir;
 
     run("git init -b main", base);
     run('git config user.name "Pi Test"', base);
@@ -47,8 +47,8 @@ describe('repo-identity-worktree', () => {
   });
 
   after(() => {
-    delete process.env.GSD_PROJECT_ID;
-    delete process.env.GSD_STATE_DIR;
+    delete process.env.GWD_PROJECT_ID;
+    delete process.env.GWD_STATE_DIR;
     rmSync(base, { recursive: true, force: true });
     rmSync(stateDir, { recursive: true, force: true });
   });
@@ -83,16 +83,16 @@ test('ensureGsdSymlink preserves worktree .gsd directories', () => {
     assert.ok(existsSync(join(worktreePath, ".gsd", "milestones", "stale.txt")), "existing worktree .gsd directory contents remain available for sync logic");
 });
 
-test('GSD_PROJECT_ID overrides computed repo hash', () => {
-    process.env.GSD_PROJECT_ID = "my-project";
-    assert.deepStrictEqual(repoIdentity(base), "my-project", "repoIdentity returns GSD_PROJECT_ID when set");
-    assert.deepStrictEqual(externalGsdRoot(base), join(stateDir, "projects", "my-project"), "externalGsdRoot uses GSD_PROJECT_ID");
-    delete process.env.GSD_PROJECT_ID;
+test('GWD_PROJECT_ID overrides computed repo hash', () => {
+    process.env.GWD_PROJECT_ID = "my-project";
+    assert.deepStrictEqual(repoIdentity(base), "my-project", "repoIdentity returns GWD_PROJECT_ID when set");
+    assert.deepStrictEqual(externalGsdRoot(base), join(stateDir, "projects", "my-project"), "externalGsdRoot uses GWD_PROJECT_ID");
+    delete process.env.GWD_PROJECT_ID;
 });
 
-test('GSD_PROJECT_ID falls back to hash when unset', () => {
+test('GWD_PROJECT_ID falls back to hash when unset', () => {
     const hashIdentity = repoIdentity(base);
-    assert.ok(/^[0-9a-f]{12}$/.test(hashIdentity), "repoIdentity returns 12-char hex hash when GSD_PROJECT_ID is unset");
+    assert.ok(/^[0-9a-f]{12}$/.test(hashIdentity), "repoIdentity returns 12-char hex hash when GWD_PROJECT_ID is unset");
 });
 
 test('readRepoMeta returns null for malformed metadata', () => {
@@ -111,7 +111,7 @@ test('ensureGsdSymlink refreshes repo-meta gitRoot after repo move with fixed pr
       run("git add README.md", moveRepo);
       run('git commit -m "chore: init move repo"', moveRepo);
 
-      process.env.GSD_PROJECT_ID = "fixed-project";
+      process.env.GWD_PROJECT_ID = "fixed-project";
       const fixedExternal = ensureGsdSymlink(moveRepo);
       const before = readRepoMeta(fixedExternal);
       assert.ok(before !== null, "repo metadata exists before repo move");
@@ -129,7 +129,7 @@ test('ensureGsdSymlink refreshes repo-meta gitRoot after repo move with fixed pr
       assert.deepStrictEqual(after!.createdAt, before!.createdAt, "repo metadata preserves createdAt on refresh");
 
       rmSync(movedBase, { recursive: true, force: true });
-      delete process.env.GSD_PROJECT_ID;
+      delete process.env.GWD_PROJECT_ID;
 });
 
 test('isInheritedRepo detects subdirectory of parent repo without .gsd (#1639)', () => {

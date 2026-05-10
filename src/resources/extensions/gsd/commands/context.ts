@@ -1,4 +1,4 @@
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { checkRemoteAutoSession, isAutoActive, isAutoPaused, stopAutoRemote } from "../auto.js";
 import { validateDirectory } from "../validate-directory.js";
@@ -14,7 +14,7 @@ export interface GsdDispatchContext {
 }
 
 /**
- * Typed error for when GSD is run outside a valid project directory.
+ * Typed error for when GWD is run outside a valid project directory.
  * Command handlers catch this to show a friendly message instead of a raw exception.
  */
 export class GSDNoProjectError extends Error {
@@ -52,7 +52,7 @@ export function projectRoot(): string {
   const pathToCheck = root !== cwd ? cwd : root;
   const result = validateDirectory(pathToCheck);
   if (result.severity === "blocked") {
-    throw new GSDNoProjectError(result.reason ?? "GSD must be run inside a project directory.");
+    throw new GSDNoProjectError(result.reason ?? "GWD must be run inside a project directory.");
   }
   return root;
 }
@@ -70,7 +70,7 @@ export function currentDirectoryRoot(): string {
   }
   const result = validateDirectory(cwd);
   if (result.severity === "blocked") {
-    throw new GSDNoProjectError(result.reason ?? "GSD must be run inside a project directory.");
+    throw new GSDNoProjectError(result.reason ?? "GWD must be run inside a project directory.");
   }
   return cwd;
 }
@@ -90,10 +90,10 @@ export async function guardRemoteSession(
 
   // In RPC/web bridge mode, interactive TUI prompts (showNextAction) block
   // forever because there is no terminal to answer them. Notify and bail.
-  if (process.env.GSD_WEB_BRIDGE_TUI === "1") {
+  if (process.env.GWD_WEB_BRIDGE_TUI === "1") {
     ctx.ui.notify(
       `Another auto-mode session (PID ${remote.pid}) is running on this project (${unitLabel}). ` +
-      `Stop it first with /gsd stop, or use /gsd steer to redirect it.`,
+      `Stop it first with /gwd stop, or use /gwd steer to redirect it.`,
       "warning",
     );
     return false;
@@ -109,13 +109,13 @@ export async function guardRemoteSession(
       {
         id: "status",
         label: "View status",
-        description: "Show the current GSD progress dashboard.",
+        description: "Show the current GWD progress dashboard.",
         recommended: true,
       },
       {
         id: "steer",
         label: "Steer the session",
-        description: "Use /gsd steer <instruction> to redirect the running session.",
+        description: "Use /gwd steer <instruction> to redirect the running session.",
       },
       {
         id: "stop",
@@ -128,7 +128,7 @@ export async function guardRemoteSession(
         description: "Start a new session, terminating the existing one.",
       },
     ],
-    notYetMessage: "Run /gsd when ready.",
+    notYetMessage: "Run /gwd when ready.",
   });
 
   if (choice === "status") {
@@ -137,8 +137,8 @@ export async function guardRemoteSession(
   }
   if (choice === "steer") {
     ctx.ui.notify(
-      "Use /gsd steer <instruction> to redirect the running auto-mode session.\n" +
-      "Example: /gsd steer Use Postgres instead of SQLite",
+      "Use /gwd steer <instruction> to redirect the running auto-mode session.\n" +
+      "Example: /gwd steer Use Postgres instead of SQLite",
       "info",
     );
     return false;

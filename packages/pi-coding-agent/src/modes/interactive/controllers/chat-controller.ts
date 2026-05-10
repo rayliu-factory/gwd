@@ -1,5 +1,5 @@
 // GSD-2 Interactive Chat Controller
-import { Loader, Markdown, Spacer, Text } from "@gsd/pi-tui";
+import { Loader, Markdown, Spacer, Text } from "@gwd/pi-tui";
 
 import type { InteractiveModeEvent, InteractiveModeStateHost } from "../interactive-mode-state.js";
 import { theme } from "../theme/theme.js";

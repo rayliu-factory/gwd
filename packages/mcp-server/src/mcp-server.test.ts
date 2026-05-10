@@ -1,7 +1,7 @@
 /**
- * @gsd-build/mcp-server — Integration and unit tests.
+ * @gwd-build/mcp-server — Integration and unit tests.
  *
- * Strategy: We cannot mock @gsd-build/rpc-client at the module level without
+ * Strategy: We cannot mock @gwd-build/rpc-client at the module level without
  * --experimental-test-module-mocks. Instead we test by:
  *
  * 1. Subclassing SessionManager to inject a mock client factory
@@ -181,7 +181,7 @@ class TestableSessionManager extends SessionManager {
       });
 
       // Kick off auto-mode
-      const command = options.command ?? '/gsd auto';
+      const command = options.command ?? '/gwd auto';
       await client.prompt(command);
 
       return session.sessionId;
@@ -236,7 +236,7 @@ describe('SessionManager', () => {
   });
 
   it('startSession creates session and returns sessionId', async () => {
-    const sessionId = await sm.startSession('/tmp/test-project', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/test-project', { cliPath: '/usr/bin/gwd' });
     assert.equal(sessionId, 'mock-session-001');
 
     const session = sm.getSession(sessionId);
@@ -245,22 +245,22 @@ describe('SessionManager', () => {
     assert.equal(session.projectDir, resolve('/tmp/test-project'));
   });
 
-  it('startSession sends /gsd auto by default', async () => {
-    await sm.startSession('/tmp/test-prompt', { cliPath: '/usr/bin/gsd' });
+  it('startSession sends /gwd auto by default', async () => {
+    await sm.startSession('/tmp/test-prompt', { cliPath: '/usr/bin/gwd' });
     assert.ok(sm.lastClient);
-    assert.deepEqual(sm.lastClient.prompted, ['/gsd auto']);
+    assert.deepEqual(sm.lastClient.prompted, ['/gwd auto']);
   });
 
   it('startSession sends custom command when provided', async () => {
-    await sm.startSession('/tmp/test-cmd', { cliPath: '/usr/bin/gsd', command: '/gsd auto --resume' });
+    await sm.startSession('/tmp/test-cmd', { cliPath: '/usr/bin/gwd', command: '/gwd auto --resume' });
     assert.ok(sm.lastClient);
-    assert.deepEqual(sm.lastClient.prompted, ['/gsd auto --resume']);
+    assert.deepEqual(sm.lastClient.prompted, ['/gwd auto --resume']);
   });
 
   it('startSession rejects duplicate projectDir', async () => {
-    await sm.startSession('/tmp/dup-test', { cliPath: '/usr/bin/gsd' });
+    await sm.startSession('/tmp/dup-test', { cliPath: '/usr/bin/gwd' });
     await assert.rejects(
-      () => sm.startSession('/tmp/dup-test', { cliPath: '/usr/bin/gsd' }),
+      () => sm.startSession('/tmp/dup-test', { cliPath: '/usr/bin/gwd' }),
       (err: Error) => {
         assert.ok(err.message.includes('Session already active'));
         return true;
@@ -274,12 +274,12 @@ describe('SessionManager', () => {
   for (const terminalStatus of ['completed', 'error', 'cancelled'] as const) {
     it(`startSession evicts a prior '${terminalStatus}' session for the same projectDir`, async () => {
       const dir = `/tmp/evict-${terminalStatus}`;
-      const firstSessionId = await sm.startSession(dir, { cliPath: '/usr/bin/gsd' });
+      const firstSessionId = await sm.startSession(dir, { cliPath: '/usr/bin/gwd' });
       const first = sm.getSession(firstSessionId)!;
       first.status = terminalStatus;
 
       // Should not throw — terminal session is evicted, fresh one starts.
-      const secondSessionId = await sm.startSession(dir, { cliPath: '/usr/bin/gsd' });
+      const secondSessionId = await sm.startSession(dir, { cliPath: '/usr/bin/gwd' });
       assert.notEqual(secondSessionId, firstSessionId);
       const second = sm.getSession(secondSessionId)!;
       assert.equal(second.status, 'running');
@@ -290,10 +290,10 @@ describe('SessionManager', () => {
   for (const activeStatus of ['starting', 'running', 'blocked'] as const) {
     it(`startSession still rejects a prior '${activeStatus}' session`, async () => {
       const dir = `/tmp/keep-${activeStatus}`;
-      const sid = await sm.startSession(dir, { cliPath: '/usr/bin/gsd' });
+      const sid = await sm.startSession(dir, { cliPath: '/usr/bin/gwd' });
       sm.getSession(sid)!.status = activeStatus;
       await assert.rejects(
-        () => sm.startSession(dir, { cliPath: '/usr/bin/gsd' }),
+        () => sm.startSession(dir, { cliPath: '/usr/bin/gwd' }),
         /Session already active/,
       );
     });
@@ -301,7 +301,7 @@ describe('SessionManager', () => {
 
   it('startSession rejects empty projectDir', async () => {
     await assert.rejects(
-      () => sm.startSession('', { cliPath: '/usr/bin/gsd' }),
+      () => sm.startSession('', { cliPath: '/usr/bin/gwd' }),
       (err: Error) => {
         assert.ok(err.message.includes('projectDir is required'));
         return true;
@@ -313,7 +313,7 @@ describe('SessionManager', () => {
     sm.nextStartError = new Error('spawn failed');
 
     await assert.rejects(
-      () => sm.startSession('/tmp/fail-start', { cliPath: '/usr/bin/gsd' }),
+      () => sm.startSession('/tmp/fail-start', { cliPath: '/usr/bin/gwd' }),
       (err: Error) => {
         assert.ok(err.message.includes('Failed to start session'));
         assert.ok(err.message.includes('spawn failed'));
@@ -326,7 +326,7 @@ describe('SessionManager', () => {
     sm.nextInitError = new Error('handshake failed');
 
     await assert.rejects(
-      () => sm.startSession('/tmp/fail-init', { cliPath: '/usr/bin/gsd' }),
+      () => sm.startSession('/tmp/fail-init', { cliPath: '/usr/bin/gwd' }),
       (err: Error) => {
         assert.ok(err.message.includes('Failed to start session'));
         assert.ok(err.message.includes('handshake failed'));
@@ -341,14 +341,14 @@ describe('SessionManager', () => {
   });
 
   it('getSessionByDir returns session for known dir', async () => {
-    await sm.startSession('/tmp/by-dir', { cliPath: '/usr/bin/gsd' });
+    await sm.startSession('/tmp/by-dir', { cliPath: '/usr/bin/gwd' });
     const session = sm.getSessionByDir('/tmp/by-dir');
     assert.ok(session);
     assert.equal(session.sessionId, 'mock-session-001');
   });
 
   it('resolveBlocker errors when no pending blocker', async () => {
-    const sessionId = await sm.startSession('/tmp/no-blocker', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/no-blocker', { cliPath: '/usr/bin/gwd' });
     await assert.rejects(
       () => sm.resolveBlocker(sessionId, 'some response'),
       (err: Error) => {
@@ -369,7 +369,7 @@ describe('SessionManager', () => {
   });
 
   it('resolveBlocker clears pendingBlocker and sends UI response', async () => {
-    const sessionId = await sm.startSession('/tmp/blocker-resolve', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/blocker-resolve', { cliPath: '/usr/bin/gwd' });
     const client = sm.lastClient!;
 
     // Simulate a blocking UI request event
@@ -394,7 +394,7 @@ describe('SessionManager', () => {
   });
 
   it('cancelSession calls abort + stop on client', async () => {
-    const sessionId = await sm.startSession('/tmp/cancel-test', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/cancel-test', { cliPath: '/usr/bin/gwd' });
     const client = sm.lastClient!;
 
     await sm.cancelSession(sessionId);
@@ -417,8 +417,8 @@ describe('SessionManager', () => {
   });
 
   it('cleanup stops all active sessions', async () => {
-    await sm.startSession('/tmp/cleanup-1', { cliPath: '/usr/bin/gsd' });
-    await sm.startSession('/tmp/cleanup-2', { cliPath: '/usr/bin/gsd' });
+    await sm.startSession('/tmp/cleanup-1', { cliPath: '/usr/bin/gwd' });
+    await sm.startSession('/tmp/cleanup-2', { cliPath: '/usr/bin/gwd' });
 
     assert.equal(sm.allClients.length, 2);
 
@@ -430,7 +430,7 @@ describe('SessionManager', () => {
   });
 
   it('event ring buffer caps at MAX_EVENTS', async () => {
-    const sessionId = await sm.startSession('/tmp/ring-buffer', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/ring-buffer', { cliPath: '/usr/bin/gwd' });
     const client = sm.lastClient!;
 
     for (let i = 0; i < MAX_EVENTS + 20; i++) {
@@ -444,7 +444,7 @@ describe('SessionManager', () => {
   });
 
   it('blocker detection: non-fire-and-forget extension_ui_request sets pendingBlocker', async () => {
-    const sessionId = await sm.startSession('/tmp/blocker-detect', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/blocker-detect', { cliPath: '/usr/bin/gwd' });
     const client = sm.lastClient!;
 
     // 'select' is not in FIRE_AND_FORGET_METHODS
@@ -463,7 +463,7 @@ describe('SessionManager', () => {
   });
 
   it('fire-and-forget methods do not set pendingBlocker', async () => {
-    const sessionId = await sm.startSession('/tmp/fire-forget', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/fire-forget', { cliPath: '/usr/bin/gwd' });
     const client = sm.lastClient!;
 
     // 'notify' is fire-and-forget — on its own (no terminal prefix) should not block
@@ -480,7 +480,7 @@ describe('SessionManager', () => {
   });
 
   it('terminal detection: auto-mode stopped sets status to completed', async () => {
-    const sessionId = await sm.startSession('/tmp/terminal', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/terminal', { cliPath: '/usr/bin/gwd' });
     const client = sm.lastClient!;
 
     client.emitEvent({
@@ -495,7 +495,7 @@ describe('SessionManager', () => {
   });
 
   it('terminal detection with blocked: message sets status to blocked', async () => {
-    const sessionId = await sm.startSession('/tmp/terminal-blocked', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/terminal-blocked', { cliPath: '/usr/bin/gwd' });
     const client = sm.lastClient!;
 
     client.emitEvent({
@@ -511,7 +511,7 @@ describe('SessionManager', () => {
   });
 
   it('cost tracking: cumulative-max from cost_update events', async () => {
-    const sessionId = await sm.startSession('/tmp/cost-track', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/cost-track', { cliPath: '/usr/bin/gwd' });
     const client = sm.lastClient!;
 
     client.emitEvent({
@@ -535,7 +535,7 @@ describe('SessionManager', () => {
   });
 
   it('getResult returns HeadlessJsonResult-shaped object', async () => {
-    const sessionId = await sm.startSession('/tmp/result-shape', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/result-shape', { cliPath: '/usr/bin/gwd' });
     const result = sm.getResult(sessionId);
 
     assert.equal(result.sessionId, sessionId);
@@ -564,15 +564,15 @@ describe('SessionManager', () => {
 // ---------------------------------------------------------------------------
 
 describe('SessionManager.resolveCLIPath', () => {
-  const originalGsdPath = process.env['GSD_CLI_PATH'];
+  const originalGsdPath = process.env['GWD_CLI_PATH'];
   const originalPath = process.env['PATH'];
   const originalPathTitle = process.env['Path'];
 
   afterEach(() => {
     if (originalGsdPath !== undefined) {
-      process.env['GSD_CLI_PATH'] = originalGsdPath;
+      process.env['GWD_CLI_PATH'] = originalGsdPath;
     } else {
-      delete process.env['GSD_CLI_PATH'];
+      delete process.env['GWD_CLI_PATH'];
     }
     if (originalPath !== undefined) {
       process.env['PATH'] = originalPath;
@@ -586,17 +586,17 @@ describe('SessionManager.resolveCLIPath', () => {
     }
   });
 
-  it('GSD_CLI_PATH env var takes precedence', () => {
-    process.env['GSD_CLI_PATH'] = '/custom/path/to/gsd';
+  it('GWD_CLI_PATH env var takes precedence', () => {
+    process.env['GWD_CLI_PATH'] = '/custom/path/to/gwd';
     const result = SessionManager.resolveCLIPath();
-    assert.equal(result, resolve('/custom/path/to/gsd'));
+    assert.equal(result, resolve('/custom/path/to/gwd'));
   });
 
-  it('finds gsd on PATH without shelling out to which', () => {
-    delete process.env['GSD_CLI_PATH'];
-    const tmp = mkdtempSync(join(tmpdir(), 'gsd-cli-path-'));
+  it('finds gwd on PATH without shelling out to which', () => {
+    delete process.env['GWD_CLI_PATH'];
+    const tmp = mkdtempSync(join(tmpdir(), 'gwd-cli-path-'));
     try {
-      const shimName = process.platform === 'win32' ? 'gsd.cmd' : 'gsd';
+      const shimName = process.platform === 'win32' ? 'gwd.cmd' : 'gwd';
       const shimPath = join(tmp, shimName);
       writeFileSync(shimPath, '', 'utf8');
       process.env['PATH'] = [tmp, originalPath].filter(Boolean).join(delimiter);
@@ -612,12 +612,12 @@ describe('SessionManager.resolveCLIPath', () => {
     }
   });
 
-  it('finds gsd when Windows exposes Path instead of PATH', () => {
-    delete process.env['GSD_CLI_PATH'];
+  it('finds gwd when Windows exposes Path instead of PATH', () => {
+    delete process.env['GWD_CLI_PATH'];
     delete process.env['PATH'];
-    const tmp = mkdtempSync(join(tmpdir(), 'gsd-cli-path-title-'));
+    const tmp = mkdtempSync(join(tmpdir(), 'gwd-cli-path-title-'));
     try {
-      const shimName = process.platform === 'win32' ? 'gsd.cmd' : 'gsd';
+      const shimName = process.platform === 'win32' ? 'gwd.cmd' : 'gwd';
       const shimPath = join(tmp, shimName);
       writeFileSync(shimPath, '', 'utf8');
       process.env['Path'] = tmp;
@@ -633,14 +633,14 @@ describe('SessionManager.resolveCLIPath', () => {
     }
   });
 
-  it('throws when GSD_CLI_PATH not set and PATH lookup fails', () => {
-    delete process.env['GSD_CLI_PATH'];
+  it('throws when GWD_CLI_PATH not set and PATH lookup fails', () => {
+    delete process.env['GWD_CLI_PATH'];
     delete process.env['Path'];
     process.env['PATH'] = '/nonexistent';
     assert.throws(
       () => SessionManager.resolveCLIPath(),
       (err: Error) => {
-        assert.ok(err.message.includes('Cannot find GSD CLI'));
+        assert.ok(err.message.includes('Cannot find GWD CLI'));
         return true;
       },
     );
@@ -675,13 +675,13 @@ describe('createMcpServer tool registration', () => {
   });
 
   it('gsd_execute flow returns sessionId on success', async () => {
-    const sessionId = await sm.startSession('/tmp/tool-exec', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/tool-exec', { cliPath: '/usr/bin/gwd' });
     assert.equal(typeof sessionId, 'string');
     assert.ok(sessionId.length > 0);
   });
 
   it('gsd_status flow returns correct shape', async () => {
-    const sessionId = await sm.startSession('/tmp/tool-status', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/tool-status', { cliPath: '/usr/bin/gwd' });
     const session = sm.getSession(sessionId)!;
 
     assert.equal(typeof session.status, 'string');
@@ -691,7 +691,7 @@ describe('createMcpServer tool registration', () => {
   });
 
   it('gsd_resolve_blocker flow returns error when no blocker', async () => {
-    const sessionId = await sm.startSession('/tmp/tool-resolve', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/tool-resolve', { cliPath: '/usr/bin/gwd' });
     await assert.rejects(
       () => sm.resolveBlocker(sessionId, 'fix'),
       (err: Error) => {
@@ -702,7 +702,7 @@ describe('createMcpServer tool registration', () => {
   });
 
   it('gsd_result flow returns HeadlessJsonResult shape', async () => {
-    const sessionId = await sm.startSession('/tmp/tool-result', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/tool-result', { cliPath: '/usr/bin/gwd' });
     const result = sm.getResult(sessionId);
 
     assert.ok('sessionId' in result);
@@ -716,7 +716,7 @@ describe('createMcpServer tool registration', () => {
   });
 
   it('gsd_cancel flow marks session as cancelled', async () => {
-    const sessionId = await sm.startSession('/tmp/tool-cancel', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/tool-cancel', { cliPath: '/usr/bin/gwd' });
     await sm.cancelSession(sessionId);
     const session = sm.getSession(sessionId)!;
     assert.equal(session.status, 'cancelled');
@@ -724,7 +724,7 @@ describe('createMcpServer tool registration', () => {
 
   it('gsd_cancel can cancel an interactive session (no sessionId) via projectDir fallback', async () => {
     // Simulate an interactive session: registered by projectDir but with an empty sessionId
-    // (e.g. started via `/gsd auto` in terminal or from a restarted MCP server that lost its session registry)
+    // (e.g. started via `/gwd auto` in terminal or from a restarted MCP server that lost its session registry)
     const projectDir = resolve('/tmp/interactive-session');
     const mockClient = new MockRpcClient({ cwd: projectDir, args: [] });
     const interactiveSession: ManagedSession = {
@@ -750,7 +750,7 @@ describe('createMcpServer tool registration', () => {
 
   it('gsd_cancel via projectDir works even when sessionId lookup returns undefined', async () => {
     // Start a normal session to get its projectDir
-    const sessionId = await sm.startSession('/tmp/cancel-by-dir', { cliPath: '/usr/bin/gsd' });
+    const sessionId = await sm.startSession('/tmp/cancel-by-dir', { cliPath: '/usr/bin/gwd' });
     const session = sm.getSession(sessionId)!;
     const { projectDir } = session;
 
@@ -935,15 +935,15 @@ describe('createMcpServer tool registration', () => {
         throw new Error('should not be called');
       },
       writeGate,
-      writeGateBasePath: '/tmp/gsd-project',
+      writeGateBasePath: '/tmp/gwd-project',
     });
 
     assert.equal('isError' in result && result.isError, false);
     assert.deepEqual(calls, [
-      'pending:depth_verification_M003_confirm:/tmp/gsd-project',
-      'approval:depth_verification_M003_confirm:/tmp/gsd-project',
-      'depth:M003:/tmp/gsd-project',
-      'clear:/tmp/gsd-project',
+      'pending:depth_verification_M003_confirm:/tmp/gwd-project',
+      'approval:depth_verification_M003_confirm:/tmp/gwd-project',
+      'depth:M003:/tmp/gwd-project',
+      'clear:/tmp/gwd-project',
     ]);
   });
 
@@ -1008,15 +1008,15 @@ describe('createMcpServer tool registration', () => {
         };
       },
       writeGate,
-      writeGateBasePath: '/tmp/gsd-project',
+      writeGateBasePath: '/tmp/gwd-project',
     });
 
     assert.equal('isError' in result && result.isError, false);
     assert.deepEqual(calls, [
-      'pending:depth_verification_M003_confirm:/tmp/gsd-project',
-      'approval:depth_verification_M003_confirm:/tmp/gsd-project',
-      'depth:M003:/tmp/gsd-project',
-      'clear:/tmp/gsd-project',
+      'pending:depth_verification_M003_confirm:/tmp/gwd-project',
+      'approval:depth_verification_M003_confirm:/tmp/gwd-project',
+      'depth:M003:/tmp/gwd-project',
+      'clear:/tmp/gwd-project',
     ]);
   });
 

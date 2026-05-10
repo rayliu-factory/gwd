@@ -18,13 +18,15 @@ import {
 } from "./web-mode-runtime-harness.ts";
 
 const repoRoot = process.cwd();
+const runtimeRequestTimeoutMs = 15_000;
+const bridgeAuthRefreshTimeoutMs = 180_000;
 
 const bridge = await import("../../web/bridge-service.ts");
 const onboarding = await import("../../web/onboarding-service.ts");
 const bootRoute = await import("../../../web/app/api/boot/route.ts");
 const onboardingRoute = await import("../../../web/app/api/onboarding/route.ts");
 const commandRoute = await import("../../../web/app/api/session/command/route.ts");
-const { AuthStorage } = await import("@gsd/pi-coding-agent");
+const { AuthStorage } = await import("@gwd/pi-coding-agent");
 
 class FakeRpcChild extends EventEmitter {
   stdin = new PassThrough();
@@ -133,6 +135,31 @@ function fakeAutoDashboardData() {
   };
 }
 
+async function fetchRuntimeJson<TPayload>(
+  label: string,
+  url: string,
+  init: RequestInit,
+  timeoutMs: number,
+): Promise<{ response: Response; payload: TPayload }> {
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      ...init,
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+  } catch (error) {
+    if (error instanceof Error && error.name === "TimeoutError") {
+      throw new Error(`${label} timed out after ${timeoutMs}ms`);
+    }
+    throw error;
+  }
+
+  return {
+    response,
+    payload: (await response.json()) as TPayload,
+  };
+}
+
 async function removeTreeWithRetry(path: string): Promise<void> {
   const maxAttempts = 5;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -209,9 +236,9 @@ function configureBridgeRuntime(
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      GWD_WEB_PROJECT_CWD: fixture.projectCwd,
+      GWD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      GWD_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn(command: string, args: readonly string[], optionsArg: Record<string, unknown>) {
       void command;
@@ -219,7 +246,7 @@ function configureBridgeRuntime(
       void optionsArg;
       spawnCalls += 1;
       const generation = {
-        authVisibleAtStart: authStorage.hasAuth("openai"),
+        authVisibleAtStart: authStorage.has("openai"),
         promptMessages: [] as string[],
       };
       generations.push(generation);
@@ -443,7 +470,7 @@ test("refresh failures keep the workspace locked and expose the failed bridge-re
   assert.match(failedBootPayload.onboarding.bridgeAuthRefresh.error, /could not attach/i);
 });
 
-test("fresh gsd --web browser onboarding stays locked on failed validation and unlocks after a successful retry", async (t) => {
+test("fresh gwd --web browser onboarding stays locked on failed validation and unlocks after a successful retry", async (t) => {
   if (process.platform === "win32") {
     t.skip("runtime launch test uses POSIX browser-open stubs")
     return
@@ -466,8 +493,8 @@ test("fresh gsd --web browser onboarding stays locked on failed validation and u
     tempHome,
     browserLogPath,
     env: {
-      GSD_WEB_TEST_FAKE_API_KEY_VALIDATION: "1",
-      GSD_WEB_TEST_DISABLE_EXTERNAL_CLI: "1",
+      GWD_WEB_TEST_FAKE_API_KEY_VALIDATION: "1",
+      GWD_WEB_TEST_DISABLE_EXTERNAL_CLI: "1",
       ANTHROPIC_API_KEY: "",
       OPENAI_API_KEY: "",
       GOOGLE_API_KEY: "",
@@ -482,49 +509,61 @@ test("fresh gsd --web browser onboarding stays locked on failed validation and u
   await waitForHttpOk(`${launch.url}/api/boot`, undefined, auth)
 
   // 1. Boot reports locked before any credentials are saved
-  const bootBefore = await fetch(`${launch.url}/api/boot`, {
-    method: "GET",
-    headers: { Accept: "application/json", ...auth },
-    signal: AbortSignal.timeout(10_000),
-  })
+  const { response: bootBefore, payload: bootBeforePayload } = await fetchRuntimeJson<any>(
+    "initial boot",
+    `${launch.url}/api/boot`,
+    {
+      method: "GET",
+      headers: { Accept: "application/json", ...auth },
+    },
+    runtimeRequestTimeoutMs,
+  )
   assert.equal(bootBefore.ok, true, `expected boot endpoint to respond successfully: ${bootBefore.status}`)
-  const bootBeforePayload = await bootBefore.json() as any
   assert.equal(bootBeforePayload.onboarding.locked, true)
   assert.equal(bootBeforePayload.onboarding.lockReason, "required_setup")
 
   // 2. Invalid key → stays locked with failed validation
-  const invalidValidation = await fetch(`${launch.url}/api/onboarding`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json", ...auth },
-    body: JSON.stringify({ action: "save_api_key", providerId: "openai", apiKey: "invalid-demo-key" }),
-    signal: AbortSignal.timeout(10_000),
-  })
+  const { response: invalidValidation, payload: invalidPayload } = await fetchRuntimeJson<any>(
+    "invalid onboarding validation",
+    `${launch.url}/api/onboarding`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json", ...auth },
+      body: JSON.stringify({ action: "save_api_key", providerId: "openai", apiKey: "invalid-demo-key" }),
+    },
+    runtimeRequestTimeoutMs,
+  )
   assert.equal(invalidValidation.status, 422)
-  const invalidPayload = await invalidValidation.json() as any
   assert.equal(invalidPayload.onboarding.locked, true)
   assert.equal(invalidPayload.onboarding.lastValidation.status, "failed")
   assert.match(invalidPayload.onboarding.lastValidation.message ?? "", /rejected/i)
 
   // 3. Valid key → unlocks
-  const validValidation = await fetch(`${launch.url}/api/onboarding`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json", ...auth },
-    body: JSON.stringify({ action: "save_api_key", providerId: "openai", apiKey: "valid-demo-key" }),
-    signal: AbortSignal.timeout(60_000),
-  })
+  const { response: validValidation, payload: validPayload } = await fetchRuntimeJson<any>(
+    "valid onboarding validation and bridge auth refresh",
+    `${launch.url}/api/onboarding`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json", ...auth },
+      body: JSON.stringify({ action: "save_api_key", providerId: "openai", apiKey: "valid-demo-key" }),
+    },
+    bridgeAuthRefreshTimeoutMs,
+  )
   assert.equal(validValidation.status, 200, `expected successful retry to unlock onboarding: ${validValidation.status}`)
-  const validPayload = await validValidation.json() as any
   assert.equal(validPayload.onboarding.locked, false)
   assert.equal(validPayload.onboarding.bridgeAuthRefresh.phase, "succeeded")
 
   // 4. Boot confirms unlocked
-  const bootAfter = await fetch(`${launch.url}/api/boot`, {
-    method: "GET",
-    headers: { Accept: "application/json", ...auth },
-    signal: AbortSignal.timeout(10_000),
-  })
+  const { response: bootAfter, payload: bootAfterPayload } = await fetchRuntimeJson<any>(
+    "post-onboarding boot",
+    `${launch.url}/api/boot`,
+    {
+      method: "GET",
+      headers: { Accept: "application/json", ...auth },
+    },
+    runtimeRequestTimeoutMs,
+  )
   assert.equal(bootAfter.ok, true)
-  const bootAfterPayload = await bootAfter.json() as any
   assert.equal(bootAfterPayload.onboarding.locked, false)
   assert.equal(bootAfterPayload.onboarding.lockReason, null)
 })

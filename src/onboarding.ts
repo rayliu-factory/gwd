@@ -13,10 +13,11 @@
 import { execFile } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
-import type { AuthStorage } from '@gsd/pi-coding-agent'
+import type { AuthStorage } from '@gwd/pi-coding-agent'
 import { renderLogo } from './logo.js'
 import { agentDir } from './app-paths.js'
 import { isClaudeCliReady } from './claude-cli-check.js'
+import { PRODUCT_DISPLAY_NAME } from './namespace.js'
 import {
   markOnboardingComplete,
   markStepCompleted,
@@ -125,7 +126,7 @@ async function loadClack(): Promise<ClackModule> {
   try {
     return await import('@clack/prompts')
   } catch {
-    throw new Error('[gsd] @clack/prompts not found — onboarding wizard requires this dependency')
+    throw new Error('[gwd] @clack/prompts not found — onboarding wizard requires this dependency')
   }
 }
 
@@ -293,22 +294,22 @@ export async function runOnboarding(
     ;[p, pc] = await Promise.all([loadClack(), loadPico()])
   } catch (err) {
     // If clack isn't available, fall back silently — don't block boot
-    process.stderr.write(`[gsd] Onboarding wizard unavailable: ${err instanceof Error ? err.message : String(err)}\n`)
+    process.stderr.write(`[gwd] Onboarding wizard unavailable: ${err instanceof Error ? err.message : String(err)}\n`)
     return
   }
 
   // ── Intro ─────────────────────────────────────────────────────────────────
   if (opts.showIntro !== false) {
     process.stderr.write(renderLogo(pc.cyan))
-    p.intro(pc.bold('Welcome to GSD — let\'s get you set up'))
+    p.intro(pc.bold(`Welcome to ${PRODUCT_DISPLAY_NAME} — let's get you set up`))
   }
 
   const completedSteps: string[] = []
 
   // ── LLM Provider Selection ────────────────────────────────────────────────
   const llmResult = await runStep(p, 'LLM setup failed', () => runLlmStep(p, pc, authStorage), {
-    cancelMessage: 'Setup cancelled — you can run /gsd onboarding --resume later.',
-    errorInfo: 'You can configure your LLM provider later with /login inside GSD.',
+    cancelMessage: 'Setup cancelled — you can run /gwd onboarding --resume later.',
+    errorInfo: `You can configure your LLM provider later with /login inside ${PRODUCT_DISPLAY_NAME}.`,
   })
   if (llmResult === STEP_CANCELLED) return
   const llmConfigured = llmResult ?? false
@@ -347,19 +348,19 @@ export async function runOnboarding(
       summaryLines.push(`${pc.green('✓')} LLM provider configured`)
     }
   } else {
-    summaryLines.push(`${pc.yellow('↷')} LLM provider: skipped — use /login inside GSD`)
+    summaryLines.push(`${pc.yellow('↷')} LLM provider: skipped — use /login inside ${PRODUCT_DISPLAY_NAME}`)
   }
 
   if (searchConfigured) {
     summaryLines.push(`${pc.green('✓')} Web search: ${searchConfigured}`)
   } else {
-    summaryLines.push(`${pc.dim('↷')} Web search: not configured — use /search-provider inside GSD`)
+    summaryLines.push(`${pc.dim('↷')} Web search: not configured — use /search-provider inside ${PRODUCT_DISPLAY_NAME}`)
   }
 
   if (remoteConfigured) {
     summaryLines.push(`${pc.green('✓')} Remote questions: ${remoteConfigured}`)
   } else {
-    summaryLines.push(`${pc.dim('↷')} Remote questions: not configured — use /gsd remote inside GSD`)
+    summaryLines.push(`${pc.dim('↷')} Remote questions: not configured — use /gwd remote inside ${PRODUCT_DISPLAY_NAME}`)
   }
 
   if (toolKeyCount > 0) {
@@ -374,10 +375,10 @@ export async function runOnboarding(
   markOnboardingComplete(completedSteps)
 
   summaryLines.push('')
-  summaryLines.push(`${pc.dim('Tip:')} re-run anytime with ${pc.cyan('/gsd onboarding')}`)
+  summaryLines.push(`${pc.dim('Tip:')} re-run anytime with ${pc.cyan('/gwd onboarding')}`)
 
   p.note(summaryLines.join('\n'), 'Setup complete')
-  p.outro(pc.dim('Launching GSD...'))
+  p.outro(pc.dim(`Launching ${PRODUCT_DISPLAY_NAME}...`))
 }
 
 // ─── LLM Authentication Step ──────────────────────────────────────────────────
@@ -409,7 +410,7 @@ export async function runLlmStep(p: ClackModule, pc: PicoModule, authStorage: Au
   authOptions.push(
     { value: 'browser', label: 'Sign in with your browser', hint: 'GitHub Copilot, ChatGPT, Google, etc.' },
     { value: 'api-key', label: 'Paste an API key', hint: 'from your provider dashboard' },
-    { value: 'skip', label: 'Skip for now', hint: 'use /login inside GSD later' },
+    { value: 'skip', label: 'Skip for now', hint: `use /login inside ${PRODUCT_DISPLAY_NAME} later` },
   )
 
   const method = await p.select({
@@ -578,7 +579,7 @@ async function runApiKeyFlow(
 
   // Provider-specific post-setup hints
   if (providerId === 'openrouter') {
-    p.log.info(`Use ${pc.cyan('/model')} inside GSD to pick an OpenRouter model.`)
+    p.log.info(`Use ${pc.cyan('/model')} inside ${PRODUCT_DISPLAY_NAME} to pick an OpenRouter model.`)
     p.log.info(`To add custom models or control routing, see ${pc.dim('docs/providers.md#openrouter')}`)
   }
 
@@ -785,7 +786,7 @@ export async function runWebSearchStep(
   options.push(
     { value: 'brave', label: 'Brave Search', hint: 'requires API key — brave.com/search/api' },
     { value: 'tavily', label: 'Tavily', hint: 'requires API key — tavily.com' },
-    { value: 'skip', label: 'Skip for now', hint: 'use /search-provider inside GSD later' },
+    { value: 'skip', label: 'Skip for now', hint: `use /search-provider inside ${PRODUCT_DISPLAY_NAME} later` },
   )
 
   const choice = await p.select({
@@ -901,11 +902,11 @@ export async function runRemoteQuestionsStep(
     { value: 'discord', label: 'Discord', hint: 'receive questions in a Discord channel' },
     { value: 'slack', label: 'Slack', hint: 'receive questions in a Slack channel' },
     { value: 'telegram', label: 'Telegram', hint: 'receive questions via Telegram bot' },
-    { value: 'skip', label: 'Skip for now', hint: 'use /gsd remote inside GSD later' },
+    { value: 'skip', label: 'Skip for now', hint: `use /gwd remote inside ${PRODUCT_DISPLAY_NAME} later` },
   )
 
   const choice = await p.select({
-    message: 'Set up remote questions? (get notified when GSD needs input)',
+    message: `Set up remote questions? (get notified when ${PRODUCT_DISPLAY_NAME} needs input)`,
     options,
   })
 
@@ -1024,7 +1025,7 @@ export async function runRemoteQuestionsStep(
       const res = await fetch(`https://api.telegram.org/bot${trimmed}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: trimmedChatId, text: 'GSD remote questions connected.' }),
+        body: JSON.stringify({ chat_id: trimmedChatId, text: 'GWD remote questions connected.' }),
         signal: AbortSignal.timeout(15_000),
       })
       const data = await res.json() as TelegramGetMeResponse
@@ -1074,12 +1075,12 @@ async function runDiscordChannelStep(p: ClackModule, pc: PicoModule, token: stri
     const data = await res.json()
     guilds = Array.isArray(data) ? data : []
   } catch {
-    p.log.warn('Could not fetch Discord servers — configure channel later with /gsd remote discord')
+    p.log.warn('Could not fetch Discord servers — configure channel later with /gwd remote discord')
     return null
   }
 
   if (guilds.length === 0) {
-    p.log.warn('Bot is not in any Discord servers — configure channel later with /gsd remote discord')
+    p.log.warn('Bot is not in any Discord servers — configure channel later with /gwd remote discord')
     return null
   }
 
@@ -1115,19 +1116,19 @@ async function runDiscordChannelStep(p: ClackModule, pc: PicoModule, token: stri
         )
       : []
   } catch {
-    p.log.warn('Could not fetch channels — configure later with /gsd remote discord')
+    p.log.warn('Could not fetch channels — configure later with /gwd remote discord')
     return null
   }
 
   if (channels.length === 0) {
-    p.log.warn('No text channels found — configure later with /gsd remote discord')
+    p.log.warn('No text channels found — configure later with /gwd remote discord')
     return null
   }
 
   // Select channel
   const MANUAL_VALUE = '__manual__'
   const channelChoice = await p.select({
-    message: 'Which channel should GSD use for remote questions?',
+    message: 'Which channel should GWD use for remote questions?',
     options: [
       ...channels.map(ch => ({ value: ch.id, label: `#${ch.name}` })),
       { value: MANUAL_VALUE, label: 'Enter channel ID manually' },

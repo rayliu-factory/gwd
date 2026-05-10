@@ -1,4 +1,4 @@
-You are executing GSD auto-mode.
+You are executing GWD auto-mode.
 
 ## UNIT: Refine Slice {{sliceId}} ("{{sliceTitle}}") - Milestone {{milestoneId}}
 

@@ -1,13 +1,10 @@
-// Project/App: GSD-2
-// File Purpose: Verifies canonical and alias DB tool registration plus legacy alias telemetry.
+// Project/App: GWD-2
+// File Purpose: Verifies canonical DB tool registration after the hard namespace cutover.
 
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
-import { registerDbTools } from '../bootstrap/db-tools.ts';
-import { getLegacyTelemetry, resetLegacyTelemetry } from '../legacy-telemetry.ts';
+import { test } from "node:test";
+import assert from "node:assert/strict";
 
-
-// ─── Mock PI ──────────────────────────────────────────────────────────────────
+import { registerDbTools } from "../bootstrap/db-tools.ts";
 
 function makeMockPi() {
   const tools: any[] = [];
@@ -17,139 +14,73 @@ function makeMockPi() {
   } as any;
 }
 
-// ─── Rename map ───────────────────────────────────────────────────────────────
+const CANONICAL_TOOL_NAMES = [
+  "gsd_decision_save",
+  "gsd_requirement_update",
+  "gsd_requirement_save",
+  "gsd_summary_save",
+  "gsd_milestone_generate_id",
+  "gsd_plan_milestone",
+  "gsd_plan_slice",
+  "gsd_plan_task",
+  "gsd_task_complete",
+  "gsd_slice_complete",
+  "gsd_skip_slice",
+  "gsd_complete_milestone",
+  "gsd_validate_milestone",
+  "gsd_replan_slice",
+  "gsd_reassess_roadmap",
+  "gsd_task_reopen",
+  "gsd_slice_reopen",
+  "gsd_milestone_reopen",
+  "gsd_save_gate_result",
+] as const;
 
-const RENAME_MAP: Array<{ canonical: string; alias: string }> = [
-  { canonical: "gsd_decision_save", alias: "gsd_save_decision" },
-  { canonical: "gsd_requirement_update", alias: "gsd_update_requirement" },
-  { canonical: "gsd_requirement_save", alias: "gsd_save_requirement" },
-  { canonical: "gsd_summary_save", alias: "gsd_save_summary" },
-  { canonical: "gsd_milestone_generate_id", alias: "gsd_generate_milestone_id" },
-  { canonical: "gsd_task_complete", alias: "gsd_complete_task" },
-  { canonical: "gsd_slice_complete", alias: "gsd_complete_slice" },
-  { canonical: "gsd_plan_milestone", alias: "gsd_milestone_plan" },
-  { canonical: "gsd_plan_slice", alias: "gsd_slice_plan" },
-  { canonical: "gsd_plan_task", alias: "gsd_task_plan" },
-  { canonical: "gsd_replan_slice", alias: "gsd_slice_replan" },
-  { canonical: "gsd_reassess_roadmap", alias: "gsd_roadmap_reassess" },
-  { canonical: "gsd_complete_milestone", alias: "gsd_milestone_complete" },
-  { canonical: "gsd_validate_milestone", alias: "gsd_milestone_validate" },
-  { canonical: "gsd_task_reopen", alias: "gsd_reopen_task" },
-  { canonical: "gsd_slice_reopen", alias: "gsd_reopen_slice" },
-  { canonical: "gsd_milestone_reopen", alias: "gsd_reopen_milestone" },
-];
+const REMOVED_ALIAS_NAMES = [
+  "gsd_save_decision",
+  "gsd_update_requirement",
+  "gsd_save_requirement",
+  "gsd_save_summary",
+  "gsd_generate_milestone_id",
+  "gsd_milestone_plan",
+  "gsd_slice_plan",
+  "gsd_task_plan",
+  "gsd_complete_task",
+  "gsd_complete_slice",
+  "gsd_milestone_complete",
+  "gsd_milestone_validate",
+  "gsd_slice_replan",
+  "gsd_roadmap_reassess",
+  "gsd_reopen_task",
+  "gsd_reopen_slice",
+  "gsd_reopen_milestone",
+] as const;
 
-// ─── Registration count ──────────────────────────────────────────────────────
+test("registerDbTools registers only canonical DB workflow tools", () => {
+  const pi = makeMockPi();
+  registerDbTools(pi);
+  const toolNames = pi.tools.map((tool: any) => tool.name).sort();
 
-console.log('\n── Tool naming: registration count ──');
+  assert.deepEqual(toolNames, [...CANONICAL_TOOL_NAMES].sort());
+});
 
-const pi = makeMockPi();
-registerDbTools(pi);
+test("legacy compatibility alias tools are not registered", () => {
+  const pi = makeMockPi();
+  registerDbTools(pi);
+  const registered = new Set(pi.tools.map((tool: any) => tool.name));
 
-assert.deepStrictEqual(
-  pi.tools.length,
-  RENAME_MAP.length * 2 + 2,
-  'Should register canonical/alias tool pairs plus 1 gate tool and 1 gsd_skip_slice',
-);
-
-// ─── Both names exist for each pair ──────────────────────────────────────────
-
-console.log('\n── Tool naming: canonical and alias names exist ──');
-
-for (const { canonical, alias } of RENAME_MAP) {
-  const canonicalTool = pi.tools.find((t: any) => t.name === canonical);
-  const aliasTool = pi.tools.find((t: any) => t.name === alias);
-
-  assert.ok(canonicalTool !== undefined, `Canonical tool "${canonical}" should be registered`);
-  assert.ok(aliasTool !== undefined, `Alias tool "${alias}" should be registered`);
-}
-
-// ─── Execute function wrapping ───────────────────────────────────────────────
-
-console.log('\n── Tool naming: alias execute wrapper ──');
-
-for (const { canonical, alias } of RENAME_MAP) {
-  const canonicalTool = pi.tools.find((t: any) => t.name === canonical);
-  const aliasTool = pi.tools.find((t: any) => t.name === alias);
-
-  if (canonicalTool && aliasTool) {
-    assert.ok(
-      canonicalTool.execute !== aliasTool.execute,
-      `"${alias}" should wrap "${canonical}" so alias usage can be counted`,
-    );
-  }
-}
-
-test("alias execute increments legacy MCP alias telemetry before delegating", async () => {
-  const canonicalTool = pi.tools.find((t: any) => t.name === "gsd_decision_save");
-  const aliasTool = pi.tools.find((t: any) => t.name === "gsd_save_decision");
-  assert.ok(canonicalTool);
-  assert.ok(aliasTool);
-
-  const originalCanonicalExecute = canonicalTool.execute;
-  try {
-    resetLegacyTelemetry();
-    let delegated = false;
-    canonicalTool.execute = async () => {
-      delegated = true;
-      return { content: [{ type: "text", text: "ok" }], details: { ok: true } };
-    };
-
-    await aliasTool.execute("call-1", {}, undefined, undefined, undefined);
-
-    assert.equal(delegated, true);
-    assert.equal(getLegacyTelemetry()["legacy.mcpAliasUsed"], 1);
-  } finally {
-    canonicalTool.execute = originalCanonicalExecute;
-    resetLegacyTelemetry();
+  for (const aliasName of REMOVED_ALIAS_NAMES) {
+    assert.equal(registered.has(aliasName), false, `${aliasName} must not be registered after hard cutover`);
   }
 });
 
-// ─── Alias descriptions include "(alias for ...)" ───────────────────────────
+test("tool descriptions and prompt guidelines do not advertise aliases", () => {
+  const pi = makeMockPi();
+  registerDbTools(pi);
 
-console.log('\n── Tool naming: alias descriptions ──');
-
-for (const { canonical, alias } of RENAME_MAP) {
-  const aliasTool = pi.tools.find((t: any) => t.name === alias);
-
-  if (aliasTool) {
-    assert.ok(
-      aliasTool.description.includes(`alias for ${canonical}`),
-      `Alias "${alias}" description should include "alias for ${canonical}"`,
-    );
+  for (const tool of pi.tools as any[]) {
+    assert.ok(!/alias/i.test(tool.description ?? ""), `${tool.name} description must not advertise aliases`);
+    const guidelines = Array.isArray(tool.promptGuidelines) ? tool.promptGuidelines.join(" ") : "";
+    assert.ok(!/alias/i.test(guidelines), `${tool.name} prompt guidelines must not advertise aliases`);
   }
-}
-
-// ─── Canonical tools have proper promptGuidelines ────────────────────────────
-
-console.log('\n── Tool naming: canonical promptGuidelines use canonical name ──');
-
-for (const { canonical } of RENAME_MAP) {
-  const canonicalTool = pi.tools.find((t: any) => t.name === canonical);
-
-  if (canonicalTool) {
-    const guidelinesText = canonicalTool.promptGuidelines.join(' ');
-    assert.ok(
-      guidelinesText.includes(canonical),
-      `Canonical tool "${canonical}" promptGuidelines should reference its own name`,
-    );
-  }
-}
-
-// ─── Alias promptGuidelines direct to canonical ──────────────────────────────
-
-console.log('\n── Tool naming: alias promptGuidelines redirect to canonical ──');
-
-for (const { canonical, alias } of RENAME_MAP) {
-  const aliasTool = pi.tools.find((t: any) => t.name === alias);
-
-  if (aliasTool) {
-    const guidelinesText = aliasTool.promptGuidelines.join(' ');
-    assert.ok(
-      guidelinesText.includes(`Alias for ${canonical}`),
-      `Alias "${alias}" promptGuidelines should say "Alias for ${canonical}"`,
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
+});

@@ -1,4 +1,4 @@
-// GSD Extension — Desktop Notification Helper
+// GWD Extension — Desktop Notification Helper
 // Cross-platform desktop notifications for auto-mode events.
 
 import { execFileSync } from "node:child_process";
@@ -25,9 +25,9 @@ export function sendDesktopNotification(
   kind: NotificationKind = "complete",
   projectName?: string,
 ): void {
-  // When a projectName is provided and the title is the default "GSD",
+  // When a projectName is provided and the title is the default "GWD",
   // replace it with a project-qualified title for multi-project clarity.
-  if (projectName && title === "GSD") {
+  if (projectName && title === "GWD") {
     title = formatNotificationTitle(projectName);
   }
   const loaded = loadEffectiveGSDPreferences()?.preferences;
@@ -90,12 +90,12 @@ export function shouldSendDesktopNotification(
 
 /**
  * Format a notification title that includes the project name for context.
- * Returns "GSD — projectName" when a project name is available, otherwise "GSD".
+ * Returns "GWD — projectName" when a project name is available, otherwise "GWD".
  */
 export function formatNotificationTitle(projectName?: string): string {
   const trimmed = projectName?.trim();
-  if (trimmed) return `GSD — ${trimmed}`;
-  return "GSD";
+  if (trimmed) return `GWD — ${trimmed}`;
+  return "GWD";
 }
 
 export function buildDesktopNotificationCommand(
@@ -112,7 +112,7 @@ export function buildDesktopNotificationCommand(
     // so it gets a proper permission entry in System Settings → Notifications.
     // osascript notifications are silently swallowed when the calling terminal
     // (Ghostty, iTerm2, etc.) lacks notification permissions — exits 0, no error.
-    // See: https://github.com/gsd-build/gsd-2/issues/2632
+    // See: https://github.com/gwd-build/gwd-2/issues/2632
     const tnPath = findExecutable("terminal-notifier");
     if (tnPath) {
       const sound = level === "error" ? "Basso" : "Glass";

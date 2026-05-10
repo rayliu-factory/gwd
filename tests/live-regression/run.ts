@@ -13,11 +13,11 @@
  * These tests DO NOT require LLM API keys — they test the state machine
  * and infrastructure, not the LLM execution.
  *
- * Run from CI pipeline after `npm install -g gsd-pi@<version>`:
+ * Run from CI pipeline after `npm install -g gwd-pi@<version>`:
  *   node --experimental-strip-types tests/live-regression/run.ts
  *
  * Or locally:
- *   GSD_SMOKE_BINARY=dist/loader.js node --experimental-strip-types tests/live-regression/run.ts
+ *   GWD_SMOKE_BINARY=dist/loader.js node --experimental-strip-types tests/live-regression/run.ts
  */
 
 import { execFileSync, spawn, spawnSync } from "child_process";
@@ -33,7 +33,7 @@ import { tmpdir } from "os";
 
 // ─── Config ───────────────────────────────────────────────────────────────
 
-const binary = process.env.GSD_SMOKE_BINARY || "gsd";
+const binary = process.env.GWD_SMOKE_BINARY || "gsd";
 let passed = 0;
 let failed = 0;
 
@@ -88,7 +88,7 @@ function gsd(
       encoding: "utf-8",
       timeout: 30_000,
       stdio: ["pipe", "pipe", "pipe"],
-      env: { ...process.env, ...env, GSD_NON_INTERACTIVE: "1" },
+      env: { ...process.env, ...env, GWD_NON_INTERACTIVE: "1" },
     },
   );
   return {

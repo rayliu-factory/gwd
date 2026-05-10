@@ -1,4 +1,4 @@
-// GSD Gate State Canonicalization Tests
+// GWD Gate State Canonicalization Tests
 // Regression tests for #4950: canonical omitted state and GateVerdict type narrowing.
 
 import { describe, test, beforeEach, afterEach } from "node:test";

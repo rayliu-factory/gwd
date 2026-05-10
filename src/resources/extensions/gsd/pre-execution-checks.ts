@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Pre-execution validation checks for GSD task plans.
+// Project/App: GWD-2
+// File Purpose: Pre-execution validation checks for GWD task plans.
 
 /**
  * Pre-Execution Checks — Validate task plans before execution begins.
@@ -99,7 +99,7 @@ export function extractPackageReferences(description: string): string[] {
   // natural-language prose like `from "What's Next"` or `from 'master'` does
   // not produce false package-existence failures.  Requiring the leading import
   // keyword anchors the match to JavaScript/TypeScript syntax.
-  // See: https://github.com/gsd-build/gsd-2/issues/4388
+  // See: https://github.com/gwd-build/gwd-2/issues/4388
   const importPattern = /(?:require\s*\(\s*['"]|import\b[\s\S]*?\bfrom\s+['"])([a-zA-Z0-9@/_-]+)['"\)]/g;
   let importMatch: RegExpExecArray | null;
   while ((importMatch = importPattern.exec(description)) !== null) {

@@ -1,5 +1,5 @@
 /**
- * GSD Command — /gsd eval-review
+ * GWD Command — /gwd eval-review
  *
  * Audits the implemented evaluation strategy of a slice against the planned
  * `AI-SPEC.md` and observed `SUMMARY.md`. Dispatches an LLM turn that scores
@@ -24,7 +24,7 @@
  *      `--*` tokens raise an explicit error.
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { existsSync, realpathSync } from "node:fs";
 import { open, readFile } from "node:fs/promises";
@@ -53,7 +53,7 @@ import {
 
 /**
  * Slice-ID format. Must match the canonical `/^S\d+$/` used elsewhere in the
- * GSD extension (`commands-ship.ts:56`). Trailing whitespace, embedded
+ * GWD extension (`commands-ship.ts:56`). Trailing whitespace, embedded
  * separators, traversal sequences, and unicode look-alikes are all rejected.
  */
 export const SLICE_ID_PATTERN = /^S\d+$/;
@@ -72,11 +72,11 @@ const SPEC_MARKER_RESERVE_BYTES = 128;
 /** Below this many bytes left for spec we skip reading and emit only a marker. */
 const MIN_USEFUL_SPEC_BYTES = 256;
 
-const USAGE = "Usage: /gsd eval-review <sliceId> [--force] [--show]  (e.g. S07)";
+const USAGE = "Usage: /gwd eval-review <sliceId> [--force] [--show]  (e.g. S07)";
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
-/** Parsed and validated arguments for the `/gsd eval-review` command. */
+/** Parsed and validated arguments for the `/gwd eval-review` command. */
 export interface EvalReviewArgs {
   /** Validated slice ID matching {@link SLICE_ID_PATTERN}. */
   sliceId: string;
@@ -205,7 +205,7 @@ export function parseEvalReviewArgs(raw: string): EvalReviewArgs {
  *   - `no-slice-dir` → likely a typo in the slice ID, milestone exists but
  *      slice does not.
  *   - `no-summary` → slice exists but `SUMMARY.md` is missing; the user
- *      probably skipped `/gsd execute-phase`.
+ *      probably skipped `/gwd execute-phase`.
  *   - `ready` → audit can run.
  *
  * AI-SPEC.md is optional in every state where the slice directory exists —
@@ -588,7 +588,7 @@ export function planEvalReviewAction(
 // ─── Handler entry ────────────────────────────────────────────────────────────
 
 /**
- * Handle `/gsd eval-review <sliceId> [--force] [--show]`.
+ * Handle `/gwd eval-review <sliceId> [--force] [--show]`.
  *
  * Workflow:
  *   1. Parse and validate args (path-traversal-safe).
@@ -629,7 +629,7 @@ export async function handleEvalReview(
   const state = await deriveState(basePath);
   if (!state.activeMilestone) {
     ctx.ui.notify(
-      "No active milestone — start or resume one before running /gsd eval-review.",
+      "No active milestone — start or resume one before running /gwd eval-review.",
       "warning",
     );
     return;
@@ -652,7 +652,7 @@ export async function handleEvalReview(
   if (action.kind === "show") {
     if (!action.path) {
       ctx.ui.notify(
-        `No EVAL-REVIEW.md present for ${parsed.sliceId}. Run /gsd eval-review ${parsed.sliceId} to generate one.`,
+        `No EVAL-REVIEW.md present for ${parsed.sliceId}. Run /gwd eval-review ${parsed.sliceId} to generate one.`,
         "warning",
       );
       return;
@@ -668,7 +668,7 @@ export async function handleEvalReview(
   }
   if (action.kind === "no-summary") {
     ctx.ui.notify(
-      `Slice ${parsed.sliceId} exists but has no SUMMARY.md — run /gsd execute-phase first to generate one.`,
+      `Slice ${parsed.sliceId} exists but has no SUMMARY.md — run /gwd execute-phase first to generate one.`,
       "warning",
     );
     return;

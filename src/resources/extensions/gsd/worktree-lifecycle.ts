@@ -1,4 +1,4 @@
-// GSD-2 — Worktree Lifecycle module: owns milestone entry/exit lifecycle behind a small, typed Interface.
+// GWD-2 — Worktree Lifecycle module: owns milestone entry/exit lifecycle behind a small, typed Interface.
 /**
  * Worktree Lifecycle module — first-class Module for worktree create/enter/exit/merge.
  *
@@ -818,10 +818,10 @@ function _mergeWorktreeModeImpl(
     });
     // Surface a clear, actionable error. Worktree and milestone branch
     // are intentionally preserved — nothing has been deleted. User can
-    // retry /gsd dispatch complete-milestone or merge manually once the
+    // retry /gwd dispatch complete-milestone or merge manually once the
     // underlying issue is fixed (#1668, #1891).
     notify(
-      `Milestone merge failed: ${msg}. Your worktree and milestone branch are preserved — retry with \`/gsd dispatch complete-milestone\` or merge manually.`,
+      `Milestone merge failed: ${msg}. Your worktree and milestone branch are preserved — retry with \`/gwd dispatch complete-milestone\` or merge manually.`,
       "warning",
     );
 
@@ -893,7 +893,7 @@ function _mergeBranchModeImpl(
             ? checkoutErr.message
             : String(checkoutErr);
         notify(
-          `Cannot merge milestone ${milestoneId}: working tree is on ${currentBranch} and checkout to ${milestoneBranch} failed (${checkoutMsg}). Resolve manually and run /gsd auto to resume.`,
+          `Cannot merge milestone ${milestoneId}: working tree is on ${currentBranch} and checkout to ${milestoneBranch} failed (${checkoutMsg}). Resolve manually and run /gwd auto to resume.`,
           "error",
         );
         throw new UserNotifiedError(checkoutMsg, checkoutErr);
@@ -903,7 +903,7 @@ function _mergeBranchModeImpl(
       if (reverify !== milestoneBranch) {
         const reverifyMsg = `branch checkout to ${milestoneBranch} reported success but current branch is ${reverify}`;
         notify(
-          `Cannot merge milestone ${milestoneId}: ${reverifyMsg}. Resolve manually and run /gsd auto to resume.`,
+          `Cannot merge milestone ${milestoneId}: ${reverifyMsg}. Resolve manually and run /gwd auto to resume.`,
           "error",
         );
         throw new UserNotifiedError(reverifyMsg);

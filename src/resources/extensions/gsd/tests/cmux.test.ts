@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Unit tests for cmux integration, layout, and CLI isolation.
 import test, { describe, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
@@ -107,7 +107,7 @@ describe("autoEnableCmuxPreferences", () => {
       "version: 1",
       "---",
       "",
-      "# GSD Skill Preferences",
+      "# GWD Skill Preferences",
     ].join("\n"));
 
     const result = autoEnableCmuxPreferences();
@@ -135,7 +135,7 @@ describe("autoEnableCmuxPreferences", () => {
       "  browser: true",
       "---",
       "",
-      "# GSD Skill Preferences",
+      "# GWD Skill Preferences",
     ].join("\n"));
 
     const result = autoEnableCmuxPreferences();

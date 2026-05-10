@@ -1,4 +1,4 @@
-// GSD Auto-mode — Artifact Path Resolution
+// GWD Auto-mode — Artifact Path Resolution
 //
 // resolveExpectedArtifactPath and diagnoseExpectedArtifact moved here from
 // auto-recovery.ts (Phase 5 dead-code cleanup). The artifact verification

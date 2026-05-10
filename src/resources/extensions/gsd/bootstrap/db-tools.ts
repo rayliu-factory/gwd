@@ -1,42 +1,18 @@
-// Project/App: GSD-2
-// File Purpose: Registers DB-backed GSD workflow tools and compatibility aliases.
+// Project/App: GWD-2
+// File Purpose: Registers DB-backed GWD workflow tools.
 import { Type } from "@sinclair/typebox";
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
-import { Text } from "@gsd/pi-tui";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
+import { Text } from "@gwd/pi-tui";
 
 import { loadEffectiveGSDPreferences } from "../preferences.js";
 import { ensureDbOpen, resolveCtxCwd } from "./dynamic-tools.js";
 import { loadWriteGateSnapshot, shouldBlockRootArtifactSaveInSnapshot } from "./write-gate.js";
-import { StringEnum } from "@gsd/pi-ai";
+import { StringEnum } from "@gwd/pi-ai";
 import { logError } from "../workflow-logger.js";
 import { getErrorMessage } from "../error-utils.js";
-import { incrementLegacyTelemetry } from "../legacy-telemetry.js";
 
 async function loadWorkflowExecutors(): Promise<typeof import("../tools/workflow-tool-executors.js")> {
   return import("../tools/workflow-tool-executors.js");
-}
-
-
-/**
- * Register an alias tool that shares the same execute function as its canonical counterpart.
- * The alias description and promptGuidelines direct the LLM to prefer the canonical name.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- toolDef shape matches ToolDefinition but typing it fully requires generics
-function registerAlias(pi: ExtensionAPI, toolDef: any, aliasName: string, canonicalName: string): void {
-  const execute = typeof toolDef.execute === "function"
-    ? async (...args: any[]) => {
-        incrementLegacyTelemetry("legacy.mcpAliasUsed");
-        return toolDef.execute(...args);
-      }
-    : toolDef.execute;
-
-  pi.registerTool({
-    ...toolDef,
-    name: aliasName,
-    description: toolDef.description + ` (alias for ${canonicalName} — prefer the canonical name)`,
-    promptGuidelines: [`Alias for ${canonicalName} — prefer the canonical name.`],
-    execute,
-  });
 }
 
 function requirementRootWriteGuard(operation: string, basePath: string): { content: Array<{ type: "text"; text: string }>; details: Record<string, unknown>; isError: true } | null {
@@ -63,14 +39,14 @@ function readDetails(result: any): any {
 }
 
 export function registerDbTools(pi: ExtensionAPI): void {
-  // ─── gsd_decision_save (formerly gsd_save_decision) ─────────────────────
+  // ─── gsd_decision_save ─────────────────────────────────────────────────
 
   const decisionSaveExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const basePath = resolveCtxCwd(_ctx);
     const dbAvailable = await ensureDbOpen(basePath);
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot save decision." }],
+        content: [{ type: "text" as const, text: "Error: GWD database is not available. Cannot save decision." }],
         details: { operation: "save_decision", error: "db_unavailable" } as any,
       };
     }
@@ -106,9 +82,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_decision_save",
     label: "Save Decision",
     description:
-      "Record a project decision to the GSD database and regenerate DECISIONS.md. " +
+      "Record a project decision to the GWD database and regenerate DECISIONS.md. " +
       "Decision IDs are auto-assigned — never provide an ID manually.",
-    promptSnippet: "Record a project decision to the GSD database (auto-assigns ID, regenerates DECISIONS.md)",
+    promptSnippet: "Record a project decision to the GWD database (auto-assigns ID, regenerates DECISIONS.md)",
     promptGuidelines: [
       "Use gsd_decision_save when recording an architectural, pattern, library, or observability decision.",
       "Decision IDs are auto-assigned (D001, D002, ...) — never guess or provide an ID.",
@@ -149,9 +125,8 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(decisionSaveTool);
-  registerAlias(pi, decisionSaveTool, "gsd_save_decision", "gsd_decision_save");
 
-  // ─── gsd_requirement_update (formerly gsd_update_requirement) ───────────
+  // ─── gsd_requirement_update ─────────────────────────────────────────────
 
   const requirementUpdateExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const basePath = resolveCtxCwd(_ctx);
@@ -160,7 +135,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     const dbAvailable = await ensureDbOpen(basePath);
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot update requirement." }],
+        content: [{ type: "text" as const, text: "Error: GWD database is not available. Cannot update requirement." }],
         details: { operation: "update_requirement", id: params.id, error: "db_unavailable" } as any,
       };
     }
@@ -192,9 +167,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_requirement_update",
     label: "Update Requirement",
     description:
-      "Update an existing requirement in the GSD database and regenerate REQUIREMENTS.md. " +
+      "Update an existing requirement in the GWD database and regenerate REQUIREMENTS.md. " +
       "Provide the requirement ID (e.g. R001) and any fields to update.",
-    promptSnippet: "Update an existing GSD requirement by ID (regenerates REQUIREMENTS.md)",
+    promptSnippet: "Update an existing GWD requirement by ID (regenerates REQUIREMENTS.md)",
     promptGuidelines: [
       "Use gsd_requirement_update to change status, validation, notes, or other fields on an existing requirement.",
       "The id parameter is required — it must be an existing RXXX identifier.",
@@ -230,7 +205,6 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(requirementUpdateTool);
-  registerAlias(pi, requirementUpdateTool, "gsd_update_requirement", "gsd_requirement_update");
 
   // ─── gsd_requirement_save ─────────────────────────────────────────────
 
@@ -241,7 +215,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     const dbAvailable = await ensureDbOpen(basePath);
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot save requirement." }],
+        content: [{ type: "text" as const, text: "Error: GWD database is not available. Cannot save requirement." }],
         details: { operation: "save_requirement", error: "db_unavailable" } as any,
       };
     }
@@ -279,9 +253,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_requirement_save",
     label: "Save Requirement",
     description:
-      "Record a new requirement to the GSD database and regenerate REQUIREMENTS.md. " +
+      "Record a new requirement to the GWD database and regenerate REQUIREMENTS.md. " +
       "Requirement IDs are auto-assigned — never provide an ID manually.",
-    promptSnippet: "Record a new GSD requirement to the database (auto-assigns ID, regenerates REQUIREMENTS.md)",
+    promptSnippet: "Record a new GWD requirement to the database (auto-assigns ID, regenerates REQUIREMENTS.md)",
     promptGuidelines: [
       "Use gsd_requirement_save when recording a new capability, quality attribute, constraint, or anti-feature requirement.",
       "Use one of these classes: core-capability, primary-user-loop, launchability, continuity, failure-visibility, integration, quality-attribute, operability, admin/support, compliance/security, differentiator, constraint, anti-feature.",
@@ -333,9 +307,8 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(requirementSaveTool);
-  registerAlias(pi, requirementSaveTool, "gsd_save_requirement", "gsd_requirement_save");
 
-  // ─── gsd_summary_save (formerly gsd_save_summary) ──────────────────────
+  // ─── gsd_summary_save ──────────────────────────────────────────────────
 
   const summarySaveExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const { executeSummarySave } = await loadWorkflowExecutors();
@@ -346,9 +319,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_summary_save",
     label: "Save Summary",
     description:
-      "Save a summary, research, context, or assessment artifact to the GSD database and write it to disk. " +
+      "Save a summary, research, context, or assessment artifact to the GWD database and write it to disk. " +
       "Computes the file path from milestone/slice/task IDs automatically.",
-    promptSnippet: "Save a GSD artifact (summary/research/context/assessment) to DB and disk",
+    promptSnippet: "Save a GWD artifact (summary/research/context/assessment) to DB and disk",
     promptGuidelines: [
       "Use gsd_summary_save to persist structured artifacts (SUMMARY, RESEARCH, CONTEXT, ASSESSMENT, CONTEXT-DRAFT, PROJECT, PROJECT-DRAFT, REQUIREMENTS, REQUIREMENTS-DRAFT).",
       "milestone_id is required for milestone/slice/task artifacts. Omit milestone_id only for root-level PROJECT/PROJECT-DRAFT/REQUIREMENTS/REQUIREMENTS-DRAFT.",
@@ -384,9 +357,8 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(summarySaveTool);
-  registerAlias(pi, summarySaveTool, "gsd_save_summary", "gsd_summary_save");
 
-  // ─── gsd_milestone_generate_id (formerly gsd_generate_milestone_id) ────
+  // ─── gsd_milestone_generate_id ─────────────────────────────────────────
 
   const milestoneGenerateIdExecute = async (_toolCallId: string, _params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     try {
@@ -442,7 +414,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_milestone_generate_id",
     label: "Generate Milestone ID",
     description:
-      "Generate the next milestone ID for a new GSD milestone. " +
+      "Generate the next milestone ID for a new GWD milestone. " +
       "Scans existing milestones on disk and respects the unique_milestone_ids preference. " +
       "Always use this tool when creating a new milestone — never invent milestone IDs manually.",
     promptSnippet: "Generate a valid milestone ID (respects unique_milestone_ids preference)",
@@ -469,9 +441,8 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(milestoneGenerateIdTool);
-  registerAlias(pi, milestoneGenerateIdTool, "gsd_generate_milestone_id", "gsd_milestone_generate_id");
 
-  // ─── gsd_plan_milestone (gsd_milestone_plan alias) ─────────────────────
+  // ─── gsd_plan_milestone ────────────────────────────────────────────────
 
   const planMilestoneExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const { executePlanMilestone } = await loadWorkflowExecutors();
@@ -482,13 +453,13 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_plan_milestone",
     label: "Plan Milestone",
     description:
-      "Write milestone planning state to the GSD database, render ROADMAP.md from DB, and clear caches after a successful render.",
+      "Write milestone planning state to the GWD database, render ROADMAP.md from DB, and clear caches after a successful render.",
     promptSnippet: "Plan a milestone via DB write + roadmap render + cache invalidation",
     promptGuidelines: [
       "Use gsd_plan_milestone for milestone planning instead of writing ROADMAP.md directly.",
       "Keep parameters flat and provide the full milestone planning payload, including slices.",
       "The tool validates input, writes milestone and slice planning data transactionally, renders ROADMAP.md from DB, and clears both state and parse caches after success.",
-      "Use the canonical name gsd_plan_milestone; gsd_milestone_plan is only an alias.",
+      "Use gsd_plan_milestone to plan a milestone.",
     ],
     parameters: Type.Object({
       // ── Core identification + content (required) ──────────────────────
@@ -539,9 +510,8 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(planMilestoneTool);
-  registerAlias(pi, planMilestoneTool, "gsd_milestone_plan", "gsd_plan_milestone");
 
-  // ─── gsd_plan_slice (gsd_slice_plan alias) ─────────────────────────────
+  // ─── gsd_plan_slice ────────────────────────────────────────────────────
 
   const planSliceExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const { executePlanSlice } = await loadWorkflowExecutors();
@@ -552,13 +522,13 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_plan_slice",
     label: "Plan Slice",
     description:
-      "Write slice planning state to the GSD database, render S##-PLAN.md plus task PLAN artifacts from DB, and clear caches after a successful render.",
+      "Write slice planning state to the GWD database, render S##-PLAN.md plus task PLAN artifacts from DB, and clear caches after a successful render.",
     promptSnippet: "Plan a slice via DB write + PLAN render + cache invalidation",
     promptGuidelines: [
       "Use gsd_plan_slice for slice planning instead of writing S##-PLAN.md or task PLAN files directly.",
       "Keep parameters flat and provide the full slice planning payload, including tasks.",
       "The tool validates input, requires an existing parent slice, writes slice/task planning data, renders PLAN.md and task plan files from DB, and clears both state and parse caches after success.",
-      "Use the canonical name gsd_plan_slice; gsd_slice_plan is only an alias.",
+      "Use gsd_plan_slice to plan a slice.",
     ],
     parameters: Type.Object({
       // ── Core identification + content (required) ──────────────────────
@@ -589,16 +559,15 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(planSliceTool);
-  registerAlias(pi, planSliceTool, "gsd_slice_plan", "gsd_plan_slice");
 
-  // ─── gsd_plan_task (gsd_task_plan alias) ───────────────────────────────
+  // ─── gsd_plan_task ─────────────────────────────────────────────────────
 
   const planTaskExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const basePath = resolveCtxCwd(_ctx);
     const dbAvailable = await ensureDbOpen(basePath);
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot plan task." }],
+        content: [{ type: "text" as const, text: "Error: GWD database is not available. Cannot plan task." }],
         details: { operation: "plan_task", error: "db_unavailable" } as any,
       };
     }
@@ -635,13 +604,13 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_plan_task",
     label: "Plan Task",
     description:
-      "Write task planning state to the GSD database, render tasks/T##-PLAN.md from DB, and clear caches after a successful render.",
+      "Write task planning state to the GWD database, render tasks/T##-PLAN.md from DB, and clear caches after a successful render.",
     promptSnippet: "Plan a task via DB write + task PLAN render + cache invalidation",
     promptGuidelines: [
       "Use gsd_plan_task for task planning instead of writing tasks/T##-PLAN.md directly.",
       "Keep parameters flat and provide the full task planning payload.",
       "The tool validates input, requires an existing parent slice, writes task planning data, renders the task PLAN file from DB, and clears both state and parse caches after success.",
-      "Use the canonical name gsd_plan_task; gsd_task_plan is only an alias.",
+      "Use gsd_plan_task to plan a task.",
     ],
     parameters: Type.Object({
       milestoneId: Type.String({ description: "Milestone ID (e.g. M001)" }),
@@ -663,9 +632,8 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(planTaskTool);
-  registerAlias(pi, planTaskTool, "gsd_task_plan", "gsd_plan_task");
 
-  // ─── gsd_task_complete (gsd_complete_task alias) ────────────────────────
+  // ─── gsd_task_complete ─────────────────────────────────────────────────
 
   const taskCompleteExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const { executeTaskComplete } = await loadWorkflowExecutors();
@@ -676,11 +644,11 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_task_complete",
     label: "Complete Task",
     description:
-      "Record a completed task to the GSD database, render a SUMMARY.md to disk, and toggle the plan checkbox — all in one atomic operation. " +
+      "Record a completed task to the GWD database, render a SUMMARY.md to disk, and toggle the plan checkbox — all in one atomic operation. " +
       "Writes the task row inside a transaction, then performs filesystem writes outside the transaction.",
-    promptSnippet: "Complete a GSD task (DB write + summary render + checkbox toggle)",
+    promptSnippet: "Complete a GWD task (DB write + summary render + checkbox toggle)",
     promptGuidelines: [
-      "Use gsd_task_complete (or gsd_complete_task) when a task is finished and needs to be recorded.",
+      "Use gsd_task_complete when a task is finished and needs to be recorded.",
       "All string fields are required. verificationEvidence is an array of objects with command, exitCode, verdict, durationMs.",
       "The tool validates required fields and returns an error message if any are missing.",
       "On success, returns the summaryPath where the SUMMARY.md was written.",
@@ -704,14 +672,14 @@ export function registerDbTools(pi: ExtensionAPI): void {
       escalation: Type.Optional(Type.Object({
         question: Type.String({ description: "The question the user needs to answer — one clear sentence." }),
         options: Type.Array(Type.Object({
-          id: Type.String({ description: "Short id (e.g. 'A', 'B') used by /gsd escalate resolve." }),
+          id: Type.String({ description: "Short id (e.g. 'A', 'B') used by /gwd escalate resolve." }),
           label: Type.String({ description: "One-line label." }),
           tradeoffs: Type.String({ description: "1-2 sentences on the tradeoffs of this option." }),
         }), { minItems: 2, maxItems: 4, description: "2–4 options the user can choose between." }),
         recommendation: Type.String({ description: "Option id the executor recommends." }),
         recommendationRationale: Type.String({ description: "Why the recommendation — 1–2 sentences." }),
         continueWithDefault: Type.Boolean({
-          description: "When true, loop continues (artifact logged for later review). When false, auto-mode pauses until the user resolves via /gsd escalate resolve.",
+          description: "When true, loop continues (artifact logged for later review). When false, auto-mode pauses until the user resolves via /gwd escalate resolve.",
         }),
       }, { description: "ADR-011 Phase 2: optional escalation payload. Only honored when phases.mid_execution_escalation is true." })),
       verificationEvidence: Type.Optional(Type.Array(
@@ -734,9 +702,8 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(taskCompleteTool);
-  registerAlias(pi, taskCompleteTool, "gsd_complete_task", "gsd_task_complete");
 
-  // ─── gsd_slice_complete (gsd_complete_slice alias) ─────────────────────
+  // ─── gsd_slice_complete ────────────────────────────────────────────────
 
   const sliceCompleteExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const { executeSliceComplete } = await loadWorkflowExecutors();
@@ -747,11 +714,11 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_slice_complete",
     label: "Complete Slice",
     description:
-      "Record a completed slice to the GSD database, render SUMMARY.md + UAT.md to disk, and toggle the roadmap checkbox — all in one atomic operation. " +
+      "Record a completed slice to the GWD database, render SUMMARY.md + UAT.md to disk, and toggle the roadmap checkbox — all in one atomic operation. " +
       "Validates all tasks are complete before proceeding. Writes the slice row inside a transaction, then performs filesystem writes outside the transaction.",
-    promptSnippet: "Complete a GSD slice (DB write + summary/UAT render + roadmap checkbox toggle)",
+    promptSnippet: "Complete a GWD slice (DB write + summary/UAT render + roadmap checkbox toggle)",
     promptGuidelines: [
-      "Use gsd_slice_complete (or gsd_complete_slice) when all tasks in a slice are finished and the slice needs to be recorded.",
+      "Use gsd_slice_complete when all tasks in a slice are finished and the slice needs to be recorded.",
       "All tasks in the slice must have status 'complete' — the handler validates this before proceeding.",
       "On success, returns summaryPath and uatPath where the files were written.",
       "Idempotent — calling with the same params twice will not crash.",
@@ -835,7 +802,6 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(sliceCompleteTool);
-  registerAlias(pi, sliceCompleteTool, "gsd_complete_slice", "gsd_slice_complete");
 
   // ─── gsd_skip_slice (#3477 / #3487) ───────────────────────────────────
 
@@ -844,7 +810,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     const dbAvailable = await ensureDbOpen(basePath);
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot skip slice." }],
+        content: [{ type: "text" as const, text: "Error: GWD database is not available. Cannot skip slice." }],
         details: { operation: "skip_slice", error: "db_unavailable" } as any,
       };
     }
@@ -872,7 +838,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
       invalidateStateCache();
 
       // Rebuild STATE.md so it reflects the skip immediately (#3477).
-      // Without this, /gsd auto reads stale STATE.md and resumes the skipped slice.
+      // Without this, /gwd auto reads stale STATE.md and resumes the skipped slice.
       try {
         const { rebuildState } = await import("../doctor.js");
         await rebuildState(basePath);
@@ -914,7 +880,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
       "Mark a slice as skipped so auto-mode advances past it without executing. " +
       "Non-closed tasks within the slice are cascaded to skipped so milestone completion is not blocked by leftover pending tasks (#4375). " +
       "The slice data is preserved for reference. The state machine treats skipped slices like completed ones for dependency satisfaction.",
-    promptSnippet: "Skip a GSD slice (mark as skipped, auto-mode will advance past it)",
+    promptSnippet: "Skip a GWD slice (mark as skipped, auto-mode will advance past it)",
     promptGuidelines: [
       "Use gsd_skip_slice when a slice should be bypassed — descoped, superseded, or no longer relevant.",
       "Cannot skip a slice that is already complete.",
@@ -940,9 +906,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_complete_milestone",
     label: "Complete Milestone",
     description:
-      "Record a completed milestone to the GSD database, render MILESTONE-SUMMARY.md to disk — all in one atomic operation. " +
+      "Record a completed milestone to the GWD database, render MILESTONE-SUMMARY.md to disk — all in one atomic operation. " +
       "Validates all slices are complete before proceeding.",
-    promptSnippet: "Complete a GSD milestone (DB write + summary render)",
+    promptSnippet: "Complete a GWD milestone (DB write + summary render)",
     promptGuidelines: [
       "Use gsd_complete_milestone when all slices in a milestone are finished and the milestone needs to be recorded.",
       "All slices in the milestone must have status 'complete' — the handler validates this before proceeding.",
@@ -973,9 +939,8 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(milestoneCompleteTool);
-  registerAlias(pi, milestoneCompleteTool, "gsd_milestone_complete", "gsd_complete_milestone");
 
-  // ─── gsd_validate_milestone (gsd_milestone_validate alias) ─────────────
+  // ─── gsd_validate_milestone ────────────────────────────────────────────
 
   const milestoneValidateExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const { executeValidateMilestone } = await loadWorkflowExecutors();
@@ -988,7 +953,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     description:
       "Validate a milestone before completion — persist validation results to the DB, render VALIDATION.md to disk. " +
       "Records verdict (pass/needs-attention/needs-remediation) and rationale.",
-    promptSnippet: "Validate a GSD milestone (DB write + VALIDATION.md render)",
+    promptSnippet: "Validate a GWD milestone (DB write + VALIDATION.md render)",
     promptGuidelines: [
       "Use gsd_validate_milestone when all slices are done and the milestone needs validation before completion.",
       "Parameters: milestoneId, verdict, remediationRound, successCriteriaChecklist, sliceDeliveryAudit, crossSliceIntegration, requirementCoverage, verificationClasses (optional), verdictRationale, remediationPlan (optional).",
@@ -1011,9 +976,8 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(milestoneValidateTool);
-  registerAlias(pi, milestoneValidateTool, "gsd_milestone_validate", "gsd_validate_milestone");
 
-  // ─── gsd_replan_slice (gsd_slice_replan alias) ─────────────────────────
+  // ─── gsd_replan_slice ──────────────────────────────────────────────────
 
   const replanSliceExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const { executeReplanSlice } = await loadWorkflowExecutors();
@@ -1027,9 +991,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
       "Replan a slice after a blocker is discovered. Structurally enforces preservation of completed tasks — " +
       "mutations to completed task IDs are rejected with actionable error payloads. Writes replan history to DB, " +
       "applies task mutations, re-renders PLAN.md, and renders REPLAN.md.",
-    promptSnippet: "Replan a GSD slice with structural enforcement of completed tasks",
+    promptSnippet: "Replan a GWD slice with structural enforcement of completed tasks",
     promptGuidelines: [
-      "Use gsd_replan_slice (canonical) or gsd_slice_replan (alias) when a blocker is discovered and the slice plan needs rewriting.",
+      "Use gsd_replan_slice when a blocker is discovered and the slice plan needs rewriting.",
       "The tool structurally enforces that completed tasks cannot be updated or removed — violations return specific error payloads naming the blocked task ID.",
       "Parameters: milestoneId, sliceId, blockerTaskId, blockerDescription, whatChanged, updatedTasks (array), removedTaskIds (array).",
       "updatedTasks items: taskId, title, description, estimate, files, verify, inputs, expectedOutput.",
@@ -1062,9 +1026,8 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(replanSliceTool);
-  registerAlias(pi, replanSliceTool, "gsd_slice_replan", "gsd_replan_slice");
 
-  // ─── gsd_reassess_roadmap (gsd_roadmap_reassess alias) ─────────────────
+  // ─── gsd_reassess_roadmap ──────────────────────────────────────────────
 
   const reassessRoadmapExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const { executeReassessRoadmap } = await loadWorkflowExecutors();
@@ -1078,9 +1041,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
       "Reassess the milestone roadmap after a slice completes. Structurally enforces preservation of completed slices — " +
       "mutations to completed slice IDs are rejected with actionable error payloads. Writes assessment to DB, " +
       "applies slice mutations, re-renders ROADMAP.md, and renders ASSESSMENT.md.",
-    promptSnippet: "Reassess a GSD roadmap with structural enforcement of completed slices",
+    promptSnippet: "Reassess a GWD roadmap with structural enforcement of completed slices",
     promptGuidelines: [
-      "Use gsd_reassess_roadmap (canonical) or gsd_roadmap_reassess (alias) after a slice completes to reassess the roadmap.",
+      "Use gsd_reassess_roadmap after a slice completes to reassess the roadmap.",
       "The tool structurally enforces that completed slices cannot be modified or removed — violations return specific error payloads naming the blocked slice ID.",
       "Parameters: milestoneId, completedSliceId, verdict, assessment, sliceChanges (object with modified, added, removed arrays).",
       "sliceChanges.modified items: sliceId, title, risk (optional), depends (optional), demo (optional).",
@@ -1121,9 +1084,8 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(reassessRoadmapTool);
-  registerAlias(pi, reassessRoadmapTool, "gsd_roadmap_reassess", "gsd_reassess_roadmap");
 
-  // ─── gsd_task_reopen (gsd_reopen_task alias) ───────────────────────────
+  // ─── gsd_task_reopen ───────────────────────────────────────────────────
   // Single-writer v3, Stream 3: reversibility tools for closed units.
 
   const reopenTaskExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
@@ -1131,7 +1093,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     const dbAvailable = await ensureDbOpen(basePath);
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot reopen task." }],
+        content: [{ type: "text" as const, text: "Error: GWD database is not available. Cannot reopen task." }],
         details: { operation: "reopen_task", error: "db_unavailable" } as any,
       };
     }
@@ -1169,12 +1131,12 @@ export function registerDbTools(pi: ExtensionAPI): void {
     description:
       "Reset a completed task back to 'pending' so it can be re-done. Cleans up SUMMARY.md so the DB-filesystem reconciler does not auto-correct the task back to complete. " +
       "Both the parent slice and milestone must still be open — use gsd_slice_reopen first if the slice has been closed.",
-    promptSnippet: "Reopen a completed GSD task (resets status to pending, removes SUMMARY.md)",
+    promptSnippet: "Reopen a completed GWD task (resets status to pending, removes SUMMARY.md)",
     promptGuidelines: [
       "Use gsd_task_reopen when a completed task needs to be re-done (e.g. verification missed a regression, requirements changed).",
       "Will fail if the parent slice or milestone is already closed — reopen those first.",
       "Will fail if the task is not currently 'complete' — there is nothing to reopen.",
-      "Use the canonical name gsd_task_reopen; gsd_reopen_task is only an alias.",
+      "Use gsd_task_reopen to reopen a completed task.",
     ],
     parameters: Type.Object({
       milestoneId: Type.String({ description: "Milestone ID (e.g. M001)" }),
@@ -1189,16 +1151,15 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(reopenTaskTool);
-  registerAlias(pi, reopenTaskTool, "gsd_reopen_task", "gsd_task_reopen");
 
-  // ─── gsd_slice_reopen (gsd_reopen_slice alias) ─────────────────────────
+  // ─── gsd_slice_reopen ──────────────────────────────────────────────────
 
   const reopenSliceExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const basePath = resolveCtxCwd(_ctx);
     const dbAvailable = await ensureDbOpen(basePath);
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot reopen slice." }],
+        content: [{ type: "text" as const, text: "Error: GWD database is not available. Cannot reopen slice." }],
         details: { operation: "reopen_slice", error: "db_unavailable" } as any,
       };
     }
@@ -1236,13 +1197,13 @@ export function registerDbTools(pi: ExtensionAPI): void {
     description:
       "Reset a completed slice back to 'in_progress' and reset ALL of its tasks back to 'pending'. Cleans up SUMMARY.md / UAT.md and per-task summaries. " +
       "Reopening a slice means re-doing the work — partial resets create ambiguous state, so all tasks are reset.",
-    promptSnippet: "Reopen a completed GSD slice (resets all tasks to pending, removes summaries)",
+    promptSnippet: "Reopen a completed GWD slice (resets all tasks to pending, removes summaries)",
     promptGuidelines: [
       "Use gsd_slice_reopen when a completed slice needs to be re-done (e.g. integration issue surfaced, requirements changed).",
       "All tasks within the slice are reset to 'pending' — there is no partial-reopen.",
       "Will fail if the parent milestone is already closed — reopen the milestone first.",
       "Will fail if the slice is not currently 'complete' — there is nothing to reopen.",
-      "Use the canonical name gsd_slice_reopen; gsd_reopen_slice is only an alias.",
+      "Use gsd_slice_reopen to reopen a completed slice.",
     ],
     parameters: Type.Object({
       milestoneId: Type.String({ description: "Milestone ID (e.g. M001)" }),
@@ -1256,16 +1217,15 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(reopenSliceTool);
-  registerAlias(pi, reopenSliceTool, "gsd_reopen_slice", "gsd_slice_reopen");
 
-  // ─── gsd_milestone_reopen (gsd_reopen_milestone alias) ─────────────────
+  // ─── gsd_milestone_reopen ──────────────────────────────────────────────
 
   const reopenMilestoneExecute = async (_toolCallId: string, params: any, _signal: AbortSignal | undefined, _onUpdate: unknown, _ctx: unknown) => {
     const basePath = resolveCtxCwd(_ctx);
     const dbAvailable = await ensureDbOpen(basePath);
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot reopen milestone." }],
+        content: [{ type: "text" as const, text: "Error: GWD database is not available. Cannot reopen milestone." }],
         details: { operation: "reopen_milestone", error: "db_unavailable" } as any,
       };
     }
@@ -1303,12 +1263,12 @@ export function registerDbTools(pi: ExtensionAPI): void {
     description:
       "Reset a closed milestone back to 'active', all of its slices to 'in_progress', and all tasks to 'pending'. " +
       "Cleans up MILESTONE-SUMMARY.md, slice summaries, and task summaries so the DB-filesystem reconciler does not auto-correct status back to complete.",
-    promptSnippet: "Reopen a closed GSD milestone (resets slices and tasks, removes summaries)",
+    promptSnippet: "Reopen a closed GWD milestone (resets slices and tasks, removes summaries)",
     promptGuidelines: [
       "Use gsd_milestone_reopen when a closed milestone needs to be re-done (e.g. validation failure surfaced after closure).",
       "All slices reset to 'in_progress' and all tasks reset to 'pending' — no partial reopen.",
       "Will fail if the milestone is not currently closed — there is nothing to reopen.",
-      "Use the canonical name gsd_milestone_reopen; gsd_reopen_milestone is only an alias.",
+      "Use gsd_milestone_reopen to reopen a closed milestone.",
     ],
     parameters: Type.Object({
       milestoneId: Type.String({ description: "Milestone ID (e.g. M001)" }),
@@ -1321,7 +1281,6 @@ export function registerDbTools(pi: ExtensionAPI): void {
   };
 
   pi.registerTool(reopenMilestoneTool);
-  registerAlias(pi, reopenMilestoneTool, "gsd_reopen_milestone", "gsd_milestone_reopen");
 
   // ─── gsd_save_gate_result ──────────────────────────────────────────────
 
@@ -1334,7 +1293,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_save_gate_result",
     label: "Save Gate Result",
     description:
-      "Save the result of a quality gate evaluation (Q3-Q8 or MV01-MV04) to the GSD database. " +
+      "Save the result of a quality gate evaluation (Q3-Q8 or MV01-MV04) to the GWD database. " +
       "Called by gate evaluation sub-agents after analyzing a specific quality question.",
     promptSnippet: "Save quality gate evaluation result (verdict, rationale, findings)",
     promptGuidelines: [

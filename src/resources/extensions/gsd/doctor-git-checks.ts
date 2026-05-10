@@ -337,7 +337,7 @@ export async function checkGitHealth(
     const wtDir = worktreesDir(basePath);
     if (existsSync(wtDir)) {
       // Resolve symlinks and normalize separators so that symlinked .gsd
-      // paths (e.g. ~/.gsd/projects/<hash>/worktrees/…) match the paths
+      // paths (e.g. ~/.gwd/projects/<hash>/worktrees/…) match the paths
       // returned by `git worktree list`.
       const normalizePath = (p: string): string => {
         try { p = realpathSync(p); } catch { /* path may not exist */ }
@@ -433,7 +433,7 @@ export async function checkGitHealth(
   }
 
   // ── Worktree lifecycle checks ──────────────────────────────────────────
-  // Check GSD-managed worktrees for: merged branches, stale work, dirty
+  // Check GWD-managed worktrees for: merged branches, stale work, dirty
   // state, and unpushed commits. Only worktrees under .gsd/worktrees/.
   try {
     const healthStatuses = getAllWorktreeHealth(basePath);

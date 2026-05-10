@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Auto-mode bootstrap, worktree recovery, and fresh-start initialization.
 /**
  * Auto-mode bootstrap — fresh-start initialization path.
@@ -14,7 +14,7 @@
 import type {
   ExtensionAPI,
   ExtensionCommandContext,
-} from "@gsd/pi-coding-agent";
+} from "@gwd/pi-coding-agent";
 import { deriveState } from "./state.js";
 import { loadFile, getManifestStatus } from "./files.js";
 import type { InterruptedSessionAssessment } from "./interrupted-session.js";
@@ -275,7 +275,7 @@ export function auditOrphanedMilestoneBranches(
       warnings.push(
         `Branch ${branch} has ${commitsAhead} commit(s) ahead of ${mainBranch} for in-progress milestone ${milestoneId}.` +
         wtSuffix +
-        ` Run \`/gsd auto\` to resume, or merge manually if abandoning.`,
+        ` Run \`/gwd auto\` to resume, or merge manually if abandoning.`,
       );
 
       // #4764 telemetry
@@ -339,7 +339,7 @@ export function auditOrphanedMilestoneBranches(
       // Branch is NOT merged — preserve for safety, warn the user
       warnings.push(
         `Branch ${branch} exists for completed milestone ${milestoneId} but is NOT merged into ${mainBranch}. ` +
-        `This may contain unmerged work. Merge manually or run \`/gsd doctor fix\` to resolve.`,
+        `This may contain unmerged work. Merge manually or run \`/gwd doctor fix\` to resolve.`,
       );
 
       // #4764 telemetry
@@ -480,7 +480,7 @@ export function _finalizeSurvivorBranch(
   const err = result.cause instanceof Error ? result.cause : new Error(String(result.cause));
   const msg = err.message;
   ui.notify(
-    `Survivor-branch finalization for ${milestoneId} failed: ${msg}. Resolve manually and re-run /gsd auto.`,
+    `Survivor-branch finalization for ${milestoneId} failed: ${msg}. Resolve manually and re-run /gwd auto.`,
     "error",
   );
   return { merged: false, error: err };
@@ -514,7 +514,7 @@ export function _mergeOrphanCompletedMilestone(
   const err = result.cause instanceof Error ? result.cause : new Error(String(result.cause));
   const msg = err.message;
   ui.notify(
-    `Could not merge orphan milestone ${orphanId}: ${msg}. Resolve manually and re-run /gsd auto.`,
+    `Could not merge orphan milestone ${orphanId}: ${msg}. Resolve manually and re-run /gwd auto.`,
     "warning",
   );
   return { merged: false, error: err };
@@ -559,15 +559,15 @@ export async function bootstrapAutoSession(
   // phase-specific planning model for a discuss turn (#2829).
   //
   // Precedence:
-  // 1) Explicit session override via /gsd model (this session)
+  // 1) Explicit session override via /gwd model (this session)
   // 2) Current session model from settings/session restore (if provider ready)
-  // 3) GSD model preferences from PREFERENCES.md (validated against live auth)
+  // 3) GWD model preferences from PREFERENCES.md (validated against live auth)
   //
   // This preserves #3517 defaults while honoring explicit runtime model
-  // selection for subsequent /gsd runs in the same session.
+  // selection for subsequent /gwd runs in the same session.
   //
   // Exception (#4122): when the session provider is a custom provider declared
-  // in ~/.gsd/agent/models.json (Ollama, vLLM, OpenAI-compatible proxy, etc.),
+  // in ~/.gwd/agent/models.json (Ollama, vLLM, OpenAI-compatible proxy, etc.),
   // PREFERENCES.md is skipped entirely. PREFERENCES.md cannot reference custom
   // providers, so honoring it would silently reroute auto-mode to a built-in
   // provider the user is not logged into and surface as "Not logged in · Please
@@ -611,11 +611,11 @@ export async function bootstrapAutoSession(
     ?? null;
 
   try {
-    // Validate GSD_PROJECT_ID early so the user gets immediate feedback
-    const customProjectId = process.env.GSD_PROJECT_ID;
+    // Validate GWD_PROJECT_ID early so the user gets immediate feedback
+    const customProjectId = process.env.GWD_PROJECT_ID;
     if (customProjectId && !validateProjectId(customProjectId)) {
       ctx.ui.notify(
-        `GSD_PROJECT_ID must contain only alphanumeric characters, hyphens, and underscores. Got: "${customProjectId}"`,
+        `GWD_PROJECT_ID must contain only alphanumeric characters, hyphens, and underscores. Got: "${customProjectId}"`,
         "error",
       );
       return releaseLockAndReturn();
@@ -624,7 +624,7 @@ export async function bootstrapAutoSession(
     const gitLockFile = join(base, ".git", "index.lock");
     if (existsSync(gitLockFile)) {
       ctx.ui.notify(
-        "Git index lock is present at .git/index.lock. Another git process may be running; resolve the lock before starting GSD.",
+        "Git index lock is present at .git/index.lock. Another git process may be running; resolve the lock before starting GWD.",
         "error",
       );
       debugLog("git-index-lock-present-preflight", { path: gitLockFile });
@@ -691,7 +691,7 @@ export async function bootstrapAutoSession(
     );
 
     // ── Debug mode ──
-    if (!isDebugEnabled() && process.env.GSD_DEBUG === "1") {
+    if (!isDebugEnabled() && process.env.GWD_DEBUG === "1") {
       enableDebug(base);
     }
     if (isDebugEnabled()) {
@@ -855,7 +855,7 @@ export async function bootstrapAutoSession(
         hasSurvivorBranch = false;
       } else {
         ctx.ui.notify(
-          "Discussion completed but milestone draft was not promoted. Run /gsd to try again.",
+          "Discussion completed but milestone draft was not promoted. Run /gwd to try again.",
           "warning",
         );
         return releaseLockAndReturn();
@@ -953,7 +953,7 @@ export async function bootstrapAutoSession(
           s.consecutiveCompleteBootstraps = 0;
           ctx.ui.notify(
             "All milestones are complete and the discussion didn't produce a new one. " +
-            "Run /gsd to start a new milestone manually.",
+            "Run /gwd to start a new milestone manually.",
             "warning",
           );
           return releaseLockAndReturn();
@@ -1009,7 +1009,7 @@ export async function bootstrapAutoSession(
           state = postState;
         } else {
           ctx.ui.notify(
-            "Discussion completed but milestone draft was not promoted. Run /gsd to try again.",
+            "Discussion completed but milestone draft was not promoted. Run /gwd to try again.",
             "warning",
           );
           return releaseLockAndReturn();
@@ -1217,11 +1217,11 @@ export async function bootstrapAutoSession(
     s.manualSessionModelOverride = manualSessionOverride ?? null;
 
     // Apply worker model override from parallel orchestrator (#worker-model).
-    // GSD_WORKER_MODEL is injected by the coordinator when parallel.worker_model
+    // GWD_WORKER_MODEL is injected by the coordinator when parallel.worker_model
     // is configured, so parallel milestone workers use a cheaper model than the
     // coordinator session (e.g. Haiku for execution, Sonnet for planning).
-    const workerModelOverride = process.env.GSD_WORKER_MODEL;
-    if (workerModelOverride && process.env.GSD_PARALLEL_WORKER === "1") {
+    const workerModelOverride = process.env.GWD_WORKER_MODEL;
+    if (workerModelOverride && process.env.GWD_PARALLEL_WORKER === "1") {
       const availableModels = ctx.modelRegistry.getAvailable();
       const { resolveModelId } = await import("./auto-model-selection.js");
       const overrideModel = resolveModelId(workerModelOverride, availableModels, ctx.model?.provider);

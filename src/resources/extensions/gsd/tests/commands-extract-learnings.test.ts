@@ -417,7 +417,7 @@ describe("extractProjectName", () => {
 // ─── buildExtractionStepsBlock ────────────────────────────────────────────────
 //
 // The steps block is the single source of truth for how learnings are routed
-// into KNOWLEDGE.md and the DECISIONS DB. Both the manual /gsd extract-learnings
+// into KNOWLEDGE.md and the DECISIONS DB. Both the manual /gwd extract-learnings
 // path and the auto complete-milestone path render it verbatim, so every
 // structural assertion below protects both paths at once.
 

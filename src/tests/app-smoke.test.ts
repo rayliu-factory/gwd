@@ -2,7 +2,7 @@
  * Unit tests for the gsd CLI package.
  *
  * Tests the glue code that IS the product:
- * - app-paths resolve to ~/.gsd/
+ * - app-paths resolve to ~/.gwd/
  * - loader sets all required env vars
  * - resource-loader syncs bundled resources
  * - wizard loadStoredEnvKeys hydrates env
@@ -32,23 +32,23 @@ function assertExtensionIndexExists(agentDir: string, extensionName: string): vo
 // 1. app-paths
 // ═══════════════════════════════════════════════════════════════════════════
 
-test("app-paths resolve to ~/.gsd/", async () => {
+test("app-paths resolve to ~/.gwd/", async () => {
   const { appRoot, agentDir, sessionsDir, authFilePath } = await import("../app-paths.ts");
   // Use homedir() — process.env.HOME is undefined on Windows (uses USERPROFILE instead)
   const { homedir } = await import("node:os");
   const home = homedir();
 
-  assert.equal(appRoot, join(home, ".gsd"), "appRoot is ~/.gsd/");
-  assert.equal(agentDir, join(home, ".gsd", "agent"), "agentDir is ~/.gsd/agent/");
-  assert.equal(sessionsDir, join(home, ".gsd", "sessions"), "sessionsDir is ~/.gsd/sessions/");
-  assert.equal(authFilePath, join(home, ".gsd", "agent", "auth.json"), "authFilePath is ~/.gsd/agent/auth.json");
+  assert.equal(appRoot, join(home, ".gwd"), "appRoot is ~/.gwd/");
+  assert.equal(agentDir, join(home, ".gwd", "agent"), "agentDir is ~/.gwd/agent/");
+  assert.equal(sessionsDir, join(home, ".gwd", "sessions"), "sessionsDir is ~/.gwd/sessions/");
+  assert.equal(authFilePath, join(home, ".gwd", "agent", "auth.json"), "authFilePath is ~/.gwd/agent/auth.json");
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 2. loader env vars
 // ═══════════════════════════════════════════════════════════════════════════
 
-test("loader sets all 4 GSD_ env vars and PI_PACKAGE_DIR", async (t) => {
+test("loader sets all 4 GWD_ env vars and PI_PACKAGE_DIR", async (t) => {
   // Run loader in a subprocess that prints env vars and exits before TUI starts
   const script = `
     import { fileURLToPath } from 'url';
@@ -57,19 +57,19 @@ test("loader sets all 4 GSD_ env vars and PI_PACKAGE_DIR", async (t) => {
 
     const pkgDir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'pkg');
     process.env.PI_PACKAGE_DIR = pkgDir;
-    process.env.GSD_CODING_AGENT_DIR = agentDir;
-    process.env.GSD_BIN_PATH = process.argv[1];
+    process.env.GWD_CODING_AGENT_DIR = agentDir;
+    process.env.GWD_BIN_PATH = process.argv[1];
     const resourcesDir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'resources');
-    process.env.GSD_WORKFLOW_PATH = join(resourcesDir, 'GSD-WORKFLOW.md');
+    process.env.GWD_WORKFLOW_PATH = join(resourcesDir, 'GWD-WORKFLOW.md');
     const exts = ['extensions/gsd/index.ts'].map(r => join(resourcesDir, r));
-    process.env.GSD_BUNDLED_EXTENSION_PATHS = exts.join(delimiter);
+    process.env.GWD_BUNDLED_EXTENSION_PATHS = exts.join(delimiter);
 
     // Print for verification
     console.log('PI_PACKAGE_DIR=' + process.env.PI_PACKAGE_DIR);
-    console.log('GSD_CODING_AGENT_DIR=' + process.env.GSD_CODING_AGENT_DIR);
-    console.log('GSD_BIN_PATH=' + process.env.GSD_BIN_PATH);
-    console.log('GSD_WORKFLOW_PATH=' + process.env.GSD_WORKFLOW_PATH);
-    console.log('GSD_BUNDLED_EXTENSION_PATHS=' + process.env.GSD_BUNDLED_EXTENSION_PATHS);
+    console.log('GWD_CODING_AGENT_DIR=' + process.env.GWD_CODING_AGENT_DIR);
+    console.log('GWD_BIN_PATH=' + process.env.GWD_BIN_PATH);
+    console.log('GWD_WORKFLOW_PATH=' + process.env.GWD_WORKFLOW_PATH);
+    console.log('GWD_BUNDLED_EXTENSION_PATHS=' + process.env.GWD_BUNDLED_EXTENSION_PATHS);
     process.exit(0);
   `;
 
@@ -93,7 +93,7 @@ test("loader sets all 4 GSD_ env vars and PI_PACKAGE_DIR", async (t) => {
 
   // Direct logic verification (no subprocess needed)
   const { agentDir: ad } = await import("../app-paths.ts");
-  assert.ok(ad.endsWith(join(".gsd", "agent")), "agentDir ends with .gsd/agent");
+  assert.ok(ad.endsWith(join(".gwd", "agent")), "agentDir ends with .gwd/agent");
 
   // Verify that the env var is populated at runtime by checking the actual
   // extensions directory has discoverable entry points
@@ -335,7 +335,7 @@ test("initResources skips copy when managed version matches current version", as
 
 test("loadStoredEnvKeys hydrates process.env from auth.json", async (t) => {
   const { loadStoredEnvKeys } = await import("../wizard.ts");
-  const { AuthStorage } = await import("@gsd/pi-coding-agent");
+  const { AuthStorage } = await import("@gwd/pi-coding-agent");
 
   const tmp = mkdtempSync(join(tmpdir(), "gsd-wizard-test-"));
   const authPath = join(tmp, "auth.json");
@@ -384,7 +384,7 @@ test("loadStoredEnvKeys hydrates process.env from auth.json", async (t) => {
 
 test("loadStoredEnvKeys does not overwrite existing env vars", async (t) => {
   const { loadStoredEnvKeys } = await import("../wizard.ts");
-  const { AuthStorage } = await import("@gsd/pi-coding-agent");
+  const { AuthStorage } = await import("@gwd/pi-coding-agent");
 
   const tmp = mkdtempSync(join(tmpdir(), "gsd-wizard-nooverwrite-"));
   const authPath = join(tmp, "auth.json");

@@ -1,16 +1,16 @@
 /**
- * MCP Status — `/gsd mcp` command handler.
+ * MCP Status — `/gwd mcp` command handler.
  *
  * Shows configured MCP servers, their connection status, and available tools.
  *
  * Subcommands:
- *   /gsd mcp             — Overview of all servers (alias: /gsd mcp status)
- *   /gsd mcp status      — Same as bare /gsd mcp
- *   /gsd mcp check <srv> — Detailed status for a specific server
- *   /gsd mcp init [dir]  — Write project-local GSD workflow MCP config
+ *   /gwd mcp             — Overview of all servers (alias: /gwd mcp status)
+ *   /gwd mcp status      — Same as bare /gwd mcp
+ *   /gwd mcp check <srv> — Detailed status for a specific server
+ *   /gwd mcp init [dir]  — Write project-local GWD workflow MCP config
  */
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -50,7 +50,7 @@ export function formatMcpInitResult(
     `Project: ${targetPath}`,
     `Config:   ${configPath}`,
     "",
-    "Claude Code can now load the GSD workflow MCP server from this folder.",
+    "Claude Code can now load the GWD workflow MCP server from this folder.",
   ].join("\n");
 }
 
@@ -69,7 +69,7 @@ function readMcpConfigs(): McpServerRawConfig[] {
   const seen = new Set<string>();
   const configPaths = [
     join(process.cwd(), ".mcp.json"),
-    join(process.cwd(), ".gsd", "mcp.json"),
+    join(process.cwd(), ".gwd", "mcp.json"),
     join(gsdHome(), "mcp.json"),
   ];
 
@@ -120,8 +120,8 @@ export function formatMcpStatusReport(servers: McpServerStatus[]): string {
     return [
       "No MCP servers configured.",
       "",
-      "Add servers to .mcp.json, .gsd/mcp.json, or $GSD_HOME/mcp.json (default: ~/.gsd/mcp.json) to enable MCP integrations.",
-      "Tip: run /gsd mcp init . to write the local GSD workflow MCP config.",
+      "Add servers to .mcp.json, .gwd/mcp.json, or $GWD_HOME/mcp.json (default: ~/.gwd/mcp.json) to enable MCP integrations.",
+      "Tip: run /gwd mcp init . to write the local GWD workflow MCP config.",
       "See: https://modelcontextprotocol.io/quickstart",
     ].join("\n");
   }
@@ -139,7 +139,7 @@ export function formatMcpStatusReport(servers: McpServerStatus[]): string {
   }
 
   lines.push("");
-  lines.push("Use /gsd mcp check <server> for details on a specific server.");
+  lines.push("Use /gwd mcp check <server> for details on a specific server.");
   lines.push("Use mcp_discover to connect and list tools for a server.");
 
   return lines.join("\n");
@@ -175,7 +175,7 @@ export function formatMcpServerDetail(server: McpServerDetail): string {
 // ─── Command handler ────────────────────────────────────────────────────────
 
 /**
- * Handle `/gsd mcp [status|check <server>]`.
+ * Handle `/gwd mcp [status|check <server>]`.
  */
 export async function handleMcpStatus(
   args: string,
@@ -185,7 +185,7 @@ export async function handleMcpStatus(
   const lowered = trimmed.toLowerCase();
   const configs = readMcpConfigs();
 
-  // /gsd mcp init [dir]
+  // /gwd mcp init [dir]
   if (!lowered || lowered === "status") {
     // handled below
   } else if (lowered === "init" || lowered.startsWith("init ")) {
@@ -203,7 +203,7 @@ export async function handleMcpStatus(
     return;
   }
 
-  // /gsd mcp check <server>
+  // /gwd mcp check <server>
   if (lowered.startsWith("check ")) {
     const serverName = trimmed.slice("check ".length).trim();
     const config = configs.find((c) => c.name === serverName);
@@ -248,7 +248,7 @@ export async function handleMcpStatus(
     return;
   }
 
-  // /gsd mcp or /gsd mcp status
+  // /gwd mcp or /gwd mcp status
   if (!lowered || lowered === "status") {
     // Build status for each server
     const statuses: McpServerStatus[] = [];
@@ -286,10 +286,10 @@ export async function handleMcpStatus(
 
   // Unknown subcommand
   ctx.ui.notify(
-    "Usage: /gsd mcp [status|check <server>|init [dir]]\n\n" +
+    "Usage: /gwd mcp [status|check <server>|init [dir]]\n\n" +
     "  status           Show all MCP server statuses (default)\n" +
     "  check <server>   Detailed status for a specific server\n" +
-    "  init [dir]       Write .mcp.json for the local GSD workflow MCP server",
+    "  init [dir]       Write .mcp.json for the local GWD workflow MCP server",
     "warning",
   );
 }

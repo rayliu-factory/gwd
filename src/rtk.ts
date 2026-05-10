@@ -8,8 +8,8 @@ import { Readable } from "node:stream";
 import { finished } from "node:stream/promises";
 import extractZip from "extract-zip";
 import {
-  GSD_RTK_DISABLED_ENV,
-  GSD_RTK_PATH_ENV,
+  GWD_RTK_DISABLED_ENV,
+  GWD_RTK_PATH_ENV,
   RTK_TELEMETRY_DISABLED_ENV,
   applyRtkProcessEnv,
   buildRtkEnv,
@@ -21,12 +21,13 @@ import {
   prependPathEntry,
   resolveSystemRtkPath,
 } from "./rtk-shared.js";
+import { GWD_SKIP_RTK_INSTALL_ENV, PRODUCT_PACKAGE_NAME } from "./namespace.js";
 
 export const RTK_VERSION = "0.33.1";
-export const GSD_SKIP_RTK_INSTALL_ENV = "GSD_SKIP_RTK_INSTALL";
 export {
-  GSD_RTK_DISABLED_ENV,
-  GSD_RTK_PATH_ENV,
+  GWD_RTK_DISABLED_ENV,
+  GWD_RTK_PATH_ENV,
+  GWD_SKIP_RTK_INSTALL_ENV,
   RTK_TELEMETRY_DISABLED_ENV,
   applyRtkProcessEnv,
   buildRtkEnv,
@@ -110,7 +111,7 @@ function sha256File(path: string): string {
 
 async function downloadToFile(url: string, destination: string): Promise<void> {
   const response = await fetch(url, {
-    headers: { "User-Agent": "gsd-pi-rtk" },
+    headers: { "User-Agent": `${PRODUCT_PACKAGE_NAME}-rtk` },
   });
 
   if (!response.ok) {
@@ -181,7 +182,7 @@ export function resolveRtkBinaryPath(options: ResolveRtkBinaryPathOptions = {}):
   const platform = options.platform ?? process.platform;
 
   if (options.binaryPath) return options.binaryPath;
-  const explicitPath = env[GSD_RTK_PATH_ENV];
+  const explicitPath = env[GWD_RTK_PATH_ENV];
   if (explicitPath && existsSync(explicitPath)) {
     return explicitPath;
   }
@@ -261,14 +262,14 @@ export function validateRtkBinary(binaryPath: string, options: ValidateRtkBinary
 export async function ensureRtkAvailable(options: EnsureRtkOptions = {}): Promise<EnsureRtkResult> {
   const env = options.env ?? process.env;
   if (!isRtkEnabled(env)) {
-    return { enabled: false, supported: true, available: false, source: "disabled", reason: `${GSD_RTK_DISABLED_ENV} is set` };
+    return { enabled: false, supported: true, available: false, source: "disabled", reason: `${GWD_RTK_DISABLED_ENV} is set` };
   }
-  if (isTruthy(env[GSD_SKIP_RTK_INSTALL_ENV])) {
-    const configuredPath = env[GSD_RTK_PATH_ENV];
+  if (isTruthy(env[GWD_SKIP_RTK_INSTALL_ENV])) {
+    const configuredPath = env[GWD_RTK_PATH_ENV];
     if (configuredPath && existsSync(configuredPath)) {
       return { enabled: true, supported: true, available: true, source: "managed", binaryPath: configuredPath };
     }
-    return { enabled: true, supported: true, available: false, source: "missing", reason: `${GSD_SKIP_RTK_INSTALL_ENV} is set` };
+    return { enabled: true, supported: true, available: false, source: "missing", reason: `${GWD_SKIP_RTK_INSTALL_ENV} is set` };
   }
 
   const targetDir = options.targetDir ?? getManagedRtkDir(env);
@@ -309,7 +310,7 @@ export async function ensureRtkAvailable(options: EnsureRtkOptions = {}): Promis
 
   try {
     const checksumsUrl = getChecksumsUrl(version);
-    const checksumsResponse = await fetch(checksumsUrl, { headers: { "User-Agent": "gsd-pi-rtk" } });
+    const checksumsResponse = await fetch(checksumsUrl, { headers: { "User-Agent": `${PRODUCT_PACKAGE_NAME}-rtk` } });
     if (!checksumsResponse.ok) {
       throw new Error(`failed to fetch RTK checksums (${checksumsResponse.status})`);
     }
@@ -361,7 +362,7 @@ export async function bootstrapRtk(options: EnsureRtkOptions = {}): Promise<Ensu
   const result = await ensureRtkAvailable(options);
   applyRtkProcessEnv(process.env);
   if (result.binaryPath) {
-    process.env[GSD_RTK_PATH_ENV] = result.binaryPath;
+    process.env[GWD_RTK_PATH_ENV] = result.binaryPath;
   }
   return result;
 }

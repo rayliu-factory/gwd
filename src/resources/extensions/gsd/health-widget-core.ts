@@ -1,5 +1,5 @@
 /**
- * Pure GSD health widget logic.
+ * Pure GWD health widget logic.
  *
  * Separates project-state detection and line rendering from the widget's
  * runtime integrations so the regressions can be tested directly.
@@ -66,11 +66,11 @@ function truncateMessage(msg: string, maxLen: number): string {
  */
 export function buildHealthLines(data: HealthWidgetData, width?: number): string[] {
   if (data.projectState === "none") {
-    return ["  GSD  No project loaded — run /gsd to start"];
+    return ["  GWD  No project loaded — run /gwd to start"];
   }
 
   if (data.projectState === "initialized") {
-    return ["  GSD  Project initialized — run /gsd to continue setup"];
+    return ["  GWD  Project initialized — run /gwd to continue setup"];
   }
 
   const leftParts: string[] = [];

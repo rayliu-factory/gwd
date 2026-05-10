@@ -1,10 +1,10 @@
 import { existsSync } from "node:fs";
 import { homedir as osHomedir } from "node:os";
 import { delimiter, join } from "node:path";
+import { GLOBAL_STATE_DIR_NAME, GWD_HOME_ENV, GWD_RTK_DISABLED_ENV, GWD_RTK_PATH_ENV } from "./namespace.js";
 
-export const GSD_RTK_DISABLED_ENV = "GSD_RTK_DISABLED";
-export const GSD_RTK_PATH_ENV = "GSD_RTK_PATH";
 export const RTK_TELEMETRY_DISABLED_ENV = "RTK_TELEMETRY_DISABLED";
+export { GWD_RTK_DISABLED_ENV, GWD_RTK_PATH_ENV };
 
 export function isTruthy(value: string | undefined): boolean {
   if (!value) return false;
@@ -13,11 +13,11 @@ export function isTruthy(value: string | undefined): boolean {
 }
 
 export function isRtkEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
-  return !isTruthy(env[GSD_RTK_DISABLED_ENV]);
+  return !isTruthy(env[GWD_RTK_DISABLED_ENV]);
 }
 
 export function getManagedRtkDir(env: NodeJS.ProcessEnv = process.env): string {
-  return join(env.GSD_HOME || join(osHomedir(), ".gsd"), "agent", "bin");
+  return join(env[GWD_HOME_ENV] || join(osHomedir(), GLOBAL_STATE_DIR_NAME), "agent", "bin");
 }
 
 export function getRtkBinaryName(platform: NodeJS.Platform = process.platform): string {

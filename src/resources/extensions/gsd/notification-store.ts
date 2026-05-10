@@ -1,4 +1,4 @@
-// GSD Extension — Persistent Notification Store
+// GWD Extension — Persistent Notification Store
 // Captures all ctx.ui.notify() calls and workflow-logger warnings to
 // .gsd/notifications.jsonl so they survive context resets and session restarts.
 // Rotates at MAX_ENTRIES to prevent unbounded growth.

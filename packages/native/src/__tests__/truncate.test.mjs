@@ -114,14 +114,14 @@ describe("truncateHead", () => {
 
 // ── truncateOutput ───────────────────────────────────────────────────────
 
-// `truncateOutput` may be missing from published `@gsd-build/engine-*`
+// `truncateOutput` may be missing from published `@gwd-build/engine-*`
 // binaries (see #4854 — coverage fix surfaced that some symbols weren't
 // in the shipped binary). Skip this suite when the function isn't
 // present rather than failing with a TypeError on every test.
 const truncateOutputSkip =
   typeof native.truncateOutput === "function"
     ? undefined
-    : "native.truncateOutput missing from @gsd/native binary — see #4854";
+    : "native.truncateOutput missing from @gwd/native binary — see #4854";
 
 describe("truncateOutput", { skip: truncateOutputSkip }, () => {
   test("no truncation when fits", () => {

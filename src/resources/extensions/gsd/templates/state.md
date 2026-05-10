@@ -1,4 +1,4 @@
-# GSD State
+# GWD State
 
 **Active Milestone:** {{milestoneId}}: {{milestoneTitle}}
 **Active Slice:** {{sliceId}}: {{sliceTitle}}

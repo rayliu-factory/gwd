@@ -72,5 +72,5 @@ export function resolveGsdCliEntry(options: ResolveGsdCliEntryOptions): GsdCliEn
     if (builtCliEntry) return builtCliEntry;
   }
 
-  throw new Error(`GSD CLI entry not found; checked=${sourceEntry},${builtEntry}`);
+  throw new Error(`GWD CLI entry not found; checked=${sourceEntry},${builtEntry}`);
 }

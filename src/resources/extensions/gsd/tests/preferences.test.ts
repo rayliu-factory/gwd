@@ -55,7 +55,7 @@ test("git.merge_to_main produces deprecation warning", () => {
 test("getIsolationMode defaults to none when preferences have no isolation setting", () => {
   // Validate the default via validatePreferences: when no isolation is set,
   // preferences.git.isolation is undefined, and getIsolationMode returns "none".
-  // Default changed from "worktree" to "none" so GSD works out of the box
+  // Default changed from "worktree" to "none" so GWD works out of the box
   // without PREFERENCES.md (#2480).
   const { preferences } = validatePreferences({});
   assert.equal(preferences.git?.isolation, undefined, "no isolation in empty prefs");
@@ -275,7 +275,7 @@ test("disabled_model_providers rejects non-array values", () => {
 
 test("loadEffectiveGSDPreferences preserves disabled_model_providers across merge layers", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-disabled-provider-project-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-disabled-provider-home-"));
 
@@ -307,7 +307,7 @@ test("loadEffectiveGSDPreferences preserves disabled_model_providers across merg
       "utf-8",
     );
 
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     const loaded = loadEffectiveGSDPreferences();
@@ -318,8 +318,8 @@ test("loadEffectiveGSDPreferences preserves disabled_model_providers across merg
     );
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }
@@ -605,7 +605,7 @@ test("unrecognized format warning is emitted at most once (#2373)", () => {
 });
 
 test("parsePreferencesMarkdown parses heading+list format without frontmatter (#2036)", () => {
-  // A GSD agent recovery session wrote preferences in markdown heading+list
+  // A GWD agent recovery session wrote preferences in markdown heading+list
   // format instead of YAML frontmatter. Since the heading+list fallback parser
   // was added, this format is now handled gracefully.
   const content = "## Git\n\n- isolation: none\n";
@@ -677,7 +677,7 @@ test("experimental.rtk parses correctly from preferences markdown", () => {
 
 test("loadEffectiveGSDPreferences preserves experimental prefs across global+project merge", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-project-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-home-"));
 
@@ -708,7 +708,7 @@ test("loadEffectiveGSDPreferences preserves experimental prefs across global+pro
       "utf-8",
     );
 
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     const loaded = loadEffectiveGSDPreferences();
@@ -717,8 +717,8 @@ test("loadEffectiveGSDPreferences preserves experimental prefs across global+pro
     assert.equal(loaded!.preferences.git?.isolation, "none");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }
@@ -726,7 +726,7 @@ test("loadEffectiveGSDPreferences preserves experimental prefs across global+pro
 
 test("loadEffectiveGSDPreferences exposes slice_parallel prefs to runtime callers", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-slice-parallel-project-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-slice-parallel-home-"));
 
@@ -746,7 +746,7 @@ test("loadEffectiveGSDPreferences exposes slice_parallel prefs to runtime caller
       "utf-8",
     );
 
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     const loaded = loadEffectiveGSDPreferences();
@@ -755,8 +755,8 @@ test("loadEffectiveGSDPreferences exposes slice_parallel prefs to runtime caller
     assert.equal(loaded!.preferences.slice_parallel?.max_workers, 3);
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }
@@ -764,7 +764,7 @@ test("loadEffectiveGSDPreferences exposes slice_parallel prefs to runtime caller
 
 test("loadEffectiveGSDPreferences merges min_request_interval_ms with project overriding global (#2996)", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-rate-limit-project-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-rate-limit-home-"));
 
@@ -794,7 +794,7 @@ test("loadEffectiveGSDPreferences merges min_request_interval_ms with project ov
       "utf-8",
     );
 
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     const loaded = loadEffectiveGSDPreferences();
@@ -803,8 +803,8 @@ test("loadEffectiveGSDPreferences merges min_request_interval_ms with project ov
     assert.equal(loaded!.preferences.budget_ceiling, 45);
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }
@@ -812,7 +812,7 @@ test("loadEffectiveGSDPreferences merges min_request_interval_ms with project ov
 
 test("loadEffectiveGSDPreferences does not inherit global planning_depth into fresh projects", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-depth-global-project-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-depth-global-home-"));
 
@@ -831,7 +831,7 @@ test("loadEffectiveGSDPreferences does not inherit global planning_depth into fr
       "utf-8",
     );
 
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     const loaded = loadEffectiveGSDPreferences();
@@ -840,8 +840,8 @@ test("loadEffectiveGSDPreferences does not inherit global planning_depth into fr
     assert.equal(loaded!.preferences.language, "German", "other global preferences still carry over");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }
@@ -849,7 +849,7 @@ test("loadEffectiveGSDPreferences does not inherit global planning_depth into fr
 
 test("loadEffectiveGSDPreferences keeps project-local planning_depth explicit", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-depth-local-project-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-depth-local-home-"));
 
@@ -867,7 +867,7 @@ test("loadEffectiveGSDPreferences keeps project-local planning_depth explicit", 
       "utf-8",
     );
 
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     const loaded = loadEffectiveGSDPreferences();
@@ -875,8 +875,8 @@ test("loadEffectiveGSDPreferences keeps project-local planning_depth explicit", 
     assert.equal(loaded!.preferences.planning_depth, "light");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }
@@ -884,13 +884,13 @@ test("loadEffectiveGSDPreferences keeps project-local planning_depth explicit", 
 
 test("preferences paths use canonical uppercase filenames", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-canonical-project-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-canonical-home-"));
 
   try {
     mkdirSync(join(tempProject, ".gsd"), { recursive: true });
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     assert.equal(basename(getGlobalGSDPreferencesPath()), "PREFERENCES.md");
@@ -901,8 +901,8 @@ test("preferences paths use canonical uppercase filenames", () => {
     );
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }
@@ -910,15 +910,15 @@ test("preferences paths use canonical uppercase filenames", () => {
 
 test("explicit base path preference loading survives a deleted cwd (#4498)", (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-base-project-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-base-home-"));
   const deletedCwd = mkdtempSync(join(tmpdir(), "gsd-prefs-deleted-cwd-"));
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
     rmSync(deletedCwd, { recursive: true, force: true });
@@ -931,7 +931,7 @@ test("explicit base path preference loading survives a deleted cwd (#4498)", (t)
     "utf-8",
   );
 
-  process.env.GSD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGsdHome;
   process.chdir(deletedCwd);
   rmSync(deletedCwd, { recursive: true, force: true });
 
@@ -943,7 +943,7 @@ test("explicit base path preference loading survives a deleted cwd (#4498)", (t)
 
 test("uppercase PREFERENCES.md wins over legacy lowercase preferences.md", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-priority-project-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-priority-home-"));
 
@@ -955,7 +955,7 @@ test("uppercase PREFERENCES.md wins over legacy lowercase preferences.md", () =>
     writeFileSync(join(tempProject, ".gsd", "preferences.md"), "---\nversion: 1\nlanguage: German\n---\n", "utf-8");
     writeFileSync(join(tempProject, ".gsd", "PREFERENCES.md"), "---\nversion: 1\nlanguage: Japanese\n---\n", "utf-8");
 
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     const globalPrefs = loadGlobalGSDPreferences();
@@ -972,8 +972,8 @@ test("uppercase PREFERENCES.md wins over legacy lowercase preferences.md", () =>
     );
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }
@@ -1123,7 +1123,7 @@ test("language: parses from markdown frontmatter", () => {
 
 test("language: project setting overrides global via loadEffectiveGSDPreferences", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-lang-project-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-lang-home-"));
 
@@ -1142,7 +1142,7 @@ test("language: project setting overrides global via loadEffectiveGSDPreferences
       "utf-8",
     );
 
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     const loaded = loadEffectiveGSDPreferences();
@@ -1150,8 +1150,8 @@ test("language: project setting overrides global via loadEffectiveGSDPreferences
     assert.equal(loaded!.preferences.language, "Japanese", "project language overrides global");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }
@@ -1159,7 +1159,7 @@ test("language: project setting overrides global via loadEffectiveGSDPreferences
 
 test("language: global setting used when project has none", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-lang-noproj-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-lang-nhome-"));
 
@@ -1178,7 +1178,7 @@ test("language: global setting used when project has none", () => {
       "utf-8",
     );
 
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     const loaded = loadEffectiveGSDPreferences();
@@ -1186,8 +1186,8 @@ test("language: global setting used when project has none", () => {
     assert.equal(loaded!.preferences.language, "German", "global language carries over when project omits it");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }

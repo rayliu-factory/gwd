@@ -1,5 +1,5 @@
 /**
- * Regression test for #2379: /gsd queue fails with 429 rate limit on projects
+ * Regression test for #2379: /gwd queue fails with 429 rate limit on projects
  * with many completed milestones.
  *
  * The bug: buildExistingMilestonesContext iterates over ALL milestones

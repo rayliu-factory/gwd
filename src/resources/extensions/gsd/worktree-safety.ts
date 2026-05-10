@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Worktree Safety module contract for validating source-writing Unit roots.
 
 import { existsSync, lstatSync, type Stats } from "node:fs";
@@ -123,7 +123,7 @@ export function createWorktreeSafetyModule(
         return {
           ok: true,
           kind: "not-required",
-          reason: "planning-only Units may write GSD artifacts without a source worktree",
+          reason: "planning-only Units may write GWD artifacts without a source worktree",
         };
       }
 
@@ -191,7 +191,7 @@ export function createWorktreeSafetyModule(
         return failure(
           "worktree-git-marker-not-file",
           `Worktree root ${unitRoot} has a .git directory, not a registered worktree .git file.`,
-          "Use a registered GSD worktree instead of a copied or nested repository.",
+          "Use a registered GWD worktree instead of a copied or nested repository.",
           { gitMarker },
         );
       }

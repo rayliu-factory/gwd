@@ -16,8 +16,8 @@
  * `let` or `var` declarations.
  */
 
-import type { Api, Model } from "@gsd/pi-ai";
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { Api, Model } from "@gwd/pi-ai";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import type { GitServiceImpl } from "../git-service.js";
 import type { CaptureEntry } from "../captures.js";
 import type { BudgetAlertLevel } from "../auto-budget.js";
@@ -143,7 +143,7 @@ export class AutoSession {
 
   // ── Model state ──────────────────────────────────────────────────────────
   autoModeStartModel: StartModel | null = null;
-  /** Explicit /gsd model pin captured at bootstrap (session-scoped policy override). */
+  /** Explicit /gwd model pin captured at bootstrap (session-scoped policy override). */
   manualSessionModelOverride: StartModel | null = null;
   currentUnitModel: Model<Api> | null = null;
   /** Fully-qualified model ID (provider/id) set after selectAndApplyModel + hook overrides (#2899). */
@@ -187,7 +187,7 @@ export class AutoSession {
   readonly preExecRetryCount: Map<string, number> = new Map();
 
   // ── Tool invocation errors (#2883) ──────────────────────────────────
-  /** Set when a GSD tool execution ends with isError due to malformed/truncated
+  /** Set when a GWD tool execution ends with isError due to malformed/truncated
    *  JSON arguments. Checked by postUnitPreVerification to break retry loops. */
   lastToolInvocationError: string | null = null;
   /** Agent-end messages from the just-finished unit, consumed during finalize. */

@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Base table, index, and view DDL for the GSD database facade.
+// Project/App: GWD-2
+// File Purpose: Base table, index, and view DDL for the GWD database facade.
 
 import type { DbAdapter } from "./db-adapter.js";
 

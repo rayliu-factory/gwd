@@ -1,12 +1,12 @@
 /**
- * GSD Queue Management — showQueue, reorder, add, and context builder.
+ * GWD Queue Management — showQueue, reorder, add, and context builder.
  *
  * Self-contained queue UI extracted from guided-flow.ts.
  * Safe to run while auto-mode is executing — only writes to future milestone
  * directories (which auto-mode won't touch until it reaches them).
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { showNextAction } from "../shared/tui.js";
 import { setQueuePhaseActive } from "./index.js";
 import { loadFile } from "./files.js";
@@ -49,7 +49,7 @@ export async function showQueue(
   // ── Ensure .gsd/ exists ─────────────────────────────────────────────
   const gsd = gsdRoot(basePath);
   if (!existsSync(gsd)) {
-    ctx.ui.notify("No GSD project found. Run /gsd to start one first.", "warning");
+    ctx.ui.notify("No GWD project found. Run /gwd to start one first.", "warning");
     return;
   }
 
@@ -57,7 +57,7 @@ export async function showQueue(
   const milestoneIds = findMilestoneIds(basePath);
 
   if (milestoneIds.length === 0) {
-    ctx.ui.notify("No milestones exist yet. Run /gsd to create the first one.", "warning");
+    ctx.ui.notify("No milestones exist yet. Run /gwd to create the first one.", "warning");
     return;
   }
 
@@ -74,7 +74,7 @@ export async function showQueue(
     if (parkedCount > 0) summaryParts.push(`${parkedCount} parked.`);
 
     const choice = await showNextAction(ctx, {
-      title: "GSD — Queue Management",
+      title: "GWD — Queue Management",
       summary: summaryParts,
       actions: [
         {
@@ -89,7 +89,7 @@ export async function showQueue(
           description: "Queue new milestones via discussion.",
         },
       ],
-      notYetMessage: "Run /gsd queue when ready.",
+      notYetMessage: "Run /gwd queue when ready.",
     });
 
     if (choice === "reorder") {
@@ -186,7 +186,7 @@ export async function showQueueAdd(
   const completeCount = state.registry.filter(m => m.status === "complete").length;
 
   const preamble = [
-    `Queuing new work onto an existing GSD project.`,
+    `Queuing new work onto an existing GWD project.`,
     activePart,
     `${completeCount} milestone(s) complete, ${pendingCount} pending.`,
     `Next available milestone ID: ${nextId}.`,
@@ -437,6 +437,6 @@ function syncProjectMdSequence(
   const newTable = [headerLine, separatorLine, ...newRows];
   lines.splice(tableStart, tableEnd - tableStart, ...newTable);
   // Atomic write: tmp+rename avoids a torn PROJECT.md appearing dirty in
-  // another worktree's working tree during a concurrent /gsd auto merge.
+  // another worktree's working tree during a concurrent /gwd auto merge.
   atomicWriteSync(projectPath, lines.join("\n"), "utf-8");
 }

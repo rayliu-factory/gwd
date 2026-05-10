@@ -2,14 +2,14 @@
  * Regression tests for #2883: gsd_complete_slice tool invocation fails with
  * JSON truncation, causing stuck retry loop.
  *
- * When a GSD tool is invoked with malformed/truncated JSON arguments, the tool
+ * When a GWD tool is invoked with malformed/truncated JSON arguments, the tool
  * execution fails (isError: true). But postUnitPreVerification only checks if
  * the expected artifact exists on disk — it does not know the tool itself failed.
  * When the artifact is missing (because the tool never ran), it sets up
  * pendingVerificationRetry, re-dispatching the same unit with the same truncated
  * input, creating a stuck loop.
  *
- * The fix adds a `lastToolInvocationError` field to AutoSession. When a GSD tool
+ * The fix adds a `lastToolInvocationError` field to AutoSession. When a GWD tool
  * execution ends with isError, the error is recorded. postUnitPreVerification
  * checks this field before retrying — if a tool invocation error occurred, it
  * pauses auto-mode instead of retrying.
@@ -101,7 +101,7 @@ describe("#2883: isToolInvocationError classification", () => {
     );
   });
 
-  test("detects raw write-gate CONTEXT failures for non-GSD write tools", () => {
+  test("detects raw write-gate CONTEXT failures for non-GWD write tools", () => {
     resetWriteGateState(process.cwd());
     const result = shouldBlockContextWrite(
       "write",
@@ -115,7 +115,7 @@ describe("#2883: isToolInvocationError classification", () => {
     assert.equal(isToolInvocationError(result.reason ?? ""), true);
   });
 
-  test("detects raw pending-gate failures for non-GSD write tools", () => {
+  test("detects raw pending-gate failures for non-GWD write tools", () => {
     const snapshot: WriteGateSnapshot = {
       verifiedDepthMilestones: [],
       activeQueuePhase: false,
@@ -143,7 +143,7 @@ describe("#2883: isToolInvocationError classification", () => {
     assert.equal(isToolInvocationError(bashResult.reason ?? ""), true);
   });
 
-  test("detects direct STATE.md/gsd.db write-intercept policy blocks", () => {
+  test("detects direct STATE.md/gwd.db write-intercept policy blocks", () => {
     assert.equal(isDeterministicPolicyError(BLOCKED_WRITE_ERROR), true);
     assert.equal(isToolInvocationError(BLOCKED_WRITE_ERROR), true);
   });

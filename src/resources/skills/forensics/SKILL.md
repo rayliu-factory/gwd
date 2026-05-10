@@ -1,14 +1,14 @@
 ---
 name: forensics
-description: Post-mortem a failed GSD auto-mode run. Traces from symptom to root cause using `.gsd/activity/*.jsonl`, `.gsd/journal/YYYY-MM-DD.jsonl`, `.gsd/metrics.json`, and `.gsd/auto.lock`. Produces a filing-ready bug report with file:line references and a concrete fix suggestion. Use when asked to "forensics", "post-mortem", "why did auto-mode fail", "trace the stuck loop", "debug the crash", after `/gsd forensics` is invoked, or when a session ended in an unexpected terminal state. Reads existing artifacts — does NOT re-run anything.
+description: Post-mortem a failed GWD auto-mode run. Traces from symptom to root cause using `.gsd/activity/*.jsonl`, `.gsd/journal/YYYY-MM-DD.jsonl`, `.gsd/metrics.json`, and `.gsd/auto.lock`. Produces a filing-ready bug report with file:line references and a concrete fix suggestion. Use when asked to "forensics", "post-mortem", "why did auto-mode fail", "trace the stuck loop", "debug the crash", after `/gwd forensics` is invoked, or when a session ended in an unexpected terminal state. Reads existing artifacts — does NOT re-run anything.
 ---
 
 <objective>
-Turn scattered GSD runtime artifacts into one coherent cause chain. The deliverable is a GitHub-issue-ready report that names the file and line where the bug lives, cites the evidence, and proposes a fix. Forensics is archaeology, not re-run — no modifying state, no triggering commands, just reading the paper trail.
+Turn scattered GWD runtime artifacts into one coherent cause chain. The deliverable is a GitHub-issue-ready report that names the file and line where the bug lives, cites the evidence, and proposes a fix. Forensics is archaeology, not re-run — no modifying state, no triggering commands, just reading the paper trail.
 </objective>
 
 <context>
-GSD persists a lot of runtime evidence under `.gsd/`:
+GWD persists a lot of runtime evidence under `.gsd/`:
 
 - `activity/{seq}-{unitType}-{unitId}.jsonl` — full tool-call and message stream per unit
 - `journal/YYYY-MM-DD.jsonl` — iteration-level events (dispatch-match, stuck-detected, guard-block, unit-start/end, terminal)
@@ -19,10 +19,10 @@ GSD persists a lot of runtime evidence under `.gsd/`:
 - `runtime/paused-session.json` — serialized session when auto-mode paused
 - `doctor-history.jsonl` — doctor check history
 
-The `/gsd forensics` command pre-computes a forensic report with anomalies flagged. This skill is the manual investigation that goes deeper, or runs when the automated report isn't enough.
+The `/gwd forensics` command pre-computes a forensic report with anomalies flagged. This skill is the manual investigation that goes deeper, or runs when the automated report isn't enough.
 
 Invocation points:
-- `/gsd forensics` has been run and user wants deeper analysis
+- `/gwd forensics` has been run and user wants deeper analysis
 - Auto-mode exited unexpectedly, no obvious cause
 - Same unit dispatched multiple times (stuck loop suspected)
 - A session crashed and `auto.lock` is stale
@@ -34,7 +34,7 @@ Invocation points:
 
 **SYMPTOM → ROOT CAUSE, WITH CITATIONS.** Every claim in the report is backed by an artifact path and either a line number or a JSONL field. "The loop got stuck because of a race" is not useful; "`.gsd/journal/2026-04-19.jsonl:142` shows `stuck-detected` with flowId X, caused by `dispatch-guard.ts:87` returning the same unit after `unit-end`" is.
 
-**PRE-PARSED LEADS, NOT CONCLUSIONS.** If `/gsd forensics` has surfaced anomalies, treat them as hypotheses to verify, not answers.
+**PRE-PARSED LEADS, NOT CONCLUSIONS.** If `/gwd forensics` has surfaced anomalies, treat them as hypotheses to verify, not answers.
 </core_principle>
 
 <process>

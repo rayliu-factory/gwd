@@ -59,14 +59,14 @@ test("mcp pending blocker preserves secure input payloads", () => {
 	assert.equal(blocker.event.secure, true);
 });
 
-test("workflow tool contracts expose canonical names and aliases", () => {
+test("workflow tool contracts expose canonical names without compatibility aliases", () => {
 	assert.ok(WORKFLOW_TOOL_NAMES.includes("gsd_task_complete"));
-	assert.ok(WORKFLOW_TOOL_NAMES.includes("gsd_complete_task"));
+	assert.ok(!WORKFLOW_TOOL_NAMES.includes("gsd_complete_task"));
 	assert.ok(WORKFLOW_TOOL_NAMES.includes("gsd_plan_milestone"));
 
 	const taskComplete = WORKFLOW_TOOL_CONTRACTS.find((tool) => tool.canonicalName === "gsd_task_complete");
 	assert.ok(taskComplete);
-	assert.deepEqual([...taskComplete.aliases], ["gsd_complete_task"]);
+	assert.deepEqual([...taskComplete.aliases], []);
 	assert.equal(taskComplete.writePolicy, "write");
 	assert.equal(taskComplete.schemaId, "workflow.task.complete");
 });

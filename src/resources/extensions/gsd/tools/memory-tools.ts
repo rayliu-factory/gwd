@@ -1,4 +1,4 @@
-// GSD Memory Tools — Phase 1 executors for capture_thought, memory_query, gsd_graph
+// GWD Memory Tools — Phase 1 executors for capture_thought, memory_query, gsd_graph
 //
 // These executors back the three memory-layer tools the LLM can call at any
 // point in a session. They build on the existing `memory-store.ts` layer
@@ -32,7 +32,7 @@ function dbUnavailable(operation: string): ToolExecutionResult {
     content: [
       {
         type: "text",
-        text: "Error: GSD database is not available. Memory tools require an initialized .gsd/ project.",
+        text: "Error: GWD database is not available. Memory tools require an initialized .gsd/ project.",
       },
     ],
     details: { operation, error: "db_unavailable" },
@@ -51,8 +51,8 @@ export interface MemoryCaptureParams {
   /**
    * ADR-013 Step 2: optional structured payload preserved verbatim on the
    * memories row. Used when capturing decisions that need to retain
-   * gsd_save_decision-style fields (scope, decision, choice, rationale,
-   * made_by, revisable) so the eventual cutover (Step 6) is lossless.
+   * decision-save fields (scope, decision, choice, rationale, made_by,
+   * revisable) so decision memory remains lossless.
    * Plain pattern/gotcha/convention captures may omit this entirely.
    */
   structuredFields?: Record<string, unknown> | null;
@@ -344,7 +344,7 @@ export function executeGsdGraph(params: GsdGraphParams): ToolExecutionResult {
 
   if (params.mode === "build") {
     // The extractor emits LINK actions incrementally (Phase 4). There is no
-    // batch rebuild step to run today — ingest artifacts via `/gsd memory
+    // batch rebuild step to run today — ingest artifacts via `/gwd memory
     // extract <SRC-...>` and the next extraction turn will add edges.
     return {
       content: [
@@ -352,7 +352,7 @@ export function executeGsdGraph(params: GsdGraphParams): ToolExecutionResult {
           type: "text",
           text:
             "gsd_graph build acknowledged. Graph edges are populated incrementally by memory " +
-            "extraction (including LINK actions). Use `/gsd memory extract <SRC-...>` to trigger " +
+            "extraction (including LINK actions). Use `/gwd memory extract <SRC-...>` to trigger " +
             "extraction against a specific ingested source.",
         },
       ],

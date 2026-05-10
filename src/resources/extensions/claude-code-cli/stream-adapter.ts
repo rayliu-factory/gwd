@@ -18,9 +18,9 @@ import type {
 	SimpleStreamOptions,
 	ThinkingLevel,
 	ToolCall,
-} from "@gsd/pi-ai";
-import type { ExtensionUIContext } from "@gsd/pi-coding-agent";
-import { EventStream } from "@gsd/pi-ai";
+} from "@gwd/pi-ai";
+import type { ExtensionUIContext } from "@gwd/pi-coding-agent";
+import { EventStream } from "@gwd/pi-ai";
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
@@ -158,7 +158,7 @@ const SENSITIVE_FIELD_PATTERN = /(password|passphrase|secret|token|api[_\s-]*key
 
 /**
  * Construct an AssistantMessageEventStream using EventStream directly.
- * (The class itself is only re-exported as a type from the @gsd/pi-ai barrel.)
+ * (The class itself is only re-exported as a type from the @gwd/pi-ai barrel.)
  */
 function createAssistantStream(): AssistantMessageEventStream {
 	return new EventStream<AssistantMessageEvent, AssistantMessage>(
@@ -1006,7 +1006,7 @@ function formatToolInput(toolName: string, input: Record<string, unknown>): stri
  * takes an optional UI context and returns the callback or undefined.
  *
  * When UI is unavailable (headless / auto-mode sub-agents), returns a handler
- * that always approves — replacing the old GSD_AUTO_MODE → bypassPermissions
+ * that always approves — replacing the old GWD_AUTO_MODE → bypassPermissions
  * workaround.
  */
 export function createClaudeCodeCanUseToolHandler(
@@ -1232,11 +1232,11 @@ export function makeAbortedMessage(model: string, lastTextContent: string): Assi
  * user sees a prompt instead of a silent refusal that Claude Code mistakes
  * for user rejection (#4383).
  *
- * Set `GSD_CLAUDE_CODE_PERMISSION_MODE` to `bypassPermissions` to restore
+ * Set `GWD_CLAUDE_CODE_PERMISSION_MODE` to `bypassPermissions` to restore
  * the old always-approve behaviour, or to `default` / `plan` for stricter
  * modes.
  *
- * When `GSD_HEADLESS=1` is set (auto-mode / non-interactive runs), the
+ * When `GWD_HEADLESS=1` is set (auto-mode / non-interactive runs), the
  * default flips to `bypassPermissions` because there is no UI to approve
  * permission dialogs — `acceptEdits` would hang verification commands like
  * `npx tsc --noEmit` or `npx vitest run` indefinitely (#4657). Explicit
@@ -1245,22 +1245,22 @@ export function makeAbortedMessage(model: string, lastTextContent: string): Assi
 export async function resolveClaudePermissionMode(
 	env: NodeJS.ProcessEnv = process.env,
 ): Promise<"bypassPermissions" | "acceptEdits" | "default" | "plan"> {
-	const override = env.GSD_CLAUDE_CODE_PERMISSION_MODE?.trim();
+	const override = env.GWD_CLAUDE_CODE_PERMISSION_MODE?.trim();
 	if (override === "bypassPermissions" || override === "acceptEdits" || override === "default" || override === "plan") {
 		return override;
 	}
-	if (env.GSD_HEADLESS === "1") {
+	if (env.GWD_HEADLESS === "1") {
 		console.warn(
-			"[claude-code-cli] Headless mode detected (GSD_HEADLESS=1): defaulting permissionMode to 'bypassPermissions' so verification Bash commands can run. Set GSD_CLAUDE_CODE_PERMISSION_MODE=acceptEdits to opt out.",
+			"[claude-code-cli] Headless mode detected (GWD_HEADLESS=1): defaulting permissionMode to 'bypassPermissions' so verification Bash commands can run. Set GWD_CLAUDE_CODE_PERMISSION_MODE=acceptEdits to opt out.",
 		);
 		return "bypassPermissions";
 	}
 	return "bypassPermissions";
 }
 
-// NOTE: These helpers intentionally mirror @gsd/pi-ai anthropic-shared
+// NOTE: These helpers intentionally mirror @gwd/pi-ai anthropic-shared
 // behavior so this extension remains typecheck-stable even when the published
-// @gsd/pi-ai barrel lags behind monorepo source exports.
+// @gwd/pi-ai barrel lags behind monorepo source exports.
 /** Return true for model IDs that support the adaptive thinking API (Opus 4.6/4.7, Sonnet 4.6/4.7, Haiku 4.5). */
 function modelSupportsAdaptiveThinking(modelId: string): boolean {
 	return (
@@ -1321,7 +1321,7 @@ export function buildSdkOptions(
 	// workflow MCP server is available, prefer its `ask_user_questions` tool over
 	// Claude Code's native `AskUserQuestion`; the MCP path carries stable IDs and
 	// routes responses through the GSD elicitation bridge.
-	// Opt back into gated mode with GSD_CLAUDE_CODE_PERMISSION_MODE=acceptEdits.
+	// Opt back into gated mode with GWD_CLAUDE_CODE_PERMISSION_MODE=acceptEdits.
 	const workflowMcpTools = mcpServers ? Object.keys(mcpServers).map((serverName) => `mcp__${serverName}__*`) : [];
 	const disallowedTools: string[] = workflowMcpTools.length > 0 ? ["AskUserQuestion"] : [];
 	const allowedTools = [

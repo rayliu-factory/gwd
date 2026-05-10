@@ -134,7 +134,7 @@ test("register-hooks writes Context Mode snapshot before active auto cancels com
   assert.deepEqual(result, { cancel: true }, "active auto should still cancel compaction");
   const snapshotPath = join(base, ".gsd", "last-snapshot.md");
   assert.ok(existsSync(snapshotPath), "active auto cancel should still leave a Context Mode snapshot");
-  assert.match(readFileSync(snapshotPath, "utf-8"), /GSD context snapshot/);
+  assert.match(readFileSync(snapshotPath, "utf-8"), /GWD context snapshot/);
 });
 
 test("register-hooks does not write Context Mode snapshot when disabled", async (t) => {

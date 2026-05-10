@@ -209,21 +209,21 @@ test('authFetch short-circuits missing tokens and preserves explicit Authorizati
 
 test('proxy auth validates configured bearer and query-token authentication', async () => {
   const previousEnv = {
-    token: process.env.GSD_WEB_AUTH_TOKEN,
-    host: process.env.GSD_WEB_HOST,
-    port: process.env.GSD_WEB_PORT,
-    origins: process.env.GSD_WEB_ALLOWED_ORIGINS,
+    token: process.env.GWD_WEB_AUTH_TOKEN,
+    host: process.env.GWD_WEB_HOST,
+    port: process.env.GWD_WEB_PORT,
+    origins: process.env.GWD_WEB_ALLOWED_ORIGINS,
   }
 
   try {
     const { evaluateWebProxyAuth } = await importProxyAuth('auth-proxy')
 
-    delete process.env.GSD_WEB_AUTH_TOKEN
+    delete process.env.GWD_WEB_AUTH_TOKEN
     assert.deepEqual(evaluateWebProxyAuth(makeRequest('/api/status')), { kind: 'next' })
 
-    process.env.GSD_WEB_AUTH_TOKEN = 'expected'
-    process.env.GSD_WEB_HOST = '127.0.0.1'
-    process.env.GSD_WEB_PORT = '3888'
+    process.env.GWD_WEB_AUTH_TOKEN = 'expected'
+    process.env.GWD_WEB_HOST = '127.0.0.1'
+    process.env.GWD_WEB_PORT = '3888'
     assert.deepEqual(evaluateWebProxyAuth(makeRequest('/not-api/status')), { kind: 'next' })
     assert.equal(evaluateWebProxyAuth(makeRequest('/api/status')).status, 401)
     assert.deepEqual(evaluateWebProxyAuth(makeRequest('/api/status', { authorization: 'Bearer expected' })), {
@@ -240,16 +240,16 @@ test('proxy auth validates configured bearer and query-token authentication', as
       403,
     )
 
-    process.env.GSD_WEB_ALLOWED_ORIGINS = 'http://proxy.test'
+    process.env.GWD_WEB_ALLOWED_ORIGINS = 'http://proxy.test'
     assert.deepEqual(evaluateWebProxyAuth(makeRequest('/api/status', {
       authorization: 'Bearer expected',
       origin: 'http://proxy.test',
     })), { kind: 'next' })
   } finally {
-    restoreEnv('GSD_WEB_AUTH_TOKEN', previousEnv.token)
-    restoreEnv('GSD_WEB_HOST', previousEnv.host)
-    restoreEnv('GSD_WEB_PORT', previousEnv.port)
-    restoreEnv('GSD_WEB_ALLOWED_ORIGINS', previousEnv.origins)
+    restoreEnv('GWD_WEB_AUTH_TOKEN', previousEnv.token)
+    restoreEnv('GWD_WEB_HOST', previousEnv.host)
+    restoreEnv('GWD_WEB_PORT', previousEnv.port)
+    restoreEnv('GWD_WEB_ALLOWED_ORIGINS', previousEnv.origins)
   }
 })
 

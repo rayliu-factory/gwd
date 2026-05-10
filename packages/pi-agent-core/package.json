@@ -1,11 +1,11 @@
 {
-  "name": "@gsd/pi-agent-core",
+  "name": "@gwd/pi-agent-core",
   "version": "2.81.0",
   "description": "General-purpose agent core (vendored from pi-mono)",
   "type": "module",
-  "gsd": {
+  "gwd": {
     "linkable": true,
-    "scope": "@gsd",
+    "scope": "@gwd",
     "name": "pi-agent-core"
   },
   "main": "./dist/index.js",

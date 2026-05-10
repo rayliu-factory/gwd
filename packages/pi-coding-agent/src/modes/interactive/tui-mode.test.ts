@@ -57,7 +57,7 @@ describe("AdaptiveLayoutComponent", () => {
 		const plain = layout.render(120).map(stripAnsi);
 
 		assert.match(plain[0], /^─+/, "workflow layout should start with a rule frame");
-		assert.ok(plain.some((line) => line.includes("GSD Command Center")), "workflow title should render");
+		assert.ok(plain.some((line) => line.includes("GWD Command Center")), "workflow title should render");
 		assert.ok(plain.some((line) => line.includes("signals")), "inspector title should render");
 		assert.ok(plain.some((line) => line.includes("│ Active")), "body rows should keep prototype gutter");
 		assert.ok(!plain.some((line) => /[╭╮╰╯]/.test(line)), "workflow layout should not use rounded box corners");

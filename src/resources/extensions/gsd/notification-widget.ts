@@ -1,10 +1,10 @@
-// GSD Extension — Notification Status
+// GWD Extension — Notification Status
 // Always-on ambient notification chip surfaced as an extension status on the
 // footer pwd row. Refreshes on store change + on a 30s timer. Hidden when
 // unread=0. Key sorts late so the chip renders to the right of other
 // extension statuses.
 
-import type { ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionContext } from "@gwd/pi-coding-agent";
 
 import { getUnreadCount, onNotificationStoreChange } from "./notification-store.js";
 import { formattedShortcutPair } from "./shortcut-defs.js";

@@ -1,5 +1,5 @@
 /**
- * Unit tests for GSD Triage Resolution — resolution execution and file overlap detection.
+ * Unit tests for GWD Triage Resolution — resolution execution and file overlap detection.
  */
 
 import test from "node:test";
@@ -8,7 +8,7 @@ import { mkdirSync, readFileSync, writeFileSync, rmSync, existsSync } from "node
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { appendCapture, markCaptureResolved, markCaptureExecuted, loadAllCaptures, loadActionableCaptures } from "../captures.ts";
-// Import only the functions that don't depend on @gsd/pi-coding-agent
+// Import only the functions that don't depend on @gwd/pi-coding-agent
 // (triage-ui.ts imports next-action-ui.ts which imports the unavailable package)
 import { executeInject, executeReplan, detectFileOverlap, loadDeferredCaptures, loadReplanCaptures, buildQuickTaskPrompt, executeTriageResolutions, ensureDeferMilestoneDir } from "../triage-resolution.ts";
 

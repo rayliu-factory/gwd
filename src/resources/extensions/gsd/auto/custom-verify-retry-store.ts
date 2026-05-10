@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Persistence adapter for custom workflow verification retry counts.
 
 import { readFileSync, mkdirSync, unlinkSync } from "node:fs";

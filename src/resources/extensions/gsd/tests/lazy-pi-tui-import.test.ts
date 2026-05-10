@@ -9,14 +9,14 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-test("shared/mod.ts imports without resolving @gsd/pi-tui", () => {
+test("shared/mod.ts imports without resolving @gwd/pi-tui", () => {
   const tmp = mkdtempSync(join(process.env.TMPDIR ?? "/tmp", "gsd-shared-mod-"));
   const loaderPath = join(tmp, "block-pi-tui-loader.mjs");
   writeFileSync(
     loaderPath,
     [
       "export async function resolve(specifier, context, nextResolve) {",
-      "  if (specifier === '@gsd/pi-tui') throw new Error('unexpected @gsd/pi-tui import');",
+      "  if (specifier === '@gwd/pi-tui') throw new Error('unexpected @gwd/pi-tui import');",
       "  return nextResolve(specifier, context);",
       "}",
       "",
@@ -45,7 +45,7 @@ test("shared/mod.ts imports without resolving @gsd/pi-tui", () => {
     assert.equal(
       result.status,
       0,
-      `shared/mod.ts should import without @gsd/pi-tui; stderr:\n${result.stderr}`,
+      `shared/mod.ts should import without @gwd/pi-tui; stderr:\n${result.stderr}`,
     );
   } finally {
     rmSync(tmp, { recursive: true, force: true });

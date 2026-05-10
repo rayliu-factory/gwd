@@ -1,14 +1,14 @@
 /**
- * GSD Configuration Overlay
+ * GWD Configuration Overlay
  *
- * Read-only TUI overlay showing the effective GSD configuration:
+ * Read-only TUI overlay showing the effective GWD configuration:
  * token profile, model assignments, dynamic routing, git settings,
  * budget, workflow toggles, and preference file sources.
- * Opened via `/gsd show-config` or `/gsd config`.
+ * Opened via `/gwd show-config` or `/gwd config`.
  */
 
-import type { Theme } from "@gsd/pi-coding-agent";
-import { matchesKey, Key, truncateToWidth } from "@gsd/pi-tui";
+import type { Theme } from "@gwd/pi-coding-agent";
+import { matchesKey, Key, truncateToWidth } from "@gwd/pi-tui";
 
 import {
   loadEffectiveGSDPreferences,
@@ -202,7 +202,7 @@ function collectConfigSections(): ConfigSection[] {
 
 export function formatConfigText(): string {
   const sections = collectConfigSections();
-  const lines: string[] = ["GSD Configuration\n"];
+  const lines: string[] = ["GWD Configuration\n"];
 
   let maxLabel = 0;
   for (const section of sections) {
@@ -293,7 +293,7 @@ export class GSDConfigOverlay {
     const allLines: string[] = [];
 
     // Header
-    allLines.push(t.bold(t.fg("accent", " GSD Configuration ")));
+    allLines.push(t.bold(t.fg("accent", " GWD Configuration ")));
     allLines.push(t.fg("muted", "\u2500".repeat(w)));
 
     // Find max label width for alignment
@@ -318,7 +318,7 @@ export class GSDConfigOverlay {
 
     allLines.push("");
     allLines.push(t.fg("muted", `  ${"\u2500".repeat(w - 4)}`));
-    allLines.push(t.fg("muted", "  esc/q close  \u2502  \u2191\u2193/jk scroll  \u2502  /gsd prefs to edit"));
+    allLines.push(t.fg("muted", "  esc/q close  \u2502  \u2191\u2193/jk scroll  \u2502  /gwd prefs to edit"));
 
     // Apply scroll
     const maxScroll = Math.max(0, allLines.length - 20);

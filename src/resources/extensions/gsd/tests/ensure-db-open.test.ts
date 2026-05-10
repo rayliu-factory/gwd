@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 // database without implicitly importing markdown projections.
 //
 // This covers the bug where interactive (non-auto) sessions got
-// "GSD database is not available" because ensureDbOpen only opened
+// "GWD database is not available" because ensureDbOpen only opened
 // existing DB files but never created them.
 
 import * as path from 'node:path';

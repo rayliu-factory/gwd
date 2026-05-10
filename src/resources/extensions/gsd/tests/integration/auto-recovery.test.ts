@@ -1,4 +1,4 @@
-// GSD Extension — Auto recovery integration tests.
+// GWD Extension — Auto recovery integration tests.
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -803,14 +803,14 @@ test("hasImplementationArtifacts finds production execute-task commits after ret
   mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
   writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"), "# Roadmap");
   execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
-  execFileSync("git", ["commit", "-m", "chore: auto-commit after plan-milestone\n\nGSD-Unit: M001"], { cwd: base, stdio: "ignore" });
+  execFileSync("git", ["commit", "-m", "chore: auto-commit after plan-milestone\n\nGWD-Unit: M001"], { cwd: base, stdio: "ignore" });
 
   mkdirSync(join(base, "src"), { recursive: true });
   mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   writeFileSync(join(base, "src", "feature.ts"), "export function feature() {}");
   writeFileSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md"), "# Summary");
   execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
-  execFileSync("git", ["commit", "-m", "feat: add milestone feature\n\nGSD-Task: S01/T01"], { cwd: base, stdio: "ignore" });
+  execFileSync("git", ["commit", "-m", "feat: add milestone feature\n\nGWD-Task: S01/T01"], { cwd: base, stdio: "ignore" });
 
   const result = hasImplementationArtifacts(base, "M001");
   assert.equal(result, "present", "main self-diff retry should find production execute-task commits");

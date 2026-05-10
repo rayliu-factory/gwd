@@ -1,4 +1,4 @@
-// GSD-2 Web — Shutdown gate regression tests
+// GWD-2 Web — Shutdown gate regression tests
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 
@@ -22,7 +22,7 @@ function resetGate() {
     globalThis.__gsdShutdownGate.lastBootAt = 0;
     globalThis.__gsdShutdownGate.activeStreams.clear();
   }
-  delete process.env.GSD_WEB_DAEMON_MODE;
+  delete process.env.GWD_WEB_DAEMON_MODE;
 }
 
 describe("shutdown-gate", () => {
@@ -45,9 +45,9 @@ describe("shutdown-gate", () => {
     });
   });
 
-  describe("daemon mode (GSD_WEB_DAEMON_MODE=1)", () => {
+  describe("daemon mode (GWD_WEB_DAEMON_MODE=1)", () => {
     beforeEach(() => {
-      process.env.GSD_WEB_DAEMON_MODE = "1";
+      process.env.GWD_WEB_DAEMON_MODE = "1";
     });
 
     test("isDaemonMode() returns true", () => {
@@ -72,22 +72,22 @@ describe("shutdown-gate", () => {
   });
 
   describe("daemon mode is not activated by other values", () => {
-    test("GSD_WEB_DAEMON_MODE=0 does not enable daemon mode", () => {
-      process.env.GSD_WEB_DAEMON_MODE = "0";
+    test("GWD_WEB_DAEMON_MODE=0 does not enable daemon mode", () => {
+      process.env.GWD_WEB_DAEMON_MODE = "0";
       assert.equal(isDaemonMode(), false);
       scheduleShutdown();
       assert.equal(isShutdownPending(), true);
     });
 
-    test("GSD_WEB_DAEMON_MODE=true does not enable daemon mode", () => {
-      process.env.GSD_WEB_DAEMON_MODE = "true";
+    test("GWD_WEB_DAEMON_MODE=true does not enable daemon mode", () => {
+      process.env.GWD_WEB_DAEMON_MODE = "true";
       assert.equal(isDaemonMode(), false);
       scheduleShutdown();
       assert.equal(isShutdownPending(), true);
     });
 
-    test("unset GSD_WEB_DAEMON_MODE does not enable daemon mode", () => {
-      delete process.env.GSD_WEB_DAEMON_MODE;
+    test("unset GWD_WEB_DAEMON_MODE does not enable daemon mode", () => {
+      delete process.env.GWD_WEB_DAEMON_MODE;
       assert.equal(isDaemonMode(), false);
       scheduleShutdown();
       assert.equal(isShutdownPending(), true);

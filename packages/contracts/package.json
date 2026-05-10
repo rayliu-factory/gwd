@@ -1,16 +1,16 @@
 {
-  "name": "@gsd-build/contracts",
+  "name": "@gwd-build/contracts",
   "version": "2.80.0",
   "description": "Shared public contracts for GSD workspace boundaries",
   "license": "MIT",
-  "gsd": {
+  "gwd": {
     "linkable": true,
-    "scope": "@gsd-build",
+    "scope": "@gwd-build",
     "name": "contracts"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gsd-build/gsd-2.git",
+    "url": "https://github.com/gwd-build/gwd-2.git",
     "directory": "packages/contracts"
   },
   "publishConfig": {

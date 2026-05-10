@@ -32,7 +32,7 @@ Find the active milestone:
 
 1. Read `.gsd/STATE.md` — it names the active milestone.
 2. If no milestone is active, ask the user whether this is a new milestone (create directory + files) or appending to an existing one.
-3. For a new milestone, use `gsd_milestone_new` or the `/gsd new-milestone` flow — do not create directories by hand.
+3. For a new milestone, use `gsd_milestone_new` or the `/gwd new-milestone` flow — do not create directories by hand.
 
 ## Step 2: Read the template
 
@@ -77,7 +77,7 @@ Then append a one-line summary to `.gsd/DECISIONS.md` for any genuinely hard-to-
 
 After writing, offer the user (do not auto-execute):
 
-1. **Proceed to planning** — run `/gsd dispatch plan` to generate `M###-ROADMAP.md` from this brief.
+1. **Proceed to planning** — run `/gwd dispatch plan` to generate `M###-ROADMAP.md` from this brief.
 2. **File as GitHub issue** — use `mcp__github__issue_write` to create a tracking issue. Requires explicit "yes" per the outward-action rule. Use the PRD template below for the body.
 3. **Iterate on the brief** — if something feels wrong, run `grill-me` to stress-test before moving on.
 

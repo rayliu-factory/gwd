@@ -1,4 +1,4 @@
-// GSD-2 + src/resources/extensions/gsd/tests/session-switch-abort-misclassification.test.ts
+// GWD-2 + src/resources/extensions/gsd/tests/session-switch-abort-misclassification.test.ts
 // Regression: session-transition aborts must not be classified as user cancellations.
 
 import test from "node:test";

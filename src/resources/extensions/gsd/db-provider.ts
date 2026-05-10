@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: SQLite provider loading and fallback helpers for the GSD database facade.
+// Project/App: GWD-2
+// File Purpose: SQLite provider loading and fallback helpers for the GWD database facade.
 
 export type DbProviderName = "node:sqlite" | "better-sqlite3";
 
@@ -81,7 +81,7 @@ export class SqliteProviderLoader {
 
     const nodeMajor = parseInt(this.deps.nodeVersion.split(".")[0], 10);
     const versionHint = nodeMajor < 22
-      ? ` GSD requires Node >= 22.0.0 (current: v${this.deps.nodeVersion}). Upgrade Node to fix this.`
+      ? ` GWD requires Node >= 22.0.0 (current: v${this.deps.nodeVersion}). Upgrade Node to fix this.`
       : "";
     this.deps.writeStderr(
       `gsd-db: No SQLite provider available (tried node:sqlite, better-sqlite3).${versionHint}\n`,

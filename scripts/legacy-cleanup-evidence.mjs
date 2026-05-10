@@ -16,7 +16,7 @@ export const DEFAULT_EVIDENCE_COMMANDS = [["npm", "run", "baseline:refactor:gate
 
 export function parseArgs(argv = process.argv.slice(2), env = process.env) {
   const opts = {
-    file: env.GSD_LEGACY_TELEMETRY_FILE ?? "",
+    file: env.GWD_LEGACY_TELEMETRY_FILE ?? "",
     json: false,
     commands: [],
   };
@@ -49,7 +49,7 @@ export function parseArgs(argv = process.argv.slice(2), env = process.env) {
   }
 
   if (!opts.file.trim()) {
-    throw new Error("No telemetry file provided. Pass --file or set GSD_LEGACY_TELEMETRY_FILE.");
+    throw new Error("No telemetry file provided. Pass --file or set GWD_LEGACY_TELEMETRY_FILE.");
   }
   return {
     ...opts,
@@ -103,7 +103,7 @@ export async function runEvidenceCommand(command, env) {
 export async function collectLegacyCleanupEvidence(opts) {
   const env = {
     ...process.env,
-    GSD_LEGACY_TELEMETRY_FILE: opts.file,
+    GWD_LEGACY_TELEMETRY_FILE: opts.file,
   };
 
   for (const command of opts.commands) {

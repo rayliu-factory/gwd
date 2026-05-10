@@ -1,6 +1,6 @@
-// GSD2 — Extension registration: wires all GSD tools, commands, and hooks into pi
+// GSD2 — Extension registration: wires all GWD tools, commands, and hooks into pi
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { registerExitCommand } from "../exit-command.js";
 import { registerLazyWorktreeCommands } from "../worktree-command-bootstrap.js";
@@ -32,11 +32,11 @@ export function handleRecoverableExtensionProcessError(err: Error): boolean {
   if ((err as NodeJS.ErrnoException).code === "ENOENT") {
     const syscall = (err as NodeJS.ErrnoException).syscall;
     if (syscall?.startsWith("spawn")) {
-      process.stderr.write(`[gsd] spawn ENOENT: ${(err as any).path ?? "unknown"} — command not found\n`);
+      process.stderr.write(`[gwd] spawn ENOENT: ${(err as any).path ?? "unknown"} — command not found\n`);
       return true;
     }
     if (syscall === "uv_cwd") {
-      process.stderr.write(`[gsd] ENOENT (${syscall}): ${err.message}\n`);
+      process.stderr.write(`[gwd] ENOENT (${syscall}): ${err.message}\n`);
       return true;
     }
   }
@@ -73,7 +73,7 @@ export function registerGsdExtension(pi: ExtensionAPI): void {
   registerLazyWorktreeCommands(pi);
   registerExitCommand(pi);
 
-  // Wire the Layer 2 event emitter bridge so deeply-nested GSD code can emit
+  // Wire the Layer 2 event emitter bridge so deeply-nested GWD code can emit
   // extension events (git lifecycle, verify, budget, milestone, unit) without
   // threading `pi` through every call site.
   import("../hook-emitter.js")
@@ -82,18 +82,18 @@ export function registerGsdExtension(pi: ExtensionAPI): void {
       // Non-fatal — emitters simply become no-ops if this import fails, but
       // surface the failure so silent bootstrap breakage is debuggable.
       process.stderr.write(
-        `[gsd] Failed to bootstrap hook-emitter bridge: ${err instanceof Error ? err.stack ?? err.message : String(err)}\n`,
+        `[gwd] Failed to bootstrap hook-emitter bridge: ${err instanceof Error ? err.stack ?? err.message : String(err)}\n`,
       );
     });
 
   installEpipeGuard();
 
   // Ecosystem handlers captured by the GSDExtensionAPI wrapper for the
-  // GSD-owned `before_agent_start` dispatch step (#3338).
+  // GWD-owned `before_agent_start` dispatch step (#3338).
   const ecosystemHandlers: GSDEcosystemBeforeAgentStartHandler[] = [];
 
   pi.registerCommand("kill", {
-    description: "Exit GSD immediately (no cleanup)",
+    description: "Exit GWD immediately (no cleanup)",
     handler: async (_args: string, _ctx: ExtensionCommandContext) => {
       process.exit(0);
     },

@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Registers Context Mode execution tools.
 // GSD2 — Exec (context-mode) tool registration.
 //
@@ -6,7 +6,7 @@
 // `context_mode.enabled: false` in preferences.
 
 import { Type } from "@sinclair/typebox";
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 
 import { resolveCtxCwd } from "./dynamic-tools.js";
 

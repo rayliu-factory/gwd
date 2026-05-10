@@ -1,4 +1,4 @@
-// GSD-2 + metrics-lock-retry-sleep.test.ts: verify sleep between lock acquire retries (M3 follow-up)
+// GWD-2 + metrics-lock-retry-sleep.test.ts: verify sleep between lock acquire retries (M3 follow-up)
 /**
  * Verifies that acquireLock sleeps between non-stale-evicting retries:
  *
@@ -87,8 +87,8 @@ function assistantCtx(): any {
 // Writes its PID to stdout once the lock is acquired so the caller can synchronize.
 const LOCK_HOLDER_WORKER = `
 const { openSync, closeSync, writeFileSync, unlinkSync } = require('node:fs');
-const lockPath = process.env.GSD_TEST_LOCK_PATH;
-const holdMs = parseInt(process.env.GSD_TEST_HOLD_MS || '100', 10);
+const lockPath = process.env.GWD_TEST_LOCK_PATH;
+const holdMs = parseInt(process.env.GWD_TEST_HOLD_MS || '100', 10);
 
 const deadline = Date.now() + 3000;
 let acquired = false;
@@ -164,8 +164,8 @@ describe("metrics lock retry sleep (M3 follow-up)", () => {
     const child = spawn(process.execPath, ["-e", LOCK_HOLDER_WORKER], {
       env: {
         ...process.env,
-        GSD_TEST_LOCK_PATH: lp,
-        GSD_TEST_HOLD_MS: "100",
+        GWD_TEST_LOCK_PATH: lp,
+        GWD_TEST_HOLD_MS: "100",
       },
     });
 

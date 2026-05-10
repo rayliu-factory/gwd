@@ -1,4 +1,4 @@
-// GSD-2 + src/resources/extensions/gsd/auto-dashboard.ts - Auto-mode progress widget rendering and dashboard helpers.
+// GWD-2 + src/resources/extensions/gsd/auto-dashboard.ts - Auto-mode progress widget rendering and dashboard helpers.
 
 /**
  * Auto-mode Dashboard — progress widget rendering, elapsed time formatting,
@@ -14,7 +14,7 @@ import type {
   SessionMessageEntry,
   ReadonlyFooterDataProvider,
   Theme,
-} from "@gsd/pi-coding-agent";
+} from "@gwd/pi-coding-agent";
 import type { GSDState } from "./types.js";
 import { getCurrentBranch } from "./worktree.js";
 import { getActiveHook } from "./post-unit-hooks.js";
@@ -28,7 +28,7 @@ import {
 import { isDbAvailable, getMilestoneSlices, getSliceTasks } from "./gsd-db.js";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
-import { truncateToWidth, visibleWidth } from "@gsd/pi-tui";
+import { truncateToWidth, visibleWidth } from "@gwd/pi-tui";
 import { makeUI } from "../shared/tui.js";
 import { GLYPH, INDENT } from "../shared/mod.js";
 import { computeProgressScore } from "./progress-score.js";
@@ -781,7 +781,7 @@ export function updateProgressWidget(
             : "x";
         const healthStr = `  ${theme.fg(healthColor, healthIcon)} ${theme.fg(healthColor, healthSummary)}`;
 
-        const headerLeft = `${pad}${dot} ${theme.fg("accent", theme.bold("GSD"))}  ${theme.fg("success", modeTag)}${healthStr}`;
+        const headerLeft = `${pad}${dot} ${theme.fg("accent", theme.bold("GWD"))}  ${theme.fg("success", modeTag)}${healthStr}`;
 
         // ETA in header right, after elapsed
         const eta = estimateTimeRemaining();
@@ -1071,7 +1071,7 @@ export function updateProgressWidget(
           : "";
         // Step-mode guidance — shown above keyboard hints when auto is paused
         if (accessors.isStepMode()) {
-          lines.push(`${pad}${theme.fg("accent", "→")} ${theme.fg("dim", "Ctrl+N to advance to next step  ·  /gsd status for overview")}`);
+          lines.push(`${pad}${theme.fg("accent", "→")} ${theme.fg("dim", "Ctrl+N to advance to next step  ·  /gwd status for overview")}`);
         }
 
         // Hints line

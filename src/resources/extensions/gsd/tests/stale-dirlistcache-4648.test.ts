@@ -1,5 +1,5 @@
 /**
- * GSD-2 / agent-end-recovery — regression tests for #4648.
+ * GWD-2 / agent-end-recovery — regression tests for #4648.
  */
 
 import { describe, test } from "node:test";

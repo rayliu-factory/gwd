@@ -1,17 +1,17 @@
 ---
 name: create-gsd-extension
-description: Create, debug, and iterate on GSD extensions (TypeScript modules that add tools, commands, event hooks, custom UI, and providers to GSD). Use when asked to build an extension, add a tool the LLM can call, register a slash command, hook into GSD events, create custom TUI components, or modify GSD behavior. Triggers on "create extension", "build extension", "add a tool", "register command", "hook into gsd", "custom tool", "gsd plugin", "gsd extension".
+description: Create, debug, and iterate on GWD extensions (TypeScript modules that add tools, commands, event hooks, custom UI, and providers to GWD). Use when asked to build an extension, add a tool the LLM can call, register a slash command, hook into GWD events, create custom TUI components, or modify GWD behavior. Triggers on "create extension", "build extension", "add a tool", "register command", "hook into gwd", "custom tool", "gwd plugin", "gwd extension".
 ---
 
 <essential_principles>
 
-**Extensions are TypeScript modules** that hook into GSD's runtime (built on pi). They export a default function receiving `ExtensionAPI` and use it to subscribe to events, register tools/commands/shortcuts, and interact with the session.
+**Extensions are TypeScript modules** that hook into GWD's runtime (built on pi). They export a default function receiving `ExtensionAPI` and use it to subscribe to events, register tools/commands/shortcuts, and interact with the session.
 
-**GSD extension paths (community/user-installed extensions):**
+**GWD extension paths (community/user-installed extensions):**
 - Global: `~/.pi/agent/extensions/*.ts` or `~/.pi/agent/extensions/*/index.ts`
 - Project-local: `.gsd/extensions/*.ts` or `.gsd/extensions/*/index.ts`
 
-Note: `~/.gsd/agent/extensions/` is reserved for bundled extensions synced from the gsd-pi package. Community extensions placed there are silently ignored by the loader.
+Note: `~/.gwd/agent/extensions/` is reserved for bundled extensions synced from the gwd-pi package. Community extensions placed there are silently ignored by the loader.
 
 **The three primitives:**
 1. **Events** — Listen and react (`pi.on("event", handler)`). Can block tool calls, modify messages, inject context.
@@ -19,8 +19,8 @@ Note: `~/.gsd/agent/extensions/` is reserved for bundled extensions synced from 
 3. **Commands** — Give users slash commands (`pi.registerCommand()`). Users type `/mycommand`.
 
 **Non-negotiable rules:**
-- Use `StringEnum` from `@gsd/pi-ai` for string enum params (NOT `Type.Union`/`Type.Literal` — breaks Google's API)
-- Truncate tool output to 50KB / 2000 lines max (use `truncateHead`/`truncateTail` from `@gsd/pi-coding-agent`)
+- Use `StringEnum` from `@gwd/pi-ai` for string enum params (NOT `Type.Union`/`Type.Literal` — breaks Google's API)
+- Truncate tool output to 50KB / 2000 lines max (use `truncateHead`/`truncateTail` from `@gwd/pi-coding-agent`)
 - Store stateful tool state in `details` for branching support
 - Check `signal?.aborted` in long-running tool executions
 - Use `pi.exec()` not `child_process` for shell commands
@@ -34,10 +34,10 @@ Note: `~/.gsd/agent/extensions/` is reserved for bundled extensions synced from 
 
 | Package | Purpose |
 |---------|---------|
-| `@gsd/pi-coding-agent` | `ExtensionAPI`, `ExtensionContext`, `Theme`, event types, tool utilities, `DynamicBorder`, `BorderedLoader`, `CustomEditor`, `highlightCode` |
+| `@gwd/pi-coding-agent` | `ExtensionAPI`, `ExtensionContext`, `Theme`, event types, tool utilities, `DynamicBorder`, `BorderedLoader`, `CustomEditor`, `highlightCode` |
 | `@sinclair/typebox` | `Type.Object`, `Type.String`, `Type.Number`, `Type.Optional`, `Type.Boolean`, `Type.Array` |
-| `@gsd/pi-ai` | `StringEnum` (required for string enums), `Type` re-export |
-| `@gsd/pi-tui` | `Text`, `Box`, `Container`, `Spacer`, `Markdown`, `SelectList`, `Input`, `matchesKey`, `Key`, `truncateToWidth`, `visibleWidth` |
+| `@gwd/pi-ai` | `StringEnum` (required for string enums), `Type` re-export |
+| `@gwd/pi-tui` | `Text`, `Box`, `Container`, `Spacer`, `Markdown`, `SelectList`, `Input`, `matchesKey`, `Key`, `truncateToWidth`, `visibleWidth` |
 | Node.js built-ins | `node:fs`, `node:path`, `node:child_process`, etc. |
 
 </essential_principles>
@@ -67,7 +67,7 @@ All domain knowledge in `references/`:
 **Infrastructure:** model-provider-management.md, remote-execution-overrides.md, packaging-distribution.md, mode-behavior.md
 **Spec:** `docs/extension-sdk/manifest-spec.md` — manifest format, tiers, validation
 **Testing:** `docs/extension-sdk/testing.md` — mock patterns, test conventions
-**SDK:** `docs/extension-sdk/` — the authoritative GSD-2 extension guide
+**SDK:** `docs/extension-sdk/` — the authoritative GWD-2 extension guide
 **Gotchas:** key-rules-gotchas.md
 </reference_index>
 
@@ -83,7 +83,7 @@ All domain knowledge in `references/`:
 Extension is complete when:
 - `extension-manifest.json` exists with accurate `provides` listing all registered tools/commands/hooks/shortcuts
 - TypeScript compiles without errors (jiti handles this at runtime)
-- Extension loads on GSD startup or `/reload` without errors
+- Extension loads on GWD startup or `/reload` without errors
 - Tools appear in the LLM's system prompt and are callable
 - Commands respond to `/command` input
 - Event hooks fire at the expected lifecycle points

@@ -3,7 +3,7 @@
  *
  * Locates and loads the compiled Rust N-API addon (`.node` file).
  * Resolution order:
- *   1. @gsd-build/engine-{platform} npm optional dependency (production install)
+ *   1. @gwd-build/engine-{platform} npm optional dependency (production install)
  *   2. native/addon/gsd_engine.{platform}.node (local release build)
  *   3. native/addon/gsd_engine.dev.node (local debug build)
  */
@@ -37,10 +37,10 @@ function loadNative(): Record<string, unknown> {
   const packageSuffix = platformPackageMap[platformTag];
   if (packageSuffix) {
     try {
-      _loadedSuccessfully = true; return _require(`@gsd-build/engine-${packageSuffix}`) as Record<string, unknown>;
+      _loadedSuccessfully = true; return _require(`@gwd-build/engine-${packageSuffix}`) as Record<string, unknown>;
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      errors.push(`@gsd-build/engine-${packageSuffix}: ${message}`);
+      errors.push(`@gwd-build/engine-${packageSuffix}: ${message}`);
     }
   }
 
@@ -70,7 +70,7 @@ function loadNative(): Record<string, unknown> {
   // entire import chain at startup (#1223). Consumers with JS fallbacks
   // (parseRoadmap, parsePlan, fuzzyFind, etc.) catch these and degrade gracefully.
   process.stderr.write(
-    `[gsd] Native addon not available for ${platformTag}. Falling back to JS implementations (slower).\n` +
+    `[gwd] Native addon not available for ${platformTag}. Falling back to JS implementations (slower).\n` +
       `  Supported native platforms: ${supportedPlatforms.join(", ")}\n`,
   );
   return new Proxy({} as Record<string, unknown>, {

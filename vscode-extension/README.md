@@ -1,24 +1,24 @@
-# GSD-2 — VS Code Extension
+# GWD-2 — VS Code Extension
 
-Control the [GSD-2 coding agent](https://github.com/gsd-build/gsd-2) directly from VS Code. Run autonomous coding sessions, chat with `@gsd`, monitor agent activity in real-time, review and accept/reject changes, and manage your workflow — all without leaving the editor.
+Control the [GWD-2 coding agent](https://github.com/gwd-build/gwd-2) directly from VS Code. Run autonomous coding sessions, chat with `@gwd`, monitor agent activity in real-time, review and accept/reject changes, and manage your workflow — all without leaving the editor.
 
-![GSD Extension Overview](docs/images/overview.png)
+![GWD Extension Overview](docs/images/overview.png)
 
 ## Requirements
 
-- **GSD-2** installed globally: `npm install -g gsd-pi`
+- **GWD-2** installed globally: `npm install -g gwd-pi`
 - **Node.js** >= 22.0.0
 - **Git** installed and on PATH
 - **VS Code** >= 1.95.0
 
 ## Quick Start
 
-1. Install GSD: `npm install -g gsd-pi`
+1. Install GWD: `npm install -g gwd-pi`
 2. Install this extension
 3. Open a project folder in VS Code
-4. Click the **GSD icon** in the Activity Bar (left sidebar)
-5. Click **Start Agent** or run `Ctrl+Shift+P` > **GSD: Start Agent**
-6. Start chatting with `@gsd` in Chat or click **Auto** in the sidebar
+4. Click the **GWD icon** in the Activity Bar (left sidebar)
+5. Click **Start Agent** or run `Ctrl+Shift+P` > **GWD: Start Agent**
+6. Start chatting with `@gwd` in Chat or click **Auto** in the sidebar
 
 ---
 
@@ -26,11 +26,11 @@ Control the [GSD-2 coding agent](https://github.com/gsd-build/gsd-2) directly fr
 
 ### Sidebar Dashboard
 
-Click the **GSD icon** in the Activity Bar. The compact header shows connection status, model, session, message count, thinking level, context usage bar, and cost — all in two lines. Sections (Workflow, Stats, Actions, Settings) are collapsible and remember their state.
+Click the **GWD icon** in the Activity Bar. The compact header shows connection status, model, session, message count, thinking level, context usage bar, and cost — all in two lines. Sections (Workflow, Stats, Actions, Settings) are collapsible and remember their state.
 
 ### Workflow Controls
 
-One-click buttons for GSD's core commands. All route through the Chat panel so you see the full response:
+One-click buttons for GWD's core commands. All route through the Chat panel so you see the full response:
 
 | Button | What it does |
 |--------|-------------|
@@ -39,14 +39,14 @@ One-click buttons for GSD's core commands. All route through the Chat panel so y
 | **Quick** | Quick task without planning (opens input) |
 | **Capture** | Capture a thought for later triage |
 
-### Chat Integration (`@gsd`)
+### Chat Integration (`@gwd`)
 
-Use `@gsd` in VS Code Chat (`Cmd+Shift+I`) to talk to the agent:
+Use `@gwd` in VS Code Chat (`Cmd+Shift+I`) to talk to the agent:
 
 ```
-@gsd refactor the auth module to use JWT
-@gsd /gsd auto
-@gsd fix the errors in this file
+@gwd refactor the auth module to use JWT
+@gwd /gsd auto
+@gwd fix the errors in this file
 ```
 
 - **Auto-starts** the agent if not running
@@ -57,7 +57,7 @@ Use `@gsd` in VS Code Chat (`Cmd+Shift+I`) to talk to the agent:
 
 ### Source Control Integration
 
-Agent-modified files appear in a dedicated **"GSD Agent"** section of the Source Control panel:
+Agent-modified files appear in a dedicated **"GWD Agent"** section of the Source Control panel:
 
 - **Click any file** to see a before/after diff in VS Code's native diff editor
 - **Accept** or **Discard** changes per-file via inline buttons
@@ -70,7 +70,7 @@ When the agent modifies a file, you'll see:
 - **Green background** on newly added lines
 - **Yellow background** on modified lines
 - **Left border gutter indicator** on all agent-touched lines
-- **Hover** any decorated line to see "Modified by GSD Agent"
+- **Hover** any decorated line to see "Modified by GWD Agent"
 
 ### Checkpoints & Rollback
 
@@ -82,7 +82,7 @@ The **Activity** panel shows a real-time log of every tool the agent executes �
 
 ### Plan View
 
-The **Plan** panel shows the agent's current plan as a dedicated tree view. Use **GSD: Clear Plan View** from the Command Palette to clear the displayed plan.
+The **Plan** panel shows the agent's current plan as a dedicated tree view. Use **GWD: Clear Plan View** from the Command Palette to clear the displayed plan.
 
 ### Sessions
 
@@ -91,7 +91,7 @@ The **Sessions** panel lists all past sessions for the current workspace. Click 
 ### Diagnostic Integration
 
 - **Fix Errors** button in the sidebar reads the active file's diagnostics from the Problems panel and sends them to the agent
-- **Fix All Problems** (`Cmd+Shift+P` > GSD: Fix All Problems) collects errors/warnings across the workspace
+- **Fix All Problems** (`Cmd+Shift+P` > GWD: Fix All Problems) collects errors/warnings across the workspace
 - Works automatically in chat — mention "fix" or "error" and diagnostics are included
 
 ### Code Lens
@@ -100,7 +100,7 @@ Four inline actions above every function and class (TS/JS/Python/Go/Rust):
 
 | Action | What it does |
 |--------|-------------|
-| **Ask GSD** | Explain the function/class |
+| **Ask GWD** | Explain the function/class |
 | **Refactor** | Improve clarity, performance, or structure |
 | **Find Bugs** | Review for bugs and edge cases |
 | **Tests** | Generate test coverage |
@@ -121,7 +121,7 @@ Control how much autonomy the agent has:
 | **Ask** | Prompts before file writes and commands |
 | **Plan-only** | Read-only — agent can analyze but not modify |
 
-Change via Settings section or `Cmd+Shift+P` > **GSD: Select Approval Mode**.
+Change via Settings section or `Cmd+Shift+P` > **GWD: Select Approval Mode**.
 
 ### Agent UI Requests
 
@@ -143,37 +143,37 @@ When the agent needs input (questions, confirmations, selections), VS Code dialo
 
 | Command | Shortcut | Description |
 |---------|----------|-------------|
-| **GSD: Start Agent** | | Connect to the GSD agent |
-| **GSD: Stop Agent** | | Disconnect the agent |
-| **GSD: New Session** | `Cmd+Shift+G` `Cmd+Shift+N` | Start a fresh conversation |
-| **GSD: Send Message** | `Cmd+Shift+G` `Cmd+Shift+P` | Send a message to the agent |
-| **GSD: Abort** | `Cmd+Shift+G` `Cmd+Shift+A` | Interrupt the current operation |
-| **GSD: Steer Agent** | `Cmd+Shift+G` `Cmd+Shift+I` | Steering message mid-operation |
-| **GSD: Switch Model** | | Pick a model from QuickPick |
-| **GSD: Cycle Model** | `Cmd+Shift+G` `Cmd+Shift+M` | Rotate to the next model |
-| **GSD: Set Thinking Level** | | Choose off / low / medium / high |
-| **GSD: Cycle Thinking** | `Cmd+Shift+G` `Cmd+Shift+T` | Rotate through thinking levels |
-| **GSD: Compact Context** | | Trigger context compaction |
-| **GSD: Export HTML** | | Save session as HTML |
-| **GSD: Session Stats** | | Display token usage and cost |
-| **GSD: Run Bash** | | Execute a shell command |
-| **GSD: List Commands** | | Browse slash commands |
-| **GSD: Set Session Name** | | Rename current session |
-| **GSD: Copy Last Response** | | Copy to clipboard |
-| **GSD: Switch Session** | | Load a different session |
-| **GSD: Show History** | | Open conversation viewer |
-| **GSD: Fork Session** | | Fork from a previous message |
-| **GSD: Fix Problems in File** | | Send file diagnostics to agent |
-| **GSD: Fix All Problems** | | Send workspace errors to agent |
-| **GSD: Clear Plan View** | | Clear the current plan panel |
-| **GSD: Commit Agent Changes** | | Git commit modified files |
-| **GSD: Create Branch** | | Create branch for agent work |
-| **GSD: Show Agent Diff** | | View git diff |
-| **GSD: Accept All Changes** | | Accept all SCM changes |
-| **GSD: Discard All Changes** | | Revert all agent modifications |
-| **GSD: Select Approval Mode** | | Choose auto-approve/ask/plan-only |
-| **GSD: Cycle Approval Mode** | | Rotate through approval modes |
-| **GSD: Code Lens** actions | | Ask, Refactor, Find Bugs, Tests |
+| **GWD: Start Agent** | | Connect to the GWD agent |
+| **GWD: Stop Agent** | | Disconnect the agent |
+| **GWD: New Session** | `Cmd+Shift+G` `Cmd+Shift+N` | Start a fresh conversation |
+| **GWD: Send Message** | `Cmd+Shift+G` `Cmd+Shift+P` | Send a message to the agent |
+| **GWD: Abort** | `Cmd+Shift+G` `Cmd+Shift+A` | Interrupt the current operation |
+| **GWD: Steer Agent** | `Cmd+Shift+G` `Cmd+Shift+I` | Steering message mid-operation |
+| **GWD: Switch Model** | | Pick a model from QuickPick |
+| **GWD: Cycle Model** | `Cmd+Shift+G` `Cmd+Shift+M` | Rotate to the next model |
+| **GWD: Set Thinking Level** | | Choose off / low / medium / high |
+| **GWD: Cycle Thinking** | `Cmd+Shift+G` `Cmd+Shift+T` | Rotate through thinking levels |
+| **GWD: Compact Context** | | Trigger context compaction |
+| **GWD: Export HTML** | | Save session as HTML |
+| **GWD: Session Stats** | | Display token usage and cost |
+| **GWD: Run Bash** | | Execute a shell command |
+| **GWD: List Commands** | | Browse slash commands |
+| **GWD: Set Session Name** | | Rename current session |
+| **GWD: Copy Last Response** | | Copy to clipboard |
+| **GWD: Switch Session** | | Load a different session |
+| **GWD: Show History** | | Open conversation viewer |
+| **GWD: Fork Session** | | Fork from a previous message |
+| **GWD: Fix Problems in File** | | Send file diagnostics to agent |
+| **GWD: Fix All Problems** | | Send workspace errors to agent |
+| **GWD: Clear Plan View** | | Clear the current plan panel |
+| **GWD: Commit Agent Changes** | | Git commit modified files |
+| **GWD: Create Branch** | | Create branch for agent work |
+| **GWD: Show Agent Diff** | | View git diff |
+| **GWD: Accept All Changes** | | Accept all SCM changes |
+| **GWD: Discard All Changes** | | Revert all agent modifications |
+| **GWD: Select Approval Mode** | | Choose auto-approve/ask/plan-only |
+| **GWD: Cycle Approval Mode** | | Rotate through approval modes |
+| **GWD: Code Lens** actions | | Ask, Refactor, Find Bugs, Tests |
 
 > On Windows/Linux, replace `Cmd` with `Ctrl`.
 
@@ -181,7 +181,7 @@ When the agent needs input (questions, confirmations, selections), VS Code dialo
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `gsd.binaryPath` | `"gsd"` | Path to the GSD binary |
+| `gsd.binaryPath` | `"gsd"` | Path to the GWD binary |
 | `gsd.autoStart` | `false` | Start agent on extension activation |
 | `gsd.autoCompaction` | `true` | Automatic context compaction |
 | `gsd.codeLens` | `true` | Code lens above functions/classes |
@@ -197,6 +197,6 @@ The extension spawns `gsd --mode rpc` and communicates over JSON-RPC via stdin/s
 
 ## Links
 
-- [GSD Documentation](https://github.com/gsd-build/gsd-2/tree/main/docs)
-- [Getting Started](https://github.com/gsd-build/gsd-2/blob/main/docs/getting-started.md)
-- [Issue Tracker](https://github.com/gsd-build/gsd-2/issues)
+- [GWD Documentation](https://github.com/gwd-build/gwd-2/tree/main/docs)
+- [Getting Started](https://github.com/gwd-build/gwd-2/blob/main/docs/getting-started.md)
+- [Issue Tracker](https://github.com/gwd-build/gwd-2/issues)

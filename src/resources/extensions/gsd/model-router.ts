@@ -1,12 +1,12 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Routes work to appropriate models while preserving configured ceilings.
 
 import type { ComplexityTier, ClassificationResult, TaskMetadata } from "./complexity-classifier.js";
 import { tierOrdinal } from "./complexity-classifier.js";
 import type { ResolvedModelConfig } from "./preferences.js";
-import { getProviderCapabilities, type ProviderCapabilities } from "@gsd/pi-ai";
-import { getToolCompatibility, getAllToolCompatibility } from "@gsd/pi-coding-agent";
-import type { ToolCompatibility } from "@gsd/pi-coding-agent";
+import { getProviderCapabilities, type ProviderCapabilities } from "@gwd/pi-ai";
+import { getToolCompatibility, getAllToolCompatibility } from "@gwd/pi-coding-agent";
+import type { ToolCompatibility } from "@gwd/pi-coding-agent";
 import { incrementLegacyTelemetry } from "./legacy-telemetry.js";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -746,7 +746,7 @@ export const GROQ_MAX_TOOLS = 128;
 
 /**
  * Provider IDs that map to the Groq API backend.
- * Used to detect Groq at the GSD routing layer where only the provider string
+ * Used to detect Groq at the GWD routing layer where only the provider string
  * is available (the pi-ai openai-completions adapter is shared across providers).
  */
 const GROQ_PROVIDER_IDS = new Set(["groq"]);
@@ -814,7 +814,7 @@ export function filterToolsForProvider(
     const trimmed = compatible.splice(GROQ_MAX_TOOLS);
     filtered.push(...trimmed);
     console.warn(
-      `[gsd] Groq tool limit: ${compatible.length + trimmed.length} tools active but Groq allows at most ${GROQ_MAX_TOOLS}. ` +
+      `[gwd] Groq tool limit: ${compatible.length + trimmed.length} tools active but Groq allows at most ${GROQ_MAX_TOOLS}. ` +
         `Trimming to the first ${GROQ_MAX_TOOLS} tools. Removed: ${trimmed.join(", ")}`,
     );
   }

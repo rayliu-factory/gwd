@@ -1,4 +1,4 @@
-// GSD — Onboarding completion record (~/.gsd/agent/onboarding.json)
+// GWD — Onboarding completion record (~/.gwd/agent/onboarding.json)
 //
 // First-class state for the onboarding wizard so re-entry, resume, and the
 // web boot probe all read the same source of truth. Replaces the implicit
@@ -21,7 +21,7 @@ const RECORD_VERSION = 1
 // rootDir-clean for the resources tsconfig; importing from src/ pulls files
 // outside src/resources and breaks the build.
 const AGENT_DIR =
-  process.env.GSD_CODING_AGENT_DIR ||
+  process.env.GWD_CODING_AGENT_DIR ||
   join(gsdHome(), "agent")
 const FILE = join(AGENT_DIR, "onboarding.json")
 

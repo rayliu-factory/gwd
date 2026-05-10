@@ -1,5 +1,5 @@
 <overview>
-Packaging extensions for distribution via npm, git, or local paths. Creating GSD/pi packages.
+Packaging extensions for distribution via npm, git, or local paths. Creating GWD/pi packages.
 </overview>
 
 <package_manifest>
@@ -39,7 +39,7 @@ If no `pi` manifest exists, auto-discovers:
 </convention_directories>
 
 <dependencies>
-- List `@gsd/pi-ai`, `@gsd/pi-coding-agent`, `@gsd/pi-tui`, `@sinclair/typebox` in `peerDependencies` with `"*"` — they're bundled by the runtime.
+- List `@gwd/pi-ai`, `@gwd/pi-coding-agent`, `@gwd/pi-tui`, `@sinclair/typebox` in `peerDependencies` with `"*"` — they're bundled by the runtime.
 - Other npm deps go in `dependencies`. The runtime runs `npm install` on package installation.
 </dependencies>
 

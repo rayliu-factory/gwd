@@ -9,26 +9,34 @@ const ROOT = new URL("../../../../../", import.meta.url);
 export function resolve(specifier, context, nextResolve) {
   // 1. Redirect all workspace package bare imports to source.
   //    CI portability runs don't build any packages/ dist artifacts, so every
-  //    @gsd/* specifier (including transitive ones pulled in by pi-coding-agent
+  //    @gwd/* specifier (including transitive ones pulled in by pi-coding-agent
   //    source itself) must resolve to the TypeScript source entrypoint.
   if (specifier === "../../packages/pi-coding-agent/src/index.js") {
     specifier = new URL("packages/pi-coding-agent/src/index.ts", ROOT).href;
-  } else if (specifier === "@gsd/pi-coding-agent") {
+  } else if (specifier === "@gwd/pi-coding-agent") {
     specifier = new URL("packages/pi-coding-agent/src/index.ts", ROOT).href;
-  } else if (specifier === "@gsd/pi-ai/oauth") {
+  } else if (specifier === "@gwd/pi-ai/oauth") {
     specifier = new URL("packages/pi-ai/src/utils/oauth/index.ts", ROOT).href;
-  } else if (specifier === "@gsd/pi-ai") {
+  } else if (specifier === "@gwd/pi-ai") {
     specifier = new URL("packages/pi-ai/src/index.ts", ROOT).href;
-  } else if (specifier === "@gsd/pi-agent-core") {
+  } else if (specifier === "@gwd/pi-agent-core") {
     specifier = new URL("packages/pi-agent-core/src/index.ts", ROOT).href;
-  } else if (specifier === "@gsd/pi-tui") {
+  } else if (specifier === "@gwd/pi-tui") {
     specifier = new URL("packages/pi-tui/src/index.ts", ROOT).href;
-  } else if (specifier === "@gsd/native") {
+  } else if (specifier === "@gwd/native") {
     specifier = new URL("packages/native/src/index.ts", ROOT).href;
-  } else if (specifier.startsWith("@gsd/native/")) {
-    // Sub-path imports like @gsd/native/fd, @gsd/native/text, etc.
-    const subpath = specifier.slice("@gsd/native/".length);
+  } else if (specifier.startsWith("@gwd/native/")) {
+    // Sub-path imports like @gwd/native/fd, @gwd/native/text, etc.
+    const subpath = specifier.slice("@gwd/native/".length);
     specifier = new URL(`packages/native/src/${subpath}/index.ts`, ROOT).href;
+  } else if (specifier === "@gwd-build/contracts") {
+    specifier = new URL("packages/contracts/src/index.ts", ROOT).href;
+  } else if (specifier === "@gwd-build/rpc-client") {
+    specifier = new URL("packages/rpc-client/src/index.ts", ROOT).href;
+  } else if (specifier === "@gwd-build/mcp-server") {
+    specifier = new URL("packages/mcp-server/src/index.ts", ROOT).href;
+  } else if (specifier === "@gwd-build/daemon") {
+    specifier = new URL("packages/daemon/src/index.ts", ROOT).href;
   }
   // 2. Redirect packages/*/dist/ → packages/*/src/ with .js→.ts for strip-types
   //    Also handles local imports — skip rewrite for dist/ paths that are real compiled artifacts.

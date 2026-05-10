@@ -1,4 +1,4 @@
-// GSD-2 — Tests verifying gsdRootCache is decoupled from per-turn clearPathCache()
+// GWD-2 — Tests verifying gsdRootCache is decoupled from per-turn clearPathCache()
 
 import { describe, test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -28,12 +28,12 @@ function makeFixture(): Fixture {
 
   const savedHome = process.env.HOME;
   const savedUserProfile = process.env.USERPROFILE;
-  const savedGsdHome = process.env.GSD_HOME;
+  const savedGsdHome = process.env.GWD_HOME;
 
-  // Redirect HOME so gsdRoot never accidentally resolves to the real ~/.gsd.
+  // Redirect HOME so gsdRoot never accidentally resolves to the real ~/.gwd.
   process.env.HOME = fakeHome;
   process.env.USERPROFILE = fakeHome;
-  process.env.GSD_HOME = join(fakeHome, '.gsd');
+  process.env.GWD_HOME = join(fakeHome, '.gsd');
 
   _clearGsdRootCache();
 
@@ -45,8 +45,8 @@ function teardownFixture(f: Fixture): void {
   else process.env.HOME = f.savedHome;
   if (f.savedUserProfile === undefined) delete process.env.USERPROFILE;
   else process.env.USERPROFILE = f.savedUserProfile;
-  if (f.savedGsdHome === undefined) delete process.env.GSD_HOME;
-  else process.env.GSD_HOME = f.savedGsdHome;
+  if (f.savedGsdHome === undefined) delete process.env.GWD_HOME;
+  else process.env.GWD_HOME = f.savedGsdHome;
 
   _clearGsdRootCache();
   clearPathCache();

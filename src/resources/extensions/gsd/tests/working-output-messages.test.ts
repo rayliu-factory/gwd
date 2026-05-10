@@ -1,4 +1,4 @@
-// GSD-2 + src/resources/extensions/gsd/tests/working-output-messages.test.ts - Regression coverage for user-facing working-state message quality.
+// GWD-2 + src/resources/extensions/gsd/tests/working-output-messages.test.ts - Regression coverage for user-facing working-state message quality.
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -37,7 +37,7 @@ test("generic working messages are flagged", () => {
 test("dashboard messages cannot claim healthy progress while recovering", () => {
   const findings = evaluateWorkingOutputMessage({
     surface: "dashboard",
-    message: "GSD AUTO Progressing well",
+    message: "GWD AUTO Progressing well",
     context: { health: "recovering", recoveryAttempts: 1 },
   });
 
@@ -64,7 +64,7 @@ test("stalled/provider-error/timeout messages need an action", () => {
 
   const withAction = evaluateWorkingOutputMessage({
     surface: "notification",
-    message: "Provider stalled after 2m. Type /gsd stop or wait for retry.",
+    message: "Provider stalled after 2m. Type /gwd stop or wait for retry.",
     context: { health: "stalled" },
   });
   assert.equal(withAction.length, 0);

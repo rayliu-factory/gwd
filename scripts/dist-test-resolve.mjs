@@ -5,7 +5,7 @@
  * .js files still import '../foo.ts'. This hook redirects those to '.js' so
  * Node can find the compiled output.
  *
- * Also redirects @gsd bare imports to their compiled counterparts in dist-test.
+ * Also redirects @gwd bare imports to their compiled counterparts in dist-test.
  */
 
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -14,25 +14,25 @@ import { join } from 'node:path';
 
 // Compiled legacy state tests exercise markdown derivation through deriveState().
 // Production/runtime keeps this fallback disabled unless explicitly requested.
-process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK ??= '1';
+process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK ??= '1';
 
 // dist-test root — everything compiled lands here
 const DIST_TEST = new URL('../dist-test/', import.meta.url).href;
 
-// Absolute paths to compiled @gsd/* entry points
-const GSD_ALIASES = {
-  '@gsd/pi-coding-agent': new URL('../dist-test/packages/pi-coding-agent/src/index.js', import.meta.url).href,
-  '@gsd/pi-ai/oauth':     new URL('../dist-test/packages/pi-ai/src/utils/oauth/index.js', import.meta.url).href,
-  '@gsd/pi-ai':           new URL('../dist-test/packages/pi-ai/src/index.js', import.meta.url).href,
-  '@gsd/pi-agent-core':   new URL('../dist-test/packages/pi-agent-core/src/index.js', import.meta.url).href,
-  '@gsd/pi-tui':          new URL('../dist-test/packages/pi-tui/src/index.js', import.meta.url).href,
-  '@gsd/native':          new URL('../dist-test/packages/native/src/index.js', import.meta.url).href,
+// Absolute paths to compiled @gwd/* entry points
+const GWD_ALIASES = {
+  '@gwd/pi-coding-agent': new URL('../dist-test/packages/pi-coding-agent/src/index.js', import.meta.url).href,
+  '@gwd/pi-ai/oauth':     new URL('../dist-test/packages/pi-ai/src/utils/oauth/index.js', import.meta.url).href,
+  '@gwd/pi-ai':           new URL('../dist-test/packages/pi-ai/src/index.js', import.meta.url).href,
+  '@gwd/pi-agent-core':   new URL('../dist-test/packages/pi-agent-core/src/index.js', import.meta.url).href,
+  '@gwd/pi-tui':          new URL('../dist-test/packages/pi-tui/src/index.js', import.meta.url).href,
+  '@gwd/native':          new URL('../dist-test/packages/native/src/index.js', import.meta.url).href,
 };
 
 export function resolve(specifier, context, nextResolve) {
-  // 1. @gsd/* bare imports → compiled dist-test counterpart
-  if (specifier in GSD_ALIASES) {
-    return nextResolve(GSD_ALIASES[specifier], context);
+  // 1. @gwd/* bare imports → compiled dist-test counterpart
+  if (specifier in GWD_ALIASES) {
+    return nextResolve(GWD_ALIASES[specifier], context);
   }
 
   // 2. .ts relative imports inside dist-test → .js

@@ -1,4 +1,4 @@
-// GSD Extension — Hook Engine Tests (Post-Unit, Pre-Dispatch, State Persistence)
+// GWD Extension — Hook Engine Tests (Post-Unit, Pre-Dispatch, State Persistence)
 
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';

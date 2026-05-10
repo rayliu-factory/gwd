@@ -1,6 +1,6 @@
-// Project/App: GSD-2
-// File Purpose: Markdown projection renderer for GSD workflow database rows.
-// GSD Markdown Renderer — DB → Markdown file generation
+// Project/App: GWD-2
+// File Purpose: Markdown projection renderer for GWD workflow database rows.
+// GWD Markdown Renderer — DB → Markdown file generation
 //
 // Transforms DB state into correct markdown files on disk.
 // Each render function reads from DB, writes a markdown projection to disk,

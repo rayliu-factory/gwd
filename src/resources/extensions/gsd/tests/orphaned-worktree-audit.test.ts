@@ -102,11 +102,11 @@ describe("auditOrphanedMilestoneBranches", () => {
       "should warn about unmerged branch",
     );
     assert.ok(
-      result.warnings.some(w => w.includes("/gsd doctor fix")),
+      result.warnings.some(w => w.includes("/gwd doctor fix")),
       `warning should suggest the real remediation command; got: ${JSON.stringify(result.warnings)}`,
     );
     assert.ok(
-      result.warnings.every(w => !w.includes("/gsd health --fix")),
+      result.warnings.every(w => !w.includes("/gwd health --fix")),
       `warning must not suggest the removed health --fix command; got: ${JSON.stringify(result.warnings)}`,
     );
 

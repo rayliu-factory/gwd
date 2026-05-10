@@ -1,5 +1,5 @@
 /**
- * GSD Welcome Screen
+ * GWD Welcome Screen
  *
  * Two-panel bar layout: full-width accent bars at top/bottom (matching the
  * auto-mode progress widget style), logo left (fixed width), info right.
@@ -11,7 +11,8 @@ import { join } from 'node:path'
 import os from 'node:os'
 import chalk from 'chalk'
 import stripAnsi from 'strip-ansi'
-import { GSD_LOGO } from './logo.js'
+import { GWD_LOGO } from './logo.js'
+import { PRODUCT_FULL_NAME } from './namespace.js'
 
 interface GsdState {
   milestone?: string
@@ -95,7 +96,7 @@ export function buildWelcomeScreenLines(opts: WelcomeScreenOptions): string[] {
 
   // Narrow terminal fallback
   if (termWidth < 70) {
-    return ['', `  Get Shit Done v${version}`, `  ${shortCwd}`, '']
+    return ['', `  ${PRODUCT_FULL_NAME} v${version}`, `  ${shortCwd}`, '']
   }
 
   // ── Panel widths ────────────────────────────────────────────────────────────
@@ -108,10 +109,10 @@ export function buildWelcomeScreenLines(opts: WelcomeScreenOptions): string[] {
   const H = '─', DV = '│', DS = '├'
 
   // ── Left rows: blank + 6 logo lines + blank (8 total) ───────────────────────
-  const leftRows = ['', ...GSD_LOGO, '']
+  const leftRows = ['', ...GWD_LOGO, '']
 
   // ── Right rows (8 total, null = divider) ────────────────────────────────────
-  const titleLeft  = `  ${chalk.bold('Get Shit Done')}`
+  const titleLeft  = `  ${chalk.bold(PRODUCT_FULL_NAME)}`
   const titleRight = chalk.dim(`v${version}`)
   const titleFill  = RIGHT_INNER - visLen(titleLeft) - visLen(titleRight)
   const titleRow   = titleLeft + ' '.repeat(Math.max(1, titleFill)) + titleRight
@@ -126,11 +127,11 @@ export function buildWelcomeScreenLines(opts: WelcomeScreenOptions): string[] {
 
   // Tools left, hint right-aligned on the same row
   const toolsLeft  = toolParts.length > 0 ? chalk.dim('  ' + toolParts.join('  ·  ')) : ''
-  const hintRight  = chalk.dim('/gsd to begin  ·  /gsd help')
+  const hintRight  = chalk.dim('/gwd to begin  ·  /gwd help')
   const footerFill = RIGHT_INNER - visLen(toolsLeft) - visLen(hintRight)
   const footerRow  = toolsLeft + ' '.repeat(Math.max(1, footerFill)) + hintRight
 
-  // "Welcome back" context lines — GSD state if available, else hint.
+  // "Welcome back" context lines — GWD state if available, else hint.
   // Intentionally avoids data already shown in the footer (model, provider,
   // pwd, branch).
   const state = readGsdState()
@@ -147,8 +148,8 @@ export function buildWelcomeScreenLines(opts: WelcomeScreenOptions): string[] {
       ? `  Next       ${chalk.dim(state.nextAction)}`
       : ''
   } else {
-    line1 = `  Status     ${chalk.dim('No active GSD project')}`
-    line2 = `             ${chalk.dim('/gsd to begin')}`
+    line1 = `  Status     ${chalk.dim('No active GWD project')}`
+    line2 = `             ${chalk.dim('/gwd to begin')}`
   }
   const sessionLine = line1
   const projectLine = line2

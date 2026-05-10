@@ -1,4 +1,4 @@
-// GSD Markdown Importer
+// GWD Markdown Importer
 // Parses DECISIONS.md, REQUIREMENTS.md, and hierarchy artifacts from a .gsd/ tree,
 // then upserts everything into the SQLite database.
 //

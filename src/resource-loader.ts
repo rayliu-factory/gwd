@@ -1,4 +1,4 @@
-import type { DefaultResourceLoader as DefaultResourceLoaderType } from '@gsd/pi-coding-agent'
+import type { DefaultResourceLoader as DefaultResourceLoaderType } from '@gwd/pi-coding-agent'
 import { createHash } from 'node:crypto'
 import { homedir } from 'node:os'
 import { chmodSync, copyFileSync, cpSync, existsSync, lstatSync, mkdirSync, openSync, closeSync, readFileSync, readlinkSync, readdirSync, rmSync, statSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs'
@@ -8,13 +8,14 @@ import { compareSemver } from './update-check.js'
 import { discoverExtensionEntryPaths } from './extension-discovery.js'
 import { loadRegistry, readManifestFromEntryPath, isExtensionEnabled, ensureRegistryEntries } from './extension-registry.js'
 import { resolveBundledResourcesDirFromPackageRoot } from './bundled-resource-path.js'
+import { CLI_COMMAND, GWD_VERSION_ENV } from './namespace.js'
 
-type PiCodingAgentModule = typeof import('@gsd/pi-coding-agent')
+type PiCodingAgentModule = typeof import('@gwd/pi-coding-agent')
 
 let piCodingAgentModulePromise: Promise<PiCodingAgentModule> | undefined
 
 function loadPiCodingAgentModule(): Promise<PiCodingAgentModule> {
-  return (piCodingAgentModulePromise ??= import('@gsd/pi-coding-agent'))
+  return (piCodingAgentModulePromise ??= import('@gwd/pi-coding-agent'))
 }
 
 // Resolve resources directory — prefer dist/resources/ (stable, set at build time)
@@ -22,7 +23,7 @@ function loadPiCodingAgentModule(): Promise<PiCodingAgentModule> {
 //
 // Why this matters: with `npm link`, src/resources/ points into the gsd-2 repo's
 // working tree. Switching branches there changes src/resources/ for ALL projects
-// that use gsd — causing stale/broken extensions to be synced to ~/.gsd/agent/.
+// that use gsd — causing stale/broken extensions to be synced to ~/.gwd/agent/.
 // dist/resources/ is populated by the build step (`npm run copy-resources`) and
 // reflects the built state, not the currently checked-out branch.
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -67,9 +68,10 @@ function getManagedResourceManifestPath(agentDir: string): string {
 }
 
 function getBundledGsdVersion(): string {
-  // Prefer GSD_VERSION env var (set once by loader.ts) to avoid re-reading package.json
-  if (process.env.GSD_VERSION && process.env.GSD_VERSION !== '0.0.0') {
-    return process.env.GSD_VERSION
+  // Prefer GWD_VERSION env var (set once by loader.ts) to avoid re-reading package.json.
+  const envVersion = process.env[GWD_VERSION_ENV]
+  if (envVersion && envVersion !== '0.0.0') {
+    return envVersion
   }
   try {
     const pkg = JSON.parse(readFileSync(join(packageRoot, 'package.json'), 'utf-8'))
@@ -327,14 +329,14 @@ function copyDirRecursive(src: string, dest: string): void {
  *
  * Native ESM `import()` ignores NODE_PATH — it resolves packages by walking
  * up the directory tree from the importing file. Extension files synced to
- * ~/.gsd/agent/extensions/ have no ancestor node_modules, so imports of
- * @gsd/* packages fail. The symlink makes Node's standard resolution find
+ * ~/.gwd/agent/extensions/ have no ancestor node_modules, so imports of
+ * @gwd/* packages fail. The symlink makes Node's standard resolution find
  * them without requiring every call site to use jiti.
  *
  * Layout differences by install method:
  * - Source/monorepo: packageRoot/node_modules has everything → simple symlink
- * - npm/bun global: deps hoisted to dirname(packageRoot), including @gsd/* → simple symlink
- * - pnpm global: external deps hoisted, but @gsd/* stays in packageRoot/node_modules
+ * - npm/bun global: deps hoisted to dirname(packageRoot), including @gwd/* → simple symlink
+ * - pnpm global: external deps hoisted, but @gwd/* stays in packageRoot/node_modules
  *   → merged directory with symlinks from both roots (#3529, #3564)
  */
 function ensureNodeModulesSymlink(agentDir: string): void {
@@ -349,7 +351,7 @@ function ensureNodeModulesSymlink(agentDir: string): void {
     return
   }
 
-  // Global install: check if workspace scopes (@gsd/*) are hoisted.
+  // Global install: check if workspace scopes (@gwd/*) are hoisted.
   // npm/bun hoist everything; pnpm keeps workspace packages internal.
   if (!hasMissingWorkspaceScopes(hoistedNodeModules, internalNodeModules)) {
     // Everything is hoisted — simple symlink to parent node_modules
@@ -361,12 +363,12 @@ function ensureNodeModulesSymlink(agentDir: string): void {
   reconcileMergedNodeModules(agentNodeModules, hoistedNodeModules, internalNodeModules)
 }
 
-/** Check if any @gsd* scopes exist in internal but not in hoisted node_modules */
+/** Check if any @gwd* scopes exist in internal but not in hoisted node_modules */
 export function hasMissingWorkspaceScopes(hoisted: string, internal: string): boolean {
   if (!existsSync(internal)) return false
   try {
     for (const entry of readdirSync(internal, { withFileTypes: true })) {
-      if (entry.isDirectory() && entry.name.startsWith('@gsd') &&
+      if (entry.isDirectory() && entry.name.startsWith('@gwd') &&
           !existsSync(join(hoisted, entry.name))) {
         return true
       }
@@ -394,14 +396,14 @@ function reconcileSymlink(link: string, target: string): void {
   try {
     symlinkSync(target, link, 'junction')
   } catch (err) {
-    console.error(`[gsd] WARN: Failed to symlink ${link} → ${target}: ${err instanceof Error ? err.message : err}`)
+    console.error(`[${CLI_COMMAND}] WARN: Failed to symlink ${link} → ${target}: ${err instanceof Error ? err.message : err}`)
   }
 }
 
 /**
  * Create a real node_modules directory containing symlinks from both the
- * hoisted root (external deps) and internal root (@gsd/* workspace packages).
- * Used for pnpm global installs where @gsd/* isn't hoisted.
+ * hoisted root (external deps) and internal root (@gwd/* workspace packages).
+ * Used for pnpm global installs where @gwd/* isn't hoisted.
  */
 export function reconcileMergedNodeModules(
   agentNodeModules: string,
@@ -410,7 +412,7 @@ export function reconcileMergedNodeModules(
 ): void {
   // Fast path: if already merged for this packageRoot + same directory contents, skip.
   // The fingerprint includes entry names from both roots so `pnpm add/remove` triggers rebuild.
-  const marker = join(agentNodeModules, '.gsd-merged')
+  const marker = join(agentNodeModules, '.gwd-merged')
   const fingerprint = mergedFingerprint(hoisted, internal)
   try {
     if (existsSync(marker) && readFileSync(marker, 'utf-8').trim() === fingerprint) return
@@ -433,17 +435,17 @@ export function reconcileMergedNodeModules(
   // Symlink entries from the hoisted node_modules (external deps)
   try {
     for (const entry of readdirSync(hoisted, { withFileTypes: true })) {
-      // Skip the gsd-pi package itself and dotfiles
+      // Skip the gwd-pi package itself and dotfiles
       if (entry.name === basename(packageRoot)) continue
       if (entry.name.startsWith('.')) continue
       try { symlinkSync(join(hoisted, entry.name), join(agentNodeModules, entry.name), 'junction'); linkedCount++ } catch { /* skip individual */ }
     }
   } catch (err) {
-    console.error(`[gsd] WARN: Failed to read hoisted node_modules at ${hoisted}: ${err instanceof Error ? err.message : err}`)
+    console.error(`[${CLI_COMMAND}] WARN: Failed to read hoisted node_modules at ${hoisted}: ${err instanceof Error ? err.message : err}`)
   }
 
   // Overlay internal node_modules entries that weren't hoisted.
-  // This covers @gsd/* workspace packages AND optional deps like
+  // This covers @gwd/* workspace packages AND optional deps like
   // @anthropic-ai/claude-agent-sdk that npm keeps internal.
   try {
     for (const entry of readdirSync(internal, { withFileTypes: true })) {
@@ -454,7 +456,7 @@ export function reconcileMergedNodeModules(
       try { symlinkSync(join(internal, entry.name), link, 'junction'); linkedCount++ } catch { /* skip individual */ }
     }
   } catch (err) {
-    console.error(`[gsd] WARN: Failed to read internal node_modules at ${internal}: ${err instanceof Error ? err.message : err}`)
+    console.error(`[${CLI_COMMAND}] WARN: Failed to read internal node_modules at ${internal}: ${err instanceof Error ? err.message : err}`)
   }
 
   // Only stamp marker if we actually linked something — avoids caching a broken state
@@ -548,11 +550,11 @@ function pruneRemovedBundledExtensions(
 }
 
 /**
- * Syncs all bundled resources to agentDir (~/.gsd/agent/) on every launch.
+ * Syncs all bundled resources to agentDir (~/.gwd/agent/) on every launch.
  *
- * - extensions/ → ~/.gsd/agent/extensions/   (overwrite when version changes)
- * - agents/     → ~/.gsd/agent/agents/        (overwrite when version changes)
- * - GSD-WORKFLOW.md → ~/.gsd/agent/GSD-WORKFLOW.md (fallback for env var miss)
+ * - extensions/ → ~/.gwd/agent/extensions/   (overwrite when version changes)
+ * - agents/     → ~/.gwd/agent/agents/        (overwrite when version changes)
+ * - GWD-WORKFLOW.md → ~/.gwd/agent/GWD-WORKFLOW.md (fallback for env var miss)
  *
  * Skills are NOT synced here. They are installed by the user via the
  * skills.sh CLI (`npx skills add <repo>`) into ~/.agents/skills/ — the
@@ -563,7 +565,7 @@ function pruneRemovedBundledExtensions(
  * After `npm update -g @glittercowboy/gsd`, versions will differ and the
  * copy runs once to land the new resources.
  *
- * Inspectable: `ls ~/.gsd/agent/extensions/`
+ * Inspectable: `ls ~/.gwd/agent/extensions/`
  */
 export function initResources(agentDir: string, skillsDir: string = join(homedir(), '.agents', 'skills')): void {
   mkdirSync(agentDir, { recursive: true })
@@ -579,9 +581,9 @@ export function initResources(agentDir: string, skillsDir: string = join(homedir
   pruneRemovedBundledExtensions(manifest, agentDir)
   pruneStaleSiblingFiles(bundledExtensionsDir, extensionsDir)
 
-  // Ensure ~/.gsd/agent/node_modules symlinks to GSD's node_modules on EVERY
+  // Ensure ~/.gwd/agent/node_modules symlinks to GSD's node_modules on EVERY
   // launch, not just during resource syncs. A stale/broken symlink makes ALL
-  // extensions fail to resolve @gsd/* packages, rendering GSD non-functional.
+  // extensions fail to resolve @gwd/* packages, rendering GSD non-functional.
   ensureNodeModulesSymlink(agentDir)
 
   // Migrate legacy skills on every launch (not gated by manifest) so that
@@ -606,11 +608,11 @@ export function initResources(agentDir: string, skillsDir: string = join(homedir
   syncResourceDir(join(resourcesDir, 'agents'), join(agentDir, 'agents'))
   syncResourceDir(join(resourcesDir, 'skills'), skillsDir)
 
-  // Sync GSD-WORKFLOW.md to agentDir as a fallback for when GSD_WORKFLOW_PATH
+  // Sync GWD-WORKFLOW.md to agentDir as a fallback for when GWD_WORKFLOW_PATH
   // env var is not set (e.g. fork/dev builds, alternative entry points).
-  const workflowSrc = join(resourcesDir, 'GSD-WORKFLOW.md')
+  const workflowSrc = join(resourcesDir, 'GWD-WORKFLOW.md')
   if (existsSync(workflowSrc)) {
-    try { copyFileSync(workflowSrc, join(agentDir, 'GSD-WORKFLOW.md')) } catch { /* non-fatal */ }
+    try { copyFileSync(workflowSrc, join(agentDir, 'GWD-WORKFLOW.md')) } catch { /* non-fatal */ }
   }
 
   // Ensure all newly copied files are owner-writable so the next run can
@@ -625,7 +627,7 @@ export function initResources(agentDir: string, skillsDir: string = join(homedir
 
 /**
  * One-time migration: copy user-customized skills from the old
- * ~/.gsd/agent/skills/ directory into ~/.agents/skills/.
+ * ~/.gwd/agent/skills/ directory into ~/.agents/skills/.
  *
  * The migration is conservative:
  *  - Only skill directories containing a SKILL.md are considered.
@@ -689,7 +691,7 @@ function migrateSkillsToEcosystemDir(agentDir: string): void {
         if (isSymlink) {
           // Recreate the symlink in the ecosystem directory using an absolute
           // target. Relative symlinks would resolve from the new parent dir
-          // (~/.agents/skills/) instead of the original (~/.gsd/agent/skills/),
+          // (~/.agents/skills/) instead of the original (~/.gwd/agent/skills/),
           // pointing to the wrong location.
           const rawTarget = readlinkSync(sourcePath)
           const absTarget = resolve(dirname(sourcePath), rawTarget)
@@ -764,7 +766,7 @@ function collectRelativeFiles(rootDir: string): Set<string> {
 
 /**
  * Constructs a DefaultResourceLoader that loads extensions from both
- * ~/.gsd/agent/extensions/ (GSD's default) and ~/.pi/agent/extensions/ (pi's default).
+ * ~/.gwd/agent/extensions/ (GWD's default) and ~/.pi/agent/extensions/ (pi's default).
  * This allows users to use extensions from either location.
  */
 // Cache bundled extension keys at module load — avoids re-scanning the extensions

@@ -1146,8 +1146,8 @@ test("executeSummarySave leaves sibling CONTEXT-DRAFT intact for non-CONTEXT art
 
 test("executeSummarySave CONTEXT HARD BLOCK clears after write-gate state file is deleted (#4343)", async () => {
   const base = makeTmpBase();
-  const originalEnv = process.env.GSD_PERSIST_WRITE_GATE_STATE;
-  process.env.GSD_PERSIST_WRITE_GATE_STATE = "1";
+  const originalEnv = process.env.GWD_PERSIST_WRITE_GATE_STATE;
+  process.env.GWD_PERSIST_WRITE_GATE_STATE = "1";
   try {
     openTestDb(base);
     clearDiscussionFlowState(base);
@@ -1197,9 +1197,9 @@ test("executeSummarySave CONTEXT HARD BLOCK clears after write-gate state file i
     assert.equal(unblocked.details.operation, "save_summary");
   } finally {
     if (originalEnv === undefined) {
-      delete process.env.GSD_PERSIST_WRITE_GATE_STATE;
+      delete process.env.GWD_PERSIST_WRITE_GATE_STATE;
     } else {
-      process.env.GSD_PERSIST_WRITE_GATE_STATE = originalEnv;
+      process.env.GWD_PERSIST_WRITE_GATE_STATE = originalEnv;
     }
     clearDiscussionFlowState(base);
     closeDatabase();

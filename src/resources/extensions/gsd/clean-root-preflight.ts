@@ -132,7 +132,7 @@ export function postflightPopStash(
   try {
     stashRef = findPreflightStashRef(basePath, milestoneId, stashMarker);
     if (!stashRef) {
-      const msg = `No matching GSD preflight stash found for milestone ${milestoneId}; leaving stash list untouched.`;
+      const msg = `No matching GWD preflight stash found for milestone ${milestoneId}; leaving stash list untouched.`;
       logWarning("preflight", msg);
       notify(msg, "warning");
       return {
@@ -160,7 +160,7 @@ export function postflightPopStash(
     // Log a warning — the user needs to resolve manually, but the merge succeeded.
     const restoreHint = stashRef
       ? `Run "git stash pop ${stashRef}" or "git stash apply ${stashRef}" manually to restore the correct stash.`
-      : `Run "git stash list" to find the matching GSD preflight stash before restoring manually.`;
+      : `Run "git stash list" to find the matching GWD preflight stash before restoring manually.`;
     const msg = `git stash pop ${stashRef ?? ""}`.trim() + ` failed after merge of milestone ${milestoneId}: ${err instanceof Error ? err.message : String(err)}. ${restoreHint}`;
     logWarning("preflight", msg);
     notify(msg, "warning");

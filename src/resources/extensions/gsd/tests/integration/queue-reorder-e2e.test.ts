@@ -313,7 +313,7 @@ test('E2E: DB-backed path respects queue order (#2556)', async () => {
         insertMilestone({ id: 'M006', title: 'Earlier', status: 'active' });
         insertMilestone({ id: 'M008', title: 'Later', status: 'active' });
 
-        // Set queue order: M008 should come FIRST (user reordered via /gsd queue)
+        // Set queue order: M008 should come FIRST (user reordered via /gwd queue)
         saveQueueOrder(base, ['M008', 'M006']);
 
         // deriveState should pick M008 (queue-first), not M006 (ID-first)

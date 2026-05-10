@@ -2,7 +2,7 @@
  * stash-queued-context-files.test.ts — Regression test for #2505.
  *
  * When mergeMilestoneToMain runs `git stash push --include-untracked`,
- * untracked `.gsd/milestones/M<queued>/` directories created by `/gsd queue`
+ * untracked `.gsd/milestones/M<queued>/` directories created by `/gwd queue`
  * are swept into the stash. If stash pop fails (conflict on tracked files),
  * the queued milestone CONTEXT files are permanently lost.
  *
@@ -191,7 +191,7 @@ test("#2505: mergeMilestoneToMain preserves queued CONTEXT files (not swept into
     run("git checkout milestone/M015", wtPath);
     run(`git merge --no-ff "${sliceBranch}" -m "merge S01"`, wtPath);
 
-    // Simulate `/gsd queue` creating queued milestone CONTEXT files at the
+    // Simulate `/gwd queue` creating queued milestone CONTEXT files at the
     // project root. These are untracked, and in repos with tracked .gsd/
     // files they are NOT gitignored.
     const m013Dir = join(repo, ".gsd", "milestones", "M013");
@@ -223,7 +223,7 @@ test("#2505: mergeMilestoneToMain preserves queued CONTEXT files (not swept into
 
     const result = mergeMilestoneToMain(repo, "M015", roadmap);
     assert.ok(
-      result.commitMessage.includes("GSD-Milestone: M015"),
+      result.commitMessage.includes("GWD-Milestone: M015"),
       "merge should succeed",
     );
 
@@ -309,7 +309,7 @@ test("#2505: pre-merge stash handles symlinked .gsd without traversing it", () =
       { id: "S01", title: "Feature" },
     ]));
 
-    assert.ok(result.commitMessage.includes("GSD-Milestone: M016"), "merge should succeed");
+    assert.ok(result.commitMessage.includes("GWD-Milestone: M016"), "merge should succeed");
     assert.ok(existsSync(join(repo, "app.ts")), "milestone code merged to main");
     assert.equal(lstatSync(join(repo, ".gsd")).isSymbolicLink(), true, ".gsd symlink remains in place");
     assert.ok(existsSync(join(queuedDir, "M017-CONTEXT.md")), "queued context remains in external state");
@@ -427,7 +427,7 @@ test("#4573: gitignored .gsd symlink does not break pre-merge stash", () => {
     );
 
     assert.ok(
-      result.commitMessage.includes("GSD-Milestone: M001"),
+      result.commitMessage.includes("GWD-Milestone: M001"),
       "merge must succeed despite gitignored .gsd symlink",
     );
     assert.ok(existsSync(join(repo, "app.ts")), "milestone code merged to main");

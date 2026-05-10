@@ -1,5 +1,5 @@
 /**
- * GSD-2 / guided-flow — regression tests for #4573
+ * GWD-2 / guided-flow — regression tests for #4573
  *
  * Covers two recovery paths:
  *   - maybeHandleReadyPhraseWithoutFiles: nudge when LLM emits
@@ -385,7 +385,7 @@ describe("#4573 maybeHandleReadyPhraseWithoutFiles", () => {
       maybeHandleReadyPhraseWithoutFiles(event);
       maybeHandleReadyPhraseWithoutFiles(event); // clears entry
 
-      // New /gsd run — re-seeds entry; counter must be 0 again
+      // New /gwd run — re-seeds entry; counter must be 0 again
       cap.messages.length = 0;
       setPendingAutoStart(base, {
         basePath: base,

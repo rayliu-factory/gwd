@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Shared Context Mode tool result helpers.
 
 export interface ToolExecutionResult {

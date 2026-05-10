@@ -1,4 +1,4 @@
-// GSD-2 Web — Session events SSE route: registers streams with shutdown gate
+// GWD-2 Web — Session events SSE route: registers streams with shutdown gate
 import {
   collectCurrentProjectOnboardingState,
   getProjectBridgeServiceForCwd,

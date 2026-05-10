@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Regression tests for the TUI header lifecycle fixes —
 // header is suppressed (zero lines) when auto-mode activates, the wizard
 // step status badge is cleared, the NEXT-mode footer hint renders when
@@ -163,12 +163,14 @@ test("auto-dashboard widget render output includes Ctrl+N guidance when isStepMo
     bold: (text: string) => text,
   };
   const component = widgetFactory!(fakeTui, fakeTheme);
-  const lines = component.render(120);
+  try {
+    const lines = component.render(120);
 
-  const hasStepHint = lines.some((line: string) => line.includes("Ctrl+N to advance"));
-  assert.ok(hasStepHint, `expected step-mode hint in render output; got:\n${lines.join("\n")}`);
-
-  if (component.dispose) component.dispose();
+    const hasStepHint = lines.some((line: string) => line.includes("Ctrl+N to advance"));
+    assert.ok(hasStepHint, `expected step-mode hint in render output; got:\n${lines.join("\n")}`);
+  } finally {
+    if (component.dispose) component.dispose();
+  }
 });
 
 test("auto-dashboard widget render output omits Ctrl+N guidance when isStepMode is false", (t) => {
@@ -201,12 +203,14 @@ test("auto-dashboard widget render output omits Ctrl+N guidance when isStepMode 
     bold: (text: string) => text,
   };
   const component = widgetFactory!(fakeTui, fakeTheme);
-  const lines = component.render(120);
+  try {
+    const lines = component.render(120);
 
-  const hasStepHint = lines.some((line: string) => line.includes("Ctrl+N to advance"));
-  assert.equal(hasStepHint, false, "step-mode hint must NOT appear when isStepMode is false");
-
-  if (component.dispose) component.dispose();
+    const hasStepHint = lines.some((line: string) => line.includes("Ctrl+N to advance"));
+    assert.equal(hasStepHint, false, "step-mode hint must NOT appear when isStepMode is false");
+  } finally {
+    if (component.dispose) component.dispose();
+  }
 });
 
 test("completion dashboard keeps final milestone roll-up in the progress widget", (t) => {
@@ -256,24 +260,26 @@ test("completion dashboard keeps final milestone roll-up in the progress widget"
     bold: (text: string) => text,
   };
   const component = widgetFactory!(fakeTui, fakeTheme);
-  const output = component.render(140).join("\n");
+  try {
+    const output = component.render(140).join("\n");
 
-  assert.match(output, /Milestone M003 roll-up/);
-  assert.match(output, /Budget tracking/);
-  assert.match(output, /Outcome/);
-  assert.match(output, /Added milestone budget warning output/);
-  assert.match(output, /What changed/);
-  assert.match(output, /Budget warnings appear/);
-  assert.match(output, /Users can see what shipped/);
-  assert.match(output, /Keep completion closeout/);
-  assert.match(output, /Verification/);
-  assert.match(output, /Files: src\/resources\/extensions\/gsd\/auto-dashboard\.ts/);
-  assert.match(output, /Run totals 3\/3 slices/);
-  assert.match(output, /100% cache hit/);
-  assert.match(output, /\$21\.29/);
-  assert.match(output, /1\.0M tokens/);
-  assert.match(output, /8 units/);
-  assert.doesNotMatch(output, /COMPLETE-MILESTONE/);
-
-  if (component.dispose) component.dispose();
+    assert.match(output, /Milestone M003 roll-up/);
+    assert.match(output, /Budget tracking/);
+    assert.match(output, /Outcome/);
+    assert.match(output, /Added milestone budget warning output/);
+    assert.match(output, /What changed/);
+    assert.match(output, /Budget warnings appear/);
+    assert.match(output, /Users can see what shipped/);
+    assert.match(output, /Keep completion closeout/);
+    assert.match(output, /Verification/);
+    assert.match(output, /Files: src\/resources\/extensions\/gsd\/auto-dashboard\.ts/);
+    assert.match(output, /Run totals 3\/3 slices/);
+    assert.match(output, /100% cache hit/);
+    assert.match(output, /\$21\.29/);
+    assert.match(output, /1\.0M tokens/);
+    assert.match(output, /8 units/);
+    assert.doesNotMatch(output, /COMPLETE-MILESTONE/);
+  } finally {
+    if (component.dispose) component.dispose();
+  }
 });

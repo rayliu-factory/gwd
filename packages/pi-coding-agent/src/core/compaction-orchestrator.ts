@@ -9,9 +9,9 @@
  * - Branch summarization abort coordination
  */
 
-import type { Agent } from "@gsd/pi-agent-core";
-import type { AssistantMessage, Model } from "@gsd/pi-ai";
-import { isContextOverflow } from "@gsd/pi-ai";
+import type { Agent } from "@gwd/pi-agent-core";
+import type { AssistantMessage, Model } from "@gwd/pi-ai";
+import { isContextOverflow } from "@gwd/pi-ai";
 import {
 	type CompactionResult,
 	CompactionProducedNoSummaryError,

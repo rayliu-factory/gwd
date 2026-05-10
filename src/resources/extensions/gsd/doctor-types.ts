@@ -50,7 +50,7 @@ export type DoctorIssueCode =
   // Git / worktree integrity checks
   | "integration_branch_missing"
   | "worktree_directory_orphaned"
-  // GSD state structural checks
+  // GWD state structural checks
   | "circular_slice_dependency"
   | "orphaned_slice_directory"
   | "missing_slice_dir"
@@ -116,7 +116,7 @@ export interface DoctorReport {
   basePath: string;
   issues: DoctorIssue[];
   fixesApplied: string[];
-  /** Per-domain check durations in milliseconds. Present on explicit /gsd doctor runs. */
+  /** Per-domain check durations in milliseconds. Present on explicit /gwd doctor runs. */
   timing?: { git: number; runtime: number; environment: number; gsdState: number };
 }
 

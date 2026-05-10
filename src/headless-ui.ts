@@ -8,7 +8,7 @@
 
 import type { Readable } from 'node:stream'
 
-import { RpcClient, attachJsonlLineReader } from '@gsd/pi-coding-agent'
+import { RpcClient, attachJsonlLineReader } from '@gwd/pi-coding-agent'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -303,8 +303,8 @@ export function formatProgress(event: Record<string, unknown>, ctx: ProgressCont
         // Bold important notifications
         const isImportant = /^(committed:|verification gate:|milestone|blocked:)/i.test(msg)
         return isImportant
-          ? `${c.bold}[gsd]     ${msg}${c.reset}`
-          : `[gsd]     ${msg}`
+          ? `${c.bold}[gwd]     ${msg}${c.reset}`
+          : `[gwd]     ${msg}`
       }
 
       if (method === 'setStatus') {

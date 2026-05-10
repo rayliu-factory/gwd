@@ -1,4 +1,4 @@
-// GSD Compaction Snapshot — writes a ≤2 KB markdown digest of durable
+// GWD Compaction Snapshot — writes a ≤2 KB markdown digest of durable
 // project state before the session context is compacted. On resume, an
 // agent can `gsd_resume` (or Read .gsd/last-snapshot.md) to re-orient
 // without re-deriving the same memories.
@@ -45,7 +45,7 @@ export function buildSnapshot(sources: SnapshotSources, opts: BuildSnapshotOptio
   const maxExec = opts.maxExec ?? 5;
 
   const lines: string[] = [];
-  lines.push(`# GSD context snapshot (${sources.generatedAt.toISOString()})`);
+  lines.push(`# GWD context snapshot (${sources.generatedAt.toISOString()})`);
   lines.push("");
 
   if (sources.activeContext && sources.activeContext.trim().length > 0) {

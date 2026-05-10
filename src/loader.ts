@@ -1,8 +1,15 @@
 #!/usr/bin/env node
-// GSD Startup Loader
+// GWD Startup Loader
 import { fileURLToPath } from 'url'
 import { dirname, resolve, join, relative, delimiter } from 'path'
 import { existsSync, readFileSync, readdirSync, statSync, mkdirSync, symlinkSync, cpSync } from 'fs'
+import {
+  CLI_COMMAND,
+  GWD_VERSION_ENV,
+  PRODUCT_DISPLAY_NAME,
+  PRODUCT_FULL_NAME,
+  PRODUCT_PACKAGE_NAME,
+} from './namespace.js'
 
 // Fast-path: handle --version/-v and --help/-h before importing any heavy
 // dependencies. This avoids loading the entire pi-coding-agent barrel import
@@ -11,7 +18,7 @@ const gsdRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const args = process.argv.slice(2)
 const firstArg = args[0]
 
-// Read package.json once — reused for version, banner, and GSD_VERSION below
+// Read package.json once — reused for version, banner, and GWD_VERSION below
 let gsdVersion = '0.0.0'
 try {
   const pkg = JSON.parse(readFileSync(join(gsdRoot, 'package.json'), 'utf-8'))
@@ -45,7 +52,7 @@ if (firstArg === '--help' || firstArg === '-h') {
   const nodeCheck = checkNodeVersion(process.versions.node, MIN_NODE_MAJOR)
   if (!nodeCheck.ok) {
     process.stderr.write(
-      `\n${red}${bold}Error:${reset} GSD requires Node.js >= ${MIN_NODE_MAJOR}.0.0\n` +
+      `\n${red}${bold}Error:${reset} ${PRODUCT_DISPLAY_NAME} requires Node.js >= ${MIN_NODE_MAJOR}.0.0\n` +
       `       You are running Node.js ${process.versions.node}\n\n` +
       `${dim}Install a supported version:${reset}\n` +
       `  nvm install ${MIN_NODE_MAJOR}   ${dim}# if using nvm${reset}\n` +
@@ -60,7 +67,7 @@ if (firstArg === '--help' || firstArg === '-h') {
   const gitOk = requireGit((cmd, args) => execFileSync(cmd, args as string[], { stdio: 'ignore' }))
   if (!gitOk) {
     process.stderr.write(
-      `\n${red}${bold}Error:${reset} GSD requires git but it was not found on PATH.\n\n` +
+      `\n${red}${bold}Error:${reset} ${PRODUCT_DISPLAY_NAME} requires git but it was not found on PATH.\n\n` +
       `${dim}Install git:${reset}\n` +
       `  https://git-scm.com/downloads\n\n`
     )
@@ -77,10 +84,10 @@ import { loadRegistry, readManifestFromEntryPath, isExtensionEnabled } from './e
 import { applyLoaderCliEntrypointEnv } from './loader-entrypoint.js'
 import { renderLogo } from './logo.js'
 
-// pkg/ is a shim directory: contains gsd's piConfig (package.json) and pi's
+// pkg/ is a shim directory: contains gwd's piConfig (package.json) and pi's
 // theme assets (dist/modes/interactive/theme/) without a src/ directory.
 // This allows config.js to:
-//   1. Read piConfig.name → "gsd" (branding)
+//   1. Read piConfig.name → "gwd" (branding)
 //   2. Resolve themes via dist/ (no src/ present → uses dist path)
 const pkgDir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'pkg')
 
@@ -88,10 +95,10 @@ const pkgDir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'pkg')
 // reads to determine APP_NAME and CONFIG_DIR_NAME
 process.env.PI_PACKAGE_DIR = pkgDir
 process.env.PI_SKIP_VERSION_CHECK = '1'  // GSD runs its own update check in cli.ts — suppress pi's
-process.title = 'gsd'
+process.title = CLI_COMMAND
 
-// Print branded banner on first launch (before ~/.gsd/ exists).
-// Set GSD_FIRST_RUN_BANNER so cli.ts skips the duplicate welcome screen.
+// Print branded banner on first launch (before ~/.gwd/ exists).
+// Set GWD_FIRST_RUN_BANNER so cli.ts skips the duplicate welcome screen.
 if (!existsSync(appRoot)) {
   const cyan  = '\x1b[36m'
   const green = '\x1b[32m'
@@ -101,21 +108,21 @@ if (!existsSync(appRoot)) {
   process.stderr.write(
     renderLogo(colorCyan) +
     '\n' +
-    `  Get Shit Done ${dim}v${gsdVersion}${reset}\n` +
+    `  ${PRODUCT_FULL_NAME} ${dim}v${gsdVersion}${reset}\n` +
     `  ${green}Welcome.${reset} Setting up your environment...\n\n`
   )
-  process.env.GSD_FIRST_RUN_BANNER = '1'
+  process.env.GWD_FIRST_RUN_BANNER = '1'
 }
 
-// GSD_CODING_AGENT_DIR — tells pi's getAgentDir() to return ~/.gsd/agent/ instead of ~/.gsd/agent/
-process.env.GSD_CODING_AGENT_DIR = agentDir
+// GWD_CODING_AGENT_DIR — tells pi's getAgentDir() to return ~/.gwd/agent/
+process.env.GWD_CODING_AGENT_DIR = agentDir
 
-// GSD_PKG_ROOT — absolute path to gsd-pi package root. Used by deployed extensions
+// GWD_PKG_ROOT — absolute path to the gwd-pi package root. Used by deployed extensions
 // (e.g. auto.ts resume path) to import modules like resource-loader.js that live
-// in the package tree, not in the deployed ~/.gsd/agent/ tree.
-process.env.GSD_PKG_ROOT = gsdRoot
+// in the package tree, not in the deployed ~/.gwd/agent/ tree.
+process.env.GWD_PKG_ROOT = gsdRoot
 
-// RTK environment — make ~/.gsd/agent/bin visible to all child-process paths,
+// RTK environment — make ~/.gwd/agent/bin visible to all child-process paths,
 // not just the bash tool, and force-disable RTK telemetry for GSD-managed use.
 applyRtkProcessEnv(process.env)
 
@@ -133,24 +140,24 @@ process.env.NODE_PATH = [gsdNodeModules, process.env.NODE_PATH]
 const { Module } = await import('module');
 (Module as any)._initPaths?.()
 
-// GSD_VERSION — expose package version so extensions can display it
-process.env.GSD_VERSION = gsdVersion
+// GWD_VERSION — expose package version so extensions can display it
+process.env[GWD_VERSION_ENV] = gsdVersion
 
-// GSD_BIN_PATH — absolute path to the CLI entrypoint, used by patched
+// GWD_BIN_PATH — absolute path to the CLI entrypoint, used by patched
 // subagent/parallel workers to spawn gsd instead of pi when dispatching
 // workflow tasks. In source-dev mode this must remain scripts/dev-cli.js, not
 // src/loader.ts, because child processes need the --import resolve-ts wrapper.
 applyLoaderCliEntrypointEnv(process.env, { gsdRoot, invokedBinPath: process.argv[1] })
 
-// GSD_WORKFLOW_PATH — absolute path to bundled GSD-WORKFLOW.md, used by patched gsd extension
+// GWD_WORKFLOW_PATH — absolute path to bundled GWD-WORKFLOW.md, used by patched gsd extension
 // when dispatching workflow prompts. Prefers dist/resources/ (stable, set at build time)
 // over src/resources/ (live working tree) — see resource-loader.ts for rationale.
 const resourcesDir = resolveBundledResourcesDirFromPackageRoot(gsdRoot)
-process.env.GSD_WORKFLOW_PATH = join(resourcesDir, 'GSD-WORKFLOW.md')
+process.env.GWD_WORKFLOW_PATH = join(resourcesDir, 'GWD-WORKFLOW.md')
 
-// GSD_BUNDLED_EXTENSION_PATHS — dynamically discovered bundled extension entry points.
+// GWD_BUNDLED_EXTENSION_PATHS — dynamically discovered bundled extension entry points.
 // Uses the shared discoverExtensionEntryPaths() to scan the bundled resources
-// directory, then remaps discovered paths to agentDir (~/.gsd/agent/extensions/)
+// directory, then remaps discovered paths to agentDir (~/.gwd/agent/extensions/)
 // where initResources() will sync them.
 const bundledExtDir = join(resourcesDir, 'extensions')
 const agentExtDir = join(agentDir, 'extensions')
@@ -163,7 +170,7 @@ const discoveredExtensionPaths = discoverExtensionEntryPaths(bundledExtDir)
     return isExtensionEnabled(registry, manifest.id)
   })
 
-process.env.GSD_BUNDLED_EXTENSION_PATHS = serializeBundledExtensionPaths(discoveredExtensionPaths)
+process.env.GWD_BUNDLED_EXTENSION_PATHS = serializeBundledExtensionPaths(discoveredExtensionPaths)
 
 // Respect HTTP_PROXY / HTTPS_PROXY / NO_PROXY env vars for all outbound requests.
 // pi-coding-agent's cli.ts sets this, but GSD bypasses that entry point — so we
@@ -175,15 +182,15 @@ if (process.env.HTTP_PROXY || process.env.HTTPS_PROXY || process.env.http_proxy 
 }
 
 // Ensure workspace packages are linked (or copied on Windows) before importing
-// cli.js (which imports @gsd/*).
+// cli.js (which imports @gwd/*).
 // npm postinstall handles this normally, but npx --ignore-scripts skips postinstall.
 // On Windows without Developer Mode or admin rights, symlinkSync will throw even for
 // 'junction' type — so we fall back to cpSync (a full directory copy) which works
 // everywhere without elevated permissions.
 // Discover linkable workspace packages by scanning packages/*/package.json for
-// `gsd.linkable === true`. This is the single source of truth — the same list
+// `gwd.linkable === true`. This is the single source of truth — the same list
 // read by scripts/link-workspace-packages.cjs and scripts/validate-pack.js.
-// Adding a new linkable package requires only setting `gsd.linkable` in its
+// Adding a new linkable package requires only setting `gwd.linkable` in its
 // package.json; there is no enumeration to keep in sync here.
 const packagesDir = join(gsdRoot, 'packages')
 type WsPkg = { dir: string; scope: string; name: string }
@@ -197,9 +204,9 @@ try {
       if (!existsSync(pkgJsonPath)) continue
       try {
         const pkg = JSON.parse(readFileSync(pkgJsonPath, 'utf-8'))
-        const gsd = pkg.gsd
-        if (!gsd || gsd.linkable !== true) continue
-        if (gsd.scope && gsd.name) wsPackages.push({ dir, scope: gsd.scope, name: gsd.name })
+        const gwd = pkg.gwd
+        if (!gwd || gwd.linkable !== true) continue
+        if (gwd.scope && gwd.name) wsPackages.push({ dir, scope: gwd.scope, name: gwd.name })
       } catch { /* ignore malformed package.json */ }
     }
   }
@@ -222,25 +229,25 @@ try {
   }
 } catch { /* non-fatal */ }
 
-const gsdScopeDir = join(gsdNodeModules, '@gsd')
+const gwdScopeDir = join(gsdNodeModules, '@gwd')
 
 // Validate critical workspace packages are resolvable. If still missing after the
 // symlink+copy attempts, emit a clear diagnostic instead of a cryptic
 // ERR_MODULE_NOT_FOUND from deep inside cli.js.
 const criticalPackages = ['pi-coding-agent']
-const missingPackages = criticalPackages.filter(pkg => !existsSync(join(gsdScopeDir, pkg)))
+const missingPackages = criticalPackages.filter(pkg => !existsSync(join(gwdScopeDir, pkg)))
 if (missingPackages.length > 0) {
-  const missing = missingPackages.map(p => `@gsd/${p}`).join(', ')
+  const missing = missingPackages.map(p => `@gwd/${p}`).join(', ')
   process.stderr.write(
-    `\nError: GSD installation is broken — missing packages: ${missing}\n\n` +
+    `\nError: ${PRODUCT_DISPLAY_NAME} installation is broken — missing packages: ${missing}\n\n` +
     `This is usually caused by one of:\n` +
-    `  • An outdated version installed from npm (run: npm install -g gsd-pi@latest)\n` +
+    `  • An outdated version installed from npm (run: npm install -g ${PRODUCT_PACKAGE_NAME}@latest)\n` +
     `  • The packages/ directory was excluded from the installed tarball\n` +
     `  • A filesystem error prevented linking or copying the workspace packages\n\n` +
     `Fix it by reinstalling:\n\n` +
-    `  npm install -g gsd-pi@latest\n\n` +
+    `  npm install -g ${PRODUCT_PACKAGE_NAME}@latest\n\n` +
     `If the issue persists, please open an issue at:\n` +
-    `  https://github.com/gsd-build/gsd-2/issues\n`
+    `  https://github.com/gwd-build/gwd-2/issues\n`
   )
   process.exit(1)
 }

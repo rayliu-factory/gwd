@@ -2,12 +2,12 @@
 // Verifies that activeInferenceModel is set before streaming begins and
 // cleared after streaming completes — observed via the streamFn seam and
 // post-condition, not the source text.
-// Regression test for https://github.com/gsd-build/gsd-2/issues/1844 Bug 2
+// Regression test for https://github.com/gwd-build/gwd-2/issues/1844 Bug 2
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { Agent } from "./agent.ts";
-import { getModel, type AssistantMessageEventStream } from "@gsd/pi-ai";
+import { getModel, type AssistantMessageEventStream } from "@gwd/pi-ai";
 
 function makeDoneStream(modelId: string): AssistantMessageEventStream {
 	const usage = {

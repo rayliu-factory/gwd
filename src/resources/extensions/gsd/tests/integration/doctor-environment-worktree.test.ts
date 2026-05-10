@@ -123,8 +123,8 @@ describe('doctor-environment-worktree', async () => {
       assert.deepStrictEqual(depsCheck!.status, "error", "missing node_modules is an error for non-worktree");
     });
 
-    // ── GSD_WORKTREE env var detection ─────────────────────────────────
-    test('GSD_WORKTREE env: should resolve project root node_modules', () => {
+    // ── GWD_WORKTREE env var detection ─────────────────────────────────
+    test('GWD_WORKTREE env: should resolve project root node_modules', () => {
       const projectRoot = createDir({
         "package.json": JSON.stringify({ name: "test-project" }),
       });
@@ -132,26 +132,26 @@ describe('doctor-environment-worktree', async () => {
       cleanups.push(projectRoot);
 
       // Create a directory that doesn't have .gsd/worktrees in path but
-      // has GSD_WORKTREE env pointing to project root
+      // has GWD_WORKTREE env pointing to project root
       const someDir = createDir({
         "package.json": JSON.stringify({ name: "test-project" }),
       });
       cleanups.push(someDir);
 
-      const origEnv = process.env.GSD_WORKTREE;
+      const origEnv = process.env.GWD_WORKTREE;
       try {
-        process.env.GSD_WORKTREE = projectRoot;
+        process.env.GWD_WORKTREE = projectRoot;
         const results = runEnvironmentChecks(someDir);
         const depsCheck = results.find(r => r.name === "dependencies");
         assert.ok(
           depsCheck === undefined || depsCheck.status !== "error",
-          "GSD_WORKTREE env allows fallback to project root node_modules",
+          "GWD_WORKTREE env allows fallback to project root node_modules",
         );
       } finally {
         if (origEnv === undefined) {
-          delete process.env.GSD_WORKTREE;
+          delete process.env.GWD_WORKTREE;
         } else {
-          process.env.GSD_WORKTREE = origEnv;
+          process.env.GWD_WORKTREE = origEnv;
         }
       }
     });

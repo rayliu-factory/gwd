@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-// loadPrompt reads from ~/.gsd/agent/extensions/gsd/prompts/ (main checkout).
+// loadPrompt reads from ~/.gwd/agent/extensions/gsd/prompts/ (main checkout).
 // In a worktree the file may not exist there yet, so we resolve prompts
 // relative to this test file's location (the worktree copy).
 const __dirname = dirname(fileURLToPath(import.meta.url));

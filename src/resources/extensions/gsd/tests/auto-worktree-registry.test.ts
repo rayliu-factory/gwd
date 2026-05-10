@@ -1,4 +1,4 @@
-// GSD-2 + Unit tests for the workspace registry that replaced the originalBase singleton
+// GWD-2 + Unit tests for the workspace registry that replaced the originalBase singleton
 
 import { describe, test, beforeEach } from "node:test";
 import assert from "node:assert/strict";

@@ -1,4 +1,4 @@
-import { writeFileSync, unlinkSync, existsSync, chmodSync } from 'node:fs';
+import { writeFileSync, unlinkSync, existsSync, chmodSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { execSync } from 'node:child_process';
@@ -34,7 +34,7 @@ export type RunCommandFn = (cmd: string) => string;
 
 // --------------- constants ---------------
 
-const LABEL = 'com.gsd.daemon';
+const LABEL = 'com.gwd.daemon';
 const PLIST_FILENAME = `${LABEL}.plist`;
 
 // --------------- helpers ---------------
@@ -67,12 +67,12 @@ function buildEnvPath(nodePath: string): string {
 
 // --------------- plist generation ---------------
 
-/** Generate valid launchd plist XML for the GSD daemon. */
+/** Generate valid launchd plist XML for the GWD daemon. */
 export function generatePlist(opts: PlistOptions): string {
   const home = homedir();
   const workDir = opts.workingDirectory ?? home;
-  const stdoutPath = opts.stdoutPath ?? resolve(home, '.gsd', 'daemon-stdout.log');
-  const stderrPath = opts.stderrPath ?? resolve(home, '.gsd', 'daemon-stderr.log');
+  const stdoutPath = opts.stdoutPath ?? resolve(home, '.gwd', 'daemon-stdout.log');
+  const stderrPath = opts.stderrPath ?? resolve(home, '.gwd', 'daemon-stderr.log');
   const envPath = buildEnvPath(opts.nodePath);
 
   // Forward ANTHROPIC_API_KEY so the orchestrator LLM can authenticate.
@@ -154,6 +154,7 @@ export function install(
     }
   }
 
+  mkdirSync(dirname(plistPath), { recursive: true });
   writeFileSync(plistPath, xml, 'utf-8');
   chmodSync(plistPath, 0o644);
 

@@ -1,4 +1,4 @@
-// GSD Exec Sandbox — tool-output sandboxing for sub-sessions.
+// GWD Exec Sandbox — tool-output sandboxing for sub-sessions.
 //
 // Runs a script in a subprocess and persists stdout/stderr to
 // `.gsd/exec/<id>.{stdout,stderr,meta.json}`. Only a short digest is

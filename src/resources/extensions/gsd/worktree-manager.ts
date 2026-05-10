@@ -1,5 +1,5 @@
 /**
- * GSD Worktree Manager
+ * GWD Worktree Manager
  *
  * Creates and manages git worktrees under .gsd/worktrees/<name>/.
  * Each worktree gets its own branch (worktree/<name>) and a full
@@ -18,7 +18,7 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { join, resolve, sep } from "node:path";
-import { GSDError, GSD_PARSE_ERROR, GSD_STALE_STATE, GSD_LOCK_HELD, GSD_GIT_ERROR, GSD_MERGE_CONFLICT } from "./errors.js";
+import { GSDError, GWD_PARSE_ERROR, GWD_STALE_STATE, GWD_LOCK_HELD, GWD_GIT_ERROR, GWD_MERGE_CONFLICT } from "./errors.js";
 import { logWarning } from "./workflow-logger.js";
 import {
   nativeBranchDelete,
@@ -96,8 +96,8 @@ function normalizeBasePathForWorktreeOps(basePath: string): string {
     normalizeWorktreePathForCompare(resolved) === normalizeWorktreePathForCompare(basePath)
   ) {
     throw new GSDError(
-      GSD_GIT_ERROR,
-      `Cannot resolve project root from worktree path: ${basePath}. Run the command from the project root or set GSD_PROJECT_ROOT.`,
+      GWD_GIT_ERROR,
+      `Cannot resolve project root from worktree path: ${basePath}. Run the command from the project root or set GWD_PROJECT_ROOT.`,
     );
   }
   return resolved;
@@ -227,7 +227,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
 
   // Validate name: alphanumeric, hyphens, underscores only
   if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
-    throw new GSDError(GSD_PARSE_ERROR, `Invalid worktree name "${name}". Use only letters, numbers, hyphens, and underscores.`);
+    throw new GSDError(GWD_PARSE_ERROR, `Invalid worktree name "${name}". Use only letters, numbers, hyphens, and underscores.`);
   }
 
   const wtPath = worktreePath(basePath, name);
@@ -243,7 +243,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
       logWarning("reconcile", `Removing stale worktree directory (no .git file): ${wtPath}`, { worktree: name });
       rmSync(wtPath, { recursive: true, force: true });
     } else {
-      throw new GSDError(GSD_STALE_STATE, `Worktree "${name}" already exists at ${wtPath}`);
+      throw new GSDError(GWD_STALE_STATE, `Worktree "${name}" already exists at ${wtPath}`);
     }
   }
 
@@ -264,7 +264,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
   // `fatal: not a valid object name`. (Issue #4980 HIGH-9)
   if (!startPoint || startPoint.length === 0) {
     throw new GSDError(
-      GSD_GIT_ERROR,
+      GWD_GIT_ERROR,
       "Repository has no commits yet (unborn branch). Make an initial commit before creating worktrees.",
     );
   }
@@ -279,7 +279,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
 
     if (branchInUse) {
       throw new GSDError(
-        GSD_LOCK_HELD,
+        GWD_LOCK_HELD,
         `Branch "${branch}" is already in use by another worktree. ` +
         `Remove the existing worktree first with /worktree remove ${name}.`,
       );
@@ -299,7 +299,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
       const branchIsAncestor = nativeIsAncestor(basePath, branch, startPoint);
       if (!branchIsAncestor) {
         throw new GSDError(
-          GSD_GIT_ERROR,
+          GWD_GIT_ERROR,
           `Branch "${branch}" already exists with commits not reachable from "${startPoint}". ` +
           `Refusing to force-reset — would orphan prior work. ` +
           `If you intend to keep those commits, retry with reuseExistingBranch=true. ` +
@@ -323,7 +323,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
 }
 
 /**
- * List all GSD-managed worktrees.
+ * List all GWD-managed worktrees.
  * Uses native worktree list and filters to those under .gsd/worktrees/.
  */
 export function listWorktrees(basePath: string): WorktreeInfo[] {
@@ -522,7 +522,7 @@ export function removeWorktree(
     wtPath = gitReportedPath;
   } else if (gitReportedPath) {
     console.error(
-      `[GSD] WARNING: git worktree list reported path outside .gsd/worktrees/: ${gitReportedPath}\n` +
+      `[GWD] WARNING: git worktree list reported path outside .gsd/worktrees/: ${gitReportedPath}\n` +
         `  Refusing to use it for removal — falling back to computed path: ${wtPath}`,
     );
     // Still tell git to unregister the worktree entry via its reported path,
@@ -647,7 +647,7 @@ export function removeWorktree(
     // worktree remove), force-remove the git internal worktree metadata first,
     // then remove the filesystem directory. Without this, the .git/worktrees/<name>
     // lock prevents rmSync from cleaning up, and the orphaned worktree directory
-    // causes every subsequent `/gsd auto` to re-enter the stale worktree.
+    // causes every subsequent `/gwd auto` to re-enter the stale worktree.
     if (existsSync(resolvedWtPath)) {
       try {
         const wtInternalDir = join(basePath, ".git", "worktrees", name);
@@ -671,7 +671,7 @@ export function removeWorktree(
     // Path is outside containment — only do a non-force git worktree remove
     // (which refuses to delete dirty worktrees) and never fall back to rmSync.
     console.error(
-      `[GSD] WARNING: Resolved worktree path is outside .gsd/worktrees/: ${resolvedWtPath}\n` +
+      `[GWD] WARNING: Resolved worktree path is outside .gsd/worktrees/: ${resolvedWtPath}\n` +
         `  Skipping forced removal to prevent data loss.`,
     );
     try { nativeWorktreeRemove(basePath, resolvedWtPath, false); } catch (e) { logWarning("worktree", `non-force worktree remove failed for ${resolvedWtPath}: ${e instanceof Error ? e.message : String(e)}`); }
@@ -688,7 +688,7 @@ export function removeWorktree(
 /**
  * Paths to skip in all worktree diffs (internal/runtime artifacts).
  *
- * NOTE: These arrays must stay synchronized with GSD_RUNTIME_PATTERNS in gitignore.ts.
+ * NOTE: These arrays must stay synchronized with GWD_RUNTIME_PATTERNS in gitignore.ts.
  * That file is the canonical source of truth for runtime ignore patterns.
  * This module uses a split representation (paths/exact/prefixes) for efficient matching.
  */
@@ -712,7 +712,7 @@ const SKIP_EXACT = [
 /** File prefixes to skip (for wildcard patterns like completed-units*.json, gsd.db*). */
 const SKIP_PREFIXES = [
   ".gsd/completed-units",
-  ".gsd/gsd.db",
+  ".gsd/gwd.db",
 ];
 
 function shouldSkipPath(filePath: string): boolean {
@@ -747,7 +747,7 @@ function parseDiffNameStatus(entries: { status: string; path: string }[]): Workt
 
 /**
  * Diff the .gsd/ directory between the worktree branch and main branch.
- * Returns a summary of added, modified, and removed GSD artifacts.
+ * Returns a summary of added, modified, and removed GWD artifacts.
  */
 export function diffWorktreeGSD(basePath: string, name: string): WorktreeDiffSummary {
   basePath = normalizeBasePathForWorktreeOps(basePath);
@@ -850,12 +850,12 @@ export function mergeWorktreeToMain(basePath: string, name: string, commitMessag
   const current = nativeGetCurrentBranch(basePath);
 
   if (current !== mainBranch) {
-    throw new GSDError(GSD_GIT_ERROR, `Must be on ${mainBranch} to merge. Currently on ${current}.`);
+    throw new GSDError(GWD_GIT_ERROR, `Must be on ${mainBranch} to merge. Currently on ${current}.`);
   }
 
   const result = nativeMergeSquash(basePath, branch);
   if (!result.success) {
-    throw new GSDError(GSD_MERGE_CONFLICT, `Merge conflicts detected in: ${result.conflicts.join(", ")}`);
+    throw new GSDError(GWD_MERGE_CONFLICT, `Merge conflicts detected in: ${result.conflicts.join(", ")}`);
   }
 
   nativeCommit(basePath, commitMessage);

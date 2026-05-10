@@ -3,12 +3,12 @@
  *
  * Discovers workflow definitions from three tiers (project > global > bundled)
  * in both YAML and markdown formats. Each plugin declares an execution mode
- * that controls how `/gsd workflow <name>` dispatches it:
+ * that controls how `/gwd workflow <name>` dispatches it:
  *
  *   oneshot         — prompt-only, no state or scaffolding
  *   yaml-step       — CustomWorkflowEngine run with GRAPH.yaml
  *   markdown-phase  — STATE.json + phase gates (current md template behavior)
- *   auto-milestone  — hooks into /gsd auto pipeline (full-project only)
+ *   auto-milestone  — hooks into /gwd auto pipeline (full-project only)
  *
  * Precedence: project > global > bundled. Same-named file wins.
  */
@@ -318,7 +318,7 @@ export function resolvePlugin(basePath: string, name: string): WorkflowPlugin | 
 export function listPluginsFormatted(basePath: string): string {
   const plugins = discoverPlugins(basePath);
   if (plugins.size === 0) {
-    return "No workflow plugins found.\n\nRun /gsd workflow new to author one.";
+    return "No workflow plugins found.\n\nRun /gwd workflow new to author one.";
   }
 
   const groups: Record<WorkflowMode, WorkflowPlugin[]> = {
@@ -347,15 +347,15 @@ export function listPluginsFormatted(basePath: string): string {
   }
 
   lines.push("Usage:");
-  lines.push("  /gsd workflow <name>          Run a plugin directly");
-  lines.push("  /gsd workflow info <name>     Show plugin details");
-  lines.push("  /gsd workflow install <src>   Install a plugin from a URL");
+  lines.push("  /gwd workflow <name>          Run a plugin directly");
+  lines.push("  /gwd workflow info <name>     Show plugin details");
+  lines.push("  /gwd workflow install <src>   Install a plugin from a URL");
 
   return lines.join("\n");
 }
 
 /**
- * Format a single plugin's metadata for `/gsd workflow info <name>`.
+ * Format a single plugin's metadata for `/gwd workflow info <name>`.
  */
 export function formatPluginInfo(plugin: WorkflowPlugin): string {
   const lines = [

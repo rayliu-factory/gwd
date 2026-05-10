@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Pure workflow-loop decisions for auto-mode before side-effect adapters run.
 
 export type WorkflowLoopAction =
@@ -331,7 +331,7 @@ export function decideMemoryPressure(input: MemoryPressureInput): MemoryPressure
     stopMessage:
       `Memory pressure: heap at ${input.heapMB}MB / ${input.limitMB}MB (${pct}%). ` +
       `Stopping gracefully to prevent OOM kill after ${input.iteration} iterations. ` +
-      "Resume with /gsd auto to continue from where you left off.",
+      "Resume with /gwd auto to continue from where you left off.",
     turnError: "memory-pressure",
   };
 }

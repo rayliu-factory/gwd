@@ -1,4 +1,4 @@
-// GSD Extension — Regression test for #4996: deferred milestone dir creation
+// GWD Extension — Regression test for #4996: deferred milestone dir creation
 
 import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";

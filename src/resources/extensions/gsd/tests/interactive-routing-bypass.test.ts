@@ -1,4 +1,4 @@
-// GSD Extension — Interactive Routing Bypass Tests
+// GWD Extension — Interactive Routing Bypass Tests
 
 import test, { describe } from "node:test";
 import assert from "node:assert/strict";
@@ -10,7 +10,7 @@ import { resolvePreferredModelConfig } from "../auto-model-selection.ts";
 
 function withRoutingPrefs<T>(fn: () => T): T {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-interactive-routing-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-interactive-routing-home-"));
 
@@ -30,13 +30,13 @@ function withRoutingPrefs<T>(fn: () => T): T {
       ].join("\n"),
       "utf-8",
     );
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
     return fn();
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }

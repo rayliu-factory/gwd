@@ -1,5 +1,5 @@
 /**
- * SessionManager — manages RpcClient lifecycle for background GSD execution.
+ * SessionManager — manages RpcClient lifecycle for background GWD execution.
  *
  * One active session per projectDir. Tracks events in a ring buffer,
  * detects blockers, tracks terminal state, and accumulates cost using
@@ -8,8 +8,8 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, join, delimiter } from 'node:path';
-import { RpcClient } from '@gsd-build/rpc-client';
-import type { SdkAgentEvent, RpcInitResult, RpcCostUpdateEvent, RpcExtensionUIRequest } from '@gsd-build/contracts';
+import { RpcClient } from '@gwd-build/rpc-client';
+import type { SdkAgentEvent, RpcInitResult, RpcCostUpdateEvent, RpcExtensionUIRequest } from '@gwd-build/contracts';
 import type {
   ManagedSession,
   ExecuteOptions,
@@ -78,11 +78,11 @@ export class SessionManager {
   private sessions = new Map<string, ManagedSession>();
 
   /**
-   * Start a new GSD auto-mode session for the given project directory.
+   * Start a new GWD auto-mode session for the given project directory.
    *
    * Rejects if a session already exists for this projectDir.
    * Creates an RpcClient, starts the process, performs the v2 init handshake,
-   * wires event tracking, and sends '/gsd auto' to begin execution.
+   * wires event tracking, and sends '/gwd auto' to begin execution.
    */
   async startSession(projectDir: string, options: ExecuteOptions = {}): Promise<string> {
     if (!projectDir || projectDir.trim() === '') {
@@ -154,7 +154,7 @@ export class SessionManager {
       });
 
       // Kick off auto-mode
-      const command = options.command ?? '/gsd auto';
+      const command = options.command ?? '/gwd auto';
       await client.prompt(command);
 
       return session.sessionId;
@@ -222,7 +222,7 @@ export class SessionManager {
   /**
    * Cancel a session looked up by project directory.
    *
-   * This is the fallback path for interactive sessions (started via `/gsd auto`
+   * This is the fallback path for interactive sessions (started via `/gwd auto`
    * in the terminal) and sessions from a restarted MCP server that have no
    * registered sessionId. The sessions map is keyed by projectDir, so this
    * lookup always succeeds for any tracked session regardless of sessionId.
@@ -313,23 +313,23 @@ export class SessionManager {
   }
 
   /**
-   * Resolve the GSD CLI path.
+   * Resolve the GWD CLI path.
    *
-   * 1. GSD_CLI_PATH env var (highest priority)
-   * 2. PATH lookup → resolve to the actual gsd executable/shim
+   * 1. GWD_CLI_PATH env var (highest priority)
+   * 2. PATH lookup → resolve to the actual gwd executable/shim
    */
   static resolveCLIPath(): string {
     // Check env var first
-    const envPath = process.env['GSD_CLI_PATH'];
+    const envPath = process.env['GWD_CLI_PATH'];
     if (envPath) return resolve(envPath);
 
-    const gsdBin = findExecutableOnPath('gsd');
-    if (gsdBin) {
-      return resolve(gsdBin);
+    const gwdBin = findExecutableOnPath('gwd');
+    if (gwdBin) {
+      return resolve(gwdBin);
     }
 
     throw new Error(
-      'Cannot find GSD CLI. Set GSD_CLI_PATH environment variable or ensure `gsd` is in PATH.'
+      'Cannot find GWD CLI. Set GWD_CLI_PATH environment variable or ensure `gwd` is in PATH.'
     );
   }
 

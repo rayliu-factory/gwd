@@ -275,7 +275,7 @@ describe("workflow MCP tools", () => {
     try {
       writeFileSync(
         join(base, ".gsd", "last-snapshot.md"),
-        "# GSD context snapshot\n\nResume from here.\n",
+        "# GWD context snapshot\n\nResume from here.\n",
         "utf-8",
       );
       const server = makeMockServer();
@@ -289,7 +289,7 @@ describe("workflow MCP tools", () => {
       assert.deepEqual((result as any).structuredContent, {
         operation: "gsd_resume",
         found: true,
-        bytes: Buffer.byteLength("# GSD context snapshot\n\nResume from here.\n", "utf-8"),
+        bytes: Buffer.byteLength("# GWD context snapshot\n\nResume from here.\n", "utf-8"),
       });
     } finally {
       cleanup(base);
@@ -304,7 +304,7 @@ describe("workflow MCP tools", () => {
         "---\ncontext_mode:\n  enabled: false\n---\n",
         "utf-8",
       );
-      writeFileSync(join(base, ".gsd", "last-snapshot.md"), "# GSD context snapshot\n\nHidden.\n", "utf-8");
+      writeFileSync(join(base, ".gsd", "last-snapshot.md"), "# GWD context snapshot\n\nHidden.\n", "utf-8");
       const server = makeMockServer();
       registerWorkflowTools(server as any);
       const tool = server.tools.find((t) => t.name === "gsd_resume");
@@ -443,9 +443,9 @@ describe("workflow MCP tools", () => {
   it("rejects workflow tool calls outside the configured project root", async () => {
     const base = makeTmpBase();
     const otherBase = makeTmpBase();
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = base;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = base;
       const server = makeMockServer();
       registerWorkflowTools(server as any);
       const tool = server.tools.find((t) => t.name === "gsd_summary_save");
@@ -460,9 +460,9 @@ describe("workflow MCP tools", () => {
       assertToolError(result, /configured workflow project root/);
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(base);
       cleanup(otherBase);
@@ -471,11 +471,11 @@ describe("workflow MCP tools", () => {
 
   it("rejects non-file executor module URLs", async () => {
     const base = makeTmpBase();
-    const prevModule = process.env.GSD_WORKFLOW_EXECUTORS_MODULE;
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevModule = process.env.GWD_WORKFLOW_EXECUTORS_MODULE;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = base;
-      process.env.GSD_WORKFLOW_EXECUTORS_MODULE = "data:text/javascript,export default {}";
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = base;
+      process.env.GWD_WORKFLOW_EXECUTORS_MODULE = "data:text/javascript,export default {}";
       const { registerWorkflowTools: freshRegisterWorkflowTools } = await import(
         cacheBustedWorkflowToolsImport("bad-module")
       );
@@ -493,14 +493,14 @@ describe("workflow MCP tools", () => {
       assertToolError(result, /only supports file: URLs or filesystem paths/);
     } finally {
       if (prevModule === undefined) {
-        delete process.env.GSD_WORKFLOW_EXECUTORS_MODULE;
+        delete process.env.GWD_WORKFLOW_EXECUTORS_MODULE;
       } else {
-        process.env.GSD_WORKFLOW_EXECUTORS_MODULE = prevModule;
+        process.env.GWD_WORKFLOW_EXECUTORS_MODULE = prevModule;
       }
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(base);
     }
@@ -623,8 +623,8 @@ describe("workflow MCP tools", () => {
     const base = makeTmpBase();
     const capturePath = join(base, "captured-args.json");
     const mockModulePath = join(base, "mock-executors.mjs");
-    const prevModule = process.env.GSD_WORKFLOW_EXECUTORS_MODULE;
-    const prevCapture = process.env.GSD_TEST_TASK_COMPLETE_CAPTURE_PATH;
+    const prevModule = process.env.GWD_WORKFLOW_EXECUTORS_MODULE;
+    const prevCapture = process.env.GWD_TEST_TASK_COMPLETE_CAPTURE_PATH;
     try {
       // Mock module: implements the WorkflowToolExecutors shape.
       // executeTaskComplete writes its received args to disk for assertion.
@@ -647,7 +647,7 @@ export const executeSaveGateResult = noop;
 export const executeSummarySave = noop;
 
 export const executeTaskComplete = async (params, projectDir) => {
-  const capturePath = process.env.GSD_TEST_TASK_COMPLETE_CAPTURE_PATH;
+  const capturePath = process.env.GWD_TEST_TASK_COMPLETE_CAPTURE_PATH;
   if (capturePath) {
     writeFileSync(capturePath, JSON.stringify({ params, projectDir }, null, 2));
   }
@@ -658,8 +658,8 @@ export const executeTaskComplete = async (params, projectDir) => {
 };
 `;
       writeFileSync(mockModulePath, mockSource, "utf-8");
-      process.env.GSD_WORKFLOW_EXECUTORS_MODULE = mockModulePath;
-      process.env.GSD_TEST_TASK_COMPLETE_CAPTURE_PATH = capturePath;
+      process.env.GWD_WORKFLOW_EXECUTORS_MODULE = mockModulePath;
+      process.env.GWD_TEST_TASK_COMPLETE_CAPTURE_PATH = capturePath;
 
       // Fresh import bypasses the cached workflowToolExecutorsPromise so the
       // mock module is actually loaded for this test.
@@ -728,49 +728,15 @@ export const executeTaskComplete = async (params, projectDir) => {
       );
     } finally {
       if (prevModule === undefined) {
-        delete process.env.GSD_WORKFLOW_EXECUTORS_MODULE;
+        delete process.env.GWD_WORKFLOW_EXECUTORS_MODULE;
       } else {
-        process.env.GSD_WORKFLOW_EXECUTORS_MODULE = prevModule;
+        process.env.GWD_WORKFLOW_EXECUTORS_MODULE = prevModule;
       }
       if (prevCapture === undefined) {
-        delete process.env.GSD_TEST_TASK_COMPLETE_CAPTURE_PATH;
+        delete process.env.GWD_TEST_TASK_COMPLETE_CAPTURE_PATH;
       } else {
-        process.env.GSD_TEST_TASK_COMPLETE_CAPTURE_PATH = prevCapture;
+        process.env.GWD_TEST_TASK_COMPLETE_CAPTURE_PATH = prevCapture;
       }
-      cleanup(base);
-    }
-  });
-
-  it("gsd_complete_task alias delegates to gsd_task_complete behavior", async () => {
-    const base = makeTmpBase();
-    try {
-      mkdirSync(join(base, ".gsd", "milestones", "M002", "slices", "S02"), { recursive: true });
-      writeFileSync(
-        join(base, ".gsd", "milestones", "M002", "slices", "S02", "S02-PLAN.md"),
-        "# S02\n\n- [ ] **T02: Demo** `est:5m`\n",
-      );
-
-      const server = makeMockServer();
-      registerWorkflowTools(server as any);
-      const aliasTool = server.tools.find((t) => t.name === "gsd_complete_task");
-      assert.ok(aliasTool, "task completion alias should be registered");
-
-      const result = await aliasTool!.handler({
-        projectDir: base,
-        taskId: "T02",
-        sliceId: "S02",
-        milestoneId: "M002",
-        oneLiner: "Completed task via alias",
-        narrative: "Did the work through alias",
-        verification: "npm test",
-      });
-
-      assert.match((result as any).content[0].text as string, /Completed task T02/);
-      assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M002", "slices", "S02", "tasks", "T02-SUMMARY.md")),
-        "alias should write task summary to disk",
-      );
-    } finally {
       cleanup(base);
     }
   });
@@ -1286,7 +1252,7 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_replan_slice and gsd_slice_replan work end-to-end", async () => {
+  it("gsd_replan_slice works end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
@@ -1295,12 +1261,10 @@ export const executeTaskComplete = async (params, projectDir) => {
       const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
       const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
       const canonicalTool = server.tools.find((t) => t.name === "gsd_replan_slice");
-      const aliasTool = server.tools.find((t) => t.name === "gsd_slice_replan");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");
       assert.ok(canonicalTool, "slice replanning tool should be registered");
-      assert.ok(aliasTool, "slice replanning alias should be registered");
 
       await milestoneTool!.handler({
         projectDir: base,
@@ -1393,28 +1357,6 @@ export const executeTaskComplete = async (params, projectDir) => {
       });
       assert.match((canonicalResult as any).content[0].text as string, /Replanned slice S09/);
 
-      const aliasResult = await aliasTool!.handler({
-        projectDir: base,
-        milestoneId: "M099",
-        sliceId: "S09",
-        blockerTaskId: "T09",
-        blockerDescription: "Alias path confirms the same replan flow.",
-        whatChanged: "Removed the remediation task after the alias check.",
-        updatedTasks: [
-          {
-            taskId: "T10",
-            title: "Pending task (updated again)",
-            description: "Alias adjusted the remaining pending task.",
-            estimate: "12m",
-            files: ["src/pending.ts"],
-            verify: "node --test",
-            inputs: ["S09-PLAN.md"],
-            expectedOutput: ["Updated plan"],
-          },
-        ],
-        removedTaskIds: ["T11"],
-      });
-      assert.match((aliasResult as any).content[0].text as string, /Replanned slice S09/);
       assert.ok(
         existsSync(join(base, ".gsd", "milestones", "M099", "slices", "S09", "S09-REPLAN.md")),
         "replan artifact should exist on disk",
@@ -1423,16 +1365,16 @@ export const executeTaskComplete = async (params, projectDir) => {
         existsSync(join(base, ".gsd", "milestones", "M099", "slices", "S09", "S09-PLAN.md")),
         "updated plan should exist on disk",
       );
-      const removedTask = _getAdapter()!.prepare(
+      const remediationTask = _getAdapter()!.prepare(
         "SELECT id FROM tasks WHERE milestone_id = ? AND slice_id = ? AND id = ?",
       ).get("M099", "S09", "T11");
-      assert.equal(removedTask, undefined, "alias should remove the replanned task");
+      assert.notEqual(remediationTask, undefined, "canonical replan should persist the new remediation task");
     } finally {
       cleanup(base);
     }
   });
 
-  it("gsd_slice_complete and gsd_complete_slice work end-to-end", async () => {
+  it("gsd_slice_complete works end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
@@ -1441,12 +1383,10 @@ export const executeTaskComplete = async (params, projectDir) => {
       const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
       const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
       const canonicalTool = server.tools.find((t) => t.name === "gsd_slice_complete");
-      const aliasTool = server.tools.find((t) => t.name === "gsd_complete_slice");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");
       assert.ok(canonicalTool, "slice completion tool should be registered");
-      assert.ok(aliasTool, "slice completion alias should be registered");
 
       await milestoneTool!.handler({
         projectDir: base,
@@ -1508,79 +1448,20 @@ export const executeTaskComplete = async (params, projectDir) => {
       });
       assert.match((canonicalResult as any).content[0].text as string, /Completed slice S03/);
 
-      await milestoneTool!.handler({
-        projectDir: base,
-        milestoneId: "M004",
-        title: "Alias milestone",
-        vision: "Prepare alias slice completion state.",
-        slices: [
-          {
-            sliceId: "S04",
-            title: "Alias Slice",
-            risk: "medium",
-            depends: [],
-            demo: "Alias slice completes through MCP.",
-            goal: "Seed alias workflow state.",
-            successCriteria: "Alias summary and UAT files are written.",
-            proofLevel: "integration",
-            integrationClosure: "Alias reaches the shared slice executor.",
-            observabilityImpact: "Workflow tests cover alias completion.",
-          },
-        ],
-      });
-      await sliceTool!.handler({
-        projectDir: base,
-        milestoneId: "M004",
-        sliceId: "S04",
-        goal: "Complete alias slice over MCP.",
-        tasks: [
-          {
-            taskId: "T04",
-            title: "Alias task",
-            description: "Seed a completed task for alias slice completion.",
-            estimate: "5m",
-            files: ["packages/mcp-server/src/workflow-tools.ts"],
-            verify: "node --test",
-            inputs: ["M004-ROADMAP.md"],
-            expectedOutput: ["S04-SUMMARY.md", "S04-UAT.md"],
-          },
-        ],
-      });
-      await taskTool!.handler({
-        projectDir: base,
-        milestoneId: "M004",
-        sliceId: "S04",
-        taskId: "T04",
-        oneLiner: "Completed alias task",
-        narrative: "Prepared the alias slice for completion.",
-        verification: "node --test",
-      });
-
-      const aliasResult = await aliasTool!.handler({
-        projectDir: base,
-        milestoneId: "M004",
-        sliceId: "S04",
-        sliceTitle: "Alias Slice",
-        oneLiner: "Completed alias slice",
-        narrative: "Did the slice work via alias",
-        verification: "npm test",
-        uatContent: "## UAT\n\nPASS",
-      });
-      assert.match((aliasResult as any).content[0].text as string, /Completed slice S04/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M004", "slices", "S04", "S04-SUMMARY.md")),
-        "alias should write slice summary to disk",
+        existsSync(join(base, ".gsd", "milestones", "M003", "slices", "S03", "S03-SUMMARY.md")),
+        "canonical tool should write slice summary to disk",
       );
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M004", "slices", "S04", "S04-UAT.md")),
-        "alias should write slice UAT to disk",
+        existsSync(join(base, ".gsd", "milestones", "M003", "slices", "S03", "S03-UAT.md")),
+        "canonical tool should write slice UAT to disk",
       );
     } finally {
       cleanup(base);
     }
   });
 
-  it("gsd_validate_milestone and gsd_milestone_complete work end-to-end", async () => {
+  it("gsd_validate_milestone and gsd_complete_milestone work end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
@@ -1590,13 +1471,13 @@ export const executeTaskComplete = async (params, projectDir) => {
       const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
       const completeSliceTool = server.tools.find((t) => t.name === "gsd_slice_complete");
       const validateTool = server.tools.find((t) => t.name === "gsd_validate_milestone");
-      const completeMilestoneAlias = server.tools.find((t) => t.name === "gsd_milestone_complete");
+      const completeMilestoneTool = server.tools.find((t) => t.name === "gsd_complete_milestone");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");
       assert.ok(completeSliceTool, "slice completion tool should be registered");
       assert.ok(validateTool, "milestone validation tool should be registered");
-      assert.ok(completeMilestoneAlias, "milestone completion alias should be registered");
+      assert.ok(completeMilestoneTool, "milestone completion tool should be registered");
 
       await milestoneTool!.handler({
         projectDir: base,
@@ -1669,7 +1550,7 @@ export const executeTaskComplete = async (params, projectDir) => {
       });
       assert.match((validationResult as any).content[0].text as string, /Validated milestone M005/);
 
-      const completionResult = await completeMilestoneAlias!.handler({
+      const completionResult = await completeMilestoneTool!.handler({
         projectDir: base,
         milestoneId: "M005",
         title: "Milestone lifecycle",
@@ -1691,7 +1572,7 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_reassess_roadmap, gsd_roadmap_reassess, and gsd_save_gate_result work end-to-end", async () => {
+  it("gsd_reassess_roadmap and gsd_save_gate_result work end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
@@ -1701,14 +1582,12 @@ export const executeTaskComplete = async (params, projectDir) => {
       const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
       const completeSliceTool = server.tools.find((t) => t.name === "gsd_slice_complete");
       const reassessTool = server.tools.find((t) => t.name === "gsd_reassess_roadmap");
-      const reassessAlias = server.tools.find((t) => t.name === "gsd_roadmap_reassess");
       const gateTool = server.tools.find((t) => t.name === "gsd_save_gate_result");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");
       assert.ok(completeSliceTool, "slice completion tool should be registered");
       assert.ok(reassessTool, "roadmap reassessment tool should be registered");
-      assert.ok(reassessAlias, "roadmap reassessment alias should be registered");
       assert.ok(gateTool, "gate result tool should be registered");
 
       await milestoneTool!.handler({
@@ -1844,19 +1723,6 @@ export const executeTaskComplete = async (params, projectDir) => {
       });
       assert.match((reassessResult as any).content[0].text as string, /Reassessed roadmap for milestone M006 after S06/);
 
-      const reassessAliasResult = await reassessAlias!.handler({
-        projectDir: base,
-        milestoneId: "M006",
-        completedSliceId: "S06",
-        verdict: "roadmap-confirmed",
-        assessment: "No further changes needed after the first reassessment.",
-        sliceChanges: {
-          modified: [],
-          added: [],
-          removed: [],
-        },
-      });
-      assert.match((reassessAliasResult as any).content[0].text as string, /Reassessed roadmap for milestone M006 after S06/);
       assert.ok(
         existsSync(join(base, ".gsd", "milestones", "M006", "slices", "S06", "S06-ASSESSMENT.md")),
         "assessment artifact should exist on disk",
@@ -1916,9 +1782,9 @@ describe("validateProjectDir", () => {
     const linkInside = join(allowedRoot, "escape-link");
     symlinkSync(outside, linkInside, "dir");
 
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = allowedRoot;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = allowedRoot;
       assert.throws(
         () => validateProjectDir(linkInside),
         /configured workflow project root/,
@@ -1926,9 +1792,9 @@ describe("validateProjectDir", () => {
       );
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(allowedRoot);
       cleanup(outside);
@@ -1943,16 +1809,16 @@ describe("validateProjectDir", () => {
     const canonicalRoot = realpathSync(allowedRoot);
     const futureWorktree = join(canonicalRoot, "worktrees", "M999-not-yet-created");
 
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = canonicalRoot;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = canonicalRoot;
       const result = validateProjectDir(futureWorktree);
       assert.equal(result, futureWorktree, "ENOENT should fall back to the lexical path, not throw");
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(allowedRoot);
     }
@@ -1963,17 +1829,17 @@ describe("validateProjectDir", () => {
     const child = join(allowedRoot, "child");
     mkdirSync(child, { recursive: true });
 
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = allowedRoot;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = allowedRoot;
       const result = validateProjectDir(child);
       // realpath may canonicalize macOS /var → /private/var; assert it ends with our child segment.
       assert.ok(result.endsWith("child"), `expected resolved path to end with 'child', got ${result}`);
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(allowedRoot);
     }
@@ -1987,16 +1853,16 @@ describe("validateProjectDir", () => {
     rmSync(join(allowedRoot, ".gsd"), { recursive: true, force: true });
     symlinkSync(externalState, join(allowedRoot, ".gsd"), "dir");
 
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = allowedRoot;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = allowedRoot;
       const result = validateProjectDir(worktree);
       assert.equal(result, realpathSync(worktree));
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(allowedRoot);
       cleanup(externalState);
@@ -2012,18 +1878,18 @@ describe("validateProjectDir", () => {
     rmSync(join(allowedRoot, ".gsd"), { recursive: true, force: true });
     symlinkSync(externalState, join(allowedRoot, ".gsd"), "dir");
 
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = allowedRoot;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = allowedRoot;
       assert.throws(
         () => validateProjectDir(siblingWorktree),
         /configured workflow project root/,
       );
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(allowedRoot);
       cleanup(externalState);

@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Unit tests for auto-mode sidecar queue scheduling and dequeue adapter.
 
 import assert from "node:assert/strict";

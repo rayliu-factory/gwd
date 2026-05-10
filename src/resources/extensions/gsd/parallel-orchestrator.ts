@@ -1,9 +1,9 @@
 /**
- * GSD Parallel Orchestrator — Core engine for parallel milestone orchestration.
+ * GWD Parallel Orchestrator — Core engine for parallel milestone orchestration.
  *
  * Manages worker lifecycle, budget tracking, and coordination. Workers are
  * separate processes spawned via child_process, each running in its own git
- * worktree with GSD_MILESTONE_LOCK env var set. The coordinator monitors
+ * worktree with GWD_MILESTONE_LOCK env var set. The coordinator monitors
  * workers via session status files (see session-status-io.ts).
  */
 
@@ -366,7 +366,7 @@ export async function startParallel(
   prefs: GSDPreferences | undefined,
 ): Promise<{ started: string[]; errors: Array<{ mid: string; error: string }> }> {
   // Prevent workers from spawning nested parallel sessions
-  if (process.env.GSD_PARALLEL_WORKER) {
+  if (process.env.GWD_PARALLEL_WORKER) {
     return { started: [], errors: [{ mid: "all", error: "Cannot start parallel from within a parallel worker" }] };
   }
 
@@ -570,10 +570,10 @@ export function _createMilestoneWorktree(basePath: string, milestoneId: string):
 
 /**
  * Spawn a worker process for a milestone.
- * The worker runs `gsd headless --json auto` in the milestone's worktree
- * with GSD_MILESTONE_LOCK set to isolate state derivation.
+ * The worker runs `gwd headless --json auto` in the milestone's worktree
+ * with GWD_MILESTONE_LOCK set to isolate state derivation.
  *
- * IMPORTANT: We use `headless --json auto` instead of `--print "/gsd auto"`.
+ * IMPORTANT: We use `headless --json auto` instead of `--print "/gwd auto"`.
  * --print mode calls session.prompt() which returns immediately after the
  * extension command handler fires, because auto-mode's ctx.newSession()
  * resets the session and unblocks the outer prompt() await. This causes
@@ -593,7 +593,7 @@ export function spawnWorker(
   if (!worker) return false;
   if (worker.process) return true; // already spawned
 
-  // Resolve the GSD CLI binary path
+  // Resolve the GWD CLI binary path
   const binPath = resolveGsdBin();
   if (!binPath) return false;
 
@@ -601,20 +601,20 @@ export function spawnWorker(
   try {
     const workerEnv: Record<string, string | undefined> = {
       ...process.env,
-      GSD_MILESTONE_LOCK: milestoneId,
+      GWD_MILESTONE_LOCK: milestoneId,
       // Pass the real project root so workers don't need to re-derive it.
       // Without this, process.cwd() resolves symlinks and the worktree
-      // path heuristic can match the user-level ~/.gsd instead of the
+      // path heuristic can match the user-level ~/.gwd instead of the
       // project .gsd, causing writes to ~ and corrupting user config.
-      GSD_PROJECT_ROOT: basePath,
+      GWD_PROJECT_ROOT: basePath,
       // Prevent workers from spawning their own parallel sessions
-      GSD_PARALLEL_WORKER: "1",
+      GWD_PARALLEL_WORKER: "1",
     };
 
     // Apply worker model override if configured, so workers use a cheaper
     // model (e.g. Haiku) rather than inheriting the coordinator's model.
     if (state.config.worker_model) {
-      workerEnv.GSD_WORKER_MODEL = state.config.worker_model;
+      workerEnv.GWD_WORKER_MODEL = state.config.worker_model;
     }
 
     child = spawn(process.execPath, [binPath, "headless", "--json", "auto"], {
@@ -738,14 +738,14 @@ export function spawnWorker(
 }
 
 /**
- * Resolve the GSD CLI binary path.
- * Uses GSD_BIN_PATH env var (set by loader.ts) or falls back to
+ * Resolve the GWD CLI binary path.
+ * Uses GWD_BIN_PATH env var (set by loader.ts) or falls back to
  * finding the binary relative to the current module.
  */
 function resolveGsdBin(): string | null {
-  // GSD_BIN_PATH is set by loader.ts to the absolute path of dist/loader.js
-  if (process.env.GSD_BIN_PATH && existsSync(process.env.GSD_BIN_PATH)) {
-    return process.env.GSD_BIN_PATH;
+  // GWD_BIN_PATH is set by loader.ts to the absolute path of dist/loader.js
+  if (process.env.GWD_BIN_PATH && existsSync(process.env.GWD_BIN_PATH)) {
+    return process.env.GWD_BIN_PATH;
   }
 
   // Fallback: try to find loader.js relative to this file
@@ -827,7 +827,7 @@ function processWorkerLine(basePath: string, milestoneId: string, line: string):
 
   // tool_execution_start can track current unit
   if (type === "extension_ui_request" && event.method === "notify") {
-    // GSD auto-mode sends notifications about current unit
+    // GWD auto-mode sends notifications about current unit
     const worker = state.workers.get(milestoneId);
     if (worker) {
       writeSessionStatus(basePath, {

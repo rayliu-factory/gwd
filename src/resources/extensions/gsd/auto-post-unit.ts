@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Auto-mode post-unit git, verification, projection, and hook processing.
 /**
  * Post-unit processing for auto-loop — auto-commit, doctor run,
@@ -13,7 +13,7 @@
  * Extracted from the pre-loop agent_end handler in auto.ts.
  */
 
-import type { ExtensionContext, ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionContext, ExtensionAPI } from "@gwd/pi-coding-agent";
 import { deriveState } from "./state.js";
 import { logWarning, logError } from "./workflow-logger.js";
 import { loadFile, parseSummary, resolveAllOverrides } from "./files.js";
@@ -366,15 +366,15 @@ export function detectRogueFileWrites(
 export const MAX_ARTIFACT_VERIFICATION_RETRIES = 3;
 
 export const STEP_COMPLETE_FALLBACK_MESSAGE =
-  "Step complete. Run /clear, then /gsd to continue (or /gsd auto to run continuously).";
+  "Step complete. Run /clear, then /gwd to continue (or /gwd auto to run continuously).";
 
 export function buildStepCompleteMessage(nextState: import("./types.js").GSDState): string {
   if (nextState.phase === "complete") {
-    return "Step complete — milestone finished. Run /gsd status to review, or start the next milestone.";
+    return "Step complete — milestone finished. Run /gwd status to review, or start the next milestone.";
   }
   const next = describeNextUnit(nextState);
   return `Step complete. Next: ${next.label}\n`
-    + `Run /clear, then /gsd to continue (or /gsd auto to run continuously).`;
+    + `Run /clear, then /gwd to continue (or /gwd auto to run continuously).`;
 }
 
 export interface PreVerificationOpts {
@@ -478,7 +478,7 @@ export async function postUnitPreVerification(pctx: PostUnitContext, opts?: PreV
   const { s, ctx, pi, buildSnapshotOpts, stopAuto, pauseAuto } = pctx;
 
   // ── Parallel worker signal check ──
-  const milestoneLock = process.env.GSD_MILESTONE_LOCK;
+  const milestoneLock = process.env.GWD_MILESTONE_LOCK;
   if (milestoneLock) {
     const signal = consumeSignal(s.basePath, milestoneLock);
     if (signal) {
@@ -773,7 +773,7 @@ export async function postUnitPreVerification(pctx: PostUnitContext, opts?: PreV
           if (err instanceof MergeConflictError) {
             ctx.ui.notify(
               `slice-cadence merge conflict in ${sid}: ${err.conflictedFiles.join(", ")}. ` +
-              `Resolve manually on main and run \`/gsd auto\` to resume.`,
+              `Resolve manually on main and run \`/gwd auto\` to resume.`,
               "error",
             );
             // Stop auto AND signal the outer postUnit flow to exit early.
@@ -1602,8 +1602,8 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
   }
 
   // Step mode → show wizard instead of dispatch.
-  // Without this notify(), /gsd in step mode finishes a unit and silently
-  // exits the loop, leaving the user with no hint to /clear and /gsd again.
+  // Without this notify(), /gwd in step mode finishes a unit and silently
+  // exits the loop, leaving the user with no hint to /clear and /gwd again.
   if (s.stepMode) {
     try {
       const nextState = await deriveState(s.canonicalProjectRoot);

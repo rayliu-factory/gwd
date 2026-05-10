@@ -10,11 +10,11 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createJiti } from "@mariozechner/jiti";
-import * as _bundledPiAgentCore from "@gsd/pi-agent-core";
-import * as _bundledPiAi from "@gsd/pi-ai";
-import * as _bundledPiAiOauth from "@gsd/pi-ai/oauth";
-import type { KeyId } from "@gsd/pi-tui";
-import * as _bundledPiTui from "@gsd/pi-tui";
+import * as _bundledPiAgentCore from "@gwd/pi-agent-core";
+import * as _bundledPiAi from "@gwd/pi-ai";
+import * as _bundledPiAiOauth from "@gwd/pi-ai/oauth";
+import type { KeyId } from "@gwd/pi-tui";
+import * as _bundledPiTui from "@gwd/pi-tui";
 // Static imports of packages that extensions may use.
 // These MUST be static so Bun bundles them into the compiled binary.
 // The virtualModules option then makes them available to extensions.
@@ -31,7 +31,7 @@ import * as _bundledMcpServerStreamableHttp from "@modelcontextprotocol/sdk/serv
 import * as _bundledMcpTypes from "@modelcontextprotocol/sdk/types.js";
 import { getAgentDir, isBunBinary } from "../../config.js";
 // NOTE: This import works because loader.ts exports are NOT re-exported from index.ts,
-// avoiding a circular dependency. Extensions can import from @gsd/pi-coding-agent.
+// avoiding a circular dependency. Extensions can import from @gwd/pi-coding-agent.
 import * as _bundledPiCodingAgent from "../../index.js";
 import { createEventBus, type EventBus } from "../event-bus.js";
 import type { ExecOptions } from "../exec.js";
@@ -60,11 +60,11 @@ import type {
  */
 const STATIC_BUNDLED_MODULES: Record<string, unknown> = {
 	"@sinclair/typebox": _bundledTypebox,
-	"@gsd/pi-agent-core": _bundledPiAgentCore,
-	"@gsd/pi-tui": _bundledPiTui,
-	"@gsd/pi-ai": _bundledPiAi,
-	"@gsd/pi-ai/oauth": _bundledPiAiOauth,
-	"@gsd/pi-coding-agent": _bundledPiCodingAgent,
+	"@gwd/pi-agent-core": _bundledPiAgentCore,
+	"@gwd/pi-tui": _bundledPiTui,
+	"@gwd/pi-ai": _bundledPiAi,
+	"@gwd/pi-ai/oauth": _bundledPiAiOauth,
+	"@gwd/pi-coding-agent": _bundledPiCodingAgent,
 	"yaml": _bundledYaml,
 	"@modelcontextprotocol/sdk/client": _bundledMcpClient,
 	"@modelcontextprotocol/sdk/client/stdio": _bundledMcpStdio,
@@ -94,7 +94,7 @@ const STATIC_BUNDLED_MODULES: Record<string, unknown> = {
 const VIRTUAL_MODULES: Record<string, unknown> = { ...STATIC_BUNDLED_MODULES };
 
 const require = createRequire(import.meta.url);
-const EXTENSION_TIMING_ENABLED = process.env.GSD_STARTUP_TIMING === "1" || process.env.PI_TIMING === "1";
+const EXTENSION_TIMING_ENABLED = process.env.GWD_STARTUP_TIMING === "1" || process.env.PI_TIMING === "1";
 
 /**
  * Bundled npm packages whose subpath exports should be auto-resolved for extensions.
@@ -326,19 +326,19 @@ function getAliases(): Record<string, string> {
 		// Auto-discovered subpath exports (lowest priority — overridden by manual entries below)
 		...autoDiscovered,
 		// Manual entries for workspace packages and packages needing special resolution
-		"@gsd/pi-coding-agent": packageIndex,
-		"@gsd/pi-agent-core": resolveWorkspaceOrImport("agent/dist/index.js", "@gsd/pi-agent-core"),
-		"@gsd/pi-tui": resolveWorkspaceOrImport("tui/dist/index.js", "@gsd/pi-tui"),
-		"@gsd/pi-ai": resolveWorkspaceOrImport("ai/dist/index.js", "@gsd/pi-ai"),
-		"@gsd/pi-ai/oauth": resolveWorkspaceOrImport("ai/dist/oauth.js", "@gsd/pi-ai/oauth"),
+		"@gwd/pi-coding-agent": packageIndex,
+		"@gwd/pi-agent-core": resolveWorkspaceOrImport("agent/dist/index.js", "@gwd/pi-agent-core"),
+		"@gwd/pi-tui": resolveWorkspaceOrImport("tui/dist/index.js", "@gwd/pi-tui"),
+		"@gwd/pi-ai": resolveWorkspaceOrImport("ai/dist/index.js", "@gwd/pi-ai"),
+		"@gwd/pi-ai/oauth": resolveWorkspaceOrImport("ai/dist/oauth.js", "@gwd/pi-ai/oauth"),
 		"@sinclair/typebox": typeboxRoot,
 		"yaml": yamlRoot,
 		// Aliases for external PI ecosystem packages that import from the original scope
 		"@mariozechner/pi-coding-agent": packageIndex,
-		"@mariozechner/pi-agent-core": resolveWorkspaceOrImport("agent/dist/index.js", "@gsd/pi-agent-core"),
-		"@mariozechner/pi-tui": resolveWorkspaceOrImport("tui/dist/index.js", "@gsd/pi-tui"),
-		"@mariozechner/pi-ai": resolveWorkspaceOrImport("ai/dist/index.js", "@gsd/pi-ai"),
-		"@mariozechner/pi-ai/oauth": resolveWorkspaceOrImport("ai/dist/oauth.js", "@gsd/pi-ai/oauth"),
+		"@mariozechner/pi-agent-core": resolveWorkspaceOrImport("agent/dist/index.js", "@gwd/pi-agent-core"),
+		"@mariozechner/pi-tui": resolveWorkspaceOrImport("tui/dist/index.js", "@gwd/pi-tui"),
+		"@mariozechner/pi-ai": resolveWorkspaceOrImport("ai/dist/index.js", "@gwd/pi-ai"),
+		"@mariozechner/pi-ai/oauth": resolveWorkspaceOrImport("ai/dist/oauth.js", "@gwd/pi-ai/oauth"),
 	};
 
 	return _aliases;
@@ -655,7 +655,7 @@ export function containsTypeScriptSyntax(source: string): boolean {
  * Shared jiti instance for loading extension modules.
  *
  * Before this fix (#2108), each extension created a NEW jiti instance with
- * `moduleCache: false`, causing shared dependencies (e.g. @gsd/pi-agent-core)
+ * `moduleCache: false`, causing shared dependencies (e.g. @gwd/pi-agent-core)
  * to be recompiled for every extension — turning a ~3s parallel load into a
  * ~15-30s serial compilation bottleneck.
  *
@@ -1102,7 +1102,7 @@ export async function discoverAndLoadExtensions(
 
 	// 2. Global extensions: agentDir/extensions/
 	const globalExtDir = path.join(agentDir, "extensions");
-	// 2b. Installed extensions: ~/.gsd/extensions/ merged with bundled (D-14, D-15)
+	// 2b. Installed extensions: ~/.gwd/extensions/ merged with bundled (D-14, D-15)
 	// Discovery handles ID-based merge — loader stays dumb.
 	const installedExtDir = path.join(path.dirname(agentDir), "extensions");
 	const globalPaths = discoverExtensionsInDir(globalExtDir);
@@ -1131,7 +1131,7 @@ export async function discoverAndLoadExtensions(
 	const { sortedPaths, warnings: sortWarnings } = sortExtensionPaths(allPaths)
 	// Emit warnings to stderr immediately — loader runs before ctx.ui is ready (D-08)
 	for (const w of sortWarnings) {
-		process.stderr.write(`[gsd] ${w.message}\n`)
+		process.stderr.write(`[gwd] ${w.message}\n`)
 	}
 	const result = await loadExtensions(sortedPaths, cwd, eventBus)
 	result.warnings.push(...sortWarnings)

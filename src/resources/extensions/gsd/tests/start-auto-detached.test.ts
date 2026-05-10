@@ -44,7 +44,7 @@ test("command entrypoints use startAutoDetached instead of awaiting startAuto (#
   );
 });
 
-test("bare /gsd stays in the foreground smart-entry flow (#5125 regression)", () => {
+test("bare /gwd stays in the foreground smart-entry flow (#5125 regression)", () => {
   const autoHandlerSrc = readGsdFile("commands/handlers/auto.ts");
   const bareCommandBranch = autoHandlerSrc.slice(
     autoHandlerSrc.indexOf('if (trimmed === "")'),
@@ -52,15 +52,15 @@ test("bare /gsd stays in the foreground smart-entry flow (#5125 regression)", ()
 
   assert.ok(
     bareCommandBranch.includes('await import("../../guided-flow.js")'),
-    "bare /gsd should load the guided smart-entry flow",
+    "bare /gwd should load the guided smart-entry flow",
   );
   assert.ok(
     bareCommandBranch.includes("await showSmartEntry(ctx, pi, projectRoot(), { step: true })"),
-    "bare /gsd should await the foreground wizard instead of detaching auto-mode",
+    "bare /gwd should await the foreground wizard instead of detaching auto-mode",
   );
   assert.ok(
     !bareCommandBranch.includes("startAutoDetached("),
-    "bare /gsd must not enter detached auto bootstrap directly",
+    "bare /gwd must not enter detached auto bootstrap directly",
   );
 });
 
@@ -220,7 +220,7 @@ test("discussion auto-start waits for the current command context to become idle
   _scheduleAutoStartAfterIdleForTest(
     ctx,
     {} as any,
-    "/tmp/gsd-auto-start-idle-test",
+    "/tmp/gwd-auto-start-idle-test",
     false,
     { step: true },
     (...args: unknown[]) => {
@@ -237,6 +237,6 @@ test("discussion auto-start waits for the current command context to become idle
 
   await new Promise((resolveTimer) => setTimeout(resolveTimer, 0));
   assert.equal(launches.length, 1);
-  assert.equal(launches[0][2], "/tmp/gsd-auto-start-idle-test");
+  assert.equal(launches[0][2], "/tmp/gwd-auto-start-idle-test");
   assert.deepEqual(launches[0][4], { step: true });
 });

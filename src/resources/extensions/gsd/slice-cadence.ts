@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Slice-cadence merge and milestone resquash git operations.
 /**
  * Slice-cadence collapse — #4765.
@@ -25,7 +25,7 @@ import { existsSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 
-import { GSDError, GSD_GIT_ERROR } from "./errors.js";
+import { GSDError, GWD_GIT_ERROR } from "./errors.js";
 import { MergeConflictError, readIntegrationBranch } from "./git-service.js";
 import {
   nativeBranchForceReset,
@@ -102,8 +102,8 @@ function buildSliceMergeCommitMessage(milestoneId: string, sliceId: string, mile
   const body = [
     `Slice: ${sliceId}${names.sliceTitle ? ` - ${names.sliceTitle}` : ""}`,
     `Milestone: ${milestoneId}${names.milestoneTitle ? ` - ${names.milestoneTitle}` : ""}`,
-    `GSD-Slice: ${sliceId}`,
-    `GSD-Milestone: ${milestoneId}`,
+    `GWD-Slice: ${sliceId}`,
+    `GWD-Milestone: ${milestoneId}`,
     `Branch: ${milestoneBranch}`,
   ];
   return `${subject}\n\n${body.join("\n")}`;
@@ -116,7 +116,7 @@ function buildMilestoneResquashCommitMessage(milestoneId: string, sliceCount: nu
   const subject = milestoneTitle
     ? `feat: ${milestoneTitle} (${milestoneId}, ${sliceCount} slices re-squashed)`
     : `feat: ${milestoneId} (${sliceCount} slices re-squashed)`;
-  return `${subject}\n\nMilestone: ${milestoneId}${milestoneTitle ? ` - ${milestoneTitle}` : ""}\nGSD-Milestone: ${milestoneId}`;
+  return `${subject}\n\nMilestone: ${milestoneId}${milestoneTitle ? ` - ${milestoneTitle}` : ""}\nGWD-Milestone: ${milestoneId}`;
 }
 
 function advanceMilestoneBranch(
@@ -146,7 +146,7 @@ function advanceMilestoneBranch(
     }).trim();
     if (status) {
       throw new GSDError(
-        GSD_GIT_ERROR,
+        GWD_GIT_ERROR,
         `slice-cadence cannot advance ${milestoneBranch}: worktree has uncommitted changes. Status:\n${status}`,
       );
     }
@@ -199,7 +199,7 @@ export function mergeSliceToMain(
 
   if (mainBranch === milestoneBranch) {
     throw new GSDError(
-      GSD_GIT_ERROR,
+      GWD_GIT_ERROR,
       `slice-cadence resolved integration branch "${mainBranch}" to the milestone branch; refusing to self-merge.`,
     );
   }
@@ -240,7 +240,7 @@ export function mergeSliceToMain(
     }).trim();
     if (status) {
       throw new GSDError(
-        GSD_GIT_ERROR,
+        GWD_GIT_ERROR,
         `slice-cadence merge requires a clean project root; uncommitted changes detected. ` +
         `Commit or stash at ${projectRoot} before retrying. Status:\n${status}`,
       );

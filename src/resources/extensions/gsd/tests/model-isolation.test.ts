@@ -1,8 +1,8 @@
 /**
  * Tests for model config isolation between concurrent instances (#650, #1065),
  * session-scoped model precedence behavior including manual session override,
- * GSD preferences override of settings.json defaults (#3517), and custom
- * provider precedence over PREFERENCES.md when set via `/gsd model` (#4122).
+ * GWD preferences override of settings.json defaults (#3517), and custom
+ * provider precedence over PREFERENCES.md when set via `/gwd model` (#4122).
  */
 
 import { describe, it, beforeEach, afterEach } from "node:test";
@@ -237,8 +237,8 @@ describe("custom provider session model overrides PREFERENCES.md (#4122)", () =>
       ?? (ctxModel ? { provider: ctxModel.provider, id: ctxModel.id } : null);
   }
 
-  it("custom provider from /gsd model wins over PREFERENCES.md built-in default", () => {
-    // User runs `/gsd model ollama/llama3.1:8b`, then `/gsd auto`.
+  it("custom provider from /gwd model wins over PREFERENCES.md built-in default", () => {
+    // User runs `/gwd model ollama/llama3.1:8b`, then `/gwd auto`.
     // PREFERENCES.md still has the project-template claude-code default.
     const ctxModel = { provider: "ollama", id: "llama3.1:8b" };
     const preferredModel = { provider: "claude-code", id: "claude-sonnet-4-6" };

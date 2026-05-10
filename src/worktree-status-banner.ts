@@ -1,4 +1,4 @@
-// GSD worktree startup banner
+// GWD worktree startup banner
 import { execFileSync } from 'node:child_process'
 import { existsSync, realpathSync } from 'node:fs'
 import { join, resolve, sep } from 'node:path'
@@ -141,10 +141,10 @@ export function showWorktreeStatusBanner(basePath: string): void {
 
   const names = withChanges.map((worktree) => chalk.cyan(worktree.name)).join(', ')
   process.stderr.write(
-    chalk.dim('[gsd] ') +
+    chalk.dim('[gwd] ') +
     chalk.yellow(`${withChanges.length} worktree${withChanges.length === 1 ? '' : 's'} with unmerged changes: `) +
     names + '\n' +
-    chalk.dim('[gsd] ') +
-    chalk.dim('Resume: gsd -w <name>  |  Merge: gsd worktree merge <name>  |  List: gsd worktree list\n\n'),
+    chalk.dim('[gwd] ') +
+    chalk.dim('Resume: gwd -w <name>  |  Merge: gwd worktree merge <name>  |  List: gwd worktree list\n\n'),
   )
 }

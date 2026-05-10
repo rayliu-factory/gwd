@@ -1,4 +1,4 @@
-// Regression test for #1693 — /gsd dispatch uat targets the last completed
+// Regression test for #1693 — /gwd dispatch uat targets the last completed
 // slice from the roadmap instead of state.activeSlice (which has already
 // advanced to the next incomplete slice).
 

@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Prepare a clean cross-session handoff so the next agent (or you tomorrow) can pick up exactly where you left off. Writes a focused `continue.md` in the active slice directory and ensures `STATE.md` + summary artifacts are current. Use when asked to "hand off", "prepare handoff", "pause work", "bookmark this", "I'll come back to this later", before running out of context budget, or at the end of a long session with unfinished work. Closes the v1 `/gsd-pause-work` parity gap.
+description: Prepare a clean cross-session handoff so the next agent (or you tomorrow) can pick up exactly where you left off. Writes a focused `continue.md` in the active slice directory and ensures `STATE.md` + summary artifacts are current. Use when asked to "hand off", "prepare handoff", "pause work", "bookmark this", "I'll come back to this later", before running out of context budget, or at the end of a long session with unfinished work. Closes the v1 `/gwd-pause-work` parity gap.
 ---
 
 <objective>
@@ -8,7 +8,7 @@ Leave the project in a state where a fresh agent with no memory of this session 
 </objective>
 
 <context>
-GSD already writes `STATE.md` (rebuilt after each unit) and summary files (`M###-SUMMARY.md`, `S##-SUMMARY.md`, `T##-SUMMARY.md`). The gap is the *mid-task* handoff: you're partway through a task, context is getting long, and the next session shouldn't start by re-deriving your mental state.
+GWD already writes `STATE.md` (rebuilt after each unit) and summary files (`M###-SUMMARY.md`, `S##-SUMMARY.md`, `T##-SUMMARY.md`). The gap is the *mid-task* handoff: you're partway through a task, context is getting long, and the next session shouldn't start by re-deriving your mental state.
 
 `continue.md` exists for exactly this — see `auto-prompts.ts`, `guided-flow.ts`, `phase-anchor.ts`, `state.ts`. This skill is the deliberate authoring ritual.
 

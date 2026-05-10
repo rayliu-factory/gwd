@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Verifies low-risk auto-prompt duplication cuts render through prompt builders.
 
 import test from "node:test";
@@ -33,12 +33,12 @@ function cleanup(base: string): void {
 }
 
 async function loadAutoPromptBuilders(t: TestContext): Promise<AutoPromptBuilders> {
-  const previousGsdHome = process.env.GSD_HOME;
+  const previousGsdHome = process.env.GWD_HOME;
   const isolatedHome = mkdtempSync(join(tmpdir(), "gsd-prompt-loader-home-"));
-  process.env.GSD_HOME = isolatedHome;
+  process.env.GWD_HOME = isolatedHome;
   t.after(() => {
-    if (previousGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = previousGsdHome;
+    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGsdHome;
     rmSync(isolatedHome, { recursive: true, force: true });
   });
   return import(`../auto-prompts.ts?promptDupCuts=${Date.now()}-${Math.random()}`) as Promise<AutoPromptBuilders>;

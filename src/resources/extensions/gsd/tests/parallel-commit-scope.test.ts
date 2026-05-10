@@ -2,7 +2,7 @@
  * parallel-commit-scope.test.ts — Regression test for #1991.
  *
  * Parallel workers must only commit files belonging to their locked milestone.
- * When GSD_MILESTONE_LOCK is set, smartStage() must exclude .gsd/milestones/<M>/
+ * When GWD_MILESTONE_LOCK is set, smartStage() must exclude .gsd/milestones/<M>/
  * directories for milestones other than the locked one.
  *
  * Without the fix, a worker for M033 can stage and commit fabricated artifacts
@@ -60,12 +60,12 @@ describe("parallel commit scope (#1991)", () => {
   const savedEnv: Record<string, string | undefined> = {};
 
   beforeEach(() => {
-    savedEnv.GSD_MILESTONE_LOCK = process.env.GSD_MILESTONE_LOCK;
-    savedEnv.GSD_PARALLEL_WORKER = process.env.GSD_PARALLEL_WORKER;
+    savedEnv.GWD_MILESTONE_LOCK = process.env.GWD_MILESTONE_LOCK;
+    savedEnv.GWD_PARALLEL_WORKER = process.env.GWD_PARALLEL_WORKER;
   });
 
   afterEach(() => {
-    for (const key of ["GSD_MILESTONE_LOCK", "GSD_PARALLEL_WORKER"] as const) {
+    for (const key of ["GWD_MILESTONE_LOCK", "GWD_PARALLEL_WORKER"] as const) {
       if (savedEnv[key] === undefined) {
         delete process.env[key];
       } else {
@@ -74,12 +74,12 @@ describe("parallel commit scope (#1991)", () => {
     }
   });
 
-  test("autoCommit excludes other milestone directories when GSD_MILESTONE_LOCK is set", () => {
+  test("autoCommit excludes other milestone directories when GWD_MILESTONE_LOCK is set", () => {
     const repo = initTempRepo();
 
     // Set up parallel worker environment for M033
-    process.env.GSD_MILESTONE_LOCK = "M033";
-    process.env.GSD_PARALLEL_WORKER = "1";
+    process.env.GWD_MILESTONE_LOCK = "M033";
+    process.env.GWD_PARALLEL_WORKER = "1";
 
     // Create dirty files in BOTH milestones (simulates cross-milestone pollution)
     createFile(repo, ".gsd/milestones/M032/M032-SUMMARY.md", "# M032 Summary\nFabricated by M033 worker");
@@ -109,12 +109,12 @@ describe("parallel commit scope (#1991)", () => {
     rmSync(repo, { recursive: true, force: true });
   });
 
-  test("autoCommit stages all milestones when GSD_MILESTONE_LOCK is NOT set (solo mode)", () => {
+  test("autoCommit stages all milestones when GWD_MILESTONE_LOCK is NOT set (solo mode)", () => {
     const repo = initTempRepo();
 
     // No milestone lock — solo worker mode
-    delete process.env.GSD_MILESTONE_LOCK;
-    delete process.env.GSD_PARALLEL_WORKER;
+    delete process.env.GWD_MILESTONE_LOCK;
+    delete process.env.GWD_PARALLEL_WORKER;
 
     createFile(repo, ".gsd/milestones/M032/M032-SUMMARY.md", "# M032 Summary");
     createFile(repo, ".gsd/milestones/M033/slices/S01/tasks/T01-SUMMARY.md", "T01 summary");
@@ -137,8 +137,8 @@ describe("parallel commit scope (#1991)", () => {
   test("autoCommit scopes to locked milestone even with multiple foreign milestones", () => {
     const repo = initTempRepo();
 
-    process.env.GSD_MILESTONE_LOCK = "M035";
-    process.env.GSD_PARALLEL_WORKER = "1";
+    process.env.GWD_MILESTONE_LOCK = "M035";
+    process.env.GWD_PARALLEL_WORKER = "1";
 
     // Create files across many milestones
     createFile(repo, ".gsd/milestones/M032/M032-SUMMARY.md", "foreign");

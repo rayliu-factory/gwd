@@ -1,4 +1,4 @@
-// GSD-2 + Gate 1b recovery counter bound — regression tests for H1 fix (#5012)
+// GWD-2 + Gate 1b recovery counter bound — regression tests for H1 fix (#5012)
 //
 // Verifies that checkAutoStartAfterDiscuss stops emitting plan-blocked recovery
 // hints (with triggerTurn:true) after MAX_PLAN_BLOCKED_RECOVERIES attempts and
@@ -157,8 +157,8 @@ describe("Gate 1b recovery bound (H1)", () => {
     assert.ok(errorNotify, "at-limit call: ctx.ui.notify('error') must be called");
     assert.match(
       errorNotify.msg,
-      /gsd-debug/i,
-      "error notification must direct user to run /gsd-debug",
+      /gwd-debug/i,
+      "error notification must direct user to run /gwd-debug",
     );
     assert.match(
       errorNotify.msg,

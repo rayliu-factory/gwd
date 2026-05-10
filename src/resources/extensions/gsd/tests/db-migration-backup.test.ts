@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Tests for pre-migration database backup helper.
 
 import { describe, test } from "node:test";
@@ -52,7 +52,7 @@ describe("db-migration-backup", () => {
       copyFileSync: (src, dest) => copies.push([src, dest]),
       logWarning: (_scope, message) => warnings.push(message),
     });
-    backupDatabaseBeforeMigration(db, "/tmp/gsd.db", 7, {
+    backupDatabaseBeforeMigration(db, "/tmp/gwd.db", 7, {
       existsSync: (path) => path.endsWith(".backup-v7"),
       copyFileSync: (src, dest) => copies.push([src, dest]),
       logWarning: (_scope, message) => warnings.push(message),
@@ -67,14 +67,14 @@ describe("db-migration-backup", () => {
     const db = new FakeAdapter();
     const copies: Array<[string, string]> = [];
 
-    backupDatabaseBeforeMigration(db, "/tmp/gsd.db", 12, {
-      existsSync: (path) => path === "/tmp/gsd.db",
+    backupDatabaseBeforeMigration(db, "/tmp/gwd.db", 12, {
+      existsSync: (path) => path === "/tmp/gwd.db",
       copyFileSync: (src, dest) => copies.push([src, dest]),
       logWarning: () => assert.fail("should not warn"),
     });
 
     assert.deepEqual(db.execCalls, ["PRAGMA wal_checkpoint(TRUNCATE)"]);
-    assert.deepEqual(copies, [["/tmp/gsd.db", "/tmp/gsd.db.backup-v12"]]);
+    assert.deepEqual(copies, [["/tmp/gwd.db", "/tmp/gwd.db.backup-v12"]]);
   });
 
   test("continues copying when checkpoint fails and warns when copy fails", () => {
@@ -83,13 +83,13 @@ describe("db-migration-backup", () => {
     const copies: Array<[string, string]> = [];
     const warnings: string[] = [];
 
-    backupDatabaseBeforeMigration(db, "/tmp/gsd.db", 12, {
-      existsSync: (path) => path === "/tmp/gsd.db",
+    backupDatabaseBeforeMigration(db, "/tmp/gwd.db", 12, {
+      existsSync: (path) => path === "/tmp/gwd.db",
       copyFileSync: (src, dest) => copies.push([src, dest]),
       logWarning: (_scope, message) => warnings.push(message),
     });
 
-    assert.deepEqual(copies, [["/tmp/gsd.db", "/tmp/gsd.db.backup-v12"]]);
+    assert.deepEqual(copies, [["/tmp/gwd.db", "/tmp/gwd.db.backup-v12"]]);
 
     backupDatabaseBeforeMigration(db, "/tmp/fail.db", 13, {
       existsSync: (path) => path === "/tmp/fail.db",

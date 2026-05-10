@@ -1,4 +1,4 @@
-// GSD-2 + src/resources/extensions/gsd/auto/run-unit.ts - Runs one GSD auto-mode unit from session creation through agent completion.
+// GWD-2 + src/resources/extensions/gsd/auto/run-unit.ts - Runs one GWD auto-mode unit from session creation through agent completion.
 
 /**
  * auto/run-unit.ts — Single unit execution: session create → prompt → await agent_end.
@@ -6,7 +6,7 @@
  * Imports from: auto/types, auto/resolve
  */
 
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
 
 import type { AutoSession } from "./session.js";
 import { NEW_SESSION_TIMEOUT_MS } from "./session.js";

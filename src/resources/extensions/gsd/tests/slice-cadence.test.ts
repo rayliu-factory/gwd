@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Slice-cadence merge and resquash tests.
 /**
  * Tests for slice-cadence collapse — #4765.
@@ -128,8 +128,8 @@ describe("mergeSliceToMain", () => {
     assert.equal(subject, "feat: Core API - S01 of M001 (slice-cadence)");
     assert.ok(body.includes("Slice: S01 - Core API"));
     assert.ok(body.includes("Milestone: M001 - Backend foundation"));
-    assert.ok(body.includes("GSD-Slice: S01"));
-    assert.ok(body.includes("GSD-Milestone: M001"));
+    assert.ok(body.includes("GWD-Slice: S01"));
+    assert.ok(body.includes("GWD-Milestone: M001"));
   });
 
   test("merges slices to the recorded integration branch", () => {

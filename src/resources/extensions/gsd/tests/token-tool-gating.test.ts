@@ -1,12 +1,12 @@
-// Project/App: GSD-2
-// File Purpose: Tests for opt-in GSD tool surface reduction.
+// Project/App: GWD-2
+// File Purpose: Tests for opt-in GWD tool surface reduction.
 
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildMinimalAutoGsdToolSet, buildMinimalGsdToolSet, buildMinimalGsdWorkflowToolSet, buildRequestScopedGsdToolSet, MINIMAL_AUTO_BASE_TOOL_NAMES, MINIMAL_GSD_TOOL_NAMES, restoreGsdWorkflowTools, scopeGsdWorkflowToolsForDispatch } from "../bootstrap/register-hooks.ts";
+import { buildMinimalAutoGsdToolSet, buildMinimalGsdToolSet, buildMinimalGsdWorkflowToolSet, buildRequestScopedGsdToolSet, MINIMAL_AUTO_BASE_TOOL_NAMES, MINIMAL_GWD_TOOL_NAMES, restoreGsdWorkflowTools, scopeGsdWorkflowToolsForDispatch } from "../bootstrap/register-hooks.ts";
 
-test("buildMinimalGsdToolSet preserves non-GSD tools and replaces broad GSD surface", () => {
+test("buildMinimalGsdToolSet preserves non-GWD tools and replaces broad GWD surface", () => {
   const result = buildMinimalGsdToolSet([
     "bash",
     "read",
@@ -26,7 +26,7 @@ test("buildMinimalGsdToolSet preserves non-GSD tools and replaces broad GSD surf
   assert.ok(result.includes("bash"));
   assert.ok(result.includes("read"));
   assert.ok(result.includes("browser_open"));
-  for (const toolName of MINIMAL_GSD_TOOL_NAMES) {
+  for (const toolName of MINIMAL_GWD_TOOL_NAMES) {
     assert.ok(result.includes(toolName), `expected ${toolName}`);
   }
   assert.ok(!result.includes("gsd_plan_milestone"));
@@ -41,7 +41,7 @@ test("buildMinimalGsdToolSet deduplicates preserved and minimal tools", () => {
   assert.deepEqual(result.filter((toolName) => toolName === "memory_query"), ["memory_query"]);
 });
 
-test("buildMinimalGsdToolSet does not reintroduce provider-filtered GSD tools", () => {
+test("buildMinimalGsdToolSet does not reintroduce provider-filtered GWD tools", () => {
   const result = buildMinimalGsdToolSet(["bash", "read", "memory_query"]);
 
   assert.deepEqual(result, ["bash", "read", "memory_query"]);
@@ -80,7 +80,7 @@ test("buildMinimalAutoGsdToolSet keeps unit-specific completion tools without al
   assert.ok(!result.includes("gsd_complete_slice"));
 });
 
-test("buildMinimalAutoGsdToolSet keeps only the auto base non-GSD tools", () => {
+test("buildMinimalAutoGsdToolSet keeps only the auto base non-GWD tools", () => {
   const result = buildMinimalAutoGsdToolSet([
     "ask_user_questions",
     "bash",
@@ -153,7 +153,7 @@ test("buildMinimalAutoGsdToolSet covers execute-task-simple", () => {
   assert.ok(!result.includes("gsd_plan_task"));
 });
 
-test("buildMinimalGsdWorkflowToolSet keeps workflow GSD tools but drops broad non-GSD tools", () => {
+test("buildMinimalGsdWorkflowToolSet keeps workflow GWD tools but drops broad non-GWD tools", () => {
   const result = buildMinimalGsdWorkflowToolSet([
     "ask_user_questions",
     "bash",

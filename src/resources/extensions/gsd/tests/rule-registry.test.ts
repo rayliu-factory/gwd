@@ -1,4 +1,4 @@
-// GSD Extension — Rule Registry Tests
+// GWD Extension — Rule Registry Tests
 //
 // Tests the RuleRegistry class, UnifiedRule types, singleton accessors,
 // and evaluation methods using mock rules.
