@@ -1,7 +1,7 @@
 // Project/App: GSD-2
 // File Purpose: Unit tests for workflow template registry loading, matching, and display.
 //
-// GSD Workflow Templates — Unit Tests
+// GWD Workflow Templates — Unit Tests
 //
 // Tests registry loading, template resolution, auto-detection, and listing.
 

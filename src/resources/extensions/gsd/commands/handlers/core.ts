@@ -14,7 +14,7 @@ import { formattedShortcutPair } from "../../shortcut-defs.js";
 
 export function showHelp(ctx: ExtensionCommandContext, args = ""): void {
   const summaryLines = [
-    "GSD — Get Shit Done\n",
+    "GWD — Get Work Done\n",
     "QUICK START",
     "  /gsd start <tpl>   Start a workflow template",
     "  /gsd               Run next unit (same as /gsd next)",
@@ -53,7 +53,7 @@ export function showHelp(ctx: ExtensionCommandContext, args = ""): void {
   ];
 
   const fullLines = [
-    "GSD — Get Shit Done\n",
+    "GWD — Get Work Done\n",
     "WORKFLOW",
     "  /gsd start <tpl>   Start a workflow template (bugfix, spike, feature, hotfix, etc.)",
     "  /gsd templates     List available workflow templates  [info <name>]",

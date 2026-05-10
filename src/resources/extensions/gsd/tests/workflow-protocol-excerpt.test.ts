@@ -1,5 +1,5 @@
 // Project/App: GSD-2
-// File Purpose: Tests for capped GSD workflow protocol and doctor-heal payload helpers.
+// File Purpose: Tests for capped GWD workflow protocol and doctor-heal payload helpers.
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -30,7 +30,7 @@ test("workflow dispatch uses excerpt instead of full workflow body", () => {
     maxProtocolChars: 1200,
   });
 
-  assert.match(content, /## GSD Workflow Protocol Excerpt/);
+  assert.match(content, /## GWD Workflow Protocol Excerpt/);
   assert.match(content, /## Your Task/);
   assert.match(content, /Run the selected unit/);
   assert.ok(content.length < workflow.length);
@@ -38,7 +38,7 @@ test("workflow dispatch uses excerpt instead of full workflow body", () => {
 
 test("workflow protocol excerpt includes late verification and advance rules", () => {
   const workflow = [
-    "# GSD Workflow",
+    "# GWD Workflow",
     "intro",
     "## Quick Start",
     "quick",

@@ -1471,7 +1471,7 @@ export async function showDiscuss(
 ): Promise<void> {
   // Guard: no .gsd/ project
   if (!existsSync(gsdRoot(basePath))) {
-    ctx.ui.notify("No GSD project found. Run /gsd to start one first.", "warning");
+    ctx.ui.notify("No GWD project found. Run /gsd to start one first.", "warning");
     return;
   }
 
@@ -2226,7 +2226,7 @@ export async function showSmartEntry(
       ), "gsd-run", ctx, "discuss-milestone");
     } else {
       const choice = await showNextAction(ctx, {
-        title: "GSD — Get Shit Done",
+        title: "GWD — Get Work Done",
         summary: ["No active milestone."],
         actions: [
           {

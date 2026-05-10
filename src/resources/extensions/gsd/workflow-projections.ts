@@ -1,5 +1,5 @@
 // Project/App: GSD-2
-// File Purpose: Projection renderers for GSD workflow database rows.
+// File Purpose: Projection renderers for GWD workflow database rows.
 // GSD Extension — Projection Renderers (DB -> Markdown)
 // Renders PLAN.md, ROADMAP.md, SUMMARY.md, and STATE.md from database rows.
 // Projections are read-only views of engine state (Layer 3 of the architecture).

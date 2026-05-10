@@ -218,7 +218,7 @@ export async function handleShip(
   const milestoneId = state.activeMilestone.id;
   const milestoneTitle = state.activeMilestone.title ?? "";
 
-  // 2. Check for incomplete work (use GSD phase as proxy — no phase field on ActiveRef)
+  // 2. Check for incomplete work (use GWD phase as proxy — no phase field on ActiveRef)
   if (state.phase !== "complete" && !force) {
     ctx.ui.notify(
       `Milestone ${milestoneId} may not be complete (phase: ${state.phase}). Use --force to ship anyway.`,

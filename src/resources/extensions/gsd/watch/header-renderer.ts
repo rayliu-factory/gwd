@@ -216,7 +216,7 @@ export function renderHeaderLines(data: HeaderData, width: number): string[] {
 
   // Build info panel lines (6 lines to match logo height)
   const infoLines: string[] = [
-    `\x1b[1mGet Shit Done\x1b[0m`,
+    `\x1b[1mGet Work Done\x1b[0m`,
     "",
     formatInfoLine("Model", data.model, infoPanelWidth),
     formatInfoLine("Provider", data.provider, infoPanelWidth),
@@ -257,7 +257,7 @@ function renderStackedHeader(data: HeaderData, width: number): string[] {
   const lines: string[] = [];
 
   // Title
-  lines.push(`\x1b[1mGet Shit Done\x1b[0m`);
+  lines.push(`\x1b[1mGet Work Done\x1b[0m`);
   lines.push("");
 
   // Info

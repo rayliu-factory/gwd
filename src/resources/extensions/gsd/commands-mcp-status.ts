@@ -7,7 +7,7 @@
  *   /gsd mcp             — Overview of all servers (alias: /gsd mcp status)
  *   /gsd mcp status      — Same as bare /gsd mcp
  *   /gsd mcp check <srv> — Detailed status for a specific server
- *   /gsd mcp init [dir]  — Write project-local GSD workflow MCP config
+ *   /gsd mcp init [dir]  — Write project-local GWD workflow MCP config
  */
 
 import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
@@ -50,7 +50,7 @@ export function formatMcpInitResult(
     `Project: ${targetPath}`,
     `Config:   ${configPath}`,
     "",
-    "Claude Code can now load the GSD workflow MCP server from this folder.",
+    "Claude Code can now load the GWD workflow MCP server from this folder.",
   ].join("\n");
 }
 
@@ -289,7 +289,7 @@ export async function handleMcpStatus(
     "Usage: /gsd mcp [status|check <server>|init [dir]]\n\n" +
     "  status           Show all MCP server statuses (default)\n" +
     "  check <server>   Detailed status for a specific server\n" +
-    "  init [dir]       Write .mcp.json for the local GSD workflow MCP server",
+    "  init [dir]       Write .mcp.json for the local GWD workflow MCP server",
     "warning",
   );
 }

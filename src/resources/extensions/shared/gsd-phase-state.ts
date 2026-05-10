@@ -62,11 +62,11 @@ export function deactivateGSD(): void {
 	_auditContext = null;
 }
 
-/** Set the currently dispatched GSD phase (e.g. "plan-milestone"). */
+/** Set the currently dispatched GWD phase (e.g. "plan-milestone"). */
 export function setCurrentPhase(phase: string, context?: GSDPhaseAuditContext): boolean {
 	if (context) _auditContext = context;
 	if (!_active) {
-		process.emitWarning(`Ignoring GSD phase "${phase}" while GSD auto-mode is inactive`, {
+		process.emitWarning(`Ignoring GWD phase "${phase}" while GWD auto-mode is inactive`, {
 			code: "GWD_PHASE_INACTIVE",
 		});
 		return false;
@@ -89,7 +89,7 @@ export function isGSDActive(): boolean {
 	return _active;
 }
 
-/** Returns the current GSD phase, or null if none is active. */
+/** Returns the current GWD phase, or null if none is active. */
 export function getCurrentPhase(): string | null {
 	return _active ? _currentPhase : null;
 }

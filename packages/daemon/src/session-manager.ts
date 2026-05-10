@@ -1,5 +1,5 @@
 /**
- * SessionManager — manages RpcClient lifecycle for daemon-driven GSD execution.
+ * SessionManager — manages RpcClient lifecycle for daemon-driven GWD execution.
  *
  * Extends EventEmitter to emit typed session lifecycle events.
  * One active session per projectDir. Tracks events in a ring buffer,

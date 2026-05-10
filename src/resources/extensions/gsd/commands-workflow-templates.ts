@@ -2,7 +2,7 @@
 // File Purpose: Workflow template commands for starting, listing, and dispatching workflows.
 
 /**
- * GSD Workflow Template Commands — /gsd start, /gsd templates
+ * GWD Workflow Template Commands — /gsd start, /gsd templates
  *
  * Handles the `/gsd start [template] [description]` and `/gsd templates` commands.
  * Resolves templates by name or auto-detection, then dispatches the workflow prompt.
@@ -404,7 +404,7 @@ export async function handleStart(
     return;
   }
 
-  // ─── Route full-project to standard GSD workflow ────────────────────────
+  // ─── Route full-project to standard GWD workflow ────────────────────────
 
   if (templateId === "full-project") {
     const root = gsdRoot(basePath);
@@ -417,7 +417,7 @@ export async function handleStart(
       pi.sendMessage(
         {
           customType: "gsd-workflow-template",
-          content: "The user wants to start a full GSD project. Run `/gsd init` to bootstrap the project, then `/gsd auto` to begin execution.",
+          content: "The user wants to start a full GWD project. Run `/gsd init` to bootstrap the project, then `/gsd auto` to begin execution.",
           display: false,
         },
         { triggerTurn: true },

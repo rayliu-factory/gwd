@@ -104,7 +104,7 @@ const ENV_KEYS: Record<RemoteChannel, string> = {
 };
 
 // ---------------------------------------------------------------------------
-// Config resolution — reads ~/.gsd/PREFERENCES.md YAML frontmatter
+// Config resolution — reads ~/.gwd/PREFERENCES.md YAML frontmatter
 // ---------------------------------------------------------------------------
 
 function clampNumber(value: unknown, fallback: number, min: number, max: number): number {

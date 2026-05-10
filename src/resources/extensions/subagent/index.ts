@@ -357,7 +357,7 @@ async function runSingleAgent(
 		};
 	}
 
-	// GSD phase guard: block agents that conflict with the active GSD phase
+	// GWD phase guard: block agents that conflict with the active GWD phase
 	if (agent.conflictsWith && agent.conflictsWith.length > 0) {
 		const activePhase = getCurrentPhase();
 		if (activePhase && agent.conflictsWith.includes(activePhase)) {
@@ -367,7 +367,7 @@ async function runSingleAgent(
 				task,
 				exitCode: 1,
 				messages: [],
-				stderr: `Agent "${agentName}" is blocked: it conflicts with the active GSD phase "${activePhase}". Use the built-in GSD workflow instead.`,
+				stderr: `Agent "${agentName}" is blocked: it conflicts with the active GWD phase "${activePhase}". Use the built-in GWD workflow instead.`,
 				usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, contextTokens: 0, turns: 0 },
 				step,
 			};

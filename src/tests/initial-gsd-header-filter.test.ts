@@ -14,7 +14,7 @@ const GWD_LOGO_LINES = [
 
 test("filterInitialGsdHeader strips a plain startup banner and keeps real terminal content", () => {
   const warning = "Warning: Google Search is not configured.";
-  const raw = [...GWD_LOGO_LINES, "  Get Shit Done v2.33.1", "", warning].join("\n");
+  const raw = [...GWD_LOGO_LINES, "  Get Work Done v2.33.1", "", warning].join("\n");
 
   const result = filterInitialGsdHeader(raw);
 
@@ -33,7 +33,7 @@ test("filterInitialGsdHeader strips ANSI-colored startup banner output", () => {
 
   const raw =
     GWD_LOGO_LINES.map((line) => `${cyan}${line}${reset}\r\n`).join("") +
-    `  ${bold}Get Shit Done${boldReset} ${dim}v2.33.1${dimReset}\r\n\r\n` +
+    `  ${bold}Get Work Done${boldReset} ${dim}v2.33.1${dimReset}\r\n\r\n` +
     warning;
 
   const result = filterInitialGsdHeader(raw);

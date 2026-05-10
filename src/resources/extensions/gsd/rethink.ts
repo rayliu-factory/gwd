@@ -37,7 +37,7 @@ export async function handleRethink(
   const basePath = currentDirectoryRoot();
   const root = gsdRoot(basePath);
   if (!existsSync(root)) {
-    ctx.ui.notify("No GSD project found. Run /gsd init first.", "warning");
+    ctx.ui.notify("No GWD project found. Run /gsd init first.", "warning");
     return;
   }
 

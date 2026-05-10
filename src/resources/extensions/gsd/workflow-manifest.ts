@@ -1,5 +1,5 @@
 // Project/App: GSD-2
-// File Purpose: State manifest snapshot and restore orchestration for GSD workflow data.
+// File Purpose: State manifest snapshot and restore orchestration for GWD workflow data.
 
 import {
   _getAdapter,

@@ -1040,7 +1040,7 @@ export async function createMcpServer(
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_query',
-    'Query GSD project state from the filesystem. By default returns STATE.md, PROJECT.md, requirements, and milestone listing. Pass `query` to narrow the response (accepted: "state"/"status", "project", "requirements", "milestones", "all"). Does not require an active session.',
+    'Query GWD project state from the filesystem. By default returns STATE.md, PROJECT.md, requirements, and milestone listing. Pass `query` to narrow the response (accepted: "state"/"status", "project", "requirements", "milestones", "all"). Does not require an active session.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
       query: z
@@ -1255,7 +1255,7 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_graph — knowledge graph for GSD projects
+  // gsd_graph — knowledge graph for GWD projects
   //
   // Modes:
   //   build   Parse .gsd/ artifacts and write graph.json atomically.
@@ -1266,7 +1266,7 @@ export async function createMcpServer(
   server.tool(
     'gsd_graph',
     [
-      'Manage the GSD project knowledge graph. No session required.',
+      'Manage the GWD project knowledge graph. No session required.',
       '',
       'Modes:',
       '  build   Parse .gsd/ artifacts (STATE.md, milestone ROADMAPs, slice PLANs,',

@@ -73,7 +73,7 @@ test("multiple user turns: each user input after prompt is role=user", () => {
   });
 
   // Turn 1: assistant response, prompt, user input
-  parser.feed("Welcome to GSD.\n");
+  parser.feed("Welcome to GWD.\n");
   parser.feed("❯ \n");
   parser.feed("discuss\n");
 

@@ -105,14 +105,14 @@ export function readRepoMeta(externalPath: string): RepoMeta | null {
  *   2. The resolved git root is a proper ancestor of basePath
  *   3. There is no *project* `.gsd` directory at the git root or any
  *      intermediate ancestor (the parent project has not been
- *      initialised with GSD)
+ *      initialised with GWD)
  *
  * When true, the caller should run `git init` at basePath so that
  * `repoIdentity()` produces a hash unique to this directory, preventing
  * cross-project state leaks (#1639).
  *
  * When the git root already has a project `.gsd`, the directory is a
- * legitimate subdirectory of an existing GSD project — `cd src/ && /gsd`
+ * legitimate subdirectory of an existing GWD project — `cd src/ && /gsd`
  * should still load the parent project's milestones.
  */
 export function isInheritedRepo(basePath: string): boolean {
@@ -123,7 +123,7 @@ export function isInheritedRepo(basePath: string): boolean {
     if (normalizedBase === normalizedRoot) return false; // basePath IS the root
 
     // The git root is a proper ancestor. Check whether it already has .gsd
-    // (i.e. the parent project was initialised with GSD).
+    // (i.e. the parent project was initialised with GWD).
     if (isProjectGsd(join(root, ".gsd"))) return false;
 
     // Walk up from basePath's parent to the git root checking for .gsd.

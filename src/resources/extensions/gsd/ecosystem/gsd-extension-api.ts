@@ -38,7 +38,7 @@ import { logWarning } from "../workflow-logger.js";
 // ─── Public Interface ───────────────────────────────────────────────────
 
 export interface GSDExtensionAPI extends ExtensionAPI {
-  /** Current GSD workflow phase, or null if no project state. */
+  /** Current GWD workflow phase, or null if no project state. */
   getPhase(): Phase | null;
   /** Currently active milestone/slice/task triple, or null if none. */
   getActiveUnit(): GSDActiveUnit | null;

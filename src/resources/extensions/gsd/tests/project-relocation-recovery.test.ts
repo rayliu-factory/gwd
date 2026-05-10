@@ -1,7 +1,7 @@
 /**
  * Project Relocation Recovery Tests (#2750)
  *
- * Verifies that moving/renaming a GSD project directory does not cause
+ * Verifies that moving/renaming a GWD project directory does not cause
  * silent data loss. When a repo has a remote URL, the identity hash
  * should be based solely on the remote — making moves transparent.
  *

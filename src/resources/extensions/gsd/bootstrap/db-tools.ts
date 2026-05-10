@@ -1,5 +1,5 @@
 // Project/App: GSD-2
-// File Purpose: Registers DB-backed GSD workflow tools and compatibility aliases.
+// File Purpose: Registers DB-backed GWD workflow tools and compatibility aliases.
 import { Type } from "@sinclair/typebox";
 import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 import { Text } from "@gwd/pi-tui";

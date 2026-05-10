@@ -593,7 +593,7 @@ function filterConflictingSlices(
 // ─── Internal: Worker Spawning ─────────────────────────────────────────────
 
 /**
- * Resolve the GSD CLI binary path.
+ * Resolve the GWD CLI binary path.
  * Same logic as parallel-orchestrator.ts resolveGsdBin().
  */
 function resolveGsdBin(): string | null {

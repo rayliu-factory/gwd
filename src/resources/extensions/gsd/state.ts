@@ -1,5 +1,5 @@
 // Project/App: GSD-2
-// File Purpose: Runtime state derivation from GSD workflow database and legacy files.
+// File Purpose: Runtime state derivation from GWD workflow database and legacy files.
 // GSD Extension — State Derivation
 // DB-authoritative runtime derivation with explicit legacy filesystem fallback.
 // Pure TypeScript, zero Pi dependencies.

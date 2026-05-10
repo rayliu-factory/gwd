@@ -1,4 +1,4 @@
-// View renderers for the GSD workflow visualizer overlay.
+// View renderers for the GWD workflow visualizer overlay.
 
 import type { Theme } from "@gwd/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@gwd/pi-tui";

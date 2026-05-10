@@ -100,7 +100,7 @@ The workflow MCP surface includes:
 
 **Aliases (kept for backwards compatibility — prefer the canonical name above):** `gsd_save_decision`, `gsd_update_requirement`, `gsd_save_requirement`, `gsd_generate_milestone_id`, `gsd_task_plan`, `gsd_slice_replan`, `gsd_complete_task`, `gsd_complete_slice`, `gsd_milestone_validate`, `gsd_milestone_complete`, `gsd_roadmap_reassess`.
 
-These tools use the same GSD workflow handlers as the native in-process tool path wherever a shared handler exists.
+These tools use the same GWD workflow handlers as the native in-process tool path wherever a shared handler exists.
 
 `gsd_summary_save` computes artifact paths from the supplied IDs. `milestone_id` is required for milestone-, slice-, and task-scoped artifact types (`SUMMARY`, `RESEARCH`, `CONTEXT`, `ASSESSMENT`, `CONTEXT-DRAFT`) and should be omitted only for root-level `PROJECT`, `PROJECT-DRAFT`, `REQUIREMENTS`, and `REQUIREMENTS-DRAFT` artifacts. For final `REQUIREMENTS` saves, the tool renders content from active database requirement rows; callers must create those rows with `gsd_requirement_save` first.
 
@@ -195,7 +195,7 @@ Cancel a running session. Aborts the current operation and stops the agent proce
 
 ### `gsd_query`
 
-Query GSD project state from the filesystem without an active session. Returns STATE.md, PROJECT.md, requirements, and milestone listing.
+Query GWD project state from the filesystem without an active session. Returns STATE.md, PROJECT.md, requirements, and milestone listing.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -231,10 +231,10 @@ Resolve a pending blocker in a session by sending a response to the blocked UI r
 
 | Variable | Description |
 |----------|-------------|
-| `GWD_CLI_PATH` | Absolute path to the GSD CLI binary. If not set, the server resolves `gsd` via `which`. |
-| `GWD_WORKFLOW_EXECUTORS_MODULE` | Optional absolute path or `file:` URL for the shared GSD workflow executor module used by workflow mutation tools. |
+| `GWD_CLI_PATH` | Absolute path to the GWD CLI binary. If not set, the server resolves `gwd` via `which`. |
+| `GWD_WORKFLOW_EXECUTORS_MODULE` | Optional absolute path or `file:` URL for the shared GWD workflow executor module used by workflow mutation tools. |
 
-The server also hydrates supported model-provider and tool credentials from `~/.gsd/agent/auth.json` on startup. Keys saved through `/gsd config` or `/gsd keys` become available to the MCP server process automatically, and any explicitly-set environment variable still wins.
+The server also hydrates supported model-provider and tool credentials from `~/.gwd/agent/auth.json` on startup. Keys saved through `/gsd config` or `/gsd keys` become available to the MCP server process automatically, and any explicitly-set environment variable still wins.
 
 Remote secrets pushed by `secure_env_collect` to Vercel or Convex are not hydrated into the MCP server process after the push. Use explicit MCP `env` configuration or a process restart when an operator-level value must be visible to the running server.
 
@@ -250,14 +250,14 @@ Remote secrets pushed by `secure_env_collect` to Vercel or Convex are not hydrat
                                    │  @gwd-build/rpc-client │
                                    │       │          │
                                    │       ▼          │
-                                   │  GSD CLI (child  │
+                                   │  GWD CLI (child  │
                                    │  process via RPC)│
                                    └──────────────────┘
 ```
 
 - **@gwd-build/mcp-server** — MCP protocol adapter. Translates MCP tool calls into SessionManager operations.
 - **SessionManager** — Manages RpcClient lifecycle. One session per project directory. Tracks events in a ring buffer (last 50), detects blockers, accumulates cost.
-- **@gwd-build/rpc-client** — Low-level RPC client that spawns and communicates with the GSD CLI process via JSON-RPC over stdio.
+- **@gwd-build/rpc-client** — Low-level RPC client that spawns and communicates with the GWD CLI process via JSON-RPC over stdio.
 
 ## License
 

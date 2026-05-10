@@ -57,7 +57,7 @@ export function buildProjectWorkflowMcpServerConfig(
 
   if (!launch) {
     throw new Error(
-      "Unable to resolve the GSD workflow MCP server. Build this checkout or install gsd-mcp-server on PATH.",
+      "Unable to resolve the GWD workflow MCP server. Build this checkout or install gsd-mcp-server on PATH.",
     );
   }
 

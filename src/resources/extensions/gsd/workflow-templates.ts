@@ -2,7 +2,7 @@
 // File Purpose: Workflow template registry loading, matching, and display helpers.
 
 /**
- * GSD Workflow Templates — Registry & Resolution
+ * GWD Workflow Templates — Registry & Resolution
  *
  * Loads the workflow template registry and resolves templates by name,
  * alias, or trigger-keyword matching against user input.

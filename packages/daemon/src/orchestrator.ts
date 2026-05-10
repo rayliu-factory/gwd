@@ -1,5 +1,5 @@
 /**
- * Orchestrator — LLM-powered agent for the #gsd-control Discord channel.
+ * Orchestrator — LLM-powered agent for the #gwd-control Discord channel.
  *
  * Receives Discord messages, maintains conversation history, calls the
  * Anthropic messages API with 5 tool definitions (list_projects, start_session,
@@ -35,7 +35,7 @@ function resolveAnthropicApiKey(): string {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     throw new Error(
-      'ANTHROPIC_API_KEY is required. Set it in your environment or run `gsd config`.',
+      'ANTHROPIC_API_KEY is required. Set it in your environment or run `gwd config`.',
     );
   }
   return apiKey;
@@ -64,7 +64,7 @@ export interface OrchestratorDeps {
 // System Prompt
 // ---------------------------------------------------------------------------
 
-const SYSTEM_PROMPT = `You are GSD Control — a concise, capable orchestrator for managing GSD (Get Shit Done) coding agent sessions via Discord.
+const SYSTEM_PROMPT = `You are GWD Control — a concise, capable orchestrator for managing GWD (Get Work Done) coding agent sessions via Discord.
 
 You have tools to list projects, start sessions, get status, stop sessions, and inspect session details. Use them to fulfill the user's requests.
 

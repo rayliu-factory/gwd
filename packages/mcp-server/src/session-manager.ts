@@ -1,5 +1,5 @@
 /**
- * SessionManager — manages RpcClient lifecycle for background GSD execution.
+ * SessionManager — manages RpcClient lifecycle for background GWD execution.
  *
  * One active session per projectDir. Tracks events in a ring buffer,
  * detects blockers, tracks terminal state, and accumulates cost using

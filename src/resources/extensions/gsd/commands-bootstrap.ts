@@ -204,7 +204,7 @@ function getGsdArgumentCompletions(prefix: string) {
       { cmd: "refactor", desc: "Inventory, plan waves, migrate, verify" },
       { cmd: "security-audit", desc: "Scan, triage, remediate, re-scan" },
       { cmd: "dep-upgrade", desc: "Assess, upgrade, fix breaks, verify" },
-      { cmd: "full-project", desc: "Complete GSD workflow with full ceremony" },
+      { cmd: "full-project", desc: "Complete GWD workflow with full ceremony" },
       { cmd: "resume", desc: "Resume an in-progress workflow" },
       { cmd: "--list", desc: "List all available templates" },
       { cmd: "--dry-run", desc: "Preview workflow without executing" },
@@ -260,7 +260,7 @@ function getGsdArgumentCompletions(prefix: string) {
 
 export function registerLazyGSDCommand(pi: ExtensionAPI): void {
   pi.registerCommand("gsd", {
-    description: "GSD — Get Shit Done",
+    description: "GWD — Get Work Done",
     getArgumentCompletions: getGsdArgumentCompletions,
     handler: async (args: string, ctx: ExtensionCommandContext) => {
       const { handleGSDCommand } = await importExtensionModule<typeof import("./commands.js")>(import.meta.url, "./commands.js");

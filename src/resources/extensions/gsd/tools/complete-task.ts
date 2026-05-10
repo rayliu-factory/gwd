@@ -1,5 +1,5 @@
 // Project/App: GSD-2
-// File Purpose: Complete-task tool handler for GSD workflow state and summaries.
+// File Purpose: Complete-task tool handler for GWD workflow state and summaries.
 
 /**
  * complete-task handler — the core operation behind gsd_complete_task.

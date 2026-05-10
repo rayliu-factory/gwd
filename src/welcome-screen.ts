@@ -1,5 +1,5 @@
 /**
- * GSD Welcome Screen
+ * GWD Welcome Screen
  *
  * Two-panel bar layout: full-width accent bars at top/bottom (matching the
  * auto-mode progress widget style), logo left (fixed width), info right.
@@ -12,6 +12,7 @@ import os from 'node:os'
 import chalk from 'chalk'
 import stripAnsi from 'strip-ansi'
 import { GWD_LOGO } from './logo.js'
+import { PRODUCT_FULL_NAME } from './namespace.js'
 
 interface GsdState {
   milestone?: string
@@ -95,7 +96,7 @@ export function buildWelcomeScreenLines(opts: WelcomeScreenOptions): string[] {
 
   // Narrow terminal fallback
   if (termWidth < 70) {
-    return ['', `  Get Shit Done v${version}`, `  ${shortCwd}`, '']
+    return ['', `  ${PRODUCT_FULL_NAME} v${version}`, `  ${shortCwd}`, '']
   }
 
   // ── Panel widths ────────────────────────────────────────────────────────────
@@ -111,7 +112,7 @@ export function buildWelcomeScreenLines(opts: WelcomeScreenOptions): string[] {
   const leftRows = ['', ...GWD_LOGO, '']
 
   // ── Right rows (8 total, null = divider) ────────────────────────────────────
-  const titleLeft  = `  ${chalk.bold('Get Shit Done')}`
+  const titleLeft  = `  ${chalk.bold(PRODUCT_FULL_NAME)}`
   const titleRight = chalk.dim(`v${version}`)
   const titleFill  = RIGHT_INNER - visLen(titleLeft) - visLen(titleRight)
   const titleRow   = titleLeft + ' '.repeat(Math.max(1, titleFill)) + titleRight
@@ -147,7 +148,7 @@ export function buildWelcomeScreenLines(opts: WelcomeScreenOptions): string[] {
       ? `  Next       ${chalk.dim(state.nextAction)}`
       : ''
   } else {
-    line1 = `  Status     ${chalk.dim('No active GSD project')}`
+    line1 = `  Status     ${chalk.dim('No active GWD project')}`
     line2 = `             ${chalk.dim('/gsd to begin')}`
   }
   const sessionLine = line1

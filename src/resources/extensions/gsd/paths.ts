@@ -1,6 +1,6 @@
-// GSD-2 — ID-based path resolution for GSD project files and directories
+// GWD-2 — ID-based path resolution for GWD project files and directories
 /**
- * GSD Paths — ID-based path resolution
+ * GWD Paths — ID-based path resolution
  *
  * Directories use bare IDs: M001/, S01/, etc.
  * Files use ID-SUFFIX: M001-ROADMAP.md, S01-PLAN.md, T01-PLAN.md

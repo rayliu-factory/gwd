@@ -49,7 +49,7 @@ export async function showQueue(
   // ── Ensure .gsd/ exists ─────────────────────────────────────────────
   const gsd = gsdRoot(basePath);
   if (!existsSync(gsd)) {
-    ctx.ui.notify("No GSD project found. Run /gsd to start one first.", "warning");
+    ctx.ui.notify("No GWD project found. Run /gsd to start one first.", "warning");
     return;
   }
 
@@ -186,7 +186,7 @@ export async function showQueueAdd(
   const completeCount = state.registry.filter(m => m.status === "complete").length;
 
   const preamble = [
-    `Queuing new work onto an existing GSD project.`,
+    `Queuing new work onto an existing GWD project.`,
     activePart,
     `${completeCount} milestone(s) complete, ${pendingCount} pending.`,
     `Next available milestone ID: ${nextId}.`,

@@ -278,7 +278,7 @@ function isWithinRoot(candidatePath: string, rootPath: string): boolean {
 
 /**
  * Resolve the symlink target of `<allowedRoot>/.gsd` when it points into the
- * external state layout (`~/.gsd/projects/<hash>/`). Returns the realpath of
+ * external state layout (`~/.gwd/projects/<hash>/`). Returns the realpath of
  * that target so callers can accept worktree paths that live under
  * `<external-state>/worktrees/<MID>/`. Returns null when `.gsd` is absent or
  * resolution fails — the caller should fall back to the direct containment
@@ -311,8 +311,8 @@ export function validateProjectDir(projectDir: string, env: NodeJS.ProcessEnv = 
   if (isWithinRoot(resolvedProjectDir, resolvedAllowedRoot)) return resolvedProjectDir;
 
   // External state layout: `<allowedRoot>/.gsd` may be a symlink into
-  // `~/.gsd/projects/<hash>/`, and auto-worktrees live under
-  // `~/.gsd/projects/<hash>/worktrees/<MID>/`. Accept candidates that are
+  // `~/.gwd/projects/<hash>/`, and auto-worktrees live under
+  // `~/.gwd/projects/<hash>/worktrees/<MID>/`. Accept candidates that are
   // under the realpath of `<allowedRoot>/.gsd` — they belong to this project
   // even though their absolute path is outside allowedRoot (#issue-a44).
   const externalRoot = resolveExternalStateRoot(resolvedAllowedRoot);
@@ -436,7 +436,8 @@ function parseWorkflowArgs<T extends { projectDir?: string }>(
 
   // Defense-in-depth: refuse when the resolved candidate is the user's home
   // directory. The MCP server's process.cwd() can be $HOME if launched from
-  // an unusual context; honoring it would write project artifacts into ~/.gsd.
+  // an unusual context; honoring it would write project artifacts into the
+  // home directory's project-state folder.
   if (isHomeDirectory(projectRootCandidate)) {
     throw new Error(
       `projectDir resolves to the user's home directory (${projectRootCandidate}). ` +
@@ -625,9 +626,9 @@ async function getWorkflowToolExecutors(): Promise<WorkflowToolExecutors> {
       }
 
       throw new Error(
-        "Unable to load GSD workflow executor bridge for MCP mutation tools. " +
+        "Unable to load GWD workflow executor bridge for MCP mutation tools. " +
         "Set GWD_WORKFLOW_EXECUTORS_MODULE to an importable workflow-tool-executors module, " +
-        "or run the MCP server from a GSD checkout that includes src/resources/extensions/gsd/tools/workflow-tool-executors.(js|ts). " +
+        "or run the MCP server from a GWD checkout that includes src/resources/extensions/gsd/tools/workflow-tool-executors.(js|ts). " +
         `Attempts: ${attempts.join("; ")}`,
       );
     })();

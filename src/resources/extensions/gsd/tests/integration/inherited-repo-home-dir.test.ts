@@ -79,7 +79,7 @@ describe("isInheritedRepo when git root is HOME (#2393)", () => {
     mkdirSync(projectDir, { recursive: true });
 
     // The bug: isInheritedRepo sees ~/.gsd and returns false, thinking
-    // the home repo is a legitimate GSD project. It should return true
+    // the home repo is a legitimate GWD project. It should return true
     // because ~/.gsd is the global state dir, not a project .gsd.
     assert.strictEqual(
       isInheritedRepo(projectDir),
@@ -90,7 +90,7 @@ describe("isInheritedRepo when git root is HOME (#2393)", () => {
   });
 
   test("subdirectory with a real project .gsd symlink at git root is NOT inherited", () => {
-    // Simulate a legitimately initialised GSD project at the home repo root:
+    // Simulate a legitimately initialised GWD project at the home repo root:
     // .gsd is a symlink to an external state directory.
     const externalState = join(stateDir, "projects", "home-project");
     mkdirSync(externalState, { recursive: true });
@@ -107,7 +107,7 @@ describe("isInheritedRepo when git root is HOME (#2393)", () => {
     assert.strictEqual(
       isInheritedRepo(projectDir),
       false,
-      "subdirectory of a legitimately-initialised GSD project should NOT be inherited",
+      "subdirectory of a legitimately-initialised GWD project should NOT be inherited",
     );
   });
 

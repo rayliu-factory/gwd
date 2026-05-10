@@ -18,7 +18,7 @@ export function buildWorkflowProtocolExcerpt(
   const excerpt = buildPrioritizedWorkflowExcerpt(trimmed, limit);
   const truncated = trimmed.length > limit;
   const lines = [
-    "## GSD Workflow Protocol Excerpt",
+    "## GWD Workflow Protocol Excerpt",
     `Source: \`${workflowPath}\``,
     "",
     excerpt,
@@ -40,7 +40,7 @@ export function buildWorkflowDispatchContent(opts: {
   maxProtocolChars?: number;
 }): string {
   return [
-    "Read the following GSD workflow protocol excerpt and execute exactly. Use the source path for a full protocol read only if the excerpt lacks a required rule.",
+    "Read the following GWD workflow protocol excerpt and execute exactly. Use the source path for a full protocol read only if the excerpt lacks a required rule.",
     "",
     buildWorkflowProtocolExcerpt(opts.workflow, opts.workflowPath, { maxChars: opts.maxProtocolChars }),
     "",

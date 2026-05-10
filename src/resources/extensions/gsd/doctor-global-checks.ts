@@ -61,7 +61,7 @@ export async function checkGlobalHealth(
       code: "orphaned_project_state",
       scope: "project",
       unitId: "global",
-      message: `${orphaned.length} orphaned GSD project state director${orphaned.length === 1 ? "y" : "ies"} in ${projectsDir} whose git root no longer exists: ${labels}${overflow}${unknownNote}. Run /gsd cleanup projects to audit or /gsd cleanup projects --fix to reclaim disk space.`,
+      message: `${orphaned.length} orphaned GWD project state director${orphaned.length === 1 ? "y" : "ies"} in ${projectsDir} whose git root no longer exists: ${labels}${overflow}${unknownNote}. Run /gsd cleanup projects to audit or /gsd cleanup projects --fix to reclaim disk space.`,
       file: projectsDir,
       fixable: true,
     });

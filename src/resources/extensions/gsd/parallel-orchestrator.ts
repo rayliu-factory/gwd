@@ -593,7 +593,7 @@ export function spawnWorker(
   if (!worker) return false;
   if (worker.process) return true; // already spawned
 
-  // Resolve the GSD CLI binary path
+  // Resolve the GWD CLI binary path
   const binPath = resolveGsdBin();
   if (!binPath) return false;
 
@@ -738,7 +738,7 @@ export function spawnWorker(
 }
 
 /**
- * Resolve the GSD CLI binary path.
+ * Resolve the GWD CLI binary path.
  * Uses GWD_BIN_PATH env var (set by loader.ts) or falls back to
  * finding the binary relative to the current module.
  */

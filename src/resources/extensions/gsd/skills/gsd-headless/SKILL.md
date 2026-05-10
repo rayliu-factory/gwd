@@ -1,16 +1,16 @@
 ---
 name: gsd-headless
-description: Orchestrate GSD (Get Shit Done) projects programmatically via headless CLI. Use when an agent needs to create milestones from specs, execute software development workflows, monitor task progress, check project status, or control GSD execution (pause/stop/skip/steer). Triggers on requests to "run gsd", "create milestone", "execute project", "check gsd status", "orchestrate development", "run headless workflow", or any programmatic interaction with the GSD project management system. Essential for building orchestrators that coordinate multiple GSD workers.
+description: Orchestrate GWD (Get Work Done) projects programmatically via headless CLI. Use when an agent needs to create milestones from specs, execute software development workflows, monitor task progress, check project status, or control GWD execution (pause/stop/skip/steer). Triggers on requests to "run gwd", "create milestone", "execute project", "check gwd status", "orchestrate development", "run headless workflow", or any programmatic interaction with the GWD project management system. Essential for building orchestrators that coordinate multiple GWD workers.
 ---
 
-# GSD Headless Orchestration
+# GWD Headless Orchestration
 
-Run GSD commands without TUI via `gsd headless`. Spawns an RPC child process, auto-responds to UI prompts, streams progress.
+Run GWD commands without TUI via `gwd headless`. Spawns an RPC child process, auto-responds to UI prompts, streams progress.
 
 ## Command Syntax
 
 ```bash
-gsd headless [flags] [command] [args...]
+gwd headless [flags] [command] [args...]
 ```
 
 **Flags:**
@@ -31,7 +31,7 @@ gsd headless [flags] [command] [args...]
 ### 1. Create + Execute a Milestone (end-to-end)
 
 ```bash
-gsd headless new-milestone --context spec.md --auto
+gwd headless new-milestone --context spec.md --auto
 ```
 
 Reads spec, bootstraps `.gsd/`, creates milestone, then chains into auto-mode executing all phases (discuss → research → plan → execute → summarize → complete).
@@ -41,7 +41,7 @@ Extra flags for `new-milestone`: `--context <path>` (use `-` for stdin), `--cont
 ### 2. Run All Queued Work
 
 ```bash
-gsd headless auto
+gwd headless auto
 ```
 
 Default command. Loops through all pending units until milestone complete or blocked.
@@ -49,7 +49,7 @@ Default command. Loops through all pending units until milestone complete or blo
 ### 3. Run One Unit
 
 ```bash
-gsd headless next
+gwd headless next
 ```
 
 Execute exactly one unit (task/slice/milestone step), then exit. Ideal for step-by-step orchestration with external decision logic between steps.
@@ -57,7 +57,7 @@ Execute exactly one unit (task/slice/milestone step), then exit. Ideal for step-
 ### 4. Instant State Snapshot (no LLM)
 
 ```bash
-gsd headless query
+gwd headless query
 ```
 
 Returns a single JSON object with the full project snapshot — no LLM session, instant (~50ms). **This is the recommended way for orchestrators to inspect state.**
@@ -72,19 +72,19 @@ Returns a single JSON object with the full project snapshot — no LLM session, 
 
 ```bash
 # What phase is the project in?
-gsd headless query | jq '.state.phase'
+gwd headless query | jq '.state.phase'
 
 # What would auto-mode do next?
-gsd headless query | jq '.next'
+gwd headless query | jq '.next'
 
 # Total spend across parallel workers
-gsd headless query | jq '.cost.total'
+gwd headless query | jq '.cost.total'
 ```
 
 ### 5. Dispatch Specific Phase
 
 ```bash
-gsd headless dispatch research|plan|execute|complete|reassess|uat|replan
+gwd headless dispatch research|plan|execute|complete|reassess|uat|replan
 ```
 
 Force-route to a specific phase, bypassing normal state-machine routing.
@@ -95,13 +95,13 @@ Force-route to a specific phase, bypassing normal state-machine routing.
 
 ```bash
 # Instant state check — no LLM cost
-PHASE=$(gsd headless query | jq -r '.state.phase')
-NEXT_ACTION=$(gsd headless query | jq -r '.next.action')
+PHASE=$(gwd headless query | jq -r '.state.phase')
+NEXT_ACTION=$(gwd headless query | jq -r '.next.action')
 
 case "$PHASE" in
   complete) echo "Done" ;;
   blocked)  echo "Needs intervention" ;;
-  *)        [ "$NEXT_ACTION" = "dispatch" ] && gsd headless next ;;
+  *)        [ "$NEXT_ACTION" = "dispatch" ] && gwd headless next ;;
 esac
 ```
 
@@ -109,17 +109,17 @@ esac
 
 ```bash
 while true; do
-  gsd headless next
+  gwd headless next
   EXIT=$?
   [ $EXIT -ne 0 ] && break
   # Instant progress check between steps
-  gsd headless query | jq '{phase: .state.phase, progress: .state.progress}'
+  gwd headless query | jq '{phase: .state.phase, progress: .state.progress}'
 done
 ```
 
 ### Multi-Session Orchestration
 
-GSD tracks concurrent workers via file-based IPC in `.gsd/parallel/`. See [references/multi-session.md](references/multi-session.md) for the full architecture.
+GWD tracks concurrent workers via file-based IPC in `.gsd/parallel/`. See [references/multi-session.md](references/multi-session.md) for the full architecture.
 
 **Quick overview:**
 
@@ -128,7 +128,7 @@ Each worker spawns with `GWD_MILESTONE_LOCK=M00X` + its own git worktree. Worker
 ```bash
 # Spawn a worker for milestone M001 in its worktree
 GWD_MILESTONE_LOCK=M001 GWD_PARALLEL_WORKER=1 \
-  gsd headless --json auto \
+  gwd headless --json auto \
   --cwd .gsd/worktrees/M001 2>worker-M001.log &
 
 # Monitor all workers: read .gsd/parallel/*.status.json
@@ -154,11 +154,11 @@ echo '{"signal":"pause","sentAt":'$(date +%s000)',"from":"coordinator"}' \
 Use `--json` to get real-time events on stdout for downstream processing:
 
 ```bash
-gsd headless --json auto 2>/dev/null | while read -r line; do
+gwd headless --json auto 2>/dev/null | while read -r line; do
   TYPE=$(echo "$line" | jq -r '.type')
   case "$TYPE" in
     tool_execution_start) echo "Tool: $(echo "$line" | jq -r '.toolName')" ;;
-    extension_ui_request) echo "GSD: $(echo "$line" | jq -r '.message // .title // empty')" ;;
+    extension_ui_request) echo "GWD: $(echo "$line" | jq -r '.message // .title // empty')" ;;
     agent_end) echo "Session ended" ;;
   esac
 done
@@ -172,10 +172,10 @@ Use `--events` to receive only specific event types — reduces noise for orches
 
 ```bash
 # Only phase-relevant events
-gsd headless --events agent_end,extension_ui_request auto 2>/dev/null
+gwd headless --events agent_end,extension_ui_request auto 2>/dev/null
 
 # Only tool execution events
-gsd headless --events tool_execution_start,tool_execution_end auto
+gwd headless --events tool_execution_start,tool_execution_end auto
 ```
 
 The filter applies only to stdout output. Internal processing (completion detection, supervised mode, answer injection) is unaffected — all events are still processed internally.
@@ -187,7 +187,7 @@ Available event types: `agent_start`, `agent_end`, `tool_execution_start`, `tool
 Pre-supply answers and secrets for headless runs via `--answers`:
 
 ```bash
-gsd headless --answers answers.json auto
+gwd headless --answers answers.json auto
 ```
 
 Answer file schema:
@@ -205,7 +205,7 @@ Answer file schema:
 
 See [references/answer-injection.md](references/answer-injection.md) for full details.
 
-## GSD Project Structure
+## GWD Project Structure
 
 All state lives in `.gsd/` as markdown files (version-controllable):
 
