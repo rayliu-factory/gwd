@@ -5,7 +5,7 @@
   "type": "module",
   "keywords": [
     "pi-package",
-    "gsd-extension"
+    "gwd-extension"
   ],
   "gwd": {
     "extension": true
