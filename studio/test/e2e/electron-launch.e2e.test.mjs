@@ -11,7 +11,7 @@
  * routes, etc.) — until then, "the app starts" is the meaningful contract.
  *
  * Skipped if:
- * - studio/dist/main/index.js is missing (run `npm run build -w @gsd/studio`)
+ * - studio/dist/main/index.js is missing (run `npm run build -w @gwd/studio`)
  * - playwright is not resolvable (npm ci hoists it from the root)
  * - launching electron headless fails on this platform (no DISPLAY on linux,
  *   etc — set up xvfb in CI)
@@ -40,7 +40,7 @@ async function tryLoadElectron() {
 describe("studio electron launch (launch-only)", () => {
 	test("app launches, renderer mounts, no uncaught errors", { timeout: 60_000 }, async (t) => {
 		if (!existsSync(mainEntry)) {
-			t.skip(`studio main not built; run \`npm run build -w @gsd/studio\` first (looked at ${mainEntry})`);
+			t.skip(`studio main not built; run \`npm run build -w @gwd/studio\` first (looked at ${mainEntry})`);
 			return;
 		}
 
