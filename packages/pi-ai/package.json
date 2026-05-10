@@ -1,11 +1,11 @@
 {
-  "name": "@gsd/pi-ai",
+  "name": "@gwd/pi-ai",
   "version": "2.81.0",
   "description": "Unified LLM API (vendored from pi-mono)",
   "type": "module",
-  "gsd": {
+  "gwd": {
     "linkable": true,
-    "scope": "@gsd",
+    "scope": "@gwd",
     "name": "pi-ai"
   },
   "main": "./dist/index.js",
