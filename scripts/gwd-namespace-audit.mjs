@@ -1,13 +1,14 @@
 // scripts/gwd-namespace-audit.mjs
 // Fails on active old GSD namespace references after the hard cutover.
 
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { lstatSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const root = process.cwd();
 
 const ignoredDirs = new Set([
   ".git",
+  ".worktrees",
   "node_modules",
   "dist",
   "dist-test",
@@ -48,6 +49,7 @@ const activeOldNamespacePatterns = [
   /gsd-pi/,
   /gsd-build/,
   /gsd-2/,
+  /\bgsd[A-Z]/,
   /Gsd[A-Z]/,
   /\bGSD\b/,
   /Get Shit Done/,
@@ -73,7 +75,8 @@ function* walk(dir) {
   for (const entry of readdirSync(dir)) {
     const abs = join(dir, entry);
     const rel = relative(root, abs).replaceAll("\\", "/");
-    const stat = statSync(abs);
+    const stat = lstatSync(abs);
+    if (stat.isSymbolicLink()) continue;
     if (stat.isDirectory()) {
       if (!ignoredDirs.has(entry)) yield* walk(abs);
       continue;
