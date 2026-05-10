@@ -36,10 +36,10 @@ import {
   scopeGsdWorkflowToolsForDispatch,
 } from "./bootstrap/register-hooks.js";
 
-const UPDATE_REGISTRY_URL = "https://registry.npmjs.org/gsd-pi/latest";
+const UPDATE_REGISTRY_URL = "https://registry.npmjs.org/gwd-pi/latest";
 const UPDATE_FETCH_TIMEOUT_MS = 5000;
 
-// Detects a bun-installed gsd via `process.argv[1]`. Mirrors isBunInstall in
+// Detects a bun-installed gwd via `process.argv[1]`. Mirrors isBunInstall in
 // src/update-check.ts — duplicated because tsconfig.resources.json rootDir
 // prevents importing from src/. See #4145 for why the runtime-only check
 // (process.versions.bun) is insufficient: bun's global bin shims are plain
@@ -455,8 +455,8 @@ function compareSemverLocal(a: string, b: string): number {
 export async function handleUpdate(ctx: ExtensionCommandContext): Promise<void> {
   const { execSync } = await import("node:child_process");
 
-  const NPM_PACKAGE = "gsd-pi";
-  const current = process.env.GSD_VERSION || "0.0.0";
+  const NPM_PACKAGE = "gwd-pi";
+  const current = process.env.GWD_VERSION || "0.0.0";
 
   ctx.ui.notify(`Current version: v${current}\nChecking npm registry...`, "info");
 
@@ -479,7 +479,7 @@ export async function handleUpdate(ctx: ExtensionCommandContext): Promise<void> 
       stdio: ["ignore", "pipe", "ignore"],
     });
     ctx.ui.notify(
-      `Updated to v${latest}. Restart your GSD session to use the new version.`,
+      `Updated to v${latest}. Restart your GWD session to use the new version.`,
       "info",
     );
   } catch {
