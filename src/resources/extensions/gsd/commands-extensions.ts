@@ -3,7 +3,7 @@
  *
  * Manage the extension registry: list, enable, disable, info, install.
  * Self-contained — no imports outside the extensions tree (extensions are loaded
- * via jiti at runtime from ~/.gsd/agent/, not compiled by tsc).
+ * via jiti at runtime from ~/.gwd/agent/, not compiled by tsc).
  */
 
 import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
@@ -677,7 +677,7 @@ async function handleInstall(specifier: string | undefined, ctx: ExtensionComman
 function installFromNpm(specifier: string, installedExtDir: string, ctx: ExtensionCommandContext): void {
   // packDir holds the tarball in tmpdir(). The *extractDir* is staged inside
   // installedExtDir so the final renameSync to destPath stays on a single
-  // filesystem (avoids EXDEV when tmpdir() and ~/.gsd live on different mounts).
+  // filesystem (avoids EXDEV when tmpdir() and ~/.gwd live on different mounts).
   const packDir = mkdtempSync(join(tmpdir(), "gsd-install-"));
   let extractDir: string | null = null;
   try {

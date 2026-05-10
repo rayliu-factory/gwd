@@ -6,10 +6,10 @@
  *   - gist:abc123           → https://gist.githubusercontent.com/anonymous/abc123/raw
  *   - gh:owner/repo/path[@ref] → raw.githubusercontent.com/owner/repo/<ref>/path
  *
- * Installed files land in `~/.gsd/workflows/<name>.<ext>` by default, or
+ * Installed files land in `~/.gwd/workflows/<name>.<ext>` by default, or
  * `.gsd/workflows/<name>.<ext>` with the `--project` flag.
  *
- * A provenance file `~/.gsd/workflows/.installed.json` (or project equivalent)
+ * A provenance file `~/.gwd/workflows/.installed.json` (or project equivalent)
  * records source URL, timestamp, and sha256 so `/gsd workflow uninstall` can
  * clean up and future `/gsd workflow update` can refresh.
  */

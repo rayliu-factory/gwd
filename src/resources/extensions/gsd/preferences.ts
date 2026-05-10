@@ -212,7 +212,7 @@ function stripInheritedPlanningDepth(
   }
 
   // planning_depth is a project bootstrap routing flag, not a user-global
-  // preference. A global ~/.gsd/PREFERENCES.md value should not make every
+  // preference. A global ~/.gwd/PREFERENCES.md value should not make every
   // fresh repo behave like `/gsd new-project --deep`.
   const preferences: GSDPreferences = { ...loaded.preferences };
   delete preferences.planning_depth;

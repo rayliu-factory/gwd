@@ -49,7 +49,7 @@ export interface E2eEnv {
 
 /**
  * Allocate a fresh per-process HOME under the canonical tmpdir. Each
- * spawned `gsd` writes to `~/.gsd/agent/extensions/...` for resource
+ * spawned `gsd` writes to `~/.gwd/agent/extensions/...` for resource
  * setup; sharing the host HOME causes ENOTEMPTY races when multiple
  * spawns interleave on a CI runner. Re-using the same isolated HOME
  * across spawns inside one test process is fine — gsd's own setup
@@ -82,7 +82,7 @@ export function buildE2eEnv(extra: Record<string, string> = {}): NodeJS.ProcessE
 	// Keep TMPDIR canonical for the child too.
 	base.TMPDIR = canonicalTmpdir();
 	// Per-process isolated HOME so gsd's resource-extension setup
-	// (~/.gsd/agent/extensions) cannot race against the runner's real
+	// (~/.gwd/agent/extensions) cannot race against the runner's real
 	// home. Caller can override via `extra.HOME` if needed.
 	base.HOME = isolatedHome();
 	return { ...base, ...extra };

@@ -208,7 +208,7 @@ export function resolveDefaultSessionModel(
 
 /**
  * Returns true if `provider` is defined as a custom provider in the user's
- * `~/.gsd/agent/models.json` (Ollama, vLLM, LM Studio, OpenAI-compatible
+ * `~/.gwd/agent/models.json` (Ollama, vLLM, LM Studio, OpenAI-compatible
  * proxies, etc.).
  *
  * Used by auto-mode bootstrap to decide whether the session model

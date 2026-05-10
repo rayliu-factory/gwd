@@ -3,7 +3,7 @@
  *
  * Discovers workflow definitions from three tiers (project > global > bundled)
  * in both YAML and markdown formats. Each plugin declares an execution mode
- * that controls how `/gsd workflow <name>` dispatches it:
+ * that controls how `/gwd workflow <name>` dispatches it:
  *
  *   oneshot         — prompt-only, no state or scaffolding
  *   yaml-step       — CustomWorkflowEngine run with GRAPH.yaml
@@ -347,7 +347,7 @@ export function listPluginsFormatted(basePath: string): string {
   }
 
   lines.push("Usage:");
-  lines.push("  /gsd workflow <name>          Run a plugin directly");
+  lines.push("  /gwd workflow <name>          Run a plugin directly");
   lines.push("  /gsd workflow info <name>     Show plugin details");
   lines.push("  /gsd workflow install <src>   Install a plugin from a URL");
 

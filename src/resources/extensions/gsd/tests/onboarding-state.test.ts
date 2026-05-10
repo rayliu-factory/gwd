@@ -8,7 +8,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-// Tests must isolate per-process to avoid clobbering the user's real ~/.gsd/agent/onboarding.json.
+// Tests must isolate per-process to avoid clobbering the user's real ~/.gwd/agent/onboarding.json.
 // We point GWD_HOME at a fresh tmp dir before importing the modules under test.
 const tmpHome = mkdtempSync(join(tmpdir(), "gsd-onboarding-state-test-"));
 process.env.GWD_HOME = tmpHome;

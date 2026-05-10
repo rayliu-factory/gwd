@@ -604,7 +604,7 @@ export function spawnWorker(
       GWD_MILESTONE_LOCK: milestoneId,
       // Pass the real project root so workers don't need to re-derive it.
       // Without this, process.cwd() resolves symlinks and the worktree
-      // path heuristic can match the user-level ~/.gsd instead of the
+      // path heuristic can match the user-level ~/.gwd instead of the
       // project .gsd, causing writes to ~ and corrupting user config.
       GWD_PROJECT_ROOT: basePath,
       // Prevent workers from spawning their own parallel sessions
@@ -827,7 +827,7 @@ function processWorkerLine(basePath: string, milestoneId: string, line: string):
 
   // tool_execution_start can track current unit
   if (type === "extension_ui_request" && event.method === "notify") {
-    // GSD auto-mode sends notifications about current unit
+    // GWD auto-mode sends notifications about current unit
     const worker = state.workers.get(milestoneId);
     if (worker) {
       writeSessionStatus(basePath, {

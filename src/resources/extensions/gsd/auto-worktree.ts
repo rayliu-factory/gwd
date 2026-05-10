@@ -507,9 +507,9 @@ export function escapeStaleWorktree(base: string): string {
   // base is inside .gsd/worktrees/<something> — extract the project root
   const projectRoot = base.slice(0, idx);
 
-  // Guard: If the candidate project root's .gsd IS the user-level ~/.gsd,
+  // Guard: If the candidate project root's .gsd IS the user-level ~/.gwd,
   // the string-slice heuristic matched the wrong /.gsd/ boundary. This happens
-  // when .gsd is a symlink into ~/.gsd/projects/<hash> and process.cwd()
+  // when .gsd is a symlink into ~/.gwd/projects/<hash> and process.cwd()
   // resolved through the symlink. Returning ~ would be catastrophic (#1676).
   const candidateGsd = normalizeWorktreePathForCompare(join(projectRoot, ".gsd"));
   const gsdHomeNorm = normalizeWorktreePathForCompare(gsdHome());

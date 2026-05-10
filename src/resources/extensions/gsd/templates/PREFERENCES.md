@@ -95,6 +95,6 @@ pre_dispatch_hooks: []
 #   rtk: false
 ---
 
-# GSD Skill Preferences
+# GWD Skill Preferences
 
-See `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.
+See `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.

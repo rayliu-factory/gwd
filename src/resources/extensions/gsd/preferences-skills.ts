@@ -27,7 +27,7 @@ export type { GSDSkillRule, SkillDiscoveryMode, SkillResolution, SkillResolution
  * Searches both the skills.sh ecosystem directory (~/.agents/skills/) and
  * Claude Code's official directory (~/.claude/skills/). Project-level
  * directories for both conventions are included as well.
- * Legacy ~/.gsd/agent/skills/ is included as a fallback for pre-migration installs.
+ * Legacy ~/.gwd/agent/skills/ is included as a fallback for pre-migration installs.
  */
 export function getSkillSearchDirs(cwd: string): Array<{ dir: string; method: SkillResolution["method"] }> {
   const dirs: Array<{ dir: string; method: SkillResolution["method"] }> = [

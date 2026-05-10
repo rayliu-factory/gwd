@@ -287,7 +287,7 @@ export async function handleImportClaude(ctx: ExtensionCommandContext, scope: "g
   const writePrefs = async (prefs: Record<string, unknown>): Promise<void> => {
     prefs.version = prefs.version || 1;
     const frontmatter = serializePreferencesToFrontmatter(prefs);
-    let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+    let body = "\n# GWD Skill Preferences\n\nSee `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
     if (existsSync(path)) {
       const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
       if (preserved) body = preserved;
@@ -309,7 +309,7 @@ export async function handlePrefsMode(ctx: ExtensionCommandContext, scope: "glob
   prefs.version = prefs.version || 1;
   const frontmatter = serializePreferencesToFrontmatter(prefs);
 
-  let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# GWD Skill Preferences\n\nSee `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
   if (existsSync(path)) {
     const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
     if (preserved) body = preserved;
@@ -1635,7 +1635,7 @@ export async function writePreferencesFile(
   const frontmatter = serializePreferencesToFrontmatter(next);
 
   const fallbackBody = opts?.defaultBody
-    ?? "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+    ?? "\n# GWD Skill Preferences\n\nSee `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
 
   // Preserve existing body content (everything after closing ---) so users
   // who edited the markdown body don't lose their notes.
@@ -1828,7 +1828,7 @@ export async function handleLanguage(args: string, ctx: ExtensionCommandContext)
   const rawContent = existsSync(path) ? readFileSync(path, "utf-8") : `---\nversion: 1\n---\n`;
   const frontmatter = serializePreferencesToFrontmatter(prefs);
   const body = extractBodyAfterFrontmatter(rawContent)
-    ?? "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+    ?? "\n# GWD Skill Preferences\n\nSee `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
   await saveFile(path, `---\n${frontmatter}---${body}`);
   await ctx.waitForIdle();
   await ctx.reload();

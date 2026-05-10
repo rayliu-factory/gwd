@@ -566,7 +566,7 @@ export function getTemplateCompletions(prefix: string): Array<{ value: string; l
   }
 }
 
-// ─── Shared markdown-phase dispatcher (used by /gsd workflow <name>) ────────
+// ─── Shared markdown-phase dispatcher (used by /gwd workflow <name>) ────────
 
 /**
  * Dispatch a markdown-phase workflow plugin. Mirrors `handleStart`'s execution

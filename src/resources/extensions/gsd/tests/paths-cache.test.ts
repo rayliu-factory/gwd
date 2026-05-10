@@ -25,7 +25,7 @@ describe('gsdRootCache key normalization', () => {
     savedUserProfile = process.env.USERPROFILE;
     savedGsdHome = process.env.GWD_HOME;
 
-    // Point HOME and GWD_HOME at an unrelated temp dir to prevent ~/.gsd interference.
+    // Point HOME and GWD_HOME at an unrelated temp dir to prevent ~/.gwd interference.
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
     process.env.GWD_HOME = join(fakeHome, '.gsd');

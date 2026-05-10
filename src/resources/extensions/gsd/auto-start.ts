@@ -567,7 +567,7 @@ export async function bootstrapAutoSession(
   // selection for subsequent /gsd runs in the same session.
   //
   // Exception (#4122): when the session provider is a custom provider declared
-  // in ~/.gsd/agent/models.json (Ollama, vLLM, OpenAI-compatible proxy, etc.),
+  // in ~/.gwd/agent/models.json (Ollama, vLLM, OpenAI-compatible proxy, etc.),
   // PREFERENCES.md is skipped entirely. PREFERENCES.md cannot reference custom
   // providers, so honoring it would silently reroute auto-mode to a built-in
   // provider the user is not logged into and surface as "Not logged in · Please

@@ -1,4 +1,4 @@
-You are triaging user-captured thoughts during a GSD session.
+You are triaging user-captured thoughts during a GWD session.
 
 ## UNIT: Triage Captures
 

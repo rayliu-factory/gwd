@@ -1,5 +1,5 @@
 /**
- * MCP Server — registers GSD orchestration, project-state, and workflow tools.
+ * MCP Server — registers GWD orchestration, project-state, and workflow tools.
  *
  * Session tools (6): gsd_execute, gsd_status, gsd_result, gsd_cancel, gsd_query, gsd_resolve_blocker
  * Interactive tools (2): ask_user_questions, secure_env_collect via MCP form elicitation
@@ -36,7 +36,7 @@ import { applySecrets, checkExistingEnvKeys, detectDestination, resolveProjectEn
 // ---------------------------------------------------------------------------
 
 const MCP_PKG = '@modelcontextprotocol/sdk';
-const SERVER_NAME = 'gsd';
+const SERVER_NAME = 'gwd';
 
 /**
  * Read the version from this package's package.json so the MCP handshake
@@ -886,7 +886,7 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_execute — start a new GSD auto-mode session.
+  // gsd_execute — start a new GWD auto-mode session.
   //
   // If the JSON-RPC request is aborted while the session is starting (or
   // immediately after), we cancel the session so we don't leak a background
@@ -895,10 +895,10 @@ export async function createMcpServer(
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_execute',
-    'Start a GSD auto-mode session for a project directory. Returns a sessionId for tracking.',
+    'Start a GWD auto-mode session for a project directory. Returns a sessionId for tracking.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
-      command: z.string().optional().describe('Command to send (default: "/gsd auto")'),
+      command: z.string().optional().describe('Command to send (default: "/gwd auto")'),
       model: z.string().optional().describe('Model ID override'),
       bare: z.boolean().optional().describe('Run in bare mode (skip user config)'),
     },
@@ -928,7 +928,7 @@ export async function createMcpServer(
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_status',
-    'Get the current status of a GSD session including progress, recent events, and pending blockers.',
+    'Get the current status of a GWD session including progress, recent events, and pending blockers.',
     {
       sessionId: z.string().describe('Session ID returned from gsd_execute'),
     },
@@ -972,7 +972,7 @@ export async function createMcpServer(
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_result',
-    'Get the result of a GSD session. Returns partial results if the session is still running.',
+    'Get the result of a GWD session. Returns partial results if the session is still running.',
     {
       sessionId: z.string().describe('Session ID returned from gsd_execute'),
     },
@@ -1000,7 +1000,7 @@ export async function createMcpServer(
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_cancel',
-    'Cancel a running GSD session. Aborts the current operation and stops the process. Provide sessionId (from gsd_execute) or projectDir as a fallback for interactive/restarted sessions.',
+    'Cancel a running GWD session. Aborts the current operation and stops the process. Provide sessionId (from gsd_execute) or projectDir as a fallback for interactive/restarted sessions.',
     {
       sessionId: z.string().optional().describe('Session ID returned from gsd_execute'),
       projectDir: z.string().optional().describe('Absolute path to the project directory (fallback when sessionId is unavailable)'),
@@ -1065,7 +1065,7 @@ export async function createMcpServer(
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_resolve_blocker',
-    'Resolve a pending blocker in a GSD session by sending a response to the UI request.',
+    'Resolve a pending blocker in a GWD session by sending a response to the UI request.',
     {
       sessionId: z.string().describe('Session ID returned from gsd_execute'),
       response: z.string().describe('Response to send for the pending blocker'),

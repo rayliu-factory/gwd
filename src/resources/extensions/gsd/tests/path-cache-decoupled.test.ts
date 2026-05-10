@@ -30,7 +30,7 @@ function makeFixture(): Fixture {
   const savedUserProfile = process.env.USERPROFILE;
   const savedGsdHome = process.env.GWD_HOME;
 
-  // Redirect HOME so gsdRoot never accidentally resolves to the real ~/.gsd.
+  // Redirect HOME so gsdRoot never accidentally resolves to the real ~/.gwd.
   process.env.HOME = fakeHome;
   process.env.USERPROFILE = fakeHome;
   process.env.GWD_HOME = join(fakeHome, '.gsd');

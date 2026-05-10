@@ -271,7 +271,7 @@ export function detectWorkflowMcpLaunchConfig(
     };
   }
 
-  const binPath = lookupCommand("gsd-mcp-server");
+  const binPath = lookupCommand("gwd-mcp-server");
   if (binPath) {
     return {
       name,
@@ -420,7 +420,7 @@ export function getWorkflowTransportSupportError(
   const providerLabel = `"${provider}"`;
 
   if (!launch) {
-    return `Provider ${providerLabel} cannot run ${surface}${unitLabel}: the GWD workflow MCP server is not configured or discoverable. Detected Claude Code model but no workflow MCP. Please run /gsd mcp init . from your project root. You can also configure GWD_WORKFLOW_MCP_COMMAND, build packages/mcp-server/dist/cli.js, or install gsd-mcp-server on PATH.`;
+    return `Provider ${providerLabel} cannot run ${surface}${unitLabel}: the GWD workflow MCP server is not configured or discoverable. Detected Claude Code model but no workflow MCP. Please run /gwd mcp init . from your project root. You can also configure GWD_WORKFLOW_MCP_COMMAND, build packages/mcp-server/dist/cli.js, or install gwd-mcp-server on PATH.`;
   }
 
   const missing = [...new Set(requiredTools)].filter((tool) => !MCP_WORKFLOW_TOOL_SURFACE.has(tool));

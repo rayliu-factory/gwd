@@ -1,5 +1,5 @@
 // GSD Extension — Debug Logger
-// Structured JSONL debug logging for diagnosing stuck/slow GSD sessions.
+// Structured JSONL debug logging for diagnosing stuck/slow GWD sessions.
 // Zero overhead when disabled — all public functions are no-ops.
 
 import { appendFileSync, mkdirSync, readdirSync, unlinkSync } from 'node:fs';

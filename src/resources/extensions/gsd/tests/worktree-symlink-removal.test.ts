@@ -32,7 +32,7 @@ test('worktree-symlink-removal removes the git-registered symlink target safely'
   console.log("\n=== #1852: removeWorktree with symlinked .gsd/ ===");
 
   // Set up a test repo with .gsd/ as a symlink to an external directory,
-  // mimicking the external state directory layout (~/.gsd/projects/<hash>/).
+  // mimicking the external state directory layout (~/.gwd/projects/<hash>/).
   // Resolve tmpdir to handle macOS /tmp -> /private/var/... symlink.
   const realTmp = realpathSync(tmpdir());
   const base = mkdtempSync(join(realTmp, "gsd-wt-symlink-test-"));

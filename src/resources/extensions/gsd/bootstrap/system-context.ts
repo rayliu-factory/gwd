@@ -1,5 +1,5 @@
 // Project/App: GSD-2
-// File Purpose: System prompt and hidden context bootstrap for GSD sessions.
+// File Purpose: System prompt and hidden context bootstrap for GWD sessions.
 import { existsSync, readFileSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 
@@ -52,7 +52,7 @@ export const BUNDLED_SKILL_TRIGGERS: Array<{ trigger: string; skill: string }> =
   { trigger: "Block completion claims until verification evidence has been produced in this message", skill: "verify-before-complete" },
   { trigger: "Create a Model Context Protocol (MCP) server — tool design, error handling, Inspector testing, evals", skill: "create-mcp-server" },
   { trigger: "Write documentation, proposals, specs, RFCs, or READMEs for a fresh reader", skill: "write-docs" },
-  { trigger: "Post-mortem a failed GSD auto-mode run using .gsd/activity, .gsd/journal, and .gsd/metrics.json", skill: "forensics" },
+  { trigger: "Post-mortem a failed GWD auto-mode run using .gsd/activity, .gsd/journal, and .gsd/metrics.json", skill: "forensics" },
   { trigger: "Prepare a clean cross-session handoff — continue.md + summary updates (pause/resume work)", skill: "handoff" },
   { trigger: "Security review with STRIDE threat modeling and exploit-scenario reporting", skill: "security-review" },
   { trigger: "HTTP/REST/GraphQL API design — verbs, status codes, pagination, errors, idempotency, versioning", skill: "api-design" },
@@ -147,7 +147,7 @@ export async function buildBeforeAgentStartResult(
   const { block: knowledgeBlock, globalSizeKb } = loadKnowledgeBlock(gsdHome(), process.cwd());
   if (globalSizeKb > 4) {
     ctx.ui.notify(
-      `GSD: ~/.gsd/agent/KNOWLEDGE.md is ${globalSizeKb.toFixed(1)}KB — consider trimming to keep system prompt lean.`,
+      `GSD: ~/.gwd/agent/KNOWLEDGE.md is ${globalSizeKb.toFixed(1)}KB — consider trimming to keep system prompt lean.`,
       "warning",
     );
   }
@@ -370,7 +370,7 @@ export async function loadMemoryBlock(
 }
 
 export function loadKnowledgeBlock(gsdHomeDir: string, cwd: string): { block: string; globalSizeKb: number } {
-  // 1. Global knowledge (~/.gsd/agent/KNOWLEDGE.md) — cross-project, user-maintained
+  // 1. Global knowledge (~/.gwd/agent/KNOWLEDGE.md) — cross-project, user-maintained
   let globalKnowledge = "";
   let globalSizeKb = 0;
   const globalKnowledgePath = join(gsdHomeDir, "agent", "KNOWLEDGE.md");

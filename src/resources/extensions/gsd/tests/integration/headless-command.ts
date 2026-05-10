@@ -36,7 +36,7 @@ const FIXTURE_PROJECT_MD = `# Project
 
 ## What This Is
 
-Headless proof test project. A minimal fixture used to validate GSD auto-mode via RPC.
+Headless proof test project. A minimal fixture used to validate GWD auto-mode via RPC.
 
 ## Core Value
 
@@ -86,7 +86,7 @@ const FIXTURE_CONTEXT_MD = `# M001: Headless Proof — Context
 
 ## Project Description
 
-A minimal test project for validating GSD auto-mode in headless/RPC mode.
+A minimal test project for validating GWD auto-mode in headless/RPC mode.
 
 ## Why This Milestone
 
@@ -153,7 +153,7 @@ To call this milestone complete, we must prove:
 
 const FIXTURE_ROADMAP_MD = `# M001: Headless Proof
 
-**Vision:** Prove GSD auto-mode works headlessly.
+**Vision:** Prove GWD auto-mode works headlessly.
 
 ## Success Criteria
 

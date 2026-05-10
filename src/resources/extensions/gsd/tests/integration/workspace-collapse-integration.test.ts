@@ -314,7 +314,7 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
     savedUserProfile = process.env.USERPROFILE;
     savedGsdHome = process.env.GWD_HOME;
 
-    // Prevent ~/.gsd interference
+    // Prevent ~/.gwd interference
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
     process.env.GWD_HOME = join(fakeHome, ".gsd");

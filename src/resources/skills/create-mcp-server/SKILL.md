@@ -12,7 +12,7 @@ GSD-2 consumes MCP heavily — see `src/resources/extensions/mcp-client/`, `src/
 
 Invocation points:
 - User describes a service or API they want an LLM to reach
-- `/gsd mcp init` scaffolds config but there's a tool integration to build
+- `/gwd mcp init` scaffolds config but there's a tool integration to build
 - Replacing a hand-rolled extension with a standard MCP server
 </context>
 
@@ -93,7 +93,7 @@ Run the evals. If the model can't complete them, the server — not the model �
 
 ## Step 6: Wire into GSD
 
-Write the project's `.mcp.json` entry using `/gsd mcp init` as a starting point. Document env vars and startup in README.md. If the server is globally useful, suggest the user file it as a durable skill via `spike-wrap-up` or publish it.
+Write the project's `.mcp.json` entry using `/gwd mcp init` as a starting point. Document env vars and startup in README.md. If the server is globally useful, suggest the user file it as a durable skill via `spike-wrap-up` or publish it.
 
 </process>
 

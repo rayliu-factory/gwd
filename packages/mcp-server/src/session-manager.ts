@@ -78,7 +78,7 @@ export class SessionManager {
   private sessions = new Map<string, ManagedSession>();
 
   /**
-   * Start a new GSD auto-mode session for the given project directory.
+   * Start a new GWD auto-mode session for the given project directory.
    *
    * Rejects if a session already exists for this projectDir.
    * Creates an RpcClient, starts the process, performs the v2 init handshake,

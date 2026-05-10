@@ -6,7 +6,7 @@ GSD-specific skill ecosystem details: directory conventions, discovery mechanics
 GSD supports two skill directories, checked in order:
 
 **User-scope (global):** `~/.agents/skills/`
-- Available in every GSD session regardless of working directory
+- Available in every GWD session regardless of working directory
 - Installed via [skills.sh](https://skills.sh) or manually
 
 **Project-scope (local):** `.agents/skills/`
@@ -42,7 +42,7 @@ Skill metadata has validation constraints:
 - **Staleness detection:** Skills unused for 60+ days are flagged as stale
 - **Pass/fail rates:** Derived from unit completion status when a skill is active
 
-Telemetry data is stored in `~/.gsd/metrics.json` alongside other GSD metrics.
+Telemetry data is stored in `~/.gwd/metrics.json` alongside other GWD metrics.
 </skill_telemetry>
 
 <skill_health>

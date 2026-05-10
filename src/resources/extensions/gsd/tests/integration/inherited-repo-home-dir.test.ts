@@ -2,10 +2,10 @@
  * inherited-repo-home-dir.test.ts — Regression test for #2393.
  *
  * When the user's home directory IS a git repo (common with dotfile
- * managers like yadm), isInheritedRepo() must not treat ~/.gsd (the
+ * managers like yadm), isInheritedRepo() must not treat ~/.gwd (the
  * global GSD state directory) as a project .gsd belonging to the home
  * repo. Without the fix, isInheritedRepo() returns false for project
- * subdirectories because it sees ~/.gsd and concludes the parent repo
+ * subdirectories because it sees ~/.gwd and concludes the parent repo
  * has already been initialised with GSD — causing the wrong project
  * state to be loaded.
  */
@@ -50,7 +50,7 @@ describe("isInheritedRepo when git root is HOME (#2393)", () => {
     run("git", ["add", ".bashrc"], fakeHome);
     run("git", ["commit", "-m", "init dotfiles"], fakeHome);
 
-    // Create a plain ~/.gsd directory at fakeHome — this simulates the
+    // Create a plain ~/.gwd directory at fakeHome — this simulates the
     // global GSD home directory, NOT a project .gsd.
     mkdirSync(join(fakeHome, ".gsd", "projects"), { recursive: true });
 
@@ -73,19 +73,19 @@ describe("isInheritedRepo when git root is HOME (#2393)", () => {
     rmSync(stateDir, { recursive: true, force: true });
   });
 
-  test("subdirectory of home-as-git-root is detected as inherited even when ~/.gsd exists", () => {
+  test("subdirectory of home-as-git-root is detected as inherited even when ~/.gwd exists", () => {
     // Create a project directory inside fake HOME
     const projectDir = join(fakeHome, "projects", "my-app");
     mkdirSync(projectDir, { recursive: true });
 
-    // The bug: isInheritedRepo sees ~/.gsd and returns false, thinking
+    // The bug: isInheritedRepo sees ~/.gwd and returns false, thinking
     // the home repo is a legitimate GWD project. It should return true
-    // because ~/.gsd is the global state dir, not a project .gsd.
+    // because ~/.gwd is the global state dir, not a project .gsd.
     assert.strictEqual(
       isInheritedRepo(projectDir),
       true,
       "project inside home-as-git-root must be detected as inherited repo, " +
-      "even when ~/.gsd (global state dir) exists",
+      "even when ~/.gwd (global state dir) exists",
     );
   });
 

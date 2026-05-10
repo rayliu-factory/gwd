@@ -1471,7 +1471,7 @@ describe("normalizeFilePath tilde expansion (#4446)", () => {
 
   test("expands ~/ prefixed paths to homedir", () => {
     assert.equal(
-      normalizeFilePath("~/.gsd/agent/extensions/gsd/native-git-bridge.js"),
+      normalizeFilePath("~/.gwd/agent/extensions/gsd/native-git-bridge.js"),
       join(homedir(), ".gsd/agent/extensions/gsd/native-git-bridge.js"),
     );
   });
@@ -1590,7 +1590,7 @@ describe("checkFilePathConsistency directory inputs (#4446)", () => {
     const tasks = [
       createTask({
         id: "T01",
-        inputs: ["~/.gsd/tool.js"],
+        inputs: ["~/.gwd/tool.js"],
         expected_output: [],
       }),
     ];

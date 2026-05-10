@@ -1,13 +1,13 @@
 /**
- * MCP Status — `/gsd mcp` command handler.
+ * MCP Status — `/gwd mcp` command handler.
  *
  * Shows configured MCP servers, their connection status, and available tools.
  *
  * Subcommands:
- *   /gsd mcp             — Overview of all servers (alias: /gsd mcp status)
- *   /gsd mcp status      — Same as bare /gsd mcp
- *   /gsd mcp check <srv> — Detailed status for a specific server
- *   /gsd mcp init [dir]  — Write project-local GWD workflow MCP config
+ *   /gwd mcp             — Overview of all servers (alias: /gwd mcp status)
+ *   /gwd mcp status      — Same as bare /gwd mcp
+ *   /gwd mcp check <srv> — Detailed status for a specific server
+ *   /gwd mcp init [dir]  — Write project-local GWD workflow MCP config
  */
 
 import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
@@ -185,7 +185,7 @@ export async function handleMcpStatus(
   const lowered = trimmed.toLowerCase();
   const configs = readMcpConfigs();
 
-  // /gsd mcp init [dir]
+  // /gwd mcp init [dir]
   if (!lowered || lowered === "status") {
     // handled below
   } else if (lowered === "init" || lowered.startsWith("init ")) {

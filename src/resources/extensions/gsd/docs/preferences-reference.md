@@ -1,6 +1,6 @@
 # GSD Preferences Reference
 
-Full documentation for `~/.gsd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md` (project).
+Full documentation for `~/.gwd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md` (project).
 
 ---
 
@@ -10,7 +10,7 @@ Full documentation for `~/.gsd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md
 - Prefer explicit skill names or absolute paths.
 - Use absolute paths for personal/local skills when you want zero ambiguity.
 - These preferences guide which skills GSD should load and follow; they do not override higher-priority instructions in the current conversation.
-- For Claude marketplace/plugin import behavior, see `~/.gsd/agent/extensions/gsd/docs/claude-marketplace-import.md`.
+- For Claude marketplace/plugin import behavior, see `~/.gwd/agent/extensions/gsd/docs/claude-marketplace-import.md`.
 
 ---
 
@@ -51,7 +51,7 @@ skill_rules: []
 
 Preferences are loaded from two locations and merged:
 
-1. **Global:** `~/.gsd/PREFERENCES.md` — applies to all projects
+1. **Global:** `~/.gwd/PREFERENCES.md` — applies to all projects
 2. **Project:** `.gsd/PREFERENCES.md` — applies to the current project only
 
 **Merge behavior** (see `mergePreferences()` in `preferences.ts`):
@@ -159,7 +159,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 
 - `token_profile`: `"budget"`, `"balanced"`, `"quality"`, or `"burn-max"` — coordinates model selection, phase skipping, and context compression. `budget` skips research/reassessment and uses cheaper models; `balanced` (default) skips research/reassessment to reduce token burn; `quality` prefers higher-quality models; `burn-max` keeps full-context defaults, disables downgrade routing, and keeps phase skips off.
 
-- `planning_depth`: `"light"` or `"deep"` — controls project-level discovery before milestone planning. `"light"` is the default milestone discussion flow. `"deep"` runs workflow preferences, project discussion, requirements discussion, a research-decision gate, and optional project research before milestone planning. Enable it with `/gsd new-project --deep`, `/gsd new-milestone --deep`, or by setting `planning_depth: deep` in project-local `.gsd/PREFERENCES.md`. Global `~/.gsd/PREFERENCES.md` does not opt every fresh repo into deep mode. Deep mode writes `.gsd/PROJECT.md`, `.gsd/REQUIREMENTS.md`, `.gsd/runtime/research-decision.json`, and, when research is approved, `.gsd/research/STACK.md`, `FEATURES.md`, `ARCHITECTURE.md`, and `PITFALLS.md`.
+- `planning_depth`: `"light"` or `"deep"` — controls project-level discovery before milestone planning. `"light"` is the default milestone discussion flow. `"deep"` runs workflow preferences, project discussion, requirements discussion, a research-decision gate, and optional project research before milestone planning. Enable it with `/gsd new-project --deep`, `/gsd new-milestone --deep`, or by setting `planning_depth: deep` in project-local `.gsd/PREFERENCES.md`. Global `~/.gwd/PREFERENCES.md` does not opt every fresh repo into deep mode. Deep mode writes `.gsd/PROJECT.md`, `.gsd/REQUIREMENTS.md`, `.gsd/runtime/research-decision.json`, and, when research is approved, `.gsd/research/STACK.md`, `FEATURES.md`, `ARCHITECTURE.md`, and `PITFALLS.md`.
 
 - `phases`: fine-grained control over which phases run. Usually set by `token_profile`, but can be overridden. Keys:
   - `skip_research`: boolean — skip milestone-level research. Default: `false`.
@@ -222,7 +222,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `observation_masking`: boolean — mask old tool results to reduce context bloat. Default: `true`.
   - `observation_mask_turns`: number — keep this many recent turns verbatim (1-50). Default: `8`.
   - `compaction_threshold_percent`: number — trigger compaction at this % of context window (0.5-0.95). Lower values fire compaction earlier, reducing drift. Default: `0.70`.
-  - `tool_result_max_chars`: number — max chars per tool result in GSD sessions (200-10000). Default: `800`.
+  - `tool_result_max_chars`: number — max chars per tool result in GWD sessions (200-10000). Default: `800`.
 
 - `auto_visualize`: boolean — show a visualizer hint after each milestone completion in auto-mode. Default: `false`.
 

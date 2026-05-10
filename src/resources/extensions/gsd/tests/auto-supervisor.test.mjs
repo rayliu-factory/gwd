@@ -7,7 +7,7 @@ import { writeUnitRuntimeRecord, readUnitRuntimeRecord } from '../unit-runtime.t
 import { resolveAutoSupervisorConfig } from '../preferences.ts';
 
 test('resolveAutoSupervisorConfig provides safe timeout defaults', () => {
-  // Isolate from any developer ~/.gsd/PREFERENCES.md that overrides these
+  // Isolate from any developer ~/.gwd/PREFERENCES.md that overrides these
   // defaults — the test pins what resolveAutoSupervisorConfig() returns when
   // no preferences file exists, so it must not pick up the runner's home dir.
   const previousGsdHome = process.env.GWD_HOME;

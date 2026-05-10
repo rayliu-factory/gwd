@@ -1,4 +1,4 @@
-// GSD Extension — Write Intercept for Agent State File Blocks
+// GWD Extension — Write Intercept for Agent State File Blocks
 // Detects agent attempts to write authoritative state files and returns
 // an error directing the agent to use the engine tool API instead.
 
@@ -22,11 +22,11 @@ const BLOCKED_PATTERNS: RegExp[] = [
   // (^|[/\\]) matches both absolute paths (/project/.gsd/…) and bare relative
   // paths (.gsd/STATE.md) so a path without a leading separator is also blocked.
   /(^|[/\\])\.gsd[/\\]STATE\.md$/i,
-  // Also match resolved symlink paths under ~/.gsd/projects/ (Pitfall #6)
-  /(^|[/\\])\.gsd[/\\]projects[/\\][^/\\]+[/\\]STATE\.md$/i,
+  // Also match resolved symlink paths under ~/.gwd/projects/ (Pitfall #6)
+  /(^|[/\\])\.gwd[/\\]projects[/\\][^/\\]+[/\\]STATE\.md$/i,
   // gsd.db and WAL/SHM files — single-writer WAL connection managed by engine (#3625)
   /(^|[/\\])\.gsd[/\\]gsd\.db(-wal|-shm)?$/i,
-  /(^|[/\\])\.gsd[/\\]projects[/\\][^/\\]+[/\\]gsd\.db(-wal|-shm)?$/i,
+  /(^|[/\\])\.gwd[/\\]projects[/\\][^/\\]+[/\\]gsd\.db(-wal|-shm)?$/i,
 ];
 
 /**

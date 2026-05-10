@@ -41,7 +41,7 @@ assertEq(
 // After PR #2952, these paths resolve to the hash-level DB (same as external-state),
 // because on POSIX getcwd() returns the canonical (symlink-resolved) path anyway, so
 // a path like <proj>/.gsd/projects/<hash>/worktrees/ in practice is always
-// ~/.gsd/projects/<hash>/worktrees/ after the OS resolves the .gsd symlink.
+// ~/.gwd/projects/<hash>/worktrees/ after the OS resolves the .gsd symlink.
 const symlinkPath = `/home/user/myproject/.gsd/projects/abc123def/worktrees/M001/work`;
 const symlinkResult = resolveProjectRootDbPath(symlinkPath);
 assertEq(

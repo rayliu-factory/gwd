@@ -2,7 +2,7 @@
  * GSD Repo Identity — external state directory primitives.
  *
  * Computes a stable per-repo identity hash, resolves the external
- * `~/.gsd/projects/<hash>/` state directory, and manages the
+ * `~/.gwd/projects/<hash>/` state directory, and manages the
  * `<project>/.gsd → external` symlink.
  */
 
@@ -143,14 +143,14 @@ export function isInheritedRepo(basePath: string): boolean {
 }
 
 /**
- * Distinguish a *project* `.gsd` from the global `~/.gsd` state directory.
+ * Distinguish a *project* `.gsd` from the global `~/.gwd` state directory.
  *
  * A project `.gsd` is either:
  *   - A symlink to an external state directory (normal post-migration layout)
  *   - A legacy real directory that is NOT the global GSD home
  *
  * When the user's home directory is itself a git repo (e.g. dotfile managers),
- * `~/.gsd` exists but is the global state directory — not a project `.gsd`.
+ * `~/.gwd` exists but is the global state directory — not a project `.gsd`.
  * Treating it as a project `.gsd` would cause isInheritedRepo() to wrongly
  * conclude that subdirectories are part of the home "project" (#2393).
  */
@@ -307,7 +307,7 @@ export function repoIdentity(basePath: string): string {
  * Compute the external GSD state directory for a repository.
  *
  * Returns `$GWD_STATE_DIR/projects/<hash>` if `GWD_STATE_DIR` is set,
- * otherwise `~/.gsd/projects/<hash>`.
+ * otherwise `~/.gwd/projects/<hash>`.
  */
 export function externalGsdRoot(basePath: string): string {
   const base = process.env.GWD_STATE_DIR || gsdHome();
@@ -506,7 +506,7 @@ function ensureGsdSymlinkCore(projectPath: string): string {
   const localGsd = join(projectPath, ".gsd");
   const inWorktree = isInsideWorktree(projectPath);
 
-  // Guard: Never create a symlink at ~/.gsd — that's the user-level GSD home,
+  // Guard: Never create a symlink at ~/.gwd — that's the user-level GSD home,
   // not a project .gsd. This can happen if resolveProjectRoot() or
   // escapeStaleWorktree() returned ~ as the project root (#1676).
   // Canonical normalization: resolve symlinks, trim trailing slashes, case-fold on Windows.

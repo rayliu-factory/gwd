@@ -1,6 +1,6 @@
 # Multi-Session Orchestration
 
-How to run and monitor multiple concurrent GSD sessions.
+How to run and monitor multiple concurrent GWD sessions.
 
 ## Architecture
 
@@ -164,7 +164,7 @@ Then poll each project's `.gsd/parallel/` directory. GSD has no cross-project aw
 
 ## Built-in Parallel Commands
 
-Inside an interactive GSD session, these commands manage the parallel orchestrator:
+Inside an interactive GWD session, these commands manage the parallel orchestrator:
 
 | Command | Description |
 |---------|-------------|

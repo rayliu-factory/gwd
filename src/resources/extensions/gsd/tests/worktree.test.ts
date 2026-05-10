@@ -221,7 +221,7 @@ describe('worktree', async () => {
   // ── resolveProjectRoot: symlink-resolved paths ──────────────────────────
   console.log("\n=== resolveProjectRoot (symlink-resolved paths) ===");
 
-  // BUG FIX: symlink-resolved paths that land inside ~/.gsd should NOT
+  // BUG FIX: symlink-resolved paths that land inside ~/.gwd should NOT
   // resolve to the home directory. When the .git file fallback can't find
   // the real project root (no git worktree metadata in these synthetic paths),
   // resolveProjectRoot returns the input unchanged rather than returning ~.
@@ -235,7 +235,7 @@ describe('worktree', async () => {
   );
   delete process.env.GWD_PROJECT_ROOT;
 
-  // Without GWD_PROJECT_ROOT, direct layout still works (no ~/.gsd collision)
+  // Without GWD_PROJECT_ROOT, direct layout still works (no ~/.gwd collision)
   assert.deepStrictEqual(
     resolveProjectRoot("/some/repo"),
     "/some/repo",
@@ -243,7 +243,7 @@ describe('worktree', async () => {
   );
   delete process.env.GWD_PROJECT_ROOT;
 
-  // Without GWD_PROJECT_ROOT, direct layout still works (no ~/.gsd collision)
+  // Without GWD_PROJECT_ROOT, direct layout still works (no ~/.gwd collision)
   assert.deepStrictEqual(
     resolveProjectRoot("/foo/.gsd/worktrees/M001"),
     "/foo",

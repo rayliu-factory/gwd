@@ -20,7 +20,7 @@ import { tmpdir } from "node:os";
 // Point GWD_HOME at a throwaway directory *before* the prompt-loader
 // module is imported (via the dynamic imports below) so templates
 // resolve from the in-tree prompts/ directory instead of a developer's
-// ~/.gsd/ copy (which may be a stale cached version from a prior
+// ~/.gwd/ copy (which may be a stale cached version from a prior
 // install — see #4784 fallout). Static imports above are hoisted, so
 // `tmpdir` and `join` are already available at this point; the dynamic
 // imports below observe the value we set here. The previous value is

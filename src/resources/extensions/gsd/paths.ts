@@ -301,7 +301,7 @@ const LEGACY_GWD_ROOT_FILES: Record<GSDRootFileKey, string> = {
 // Keys are realpath-normalized (via normCacheKey) so /foo and /foo/ share the
 // same entry and so do case-variant paths on case-insensitive volumes. This
 // normalization is the safety net that prevents cache poisoning from the
-// ~/.gsd walk-up bug (fixed in c46cf4786 + b35e070eb), making it safe to
+// ~/.gwd walk-up bug (fixed in c46cf4786 + b35e070eb), making it safe to
 // hold this cache for the entire process lifetime.
 // Use _clearGsdRootCache() only at session-reset boundaries (workspace switch,
 // process exit) — NOT inside clearPathCache(), which runs on every agent turn.
@@ -413,7 +413,7 @@ export function gsdRoot(basePath: string): string {
 
   // Defense-in-depth: if basePath resolves to the user's home directory and
   // the result equals gsdHome(), refuse — project-scoped writes must never
-  // land in the global ~/.gsd. Paths under ~/.gsd/projects/<hash>/ are still
+  // land in the global ~/.gwd. Paths under ~/.gwd/projects/<hash>/ are still
   // valid (their basePath does not equal homedir).
   assertNotGlobalGsdHome(basePath, result);
 
@@ -531,7 +531,7 @@ function probeGsdRoot(rawBasePath: string): string {
   if (gitRoot) {
     const candidate = join(gitRoot, ".gsd");
     // Skip if the candidate resolves to the global GSD home — a subdir basePath
-    // must not be anchored to ~/.gsd just because $HOME is a git repo.
+    // must not be anchored to ~/.gwd just because $HOME is a git repo.
     if (existsSync(candidate) && normPath(candidate) !== gsdHomeNorm) return candidate;
   }
 

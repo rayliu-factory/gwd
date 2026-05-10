@@ -1,7 +1,7 @@
 // gsd-2 + Symlinked .gsd worktree-loop reproduction (Phase A pt 2 follow-up to PR #5236)
 //
 // Regression coverage for the auto-mode loop bug observed on projects whose
-// .gsd/ is a symlink into ~/.gsd/projects/<hash>/ (the external-state layout).
+// .gsd/ is a symlink into ~/.gwd/projects/<hash>/ (the external-state layout).
 //
 // Two assertions:
 //   1. deriveState's cache key is the canonical project root when callers

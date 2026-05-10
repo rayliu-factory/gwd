@@ -219,7 +219,7 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server relative to the 
 test("workflow MCP launch config reaches mutation tools over stdio", async () => {
   const projectRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-transport-"));
   mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
-  // Isolate the spawned MCP server from the developer's real ~/.gsd so it
+  // Isolate the spawned MCP server from the developer's real ~/.gwd so it
   // can't pick up a configured Discord/Slack/Telegram channel from global
   // PREFERENCES.md and route ask_user_questions through a remote adapter
   // instead of MCP elicitation.

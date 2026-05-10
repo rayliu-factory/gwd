@@ -148,7 +148,7 @@ export function parseWorkflowRunArgs(args: string): { defName: string; overrides
 
 /**
  * Parse every token as an optional `k=v` override. Use when the workflow name
- * is already known (e.g., direct `/gsd workflow <name> ...` dispatch) so the
+ * is already known (e.g., direct `/gwd workflow <name> ...` dispatch) so the
  * first token isn't eaten as a def name.
  */
 export function parseWorkflowOverridesOnly(args: string): Record<string, string> {
@@ -392,7 +392,7 @@ async function handleCustomWorkflow(
   // ── validate <name> ──
   if (head === "validate") {
     if (!rest) {
-      ctx.ui.notify("Usage: /gsd workflow validate <name>", "warning");
+      ctx.ui.notify("Usage: /gwd workflow validate <name>", "warning");
       return true;
     }
     const base = projectRoot();
@@ -474,7 +474,7 @@ async function handleCustomWorkflow(
     return true;
   }
 
-  // ── Direct dispatch: /gsd workflow <name> [args] ──
+  // ── Direct dispatch: /gwd workflow <name> [args] ──
   // If the first token isn't a reserved subcommand, resolve it as a plugin.
   if (!RESERVED_SUBCOMMANDS.has(head)) {
     const base = projectRoot();

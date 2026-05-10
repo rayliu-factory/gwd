@@ -1,10 +1,10 @@
 /**
  * Regression test for #4757 — readConfigs() must also read the global
- * ~/.gsd/mcp.json (resolved as $GWD_HOME/mcp.json when GWD_HOME is set).
+ * ~/.gwd/mcp.json (resolved as $GWD_HOME/mcp.json when GWD_HOME is set).
  *
  * Behaviour test against the exported getServerConfig — no source grep.
  * The fixture is anchored via $GWD_HOME so the test never touches the
- * developer's real ~/.gsd directory.
+ * developer's real ~/.gwd directory.
  */
 
 import test, { before, after } from "node:test";

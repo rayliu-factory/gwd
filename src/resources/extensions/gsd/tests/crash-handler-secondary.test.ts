@@ -1,7 +1,7 @@
 /**
  * Regression tests for #3348 secondary issues — crash handler gaps surfaced after #3696
  *
- * 1. register-extension.ts: writeCrashLog writes to ~/.gsd/crash/ directory
+ * 1. register-extension.ts: writeCrashLog writes to ~/.gwd/crash/ directory
  * 2. register-extension.ts: _gsdRejectionGuard registered for unhandledRejection
  * 3. register-extension.ts: _gsdEpipeGuard exits with code 1 for unrecoverable errors (no log-and-continue)
  * 4. crash-recovery.ts: emitCrashRecoveredUnitEnd closes open unit-start journal entries
@@ -24,7 +24,7 @@ function makeTmpBase(): string {
 
 describe('register-extension crash handler secondary fixes (#3348)', () => {
   test('writeCrashLog is exported and writes a file to the crash directory', async () => {
-    // Dynamic import so GWD_HOME can be pointed at a temp dir without polluting ~/.gsd
+    // Dynamic import so GWD_HOME can be pointed at a temp dir without polluting ~/.gwd
     const tmpHome = join(tmpdir(), `gsd-crash-test-${randomUUID()}`);
     const origHome = process.env.GWD_HOME;
     process.env.GWD_HOME = tmpHome;

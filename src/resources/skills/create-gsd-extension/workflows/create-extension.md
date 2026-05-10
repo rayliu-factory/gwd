@@ -12,7 +12,7 @@
 ## Step 1: Determine Scope and Placement
 
 Ask the user:
-- **Global** (`~/.pi/agent/extensions/`) — Available in all GSD sessions
+- **Global** (`~/.pi/agent/extensions/`) — Available in all GWD sessions
 - **Project-local** (`.gsd/extensions/`) — Available only in this project
 
 ## Step 2: Determine Extension Capabilities

@@ -23,8 +23,8 @@ describe('isBlockedStateFile blocks gsd.db paths (#3674)', () => {
     assert.ok(isBlockedStateFile('/project/.gsd/gsd.db-shm'));
   });
 
-  test('blocks resolved symlink path under .gsd/projects/', () => {
-    assert.ok(isBlockedStateFile('/home/user/.gsd/projects/myproj/gsd.db'));
+  test('blocks resolved symlink path under .gwd/projects/', () => {
+    assert.ok(isBlockedStateFile('/home/user/.gwd/projects/myproj/gsd.db'));
   });
 
   test('still blocks STATE.md', () => {

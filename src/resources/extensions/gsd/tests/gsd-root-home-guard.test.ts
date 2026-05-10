@@ -1,12 +1,12 @@
 /**
  * GSD2 — regression tests for #5187 and git-root anchor guard:
  *
- * #5187: gsdRoot() must refuse to use the global GSD home (~/.gsd) as a
+ * #5187: gsdRoot() must refuse to use the global GSD home (~/.gwd) as a
  * project .gsd directory when basePath resolves to $HOME. Paths under
- * ~/.gsd/projects/<hash>/ remain valid.
+ * ~/.gwd/projects/<hash>/ remain valid.
  *
- * git-root anchor guard: when $HOME is itself a git repo and ~/.gsd exists,
- * gsdRoot() must NOT return ~/.gsd for a subdir basePath like ~/projects/foo.
+ * git-root anchor guard: when $HOME is itself a git repo and ~/.gwd exists,
+ * gsdRoot() must NOT return ~/.gwd for a subdir basePath like ~/projects/foo.
  * It should fall through to step 4 (creation fallback) instead.
  */
 
@@ -19,7 +19,7 @@ import { spawnSync } from 'node:child_process';
 
 import { gsdRoot, _clearGsdRootCache } from '../paths.ts';
 
-describe('gsdRoot() refuses ~/.gsd as project state when basePath is $HOME (#5187)', () => {
+describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#5187)', () => {
   let fakeHome: string;
   let savedHome: string | undefined;
   let savedUserProfile: string | undefined;
@@ -67,7 +67,7 @@ describe('gsdRoot() refuses ~/.gsd as project state when basePath is $HOME (#518
     );
   });
 
-  test('does NOT throw for paths under ~/.gsd/projects/<hash>/', () => {
+  test('does NOT throw for paths under ~/.gwd/projects/<hash>/', () => {
     const projectStateDir = join(fakeHome, '.gsd', 'projects', 'abcdef123456');
     mkdirSync(join(projectStateDir, '.gsd'), { recursive: true });
     _clearGsdRootCache();
@@ -89,7 +89,7 @@ describe('gsdRoot() refuses ~/.gsd as project state when basePath is $HOME (#518
   });
 });
 
-describe('git-root anchor guard: subdir basePath must not resolve to ~/.gsd', () => {
+describe('git-root anchor guard: subdir basePath must not resolve to ~/.gwd', () => {
   let fakeHome: string;
   let subDir: string;
   let savedHome: string | undefined;
@@ -101,7 +101,7 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gsd', ()
     fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-anchor-guard-')));
     // Init a bare-minimum git repo so git rev-parse --show-toplevel returns fakeHome.
     spawnSync('git', ['init', fakeHome], { encoding: 'utf-8' });
-    // Create ~/.gsd (the global home that must NOT be used for project subdirs).
+    // Create ~/.gwd (the global home that must NOT be used for project subdirs).
     mkdirSync(join(fakeHome, '.gsd'), { recursive: true });
     // Create a subdir inside the git repo — this is the project basePath.
     subDir = join(fakeHome, 'projects', 'foo');
@@ -130,15 +130,15 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gsd', ()
     rmSync(fakeHome, { recursive: true, force: true });
   });
 
-  test('does NOT return ~/.gsd when $HOME is a git repo and basePath is a subdir', () => {
+  test('does NOT return ~/.gwd when $HOME is a git repo and basePath is a subdir', () => {
     // fakeHome IS the git root AND $HOME, so git rev-parse returns fakeHome,
-    // and ~/.gsd (fakeHome/.gsd) exists. The guard must skip that candidate
+    // and ~/.gwd (fakeHome/.gsd) exists. The guard must skip that candidate
     // and fall through to the creation fallback: subDir/.gsd.
     const result = gsdRoot(subDir);
     assert.notEqual(
       result,
       join(fakeHome, '.gsd'),
-      'gsdRoot must not return ~/.gsd for a subdir basePath',
+      'gsdRoot must not return ~/.gwd for a subdir basePath',
     );
     assert.equal(
       result,

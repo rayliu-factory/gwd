@@ -1,12 +1,12 @@
 # @gwd-build/mcp-server
 
-MCP server exposing GSD orchestration tools for Claude Code, Cursor, and other MCP-compatible clients.
+MCP server exposing GWD orchestration tools for Claude Code, Cursor, and other MCP-compatible clients.
 
-Start GSD auto-mode sessions, poll progress, resolve blockers, and retrieve results — all through the [Model Context Protocol](https://modelcontextprotocol.io/).
+Start GWD auto-mode sessions, poll progress, resolve blockers, and retrieve results — all through the [Model Context Protocol](https://modelcontextprotocol.io/).
 
 This package now exposes two tool surfaces:
 
-- session/read tools for starting and inspecting GSD sessions
+- session/read tools for starting and inspecting GWD sessions
 - MCP-native interactive tools for structured user input
 - headless-safe workflow tools for planning, completion, validation, reassessment, metadata persistence, and journal reads
 
@@ -20,7 +20,7 @@ Or with the monorepo workspace:
 
 ```bash
 # Already available as a workspace package
-npx gsd-mcp-server
+npx gwd-mcp-server
 ```
 
 ## Configuration
@@ -34,7 +34,7 @@ Add to your project's `.mcp.json`:
   "mcpServers": {
     "gsd": {
       "command": "npx",
-      "args": ["gsd-mcp-server"],
+      "args": ["gwd-mcp-server"],
       "env": {
         "GWD_CLI_PATH": "/path/to/gsd"
       }
@@ -49,7 +49,7 @@ Or if installed globally:
 {
   "mcpServers": {
     "gsd": {
-      "command": "gsd-mcp-server"
+      "command": "gwd-mcp-server"
     }
   }
 }
@@ -64,7 +64,7 @@ Add to `.cursor/mcp.json`:
   "mcpServers": {
     "gsd": {
       "command": "npx",
-      "args": ["gsd-mcp-server"],
+      "args": ["gwd-mcp-server"],
       "env": {
         "GWD_CLI_PATH": "/path/to/gsd"
       }
@@ -128,7 +128,7 @@ If the executor bridge cannot be loaded, workflow mutation calls will fail with 
 
 ### `gsd_execute`
 
-Start a GSD auto-mode session for a project directory.
+Start a GWD auto-mode session for a project directory.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -141,7 +141,7 @@ Start a GSD auto-mode session for a project directory.
 
 ### `gsd_status`
 
-Poll the current status of a running GSD session.
+Poll the current status of a running GWD session.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|

@@ -269,8 +269,8 @@ ${docHints.join("\n")}
 
 Write the complete implementation as a directory-based extension:
 
-\`~/.gsd/agent/extensions/<kebab-case-name>/index.ts\`
-\`~/.gsd/agent/extensions/<kebab-case-name>/extension-manifest.json\`
+\`~/.gwd/agent/extensions/<kebab-case-name>/index.ts\`
+\`~/.gwd/agent/extensions/<kebab-case-name>/extension-manifest.json\`
 
 The manifest must follow this format:
 \`\`\`json

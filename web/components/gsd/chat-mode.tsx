@@ -1557,7 +1557,7 @@ function PlaceholderState({
           <p className="max-w-xs text-xs text-muted-foreground">{notice}</p>
         ) : !connected ? (
           <p className="max-w-xs text-xs text-muted-foreground">
-            Connecting to GSD session…
+            Connecting to GWD session…
           </p>
         ) : primaryAction && onPrimaryAction ? (
           <div className="mt-4">

@@ -1102,7 +1102,7 @@ export async function discoverAndLoadExtensions(
 
 	// 2. Global extensions: agentDir/extensions/
 	const globalExtDir = path.join(agentDir, "extensions");
-	// 2b. Installed extensions: ~/.gsd/extensions/ merged with bundled (D-14, D-15)
+	// 2b. Installed extensions: ~/.gwd/extensions/ merged with bundled (D-14, D-15)
 	// Discovery handles ID-based merge — loader stays dumb.
 	const installedExtDir = path.join(path.dirname(agentDir), "extensions");
 	const globalPaths = discoverExtensionsInDir(globalExtDir);

@@ -103,8 +103,8 @@ export function detectWorktreeName(basePath: string): string | null {
  * When the worker was spawned with GWD_PROJECT_ROOT set, use that directly —
  * the coordinator already knows the real project root unambiguously.
  *
- * When `/.gsd/` in the resolved path is actually the user-level `~/.gsd/`
- * (common when `.gsd` is a symlink into `~/.gsd/projects/<hash>`), the
+ * When `/.gsd/` in the resolved path is actually the user-level `~/.gwd/`
+ * (common when `.gsd` is a symlink into `~/.gwd/projects/<hash>`), the
  * string-slice heuristic would return `~` — which is catastrophically wrong.
  * In that case, fall back to reading the worktree's `.git` file, which
  * contains a `gitdir:` pointer to the real project's `.git/worktrees/<name>`,
