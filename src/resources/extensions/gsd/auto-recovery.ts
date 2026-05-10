@@ -7,7 +7,7 @@
  * globals or AutoContext dependency.
  */
 
-import type { ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionContext } from "@gwd/pi-coding-agent";
 import { parseUnitId } from "./unit-id.js";
 import { MILESTONE_ID_RE } from "./milestone-ids.js";
 import { appendEvent } from "./workflow-events.js";

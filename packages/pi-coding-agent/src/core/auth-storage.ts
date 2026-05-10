@@ -14,8 +14,8 @@ import {
 	type OAuthCredentials,
 	type OAuthLoginCallbacks,
 	type OAuthProviderId,
-} from "@gsd/pi-ai";
-import { getOAuthApiKey, getOAuthProvider, getOAuthProviders } from "@gsd/pi-ai/oauth";
+} from "@gwd/pi-ai";
+import { getOAuthApiKey, getOAuthProvider, getOAuthProviders } from "@gwd/pi-ai/oauth";
 import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { getAgentDir } from "../config.js";

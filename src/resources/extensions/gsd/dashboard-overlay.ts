@@ -7,8 +7,8 @@
  * or opened from /gsd status.
  */
 
-import type { Theme } from "@gsd/pi-coding-agent";
-import { truncateToWidth, visibleWidth, matchesKey, Key } from "@gsd/pi-tui";
+import type { Theme } from "@gwd/pi-coding-agent";
+import { truncateToWidth, visibleWidth, matchesKey, Key } from "@gwd/pi-tui";
 import { deriveState } from "./state.js";
 import { loadFile } from "./files.js";
 import { isDbAvailable, getMilestoneSlices, getSliceTasks } from "./gsd-db.js";

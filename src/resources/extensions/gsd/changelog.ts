@@ -8,7 +8,7 @@
  * Entry point: handleChangelog() called from commands.ts
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -138,7 +138,7 @@ export async function handleChangelog(
   }
 
   // ── Determine version filter ────────────────────────────────────────────
-  const currentVersion = process.env.GSD_VERSION || "";
+  const currentVersion = process.env.GWD_VERSION || "";
   let sinceVersion: string | undefined;
   let showCurrentOnly = false;
 
@@ -167,7 +167,7 @@ export async function handleChangelog(
   if (showCurrentOnly) {
     if (!currentVersion) {
       ctx.ui.notify(
-        "GSD_VERSION is not set — cannot determine current release. Provide a version instead.",
+        "GWD_VERSION is not set — cannot determine current release. Provide a version instead.",
         "warning",
       );
       return;

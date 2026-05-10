@@ -47,7 +47,7 @@ describe("AdaptiveLayoutComponent", () => {
 		const component = new AdaptiveLayoutComponent(() => ({
 			override: "auto",
 			activeToolCount: 0,
-			lastError: "Cannot find module @gsd/native",
+			lastError: "Cannot find module @gwd/native",
 			cwd: "/tmp/demo",
 		}));
 

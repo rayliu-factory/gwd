@@ -1,7 +1,7 @@
 // Project/App: GSD-2
 // File Purpose: Registers journal query tools.
 import { Type } from "@sinclair/typebox";
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 
 import { queryJournal } from "../journal.js";
 import { logWarning } from "../workflow-logger.js";

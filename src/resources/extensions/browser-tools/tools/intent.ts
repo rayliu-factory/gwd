@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 import { type TUnsafe, Type } from "@sinclair/typebox";
 import { diffCompactStates } from "../core.js";
 import type { ToolDeps, CompactPageState } from "../state.js";

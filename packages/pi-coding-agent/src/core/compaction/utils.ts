@@ -2,8 +2,8 @@
  * Shared utilities for compaction and branch summarization.
  */
 
-import type { AgentMessage } from "@gsd/pi-agent-core";
-import type { AssistantMessage, Message } from "@gsd/pi-ai";
+import type { AgentMessage } from "@gwd/pi-agent-core";
+import type { AssistantMessage, Message } from "@gwd/pi-ai";
 import { TOOL_RESULT_MAX_CHARS } from "../constants.js";
 
 // Head/tail split for head+tail truncation. Keeps first half + last half up to

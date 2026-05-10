@@ -31,11 +31,11 @@ test("validateExtensionPackage: valid package returns { valid: true }", (t) => {
 
   writeIndexTs(dir);
   writePackageJson(dir, {
-    name: "@gsd-extensions/test",
+    name: "@gwd-extensions/test",
     version: "1.0.0",
     gsd: { extension: true },
     pi: { extensions: ["./index.ts"] },
-    peerDependencies: { "@gsd/pi-coding-agent": "*" },
+    peerDependencies: { "@gwd/pi-coding-agent": "*" },
     dependencies: { "some-lib": "^1.0.0" },
   });
 
@@ -50,10 +50,10 @@ test("validateExtensionPackage: missing gsd.extension marker returns error", (t)
 
   writeIndexTs(dir);
   writePackageJson(dir, {
-    name: "@gsd-extensions/test",
+    name: "@gwd-extensions/test",
     version: "1.0.0",
     pi: { extensions: ["./index.ts"] },
-    peerDependencies: { "@gsd/pi-coding-agent": "*" },
+    peerDependencies: { "@gwd/pi-coding-agent": "*" },
   });
 
   const result = validateExtensionPackage(dir);
@@ -67,10 +67,10 @@ test("validateExtensionPackage: missing pi.extensions returns error", (t) => {
 
   writeIndexTs(dir);
   writePackageJson(dir, {
-    name: "@gsd-extensions/test",
+    name: "@gwd-extensions/test",
     version: "1.0.0",
     gsd: { extension: true },
-    peerDependencies: { "@gsd/pi-coding-agent": "*" },
+    peerDependencies: { "@gwd/pi-coding-agent": "*" },
   });
 
   const result = validateExtensionPackage(dir);
@@ -84,11 +84,11 @@ test("validateExtensionPackage: pi.extensions entry path not found returns error
 
   // Do NOT create index.ts
   writePackageJson(dir, {
-    name: "@gsd-extensions/test",
+    name: "@gwd-extensions/test",
     version: "1.0.0",
     gsd: { extension: true },
     pi: { extensions: ["./index.ts"] },
-    peerDependencies: { "@gsd/pi-coding-agent": "*" },
+    peerDependencies: { "@gwd/pi-coding-agent": "*" },
   });
 
   const result = validateExtensionPackage(dir);
@@ -96,43 +96,43 @@ test("validateExtensionPackage: pi.extensions entry path not found returns error
   assert.ok(result.errors.some(e => e.includes("index.ts")), `Expected error about index.ts, got: ${JSON.stringify(result.errors)}`);
 });
 
-test("validateExtensionPackage: @gsd/* in dependencies (not peerDependencies) returns error", (t) => {
+test("validateExtensionPackage: @gwd/* in dependencies (not peerDependencies) returns error", (t) => {
   const dir = makeTempDir();
   t.after(() => rmSync(dir, { recursive: true, force: true }));
 
   writeIndexTs(dir);
   writePackageJson(dir, {
-    name: "@gsd-extensions/test",
+    name: "@gwd-extensions/test",
     version: "1.0.0",
     gsd: { extension: true },
     pi: { extensions: ["./index.ts"] },
-    dependencies: { "@gsd/pi-coding-agent": "^2.0.0" },
+    dependencies: { "@gwd/pi-coding-agent": "^2.0.0" },
   });
 
   const result = validateExtensionPackage(dir);
   assert.equal(result.valid, false);
-  assert.ok(result.errors.some(e => e.includes("@gsd/pi-coding-agent")), `Expected error about @gsd/ dep, got: ${JSON.stringify(result.errors)}`);
+  assert.ok(result.errors.some(e => e.includes("@gwd/pi-coding-agent")), `Expected error about @gwd/ dep, got: ${JSON.stringify(result.errors)}`);
 });
 
-test("validateExtensionPackage: @gsd/* in devDependencies returns error", (t) => {
+test("validateExtensionPackage: @gwd/* in devDependencies returns error", (t) => {
   const dir = makeTempDir();
   t.after(() => rmSync(dir, { recursive: true, force: true }));
 
   writeIndexTs(dir);
   writePackageJson(dir, {
-    name: "@gsd-extensions/test",
+    name: "@gwd-extensions/test",
     version: "1.0.0",
     gsd: { extension: true },
     pi: { extensions: ["./index.ts"] },
-    peerDependencies: { "@gsd/pi-coding-agent": "*" },
-    devDependencies: { "@gsd/pi-tui": "^2.0.0" },
+    peerDependencies: { "@gwd/pi-coding-agent": "*" },
+    devDependencies: { "@gwd/pi-tui": "^2.0.0" },
   });
 
   const result = validateExtensionPackage(dir);
   assert.equal(result.valid, false);
   assert.ok(
-    result.errors.some(e => e.includes("@gsd/pi-tui") && e.includes("devDependencies")),
-    `Expected error about @gsd/ in devDependencies, got: ${JSON.stringify(result.errors)}`,
+    result.errors.some(e => e.includes("@gwd/pi-tui") && e.includes("devDependencies")),
+    `Expected error about @gwd/ in devDependencies, got: ${JSON.stringify(result.errors)}`,
   );
 });
 

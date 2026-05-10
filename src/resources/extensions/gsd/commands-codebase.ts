@@ -5,7 +5,7 @@
  * Subcommands: generate, update, stats, help
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import {
   generateCodebaseMap,

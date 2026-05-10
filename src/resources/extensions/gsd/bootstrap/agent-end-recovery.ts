@@ -1,6 +1,6 @@
 // GSD-2 + src/resources/extensions/gsd/bootstrap/agent-end-recovery.ts - Handles provider and agent-end recovery for GSD auto-mode.
 
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
 
 import type { AgentEndEvent, ErrorContext } from "../auto/types.js";
 import { logWarning } from "../workflow-logger.js";

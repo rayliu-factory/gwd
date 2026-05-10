@@ -7,8 +7,8 @@
  * Opened via `/gsd show-config` or `/gsd config`.
  */
 
-import type { Theme } from "@gsd/pi-coding-agent";
-import { matchesKey, Key, truncateToWidth } from "@gsd/pi-tui";
+import type { Theme } from "@gwd/pi-coding-agent";
+import { matchesKey, Key, truncateToWidth } from "@gwd/pi-tui";
 
 import {
   loadEffectiveGSDPreferences,

@@ -3,7 +3,7 @@ import type {
   ModelRegistry as ModelRegistryInstance,
   PackageCommand,
   SettingsManager as SettingsManagerInstance,
-} from '@gsd/pi-coding-agent'
+} from '@gwd/pi-coding-agent'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { agentDir, sessionsDir, authFilePath } from './app-paths.js'
@@ -33,12 +33,12 @@ import { applyRtkProcessEnv, GWD_RTK_DISABLED_ENV, isTruthy } from './rtk-shared
 import { CLI_COMMAND, GWD_VERSION_ENV, PRODUCT_PACKAGE_NAME } from './namespace.js'
 import type { EnsureRtkResult } from './rtk.js'
 
-type PiCodingAgentModule = typeof import('@gsd/pi-coding-agent')
+type PiCodingAgentModule = typeof import('@gwd/pi-coding-agent')
 
 let piCodingAgentModulePromise: Promise<PiCodingAgentModule> | undefined
 
 function loadPiCodingAgentModule(): Promise<PiCodingAgentModule> {
-  return (piCodingAgentModulePromise ??= import('@gsd/pi-coding-agent'))
+  return (piCodingAgentModulePromise ??= import('@gwd/pi-coding-agent'))
 }
 
 // ---------------------------------------------------------------------------
@@ -222,7 +222,7 @@ if (shouldBypassManagedResourceMismatchGate(cliFlags.messages[0])) {
 // ---------------------------------------------------------------------------
 if (cliFlags.messages[0] === 'graph') {
   const sub = cliFlags.messages[1]
-  const { buildGraph, writeGraph, graphStatus, graphQuery, graphDiff, resolveGsdRoot } = await import('@gsd-build/mcp-server')
+  const { buildGraph, writeGraph, graphStatus, graphQuery, graphDiff, resolveGsdRoot } = await import('@gwd-build/mcp-server')
 
   const projectDir = process.cwd()
   const gsdRoot = resolveGsdRoot(projectDir)

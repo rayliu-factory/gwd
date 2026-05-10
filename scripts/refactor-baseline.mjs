@@ -320,7 +320,7 @@ export async function collectContractsMetrics(root) {
     surfaces.push({
       ...surface,
       exists: true,
-      usesSharedContracts: content.includes("@gsd-build/contracts"),
+      usesSharedContracts: content.includes("@gwd-build/contracts"),
       legacyTypeImports: countLegacyContractImports(content),
     });
   }
@@ -584,7 +584,7 @@ export function countLegacyContractImports(value) {
     value,
     /(?:packages\/pi-coding-agent\/src\/modes\/rpc\/rpc-types|src\/modes\/rpc\/rpc-types)/g,
   );
-  const importPattern = /import\s+type\s+\{([^}]+)\}\s+from\s+["']@gsd-build\/rpc-client["']/g;
+  const importPattern = /import\s+type\s+\{([^}]+)\}\s+from\s+["']@gwd-build\/rpc-client["']/g;
   for (const match of value.matchAll(importPattern)) {
     const names = match[1]
       .split(",")

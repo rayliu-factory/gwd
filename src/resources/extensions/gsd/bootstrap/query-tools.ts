@@ -3,7 +3,7 @@
 // GSD2 — Read-only query tools exposing DB state to the LLM via the WAL connection
 
 import { Type } from "@sinclair/typebox";
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 import { ensureDbOpen, resolveCtxCwd } from "./dynamic-tools.js";
 
 

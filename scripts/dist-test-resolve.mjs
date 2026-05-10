@@ -19,18 +19,18 @@ process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK ??= '1';
 // dist-test root — everything compiled lands here
 const DIST_TEST = new URL('../dist-test/', import.meta.url).href;
 
-// Absolute paths to compiled @gsd/* entry points
+// Absolute paths to compiled @gwd/* entry points
 const GSD_ALIASES = {
-  '@gsd/pi-coding-agent': new URL('../dist-test/packages/pi-coding-agent/src/index.js', import.meta.url).href,
-  '@gsd/pi-ai/oauth':     new URL('../dist-test/packages/pi-ai/src/utils/oauth/index.js', import.meta.url).href,
-  '@gsd/pi-ai':           new URL('../dist-test/packages/pi-ai/src/index.js', import.meta.url).href,
-  '@gsd/pi-agent-core':   new URL('../dist-test/packages/pi-agent-core/src/index.js', import.meta.url).href,
-  '@gsd/pi-tui':          new URL('../dist-test/packages/pi-tui/src/index.js', import.meta.url).href,
-  '@gsd/native':          new URL('../dist-test/packages/native/src/index.js', import.meta.url).href,
+  '@gwd/pi-coding-agent': new URL('../dist-test/packages/pi-coding-agent/src/index.js', import.meta.url).href,
+  '@gwd/pi-ai/oauth':     new URL('../dist-test/packages/pi-ai/src/utils/oauth/index.js', import.meta.url).href,
+  '@gwd/pi-ai':           new URL('../dist-test/packages/pi-ai/src/index.js', import.meta.url).href,
+  '@gwd/pi-agent-core':   new URL('../dist-test/packages/pi-agent-core/src/index.js', import.meta.url).href,
+  '@gwd/pi-tui':          new URL('../dist-test/packages/pi-tui/src/index.js', import.meta.url).href,
+  '@gwd/native':          new URL('../dist-test/packages/native/src/index.js', import.meta.url).href,
 };
 
 export function resolve(specifier, context, nextResolve) {
-  // 1. @gsd/* bare imports → compiled dist-test counterpart
+  // 1. @gwd/* bare imports → compiled dist-test counterpart
   if (specifier in GSD_ALIASES) {
     return nextResolve(GSD_ALIASES[specifier], context);
   }

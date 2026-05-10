@@ -9,7 +9,7 @@
  * @see S01-RESEARCH.md for the storage decision rationale (D002).
  */
 
-import { AuthStorage } from '@gsd/pi-coding-agent'
+import { AuthStorage } from '@gwd/pi-coding-agent'
 import { join } from 'path'
 import { resolveSearchProviderFromPreferences } from '../gsd/preferences.js'
 import { gsdHome } from "../gsd/gsd-home.js";

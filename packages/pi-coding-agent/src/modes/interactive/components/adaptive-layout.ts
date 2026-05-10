@@ -1,6 +1,6 @@
 // GSD2 - Adaptive terminal mode dashboard for the interactive TUI
 
-import { style, truncateToWidth, visibleWidth, type Component } from "@gsd/pi-tui";
+import { style, truncateToWidth, visibleWidth, type Component } from "@gwd/pi-tui";
 import type { TuiAdaptiveMode, TuiMode } from "../tui-mode.js";
 import { resolveTuiMode } from "../tui-mode.js";
 import { theme, type ThemeColor } from "../theme/theme.js";

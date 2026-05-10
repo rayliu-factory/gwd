@@ -1,5 +1,5 @@
 // GSD2 TUI - Shared chat frame renderer for assistant, user, and system cards.
-import { style, truncateToWidth, visibleWidth } from "@gsd/pi-tui";
+import { style, truncateToWidth, visibleWidth } from "@gwd/pi-tui";
 import { theme } from "../theme/theme.js";
 import { formatTimestamp, type TimestampFormat } from "./timestamp.js";
 

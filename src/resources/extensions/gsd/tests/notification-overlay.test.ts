@@ -6,7 +6,7 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
-import { truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@gsd/pi-tui";
+import { truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@gwd/pi-tui";
 
 // ── wrapText logic (mirrors the private function in notification-overlay.ts) ──
 

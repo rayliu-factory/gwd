@@ -50,15 +50,15 @@ try {
   npmCacheDir = mkdtempSync(join(tmpdir(), 'validate-pack-npm-cache-'));
   mkdirSync(npmCacheDir, { recursive: true });
 
-  // --- Guard: @gsd/* workspace packages must not have @gsd/* cross-deps ---
-  // (@gsd-build/* packages CAN depend on each other — e.g., mcp-server depends
+  // --- Guard: @gwd/* workspace packages must not have @gwd/* cross-deps ---
+  // (@gwd-build/* packages CAN depend on each other — e.g., mcp-server depends
   // on rpc-client — because they are both published to the registry.)
-  console.log('==> Checking workspace packages for @gsd/* cross-deps...');
+  console.log('==> Checking workspace packages for @gwd/* cross-deps...');
   let crossFailed = false;
 
   for (const ws of getCorePackages()) {
     const pkg = JSON.parse(readFileSync(ws.packageJsonPath, 'utf8'));
-    const deps = Object.keys(pkg.dependencies || {}).filter(d => d.startsWith('@gsd/'));
+    const deps = Object.keys(pkg.dependencies || {}).filter(d => d.startsWith('@gwd/'));
     if (deps.length) {
       console.log(`    LEAKED in ${ws.dir}: ${deps.join(', ')}`);
       crossFailed = true;
@@ -66,11 +66,11 @@ try {
   }
 
   if (crossFailed) {
-    console.log('ERROR: Workspace packages have @gsd/* cross-dependencies.');
+    console.log('ERROR: Workspace packages have @gwd/* cross-dependencies.');
     console.log('    These cause 404s when npm resolves them from the registry.');
     process.exit(1);
   }
-  console.log('    No @gsd/* cross-dependencies.');
+  console.log('    No @gwd/* cross-dependencies.');
 
   // --- Pack tarball ---
   console.log('==> Packing tarball...');
@@ -148,7 +148,7 @@ try {
 
   // --- Verify every linkable workspace package resolved correctly post-install ---
   // This catches the Windows-style failure where symlinkSync fails silently and
-  // node_modules/@gsd/ is never populated, causing ERR_MODULE_NOT_FOUND at runtime.
+  // node_modules/@gwd/ is never populated, causing ERR_MODULE_NOT_FOUND at runtime.
   // Checks every package with `gsd.linkable: true` — not just a hand-picked subset —
   // so any future addition is automatically covered.
   console.log('==> Verifying workspace package resolution (every linkable package)...');

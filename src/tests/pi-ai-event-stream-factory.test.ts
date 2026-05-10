@@ -3,9 +3,9 @@ import assert from "node:assert/strict";
 import {
 	AssistantMessageEventStream,
 	createAssistantMessageEventStream,
-} from "@gsd/pi-ai";
+} from "@gwd/pi-ai";
 
-describe("@gsd/pi-ai event stream exports", () => {
+describe("@gwd/pi-ai event stream exports", () => {
 	it("exports createAssistantMessageEventStream for package consumers", () => {
 		assert.equal(typeof createAssistantMessageEventStream, "function");
 		const stream = createAssistantMessageEventStream();

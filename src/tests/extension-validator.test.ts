@@ -86,34 +86,34 @@ describe('checkNamespaceReservation', () => {
 })
 
 describe('checkDependencyPlacement', () => {
-  test('returns error for @gsd/ package in dependencies', () => {
-    const errors = checkDependencyPlacement({ dependencies: { '@gsd/pi-coding-agent': '^2.0.0' } })
+  test('returns error for @gwd/ package in dependencies', () => {
+    const errors = checkDependencyPlacement({ dependencies: { '@gwd/pi-coding-agent': '^2.0.0' } })
     assert.equal(errors.length, 1)
     assert.equal(errors[0].code, 'WRONG_DEP_FIELD')
-    assert.ok(errors[0].message.includes('@gsd/pi-coding-agent'), 'message must name exact package')
+    assert.ok(errors[0].message.includes('@gwd/pi-coding-agent'), 'message must name exact package')
     assert.ok(errors[0].message.includes('dependencies'), 'message must name exact field')
     assert.ok(errors[0].message.includes('peerDependencies'), 'message must suggest the fix')
     assert.equal(errors[0].field, 'dependencies')
   })
 
-  test('returns error for @gsd/ package in devDependencies', () => {
-    const errors = checkDependencyPlacement({ devDependencies: { '@gsd/pi-ai': '^1.0.0' } })
+  test('returns error for @gwd/ package in devDependencies', () => {
+    const errors = checkDependencyPlacement({ devDependencies: { '@gwd/pi-ai': '^1.0.0' } })
     assert.equal(errors.length, 1)
     assert.equal(errors[0].code, 'WRONG_DEP_FIELD')
-    assert.ok(errors[0].message.includes('@gsd/pi-ai'), 'message must name exact package')
+    assert.ok(errors[0].message.includes('@gwd/pi-ai'), 'message must name exact package')
     assert.ok(errors[0].message.includes('devDependencies'), 'message must name exact field')
     assert.equal(errors[0].field, 'devDependencies')
   })
 
-  test('does not flag @gsd/ in peerDependencies', () => {
-    const errors = checkDependencyPlacement({ peerDependencies: { '@gsd/pi-coding-agent': '>=2.50.0' } })
+  test('does not flag @gwd/ in peerDependencies', () => {
+    const errors = checkDependencyPlacement({ peerDependencies: { '@gwd/pi-coding-agent': '>=2.50.0' } })
     assert.equal(errors.length, 0, 'peerDependencies is the correct placement — must not be flagged')
   })
 
   test('returns multiple errors for violations in both dependencies and devDependencies', () => {
     const errors = checkDependencyPlacement({
-      dependencies: { '@gsd/pi-coding-agent': '^2.0.0' },
-      devDependencies: { '@gsd/pi-ai': '^1.0.0' },
+      dependencies: { '@gwd/pi-coding-agent': '^2.0.0' },
+      devDependencies: { '@gwd/pi-ai': '^1.0.0' },
     })
     assert.equal(errors.length, 2)
     const fields = errors.map(e => e.field)
@@ -132,7 +132,7 @@ describe('checkDependencyPlacement', () => {
   })
 
   test('returns empty errors when dependencies is a string instead of object', () => {
-    const errors = checkDependencyPlacement({ dependencies: '@gsd/pi-coding-agent' })
+    const errors = checkDependencyPlacement({ dependencies: '@gwd/pi-coding-agent' })
     assert.equal(errors.length, 0, 'string in dependencies field should be gracefully skipped')
   })
 
@@ -142,7 +142,7 @@ describe('checkDependencyPlacement', () => {
   })
 
   test('returns empty errors when dependencies is an array', () => {
-    const errors = checkDependencyPlacement({ dependencies: ['@gsd/pi-coding-agent'] })
+    const errors = checkDependencyPlacement({ dependencies: ['@gwd/pi-coding-agent'] })
     assert.equal(errors.length, 0, 'array in dependencies field should be gracefully skipped')
   })
 })
@@ -150,7 +150,7 @@ describe('checkDependencyPlacement', () => {
 describe('validateExtensionPackage', () => {
   test('returns valid for conforming package', () => {
     const result = validateExtensionPackage(
-      { gsd: { extension: true }, peerDependencies: { '@gsd/pi-coding-agent': '>=2.50.0' } },
+      { gsd: { extension: true }, peerDependencies: { '@gwd/pi-coding-agent': '>=2.50.0' } },
       { extensionId: 'acme.browser' }
     )
     assert.equal(result.valid, true)
@@ -160,7 +160,7 @@ describe('validateExtensionPackage', () => {
 
   test('aggregates errors from multiple checks', () => {
     const result = validateExtensionPackage(
-      { dependencies: { '@gsd/pi-ai': '^1.0.0' } },
+      { dependencies: { '@gwd/pi-ai': '^1.0.0' } },
       { extensionId: 'gsd.bad' }
     )
     assert.equal(result.valid, false)
@@ -193,11 +193,11 @@ describe('validateExtensionPackage', () => {
 })
 
 describe('edge cases — field types', () => {
-  test('does not flag @gsd/ package nested in sub-object of dependencies (only top-level keys matter)', () => {
+  test('does not flag @gwd/ package nested in sub-object of dependencies (only top-level keys matter)', () => {
     // The checker iterates Object.keys(deps) — a sub-object value is a value, not a key name
     const errors = checkDependencyPlacement({
-      dependencies: { nested: { '@gsd/foo': '1.0' } },
+      dependencies: { nested: { '@gwd/foo': '1.0' } },
     })
-    assert.equal(errors.length, 0, 'nested @gsd/ in a sub-object value should not be flagged')
+    assert.equal(errors.length, 0, 'nested @gwd/ in a sub-object value should not be flagged')
   })
 })

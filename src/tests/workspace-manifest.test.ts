@@ -1,4 +1,4 @@
-// GSD-2 + src/tests/workspace-manifest.test.ts — regression tests for the linkable-packages single source of truth
+// GWD + src/tests/workspace-manifest.test.ts — regression tests for the linkable-packages single source of truth
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
@@ -36,37 +36,37 @@ describe("workspace manifest (live project)", () => {
 
 		const names = packages.map((p: { packageName: string }) => p.packageName).sort();
 		assert.deepEqual(names, [
-			"@gsd-build/contracts",
-			"@gsd-build/mcp-server",
-			"@gsd-build/rpc-client",
-			"@gsd/native",
-			"@gsd/pi-agent-core",
-			"@gsd/pi-ai",
-			"@gsd/pi-coding-agent",
-			"@gsd/pi-tui",
+			"@gwd-build/contracts",
+			"@gwd-build/mcp-server",
+			"@gwd-build/rpc-client",
+			"@gwd/native",
+			"@gwd/pi-agent-core",
+			"@gwd/pi-ai",
+			"@gwd/pi-coding-agent",
+			"@gwd/pi-tui",
 		]);
 
 		for (const pkg of packages) {
 			assert.equal(pkg.packageName, `${pkg.scope}/${pkg.name}`,
-				`${pkg.packageName}: gsd.scope/gsd.name mismatch`);
+				`${pkg.packageName}: gwd.scope/gwd.name mismatch`);
 		}
 	});
 
-	test("getCorePackages returns only @gsd scope entries", () => {
+	test("getCorePackages returns only @gwd scope entries", () => {
 		const manifest = require(manifestModulePath);
 		const core = manifest.getCorePackages();
 		assert.ok(core.length >= 1);
 		for (const pkg of core) {
-			assert.equal(pkg.scope, "@gsd", `${pkg.packageName} should be @gsd scope`);
+			assert.equal(pkg.scope, "@gwd", `${pkg.packageName} should be @gwd scope`);
 		}
 	});
 
-	test("every linkable package's package.json 'name' matches its gsd.scope/gsd.name", () => {
+	test("every linkable package's package.json 'name' matches its gwd.scope/gwd.name", () => {
 		const manifest = require(manifestModulePath);
 		for (const pkg of manifest.getLinkablePackages()) {
 			const pkgJson = JSON.parse(readFileSync(pkg.packageJsonPath, "utf8"));
 			assert.equal(pkgJson.name, `${pkg.scope}/${pkg.name}`,
-				`${pkg.packageJsonPath}: name != gsd.scope/gsd.name`);
+				`${pkg.packageJsonPath}: name != gwd.scope/gwd.name`);
 		}
 	});
 });
@@ -89,7 +89,7 @@ describe("verify-workspace-coverage CI gate", () => {
 		let fakeVerify: string;
 
 		beforeEach(() => {
-			tmp = mkdtempSync(join(tmpdir(), "gsd-verify-coverage-"));
+			tmp = mkdtempSync(join(tmpdir(), "gwd-verify-coverage-"));
 			fakePackages = join(tmp, "packages");
 			mkdirSync(fakePackages, { recursive: true });
 
@@ -128,9 +128,9 @@ describe("verify-workspace-coverage CI gate", () => {
 
 		test("FAILS when a linkable package has zero test files", () => {
 			writePackage("pkg-a", {
-				name: "@gsd/pkg-a",
+				name: "@gwd/pkg-a",
 				version: "1.0.0",
-				gsd: { linkable: true, scope: "@gsd", name: "pkg-a" },
+				gwd: { linkable: true, scope: "@gwd", name: "pkg-a" },
 			}, {
 				"src/index.ts": "export const x = 1;",
 			});
@@ -153,17 +153,17 @@ describe("verify-workspace-coverage CI gate", () => {
 
 		test("PASSES when every linkable package has at least one test file", () => {
 			writePackage("pkg-a", {
-				name: "@gsd/pkg-a",
+				name: "@gwd/pkg-a",
 				version: "1.0.0",
-				gsd: { linkable: true, scope: "@gsd", name: "pkg-a" },
+				gwd: { linkable: true, scope: "@gwd", name: "pkg-a" },
 			}, {
 				"src/index.ts": "export const x = 1;",
 				"src/index.test.ts": "import test from 'node:test'; test('ok', () => {});",
 			});
 			writePackage("pkg-b", {
-				name: "@gsd-build/pkg-b",
+				name: "@gwd-build/pkg-b",
 				version: "1.0.0",
-				gsd: { linkable: true, scope: "@gsd-build", name: "pkg-b" },
+				gwd: { linkable: true, scope: "@gwd-build", name: "pkg-b" },
 			}, {
 				"src/thing.test.js": "",
 			});
@@ -177,9 +177,9 @@ describe("verify-workspace-coverage CI gate", () => {
 
 		test("IGNORES non-linkable packages even if they have no tests", () => {
 			writePackage("internal-pkg", {
-				name: "@gsd-build/internal-pkg",
+				name: "@gwd-build/internal-pkg",
 				version: "1.0.0",
-				// Intentionally no gsd.linkable — this package should be skipped entirely.
+				// Intentionally no gwd.linkable — this package should be skipped entirely.
 			}, {
 				"src/index.ts": "export const x = 1;",
 			});
@@ -190,11 +190,11 @@ describe("verify-workspace-coverage CI gate", () => {
 			assert.ok(out !== undefined);
 		});
 
-		test("FAILS when package.json 'name' disagrees with gsd.scope/gsd.name", () => {
+		test("FAILS when package.json 'name' disagrees with gwd.scope/gwd.name", () => {
 			writePackage("pkg-bad", {
-				name: "@gsd/wrong-name",
+				name: "@gwd/wrong-name",
 				version: "1.0.0",
-				gsd: { linkable: true, scope: "@gsd", name: "pkg-bad" },
+				gwd: { linkable: true, scope: "@gwd", name: "pkg-bad" },
 			}, {
 				"src/x.test.ts": "",
 			});
@@ -213,7 +213,7 @@ describe("verify-workspace-coverage CI gate", () => {
 			assert.ok(threw, "expected exit non-zero for name mismatch");
 			// Either the manifest itself throws (preferred) or the verify script reports it.
 			assert.ok(
-				/name.*gsd\.scope\/gsd\.name|gsd\.scope\/gsd\.name.*name/i.test(stderr),
+				/name.*gwd\.scope\/gwd\.name|gwd\.scope\/gwd\.name.*name/i.test(stderr),
 				`expected stderr to explain name mismatch. got: ${stderr}`
 			);
 			// Ensure the fake manifest file was actually loaded in the child process

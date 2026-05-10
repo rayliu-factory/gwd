@@ -123,7 +123,7 @@ function runPackageScript(command, args, cwd = REPO_ROOT, label = command) {
 const packages = getLinkablePackages()
 const summary = []
 for (const pkg of packages) {
-	if (pkg.packageName === '@gsd/native') {
+	if (pkg.packageName === '@gwd/native') {
 		const canRunNative = hasNativeAddon() || commandExists('cargo')
 		summary.push({
 			pkg: pkg.packageName,
@@ -149,7 +149,7 @@ for (const row of summary) {
 let failureCount = 0
 
 for (const pkg of packages) {
-	if (pkg.packageName === '@gsd/native') {
+	if (pkg.packageName === '@gwd/native') {
 		if (!hasNativeAddon() && !commandExists('cargo')) {
 			process.stderr.write(
 				`Skipping ${pkg.packageName}: no native addon present and \`cargo\` is unavailable in this environment.\n`

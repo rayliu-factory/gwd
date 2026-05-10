@@ -5,7 +5,7 @@
  * handleRunHook, handleUpdate, handleSkillHealth
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, readFileSync, mkdirSync } from "node:fs";
 import { join, resolve as resolvePath, sep } from "node:path";
 import { homedir } from "node:os";

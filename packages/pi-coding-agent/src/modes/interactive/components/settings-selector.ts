@@ -1,5 +1,5 @@
-import type { ThinkingLevel } from "@gsd/pi-agent-core";
-import type { Transport } from "@gsd/pi-ai";
+import type { ThinkingLevel } from "@gwd/pi-agent-core";
+import type { Transport } from "@gwd/pi-ai";
 import type { AdaptiveTuiMode } from "../../../core/settings-manager.js";
 import {
 	Container,
@@ -10,7 +10,7 @@ import {
 	SettingsList,
 	Spacer,
 	Text,
-} from "@gsd/pi-tui";
+} from "@gwd/pi-tui";
 import { getSelectListTheme, getSettingsListTheme, theme } from "../theme/theme.js";
 import { DynamicBorder } from "./dynamic-border.js";
 

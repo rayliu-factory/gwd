@@ -1,6 +1,6 @@
 // GSD2 TUI - Assistant message card renderer for interactive terminal sessions.
-import type { AssistantMessage } from "@gsd/pi-ai";
-import { Container, Markdown, type MarkdownTheme, Spacer, Text } from "@gsd/pi-tui";
+import type { AssistantMessage } from "@gwd/pi-ai";
+import { Container, Markdown, type MarkdownTheme, Spacer, Text } from "@gwd/pi-tui";
 import { getMarkdownTheme, theme } from "../theme/theme.js";
 import { type TimestampFormat } from "./timestamp.js";
 import { renderChatFrame } from "./chat-frame.js";

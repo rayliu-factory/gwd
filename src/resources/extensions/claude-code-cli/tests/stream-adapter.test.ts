@@ -32,7 +32,7 @@ import {
 	normalizeClaudePathForSdk,
 	roundResultToElicitationContent,
 } from "../stream-adapter.ts";
-import type { AssistantMessage, Context, Message } from "@gsd/pi-ai";
+import type { AssistantMessage, Context, Message } from "@gwd/pi-ai";
 import type { SDKUserMessage } from "../sdk-types.ts";
 
 // ---------------------------------------------------------------------------

@@ -17,7 +17,7 @@ import type {
   ExtensionContext,
   ExtensionCommandContext,
   SessionMessageEntry,
-} from "@gsd/pi-coding-agent";
+} from "@gwd/pi-coding-agent";
 
 import { deriveState } from "./state.js";
 import { parseUnitId } from "./unit-id.js";

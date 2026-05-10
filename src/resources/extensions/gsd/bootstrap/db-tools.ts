@@ -1,13 +1,13 @@
 // Project/App: GSD-2
 // File Purpose: Registers DB-backed GSD workflow tools and compatibility aliases.
 import { Type } from "@sinclair/typebox";
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
-import { Text } from "@gsd/pi-tui";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
+import { Text } from "@gwd/pi-tui";
 
 import { loadEffectiveGSDPreferences } from "../preferences.js";
 import { ensureDbOpen, resolveCtxCwd } from "./dynamic-tools.js";
 import { loadWriteGateSnapshot, shouldBlockRootArtifactSaveInSnapshot } from "./write-gate.js";
-import { StringEnum } from "@gsd/pi-ai";
+import { StringEnum } from "@gwd/pi-ai";
 import { logError } from "../workflow-logger.js";
 import { getErrorMessage } from "../error-utils.js";
 import { incrementLegacyTelemetry } from "../legacy-telemetry.js";

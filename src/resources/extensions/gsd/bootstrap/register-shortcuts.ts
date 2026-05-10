@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
-import { Key } from "@gsd/pi-tui";
+import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
+import { Key } from "@gwd/pi-tui";
 
 import { GSD_SHORTCUTS } from "../shortcut-defs.js";
 import { shortcutDesc } from "../../shared/mod.js";

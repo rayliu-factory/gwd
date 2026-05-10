@@ -8,7 +8,7 @@
  * Entry point: handleForensics() called from commands.ts
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -321,10 +321,10 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
     }
   }
 
-  // 8. GSD version — use GSD_VERSION env var set by the loader at startup.
+  // 8. GSD version — use GWD_VERSION env var set by the loader at startup.
   // Extensions run from ~/.gsd/agent/extensions/gsd/ at runtime, so path-traversal
   // from import.meta.url would resolve to ~/package.json (wrong on every system).
-  const gsdVersion = process.env.GSD_VERSION || "unknown";
+  const gsdVersion = process.env.GWD_VERSION || "unknown";
 
   // 9. Scan journal for flow timeline and structured events
   const journalSummary = scanJournalForForensics(basePath);

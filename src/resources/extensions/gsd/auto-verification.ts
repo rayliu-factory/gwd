@@ -13,7 +13,7 @@
  * caller checks the result and handles control flow.
  */
 
-import type { ExtensionContext, ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionContext, ExtensionAPI } from "@gwd/pi-coding-agent";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolveSliceFile, resolveSlicePath, resolveMilestoneFile } from "./paths.js";
 import { parseUnitId } from "./unit-id.js";

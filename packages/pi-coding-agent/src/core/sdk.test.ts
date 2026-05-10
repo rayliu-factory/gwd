@@ -4,7 +4,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { canRestoreSessionModel, CredentialCooldownError } from "./sdk.js";
-import type { Model } from "@gsd/pi-ai";
+import type { Model } from "@gwd/pi-ai";
 
 // ─── CredentialCooldownError ──────────────────────────────────────────────────
 

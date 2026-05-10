@@ -1,5 +1,5 @@
-import type { ThinkingLevel } from "@gsd/pi-agent-core";
-import { Container, type SelectItem, SelectList } from "@gsd/pi-tui";
+import type { ThinkingLevel } from "@gwd/pi-agent-core";
+import { Container, type SelectItem, SelectList } from "@gwd/pi-tui";
 import { getSelectListTheme } from "../theme/theme.js";
 import { DynamicBorder } from "./dynamic-border.js";
 

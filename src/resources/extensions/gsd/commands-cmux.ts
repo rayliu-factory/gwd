@@ -1,4 +1,4 @@
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { saveFile } from "./files.js";
 import {

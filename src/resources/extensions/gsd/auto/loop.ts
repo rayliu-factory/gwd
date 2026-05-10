@@ -7,7 +7,7 @@
  * Imports from: auto/types, auto/resolve, auto/phases
  */
 
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
 
 import { randomUUID } from "node:crypto";
 import type { AutoSession } from "./session.js";

@@ -335,7 +335,7 @@ test("initResources skips copy when managed version matches current version", as
 
 test("loadStoredEnvKeys hydrates process.env from auth.json", async (t) => {
   const { loadStoredEnvKeys } = await import("../wizard.ts");
-  const { AuthStorage } = await import("@gsd/pi-coding-agent");
+  const { AuthStorage } = await import("@gwd/pi-coding-agent");
 
   const tmp = mkdtempSync(join(tmpdir(), "gsd-wizard-test-"));
   const authPath = join(tmp, "auth.json");
@@ -384,7 +384,7 @@ test("loadStoredEnvKeys hydrates process.env from auth.json", async (t) => {
 
 test("loadStoredEnvKeys does not overwrite existing env vars", async (t) => {
   const { loadStoredEnvKeys } = await import("../wizard.ts");
-  const { AuthStorage } = await import("@gsd/pi-coding-agent");
+  const { AuthStorage } = await import("@gwd/pi-coding-agent");
 
   const tmp = mkdtempSync(join(tmpdir(), "gsd-wizard-nooverwrite-"));
   const authPath = join(tmp, "auth.json");

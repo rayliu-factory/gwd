@@ -1,4 +1,4 @@
-import type { AuthStorage } from "@gsd/pi-coding-agent"
+import type { AuthStorage } from "@gwd/pi-coding-agent"
 
 type AnthropicMigrationDeps = {
   authStorage: Pick<AuthStorage, "getCredentialsForProvider">

@@ -1,4 +1,4 @@
-// GSD-2 + scripts/lib/workspace-manifest.cjs — single source of truth for linkable @gsd/* packages
+// GWD + scripts/lib/workspace-manifest.cjs — single source of truth for linkable @gwd/* packages
 'use strict'
 
 const { readdirSync, readFileSync, existsSync, statSync } = require('fs')
@@ -11,13 +11,13 @@ const PACKAGES_DIR = join(REPO_ROOT, 'packages')
  * Returns the canonical list of linkable workspace packages.
  *
  * A package is "linkable" if its `package.json` contains:
- *   { "gsd": { "linkable": true, "scope": "@gsd" | "@gsd-build", "name": "<pkgname>" } }
+ *   { "gwd": { "linkable": true, "scope": "@gwd" | "@gwd-build", "name": "<pkgname>" } }
  *
  * Each returned entry has:
- *   - dir: directory name under packages/ (e.g. "gsd-agent-core")
- *   - scope: "@gsd" or "@gsd-build"
+ *   - dir: directory name under packages/ (e.g. "gwd-agent-core")
+ *   - scope: "@gwd" or "@gwd-build"
  *   - name: unscoped package name (e.g. "agent-core")
- *   - packageName: scoped name (e.g. "@gsd/agent-core")
+ *   - packageName: scoped name (e.g. "@gwd/agent-core")
  *   - path: absolute path to package directory
  *   - packageJsonPath: absolute path to its package.json
  *
@@ -42,28 +42,28 @@ function getLinkablePackages() {
 		} catch (err) {
 			throw new Error(`Invalid package.json at ${pkgJsonPath}: ${err.message}`)
 		}
-		const gsd = pkg.gsd
-		if (!gsd || gsd.linkable !== true) continue
-		if (!gsd.scope || !gsd.name) {
+		const gwd = pkg.gwd
+		if (!gwd || gwd.linkable !== true) continue
+		if (!gwd.scope || !gwd.name) {
 			throw new Error(
-				`${pkgJsonPath}: "gsd.linkable" is true but "gsd.scope" or "gsd.name" is missing.`
+				`${pkgJsonPath}: "gwd.linkable" is true but "gwd.scope" or "gwd.name" is missing.`
 			)
 		}
-		if (gsd.scope !== '@gsd' && gsd.scope !== '@gsd-build') {
+		if (gwd.scope !== '@gwd' && gwd.scope !== '@gwd-build') {
 			throw new Error(
-				`${pkgJsonPath}: "gsd.scope" must be "@gsd" or "@gsd-build" (got "${gsd.scope}").`
+				`${pkgJsonPath}: "gwd.scope" must be "@gwd" or "@gwd-build" (got "${gwd.scope}").`
 			)
 		}
-		const expectedName = `${gsd.scope}/${gsd.name}`
+		const expectedName = `${gwd.scope}/${gwd.name}`
 		if (pkg.name !== expectedName) {
 			throw new Error(
-				`${pkgJsonPath}: package.json "name" (${pkg.name}) does not match gsd.scope/gsd.name (${expectedName}).`
+				`${pkgJsonPath}: package.json "name" (${pkg.name}) does not match gwd.scope/gwd.name (${expectedName}).`
 			)
 		}
 		out.push({
 			dir,
-			scope: gsd.scope,
-			name: gsd.name,
+			scope: gwd.scope,
+			name: gwd.name,
 			packageName: pkg.name,
 			path: pkgPath,
 			packageJsonPath: pkgJsonPath,
@@ -73,9 +73,9 @@ function getLinkablePackages() {
 	return out
 }
 
-/** Returns only packages in the `@gsd` scope (excludes `@gsd-build`). */
+/** Returns only packages in the `@gwd` scope (excludes `@gwd-build`). */
 function getCorePackages() {
-	return getLinkablePackages().filter((p) => p.scope === '@gsd')
+	return getLinkablePackages().filter((p) => p.scope === '@gwd')
 }
 
 module.exports = {

@@ -14,7 +14,7 @@
  *   /gsd scan --focus tech+arch — explicit default (same as no flag)
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { existsSync, mkdirSync } from "node:fs";
 import { join, relative } from "node:path";

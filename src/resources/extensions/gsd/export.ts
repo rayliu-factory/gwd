@@ -1,7 +1,7 @@
 // GSD Extension — Session/Milestone Export
 // Generate shareable reports of milestone work in JSON or markdown format.
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join, basename } from "node:path";
 import { exec, execFile } from "node:child_process";
@@ -123,7 +123,7 @@ export async function handleExport(args: string, ctx: ExtensionCommandContext, b
       const { basename: bn } = await import("node:path");
       const data = await loadVisualizerData(basePath);
       const projName = basename(basePath);
-      const gsdVersion = process.env.GSD_VERSION ?? "0.0.0";
+      const gsdVersion = process.env.GWD_VERSION ?? "0.0.0";
       const doneMilestones = data.milestones.filter(m => m.status === "complete").length;
 
       const htmlOpts = {

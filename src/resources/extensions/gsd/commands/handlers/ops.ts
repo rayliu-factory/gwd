@@ -1,6 +1,6 @@
 // Project/App: GSD-2
 // File Purpose: Handles operational /gsd subcommands.
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { enableDebug } from "../../debug-logger.js";
 import { dispatchDirectPhase } from "../../auto-direct-dispatch.js";

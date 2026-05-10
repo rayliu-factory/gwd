@@ -1,4 +1,4 @@
-import type { DefaultResourceLoader as DefaultResourceLoaderType } from '@gsd/pi-coding-agent'
+import type { DefaultResourceLoader as DefaultResourceLoaderType } from '@gwd/pi-coding-agent'
 import { createHash } from 'node:crypto'
 import { homedir } from 'node:os'
 import { chmodSync, copyFileSync, cpSync, existsSync, lstatSync, mkdirSync, openSync, closeSync, readFileSync, readlinkSync, readdirSync, rmSync, statSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs'
@@ -10,12 +10,12 @@ import { loadRegistry, readManifestFromEntryPath, isExtensionEnabled, ensureRegi
 import { resolveBundledResourcesDirFromPackageRoot } from './bundled-resource-path.js'
 import { CLI_COMMAND, GWD_VERSION_ENV } from './namespace.js'
 
-type PiCodingAgentModule = typeof import('@gsd/pi-coding-agent')
+type PiCodingAgentModule = typeof import('@gwd/pi-coding-agent')
 
 let piCodingAgentModulePromise: Promise<PiCodingAgentModule> | undefined
 
 function loadPiCodingAgentModule(): Promise<PiCodingAgentModule> {
-  return (piCodingAgentModulePromise ??= import('@gsd/pi-coding-agent'))
+  return (piCodingAgentModulePromise ??= import('@gwd/pi-coding-agent'))
 }
 
 // Resolve resources directory — prefer dist/resources/ (stable, set at build time)
@@ -330,13 +330,13 @@ function copyDirRecursive(src: string, dest: string): void {
  * Native ESM `import()` ignores NODE_PATH — it resolves packages by walking
  * up the directory tree from the importing file. Extension files synced to
  * ~/.gsd/agent/extensions/ have no ancestor node_modules, so imports of
- * @gsd/* packages fail. The symlink makes Node's standard resolution find
+ * @gwd/* packages fail. The symlink makes Node's standard resolution find
  * them without requiring every call site to use jiti.
  *
  * Layout differences by install method:
  * - Source/monorepo: packageRoot/node_modules has everything → simple symlink
- * - npm/bun global: deps hoisted to dirname(packageRoot), including @gsd/* → simple symlink
- * - pnpm global: external deps hoisted, but @gsd/* stays in packageRoot/node_modules
+ * - npm/bun global: deps hoisted to dirname(packageRoot), including @gwd/* → simple symlink
+ * - pnpm global: external deps hoisted, but @gwd/* stays in packageRoot/node_modules
  *   → merged directory with symlinks from both roots (#3529, #3564)
  */
 function ensureNodeModulesSymlink(agentDir: string): void {
@@ -351,7 +351,7 @@ function ensureNodeModulesSymlink(agentDir: string): void {
     return
   }
 
-  // Global install: check if workspace scopes (@gsd/*) are hoisted.
+  // Global install: check if workspace scopes (@gwd/*) are hoisted.
   // npm/bun hoist everything; pnpm keeps workspace packages internal.
   if (!hasMissingWorkspaceScopes(hoistedNodeModules, internalNodeModules)) {
     // Everything is hoisted — simple symlink to parent node_modules
@@ -363,12 +363,12 @@ function ensureNodeModulesSymlink(agentDir: string): void {
   reconcileMergedNodeModules(agentNodeModules, hoistedNodeModules, internalNodeModules)
 }
 
-/** Check if any @gsd* scopes exist in internal but not in hoisted node_modules */
+/** Check if any @gwd* scopes exist in internal but not in hoisted node_modules */
 export function hasMissingWorkspaceScopes(hoisted: string, internal: string): boolean {
   if (!existsSync(internal)) return false
   try {
     for (const entry of readdirSync(internal, { withFileTypes: true })) {
-      if (entry.isDirectory() && entry.name.startsWith('@gsd') &&
+      if (entry.isDirectory() && entry.name.startsWith('@gwd') &&
           !existsSync(join(hoisted, entry.name))) {
         return true
       }
@@ -402,8 +402,8 @@ function reconcileSymlink(link: string, target: string): void {
 
 /**
  * Create a real node_modules directory containing symlinks from both the
- * hoisted root (external deps) and internal root (@gsd/* workspace packages).
- * Used for pnpm global installs where @gsd/* isn't hoisted.
+ * hoisted root (external deps) and internal root (@gwd/* workspace packages).
+ * Used for pnpm global installs where @gwd/* isn't hoisted.
  */
 export function reconcileMergedNodeModules(
   agentNodeModules: string,
@@ -412,7 +412,7 @@ export function reconcileMergedNodeModules(
 ): void {
   // Fast path: if already merged for this packageRoot + same directory contents, skip.
   // The fingerprint includes entry names from both roots so `pnpm add/remove` triggers rebuild.
-  const marker = join(agentNodeModules, '.gsd-merged')
+  const marker = join(agentNodeModules, '.gwd-merged')
   const fingerprint = mergedFingerprint(hoisted, internal)
   try {
     if (existsSync(marker) && readFileSync(marker, 'utf-8').trim() === fingerprint) return
@@ -445,7 +445,7 @@ export function reconcileMergedNodeModules(
   }
 
   // Overlay internal node_modules entries that weren't hoisted.
-  // This covers @gsd/* workspace packages AND optional deps like
+  // This covers @gwd/* workspace packages AND optional deps like
   // @anthropic-ai/claude-agent-sdk that npm keeps internal.
   try {
     for (const entry of readdirSync(internal, { withFileTypes: true })) {
@@ -583,7 +583,7 @@ export function initResources(agentDir: string, skillsDir: string = join(homedir
 
   // Ensure ~/.gsd/agent/node_modules symlinks to GSD's node_modules on EVERY
   // launch, not just during resource syncs. A stale/broken symlink makes ALL
-  // extensions fail to resolve @gsd/* packages, rendering GSD non-functional.
+  // extensions fail to resolve @gwd/* packages, rendering GSD non-functional.
   ensureNodeModulesSymlink(agentDir)
 
   // Migrate legacy skills on every launch (not gated by manifest) so that

@@ -9,7 +9,7 @@
  * Imports from: auto/types, auto/detect-stuck, auto/run-unit, auto/loop-deps
  */
 
-import { importExtensionModule, type ExtensionAPI, type ExtensionContext } from "@gsd/pi-coding-agent";
+import { importExtensionModule, type ExtensionAPI, type ExtensionContext } from "@gwd/pi-coding-agent";
 
 import type { AutoSession, SidecarItem } from "./session.js";
 import type { LoopDeps } from "./loop-deps.js";
@@ -264,7 +264,7 @@ async function generateMilestoneReport(
     (m: { id: string }) => m.id === milestoneId,
   );
   const msTitle = completedMs?.title ?? milestoneId;
-  const gsdVersion = process.env.GSD_VERSION ?? "0.0.0";
+  const gsdVersion = process.env.GWD_VERSION ?? "0.0.0";
   const projName = basename(reportBasePath);
   const doneSlices = snapData.milestones.reduce(
     (acc: number, m: { slices: { done: boolean }[] }) =>

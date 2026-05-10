@@ -10,7 +10,7 @@
 // surfaced as notifications pointing the user at the canonical per-step
 // commands (/login, /gsd keys, /gsd remote) that are already ctx.ui-safe.
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent"
+import type { ExtensionCommandContext } from "@gwd/pi-coding-agent"
 import {
   ONBOARDING_STEPS,
   isValidStepId,

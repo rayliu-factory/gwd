@@ -10,7 +10,7 @@
  * @see https://github.com/gsd-build/gsd-2/issues/2874
  */
 
-import type { Message, ImageContent, TextContent } from "@gsd/pi-ai";
+import type { Message, ImageContent, TextContent } from "@gwd/pi-ai";
 
 /**
  * Maximum image dimension (px) that the Anthropic API allows in many-image

@@ -2,12 +2,12 @@
  * MCP Server types — session lifecycle and orchestration.
  */
 
-import type { RpcClient } from '@gsd-build/rpc-client';
+import type { RpcClient } from '@gwd-build/rpc-client';
 import type {
   McpPendingBlocker as PendingBlocker,
   RpcCostUpdateEvent,
   SdkAgentEvent,
-} from '@gsd-build/contracts';
+} from '@gwd-build/contracts';
 
 // ---------------------------------------------------------------------------
 // Session Status

@@ -5,8 +5,8 @@ import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
-import { isToolCallEventType } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
+import { isToolCallEventType } from "@gwd/pi-coding-agent";
 
 import type { GSDEcosystemBeforeAgentStartHandler } from "../ecosystem/gsd-extension-api.js";
 import { updateSnapshot } from "../ecosystem/gsd-extension-api.js";
@@ -91,7 +91,7 @@ async function installWelcomeHeader(ctx: ExtensionContext): Promise<void> {
         render(width: number): string[] {
           if (cachedLines !== undefined && cachedWidth === width) return cachedLines;
           cachedLines = welcome.buildWelcomeScreenLines({
-            version: process.env.GSD_VERSION || "0.0.0",
+            version: process.env.GWD_VERSION || "0.0.0",
             remoteChannel,
             width,
           });

@@ -1,4 +1,4 @@
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { GSDNoProjectError, withCommandCwd } from "./context.js";
 import { handleAutoCommand } from "./handlers/auto.js";

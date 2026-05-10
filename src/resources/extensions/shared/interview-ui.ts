@@ -26,8 +26,8 @@
  *   Esc          exit confirmation
  */
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
-import { getMarkdownTheme, type Theme } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
+import { getMarkdownTheme, type Theme } from "@gwd/pi-coding-agent";
 import {
 	Editor,
 	Key,
@@ -35,7 +35,7 @@ import {
 	matchesKey,
 	truncateToWidth,
 	type TUI,
-} from "@gsd/pi-tui";
+} from "@gwd/pi-tui";
 import { mergeSideBySide } from "./layout-utils.js";
 import { makeUI, INDENT } from "./ui.js";
 
