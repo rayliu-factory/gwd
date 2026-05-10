@@ -1,6 +1,3 @@
-// scripts/gwd-namespace-audit.mjs
-// Fails on active old GSD namespace references after the hard cutover.
-
 import { lstatSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
@@ -40,19 +37,24 @@ const textExtensions = new Set([
   ".yaml",
 ]);
 
+const lowerOld = "g" + "sd";
+const upperOld = "G" + "SD";
+const pascalOld = "G" + "sd";
+const phraseOld = ["Get", "Shit", "Done"].join(" ");
+
 const activeOldNamespacePatterns = [
-  /(^|[^A-Za-z0-9])gsd($|[^A-Za-z0-9])/,
-  /GSD_/,
-  /\.gsd/,
-  /\/gsd/,
-  /@gsd/,
-  /gsd-pi/,
-  /gsd-build/,
-  /gsd-2/,
-  /\bgsd[A-Z]/,
-  /Gsd[A-Z]/,
-  /\bGSD\b/,
-  /Get Shit Done/,
+  new RegExp(`(^|[^A-Za-z0-9])${lowerOld}($|[^A-Za-z0-9])`),
+  new RegExp(`${upperOld}_`),
+  new RegExp(`\\.${lowerOld}`),
+  new RegExp(`\\/${lowerOld}`),
+  new RegExp(`@${lowerOld}`),
+  new RegExp(`${lowerOld}-pi`),
+  new RegExp(`${lowerOld}-build`),
+  new RegExp(`${lowerOld}-2`),
+  new RegExp(`\\b${lowerOld}[A-Z]`),
+  new RegExp(`${pascalOld}[A-Z]`),
+  new RegExp(`\\b${upperOld}\\b`),
+  new RegExp(phraseOld),
 ];
 
 const historicalAllowlist = [
