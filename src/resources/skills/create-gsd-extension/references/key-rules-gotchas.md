@@ -32,6 +32,6 @@ Non-negotiable rules and common gotchas when building GSD extensions.
 - Project-local: `.gsd/extensions/*.ts`
 - Project-local (subdir): `.gsd/extensions/*/index.ts`
 
-Note: `~/.gsd/agent/extensions/` is reserved for bundled extensions synced from the gwd-pi package.
+Note: `~/.gwd/agent/extensions/` is reserved for bundled extensions synced from the gwd-pi package.
 Community extensions placed there are silently ignored by the loader.
 </gsd_paths>

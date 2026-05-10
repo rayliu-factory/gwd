@@ -8,7 +8,7 @@
  *   4. Waits for the process to exit (with a 5-minute timeout)
  *   5. Validates exit code, JSONL stdout, stderr progress, and task artifact
  *
- * Auth: Uses OAuth credentials from ~/.gsd/agent/auth.json (Claude Code Max).
+ * Auth: Uses OAuth credentials from ~/.gwd/agent/auth.json (Claude Code Max).
  * Falls back to ANTHROPIC_API_KEY env var if OAuth is not configured (D013).
  *
  * Usage:
@@ -351,9 +351,9 @@ async function main(): Promise<void> {
   // ── Step 2: Validate environment ────────────────────────────────────────
   console.log("\n[2/6] Validating environment...");
 
-  // Auth: prefer OAuth credentials from ~/.gsd/agent/auth.json (D013).
+  // Auth: prefer OAuth credentials from ~/.gwd/agent/auth.json (D013).
   // Fall back to ANTHROPIC_API_KEY env var if present.
-  const authJsonPath = join(homedir(), ".gsd", "agent", "auth.json");
+  const authJsonPath = join(homedir(), ".gwd", "agent", "auth.json");
   let hasOAuth = false;
   if (existsSync(authJsonPath)) {
     try {
@@ -365,12 +365,12 @@ async function main(): Promise<void> {
   }
 
   if (hasOAuth) {
-    console.log("  OK OAuth credentials found in ~/.gsd/agent/auth.json (Claude Code Max)");
+    console.log("  OK OAuth credentials found in ~/.gwd/agent/auth.json (Claude Code Max)");
   } else if (process.env.ANTHROPIC_API_KEY) {
     console.log("  OK ANTHROPIC_API_KEY present (env var fallback)");
   } else {
     console.error("  FAIL: No auth available. Need either:");
-    console.error("    - OAuth credentials in ~/.gsd/agent/auth.json (Claude Code Max)");
+    console.error("    - OAuth credentials in ~/.gwd/agent/auth.json (Claude Code Max)");
     console.error("    - ANTHROPIC_API_KEY environment variable");
     cleanup(fixtureDir);
     process.exit(1);

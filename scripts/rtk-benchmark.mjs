@@ -6,7 +6,7 @@ import { join, dirname } from 'node:path'
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 
 function getManagedRtkPath() {
-  return join(homedir(), '.gsd', 'agent', 'bin', process.platform === 'win32' ? 'rtk.exe' : 'rtk')
+  return join(homedir(), '.gwd', 'agent', 'bin', process.platform === 'win32' ? 'rtk.exe' : 'rtk')
 }
 
 function run(command, args, options = {}) {

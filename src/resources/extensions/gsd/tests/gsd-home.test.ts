@@ -1,5 +1,5 @@
 /**
- * Tests for gsdHome() — GSD home directory resolution.
+ * Tests for gsdHome() — GWD home directory resolution.
  *
  * @see https://github.com/gwd-build/gwd-2/issues/5015
  */
@@ -26,9 +26,9 @@ describe("gsdHome", () => {
     }
   });
 
-  it("returns ~/.gsd by default", () => {
+  it("returns ~/.gwd by default", () => {
     delete process.env.GWD_HOME;
-    assert.equal(gsdHome(), join(homedir(), ".gsd"));
+    assert.equal(gsdHome(), join(homedir(), ".gwd"));
   });
 
   it("uses GWD_HOME env var when set", () => {

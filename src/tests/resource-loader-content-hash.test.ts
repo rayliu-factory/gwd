@@ -12,7 +12,7 @@ import { tmpdir } from "node:os";
  * templates (e.g. the #4570 retry-cap fix to parallel-research-slices.md)
  * slipped through the fingerprint gate in `initResources`, so existing
  * installs silently kept serving the stale cached copy from
- * `~/.gsd/agent/extensions/gsd/prompts/`.
+ * `~/.gwd/agent/extensions/gsd/prompts/`.
  *
  * The fix hashes file CONTENTS (sha256) instead of just size — any edit,
  * regardless of length, produces a different fingerprint and triggers a

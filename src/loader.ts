@@ -119,10 +119,10 @@ process.env.GWD_CODING_AGENT_DIR = agentDir
 
 // GWD_PKG_ROOT — absolute path to the gwd-pi package root. Used by deployed extensions
 // (e.g. auto.ts resume path) to import modules like resource-loader.js that live
-// in the package tree, not in the deployed ~/.gsd/agent/ tree.
+// in the package tree, not in the deployed ~/.gwd/agent/ tree.
 process.env.GWD_PKG_ROOT = gsdRoot
 
-// RTK environment — make ~/.gsd/agent/bin visible to all child-process paths,
+// RTK environment — make ~/.gwd/agent/bin visible to all child-process paths,
 // not just the bash tool, and force-disable RTK telemetry for GSD-managed use.
 applyRtkProcessEnv(process.env)
 
@@ -157,7 +157,7 @@ process.env.GWD_WORKFLOW_PATH = join(resourcesDir, 'GSD-WORKFLOW.md')
 
 // GWD_BUNDLED_EXTENSION_PATHS — dynamically discovered bundled extension entry points.
 // Uses the shared discoverExtensionEntryPaths() to scan the bundled resources
-// directory, then remaps discovered paths to agentDir (~/.gsd/agent/extensions/)
+// directory, then remaps discovered paths to agentDir (~/.gwd/agent/extensions/)
 // where initResources() will sync them.
 const bundledExtDir = join(resourcesDir, 'extensions')
 const agentExtDir = join(agentDir, 'extensions')

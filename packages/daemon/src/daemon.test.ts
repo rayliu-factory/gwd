@@ -53,12 +53,12 @@ describe('resolveConfigPath', () => {
     }
   });
 
-  it('defaults to ~/.gsd/daemon.yaml', () => {
+  it('defaults to ~/.gwd/daemon.yaml', () => {
     const prev = process.env['GWD_DAEMON_CONFIG'];
     try {
       delete process.env['GWD_DAEMON_CONFIG'];
       const p = resolveConfigPath();
-      assert.equal(p, join(homedir(), '.gsd', 'daemon.yaml'));
+      assert.equal(p, join(homedir(), '.gwd', 'daemon.yaml'));
     } finally {
       if (prev !== undefined) process.env['GWD_DAEMON_CONFIG'] = prev;
     }
@@ -529,7 +529,7 @@ describe('CLI integration', () => {
       [join(__dirname, 'cli.js'), '--help'],
       { encoding: 'utf-8', timeout: 5000 },
     );
-    assert.ok(result.includes('Usage: gsd-daemon'));
+    assert.ok(result.includes('Usage: gwd-daemon'));
     assert.ok(result.includes('--config'));
     assert.ok(result.includes('--verbose'));
   });

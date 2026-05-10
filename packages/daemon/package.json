@@ -1,7 +1,7 @@
 {
   "name": "@gwd-build/daemon",
   "version": "2.81.0",
-  "description": "GSD daemon — background process for project monitoring and Discord integration",
+  "description": "GWD daemon - background process for project monitoring and Discord integration",
   "license": "MIT",
   "repository": {
     "type": "git",

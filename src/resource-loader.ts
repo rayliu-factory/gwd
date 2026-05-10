@@ -23,7 +23,7 @@ function loadPiCodingAgentModule(): Promise<PiCodingAgentModule> {
 //
 // Why this matters: with `npm link`, src/resources/ points into the gsd-2 repo's
 // working tree. Switching branches there changes src/resources/ for ALL projects
-// that use gsd — causing stale/broken extensions to be synced to ~/.gsd/agent/.
+// that use gsd — causing stale/broken extensions to be synced to ~/.gwd/agent/.
 // dist/resources/ is populated by the build step (`npm run copy-resources`) and
 // reflects the built state, not the currently checked-out branch.
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -329,7 +329,7 @@ function copyDirRecursive(src: string, dest: string): void {
  *
  * Native ESM `import()` ignores NODE_PATH — it resolves packages by walking
  * up the directory tree from the importing file. Extension files synced to
- * ~/.gsd/agent/extensions/ have no ancestor node_modules, so imports of
+ * ~/.gwd/agent/extensions/ have no ancestor node_modules, so imports of
  * @gwd/* packages fail. The symlink makes Node's standard resolution find
  * them without requiring every call site to use jiti.
  *
@@ -550,11 +550,11 @@ function pruneRemovedBundledExtensions(
 }
 
 /**
- * Syncs all bundled resources to agentDir (~/.gsd/agent/) on every launch.
+ * Syncs all bundled resources to agentDir (~/.gwd/agent/) on every launch.
  *
- * - extensions/ → ~/.gsd/agent/extensions/   (overwrite when version changes)
- * - agents/     → ~/.gsd/agent/agents/        (overwrite when version changes)
- * - GSD-WORKFLOW.md → ~/.gsd/agent/GSD-WORKFLOW.md (fallback for env var miss)
+ * - extensions/ → ~/.gwd/agent/extensions/   (overwrite when version changes)
+ * - agents/     → ~/.gwd/agent/agents/        (overwrite when version changes)
+ * - GSD-WORKFLOW.md → ~/.gwd/agent/GSD-WORKFLOW.md (fallback for env var miss)
  *
  * Skills are NOT synced here. They are installed by the user via the
  * skills.sh CLI (`npx skills add <repo>`) into ~/.agents/skills/ — the
@@ -565,7 +565,7 @@ function pruneRemovedBundledExtensions(
  * After `npm update -g @glittercowboy/gsd`, versions will differ and the
  * copy runs once to land the new resources.
  *
- * Inspectable: `ls ~/.gsd/agent/extensions/`
+ * Inspectable: `ls ~/.gwd/agent/extensions/`
  */
 export function initResources(agentDir: string, skillsDir: string = join(homedir(), '.agents', 'skills')): void {
   mkdirSync(agentDir, { recursive: true })
@@ -581,7 +581,7 @@ export function initResources(agentDir: string, skillsDir: string = join(homedir
   pruneRemovedBundledExtensions(manifest, agentDir)
   pruneStaleSiblingFiles(bundledExtensionsDir, extensionsDir)
 
-  // Ensure ~/.gsd/agent/node_modules symlinks to GSD's node_modules on EVERY
+  // Ensure ~/.gwd/agent/node_modules symlinks to GSD's node_modules on EVERY
   // launch, not just during resource syncs. A stale/broken symlink makes ALL
   // extensions fail to resolve @gwd/* packages, rendering GSD non-functional.
   ensureNodeModulesSymlink(agentDir)
@@ -627,7 +627,7 @@ export function initResources(agentDir: string, skillsDir: string = join(homedir
 
 /**
  * One-time migration: copy user-customized skills from the old
- * ~/.gsd/agent/skills/ directory into ~/.agents/skills/.
+ * ~/.gwd/agent/skills/ directory into ~/.agents/skills/.
  *
  * The migration is conservative:
  *  - Only skill directories containing a SKILL.md are considered.
@@ -691,7 +691,7 @@ function migrateSkillsToEcosystemDir(agentDir: string): void {
         if (isSymlink) {
           // Recreate the symlink in the ecosystem directory using an absolute
           // target. Relative symlinks would resolve from the new parent dir
-          // (~/.agents/skills/) instead of the original (~/.gsd/agent/skills/),
+          // (~/.agents/skills/) instead of the original (~/.gwd/agent/skills/),
           // pointing to the wrong location.
           const rawTarget = readlinkSync(sourcePath)
           const absTarget = resolve(dirname(sourcePath), rawTarget)
@@ -766,7 +766,7 @@ function collectRelativeFiles(rootDir: string): Set<string> {
 
 /**
  * Constructs a DefaultResourceLoader that loads extensions from both
- * ~/.gsd/agent/extensions/ (GSD's default) and ~/.pi/agent/extensions/ (pi's default).
+ * ~/.gwd/agent/extensions/ (GWD's default) and ~/.pi/agent/extensions/ (pi's default).
  * This allows users to use extensions from either location.
  */
 // Cache bundled extension keys at module load — avoids re-scanning the extensions

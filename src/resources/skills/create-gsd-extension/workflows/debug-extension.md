@@ -38,7 +38,7 @@ Community extensions must be in auto-discovery paths:
 - `.gsd/extensions/*.ts`
 - `.gsd/extensions/*/index.ts`
 
-Note: `~/.gsd/agent/extensions/` is reserved for bundled extensions synced from the gwd-pi package.
+Note: `~/.gwd/agent/extensions/` is reserved for bundled extensions synced from the gwd-pi package.
 
 The file must `export default function(pi: ExtensionAPI) { ... }`.
 

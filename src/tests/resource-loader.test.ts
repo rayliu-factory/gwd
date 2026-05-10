@@ -99,7 +99,7 @@ test("hasStaleCompiledExtensionSiblings detects nested bundled extension format 
 test("buildResourceLoader excludes duplicate top-level pi extensions when bundled resources use .js", async (t) => {
   const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-home-"));
   const piExtensionsDir = join(tmp, ".pi", "agent", "extensions");
-  const fakeAgentDir = join(tmp, ".gsd", "agent");
+  const fakeAgentDir = join(tmp, ".gwd", "agent");
   const restoreHomeEnv = overrideHomeEnv(tmp);
 
   t.after(() => {
@@ -129,7 +129,7 @@ test("buildResourceLoader excludes duplicate top-level pi extensions when bundle
 
 test("buildResourceLoader includes caller-provided additional extension paths", async (t) => {
   const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-cli-"));
-  const fakeAgentDir = join(tmp, ".gsd", "agent");
+  const fakeAgentDir = join(tmp, ".gwd", "agent");
   const cliExtensionPath = join(tmp, "cli-extension.ts");
   const restoreHomeEnv = overrideHomeEnv(tmp);
 
@@ -241,7 +241,7 @@ test("pruneRemovedBundledExtensions removes stale subdirectory extensions not in
 
     // Simulate a stale subdirectory extension left from a previous GSD version.
     // This mirrors the mcporter scenario: it was bundled before, synced to
-    // ~/.gsd/agent/extensions/, then removed from the bundle in a newer version.
+    // ~/.gwd/agent/extensions/, then removed from the bundle in a newer version.
     const staleExtDir = join(fakeAgentDir, "extensions", "mcporter");
     mkdirSync(staleExtDir, { recursive: true });
     writeFileSync(join(staleExtDir, "index.ts"), 'export default { name: "mcporter" };\n');

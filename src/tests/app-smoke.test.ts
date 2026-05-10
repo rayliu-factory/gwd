@@ -2,7 +2,7 @@
  * Unit tests for the gsd CLI package.
  *
  * Tests the glue code that IS the product:
- * - app-paths resolve to ~/.gsd/
+ * - app-paths resolve to ~/.gwd/
  * - loader sets all required env vars
  * - resource-loader syncs bundled resources
  * - wizard loadStoredEnvKeys hydrates env
@@ -32,16 +32,16 @@ function assertExtensionIndexExists(agentDir: string, extensionName: string): vo
 // 1. app-paths
 // ═══════════════════════════════════════════════════════════════════════════
 
-test("app-paths resolve to ~/.gsd/", async () => {
+test("app-paths resolve to ~/.gwd/", async () => {
   const { appRoot, agentDir, sessionsDir, authFilePath } = await import("../app-paths.ts");
   // Use homedir() — process.env.HOME is undefined on Windows (uses USERPROFILE instead)
   const { homedir } = await import("node:os");
   const home = homedir();
 
-  assert.equal(appRoot, join(home, ".gsd"), "appRoot is ~/.gsd/");
-  assert.equal(agentDir, join(home, ".gsd", "agent"), "agentDir is ~/.gsd/agent/");
-  assert.equal(sessionsDir, join(home, ".gsd", "sessions"), "sessionsDir is ~/.gsd/sessions/");
-  assert.equal(authFilePath, join(home, ".gsd", "agent", "auth.json"), "authFilePath is ~/.gsd/agent/auth.json");
+  assert.equal(appRoot, join(home, ".gwd"), "appRoot is ~/.gwd/");
+  assert.equal(agentDir, join(home, ".gwd", "agent"), "agentDir is ~/.gwd/agent/");
+  assert.equal(sessionsDir, join(home, ".gwd", "sessions"), "sessionsDir is ~/.gwd/sessions/");
+  assert.equal(authFilePath, join(home, ".gwd", "agent", "auth.json"), "authFilePath is ~/.gwd/agent/auth.json");
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -93,7 +93,7 @@ test("loader sets all 4 GWD_ env vars and PI_PACKAGE_DIR", async (t) => {
 
   // Direct logic verification (no subprocess needed)
   const { agentDir: ad } = await import("../app-paths.ts");
-  assert.ok(ad.endsWith(join(".gsd", "agent")), "agentDir ends with .gsd/agent");
+  assert.ok(ad.endsWith(join(".gwd", "agent")), "agentDir ends with .gwd/agent");
 
   // Verify that the env var is populated at runtime by checking the actual
   // extensions directory has discoverable entry points
