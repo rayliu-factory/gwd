@@ -1,10 +1,11 @@
 import { execSync } from 'node:child_process'
+import { PRODUCT_PACKAGE_NAME, GWD_VERSION_ENV } from './namespace.js'
 import { compareSemver, fetchLatestVersionFromRegistry, resolveInstallCommand } from './update-check.js'
 
-const NPM_PACKAGE = 'gsd-pi'
+const NPM_PACKAGE = PRODUCT_PACKAGE_NAME
 
 export async function runUpdate(): Promise<void> {
-  const current = process.env.GSD_VERSION || '0.0.0'
+  const current = process.env[GWD_VERSION_ENV] || '0.0.0'
   const bold = '\x1b[1m'
   const dim = '\x1b[2m'
   const green = '\x1b[32m'
