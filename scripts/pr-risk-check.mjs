@@ -60,6 +60,8 @@ const TIER_EMOJI = {
   low:      '🟢',
 };
 
+const GITHUB_FILE_BREAKDOWN_LIMIT = 120;
+
 // Maps each system label to the specific verification task a reviewer/agent should perform.
 const SYSTEM_CHECKS = {
   'State Machine':     'test state persistence across a session restart',
@@ -348,20 +350,30 @@ function renderGitHubSummary(report) {
     lines.push('');
   }
 
-  if (systemsPerFile.size > 0) {
+  const classifiedRows = [...systemsPerFile.entries()].map(([file, systems]) => ({
+    risk: TIER_EMOJI[overallRisk(systems)],
+    file,
+    systems: systems.join(', '),
+  }));
+  const unmatchedRows = unmatchedFiles.map(file => ({
+    risk: '⚪',
+    file,
+    systems: '*(unclassified)*',
+  }));
+  const fileRows = [...classifiedRows, ...unmatchedRows];
+
+  if (fileRows.length > 0) {
     lines.push('<details>');
     lines.push('<summary>File Breakdown</summary>');
     lines.push('');
     lines.push('| Risk | File | Systems |');
     lines.push('|------|------|---------|');
-    for (const [file, systems] of systemsPerFile) {
-      const tier = overallRisk(systems);
-      lines.push(`| ${TIER_EMOJI[tier]} | \`${file}\` | ${systems.join(', ')} |`);
+    for (const row of fileRows.slice(0, GITHUB_FILE_BREAKDOWN_LIMIT)) {
+      lines.push(`| ${row.risk} | \`${row.file}\` | ${row.systems} |`);
     }
-    if (unmatchedFiles.length > 0) {
-      for (const file of unmatchedFiles) {
-        lines.push(`| ⚪ | \`${file}\` | *(unclassified)* |`);
-      }
+    const omitted = fileRows.length - GITHUB_FILE_BREAKDOWN_LIMIT;
+    if (omitted > 0) {
+      lines.push(`| … | ${omitted} additional files omitted | Comment capped to stay within GitHub limits. |`);
     }
     lines.push('');
     lines.push('</details>');

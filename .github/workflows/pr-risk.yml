@@ -44,8 +44,6 @@ jobs:
         id: risk
         run: |
           REPORT=$(cat /tmp/changed-files.txt | node scripts/pr-risk-check.mjs --github || true)
-          printf '%s\n' "$REPORT" >> "$GITHUB_STEP_SUMMARY"
-
           echo "report<<EOF" >> "$GITHUB_OUTPUT"
           echo "$REPORT" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
