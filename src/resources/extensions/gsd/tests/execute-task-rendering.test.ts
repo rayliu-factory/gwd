@@ -8,14 +8,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test("execute-task prompt renders compact execution and completion gates", async (t) => {
-  const previousGsdHome = process.env.GSD_HOME;
-  const providedGsdHome = process.env.GSD_TEST_HOME;
+  const previousGsdHome = process.env.GWD_HOME;
+  const providedGsdHome = process.env.GWD_TEST_HOME;
   const isolatedHome = providedGsdHome ?? mkdtempSync(join(tmpdir(), "gsd-execute-task-render-"));
-  const fixtureRoot = process.env.GSD_TEST_WORKSPACE_ROOT ?? process.cwd();
-  process.env.GSD_HOME = isolatedHome;
+  const fixtureRoot = process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd();
+  process.env.GWD_HOME = isolatedHome;
   t.after(() => {
-    if (previousGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = previousGsdHome;
+    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGsdHome;
     if (!providedGsdHome) rmSync(isolatedHome, { recursive: true, force: true });
   });
 

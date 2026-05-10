@@ -12,7 +12,7 @@
  * passes (or no token is configured).
  */
 export function verifyAuthToken(request: Request): Response | null {
-  const expectedToken = process.env.GSD_WEB_AUTH_TOKEN
+  const expectedToken = process.env.GWD_WEB_AUTH_TOKEN
   if (!expectedToken) {
     // No token configured (e.g. dev mode) — allow through
     return null

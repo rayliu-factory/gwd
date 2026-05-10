@@ -36,7 +36,7 @@ import type { AssistantMessage, Context, Message } from "@gwd/pi-ai";
 import type { SDKUserMessage } from "../sdk-types.ts";
 
 // ---------------------------------------------------------------------------
-// Env helpers — `GSD_WORKFLOW_MCP_*` save/restore
+// Env helpers — `GWD_WORKFLOW_MCP_*` save/restore
 //
 // The naive pattern `process.env.X = prev.X` breaks when `prev.X` is
 // undefined: Node coerces the assignment to the literal string
@@ -49,11 +49,11 @@ import type { SDKUserMessage } from "../sdk-types.ts";
 // ---------------------------------------------------------------------------
 
 const WORKFLOW_MCP_ENV_KEYS = [
-	"GSD_WORKFLOW_MCP_COMMAND",
-	"GSD_WORKFLOW_MCP_NAME",
-	"GSD_WORKFLOW_MCP_ARGS",
-	"GSD_WORKFLOW_MCP_ENV",
-	"GSD_WORKFLOW_MCP_CWD",
+	"GWD_WORKFLOW_MCP_COMMAND",
+	"GWD_WORKFLOW_MCP_NAME",
+	"GWD_WORKFLOW_MCP_ARGS",
+	"GWD_WORKFLOW_MCP_ENV",
+	"GWD_WORKFLOW_MCP_CWD",
 ] as const;
 
 type WorkflowMcpEnvKey = (typeof WORKFLOW_MCP_ENV_KEYS)[number];
@@ -683,11 +683,11 @@ describe("stream-adapter — session persistence (#2859)", () => {
 		const explicitCwd = realpathSync(mkdtempSync(join(tmpdir(), "claude-sdk-cwd-")));
 		const restore = setWorkflowMcpEnv({});
 		try {
-			delete process.env.GSD_WORKFLOW_MCP_COMMAND;
-			delete process.env.GSD_WORKFLOW_MCP_NAME;
-			delete process.env.GSD_WORKFLOW_MCP_ARGS;
-			delete process.env.GSD_WORKFLOW_MCP_ENV;
-			delete process.env.GSD_WORKFLOW_MCP_CWD;
+			delete process.env.GWD_WORKFLOW_MCP_COMMAND;
+			delete process.env.GWD_WORKFLOW_MCP_NAME;
+			delete process.env.GWD_WORKFLOW_MCP_ARGS;
+			delete process.env.GWD_WORKFLOW_MCP_ENV;
+			delete process.env.GWD_WORKFLOW_MCP_CWD;
 
 			const distDir = join(explicitCwd, "packages", "mcp-server", "dist");
 			mkdirSync(distDir, { recursive: true });
@@ -696,7 +696,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			const options = buildSdkOptions("claude-sonnet-4-20250514", "hello world", undefined, { cwd: explicitCwd });
 			const mcpServers = options.mcpServers as Record<string, any>;
 			assert.equal(mcpServers["gsd-workflow"].cwd, explicitCwd);
-			assert.equal(mcpServers["gsd-workflow"].env.GSD_WORKFLOW_PROJECT_ROOT, explicitCwd);
+			assert.equal(mcpServers["gsd-workflow"].env.GWD_WORKFLOW_PROJECT_ROOT, explicitCwd);
 		} finally {
 			restore();
 			rmSync(explicitCwd, { recursive: true, force: true });
@@ -832,11 +832,11 @@ describe("stream-adapter — session persistence (#2859)", () => {
 
 	test("buildSdkOptions prefers workflow MCP question tools over native AskUserQuestion", () => {
 		const restore = setWorkflowMcpEnv({
-			GSD_WORKFLOW_MCP_COMMAND: "node",
-			GSD_WORKFLOW_MCP_NAME: "gsd-workflow",
-			GSD_WORKFLOW_MCP_ARGS: JSON.stringify(["packages/mcp-server/dist/cli.js"]),
-			GSD_WORKFLOW_MCP_ENV: JSON.stringify({ GSD_CLI_PATH: "/tmp/gsd" }),
-			GSD_WORKFLOW_MCP_CWD: "/tmp/project",
+			GWD_WORKFLOW_MCP_COMMAND: "node",
+			GWD_WORKFLOW_MCP_NAME: "gsd-workflow",
+			GWD_WORKFLOW_MCP_ARGS: JSON.stringify(["packages/mcp-server/dist/cli.js"]),
+			GWD_WORKFLOW_MCP_ENV: JSON.stringify({ GWD_CLI_PATH: "/tmp/gsd" }),
+			GWD_WORKFLOW_MCP_CWD: "/tmp/project",
 		});
 		try {
 
@@ -847,9 +847,9 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			assert.equal(srv.command, "node");
 			assert.deepEqual(srv.args, ["packages/mcp-server/dist/cli.js"]);
 			assert.equal(srv.cwd, "/tmp/project");
-			assert.equal(srv.env.GSD_CLI_PATH, "/tmp/gsd");
-			assert.equal(srv.env.GSD_PERSIST_WRITE_GATE_STATE, "1");
-			assert.equal(srv.env.GSD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
+			assert.equal(srv.env.GWD_CLI_PATH, "/tmp/gsd");
+			assert.equal(srv.env.GWD_PERSIST_WRITE_GATE_STATE, "1");
+			assert.equal(srv.env.GWD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
 			assert.deepEqual(options.disallowedTools, ["AskUserQuestion"]);
 			assert.deepEqual(options.allowedTools, [
 				"Read",
@@ -870,11 +870,11 @@ describe("stream-adapter — session persistence (#2859)", () => {
 
 	test("buildSdkOptions prefers custom workflow MCP question tools over native AskUserQuestion", () => {
 		const restore = setWorkflowMcpEnv({
-			GSD_WORKFLOW_MCP_COMMAND: "node",
-			GSD_WORKFLOW_MCP_NAME: "custom-workflow",
-			GSD_WORKFLOW_MCP_ARGS: JSON.stringify(["packages/mcp-server/dist/cli.js"]),
-			GSD_WORKFLOW_MCP_ENV: JSON.stringify({ GSD_CLI_PATH: "/tmp/gsd" }),
-			GSD_WORKFLOW_MCP_CWD: "/tmp/project",
+			GWD_WORKFLOW_MCP_COMMAND: "node",
+			GWD_WORKFLOW_MCP_NAME: "custom-workflow",
+			GWD_WORKFLOW_MCP_ARGS: JSON.stringify(["packages/mcp-server/dist/cli.js"]),
+			GWD_WORKFLOW_MCP_ENV: JSON.stringify({ GWD_CLI_PATH: "/tmp/gsd" }),
+			GWD_WORKFLOW_MCP_CWD: "/tmp/project",
 		});
 		try {
 
@@ -906,11 +906,11 @@ describe("stream-adapter — session persistence (#2859)", () => {
 		// the naive `process.env.X = prev.X` pattern introduced).
 		const restore = setWorkflowMcpEnv({});
 		try {
-			delete process.env.GSD_WORKFLOW_MCP_COMMAND;
-			delete process.env.GSD_WORKFLOW_MCP_NAME;
-			delete process.env.GSD_WORKFLOW_MCP_ARGS;
-			delete process.env.GSD_WORKFLOW_MCP_ENV;
-			delete process.env.GSD_WORKFLOW_MCP_CWD;
+			delete process.env.GWD_WORKFLOW_MCP_COMMAND;
+			delete process.env.GWD_WORKFLOW_MCP_NAME;
+			delete process.env.GWD_WORKFLOW_MCP_ARGS;
+			delete process.env.GWD_WORKFLOW_MCP_ENV;
+			delete process.env.GWD_WORKFLOW_MCP_CWD;
 
 			const originalCwd = process.cwd();
 			const emptyDir = mkdtempSync(join(tmpdir(), "claude-mcp-none-"));
@@ -934,19 +934,19 @@ describe("stream-adapter — session persistence (#2859)", () => {
 	});
 
 	test("buildSdkOptions auto-detects local workflow MCP dist CLI when present", () => {
-		// GSD_CLI_PATH isn't in WORKFLOW_MCP_ENV_KEYS, so save+restore it
+		// GWD_CLI_PATH isn't in WORKFLOW_MCP_ENV_KEYS, so save+restore it
 		// manually around setWorkflowMcpEnv which handles the MCP keys.
-		const prevCliPath = process.env.GSD_CLI_PATH;
+		const prevCliPath = process.env.GWD_CLI_PATH;
 		const restore = setWorkflowMcpEnv({});
 		const originalCwd = process.cwd();
 		const repoDir = mkdtempSync(join(tmpdir(), "claude-mcp-detect-"));
 		try {
-			delete process.env.GSD_WORKFLOW_MCP_COMMAND;
-			delete process.env.GSD_WORKFLOW_MCP_NAME;
-			delete process.env.GSD_WORKFLOW_MCP_ARGS;
-			delete process.env.GSD_WORKFLOW_MCP_ENV;
-			delete process.env.GSD_WORKFLOW_MCP_CWD;
-			process.env.GSD_CLI_PATH = "/tmp/gsd";
+			delete process.env.GWD_WORKFLOW_MCP_COMMAND;
+			delete process.env.GWD_WORKFLOW_MCP_NAME;
+			delete process.env.GWD_WORKFLOW_MCP_ARGS;
+			delete process.env.GWD_WORKFLOW_MCP_ENV;
+			delete process.env.GWD_WORKFLOW_MCP_CWD;
+			process.env.GWD_CLI_PATH = "/tmp/gsd";
 
 			const distDir = join(repoDir, "packages", "mcp-server", "dist");
 			mkdirSync(distDir, { recursive: true });
@@ -961,19 +961,19 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			assert.equal(srv.command, process.execPath);
 			assert.deepEqual(srv.args, [realpathSync(resolve(repoDir, "packages", "mcp-server", "dist", "cli.js"))]);
 			assert.equal(srv.cwd, resolvedRepoDir);
-			assert.equal(srv.env.GSD_CLI_PATH, "/tmp/gsd");
-			assert.equal(srv.env.GSD_PERSIST_WRITE_GATE_STATE, "1");
-			assert.equal(srv.env.GSD_WORKFLOW_PROJECT_ROOT, resolvedRepoDir);
+			assert.equal(srv.env.GWD_CLI_PATH, "/tmp/gsd");
+			assert.equal(srv.env.GWD_PERSIST_WRITE_GATE_STATE, "1");
+			assert.equal(srv.env.GWD_WORKFLOW_PROJECT_ROOT, resolvedRepoDir);
 			assert.deepEqual(options.disallowedTools, ["AskUserQuestion"]);
 		} finally {
 			process.chdir(originalCwd);
 			rmSync(repoDir, { recursive: true, force: true });
 			restore();
-			// GSD_CLI_PATH isn't in setWorkflowMcpEnv's scope — restore it here.
+			// GWD_CLI_PATH isn't in setWorkflowMcpEnv's scope — restore it here.
 			if (prevCliPath === undefined) {
-				delete process.env.GSD_CLI_PATH;
+				delete process.env.GWD_CLI_PATH;
 			} else {
-				process.env.GSD_CLI_PATH = prevCliPath;
+				process.env.GWD_CLI_PATH = prevCliPath;
 			}
 		}
 	});
@@ -982,11 +982,11 @@ describe("stream-adapter — session persistence (#2859)", () => {
 		const restore = setWorkflowMcpEnv({});
 		const onElicitation = async () => ({ action: "decline" as const });
 		try {
-			delete process.env.GSD_WORKFLOW_MCP_COMMAND;
-			delete process.env.GSD_WORKFLOW_MCP_NAME;
-			delete process.env.GSD_WORKFLOW_MCP_ARGS;
-			delete process.env.GSD_WORKFLOW_MCP_ENV;
-			delete process.env.GSD_WORKFLOW_MCP_CWD;
+			delete process.env.GWD_WORKFLOW_MCP_COMMAND;
+			delete process.env.GWD_WORKFLOW_MCP_NAME;
+			delete process.env.GWD_WORKFLOW_MCP_ARGS;
+			delete process.env.GWD_WORKFLOW_MCP_ENV;
+			delete process.env.GWD_WORKFLOW_MCP_CWD;
 			const options = buildSdkOptions("claude-sonnet-4-20250514", "test", undefined, { onElicitation });
 			assert.equal(options.onElicitation, onElicitation);
 		} finally {
@@ -1348,18 +1348,18 @@ describe("stream-adapter — final-turn tool-call merge (F3)", () => {
 // ---------------------------------------------------------------------------
 
 describe("stream-adapter — permission mode (F10)", () => {
-	// Earlier tests in this file set GSD_WORKFLOW_MCP_* env vars and restore
+	// Earlier tests in this file set GWD_WORKFLOW_MCP_* env vars and restore
 	// them by reassigning from `prev.*`. When `prev.*` was undefined, node
 	// coerces the assignment to the literal string "undefined", which then
 	// fails JSON.parse inside buildWorkflowMcpServers. Clear the relevant
 	// slots before each permission-mode test so buildSdkOptions doesn't throw.
 	function clearWorkflowMcpEnv(): void {
 		for (const key of [
-			"GSD_WORKFLOW_MCP_COMMAND",
-			"GSD_WORKFLOW_MCP_NAME",
-			"GSD_WORKFLOW_MCP_ARGS",
-			"GSD_WORKFLOW_MCP_ENV",
-			"GSD_WORKFLOW_MCP_CWD",
+			"GWD_WORKFLOW_MCP_COMMAND",
+			"GWD_WORKFLOW_MCP_NAME",
+			"GWD_WORKFLOW_MCP_ARGS",
+			"GWD_WORKFLOW_MCP_ENV",
+			"GWD_WORKFLOW_MCP_CWD",
 		]) {
 			if (process.env[key] === undefined || process.env[key] === "undefined") {
 				delete process.env[key];
@@ -1394,14 +1394,14 @@ describe("stream-adapter — permission mode (F10)", () => {
 		assert.equal(mode, "bypassPermissions");
 	});
 
-	test("resolveClaudePermissionMode honours the GSD_CLAUDE_CODE_PERMISSION_MODE env override", async () => {
-		const env = { GSD_CLAUDE_CODE_PERMISSION_MODE: "acceptEdits" } as NodeJS.ProcessEnv;
+	test("resolveClaudePermissionMode honours the GWD_CLAUDE_CODE_PERMISSION_MODE env override", async () => {
+		const env = { GWD_CLAUDE_CODE_PERMISSION_MODE: "acceptEdits" } as NodeJS.ProcessEnv;
 		const mode = await resolveClaudePermissionMode(env);
 		assert.equal(mode, "acceptEdits");
 	});
 
 	test("resolveClaudePermissionMode rejects unknown override values (fallback path)", async () => {
-		const env = { GSD_CLAUDE_CODE_PERMISSION_MODE: "nonsense" } as NodeJS.ProcessEnv;
+		const env = { GWD_CLAUDE_CODE_PERMISSION_MODE: "nonsense" } as NodeJS.ProcessEnv;
 		const mode = await resolveClaudePermissionMode(env);
 		// Unknown override falls back to auto-detect → either bypass or acceptEdits
 		assert.ok(
@@ -1410,11 +1410,11 @@ describe("stream-adapter — permission mode (F10)", () => {
 		);
 	});
 
-	test("resolveClaudePermissionMode flips to bypassPermissions when GSD_HEADLESS=1 (#4657)", async () => {
+	test("resolveClaudePermissionMode flips to bypassPermissions when GWD_HEADLESS=1 (#4657)", async () => {
 		const originalWarn = console.warn;
 		console.warn = () => {};
 		try {
-			const env = { GSD_HEADLESS: "1" } as NodeJS.ProcessEnv;
+			const env = { GWD_HEADLESS: "1" } as NodeJS.ProcessEnv;
 			const mode = await resolveClaudePermissionMode(env);
 			assert.equal(mode, "bypassPermissions");
 		} finally {
@@ -1422,10 +1422,10 @@ describe("stream-adapter — permission mode (F10)", () => {
 		}
 	});
 
-	test("resolveClaudePermissionMode: explicit override wins over GSD_HEADLESS=1", async () => {
+	test("resolveClaudePermissionMode: explicit override wins over GWD_HEADLESS=1", async () => {
 		const env = {
-			GSD_HEADLESS: "1",
-			GSD_CLAUDE_CODE_PERMISSION_MODE: "acceptEdits",
+			GWD_HEADLESS: "1",
+			GWD_CLAUDE_CODE_PERMISSION_MODE: "acceptEdits",
 		} as NodeJS.ProcessEnv;
 		const mode = await resolveClaudePermissionMode(env);
 		assert.equal(mode, "acceptEdits");

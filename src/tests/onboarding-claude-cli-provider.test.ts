@@ -39,7 +39,7 @@ test("onboarding claude-cli path persists defaultProvider to settings.json", (t)
         if (!configured) throw new Error("claude-cli onboarding did not complete");
       `,
     ],
-    { env: { ...process.env, GSD_HOME: gsdHome }, stdio: "pipe" },
+    { env: { ...process.env, GWD_HOME: gsdHome }, stdio: "pipe" },
   )
 
   const settings = JSON.parse(readFileSync(join(gsdHome, "agent", "settings.json"), "utf-8"))

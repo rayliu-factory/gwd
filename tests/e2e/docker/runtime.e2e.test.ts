@@ -106,7 +106,7 @@ function dockerRmImage(tag: string): void {
 	}
 }
 
-const TAG = `gsd-pi:e2e-${process.pid}`;
+const TAG = `gwd-pi:e2e-${process.pid}`;
 
 describe("docker runtime e2e", () => {
 	const skipReason = dockerAvailable()

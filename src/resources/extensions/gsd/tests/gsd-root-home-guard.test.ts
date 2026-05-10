@@ -31,11 +31,11 @@ describe('gsdRoot() refuses ~/.gsd as project state when basePath is $HOME (#518
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
-    savedGsdHome = process.env.GSD_HOME;
+    savedGsdHome = process.env.GWD_HOME;
 
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
-    delete process.env.GSD_HOME;
+    delete process.env.GWD_HOME;
 
     _clearGsdRootCache();
   });
@@ -45,8 +45,8 @@ describe('gsdRoot() refuses ~/.gsd as project state when basePath is $HOME (#518
     else process.env.HOME = savedHome;
     if (savedUserProfile === undefined) delete process.env.USERPROFILE;
     else process.env.USERPROFILE = savedUserProfile;
-    if (savedGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = savedGsdHome;
+    if (savedGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = savedGsdHome;
 
     _clearGsdRootCache();
     rmSync(fakeHome, { recursive: true, force: true });
@@ -109,11 +109,11 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gsd', ()
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
-    savedGsdHome = process.env.GSD_HOME;
+    savedGsdHome = process.env.GWD_HOME;
 
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
-    delete process.env.GSD_HOME;
+    delete process.env.GWD_HOME;
 
     _clearGsdRootCache();
   });
@@ -123,8 +123,8 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gsd', ()
     else process.env.HOME = savedHome;
     if (savedUserProfile === undefined) delete process.env.USERPROFILE;
     else process.env.USERPROFILE = savedUserProfile;
-    if (savedGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = savedGsdHome;
+    if (savedGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = savedGsdHome;
 
     _clearGsdRootCache();
     rmSync(fakeHome, { recursive: true, force: true });

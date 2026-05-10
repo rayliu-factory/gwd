@@ -323,25 +323,25 @@ test("milestone prompt builders propagate always_use_skills through buildSkillAc
   }
 });
 
-test("skill manifest strict warnings require GSD_SKILL_MANIFEST_STRICT=1", (t) => {
-  const previousStrict = process.env.GSD_SKILL_MANIFEST_STRICT;
+test("skill manifest strict warnings require GWD_SKILL_MANIFEST_STRICT=1", (t) => {
+  const previousStrict = process.env.GWD_SKILL_MANIFEST_STRICT;
   const previousStderr = setStderrLoggingEnabled(false);
   t.after(() => {
     if (previousStrict === undefined) {
-      delete process.env.GSD_SKILL_MANIFEST_STRICT;
+      delete process.env.GWD_SKILL_MANIFEST_STRICT;
     } else {
-      process.env.GSD_SKILL_MANIFEST_STRICT = previousStrict;
+      process.env.GWD_SKILL_MANIFEST_STRICT = previousStrict;
     }
     setStderrLoggingEnabled(previousStderr);
     _resetLogs();
   });
 
-  process.env.GSD_SKILL_MANIFEST_STRICT = "0";
+  process.env.GWD_SKILL_MANIFEST_STRICT = "0";
   _resetLogs();
   warnIfManifestHasMissingSkills("research-milestone", new Set());
   assert.equal(drainLogs().length, 0, "strict=0 must preserve silent behavior");
 
-  process.env.GSD_SKILL_MANIFEST_STRICT = "1";
+  process.env.GWD_SKILL_MANIFEST_STRICT = "1";
   _resetLogs();
   warnIfManifestHasMissingSkills("research-milestone", new Set());
   const logs = drainLogs();

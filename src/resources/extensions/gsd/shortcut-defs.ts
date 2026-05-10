@@ -12,7 +12,7 @@ type GSDShortcutDef = {
   hasFallback: boolean;
 };
 
-export const GSD_SHORTCUTS: Record<GSDShortcutId, GSDShortcutDef> = {
+export const GWD_SHORTCUTS: Record<GSDShortcutId, GSDShortcutDef> = {
   dashboard: {
     key: "g",
     action: "Open GSD dashboard",
@@ -38,16 +38,16 @@ function combo(prefix: "Ctrl+Alt+" | "Ctrl+Shift+", key: string): string {
 }
 
 export function primaryShortcutCombo(id: GSDShortcutId): string {
-  return combo("Ctrl+Alt+", GSD_SHORTCUTS[id].key);
+  return combo("Ctrl+Alt+", GWD_SHORTCUTS[id].key);
 }
 
 export function fallbackShortcutCombo(id: GSDShortcutId): string {
-  return combo("Ctrl+Shift+", GSD_SHORTCUTS[id].key);
+  return combo("Ctrl+Shift+", GWD_SHORTCUTS[id].key);
 }
 
 export function shortcutPair(id: GSDShortcutId, formatter: (combo: string) => string = (combo) => combo): string {
   const primary = formatter(primaryShortcutCombo(id));
-  if (!GSD_SHORTCUTS[id].hasFallback) return primary;
+  if (!GWD_SHORTCUTS[id].hasFallback) return primary;
   return `${primary} / ${formatter(fallbackShortcutCombo(id))}`;
 }
 

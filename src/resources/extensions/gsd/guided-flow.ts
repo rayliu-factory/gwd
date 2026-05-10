@@ -1116,7 +1116,7 @@ async function dispatchWorkflow(
       savedTools = scopeGsdWorkflowToolsForDispatch(pi, unitType) ?? savedTools;
     }
 
-    const workflowPath = process.env.GSD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GSD-WORKFLOW.md");
+    const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GSD-WORKFLOW.md");
     const workflow = readFileSync(workflowPath, "utf-8");
 
     pi.sendMessage(

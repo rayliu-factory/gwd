@@ -35,12 +35,12 @@ describe('getManifestStatus: mixed statuses', () => {
   let savedVal: string | undefined;
   beforeEach(() => {
     tmp = makeTempDir('manifest-mixed');
-    savedVal = process.env.GSD_TEST_EXISTING_KEY_001;
-    process.env.GSD_TEST_EXISTING_KEY_001 = 'some-value';
+    savedVal = process.env.GWD_TEST_EXISTING_KEY_001;
+    process.env.GWD_TEST_EXISTING_KEY_001 = 'some-value';
   });
   afterEach(() => {
-    delete process.env.GSD_TEST_EXISTING_KEY_001;
-    if (savedVal !== undefined) process.env.GSD_TEST_EXISTING_KEY_001 = savedVal;
+    delete process.env.GWD_TEST_EXISTING_KEY_001;
+    if (savedVal !== undefined) process.env.GWD_TEST_EXISTING_KEY_001 = savedVal;
     rmSync(tmp, { recursive: true, force: true });
   });
 
@@ -74,7 +74,7 @@ describe('getManifestStatus: mixed statuses', () => {
 
 1. Not needed
 
-### GSD_TEST_EXISTING_KEY_001
+### GWD_TEST_EXISTING_KEY_001
 
 **Service:** EnvService
 **Status:** pending
@@ -88,7 +88,7 @@ describe('getManifestStatus: mixed statuses', () => {
     assert.deepStrictEqual(result!.pending, ['PENDING_KEY']);
     assert.deepStrictEqual(result!.collected, ['COLLECTED_KEY']);
     assert.deepStrictEqual(result!.skipped, ['SKIPPED_KEY']);
-    assert.deepStrictEqual(result!.existing, ['GSD_TEST_EXISTING_KEY_001']);
+    assert.deepStrictEqual(result!.existing, ['GWD_TEST_EXISTING_KEY_001']);
   });
 });
 
@@ -240,12 +240,12 @@ describe('getManifestStatus: key in env overrides manifest status', () => {
   let savedVal: string | undefined;
   beforeEach(() => {
     tmp = makeTempDir('manifest-override');
-    savedVal = process.env.GSD_TEST_OVERRIDE_KEY;
-    process.env.GSD_TEST_OVERRIDE_KEY = 'already-here';
+    savedVal = process.env.GWD_TEST_OVERRIDE_KEY;
+    process.env.GWD_TEST_OVERRIDE_KEY = 'already-here';
   });
   afterEach(() => {
-    delete process.env.GSD_TEST_OVERRIDE_KEY;
-    if (savedVal !== undefined) process.env.GSD_TEST_OVERRIDE_KEY = savedVal;
+    delete process.env.GWD_TEST_OVERRIDE_KEY;
+    if (savedVal !== undefined) process.env.GWD_TEST_OVERRIDE_KEY = savedVal;
     rmSync(tmp, { recursive: true, force: true });
   });
 
@@ -255,7 +255,7 @@ describe('getManifestStatus: key in env overrides manifest status', () => {
 **Milestone:** M001
 **Generated:** 2025-06-20T10:00:00Z
 
-### GSD_TEST_OVERRIDE_KEY
+### GWD_TEST_OVERRIDE_KEY
 
 **Service:** Override
 **Status:** collected
@@ -269,6 +269,6 @@ describe('getManifestStatus: key in env overrides manifest status', () => {
     assert.deepStrictEqual(result!.pending, []);
     assert.deepStrictEqual(result!.collected, []);
     assert.deepStrictEqual(result!.skipped, []);
-    assert.deepStrictEqual(result!.existing, ['GSD_TEST_OVERRIDE_KEY']);
+    assert.deepStrictEqual(result!.existing, ['GWD_TEST_OVERRIDE_KEY']);
   });
 });

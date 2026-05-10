@@ -50,7 +50,7 @@ function hasFileContent(path: string | null): boolean {
 
 function getArtifactLookupBases(basePath: string): string[] {
   const bases = [basePath];
-  const projectRoot = process.env.GSD_PROJECT_ROOT;
+  const projectRoot = process.env.GWD_PROJECT_ROOT;
   if (projectRoot && projectRoot.trim().length > 0 && projectRoot !== basePath) {
     bases.push(projectRoot);
   }

@@ -88,8 +88,8 @@ function readSchemaVersion(sqlite: SqliteModule, dbPath: string): number {
 }
 
 function binaryAvailable(): { ok: boolean; reason?: string } {
-	const bin = process.env.GSD_SMOKE_BINARY;
-	if (!bin) return { ok: false, reason: "GSD_SMOKE_BINARY not set; run with `GSD_SMOKE_BINARY=$(pwd)/dist/loader.js`" };
+	const bin = process.env.GWD_SMOKE_BINARY;
+	if (!bin) return { ok: false, reason: "GWD_SMOKE_BINARY not set; run with `GWD_SMOKE_BINARY=$(pwd)/dist/loader.js`" };
 	if (!existsSync(bin)) return { ok: false, reason: `binary not found at ${bin}` };
 	return { ok: true };
 }

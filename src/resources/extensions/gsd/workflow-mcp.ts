@@ -107,9 +107,9 @@ function findWorkflowCliFromAncestorPath(startPath: string): string | null {
 
 function getBundledWorkflowMcpCliPath(env: NodeJS.ProcessEnv): string | null {
   const envAnchors = [
-    env.GSD_BIN_PATH?.trim(),
-    env.GSD_CLI_PATH?.trim(),
-    env.GSD_WORKFLOW_PATH?.trim(),
+    env.GWD_BIN_PATH?.trim(),
+    env.GWD_CLI_PATH?.trim(),
+    env.GWD_WORKFLOW_PATH?.trim(),
   ].filter((value): value is string => typeof value === "string" && value.length > 0);
 
   for (const anchor of envAnchors) {
@@ -207,12 +207,12 @@ function buildWorkflowLaunchEnv(
 
   return {
     ...(explicitEnv ?? {}),
-    ...(gsdCliPath ? { GSD_CLI_PATH: gsdCliPath, GSD_BIN_PATH: gsdCliPath } : {}),
-    ...(executorModulePath ? { GSD_WORKFLOW_EXECUTORS_MODULE: executorModulePath } : {}),
-    ...(writeGateModulePath ? { GSD_WORKFLOW_WRITE_GATE_MODULE: writeGateModulePath } : {}),
+    ...(gsdCliPath ? { GWD_CLI_PATH: gsdCliPath, GWD_BIN_PATH: gsdCliPath } : {}),
+    ...(executorModulePath ? { GWD_WORKFLOW_EXECUTORS_MODULE: executorModulePath } : {}),
+    ...(writeGateModulePath ? { GWD_WORKFLOW_WRITE_GATE_MODULE: writeGateModulePath } : {}),
     ...(nodeOptions ? { NODE_OPTIONS: nodeOptions } : {}),
-    GSD_PERSIST_WRITE_GATE_STATE: "1",
-    GSD_WORKFLOW_PROJECT_ROOT: projectRoot,
+    GWD_PERSIST_WRITE_GATE_STATE: "1",
+    GWD_WORKFLOW_PROJECT_ROOT: projectRoot,
   };
 }
 
@@ -220,20 +220,20 @@ export function detectWorkflowMcpLaunchConfig(
   projectRoot = process.cwd(),
   env: NodeJS.ProcessEnv = process.env,
 ): WorkflowMcpLaunchConfig | null {
-  const name = env.GSD_WORKFLOW_MCP_NAME?.trim() || "gsd-workflow";
-  const explicitCommand = env.GSD_WORKFLOW_MCP_COMMAND?.trim();
-  const explicitArgs = parseJsonEnv<unknown>(env, "GSD_WORKFLOW_MCP_ARGS");
-  const explicitEnv = parseJsonEnv<Record<string, string>>(env, "GSD_WORKFLOW_MCP_ENV");
-  const explicitCwd = env.GSD_WORKFLOW_MCP_CWD?.trim();
+  const name = env.GWD_WORKFLOW_MCP_NAME?.trim() || "gsd-workflow";
+  const explicitCommand = env.GWD_WORKFLOW_MCP_COMMAND?.trim();
+  const explicitArgs = parseJsonEnv<unknown>(env, "GWD_WORKFLOW_MCP_ARGS");
+  const explicitEnv = parseJsonEnv<Record<string, string>>(env, "GWD_WORKFLOW_MCP_ENV");
+  const explicitCwd = env.GWD_WORKFLOW_MCP_CWD?.trim();
   const gsdCliPath =
-    explicitEnv?.GSD_CLI_PATH?.trim()
-    || explicitEnv?.GSD_BIN_PATH?.trim()
-    || env.GSD_CLI_PATH?.trim()
-    || env.GSD_BIN_PATH?.trim();
+    explicitEnv?.GWD_CLI_PATH?.trim()
+    || explicitEnv?.GWD_BIN_PATH?.trim()
+    || env.GWD_CLI_PATH?.trim()
+    || env.GWD_BIN_PATH?.trim();
   const workflowProjectRoot =
-    explicitEnv?.GSD_WORKFLOW_PROJECT_ROOT?.trim() ||
-    env.GSD_WORKFLOW_PROJECT_ROOT?.trim() ||
-    env.GSD_PROJECT_ROOT?.trim() ||
+    explicitEnv?.GWD_WORKFLOW_PROJECT_ROOT?.trim() ||
+    env.GWD_WORKFLOW_PROJECT_ROOT?.trim() ||
+    env.GWD_PROJECT_ROOT?.trim() ||
     explicitCwd ||
     projectRoot;
   const resolvedWorkflowProjectRoot = resolve(workflowProjectRoot);
@@ -384,7 +384,7 @@ function hasAskUserQuestionsTool(activeTools: string[]): boolean {
 }
 
 function workflowMcpStructuredQuestionsOptIn(env: NodeJS.ProcessEnv = process.env): boolean {
-  const value = env.GSD_WORKFLOW_MCP_STRUCTURED_QUESTIONS;
+  const value = env.GWD_WORKFLOW_MCP_STRUCTURED_QUESTIONS;
   return value === "1" || value === "true";
 }
 
@@ -420,7 +420,7 @@ export function getWorkflowTransportSupportError(
   const providerLabel = `"${provider}"`;
 
   if (!launch) {
-    return `Provider ${providerLabel} cannot run ${surface}${unitLabel}: the GSD workflow MCP server is not configured or discoverable. Detected Claude Code model but no workflow MCP. Please run /gsd mcp init . from your project root. You can also configure GSD_WORKFLOW_MCP_COMMAND, build packages/mcp-server/dist/cli.js, or install gsd-mcp-server on PATH.`;
+    return `Provider ${providerLabel} cannot run ${surface}${unitLabel}: the GSD workflow MCP server is not configured or discoverable. Detected Claude Code model but no workflow MCP. Please run /gsd mcp init . from your project root. You can also configure GWD_WORKFLOW_MCP_COMMAND, build packages/mcp-server/dist/cli.js, or install gsd-mcp-server on PATH.`;
   }
 
   const missing = [...new Set(requiredTools)].filter((tool) => !MCP_WORKFLOW_TOOL_SURFACE.has(tool));

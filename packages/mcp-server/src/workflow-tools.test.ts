@@ -443,9 +443,9 @@ describe("workflow MCP tools", () => {
   it("rejects workflow tool calls outside the configured project root", async () => {
     const base = makeTmpBase();
     const otherBase = makeTmpBase();
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = base;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = base;
       const server = makeMockServer();
       registerWorkflowTools(server as any);
       const tool = server.tools.find((t) => t.name === "gsd_summary_save");
@@ -460,9 +460,9 @@ describe("workflow MCP tools", () => {
       assertToolError(result, /configured workflow project root/);
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(base);
       cleanup(otherBase);
@@ -471,11 +471,11 @@ describe("workflow MCP tools", () => {
 
   it("rejects non-file executor module URLs", async () => {
     const base = makeTmpBase();
-    const prevModule = process.env.GSD_WORKFLOW_EXECUTORS_MODULE;
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevModule = process.env.GWD_WORKFLOW_EXECUTORS_MODULE;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = base;
-      process.env.GSD_WORKFLOW_EXECUTORS_MODULE = "data:text/javascript,export default {}";
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = base;
+      process.env.GWD_WORKFLOW_EXECUTORS_MODULE = "data:text/javascript,export default {}";
       const { registerWorkflowTools: freshRegisterWorkflowTools } = await import(
         cacheBustedWorkflowToolsImport("bad-module")
       );
@@ -493,14 +493,14 @@ describe("workflow MCP tools", () => {
       assertToolError(result, /only supports file: URLs or filesystem paths/);
     } finally {
       if (prevModule === undefined) {
-        delete process.env.GSD_WORKFLOW_EXECUTORS_MODULE;
+        delete process.env.GWD_WORKFLOW_EXECUTORS_MODULE;
       } else {
-        process.env.GSD_WORKFLOW_EXECUTORS_MODULE = prevModule;
+        process.env.GWD_WORKFLOW_EXECUTORS_MODULE = prevModule;
       }
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(base);
     }
@@ -623,8 +623,8 @@ describe("workflow MCP tools", () => {
     const base = makeTmpBase();
     const capturePath = join(base, "captured-args.json");
     const mockModulePath = join(base, "mock-executors.mjs");
-    const prevModule = process.env.GSD_WORKFLOW_EXECUTORS_MODULE;
-    const prevCapture = process.env.GSD_TEST_TASK_COMPLETE_CAPTURE_PATH;
+    const prevModule = process.env.GWD_WORKFLOW_EXECUTORS_MODULE;
+    const prevCapture = process.env.GWD_TEST_TASK_COMPLETE_CAPTURE_PATH;
     try {
       // Mock module: implements the WorkflowToolExecutors shape.
       // executeTaskComplete writes its received args to disk for assertion.
@@ -647,7 +647,7 @@ export const executeSaveGateResult = noop;
 export const executeSummarySave = noop;
 
 export const executeTaskComplete = async (params, projectDir) => {
-  const capturePath = process.env.GSD_TEST_TASK_COMPLETE_CAPTURE_PATH;
+  const capturePath = process.env.GWD_TEST_TASK_COMPLETE_CAPTURE_PATH;
   if (capturePath) {
     writeFileSync(capturePath, JSON.stringify({ params, projectDir }, null, 2));
   }
@@ -658,8 +658,8 @@ export const executeTaskComplete = async (params, projectDir) => {
 };
 `;
       writeFileSync(mockModulePath, mockSource, "utf-8");
-      process.env.GSD_WORKFLOW_EXECUTORS_MODULE = mockModulePath;
-      process.env.GSD_TEST_TASK_COMPLETE_CAPTURE_PATH = capturePath;
+      process.env.GWD_WORKFLOW_EXECUTORS_MODULE = mockModulePath;
+      process.env.GWD_TEST_TASK_COMPLETE_CAPTURE_PATH = capturePath;
 
       // Fresh import bypasses the cached workflowToolExecutorsPromise so the
       // mock module is actually loaded for this test.
@@ -728,14 +728,14 @@ export const executeTaskComplete = async (params, projectDir) => {
       );
     } finally {
       if (prevModule === undefined) {
-        delete process.env.GSD_WORKFLOW_EXECUTORS_MODULE;
+        delete process.env.GWD_WORKFLOW_EXECUTORS_MODULE;
       } else {
-        process.env.GSD_WORKFLOW_EXECUTORS_MODULE = prevModule;
+        process.env.GWD_WORKFLOW_EXECUTORS_MODULE = prevModule;
       }
       if (prevCapture === undefined) {
-        delete process.env.GSD_TEST_TASK_COMPLETE_CAPTURE_PATH;
+        delete process.env.GWD_TEST_TASK_COMPLETE_CAPTURE_PATH;
       } else {
-        process.env.GSD_TEST_TASK_COMPLETE_CAPTURE_PATH = prevCapture;
+        process.env.GWD_TEST_TASK_COMPLETE_CAPTURE_PATH = prevCapture;
       }
       cleanup(base);
     }
@@ -1916,9 +1916,9 @@ describe("validateProjectDir", () => {
     const linkInside = join(allowedRoot, "escape-link");
     symlinkSync(outside, linkInside, "dir");
 
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = allowedRoot;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = allowedRoot;
       assert.throws(
         () => validateProjectDir(linkInside),
         /configured workflow project root/,
@@ -1926,9 +1926,9 @@ describe("validateProjectDir", () => {
       );
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(allowedRoot);
       cleanup(outside);
@@ -1943,16 +1943,16 @@ describe("validateProjectDir", () => {
     const canonicalRoot = realpathSync(allowedRoot);
     const futureWorktree = join(canonicalRoot, "worktrees", "M999-not-yet-created");
 
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = canonicalRoot;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = canonicalRoot;
       const result = validateProjectDir(futureWorktree);
       assert.equal(result, futureWorktree, "ENOENT should fall back to the lexical path, not throw");
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(allowedRoot);
     }
@@ -1963,17 +1963,17 @@ describe("validateProjectDir", () => {
     const child = join(allowedRoot, "child");
     mkdirSync(child, { recursive: true });
 
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = allowedRoot;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = allowedRoot;
       const result = validateProjectDir(child);
       // realpath may canonicalize macOS /var → /private/var; assert it ends with our child segment.
       assert.ok(result.endsWith("child"), `expected resolved path to end with 'child', got ${result}`);
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(allowedRoot);
     }
@@ -1987,16 +1987,16 @@ describe("validateProjectDir", () => {
     rmSync(join(allowedRoot, ".gsd"), { recursive: true, force: true });
     symlinkSync(externalState, join(allowedRoot, ".gsd"), "dir");
 
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = allowedRoot;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = allowedRoot;
       const result = validateProjectDir(worktree);
       assert.equal(result, realpathSync(worktree));
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(allowedRoot);
       cleanup(externalState);
@@ -2012,18 +2012,18 @@ describe("validateProjectDir", () => {
     rmSync(join(allowedRoot, ".gsd"), { recursive: true, force: true });
     symlinkSync(externalState, join(allowedRoot, ".gsd"), "dir");
 
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = allowedRoot;
+      process.env.GWD_WORKFLOW_PROJECT_ROOT = allowedRoot;
       assert.throws(
         () => validateProjectDir(siblingWorktree),
         /configured workflow project root/,
       );
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.GWD_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.GWD_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(allowedRoot);
       cleanup(externalState);

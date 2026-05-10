@@ -205,7 +205,7 @@ test("current GSD command family samples dispatch to correct outcomes after S02"
   })
 })
 
-const EXPECTED_GSD_OUTCOMES = new Map<string, "surface" | "prompt" | "local" | "view-navigate">([
+const EXPECTED_GWD_OUTCOMES = new Map<string, "surface" | "prompt" | "local" | "view-navigate">([
   // Surface commands (19)
   ["status", "surface"],
   ["visualize", "view-navigate"],
@@ -243,12 +243,12 @@ const EXPECTED_GSD_OUTCOMES = new Map<string, "surface" | "prompt" | "local" | "
 
 test("every registered /gsd subcommand has an explicit browser dispatch outcome", async (t) => {
   assert.equal(
-    EXPECTED_GSD_OUTCOMES.size,
+    EXPECTED_GWD_OUTCOMES.size,
     30,
-    "EXPECTED_GSD_OUTCOMES must cover all 30 GSD subcommands (19 surface + 1 view-navigate + 9 passthrough + 1 help)",
+    "EXPECTED_GWD_OUTCOMES must cover all 30 GSD subcommands (19 surface + 1 view-navigate + 9 passthrough + 1 help)",
   )
 
-  for (const [subcommand, expectedKind] of EXPECTED_GSD_OUTCOMES) {
+  for (const [subcommand, expectedKind] of EXPECTED_GWD_OUTCOMES) {
     await t.test(`/gsd ${subcommand} -> ${expectedKind}`, () => {
       const outcome = dispatchBrowserSlashCommand(`/gsd ${subcommand}`)
       assert.equal(
@@ -342,7 +342,7 @@ test("GSD dispatch edge cases", async (t) => {
 })
 
 test("every GSD surface dispatches through the contract wiring end-to-end", async (t) => {
-  const gsdSurfaces = [...EXPECTED_GSD_OUTCOMES.entries()].filter(([, kind]) => kind === "surface")
+  const gsdSurfaces = [...EXPECTED_GWD_OUTCOMES.entries()].filter(([, kind]) => kind === "surface")
 
   assert.equal(gsdSurfaces.length, 19, "should have exactly 19 GSD surface subcommands")
 

@@ -54,20 +54,20 @@ describe("isInheritedRepo when git root is HOME (#2393)", () => {
     // global GSD home directory, NOT a project .gsd.
     mkdirSync(join(fakeHome, ".gsd", "projects"), { recursive: true });
 
-    // Save and override env. Point GSD_HOME at fakeHome/.gsd so the
+    // Save and override env. Point GWD_HOME at fakeHome/.gsd so the
     // function recognizes it as the global state directory.
-    origGsdHome = process.env.GSD_HOME;
-    origGsdStateDir = process.env.GSD_STATE_DIR;
-    process.env.GSD_HOME = join(fakeHome, ".gsd");
+    origGsdHome = process.env.GWD_HOME;
+    origGsdStateDir = process.env.GWD_STATE_DIR;
+    process.env.GWD_HOME = join(fakeHome, ".gsd");
     stateDir = mkdtempSync(join(tmpdir(), "gsd-state-"));
-    process.env.GSD_STATE_DIR = stateDir;
+    process.env.GWD_STATE_DIR = stateDir;
   });
 
   afterEach(() => {
-    if (origGsdHome !== undefined) process.env.GSD_HOME = origGsdHome;
-    else delete process.env.GSD_HOME;
-    if (origGsdStateDir !== undefined) process.env.GSD_STATE_DIR = origGsdStateDir;
-    else delete process.env.GSD_STATE_DIR;
+    if (origGsdHome !== undefined) process.env.GWD_HOME = origGsdHome;
+    else delete process.env.GWD_HOME;
+    if (origGsdStateDir !== undefined) process.env.GWD_STATE_DIR = origGsdStateDir;
+    else delete process.env.GWD_STATE_DIR;
 
     rmSync(fakeHome, { recursive: true, force: true });
     rmSync(stateDir, { recursive: true, force: true });

@@ -8,19 +8,19 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test("complete milestone prompt renders compact verification and completion guidance", async (t) => {
-  const previousGsdHome = process.env.GSD_HOME;
-  const providedGsdHome = process.env.GSD_TEST_HOME;
+  const previousGsdHome = process.env.GWD_HOME;
+  const providedGsdHome = process.env.GWD_TEST_HOME;
   const isolatedHome = providedGsdHome ?? mkdtempSync(join(tmpdir(), "gsd-complete-milestone-render-"));
-  process.env.GSD_HOME = isolatedHome;
+  process.env.GWD_HOME = isolatedHome;
   t.after(() => {
-    if (previousGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = previousGsdHome;
+    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGsdHome;
     if (!providedGsdHome) rmSync(isolatedHome, { recursive: true, force: true });
   });
 
   const { loadPrompt } = await import(`../prompt-loader.ts?test=${Date.now()}`);
   const prompt = loadPrompt("complete-milestone", {
-    workingDirectory: process.env.GSD_TEST_WORKSPACE_ROOT ?? process.cwd(),
+    workingDirectory: process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd(),
     milestoneId: "M001",
     milestoneTitle: "Baseline And Safety",
     roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",

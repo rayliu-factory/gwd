@@ -17,7 +17,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-// Point GSD_HOME at a throwaway directory *before* the prompt-loader
+// Point GWD_HOME at a throwaway directory *before* the prompt-loader
 // module is imported (via the dynamic imports below) so templates
 // resolve from the in-tree prompts/ directory instead of a developer's
 // ~/.gsd/ copy (which may be a stale cached version from a prior
@@ -27,15 +27,15 @@ import { tmpdir } from "node:os";
 // captured and restored in an after() hook to avoid leaking module-scope
 // env mutation into other suites if the runner ever moves to a shared
 // process model.
-const previousGsdHome = process.env.GSD_HOME;
-process.env.GSD_HOME = process.env.GSD_HOME_TEST_OVERRIDE
+const previousGsdHome = process.env.GWD_HOME;
+process.env.GWD_HOME = process.env.GWD_HOME_TEST_OVERRIDE
   ?? join(tmpdir(), `gsd-test-home-${process.pid}-${Date.now()}`);
 
 after(() => {
   if (previousGsdHome === undefined) {
-    delete process.env.GSD_HOME;
+    delete process.env.GWD_HOME;
   } else {
-    process.env.GSD_HOME = previousGsdHome;
+    process.env.GWD_HOME = previousGsdHome;
   }
 });
 

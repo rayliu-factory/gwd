@@ -26,8 +26,8 @@ test("buildContextMessage marks hidden guided context when memory is supplied", 
 });
 
 test("buildContextMessage caps hidden context by default", () => {
-  const original = process.env.PI_GSD_CONTEXT_MAX_CHARS;
-  delete process.env.PI_GSD_CONTEXT_MAX_CHARS;
+  const original = process.env.PI_GWD_CONTEXT_MAX_CHARS;
+  delete process.env.PI_GWD_CONTEXT_MAX_CHARS;
   try {
     const message = buildContextMessage({
       memoryBlock: "",
@@ -40,14 +40,14 @@ test("buildContextMessage caps hidden context by default", () => {
     assert.ok(message.content.length <= 4000);
     assert.match(message.content, /\[GSD Context Truncated\]/);
   } finally {
-    if (original === undefined) delete process.env.PI_GSD_CONTEXT_MAX_CHARS;
-    else process.env.PI_GSD_CONTEXT_MAX_CHARS = original;
+    if (original === undefined) delete process.env.PI_GWD_CONTEXT_MAX_CHARS;
+    else process.env.PI_GWD_CONTEXT_MAX_CHARS = original;
   }
 });
 
 test("buildContextMessage supports explicit context cap override", () => {
-  const original = process.env.PI_GSD_CONTEXT_MAX_CHARS;
-  process.env.PI_GSD_CONTEXT_MAX_CHARS = "1200";
+  const original = process.env.PI_GWD_CONTEXT_MAX_CHARS;
+  process.env.PI_GWD_CONTEXT_MAX_CHARS = "1200";
   try {
     const message = buildContextMessage({
       memoryBlock: "",
@@ -60,8 +60,8 @@ test("buildContextMessage supports explicit context cap override", () => {
     assert.ok(message.content.length <= 1200);
     assert.match(message.content, /\[GSD Context Truncated\]/);
   } finally {
-    if (original === undefined) delete process.env.PI_GSD_CONTEXT_MAX_CHARS;
-    else process.env.PI_GSD_CONTEXT_MAX_CHARS = original;
+    if (original === undefined) delete process.env.PI_GWD_CONTEXT_MAX_CHARS;
+    else process.env.PI_GWD_CONTEXT_MAX_CHARS = original;
   }
 });
 

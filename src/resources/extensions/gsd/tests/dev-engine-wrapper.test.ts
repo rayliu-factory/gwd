@@ -266,22 +266,22 @@ describe("Resolver routing", () => {
 
 // ── Kill switch ─────────────────────────────────────────────────────────────
 
-describe("Kill switch (GSD_ENGINE_BYPASS)", () => {
-  const originalBypass = process.env.GSD_ENGINE_BYPASS;
+describe("Kill switch (GWD_ENGINE_BYPASS)", () => {
+  const originalBypass = process.env.GWD_ENGINE_BYPASS;
 
   after(() => {
     // Restore original env var state
     if (originalBypass === undefined) {
-      delete process.env.GSD_ENGINE_BYPASS;
+      delete process.env.GWD_ENGINE_BYPASS;
     } else {
-      process.env.GSD_ENGINE_BYPASS = originalBypass;
+      process.env.GWD_ENGINE_BYPASS = originalBypass;
     }
   });
 
-  test("GSD_ENGINE_BYPASS=1 does not affect resolveEngine (bypass checked in autoLoop)", async (t) => {
+  test("GWD_ENGINE_BYPASS=1 does not affect resolveEngine (bypass checked in autoLoop)", async (t) => {
     const { resolveEngine } = await import("../engine-resolver.ts");
-    process.env.GSD_ENGINE_BYPASS = "1";
-    t.after(() => delete process.env.GSD_ENGINE_BYPASS);
+    process.env.GWD_ENGINE_BYPASS = "1";
+    t.after(() => delete process.env.GWD_ENGINE_BYPASS);
 
     // resolveEngine should still resolve normally — bypass is checked in autoLoop
     const { engine } = resolveEngine({ activeEngineId: null });

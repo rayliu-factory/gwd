@@ -27,8 +27,8 @@ import {
 } from "./_shared/index.ts";
 
 function binaryAvailable(): { ok: boolean; reason?: string } {
-	const bin = process.env.GSD_SMOKE_BINARY;
-	if (!bin) return { ok: false, reason: "GSD_SMOKE_BINARY not set; build with `npm run build:core` and re-export." };
+	const bin = process.env.GWD_SMOKE_BINARY;
+	if (!bin) return { ok: false, reason: "GWD_SMOKE_BINARY not set; build with `npm run build:core` and re-export." };
 	if (!existsSync(bin)) return { ok: false, reason: `binary not found at ${bin}` };
 	return { ok: true };
 }
@@ -108,7 +108,7 @@ describe("agent loop e2e (fake LLM)", () => {
 			prompt: "use a tool",
 			mode: "json",
 			timeoutMs: 60_000,
-			extraEnv: { GSD_TOOL_APPROVAL: "auto" },
+			extraEnv: { GWD_TOOL_APPROVAL: "auto" },
 		});
 
 		const events = parseJsonEvents(result.stdoutClean);

@@ -15,11 +15,11 @@ import { registerQueryTools } from "../bootstrap/query-tools.ts";
 
 async function withDeletedCwd(fn: (projectRoot: string) => Promise<void> | void): Promise<void> {
   const previousCwd = process.cwd();
-  const previousProjectRoot = process.env.GSD_PROJECT_ROOT;
+  const previousProjectRoot = process.env.GWD_PROJECT_ROOT;
   const projectRoot = mkdtempSync(join(tmpdir(), "gsd-safe-cwd-project-"));
   const removedCwd = mkdtempSync(join(tmpdir(), "gsd-removed-cwd-"));
 
-  process.env.GSD_PROJECT_ROOT = projectRoot;
+  process.env.GWD_PROJECT_ROOT = projectRoot;
   process.chdir(removedCwd);
   rmSync(removedCwd, { recursive: true, force: true });
 
@@ -28,8 +28,8 @@ async function withDeletedCwd(fn: (projectRoot: string) => Promise<void> | void)
     await fn(projectRoot);
   } finally {
     process.chdir(previousCwd);
-    if (previousProjectRoot === undefined) delete process.env.GSD_PROJECT_ROOT;
-    else process.env.GSD_PROJECT_ROOT = previousProjectRoot;
+    if (previousProjectRoot === undefined) delete process.env.GWD_PROJECT_ROOT;
+    else process.env.GWD_PROJECT_ROOT = previousProjectRoot;
     rmSync(projectRoot, { recursive: true, force: true });
   }
 }

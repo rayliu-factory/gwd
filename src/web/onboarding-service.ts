@@ -496,14 +496,14 @@ async function defaultValidateApiKey(
 }
 
 function resolveRuntimeTestIsExternalCliProvider(env: NodeJS.ProcessEnv): OnboardingServiceDeps["isExternalCliProvider"] | undefined {
-  if (env.GSD_WEB_TEST_DISABLE_EXTERNAL_CLI !== "1") {
+  if (env.GWD_WEB_TEST_DISABLE_EXTERNAL_CLI !== "1") {
     return undefined;
   }
   return () => false;
 }
 
 function resolveRuntimeTestValidateApiKey(env: NodeJS.ProcessEnv): OnboardingServiceDeps["validateApiKey"] | undefined {
-  if (env.GSD_WEB_TEST_FAKE_API_KEY_VALIDATION !== "1") {
+  if (env.GWD_WEB_TEST_FAKE_API_KEY_VALIDATION !== "1") {
     return undefined;
   }
 

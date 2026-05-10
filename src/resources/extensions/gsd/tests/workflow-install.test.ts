@@ -25,13 +25,13 @@ function makeTmpBase(): string {
 }
 
 beforeEach(() => {
-  savedGsdHome = process.env.GSD_HOME;
-  process.env.GSD_HOME = makeTmpBase();
+  savedGsdHome = process.env.GWD_HOME;
+  process.env.GWD_HOME = makeTmpBase();
 });
 
 afterEach(() => {
-  if (savedGsdHome === undefined) delete process.env.GSD_HOME;
-  else process.env.GSD_HOME = savedGsdHome;
+  if (savedGsdHome === undefined) delete process.env.GWD_HOME;
+  else process.env.GWD_HOME = savedGsdHome;
   for (const d of tmpDirs) {
     try { rmSync(d, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 }); } catch { /* ignore */ }
   }

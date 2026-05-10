@@ -40,7 +40,7 @@ export const PROVIDER_REGISTRY: ProviderInfo[] = [
   // authentication is handled by the CLI's own OAuth flow.
   // Referenced by doctor-providers.ts, auto-model-selection.ts, and others;
   // must be in the canonical registry so all consumers see the same catalog.
-  // See: https://github.com/gsd-build/gsd-2/issues/4541
+  // See: https://github.com/gwd-build/gwd-2/issues/4541
   { id: "claude-code",      label: "Claude Code CLI",         category: "llm",                                   hasOAuth: true },
   { id: "openai",           label: "OpenAI",                  category: "llm", envVar: "OPENAI_API_KEY",         prefixes: ["sk-"],     dashboardUrl: "platform.openai.com/api-keys" },
   { id: "github-copilot",   label: "GitHub Copilot",          category: "llm", envVar: "GITHUB_TOKEN",           hasOAuth: true },

@@ -8,7 +8,7 @@ import type { Roadmap, BoundaryMapEntry, RoadmapSliceEntry, RiskLevel } from './
 
 // Issue #453: auto-mode post-turn reconciliation must stay on the stable JS path
 // unless the native parser is explicitly requested.
-const NATIVE_GSD_PARSER_ENABLED = process.env.GSD_ENABLE_NATIVE_GSD_PARSER === "1";
+const NATIVE_GWD_PARSER_ENABLED = process.env.GWD_ENABLE_NATIVE_GWD_PARSER === "1";
 
 let nativeModule: {
   parseFrontmatter: (content: string) => { metadata: string; body: string };
@@ -33,7 +33,7 @@ let loadAttempted = false;
 function loadNative(): typeof nativeModule {
   if (loadAttempted) return nativeModule;
   loadAttempted = true;
-  if (!NATIVE_GSD_PARSER_ENABLED) return nativeModule;
+  if (!NATIVE_GWD_PARSER_ENABLED) return nativeModule;
 
   try {
     // Dynamic import to avoid hard dependency - fails gracefully if native module not built

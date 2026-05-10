@@ -208,7 +208,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 - `uok`: Unified Orchestration Kernel controls. Keys:
   - `enabled`: boolean — enable kernel wrappers and contract observers. Default: `true`.
   - `legacy_fallback.enabled`: boolean — emergency release fallback that forces legacy orchestration behavior even when `uok.enabled` is `true`. Default: `false`.
-    - Runtime override: set `GSD_UOK_FORCE_LEGACY=1` (or `GSD_UOK_LEGACY_FALLBACK=1`) to force legacy behavior for the current process.
+    - Runtime override: set `GWD_UOK_FORCE_LEGACY=1` (or `GWD_UOK_LEGACY_FALLBACK=1`) to force legacy behavior for the current process.
   - `gates.enabled`: boolean — route checks through the unified gate runner and persist `gate_runs`. Default: `true`.
   - `model_policy.enabled`: boolean — enforce policy filtering before model capability scoring. Default: `true`.
   - `execution_graph.enabled`: boolean — enable DAG scheduler facade/adapters for execution. Default: `true`.
@@ -279,7 +279,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   **Known unit types for `before`/`after`:** `research-milestone`, `plan-milestone`, `research-slice`, `plan-slice`, `execute-task`, `complete-slice`, `replan-slice`, `reassess-roadmap`, `run-uat`.
 
 - `experimental`: opt-in experimental features. All features here are **off by default** — you must explicitly set each one to `true` to enable it. Features in this block may change or be removed without a deprecation cycle while in experimental status. Keys:
-  - `rtk`: boolean — enable RTK (Real-Time Kompression) shell-command compression. When enabled, GSD wraps shell commands through the RTK binary to reduce token usage during command execution. RTK is downloaded automatically on first use if not already installed. **Default: `false`** (opt-in required). Set `GSD_RTK_DISABLED=1` in the environment to force-disable regardless of this preference.
+  - `rtk`: boolean — enable RTK (Real-Time Kompression) shell-command compression. When enabled, GSD wraps shell commands through the RTK binary to reduce token usage during command execution. RTK is downloaded automatically on first use if not already installed. **Default: `false`** (opt-in required). Set `GWD_RTK_DISABLED=1` in the environment to force-disable regardless of this preference.
 
 ---
 
@@ -703,4 +703,4 @@ experimental:
 ---
 ```
 
-Opts in to RTK shell-command compression. RTK is downloaded automatically on first use. Set `GSD_RTK_DISABLED=1` to force-disable at the environment level regardless of this setting.
+Opts in to RTK shell-command compression. RTK is downloaded automatically on first use. Set `GWD_RTK_DISABLED=1` to force-disable at the environment level regardless of this setting.

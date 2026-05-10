@@ -39,8 +39,8 @@ import {
 } from "./_shared/index.ts";
 
 function binaryAvailable(): { ok: boolean; reason?: string } {
-	const bin = process.env.GSD_SMOKE_BINARY;
-	if (!bin) return { ok: false, reason: "GSD_SMOKE_BINARY not set; build with `npm run build:core`" };
+	const bin = process.env.GWD_SMOKE_BINARY;
+	if (!bin) return { ok: false, reason: "GWD_SMOKE_BINARY not set; build with `npm run build:core`" };
 	if (!existsSync(bin)) return { ok: false, reason: `binary not found at ${bin}` };
 	return { ok: true };
 }
@@ -87,7 +87,7 @@ describe("agent loop e2e — multi-iteration", () => {
 			prompt: "do two steps",
 			mode: "json",
 			timeoutMs: 45_000,
-			extraEnv: { GSD_TOOL_APPROVAL: "auto" },
+			extraEnv: { GWD_TOOL_APPROVAL: "auto" },
 		});
 
 		const events = parseJsonEvents(result.stdoutClean);
@@ -162,7 +162,7 @@ describe("agent loop e2e — multi-iteration", () => {
 			prompt: "loop forever",
 			mode: "json",
 			timeoutMs: 45_000,
-			extraEnv: { GSD_TOOL_APPROVAL: "auto" },
+			extraEnv: { GWD_TOOL_APPROVAL: "auto" },
 		});
 
 		const events = parseJsonEvents(result.stdoutClean);

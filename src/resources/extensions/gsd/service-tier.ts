@@ -38,7 +38,7 @@ const SERVICE_TIER_SCOPE_NOTE = "Only affects gpt-5.4 models, regardless of prov
  * GPT-5.5 is intentionally excluded until we verify its provider payload
  * contract instead of assuming `service_tier` support.
  *
- * See: https://github.com/gsd-build/gsd-2/issues/2546
+ * See: https://github.com/gwd-build/gwd-2/issues/2546
  */
 const SERVICE_TIER_MODEL_PREFIXES = ["gpt-5.4"] as const;
 

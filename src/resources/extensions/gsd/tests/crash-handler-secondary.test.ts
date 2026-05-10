@@ -24,10 +24,10 @@ function makeTmpBase(): string {
 
 describe('register-extension crash handler secondary fixes (#3348)', () => {
   test('writeCrashLog is exported and writes a file to the crash directory', async () => {
-    // Dynamic import so GSD_HOME can be pointed at a temp dir without polluting ~/.gsd
+    // Dynamic import so GWD_HOME can be pointed at a temp dir without polluting ~/.gsd
     const tmpHome = join(tmpdir(), `gsd-crash-test-${randomUUID()}`);
-    const origHome = process.env.GSD_HOME;
-    process.env.GSD_HOME = tmpHome;
+    const origHome = process.env.GWD_HOME;
+    process.env.GWD_HOME = tmpHome;
     try {
       const { writeCrashLog } = await import('../bootstrap/crash-log.ts');
       const err = new Error('test crash from secondary regression test');
@@ -44,7 +44,7 @@ describe('register-extension crash handler secondary fixes (#3348)', () => {
       assert.ok(content.includes('uncaughtException'), 'log should identify the source');
       assert.ok(content.includes('pid:'), 'log should include process pid');
     } finally {
-      process.env.GSD_HOME = origHome;
+      process.env.GWD_HOME = origHome;
       rmSync(tmpHome, { recursive: true, force: true });
     }
   });
@@ -65,14 +65,14 @@ describe('register-extension crash handler secondary fixes (#3348)', () => {
     assert.ok(listener, '_gsdEpipeGuard should be registered');
 
     const tmpHome = join(tmpdir(), `gsd-crash-exit-test-${randomUUID()}`);
-    const origHome = process.env.GSD_HOME;
+    const origHome = process.env.GWD_HOME;
     const originalExit = process.exit;
     let exitCode: number | string | null | undefined;
     (process as any).exit = (code?: number | string | null | undefined): never => {
       exitCode = code;
       throw new Error("process.exit intercepted");
     };
-    process.env.GSD_HOME = tmpHome;
+    process.env.GWD_HOME = tmpHome;
     try {
       assert.throws(
         () => listener(new Error("unrecoverable crash guard test"), "uncaughtException"),
@@ -85,25 +85,25 @@ describe('register-extension crash handler secondary fixes (#3348)', () => {
       assert.match(readFileSync(join(crashDir, logs[0]), "utf-8"), /unrecoverable crash guard test/);
     } finally {
       (process as any).exit = originalExit;
-      process.env.GSD_HOME = origHome;
+      process.env.GWD_HOME = origHome;
       rmSync(tmpHome, { recursive: true, force: true });
     }
   });
 
   test('writeCrashLog never throws even when directory is unwritable', async () => {
     const { writeCrashLog } = await import('../bootstrap/crash-log.ts');
-    const origHome = process.env.GSD_HOME;
+    const origHome = process.env.GWD_HOME;
     // Point at a path that will fail to mkdir (e.g. a file that exists as non-dir)
     const tmpFile = join(tmpdir(), `gsd-not-a-dir-${randomUUID()}`);
     // Don't create it — mkdirSync with bad path should be caught internally
-    process.env.GSD_HOME = join(tmpFile, 'nested', 'deeply');
+    process.env.GWD_HOME = join(tmpFile, 'nested', 'deeply');
     try {
       // Should not throw
       assert.doesNotThrow(() => {
         writeCrashLog(new Error('should not throw'), 'test');
       });
     } finally {
-      process.env.GSD_HOME = origHome;
+      process.env.GWD_HOME = origHome;
     }
   });
 });

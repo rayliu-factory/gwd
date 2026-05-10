@@ -164,7 +164,7 @@ function isProjectGsd(gsdPath: string): boolean {
     if (stat.isSymbolicLink()) return true;
 
     // For real directories, check that this isn't the global GSD home.
-    // Recompute gsdHome dynamically so env overrides (GSD_HOME) are
+    // Recompute gsdHome dynamically so env overrides (GWD_HOME) are
     // picked up at call time, not just at module load time.
     if (stat.isDirectory()) {
       const currentGsdHome = gsdHome();
@@ -260,7 +260,7 @@ function resolveGitRoot(basePath: string): string {
 }
 
 /**
- * Validate a GSD_PROJECT_ID value.
+ * Validate a GWD_PROJECT_ID value.
  *
  * Must contain only alphanumeric characters, hyphens, and underscores.
  * Call this once at startup so the user gets immediate feedback on bad values.
@@ -272,7 +272,7 @@ export function validateProjectId(id: string): boolean {
 /**
  * Compute a stable identity for a repository.
  *
- * If `GSD_PROJECT_ID` is set, returns it directly (validation is expected
+ * If `GWD_PROJECT_ID` is set, returns it directly (validation is expected
  * to have already happened at startup via `validateProjectId`).
  *
  * For repos with a remote URL, returns SHA-256 of the remote URL only —
@@ -285,7 +285,7 @@ export function validateProjectId(id: string): boolean {
  * which worktree the caller is inside.
  */
 export function repoIdentity(basePath: string): string {
-  const projectId = process.env.GSD_PROJECT_ID;
+  const projectId = process.env.GWD_PROJECT_ID;
   if (projectId) {
     return projectId;
   }
@@ -306,20 +306,20 @@ export function repoIdentity(basePath: string): string {
 /**
  * Compute the external GSD state directory for a repository.
  *
- * Returns `$GSD_STATE_DIR/projects/<hash>` if `GSD_STATE_DIR` is set,
+ * Returns `$GWD_STATE_DIR/projects/<hash>` if `GWD_STATE_DIR` is set,
  * otherwise `~/.gsd/projects/<hash>`.
  */
 export function externalGsdRoot(basePath: string): string {
-  const base = process.env.GSD_STATE_DIR || gsdHome();
+  const base = process.env.GWD_STATE_DIR || gsdHome();
   return join(base, "projects", repoIdentity(basePath));
 }
 
 /**
  * Resolve the root directory that stores project-scoped external state.
- * Honors GSD_STATE_DIR override before falling back to GSD_HOME.
+ * Honors GWD_STATE_DIR override before falling back to GWD_HOME.
  */
 export function externalProjectsRoot(): string {
-  const base = process.env.GSD_STATE_DIR || gsdHome();
+  const base = process.env.GWD_STATE_DIR || gsdHome();
   return join(base, "projects");
 }
 
@@ -338,14 +338,14 @@ export function externalProjectsRoot(): string {
  * removes them. It is called early in `ensureGsdSymlink()` so that the
  * canonical `.gsd` path is always the one in use.
  */
-const GSD_NUMBERED_VARIANT_RE = /^\.gsd \d+$/;
+const GWD_NUMBERED_VARIANT_RE = /^\.gsd \d+$/;
 
 export function cleanNumberedGsdVariants(projectPath: string): string[] {
   const removed: string[] = [];
   try {
     const entries = readdirSync(projectPath);
     for (const entry of entries) {
-      if (GSD_NUMBERED_VARIANT_RE.test(entry)) {
+      if (GWD_NUMBERED_VARIANT_RE.test(entry)) {
         const fullPath = join(projectPath, entry);
         try {
           rmSync(fullPath, { recursive: true, force: true });
@@ -440,7 +440,7 @@ function resolveExternalPathWithRecovery(projectPath: string): string {
   const markerId = readGsdIdMarker(projectPath);
   if (markerId && markerId !== computedId) {
     // The marker points to a different identity — the repo was likely moved.
-    const base = process.env.GSD_STATE_DIR || gsdHome();
+    const base = process.env.GWD_STATE_DIR || gsdHome();
     const markerPath = join(base, "projects", markerId);
     if (hasProjectState(markerPath)) {
       // Recover: use the old state directory and update the marker to the new identity.

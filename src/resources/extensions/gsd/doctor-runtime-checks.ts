@@ -374,7 +374,7 @@ export async function checkRuntimeHealth(
       );
 
       // Check for critical runtime patterns that must be present.
-      // NOTE: GSD_RUNTIME_PATTERNS in gitignore.ts is the canonical source of truth.
+      // NOTE: GWD_RUNTIME_PATTERNS in gitignore.ts is the canonical source of truth.
       // This is a minimal subset for the doctor check.
       const criticalPatterns = [
         ".gsd/activity/",

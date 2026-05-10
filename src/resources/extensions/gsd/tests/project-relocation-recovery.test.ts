@@ -66,16 +66,16 @@ describe("project-relocation-recovery (#2750)", () => {
   let savedStateDir: string | undefined;
 
   before(() => {
-    savedStateDir = process.env.GSD_STATE_DIR;
+    savedStateDir = process.env.GWD_STATE_DIR;
     stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-state-")));
-    process.env.GSD_STATE_DIR = stateDir;
+    process.env.GWD_STATE_DIR = stateDir;
   });
 
   after(() => {
     if (savedStateDir !== undefined) {
-      process.env.GSD_STATE_DIR = savedStateDir;
+      process.env.GWD_STATE_DIR = savedStateDir;
     } else {
-      delete process.env.GSD_STATE_DIR;
+      delete process.env.GWD_STATE_DIR;
     }
     rmSync(stateDir, { recursive: true, force: true });
   });

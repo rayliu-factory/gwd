@@ -41,13 +41,13 @@ import {
 
 function makeTempProject(): { dir: string; cleanup: () => void; restoreEnv: () => void } {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.GWD_HOME;
   const dir = mkdtempSync(join(tmpdir(), "gsd-policy-poison-"));
   const home = mkdtempSync(join(tmpdir(), "gsd-policy-home-"));
   mkdirSync(join(dir, ".gsd"), { recursive: true });
   // Empty PREFERENCES so default uok.model_policy.enabled = true applies.
   writeFileSync(join(dir, ".gsd", "PREFERENCES.md"), "---\n---\n", "utf-8");
-  process.env.GSD_HOME = home;
+  process.env.GWD_HOME = home;
   process.chdir(dir);
   return {
     dir,
@@ -57,8 +57,8 @@ function makeTempProject(): { dir: string; cleanup: () => void; restoreEnv: () =
     },
     restoreEnv: () => {
       process.chdir(originalCwd);
-      if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-      else process.env.GSD_HOME = originalGsdHome;
+      if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+      else process.env.GWD_HOME = originalGsdHome;
     },
   };
 }

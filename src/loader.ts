@@ -98,7 +98,7 @@ process.env.PI_SKIP_VERSION_CHECK = '1'  // GSD runs its own update check in cli
 process.title = CLI_COMMAND
 
 // Print branded banner on first launch (before ~/.gwd/ exists).
-// Set GSD_FIRST_RUN_BANNER so cli.ts skips the duplicate welcome screen.
+// Set GWD_FIRST_RUN_BANNER so cli.ts skips the duplicate welcome screen.
 if (!existsSync(appRoot)) {
   const cyan  = '\x1b[36m'
   const green = '\x1b[32m'
@@ -111,11 +111,11 @@ if (!existsSync(appRoot)) {
     `  ${PRODUCT_FULL_NAME} ${dim}v${gsdVersion}${reset}\n` +
     `  ${green}Welcome.${reset} Setting up your environment...\n\n`
   )
-  process.env.GSD_FIRST_RUN_BANNER = '1'
+  process.env.GWD_FIRST_RUN_BANNER = '1'
 }
 
-// GSD_CODING_AGENT_DIR — tells pi's getAgentDir() to return ~/.gsd/agent/ instead of ~/.gsd/agent/
-process.env.GSD_CODING_AGENT_DIR = agentDir
+// GWD_CODING_AGENT_DIR — tells pi's getAgentDir() to return ~/.gwd/agent/
+process.env.GWD_CODING_AGENT_DIR = agentDir
 
 // GWD_PKG_ROOT — absolute path to the gwd-pi package root. Used by deployed extensions
 // (e.g. auto.ts resume path) to import modules like resource-loader.js that live
@@ -143,19 +143,19 @@ const { Module } = await import('module');
 // GWD_VERSION — expose package version so extensions can display it
 process.env[GWD_VERSION_ENV] = gsdVersion
 
-// GSD_BIN_PATH — absolute path to the CLI entrypoint, used by patched
+// GWD_BIN_PATH — absolute path to the CLI entrypoint, used by patched
 // subagent/parallel workers to spawn gsd instead of pi when dispatching
 // workflow tasks. In source-dev mode this must remain scripts/dev-cli.js, not
 // src/loader.ts, because child processes need the --import resolve-ts wrapper.
 applyLoaderCliEntrypointEnv(process.env, { gsdRoot, invokedBinPath: process.argv[1] })
 
-// GSD_WORKFLOW_PATH — absolute path to bundled GSD-WORKFLOW.md, used by patched gsd extension
+// GWD_WORKFLOW_PATH — absolute path to bundled GSD-WORKFLOW.md, used by patched gsd extension
 // when dispatching workflow prompts. Prefers dist/resources/ (stable, set at build time)
 // over src/resources/ (live working tree) — see resource-loader.ts for rationale.
 const resourcesDir = resolveBundledResourcesDirFromPackageRoot(gsdRoot)
-process.env.GSD_WORKFLOW_PATH = join(resourcesDir, 'GSD-WORKFLOW.md')
+process.env.GWD_WORKFLOW_PATH = join(resourcesDir, 'GSD-WORKFLOW.md')
 
-// GSD_BUNDLED_EXTENSION_PATHS — dynamically discovered bundled extension entry points.
+// GWD_BUNDLED_EXTENSION_PATHS — dynamically discovered bundled extension entry points.
 // Uses the shared discoverExtensionEntryPaths() to scan the bundled resources
 // directory, then remaps discovered paths to agentDir (~/.gsd/agent/extensions/)
 // where initResources() will sync them.
@@ -170,7 +170,7 @@ const discoveredExtensionPaths = discoverExtensionEntryPaths(bundledExtDir)
     return isExtensionEnabled(registry, manifest.id)
   })
 
-process.env.GSD_BUNDLED_EXTENSION_PATHS = serializeBundledExtensionPaths(discoveredExtensionPaths)
+process.env.GWD_BUNDLED_EXTENSION_PATHS = serializeBundledExtensionPaths(discoveredExtensionPaths)
 
 // Respect HTTP_PROXY / HTTPS_PROXY / NO_PROXY env vars for all outbound requests.
 // pi-coding-agent's cli.ts sets this, but GSD bypasses that entry point — so we

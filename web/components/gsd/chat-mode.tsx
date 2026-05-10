@@ -42,7 +42,7 @@ interface GSDActionDef {
   disabledDuringAuto?: boolean
 }
 
-const GSD_ACTIONS: GSDActionDef[] = [
+const GWD_ACTIONS: GSDActionDef[] = [
   // ── Top 3 (standalone buttons) ──
   { label: "Discuss",   command: "/gsd discuss",   icon: MessageCircle,     description: "Start guided milestone/slice discussion",                    category: "workflow",    disabledDuringAuto: true },
   { label: "Next",      command: "/gsd next",      icon: Play,              description: "Execute next task, then pause",                              category: "workflow" },
@@ -74,9 +74,9 @@ const GSD_ACTIONS: GSDActionDef[] = [
 ]
 
 /** Top 3 shown as standalone buttons next to chat input */
-const TOP_ACTIONS = GSD_ACTIONS.slice(0, 3)
+const TOP_ACTIONS = GWD_ACTIONS.slice(0, 3)
 /** Remaining actions in the overflow menu */
-const OVERFLOW_ACTIONS = GSD_ACTIONS.slice(3)
+const OVERFLOW_ACTIONS = GWD_ACTIONS.slice(3)
 
 const CATEGORY_LABELS: Record<GSDActionDef["category"], string> = {
   workflow: "Workflow",

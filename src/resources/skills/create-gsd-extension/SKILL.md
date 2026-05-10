@@ -11,7 +11,7 @@ description: Create, debug, and iterate on GSD extensions (TypeScript modules th
 - Global: `~/.pi/agent/extensions/*.ts` or `~/.pi/agent/extensions/*/index.ts`
 - Project-local: `.gsd/extensions/*.ts` or `.gsd/extensions/*/index.ts`
 
-Note: `~/.gsd/agent/extensions/` is reserved for bundled extensions synced from the gsd-pi package. Community extensions placed there are silently ignored by the loader.
+Note: `~/.gsd/agent/extensions/` is reserved for bundled extensions synced from the gwd-pi package. Community extensions placed there are silently ignored by the loader.
 
 **The three primitives:**
 1. **Events** — Listen and react (`pi.on("event", handler)`). Can block tool calls, modify messages, inject context.
@@ -19,8 +19,8 @@ Note: `~/.gsd/agent/extensions/` is reserved for bundled extensions synced from 
 3. **Commands** — Give users slash commands (`pi.registerCommand()`). Users type `/mycommand`.
 
 **Non-negotiable rules:**
-- Use `StringEnum` from `@gsd/pi-ai` for string enum params (NOT `Type.Union`/`Type.Literal` — breaks Google's API)
-- Truncate tool output to 50KB / 2000 lines max (use `truncateHead`/`truncateTail` from `@gsd/pi-coding-agent`)
+- Use `StringEnum` from `@gwd/pi-ai` for string enum params (NOT `Type.Union`/`Type.Literal` — breaks Google's API)
+- Truncate tool output to 50KB / 2000 lines max (use `truncateHead`/`truncateTail` from `@gwd/pi-coding-agent`)
 - Store stateful tool state in `details` for branching support
 - Check `signal?.aborted` in long-running tool executions
 - Use `pi.exec()` not `child_process` for shell commands
@@ -34,10 +34,10 @@ Note: `~/.gsd/agent/extensions/` is reserved for bundled extensions synced from 
 
 | Package | Purpose |
 |---------|---------|
-| `@gsd/pi-coding-agent` | `ExtensionAPI`, `ExtensionContext`, `Theme`, event types, tool utilities, `DynamicBorder`, `BorderedLoader`, `CustomEditor`, `highlightCode` |
+| `@gwd/pi-coding-agent` | `ExtensionAPI`, `ExtensionContext`, `Theme`, event types, tool utilities, `DynamicBorder`, `BorderedLoader`, `CustomEditor`, `highlightCode` |
 | `@sinclair/typebox` | `Type.Object`, `Type.String`, `Type.Number`, `Type.Optional`, `Type.Boolean`, `Type.Array` |
-| `@gsd/pi-ai` | `StringEnum` (required for string enums), `Type` re-export |
-| `@gsd/pi-tui` | `Text`, `Box`, `Container`, `Spacer`, `Markdown`, `SelectList`, `Input`, `matchesKey`, `Key`, `truncateToWidth`, `visibleWidth` |
+| `@gwd/pi-ai` | `StringEnum` (required for string enums), `Type` re-export |
+| `@gwd/pi-tui` | `Text`, `Box`, `Container`, `Spacer`, `Markdown`, `SelectList`, `Input`, `matchesKey`, `Key`, `truncateToWidth`, `visibleWidth` |
 | Node.js built-ins | `node:fs`, `node:path`, `node:child_process`, etc. |
 
 </essential_principles>

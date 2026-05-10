@@ -104,7 +104,7 @@ test("runAutoLoopWithUok uses kernel path by default and records uok-kernel pari
     assert.ok(args.calls.kernelDeps);
     assert.notEqual(args.calls.kernelDeps, args.deps);
     assert.ok(args.calls.kernelDeps?.uokObserver);
-    assert.equal(process.env.GSD_UOK_AUDIT_UNIFIED, "0");
+    assert.equal(process.env.GWD_UOK_AUDIT_UNIFIED, "0");
 
     const events = readParityEvents(basePath);
     assert.equal(events.length, 2);
@@ -148,10 +148,10 @@ test("runAutoLoopWithUok uses legacy path when explicit legacy fallback is enabl
   }
 });
 
-test("runAutoLoopWithUok respects GSD_UOK_FORCE_LEGACY emergency switch", async () => {
+test("runAutoLoopWithUok respects GWD_UOK_FORCE_LEGACY emergency switch", async () => {
   const basePath = makeBasePath();
-  const previous = process.env.GSD_UOK_FORCE_LEGACY;
-  process.env.GSD_UOK_FORCE_LEGACY = "1";
+  const previous = process.env.GWD_UOK_FORCE_LEGACY;
+  process.env.GWD_UOK_FORCE_LEGACY = "1";
   try {
     resetLegacyTelemetry();
     const args = makeArgs(basePath, {
@@ -171,8 +171,8 @@ test("runAutoLoopWithUok respects GSD_UOK_FORCE_LEGACY emergency switch", async 
     assert.equal(getLegacyTelemetry()["legacy.uokFallbackUsed"], 1);
   } finally {
     resetLegacyTelemetry();
-    if (previous === undefined) delete process.env.GSD_UOK_FORCE_LEGACY;
-    else process.env.GSD_UOK_FORCE_LEGACY = previous;
+    if (previous === undefined) delete process.env.GWD_UOK_FORCE_LEGACY;
+    else process.env.GWD_UOK_FORCE_LEGACY = previous;
     rmSync(basePath, { recursive: true, force: true });
   }
 });

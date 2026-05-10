@@ -155,7 +155,7 @@ export interface StartSessionOptions {
   /** Run in bare mode (skip user config) */
   bare?: boolean;
 
-  /** Path to CLI binary (overrides GSD_CLI_PATH and which resolution) */
+  /** Path to CLI binary (overrides GWD_CLI_PATH and which resolution) */
   cliPath?: string;
 }
 

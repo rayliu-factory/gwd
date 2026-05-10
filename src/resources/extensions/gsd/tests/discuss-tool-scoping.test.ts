@@ -93,7 +93,7 @@ describe("discuss tool scoping (#2949)", () => {
   });
 
   test("dispatchWorkflow scopes and restores tools for discuss unit types", async () => {
-    const originalWorkflowPath = process.env.GSD_WORKFLOW_PATH;
+    const originalWorkflowPath = process.env.GWD_WORKFLOW_PATH;
     const tmp = mkdtempSync(join(tmpdir(), "gsd-discuss-tools-"));
     const workflowPath = join(tmp, "GSD-WORKFLOW.md");
     writeFileSync(workflowPath, "# Workflow\n");
@@ -101,7 +101,7 @@ describe("discuss tool scoping (#2949)", () => {
     const sent: unknown[] = [];
     let sentTools: string[] = [];
     let activeTools = ["gsd_summary_save", "gsd_complete_task", "bash"];
-    process.env.GSD_WORKFLOW_PATH = workflowPath;
+    process.env.GWD_WORKFLOW_PATH = workflowPath;
     try {
       await _dispatchWorkflowForTest(
         {
@@ -121,8 +121,8 @@ describe("discuss tool scoping (#2949)", () => {
         "discuss-milestone",
       );
     } finally {
-      if (originalWorkflowPath === undefined) delete process.env.GSD_WORKFLOW_PATH;
-      else process.env.GSD_WORKFLOW_PATH = originalWorkflowPath;
+      if (originalWorkflowPath === undefined) delete process.env.GWD_WORKFLOW_PATH;
+      else process.env.GWD_WORKFLOW_PATH = originalWorkflowPath;
       rmSync(tmp, { recursive: true, force: true });
     }
 

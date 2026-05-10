@@ -11,7 +11,7 @@ import { join } from 'node:path'
 import os from 'node:os'
 import chalk from 'chalk'
 import stripAnsi from 'strip-ansi'
-import { GSD_LOGO } from './logo.js'
+import { GWD_LOGO } from './logo.js'
 
 interface GsdState {
   milestone?: string
@@ -108,7 +108,7 @@ export function buildWelcomeScreenLines(opts: WelcomeScreenOptions): string[] {
   const H = '─', DV = '│', DS = '├'
 
   // ── Left rows: blank + 6 logo lines + blank (8 total) ───────────────────────
-  const leftRows = ['', ...GSD_LOGO, '']
+  const leftRows = ['', ...GWD_LOGO, '']
 
   // ── Right rows (8 total, null = divider) ────────────────────────────────────
   const titleLeft  = `  ${chalk.bold('Get Shit Done')}`

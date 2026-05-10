@@ -183,15 +183,15 @@ function git(basePath: string, args: string[]): string {
 }
 
 function withProjectGitEnv(projectCwd: string, run: () => Promise<void>): Promise<void> {
-  const previousProjectCwd = process.env.GSD_WEB_PROJECT_CWD
-  process.env.GSD_WEB_PROJECT_CWD = projectCwd
+  const previousProjectCwd = process.env.GWD_WEB_PROJECT_CWD
+  process.env.GWD_WEB_PROJECT_CWD = projectCwd
 
   return run().finally(() => {
     if (previousProjectCwd === undefined) {
-      delete process.env.GSD_WEB_PROJECT_CWD
+      delete process.env.GWD_WEB_PROJECT_CWD
       return
     }
-    process.env.GSD_WEB_PROJECT_CWD = previousProjectCwd
+    process.env.GWD_WEB_PROJECT_CWD = previousProjectCwd
   })
 }
 
@@ -228,9 +228,9 @@ function configureBridgeFixture(
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      GWD_WEB_PROJECT_CWD: fixture.projectCwd,
+      GWD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      GWD_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
   })

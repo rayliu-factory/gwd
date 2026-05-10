@@ -199,9 +199,9 @@ describe('derive-state-db', async () => {
   // ─── Test 2: DB-unavailable runtime does not derive from markdown ──────
   test('derive-state-db: DB-unavailable runtime does not derive from markdown by default', async () => {
     const base = createFixtureBase();
-    const prev = process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK;
+    const prev = process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK;
     try {
-      process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK = '0';
+      process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK = '0';
       writeFile(base, 'milestones/M001/M001-ROADMAP.md', ROADMAP_CONTENT);
       writeFile(base, 'milestones/M001/slices/S01/S01-PLAN.md', PLAN_CONTENT);
       writeFile(base, 'milestones/M001/slices/S01/tasks/.gitkeep', '');
@@ -221,22 +221,22 @@ describe('derive-state-db', async () => {
         'runtime degrade: blocker explains unavailable DB',
       );
     } finally {
-      if (prev === undefined) delete process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK;
-      else process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK = prev;
+      if (prev === undefined) delete process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK;
+      else process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK = prev;
       cleanup(base);
     }
   });
 
   test('derive-state-db: explicit legacy markdown fallback remains opt-in', async () => {
     const base = createFixtureBase();
-    const prev = process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK;
+    const prev = process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK;
     try {
       writeFile(base, 'milestones/M001/M001-ROADMAP.md', ROADMAP_CONTENT);
       writeFile(base, 'milestones/M001/slices/S01/S01-PLAN.md', PLAN_CONTENT);
       writeFile(base, 'milestones/M001/slices/S01/tasks/.gitkeep', '');
       writeFile(base, 'milestones/M001/slices/S01/tasks/T01-PLAN.md', '# T01 Plan');
 
-      process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK = '1';
+      process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK = '1';
 
       assert.ok(!isDbAvailable(), 'fallback: DB is not available');
       invalidateStateCache();
@@ -247,8 +247,8 @@ describe('derive-state-db', async () => {
       assert.deepStrictEqual(state.activeSlice?.id, 'S01', 'fallback: activeSlice is S01');
       assert.deepStrictEqual(state.activeTask?.id, 'T01', 'fallback: activeTask is T01');
     } finally {
-      if (prev === undefined) delete process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK;
-      else process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK = prev;
+      if (prev === undefined) delete process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK;
+      else process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK = prev;
       cleanup(base);
     }
   });

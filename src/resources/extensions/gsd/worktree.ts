@@ -100,7 +100,7 @@ export function detectWorktreeName(basePath: string): string | null {
  * If the path contains a worktrees segment, returns the portion before
  * `/.gsd/`. Otherwise returns the input unchanged.
  *
- * When the worker was spawned with GSD_PROJECT_ROOT set, use that directly —
+ * When the worker was spawned with GWD_PROJECT_ROOT set, use that directly —
  * the coordinator already knows the real project root unambiguously.
  *
  * When `/.gsd/` in the resolved path is actually the user-level `~/.gsd/`

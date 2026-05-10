@@ -90,7 +90,7 @@ export async function guardRemoteSession(
 
   // In RPC/web bridge mode, interactive TUI prompts (showNextAction) block
   // forever because there is no terminal to answer them. Notify and bail.
-  if (process.env.GSD_WEB_BRIDGE_TUI === "1") {
+  if (process.env.GWD_WEB_BRIDGE_TUI === "1") {
     ctx.ui.notify(
       `Another auto-mode session (PID ${remote.pid}) is running on this project (${unitLabel}). ` +
       `Stop it first with /gsd stop, or use /gsd steer to redirect it.`,

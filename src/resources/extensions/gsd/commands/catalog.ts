@@ -12,7 +12,7 @@ export interface GsdCommandDefinition {
 
 type CompletionMap = Record<string, readonly GsdCommandDefinition[]>;
 
-export const GSD_COMMAND_DESCRIPTION =
+export const GWD_COMMAND_DESCRIPTION =
   "GSD — Get Shit Done: /gsd help|start|templates|next|auto|stop|pause|status|widget|visualize|queue|quick|discuss|capture|triage|dispatch|history|undo|undo-task|reset-slice|rate|skip|export|cleanup|model|mode|prefs|config|keys|hooks|run-hook|skill-health|doctor|debug|logs|forensics|changelog|migrate|remote|steer|knowledge|new-milestone|new-project|parallel|cmux|park|unpark|init|setup|onboarding|inspect|extensions|update|fast|mcp|rethink|workflow|codebase|notifications|ship|do|session-report|backlog|pr-branch|add-tests|scan|language|worktree|eval-review";
 
 export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
@@ -404,7 +404,7 @@ function resolveProjectRootFromGitFile(worktreePath: string): string | null {
 }
 
 function resolveProjectRootForCompletion(basePath: string): string {
-  if (process.env.GSD_PROJECT_ROOT) return process.env.GSD_PROJECT_ROOT;
+  if (process.env.GWD_PROJECT_ROOT) return process.env.GWD_PROJECT_ROOT;
 
   const normalizedPath = normalizePathForCompare(basePath);
   const segment = findWorktreeSegment(normalizedPath);

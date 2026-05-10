@@ -102,7 +102,7 @@ function getDefaultShell(): string {
 }
 
 function getProjectCwd(): string {
-  return process.env.GSD_WEB_PROJECT_CWD || process.cwd();
+  return process.env.GWD_WEB_PROJECT_CWD || process.cwd();
 }
 
 function getShellArgs(): string[] {
@@ -120,7 +120,7 @@ interface TerminalSpawnSpec {
 }
 
 const ALLOWED_TERMINAL_COMMANDS = new Set([
-  "gsd",
+  "gwd",
   process.env.SHELL || "/bin/zsh",
   "/bin/bash",
   "/bin/zsh",
@@ -142,13 +142,13 @@ function resolveTerminalSpawnSpec(cwd: string, command?: string, commandArgs: st
     };
   }
 
-  if (command === "gsd") {
+  if (command === "gwd") {
     try {
       const cliEntry = resolveGsdCliEntry({
-        packageRoot: process.env.GSD_WEB_PACKAGE_ROOT || process.cwd(),
+        packageRoot: process.env.GWD_WEB_PACKAGE_ROOT || process.cwd(),
         cwd,
         execPath: process.execPath,
-        hostKind: process.env.GSD_WEB_HOST_KIND,
+        hostKind: process.env.GWD_WEB_HOST_KIND,
         mode: "interactive",
         messages: commandArgs,
       });
@@ -156,11 +156,11 @@ function resolveTerminalSpawnSpec(cwd: string, command?: string, commandArgs: st
       return {
         executable: cliEntry.command,
         args: cliEntry.args,
-        label: "gsd",
+        label: "gwd",
       };
     } catch (error) {
       console.warn(
-        "[pty] Falling back to PATH-resolved gsd:",
+        "[pty] Falling back to PATH-resolved gwd:",
         error instanceof Error ? error.message : String(error),
       );
     }
@@ -177,7 +177,7 @@ function getNodePtyCandidateRoots(): string[] {
   const roots = new Set<string>();
   roots.add(process.cwd());
 
-  const packageRoot = process.env.GSD_WEB_PACKAGE_ROOT;
+  const packageRoot = process.env.GWD_WEB_PACKAGE_ROOT;
   if (packageRoot) {
     roots.add(packageRoot);
     roots.add(join(packageRoot, "dist", "web", "standalone"));
@@ -285,11 +285,11 @@ export function getOrCreateSession(sessionId: string, projectCwd?: string, comma
   const spawnSpec = resolveTerminalSpawnSpec(cwd, command, commandArgs);
   console.log("[pty] Spawning command:", spawnSpec.label, "cwd:", cwd, "node-pty:", nodePtyRoot);
 
-  // Build a clean env — remove GSD-specific vars that would confuse a shell.
-  // We preserve them if the command is "gsd" because the CLI needs its configuration.
+  // Build a clean env — remove GWD-specific vars that would confuse a shell.
+  // We preserve them if the command is "gwd" because the CLI needs its configuration.
   const cleanEnv: Record<string, string> = {};
   for (const [key, value] of Object.entries(process.env)) {
-    if (value !== undefined && (command === "gsd" || !key.startsWith("GSD_WEB_"))) {
+    if (value !== undefined && (command === "gwd" || !key.startsWith("GWD_WEB_"))) {
       cleanEnv[key] = value;
     }
   }
@@ -301,7 +301,7 @@ export function getOrCreateSession(sessionId: string, projectCwd?: string, comma
   cleanEnv.LESSHISTFILE = "/dev/null";
   cleanEnv.NODE_REPL_HISTORY = "/dev/null";
   if (command) {
-    cleanEnv.GSD_WEB_PTY = "1";
+    cleanEnv.GWD_WEB_PTY = "1";
   }
 
   let ptyProcess: IPty;

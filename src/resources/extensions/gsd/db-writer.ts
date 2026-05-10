@@ -13,7 +13,7 @@ import { readFileSync, existsSync, statSync } from 'node:fs';
 import type { Decision, Requirement } from './types.js';
 import { resolveGsdRootFile } from './paths.js';
 import { saveFile } from './files.js';
-import { GSDError, GSD_STALE_STATE, GSD_IO_ERROR } from './errors.js';
+import { GSDError, GWD_STALE_STATE, GWD_IO_ERROR } from './errors.js';
 import { logWarning, logError } from './workflow-logger.js';
 import { invalidateStateCache } from './state.js';
 import { clearPathCache } from './paths.js';
@@ -308,7 +308,7 @@ export async function saveRequirementToDb(
     // Atomic ID assignment + insert inside a transaction.
     const txResult = db.transaction(() => {
       const adapter = db._getAdapter();
-      if (!adapter) throw new GSDError(GSD_STALE_STATE, "gsd-db: No database open");
+      if (!adapter) throw new GSDError(GWD_STALE_STATE, "gsd-db: No database open");
 
       const existingRow = adapter
         .prepare(
@@ -733,14 +733,14 @@ export async function saveArtifactToDbForWorkspace(
 
     const rel0 = relative(gsdDir, fullPath);
     if (rel0.startsWith('..') || isAbsolute(rel0)) {
-      throw new GSDError(GSD_IO_ERROR, `saveArtifactToDbForWorkspace: path escapes .gsd/ directory: ${opts.path}`);
+      throw new GSDError(GWD_IO_ERROR, `saveArtifactToDbForWorkspace: path escapes .gsd/ directory: ${opts.path}`);
     }
 
     let contentToPersist = opts.content;
     if (opts.artifact_type === 'REQUIREMENTS' && opts.path === 'REQUIREMENTS.md') {
       const activeRequirements = db.getActiveRequirements();
       if (activeRequirements.length === 0) {
-        throw new GSDError(GSD_STALE_STATE, 'saveArtifactToDbForWorkspace: REQUIREMENTS final save requires active DB-backed requirements');
+        throw new GSDError(GWD_STALE_STATE, 'saveArtifactToDbForWorkspace: REQUIREMENTS final save requires active DB-backed requirements');
       }
       contentToPersist = generateRequirementsMd(activeRequirements);
     }
@@ -794,7 +794,7 @@ export async function saveArtifactToDbByScope(
   // Guard: an empty milestoneId produces malformed paths (milestoneDir = join(gsd, "milestones", "")).
   // Callers that have no milestone should use saveArtifactToDbForWorkspace instead.
   if (!scope.milestoneId) {
-    throw new GSDError(GSD_IO_ERROR, `saveArtifactToDbByScope: milestoneId is empty — use saveArtifactToDbForWorkspace for root artifacts`);
+    throw new GSDError(GWD_IO_ERROR, `saveArtifactToDbByScope: milestoneId is empty — use saveArtifactToDbForWorkspace for root artifacts`);
   }
 
   try {
@@ -807,14 +807,14 @@ export async function saveArtifactToDbByScope(
     // Guard against path traversal before any reads/writes
     const rel1 = relative(gsdDir, fullPath);
     if (rel1.startsWith('..') || isAbsolute(rel1)) {
-      throw new GSDError(GSD_IO_ERROR, `saveArtifactToDbByScope: path escapes .gsd/ directory: ${opts.path}`);
+      throw new GSDError(GWD_IO_ERROR, `saveArtifactToDbByScope: path escapes .gsd/ directory: ${opts.path}`);
     }
 
     let contentToPersist = opts.content;
     if (opts.artifact_type === 'REQUIREMENTS' && opts.path === 'REQUIREMENTS.md') {
       const activeRequirements = db.getActiveRequirements();
       if (activeRequirements.length === 0) {
-        throw new GSDError(GSD_STALE_STATE, 'saveArtifactToDbByScope: REQUIREMENTS final save requires active DB-backed requirements');
+        throw new GSDError(GWD_STALE_STATE, 'saveArtifactToDbByScope: REQUIREMENTS final save requires active DB-backed requirements');
       }
       contentToPersist = generateRequirementsMd(activeRequirements);
     }

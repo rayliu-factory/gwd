@@ -15,8 +15,8 @@ export function buildDevCliChildEnv(baseEnv, devCliPath) {
     // must re-enter through this wrapper so source-mode TS imports keep
     // using resolve-ts. Pointing them at src/loader.ts directly makes Node
     // resolve .js specifiers without the TS resolver.
-    GSD_DEV_CLI_PATH: devCliPath,
-    GSD_CLI_PATH: devCliPath,
-    GSD_BIN_PATH: devCliPath,
+    GWD_DEV_CLI_PATH: devCliPath,
+    GWD_CLI_PATH: devCliPath,
+    GWD_BIN_PATH: devCliPath,
   }
 }

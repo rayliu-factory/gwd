@@ -21,7 +21,7 @@ import {
 import { createWorktree } from "../worktree-manager.ts";
 
 // This suite exercises the explicit legacy markdown derivation path.
-process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK = '1';
+process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK = '1';
 
 
 // ─── Fixture Helpers ───────────────────────────────────────────────────────

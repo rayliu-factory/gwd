@@ -25,9 +25,9 @@ describe("#4479 — --tools parsing", () => {
 	});
 
 	test("normalizes only the built-in match; extras keep original casing", () => {
-		const args = parseArgs(["--tools", "Read,GSD_Complete_Task"]);
+		const args = parseArgs(["--tools", "Read,GWD_Complete_Task"]);
 		assert.deepEqual(args.tools, ["read"]);
-		assert.deepEqual(args.extraToolNames, ["GSD_Complete_Task"]);
+		assert.deepEqual(args.extraToolNames, ["GWD_Complete_Task"]);
 	});
 
 	test("filters empty entries from comma-separated list", () => {

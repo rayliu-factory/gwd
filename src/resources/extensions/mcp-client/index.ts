@@ -2,8 +2,8 @@
  * MCP Client Extension — Native MCP server integration for pi
  *
  * Provides on-demand access to MCP servers configured in project files
- * (.mcp.json, .gsd/mcp.json) and the global ~/.gsd/mcp.json (or
- * $GSD_HOME/mcp.json) using the @modelcontextprotocol/sdk Client
+ * (.mcp.json, .gwd/mcp.json) and the global ~/.gwd/mcp.json (or
+ * $GWD_HOME/mcp.json) using the @modelcontextprotocol/sdk Client
  * directly — no external CLI dependency required.
  *
  * Three tools:
@@ -103,7 +103,7 @@ function readConfigs(): McpServerConfig[] {
 	const seen = new Set<string>();
 	const configPaths = [
 		join(process.cwd(), ".mcp.json"),
-		join(process.cwd(), ".gsd", "mcp.json"),
+		join(process.cwd(), ".gwd", "mcp.json"),
 		join(gsdHome(), "mcp.json"),
 	];
 
@@ -324,7 +324,7 @@ async function closeAll(): Promise<void> {
 // ─── Formatters ───────────────────────────────────────────────────────────────
 
 function formatServerList(servers: McpServerConfig[]): string {
-	if (servers.length === 0) return "No MCP servers configured. Add servers to .mcp.json, .gsd/mcp.json, or $GSD_HOME/mcp.json (default: ~/.gsd/mcp.json).";
+	if (servers.length === 0) return "No MCP servers configured. Add servers to .mcp.json, .gwd/mcp.json, or $GWD_HOME/mcp.json (default: ~/.gwd/mcp.json).";
 
 	const lines: string[] = [`${servers.length} MCP servers configured:\n`];
 
@@ -387,7 +387,7 @@ export default function (pi: ExtensionAPI) {
 		name: "mcp_servers",
 		label: "MCP Servers",
 		description:
-			"List all available MCP servers configured in project files (.mcp.json, .gsd/mcp.json) or globally ($GSD_HOME/mcp.json, default: ~/.gsd/mcp.json). " +
+			"List all available MCP servers configured in project files (.mcp.json, .gwd/mcp.json) or globally ($GWD_HOME/mcp.json, default: ~/.gwd/mcp.json). " +
 			"Shows server names, transport type, and connection status. Use mcp_discover to get full tool schemas for a server.",
 		promptSnippet:
 			"List available MCP servers from project configuration",

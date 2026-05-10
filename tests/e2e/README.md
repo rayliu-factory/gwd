@@ -11,10 +11,10 @@ real argv parsing, real env handling, real signal/exit behavior, real I/O.
 ```bash
 npm run build:core
 chmod +x dist/loader.js
-GSD_SMOKE_BINARY="$(pwd)/dist/loader.js" npm run test:e2e
+GWD_SMOKE_BINARY="$(pwd)/dist/loader.js" npm run test:e2e
 ```
 
-If `GSD_SMOKE_BINARY` is not set, the suite falls back to whatever `gsd`
+If `GWD_SMOKE_BINARY` is not set, the suite falls back to whatever `gsd`
 resolves on PATH (matching the convention used by `tests/live-regression`).
 
 ### Docker e2e (separate suite)
@@ -59,12 +59,12 @@ describe("my feature", () => {
 ## Harness contracts (`_shared/`)
 
 - **`spawn.ts`** — `gsdSync` / `gsdAsync` wrappers. Both:
-  - Resolve `GSD_SMOKE_BINARY` → `node <path>` vs PATH `gsd` automatically.
-  - Strip every `GSD_*` env var inherited from the host (prevents local
+  - Resolve `GWD_SMOKE_BINARY` → `node <path>` vs PATH `gsd` automatically.
+  - Strip every `GWD_*` env var inherited from the host (prevents local
     config leaking into CI).
   - Set `TMPDIR` to the canonical (realpath) tmpdir to avoid the macOS
     `/var` vs `/private/var` symlink mismatch.
-  - Force `GSD_NON_INTERACTIVE=1`.
+  - Force `GWD_NON_INTERACTIVE=1`.
   - Provide ANSI-stripped output via `result.stdoutClean` / `stderrClean`.
 - **`tmp-project.ts`** — `createTmpProject({ git, gsdSkeleton, files })`
   returns `{ dir, cleanup, writeFile }`. Always wire `t.after(cleanup)`.

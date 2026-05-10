@@ -3,9 +3,9 @@
 
 export type ApprovalMode = "ask" | "auto-approve" | "plan-only";
 
-export const GSD_APPROVAL_CONFIG_SECTION = "gsd";
-export const GSD_APPROVAL_CONFIG_KEY = "approvalMode";
-export const GSD_APPROVAL_CONFIG_PATH = `${GSD_APPROVAL_CONFIG_SECTION}.${GSD_APPROVAL_CONFIG_KEY}`;
+export const GWD_APPROVAL_CONFIG_SECTION = "gsd";
+export const GWD_APPROVAL_CONFIG_KEY = "approvalMode";
+export const GWD_APPROVAL_CONFIG_PATH = `${GWD_APPROVAL_CONFIG_SECTION}.${GWD_APPROVAL_CONFIG_KEY}`;
 
 export const APPROVAL_MODES: ApprovalMode[] = ["auto-approve", "ask", "plan-only"];
 

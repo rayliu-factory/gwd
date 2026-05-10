@@ -78,15 +78,15 @@ test("session_switch toggles gsd-health from runtime auto state without touching
   mkdirSync(tempGsdHome, { recursive: true });
 
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
-  process.env.GSD_HOME = tempGsdHome;
+  const originalGsdHome = process.env.GWD_HOME;
+  process.env.GWD_HOME = tempGsdHome;
   process.chdir(dir);
   autoSession.reset();
   t.after(() => {
     autoSession.reset();
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     try { rmSync(dir, { recursive: true, force: true }); } catch { /* best-effort */ }
   });
 
@@ -227,24 +227,24 @@ test("session_start installs the welcome screen as the TUI header", async (t) =>
 
   const originalCwd = process.cwd();
   const originalGsdPkgRoot = process.env.GWD_PKG_ROOT;
-  const originalGsdBinPath = process.env.GSD_BIN_PATH;
+  const originalGsdBinPath = process.env.GWD_BIN_PATH;
   const originalGsdVersion = process.env.GWD_VERSION;
-  const originalFirstRunBanner = process.env.GSD_FIRST_RUN_BANNER;
+  const originalFirstRunBanner = process.env.GWD_FIRST_RUN_BANNER;
   process.chdir(dir);
   process.env.GWD_PKG_ROOT = dir;
-  process.env.GSD_BIN_PATH = join(dir, "bin", "loader.js");
+  process.env.GWD_BIN_PATH = join(dir, "bin", "loader.js");
   process.env.GWD_VERSION = "9.9.9-test";
-  delete process.env.GSD_FIRST_RUN_BANNER;
+  delete process.env.GWD_FIRST_RUN_BANNER;
   t.after(() => {
     process.chdir(originalCwd);
     if (originalGsdPkgRoot === undefined) delete process.env.GWD_PKG_ROOT;
     else process.env.GWD_PKG_ROOT = originalGsdPkgRoot;
-    if (originalGsdBinPath === undefined) delete process.env.GSD_BIN_PATH;
-    else process.env.GSD_BIN_PATH = originalGsdBinPath;
+    if (originalGsdBinPath === undefined) delete process.env.GWD_BIN_PATH;
+    else process.env.GWD_BIN_PATH = originalGsdBinPath;
     if (originalGsdVersion === undefined) delete process.env.GWD_VERSION;
     else process.env.GWD_VERSION = originalGsdVersion;
-    if (originalFirstRunBanner === undefined) delete process.env.GSD_FIRST_RUN_BANNER;
-    else process.env.GSD_FIRST_RUN_BANNER = originalFirstRunBanner;
+    if (originalFirstRunBanner === undefined) delete process.env.GWD_FIRST_RUN_BANNER;
+    else process.env.GWD_FIRST_RUN_BANNER = originalFirstRunBanner;
     try { rmSync(dir, { recursive: true, force: true }); } catch { /* best-effort */ }
   });
 
@@ -293,13 +293,13 @@ test("session_start and session_switch apply disabled model provider policy from
   mkdirSync(tempGsdHome, { recursive: true });
 
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
-  process.env.GSD_HOME = tempGsdHome;
+  const originalGsdHome = process.env.GWD_HOME;
+  process.env.GWD_HOME = tempGsdHome;
   process.chdir(dir);
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
     try { rmSync(dir, { recursive: true, force: true }); } catch { /* best-effort */ }
   });
 

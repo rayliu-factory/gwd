@@ -139,11 +139,11 @@ describe('derive-state-helpers', () => {
     }
   });
 
-  // ─── resolveSliceDependencies: GSD_SLICE_LOCK with missing slice ────
-	  test('resolveSliceDependencies: GSD_SLICE_LOCK pointing to non-existent slice returns blocked', async () => {
+  // ─── resolveSliceDependencies: GWD_SLICE_LOCK with missing slice ────
+	  test('resolveSliceDependencies: GWD_SLICE_LOCK pointing to non-existent slice returns blocked', async () => {
 	    const base = createFixtureBase();
-	    const origLock = process.env.GSD_SLICE_LOCK;
-	    const origWorker = process.env.GSD_PARALLEL_WORKER;
+	    const origLock = process.env.GWD_SLICE_LOCK;
+	    const origWorker = process.env.GWD_PARALLEL_WORKER;
 	    try {
       writeFile(base, 'milestones/M001/M001-ROADMAP.md', ROADMAP_CONTENT);
       writeFile(base, 'milestones/M001/slices/S01/S01-PLAN.md', PLAN_CONTENT);
@@ -155,29 +155,29 @@ describe('derive-state-helpers', () => {
       insertSlice({ id: 'S01', milestoneId: 'M001', title: 'First', status: 'active', risk: 'low', depends: [] });
       insertTask({ id: 'T01', sliceId: 'S01', milestoneId: 'M001', title: 'First Task', status: 'pending' });
 
-	      process.env.GSD_SLICE_LOCK = 'S99';
-	      process.env.GSD_PARALLEL_WORKER = '1';
+	      process.env.GWD_SLICE_LOCK = 'S99';
+	      process.env.GWD_PARALLEL_WORKER = '1';
 
       invalidateStateCache();
       const state = await deriveStateFromDb(base);
 
       assert.equal(state.phase, 'blocked', 'slice-lock-miss: phase is blocked');
-      assert.ok(state.blockers.some(b => b.includes('GSD_SLICE_LOCK=S99')), 'slice-lock-miss: blocker mentions lock');
+      assert.ok(state.blockers.some(b => b.includes('GWD_SLICE_LOCK=S99')), 'slice-lock-miss: blocker mentions lock');
 	    } finally {
-	      if (origLock !== undefined) process.env.GSD_SLICE_LOCK = origLock;
-	      else delete process.env.GSD_SLICE_LOCK;
-	      if (origWorker !== undefined) process.env.GSD_PARALLEL_WORKER = origWorker;
-	      else delete process.env.GSD_PARALLEL_WORKER;
+	      if (origLock !== undefined) process.env.GWD_SLICE_LOCK = origLock;
+	      else delete process.env.GWD_SLICE_LOCK;
+	      if (origWorker !== undefined) process.env.GWD_PARALLEL_WORKER = origWorker;
+	      else delete process.env.GWD_PARALLEL_WORKER;
 	      closeDatabase();
       cleanup(base);
     }
   });
 
-  // ─── resolveSliceDependencies: GSD_SLICE_LOCK with valid slice ──────
-	  test('resolveSliceDependencies: GSD_SLICE_LOCK targeting valid slice bypasses deps', async () => {
+  // ─── resolveSliceDependencies: GWD_SLICE_LOCK with valid slice ──────
+	  test('resolveSliceDependencies: GWD_SLICE_LOCK targeting valid slice bypasses deps', async () => {
 	    const base = createFixtureBase();
-	    const origLock = process.env.GSD_SLICE_LOCK;
-	    const origWorker = process.env.GSD_PARALLEL_WORKER;
+	    const origLock = process.env.GWD_SLICE_LOCK;
+	    const origWorker = process.env.GWD_PARALLEL_WORKER;
 	    try {
       writeFile(base, 'milestones/M001/M001-ROADMAP.md', ROADMAP_CONTENT);
       // S02 depends on S01 but we lock to S02 directly
@@ -191,8 +191,8 @@ describe('derive-state-helpers', () => {
       insertSlice({ id: 'S02', milestoneId: 'M001', title: 'Second', status: 'pending', risk: 'low', depends: ['S01'] });
       insertTask({ id: 'T01', sliceId: 'S02', milestoneId: 'M001', title: 'Task', status: 'pending' });
 
-	      process.env.GSD_SLICE_LOCK = 'S02';
-	      process.env.GSD_PARALLEL_WORKER = '1';
+	      process.env.GWD_SLICE_LOCK = 'S02';
+	      process.env.GWD_PARALLEL_WORKER = '1';
 
       invalidateStateCache();
       const state = await deriveStateFromDb(base);
@@ -200,10 +200,10 @@ describe('derive-state-helpers', () => {
       assert.equal(state.activeSlice?.id, 'S02', 'slice-lock-valid: activeSlice is S02 (locked)');
       assert.equal(state.phase, 'executing', 'slice-lock-valid: phase is executing');
 	    } finally {
-	      if (origLock !== undefined) process.env.GSD_SLICE_LOCK = origLock;
-	      else delete process.env.GSD_SLICE_LOCK;
-	      if (origWorker !== undefined) process.env.GSD_PARALLEL_WORKER = origWorker;
-	      else delete process.env.GSD_PARALLEL_WORKER;
+	      if (origLock !== undefined) process.env.GWD_SLICE_LOCK = origLock;
+	      else delete process.env.GWD_SLICE_LOCK;
+	      if (origWorker !== undefined) process.env.GWD_PARALLEL_WORKER = origWorker;
+	      else delete process.env.GWD_PARALLEL_WORKER;
 	      closeDatabase();
       cleanup(base);
     }
@@ -475,11 +475,11 @@ describe('derive-state-helpers', () => {
 
 	  test('getActiveMilestoneId: DB lock path ignores PARKED flag projection', async () => {
 	    const base = createFixtureBase();
-	    const previousLock = process.env.GSD_MILESTONE_LOCK;
-	    const previousWorker = process.env.GSD_PARALLEL_WORKER;
+	    const previousLock = process.env.GWD_MILESTONE_LOCK;
+	    const previousWorker = process.env.GWD_PARALLEL_WORKER;
 	    try {
-	      process.env.GSD_MILESTONE_LOCK = 'M001';
-	      process.env.GSD_PARALLEL_WORKER = '1';
+	      process.env.GWD_MILESTONE_LOCK = 'M001';
+	      process.env.GWD_PARALLEL_WORKER = '1';
       writeFile(base, 'milestones/M001/M001-PARKED.md', '# Parked on disk');
 
       openDatabase(':memory:');
@@ -488,10 +488,10 @@ describe('derive-state-helpers', () => {
       const id = await getActiveMilestoneId(base);
       assert.equal(id, 'M001', 'DB status remains authoritative despite PARKED projection');
 	    } finally {
-	      if (previousLock === undefined) delete process.env.GSD_MILESTONE_LOCK;
-	      else process.env.GSD_MILESTONE_LOCK = previousLock;
-	      if (previousWorker === undefined) delete process.env.GSD_PARALLEL_WORKER;
-	      else process.env.GSD_PARALLEL_WORKER = previousWorker;
+	      if (previousLock === undefined) delete process.env.GWD_MILESTONE_LOCK;
+	      else process.env.GWD_MILESTONE_LOCK = previousLock;
+	      if (previousWorker === undefined) delete process.env.GWD_PARALLEL_WORKER;
+	      else process.env.GWD_PARALLEL_WORKER = previousWorker;
 	      closeDatabase();
       cleanup(base);
     }

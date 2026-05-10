@@ -2,7 +2,7 @@
 
 <!--
 PRs without a linked issue will be closed.
-Open or find an issue first: https://github.com/gsd-build/gsd-2/issues
+Open or find an issue first: https://github.com/gwd-build/gwd-2/issues
 -->
 
 Closes #<!-- issue number — required -->

@@ -308,7 +308,7 @@ function findGsdLoader() {
   return null;
 }
 
-const GSD_LOADER = findGsdLoader();
+const GWD_LOADER = findGsdLoader();
 
 /**
  * Respawn a dead worker. Returns the new PID or null on failure.
@@ -317,7 +317,7 @@ const GSD_LOADER = findGsdLoader();
 function respawnWorker(mid) {
   const worktreeDir = path.resolve(PROJECT_ROOT, `.gsd/worktrees/${mid}`);
   if (!fs.existsSync(worktreeDir)) return null;
-  if (!fs.existsSync(GSD_LOADER)) return null;
+  if (!fs.existsSync(GWD_LOADER)) return null;
   
   const stdoutLog = path.resolve(PROJECT_ROOT, PARALLEL_DIR, `${mid}.stdout.log`);
   const stderrLog = path.resolve(PROJECT_ROOT, PARALLEL_DIR, `${mid}.stderr.log`);
@@ -329,14 +329,14 @@ function respawnWorker(mid) {
     stdoutFd = fs.openSync(stdoutLog, 'a');
     stderrFd = fs.openSync(stderrLog, 'a');
 
-    const child = spawn(process.execPath, [GSD_LOADER, 'headless', '--json', 'auto'], {
+    const child = spawn(process.execPath, [GWD_LOADER, 'headless', '--json', 'auto'], {
       cwd: worktreeDir,
       detached: true,
       env: {
         ...process.env,
-        GSD_MILESTONE_LOCK: mid,
-        GSD_PROJECT_ROOT: PROJECT_ROOT,
-        GSD_PARALLEL_WORKER: '1',
+        GWD_MILESTONE_LOCK: mid,
+        GWD_PROJECT_ROOT: PROJECT_ROOT,
+        GWD_PARALLEL_WORKER: '1',
       },
       stdio: ['ignore', stdoutFd, stderrFd],
       windowsHide: true,

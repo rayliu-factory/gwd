@@ -97,12 +97,12 @@ const LOCK_FILE = "auto.lock";
 
 /**
  * Derive the effective lock file name for the current process.
- * In parallel worker mode (GSD_PARALLEL_WORKER + GSD_MILESTONE_LOCK),
+ * In parallel worker mode (GWD_PARALLEL_WORKER + GWD_MILESTONE_LOCK),
  * each worker uses a per-milestone lock file (`auto-<milestoneId>.lock`)
  * to avoid contending on the shared `.gsd/auto.lock` (#2184).
  */
 export function effectiveLockFile(): string {
-  const mid = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_MILESTONE_LOCK : null;
+  const mid = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_MILESTONE_LOCK : null;
   return mid ? `auto-${mid}.lock` : LOCK_FILE;
 }
 
@@ -112,7 +112,7 @@ export function effectiveLockFile(): string {
  * `.gsd/` so workers don't contend on the same proper-lockfile directory (#2184).
  */
 export function effectiveLockTarget(gsdDir: string): string {
-  const mid = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_MILESTONE_LOCK : null;
+  const mid = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_MILESTONE_LOCK : null;
   return mid ? join(gsdDir, "parallel", mid) : gsdDir;
 }
 

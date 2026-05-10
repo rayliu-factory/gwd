@@ -175,9 +175,9 @@ test("boot route returns { error } JSON on handler failure", async (t) => {
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: root,
-      GSD_WEB_PROJECT_SESSIONS_DIR: sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: process.cwd(),
+      GWD_WEB_PROJECT_CWD: root,
+      GWD_WEB_PROJECT_SESSIONS_DIR: sessionsDir,
+      GWD_WEB_PACKAGE_ROOT: process.cwd(),
     },
     getOnboardingState: async () => {
       throw new Error("boot exploded")
@@ -220,9 +220,9 @@ test("bridge-service lists project sessions without ReferenceError (#1936)", asy
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: process.cwd(),
+      GWD_WEB_PROJECT_CWD: projectCwd,
+      GWD_WEB_PROJECT_SESSIONS_DIR: sessionsDir,
+      GWD_WEB_PACKAGE_ROOT: process.cwd(),
     },
   })
 

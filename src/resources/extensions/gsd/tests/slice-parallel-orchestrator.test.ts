@@ -98,11 +98,11 @@ describe("slice worker launch contract", () => {
       { PATH: "/bin" } as NodeJS.ProcessEnv,
     );
 
-    assert.equal(env.GSD_SLICE_LOCK, "S02");
-    assert.equal(env.GSD_MILESTONE_LOCK, "M001");
-    assert.equal(env.GSD_PROJECT_ROOT, "/repo");
-    assert.equal(env.GSD_PARALLEL_WORKER, "1");
-    assert.equal(env.GSD_SLICE_WORKER_TOKEN, "worker-token");
+    assert.equal(env.GWD_SLICE_LOCK, "S02");
+    assert.equal(env.GWD_MILESTONE_LOCK, "M001");
+    assert.equal(env.GWD_PROJECT_ROOT, "/repo");
+    assert.equal(env.GWD_PARALLEL_WORKER, "1");
+    assert.equal(env.GWD_SLICE_WORKER_TOKEN, "worker-token");
   });
 
   it("defaults to two workers unless explicitly configured", () => {
@@ -139,7 +139,7 @@ describe("slice-parallel-orchestrator recovery identity", () => {
       process.execPath,
       ["-e", "setTimeout(() => {}, 30000)"],
       {
-        env: { ...process.env, GSD_SLICE_WORKER_TOKEN: token },
+        env: { ...process.env, GWD_SLICE_WORKER_TOKEN: token },
         stdio: "ignore",
       },
     );
@@ -182,8 +182,8 @@ describe("slice_parallel preference and state gating", () => {
 
   it("derives the locked slice for parallel workers", async () => {
     const basePath = makeTempProject();
-    const oldWorker = process.env.GSD_PARALLEL_WORKER;
-    const oldSlice = process.env.GSD_SLICE_LOCK;
+    const oldWorker = process.env.GWD_PARALLEL_WORKER;
+    const oldSlice = process.env.GWD_SLICE_LOCK;
     try {
       const msDir = join(basePath, ".gsd", "milestones", "M001");
       mkdirSync(msDir, { recursive: true });
@@ -197,16 +197,16 @@ describe("slice_parallel preference and state gating", () => {
           "- [ ] **S02: Second** `risk:low` `depends:[]`",
         ].join("\n"),
       );
-      process.env.GSD_PARALLEL_WORKER = "1";
-      process.env.GSD_SLICE_LOCK = "S02";
+      process.env.GWD_PARALLEL_WORKER = "1";
+      process.env.GWD_SLICE_LOCK = "S02";
 
       const state = await deriveState(basePath);
       assert.equal(state.activeSlice?.id, "S02");
     } finally {
-      if (oldWorker === undefined) delete process.env.GSD_PARALLEL_WORKER;
-      else process.env.GSD_PARALLEL_WORKER = oldWorker;
-      if (oldSlice === undefined) delete process.env.GSD_SLICE_LOCK;
-      else process.env.GSD_SLICE_LOCK = oldSlice;
+      if (oldWorker === undefined) delete process.env.GWD_PARALLEL_WORKER;
+      else process.env.GWD_PARALLEL_WORKER = oldWorker;
+      if (oldSlice === undefined) delete process.env.GWD_SLICE_LOCK;
+      else process.env.GWD_SLICE_LOCK = oldSlice;
       rmSync(basePath, { recursive: true, force: true });
     }
   });

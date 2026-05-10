@@ -608,7 +608,7 @@ export function initResources(agentDir: string, skillsDir: string = join(homedir
   syncResourceDir(join(resourcesDir, 'agents'), join(agentDir, 'agents'))
   syncResourceDir(join(resourcesDir, 'skills'), skillsDir)
 
-  // Sync GSD-WORKFLOW.md to agentDir as a fallback for when GSD_WORKFLOW_PATH
+  // Sync GSD-WORKFLOW.md to agentDir as a fallback for when GWD_WORKFLOW_PATH
   // env var is not set (e.g. fork/dev builds, alternative entry points).
   const workflowSrc = join(resourcesDir, 'GSD-WORKFLOW.md')
   if (existsSync(workflowSrc)) {

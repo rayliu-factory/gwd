@@ -18,10 +18,10 @@ import { resolveModelWithFallbacksForUnit } from "../preferences-models.ts";
 import { KNOWN_UNIT_LABELS } from "../preferences-types.ts";
 
 function withModelPreferences<T>(fn: () => T): T {
-  const oldHome = process.env.GSD_HOME;
+  const oldHome = process.env.GWD_HOME;
   const home = mkdtempSync(join(tmpdir(), "gsd-model-map-"));
   try {
-    process.env.GSD_HOME = home;
+    process.env.GWD_HOME = home;
     writeFileSync(join(home, "preferences.md"), [
       "---",
       "models:",
@@ -38,8 +38,8 @@ function withModelPreferences<T>(fn: () => T): T {
     ].join("\n"));
     return fn();
   } finally {
-    if (oldHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = oldHome;
+    if (oldHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = oldHome;
     rmSync(home, { recursive: true, force: true });
   }
 }

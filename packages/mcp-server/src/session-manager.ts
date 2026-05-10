@@ -313,23 +313,23 @@ export class SessionManager {
   }
 
   /**
-   * Resolve the GSD CLI path.
+   * Resolve the GWD CLI path.
    *
-   * 1. GSD_CLI_PATH env var (highest priority)
-   * 2. PATH lookup → resolve to the actual gsd executable/shim
+   * 1. GWD_CLI_PATH env var (highest priority)
+   * 2. PATH lookup → resolve to the actual gwd executable/shim
    */
   static resolveCLIPath(): string {
     // Check env var first
-    const envPath = process.env['GSD_CLI_PATH'];
+    const envPath = process.env['GWD_CLI_PATH'];
     if (envPath) return resolve(envPath);
 
-    const gsdBin = findExecutableOnPath('gsd');
-    if (gsdBin) {
-      return resolve(gsdBin);
+    const gwdBin = findExecutableOnPath('gwd');
+    if (gwdBin) {
+      return resolve(gwdBin);
     }
 
     throw new Error(
-      'Cannot find GSD CLI. Set GSD_CLI_PATH environment variable or ensure `gsd` is in PATH.'
+      'Cannot find GWD CLI. Set GWD_CLI_PATH environment variable or ensure `gwd` is in PATH.'
     );
   }
 

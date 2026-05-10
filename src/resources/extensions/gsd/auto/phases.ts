@@ -802,7 +802,7 @@ export async function runPreDispatch(
   if (
     prefs?.slice_parallel?.enabled &&
     mid &&
-    !process.env.GSD_PARALLEL_WORKER &&
+    !process.env.GWD_PARALLEL_WORKER &&
     isDbAvailable()
   ) {
     try {
@@ -1206,7 +1206,7 @@ export async function runDispatch(
     // gate) — pause instead of hard-stopping so the session is resumable with
     // `/gsd auto`. Error/info-level stops remain hard stops for infrastructure
     // failures and terminal conditions respectively.
-    // See: https://github.com/gsd-build/gsd-2/issues/2474
+    // See: https://github.com/gwd-build/gwd-2/issues/2474
     if (dispatchResult.level === "warning") {
       ctx.ui.notify(dispatchResult.reason, "warning");
       await deps.pauseAuto(ctx, pi, {
@@ -1506,7 +1506,7 @@ export async function runGuards(
     // In parallel worker mode, only count cost from the current auto-mode session
     // to avoid hitting the ceiling due to historical project-wide spend (#2184).
     let costUnits = currentLedger?.units;
-    if (process.env.GSD_PARALLEL_WORKER && s.autoStartTime && Array.isArray(costUnits)) {
+    if (process.env.GWD_PARALLEL_WORKER && s.autoStartTime && Array.isArray(costUnits)) {
       const sessionStartISO = new Date(s.autoStartTime).toISOString();
       costUnits = costUnits.filter(
         (u: { startedAt?: string }) => u.startedAt != null && u.startedAt >= sessionStartISO,

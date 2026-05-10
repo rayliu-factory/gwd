@@ -21,14 +21,14 @@ function jsonResponse(body: unknown): Response {
 }
 
 async function withTempGsdHome<T>(fn: (home: string) => T | Promise<T>): Promise<T> {
-  const oldHome = process.env.GSD_HOME;
+  const oldHome = process.env.GWD_HOME;
   const home = mkdtempSync(join(tmpdir(), "gsd-remote-home-"));
   try {
-    process.env.GSD_HOME = home;
+    process.env.GWD_HOME = home;
     return await fn(home);
   } finally {
-    if (oldHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = oldHome;
+    if (oldHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = oldHome;
     rmSync(home, { recursive: true, force: true });
   }
 }

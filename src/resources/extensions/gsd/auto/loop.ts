@@ -465,12 +465,12 @@ export async function autoLoop(
       // GRAPH.yaml. Shares runGuards and runUnitPhase with the dev path.
       // After unit execution, verifies then reconciles via the engine layer.
       //
-      // GSD_ENGINE_BYPASS=1 skips the engine layer entirely — falls through
+      // GWD_ENGINE_BYPASS=1 skips the engine layer entirely — falls through
       // to the dev path below.
       if (shouldUseCustomEnginePath({
         activeEngineId: s.activeEngineId,
         hasSidecarItem: Boolean(sidecarItem),
-        engineBypass: process.env.GSD_ENGINE_BYPASS === "1",
+        engineBypass: process.env.GWD_ENGINE_BYPASS === "1",
       })) {
         debugLog("autoLoop", { phase: "custom-engine-derive", iteration, engineId: s.activeEngineId });
 

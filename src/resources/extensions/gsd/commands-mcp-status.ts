@@ -69,7 +69,7 @@ function readMcpConfigs(): McpServerRawConfig[] {
   const seen = new Set<string>();
   const configPaths = [
     join(process.cwd(), ".mcp.json"),
-    join(process.cwd(), ".gsd", "mcp.json"),
+    join(process.cwd(), ".gwd", "mcp.json"),
     join(gsdHome(), "mcp.json"),
   ];
 
@@ -120,8 +120,8 @@ export function formatMcpStatusReport(servers: McpServerStatus[]): string {
     return [
       "No MCP servers configured.",
       "",
-      "Add servers to .mcp.json, .gsd/mcp.json, or $GSD_HOME/mcp.json (default: ~/.gsd/mcp.json) to enable MCP integrations.",
-      "Tip: run /gsd mcp init . to write the local GSD workflow MCP config.",
+      "Add servers to .mcp.json, .gwd/mcp.json, or $GWD_HOME/mcp.json (default: ~/.gwd/mcp.json) to enable MCP integrations.",
+      "Tip: run /gwd mcp init . to write the local GWD workflow MCP config.",
       "See: https://modelcontextprotocol.io/quickstart",
     ].join("\n");
   }

@@ -1,7 +1,7 @@
 {
-  "name": "@gsd-build/engine-linux-x64-gnu",
+  "name": "@gwd-build/engine-linux-x64-gnu",
   "version": "2.81.0",
-  "description": "GSD native engine binary for Linux x64 (glibc)",
+  "description": "GWD native engine binary for Linux x64 (glibc)",
   "os": [
     "linux"
   ],
@@ -15,6 +15,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gsd-build/gsd-2.git"
+    "url": "git+https://github.com/gwd-build/gwd-2.git"
   }
 }

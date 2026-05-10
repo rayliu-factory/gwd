@@ -222,7 +222,7 @@ export function invalidateStateCache(): void {
 export async function getActiveMilestoneId(basePath: string): Promise<string | null> {
   // Parallel worker isolation. Normal DB state derivation remains DB-only;
   // lock env vars are execution routing for explicit worker processes.
-  const milestoneLock = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_MILESTONE_LOCK : undefined;
+  const milestoneLock = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_MILESTONE_LOCK : undefined;
   if (milestoneLock) {
     if (isDbAvailable()) {
       const locked = getAllMilestones().find(m => m.id === milestoneLock);
@@ -327,7 +327,7 @@ export async function deriveState(
     result = await deriveStateFromDb(basePath);
     stopDbTimer({ phase: result.phase, milestone: result.activeMilestone?.id });
     _telemetry.dbDeriveCount++;
-  } else if (process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK === "1") {
+  } else if (process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK === "1") {
     if (wasDbOpenAttempted()) {
       logWarning("state", "DB unavailable — using explicit legacy filesystem state derivation");
     }
@@ -614,13 +614,13 @@ function resolveSliceDependencies(activeMilestoneSlices: SliceRow[]): { activeSl
     activeMilestoneSlices.filter(s => isStatusDone(s.status)).map(s => s.id)
   );
 
-  const sliceLock = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_SLICE_LOCK : undefined;
+  const sliceLock = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_SLICE_LOCK : undefined;
   if (sliceLock) {
     const lockedSlice = activeMilestoneSlices.find(s => s.id === sliceLock);
     if (lockedSlice) {
       return { activeSlice: { id: lockedSlice.id, title: lockedSlice.title }, activeSliceRow: lockedSlice };
     } else {
-      logWarning("state", `GSD_SLICE_LOCK=${sliceLock} not found in active slices — worker has no assigned work`);
+      logWarning("state", `GWD_SLICE_LOCK=${sliceLock} not found in active slices — worker has no assigned work`);
       return { activeSlice: null, activeSliceRow: null };
     }
   }
@@ -656,7 +656,7 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
 
   const allMilestones = getAllMilestones();
 
-  const milestoneLock = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_MILESTONE_LOCK : undefined;
+  const milestoneLock = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_MILESTONE_LOCK : undefined;
   const milestones = milestoneLock
     ? allMilestones.filter(m => m.id === milestoneLock)
     : allMilestones;
@@ -711,11 +711,11 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
   const activeSliceContext = resolveSliceDependencies(activeMilestoneSlices);
   if (!activeSliceContext.activeSlice) {
     // If locked slice wasn't found, it returns null but logs warning, we need to return 'blocked'
-    const sliceLock = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_SLICE_LOCK : undefined;
+    const sliceLock = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_SLICE_LOCK : undefined;
     if (sliceLock) {
       return {
         activeMilestone, activeSlice: null, activeTask: null,
-        phase: 'blocked', recentDecisions: [], blockers: [`GSD_SLICE_LOCK=${sliceLock} not found in active milestone slices`],
+        phase: 'blocked', recentDecisions: [], blockers: [`GWD_SLICE_LOCK=${sliceLock} not found in active milestone slices`],
         nextAction: 'Slice lock references a non-existent slice — check orchestrator dispatch.',
         registry, requirements,
         progress: { milestones: milestoneProgress, slices: sliceProgress },
@@ -885,12 +885,12 @@ export async function _deriveStateImpl(
   const milestoneIds = sortByQueueOrder(diskIds, customOrder);
 
   // ── Parallel worker isolation ──────────────────────────────────────────
-  // When GSD_PARALLEL_WORKER and GSD_MILESTONE_LOCK are set, this process is a parallel worker
+  // When GWD_PARALLEL_WORKER and GWD_MILESTONE_LOCK are set, this process is a parallel worker
   // scoped to a single milestone. Filter the milestone list so this worker
   // only sees its assigned milestone (all others are treated as if they
   // don't exist). This gives each worker complete isolation without
   // modifying any other state derivation logic.
-  const milestoneLock = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_MILESTONE_LOCK : undefined;
+  const milestoneLock = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_MILESTONE_LOCK : undefined;
   if (milestoneLock && milestoneIds.includes(milestoneLock)) {
     milestoneIds.length = 0;
     milestoneIds.push(milestoneLock);
@@ -1353,21 +1353,21 @@ export async function _deriveStateImpl(
   let activeSlice: ActiveRef | null = null;
 
   // ── Slice-level parallel worker isolation ─────────────────────────────
-  // When GSD_PARALLEL_WORKER and GSD_SLICE_LOCK are set, override activeSlice to only the locked slice.
-  const sliceLockLegacy = process.env.GSD_PARALLEL_WORKER ? process.env.GSD_SLICE_LOCK : undefined;
+  // When GWD_PARALLEL_WORKER and GWD_SLICE_LOCK are set, override activeSlice to only the locked slice.
+  const sliceLockLegacy = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_SLICE_LOCK : undefined;
   if (sliceLockLegacy) {
     const lockedSlice = activeRoadmap.slices.find(s => s.id === sliceLockLegacy);
     if (lockedSlice) {
       activeSlice = { id: lockedSlice.id, title: lockedSlice.title };
     } else {
-      logWarning("state", `GSD_SLICE_LOCK=${sliceLockLegacy} not found in active slices — worker has no assigned work`);
+      logWarning("state", `GWD_SLICE_LOCK=${sliceLockLegacy} not found in active slices — worker has no assigned work`);
       return {
         activeMilestone,
         activeSlice: null,
         activeTask: null,
         phase: 'blocked',
         recentDecisions: [],
-        blockers: [`GSD_SLICE_LOCK=${sliceLockLegacy} not found in active milestone slices`],
+        blockers: [`GWD_SLICE_LOCK=${sliceLockLegacy} not found in active milestone slices`],
         nextAction: 'Slice lock references a non-existent slice — check orchestrator dispatch.',
         registry,
         requirements,

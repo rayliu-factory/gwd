@@ -20,15 +20,15 @@ export function evaluateWebProxyAuth(
 ): WebProxyAuthDecision {
   if (!request.pathname.startsWith('/api/')) return { kind: 'next' }
 
-  const expectedToken = env.GSD_WEB_AUTH_TOKEN
+  const expectedToken = env.GWD_WEB_AUTH_TOKEN
   if (!expectedToken) return { kind: 'next' }
 
   const origin = request.headers.get('origin')
   if (origin) {
-    const host = env.GSD_WEB_HOST || '127.0.0.1'
-    const port = env.GSD_WEB_PORT || '3000'
+    const host = env.GWD_WEB_HOST || '127.0.0.1'
+    const port = env.GWD_WEB_PORT || '3000'
     const allowed = new Set([`http://${host}:${port}`])
-    const extra = env.GSD_WEB_ALLOWED_ORIGINS
+    const extra = env.GWD_WEB_ALLOWED_ORIGINS
     if (extra) {
       for (const entry of extra.split(',')) {
         const trimmed = entry.trim()

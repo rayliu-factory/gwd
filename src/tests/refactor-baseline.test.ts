@@ -128,7 +128,7 @@ test("collectBaseline returns the phase-zero report shape", async () => {
     assert.equal(typeof report.metrics[metricName], "number", `${metricName} should be indexed as a number`);
   }
   assert.equal(report.workspace.areas.some((area: { area: string }) => area.area === "src"), true);
-  assert.equal(report.startup.timingEnv, "GSD_STARTUP_TIMING=1");
+  assert.equal(report.startup.timingEnv, "GWD_STARTUP_TIMING=1");
 });
 
 test("buildMetricIndex includes workspace and command metrics", () => {

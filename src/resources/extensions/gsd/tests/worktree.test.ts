@@ -226,24 +226,24 @@ describe('worktree', async () => {
   // the real project root (no git worktree metadata in these synthetic paths),
   // resolveProjectRoot returns the input unchanged rather than returning ~.
   
-  // With GSD_PROJECT_ROOT env var set (layer 1 — coordinator passes it)
-  process.env.GSD_PROJECT_ROOT = "/real/project";
+  // With GWD_PROJECT_ROOT env var set (layer 1 — coordinator passes it)
+  process.env.GWD_PROJECT_ROOT = "/real/project";
   assert.deepStrictEqual(
     resolveProjectRoot("/Users/fran/.gsd/projects/89e1c9ad49bf/worktrees/M001"),
     "/real/project",
-    "uses GSD_PROJECT_ROOT when set",
+    "uses GWD_PROJECT_ROOT when set",
   );
-  delete process.env.GSD_PROJECT_ROOT;
+  delete process.env.GWD_PROJECT_ROOT;
 
-  // Without GSD_PROJECT_ROOT, direct layout still works (no ~/.gsd collision)
+  // Without GWD_PROJECT_ROOT, direct layout still works (no ~/.gsd collision)
   assert.deepStrictEqual(
     resolveProjectRoot("/some/repo"),
     "/some/repo",
-    "ignores GSD_PROJECT_ROOT override for non-worktree paths",
+    "ignores GWD_PROJECT_ROOT override for non-worktree paths",
   );
-  delete process.env.GSD_PROJECT_ROOT;
+  delete process.env.GWD_PROJECT_ROOT;
 
-  // Without GSD_PROJECT_ROOT, direct layout still works (no ~/.gsd collision)
+  // Without GWD_PROJECT_ROOT, direct layout still works (no ~/.gsd collision)
   assert.deepStrictEqual(
     resolveProjectRoot("/foo/.gsd/worktrees/M001"),
     "/foo",
@@ -263,7 +263,7 @@ describe('worktree', async () => {
     "resolves normal repo subdirectories to the project root",
   );
 
-  // Without GSD_PROJECT_ROOT, direct layout with nested subdirs
+  // Without GWD_PROJECT_ROOT, direct layout with nested subdirs
   assert.deepStrictEqual(
     resolveProjectRoot("/data/.gsd/worktrees/M003/nested"),
     "/data",
@@ -288,13 +288,13 @@ describe('worktree', async () => {
     const deep = join(project, ".gsd", "worktrees", "M001", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k");
     mkdirSync(deep, { recursive: true });
 
-    process.env.GSD_HOME = join(fakeHome, ".gsd");
+    process.env.GWD_HOME = join(fakeHome, ".gsd");
     assert.deepStrictEqual(
       normalizePath(resolveProjectRoot(realpathSync(deep))),
       normalizePath(project),
       "resolves to real project root from deep symlink-resolved worktree path",
     );
-    delete process.env.GSD_HOME;
+    delete process.env.GWD_HOME;
 
     rmSync(project, { recursive: true, force: true });
     rmSync(fakeHome, { recursive: true, force: true });

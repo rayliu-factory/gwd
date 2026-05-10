@@ -18,8 +18,8 @@ GSD uses **file-based IPC** — no sockets or ports. All coordination happens th
 ## Worker Isolation
 
 Each worker gets:
-1. **`GSD_MILESTONE_LOCK=M00X`** — state derivation only sees this milestone
-2. **`GSD_PARALLEL_WORKER=1`** — prevents nested parallel spawns
+1. **`GWD_MILESTONE_LOCK=M00X`** — state derivation only sees this milestone
+2. **`GWD_PARALLEL_WORKER=1`** — prevents nested parallel spawns
 3. **Own git worktree** at `.gsd/worktrees/M00X/` — branch `milestone/M00X`
 
 Workers cannot interfere with each other. Each has its own filesystem and git branch.
@@ -66,8 +66,8 @@ Coordinator writes to `.gsd/parallel/<milestoneId>.signal.json`. Worker consumes
 
 ```bash
 # Spawn worker in its worktree
-GSD_MILESTONE_LOCK=M001 \
-GSD_PARALLEL_WORKER=1 \
+GWD_MILESTONE_LOCK=M001 \
+GWD_PARALLEL_WORKER=1 \
   gsd headless --json auto 2>logs/M001.log &
 WORKER_PID=$!
 ```

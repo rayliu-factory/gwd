@@ -32,8 +32,8 @@ function makeRepo(): string {
 
 afterEach(() => {
   process.chdir(originalCwd);
-  delete process.env.GSD_CLI_WORKTREE;
-  delete process.env.GSD_CLI_WORKTREE_BASE;
+  delete process.env.GWD_CLI_WORKTREE;
+  delete process.env.GWD_CLI_WORKTREE_BASE;
   for (const p of cleanupPaths.splice(0)) {
     rmSync(p, { recursive: true, force: true });
   }
@@ -48,8 +48,8 @@ test("gsd -w from inside a worktree creates the next worktree at the project roo
 
   const expected = worktreePath(base, "beta");
   const nested = join(alpha.path, ".gsd", "worktrees", "beta");
-  assert.equal(process.env.GSD_CLI_WORKTREE_BASE, base);
-  assert.equal(process.env.GSD_CLI_WORKTREE, "beta");
+  assert.equal(process.env.GWD_CLI_WORKTREE_BASE, base);
+  assert.equal(process.env.GWD_CLI_WORKTREE, "beta");
   assert.equal(process.cwd(), expected);
   assert.equal(existsSync(expected), true);
   assert.equal(existsSync(nested), false);

@@ -25,7 +25,7 @@ import { existsSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 
-import { GSDError, GSD_GIT_ERROR } from "./errors.js";
+import { GSDError, GWD_GIT_ERROR } from "./errors.js";
 import { MergeConflictError, readIntegrationBranch } from "./git-service.js";
 import {
   nativeBranchForceReset,
@@ -146,7 +146,7 @@ function advanceMilestoneBranch(
     }).trim();
     if (status) {
       throw new GSDError(
-        GSD_GIT_ERROR,
+        GWD_GIT_ERROR,
         `slice-cadence cannot advance ${milestoneBranch}: worktree has uncommitted changes. Status:\n${status}`,
       );
     }
@@ -199,7 +199,7 @@ export function mergeSliceToMain(
 
   if (mainBranch === milestoneBranch) {
     throw new GSDError(
-      GSD_GIT_ERROR,
+      GWD_GIT_ERROR,
       `slice-cadence resolved integration branch "${mainBranch}" to the milestone branch; refusing to self-merge.`,
     );
   }
@@ -240,7 +240,7 @@ export function mergeSliceToMain(
     }).trim();
     if (status) {
       throw new GSDError(
-        GSD_GIT_ERROR,
+        GWD_GIT_ERROR,
         `slice-cadence merge requires a clean project root; uncommitted changes detected. ` +
         `Commit or stash at ${projectRoot} before retrying. Status:\n${status}`,
       );

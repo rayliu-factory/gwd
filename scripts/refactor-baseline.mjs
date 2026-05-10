@@ -192,8 +192,8 @@ export async function collectBaseline(root, commandSpecs = []) {
     },
     commands: commandTimings,
     startup: {
-      timingEnv: "GSD_STARTUP_TIMING=1",
-      note: "Run a command spec such as --command startup='GSD_STARTUP_TIMING=1 node dist/loader.js --version' after build output exists.",
+      timingEnv: "GWD_STARTUP_TIMING=1",
+      note: "Run a command spec such as --command startup='GWD_STARTUP_TIMING=1 node dist/loader.js --version' after build output exists.",
     },
   };
 

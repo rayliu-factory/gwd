@@ -356,7 +356,7 @@ test("Context Mode prompt suppression: disabled inlined, phase-anchor, and neste
 
 const fakeBase: BaseResolverContext = {
   unitType: "reassess-roadmap",
-  basePath: process.env.GSD_TEST_WORKSPACE_ROOT ?? process.cwd(),
+  basePath: process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd(),
   milestoneId: "M001",
   sliceId: "S01",
 };

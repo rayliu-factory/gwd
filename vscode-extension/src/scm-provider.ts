@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as path from "node:path";
 import type { GsdChangeTracker } from "./change-tracker.js";
 
-const GSD_ORIGINAL_SCHEME = "gsd-original";
+const GWD_ORIGINAL_SCHEME = "gsd-original";
 
 /**
  * Source Control provider that shows files modified by the GSD agent
@@ -23,7 +23,7 @@ export class GsdScmProvider implements vscode.Disposable {
 		this.contentProvider = new GsdOriginalContentProvider(tracker);
 		this.disposables.push(
 			vscode.workspace.registerTextDocumentContentProvider(
-				GSD_ORIGINAL_SCHEME,
+				GWD_ORIGINAL_SCHEME,
 				this.contentProvider,
 			),
 		);
@@ -38,7 +38,7 @@ export class GsdScmProvider implements vscode.Disposable {
 			provideOriginalResource: (uri: vscode.Uri): vscode.Uri | undefined => {
 				const filePath = uri.fsPath;
 				if (this.tracker.getOriginal(filePath) !== undefined) {
-					return uri.with({ scheme: GSD_ORIGINAL_SCHEME });
+					return uri.with({ scheme: GWD_ORIGINAL_SCHEME });
 				}
 				return undefined;
 			},
@@ -83,7 +83,7 @@ export class GsdScmProvider implements vscode.Disposable {
 					command: "vscode.diff",
 					title: "Show Changes",
 					arguments: [
-						uri.with({ scheme: GSD_ORIGINAL_SCHEME }),
+						uri.with({ scheme: GWD_ORIGINAL_SCHEME }),
 						uri,
 						`${fileName} (GSD Agent Changes)`,
 					],
@@ -112,7 +112,7 @@ class GsdOriginalContentProvider implements vscode.TextDocumentContentProvider {
 	constructor(private readonly tracker: GsdChangeTracker) {
 		tracker.onDidChange((paths) => {
 			for (const p of paths) {
-				this._onDidChange.fire(vscode.Uri.file(p).with({ scheme: GSD_ORIGINAL_SCHEME }));
+				this._onDidChange.fire(vscode.Uri.file(p).with({ scheme: GWD_ORIGINAL_SCHEME }));
 			}
 		});
 	}

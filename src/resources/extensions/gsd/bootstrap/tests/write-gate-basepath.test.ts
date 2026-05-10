@@ -61,15 +61,15 @@ describe("write-gate basePath regression", () => {
 
   test("snapshot persisted to basePath=A is readable after chdir to basePath=B", (t) => {
     // Arrange: enable persistence (the default when env var is not set to "0"/"false").
-    const prev = process.env.GSD_PERSIST_WRITE_GATE_STATE;
+    const prev = process.env.GWD_PERSIST_WRITE_GATE_STATE;
     t.after(() => {
       if (prev === undefined) {
-        delete process.env.GSD_PERSIST_WRITE_GATE_STATE;
+        delete process.env.GWD_PERSIST_WRITE_GATE_STATE;
       } else {
-        process.env.GSD_PERSIST_WRITE_GATE_STATE = prev;
+        process.env.GWD_PERSIST_WRITE_GATE_STATE = prev;
       }
     });
-    process.env.GSD_PERSIST_WRITE_GATE_STATE = "1";
+    process.env.GWD_PERSIST_WRITE_GATE_STATE = "1";
 
     // Reset state and clear any stale snapshot files from both dirs.
     clearDiscussionFlowState(baseDirA);

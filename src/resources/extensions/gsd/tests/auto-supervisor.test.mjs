@@ -10,10 +10,10 @@ test('resolveAutoSupervisorConfig provides safe timeout defaults', () => {
   // Isolate from any developer ~/.gsd/PREFERENCES.md that overrides these
   // defaults — the test pins what resolveAutoSupervisorConfig() returns when
   // no preferences file exists, so it must not pick up the runner's home dir.
-  const previousGsdHome = process.env.GSD_HOME;
+  const previousGsdHome = process.env.GWD_HOME;
   const previousCwd = process.cwd();
   const isolated = mkdtempSync(join(tmpdir(), 'gsd-supervisor-defaults-'));
-  process.env.GSD_HOME = isolated;
+  process.env.GWD_HOME = isolated;
   process.chdir(isolated);
   try {
     const supervisor = resolveAutoSupervisorConfig();
@@ -22,9 +22,9 @@ test('resolveAutoSupervisorConfig provides safe timeout defaults', () => {
     assert.equal(supervisor.hard_timeout_minutes, 30);
   } finally {
     if (previousGsdHome === undefined) {
-      delete process.env.GSD_HOME;
+      delete process.env.GWD_HOME;
     } else {
-      process.env.GSD_HOME = previousGsdHome;
+      process.env.GWD_HOME = previousGsdHome;
     }
     process.chdir(previousCwd);
   }

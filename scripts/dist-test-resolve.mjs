@@ -14,13 +14,13 @@ import { join } from 'node:path';
 
 // Compiled legacy state tests exercise markdown derivation through deriveState().
 // Production/runtime keeps this fallback disabled unless explicitly requested.
-process.env.GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK ??= '1';
+process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK ??= '1';
 
 // dist-test root — everything compiled lands here
 const DIST_TEST = new URL('../dist-test/', import.meta.url).href;
 
 // Absolute paths to compiled @gwd/* entry points
-const GSD_ALIASES = {
+const GWD_ALIASES = {
   '@gwd/pi-coding-agent': new URL('../dist-test/packages/pi-coding-agent/src/index.js', import.meta.url).href,
   '@gwd/pi-ai/oauth':     new URL('../dist-test/packages/pi-ai/src/utils/oauth/index.js', import.meta.url).href,
   '@gwd/pi-ai':           new URL('../dist-test/packages/pi-ai/src/index.js', import.meta.url).href,
@@ -31,8 +31,8 @@ const GSD_ALIASES = {
 
 export function resolve(specifier, context, nextResolve) {
   // 1. @gwd/* bare imports → compiled dist-test counterpart
-  if (specifier in GSD_ALIASES) {
-    return nextResolve(GSD_ALIASES[specifier], context);
+  if (specifier in GWD_ALIASES) {
+    return nextResolve(GWD_ALIASES[specifier], context);
   }
 
   // 2. .ts relative imports inside dist-test → .js

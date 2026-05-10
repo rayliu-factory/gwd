@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildMinimalAutoGsdToolSet, buildMinimalGsdToolSet, buildMinimalGsdWorkflowToolSet, buildRequestScopedGsdToolSet, MINIMAL_AUTO_BASE_TOOL_NAMES, MINIMAL_GSD_TOOL_NAMES, restoreGsdWorkflowTools, scopeGsdWorkflowToolsForDispatch } from "../bootstrap/register-hooks.ts";
+import { buildMinimalAutoGsdToolSet, buildMinimalGsdToolSet, buildMinimalGsdWorkflowToolSet, buildRequestScopedGsdToolSet, MINIMAL_AUTO_BASE_TOOL_NAMES, MINIMAL_GWD_TOOL_NAMES, restoreGsdWorkflowTools, scopeGsdWorkflowToolsForDispatch } from "../bootstrap/register-hooks.ts";
 
 test("buildMinimalGsdToolSet preserves non-GSD tools and replaces broad GSD surface", () => {
   const result = buildMinimalGsdToolSet([
@@ -26,7 +26,7 @@ test("buildMinimalGsdToolSet preserves non-GSD tools and replaces broad GSD surf
   assert.ok(result.includes("bash"));
   assert.ok(result.includes("read"));
   assert.ok(result.includes("browser_open"));
-  for (const toolName of MINIMAL_GSD_TOOL_NAMES) {
+  for (const toolName of MINIMAL_GWD_TOOL_NAMES) {
     assert.ok(result.includes(toolName), `expected ${toolName}`);
   }
   assert.ok(!result.includes("gsd_plan_milestone"));

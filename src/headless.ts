@@ -387,9 +387,9 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
   }
 
   // Resolve CLI path for the child process
-  const cliPath = process.env.GSD_BIN_PATH || process.argv[1]
+  const cliPath = process.env.GWD_BIN_PATH || process.argv[1]
   if (!cliPath) {
-    process.stderr.write('[headless] Error: Cannot determine CLI path. Set GSD_BIN_PATH or run via gsd.\n')
+    process.stderr.write('[headless] Error: Cannot determine CLI path. Set GWD_BIN_PATH or run via gsd.\n')
     process.exit(1)
   }
 
@@ -405,7 +405,7 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
     clientOptions.env = injector.getSecretEnvVars()
   }
   // Signal headless mode to the GSD extension (skips UAT human pause, etc.)
-  clientOptions.env = { ...(clientOptions.env as Record<string, string> || {}), GSD_HEADLESS: '1' }
+  clientOptions.env = { ...(clientOptions.env as Record<string, string> || {}), GWD_HEADLESS: '1' }
   // Propagate --bare to the child process
   if (options.bare) {
     clientOptions.args = [...((clientOptions.args as string[]) || []), '--bare']

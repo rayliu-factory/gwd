@@ -86,7 +86,7 @@ function discoverDbCompletedMilestones(basePath: string): Set<string> {
  * When basePath is provided, also checks the canonical project DB as the
  * source of truth. Workers with stale orchestrator state (e.g. "error")
  * are included if their project DB row shows status='complete'.
- * See: https://github.com/gsd-build/gsd-2/issues/2812
+ * See: https://github.com/gwd-build/gwd-2/issues/2812
  */
 export function determineMergeOrder(
   workers: WorkerInfo[],

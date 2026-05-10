@@ -123,11 +123,11 @@ GSD tracks concurrent workers via file-based IPC in `.gsd/parallel/`. See [refer
 
 **Quick overview:**
 
-Each worker spawns with `GSD_MILESTONE_LOCK=M00X` + its own git worktree. Workers write heartbeats to `.gsd/parallel/<milestoneId>.status.json`. The orchestrator enumerates all status files to get a dashboard of all workers, and sends commands via signal files.
+Each worker spawns with `GWD_MILESTONE_LOCK=M00X` + its own git worktree. Workers write heartbeats to `.gsd/parallel/<milestoneId>.status.json`. The orchestrator enumerates all status files to get a dashboard of all workers, and sends commands via signal files.
 
 ```bash
 # Spawn a worker for milestone M001 in its worktree
-GSD_MILESTONE_LOCK=M001 GSD_PARALLEL_WORKER=1 \
+GWD_MILESTONE_LOCK=M001 GWD_PARALLEL_WORKER=1 \
   gsd headless --json auto \
   --cwd .gsd/worktrees/M001 2>worker-M001.log &
 

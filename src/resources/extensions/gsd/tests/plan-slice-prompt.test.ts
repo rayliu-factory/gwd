@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const worktreePromptsDir = join(__dirname, "..", "prompts");
-const fixtureRoot = process.env.GSD_TEST_WORKSPACE_ROOT ?? process.cwd();
+const fixtureRoot = process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd();
 
 function loadPrompt(name: string, vars: Record<string, string> = {}): string {
   const path = join(worktreePromptsDir, `${name}.md`);

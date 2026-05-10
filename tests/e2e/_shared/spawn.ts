@@ -3,7 +3,7 @@
  *
  * Wraps child_process.spawn with the conventions every e2e test needs:
  * - canonical TMPDIR (resolves macOS /var vs /private/var symlink mismatch)
- * - deterministic env (strips inherited GSD_* vars that leak from the host)
+ * - deterministic env (strips inherited GWD_* vars that leak from the host)
  * - ANSI stripping
  * - timeout + orphan kill
  * - ready-signal helper for long-running processes
@@ -37,7 +37,7 @@ export function canonicalTmpdir(): string {
 }
 
 export interface E2eEnv {
-	/** Override binary path. Defaults to GSD_SMOKE_BINARY or "gsd". */
+	/** Override binary path. Defaults to GWD_SMOKE_BINARY or "gsd". */
 	binary?: string;
 	/** Working directory for the spawned process. */
 	cwd: string;
@@ -66,7 +66,7 @@ function isolatedHome(): string {
 }
 
 /**
- * Build the env for an e2e child process. Strips GSD_* vars from the host
+ * Build the env for an e2e child process. Strips GWD_* vars from the host
  * (so a developer's local config does not leak into a test), points HOME
  * at an isolated tmp dir (so per-user gsd state can't race against the
  * runner's real home), and forces deterministic flags.
@@ -74,11 +74,11 @@ function isolatedHome(): string {
 export function buildE2eEnv(extra: Record<string, string> = {}): NodeJS.ProcessEnv {
 	const base: NodeJS.ProcessEnv = {};
 	for (const [k, v] of Object.entries(process.env)) {
-		if (k.startsWith("GSD_")) continue;
+		if (k.startsWith("GWD_")) continue;
 		base[k] = v;
 	}
 	// Force non-interactive — every e2e test runs in CI by default.
-	base.GSD_NON_INTERACTIVE = "1";
+	base.GWD_NON_INTERACTIVE = "1";
 	// Keep TMPDIR canonical for the child too.
 	base.TMPDIR = canonicalTmpdir();
 	// Per-process isolated HOME so gsd's resource-extension setup
@@ -101,7 +101,7 @@ export interface SpawnSyncResult {
 /**
  * Resolve the binary + argv for invoking the gsd CLI.
  *
- * GSD_SMOKE_BINARY=path/to/loader.js → spawn `node path/to/loader.js ...`
+ * GWD_SMOKE_BINARY=path/to/loader.js → spawn `node path/to/loader.js ...`
  * (default "gsd")                    → spawn `gsd ...`
  *
  * Mirrors the convention used by tests/live-regression/run.ts.
@@ -110,7 +110,7 @@ export function resolveGsdInvocation(args: string[], binaryOverride?: string): {
 	command: string;
 	argv: string[];
 } {
-	const binary = binaryOverride ?? process.env.GSD_SMOKE_BINARY ?? "gsd";
+	const binary = binaryOverride ?? process.env.GWD_SMOKE_BINARY ?? "gsd";
 	if (binary === "gsd") {
 		return { command: "gsd", argv: args };
 	}

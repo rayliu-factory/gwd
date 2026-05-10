@@ -14,7 +14,7 @@ import { join } from 'path'
 import { resolveSearchProviderFromPreferences } from '../gsd/preferences.js'
 import { gsdHome } from "../gsd/gsd-home.js";
 
-// Compute authFilePath lazily so GSD_HOME overrides (e.g. in tests) take effect.
+// Compute authFilePath lazily so GWD_HOME overrides (e.g. in tests) take effect.
 // Imported locally instead of from app-paths.ts because extensions are copied to
 // ~/.gsd/agent/extensions/ at runtime where '../../../app-paths.ts' doesn't resolve.
 function authFilePath(): string {

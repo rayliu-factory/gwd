@@ -67,7 +67,7 @@ export function setCurrentPhase(phase: string, context?: GSDPhaseAuditContext): 
 	if (context) _auditContext = context;
 	if (!_active) {
 		process.emitWarning(`Ignoring GSD phase "${phase}" while GSD auto-mode is inactive`, {
-			code: "GSD_PHASE_INACTIVE",
+			code: "GWD_PHASE_INACTIVE",
 		});
 		return false;
 	}

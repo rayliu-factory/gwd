@@ -19,7 +19,7 @@ describe("resource-loader import path", () => {
     await refreshResumeResourcesAndDb(basePath, {
       env: {
         GWD_PKG_ROOT: pkgRoot,
-        GSD_CODING_AGENT_DIR: agentDir,
+        GWD_CODING_AGENT_DIR: agentDir,
       } as NodeJS.ProcessEnv,
       importModule: async (specifier: string) => {
         imports.push(specifier);

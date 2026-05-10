@@ -46,11 +46,11 @@ const WORKTREE_PATH_SEGMENT = `${join(".gsd", "worktrees")}/`;
  * auto-worktree. Returns `null` if not in a worktree.
  *
  * Detection order:
- *   1. `GSD_WORKTREE` env var (set by the worktree launcher)
+ *   1. `GWD_WORKTREE` env var (set by the worktree launcher)
  *   2. `.gsd/worktrees/` segment in basePath
  */
 function resolveWorktreeProjectRoot(basePath: string): string | null {
-  const envRoot = process.env.GSD_WORKTREE;
+  const envRoot = process.env.GWD_WORKTREE;
   if (envRoot) return envRoot;
 
   const normalised = basePath.replace(/\\/g, "/");

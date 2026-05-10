@@ -1,4 +1,4 @@
-# @gsd-build/mcp-server
+# @gwd-build/mcp-server
 
 MCP server exposing GSD orchestration tools for Claude Code, Cursor, and other MCP-compatible clients.
 
@@ -13,7 +13,7 @@ This package now exposes two tool surfaces:
 ## Installation
 
 ```bash
-npm install @gsd-build/mcp-server
+npm install @gwd-build/mcp-server
 ```
 
 Or with the monorepo workspace:
@@ -36,7 +36,7 @@ Add to your project's `.mcp.json`:
       "command": "npx",
       "args": ["gsd-mcp-server"],
       "env": {
-        "GSD_CLI_PATH": "/path/to/gsd"
+        "GWD_CLI_PATH": "/path/to/gsd"
       }
     }
   }
@@ -66,7 +66,7 @@ Add to `.cursor/mcp.json`:
       "command": "npx",
       "args": ["gsd-mcp-server"],
       "env": {
-        "GSD_CLI_PATH": "/path/to/gsd"
+        "GWD_CLI_PATH": "/path/to/gsd"
       }
     }
   }
@@ -110,7 +110,7 @@ The packaged server exposes `ask_user_questions` through MCP form elicitation. T
 
 The packaged server also exposes `secure_env_collect` through MCP form elicitation. Secret values are written directly to the selected destination and are not included in tool output. For dotenv writes, `envFilePath` must resolve inside the validated project directory; parent traversal and symlink escapes are rejected.
 
-`secure_env_collect` refuses to set variables that control the MCP server runtime itself, including `GSD_WORKFLOW_EXECUTORS_MODULE`, `GSD_WORKFLOW_WRITE_GATE_MODULE`, `GSD_WORKFLOW_PROJECT_ROOT`, `GSD_CLI_PATH`, `NODE_OPTIONS`, `NODE_PATH`, `PATH`, `LD_PRELOAD`, and `DYLD_INSERT_LIBRARIES`. These values must be configured by the operator in the MCP server environment, not collected from an MCP tool call.
+`secure_env_collect` refuses to set variables that control the MCP server runtime itself, including `GWD_WORKFLOW_EXECUTORS_MODULE`, `GWD_WORKFLOW_WRITE_GATE_MODULE`, `GWD_WORKFLOW_PROJECT_ROOT`, `GWD_CLI_PATH`, `NODE_OPTIONS`, `NODE_PATH`, `PATH`, `LD_PRELOAD`, and `DYLD_INSERT_LIBRARIES`. These values must be configured by the operator in the MCP server environment, not collected from an MCP tool call.
 
 Secret handling differs by destination:
 
@@ -120,7 +120,7 @@ Secret handling differs by destination:
 Current support boundary:
 
 - when running inside the GSD monorepo checkout, the MCP server auto-discovers the shared workflow executor module
-- outside the monorepo, set `GSD_WORKFLOW_EXECUTORS_MODULE` to an importable `workflow-tool-executors` module path if you want the mutation tools enabled
+- outside the monorepo, set `GWD_WORKFLOW_EXECUTORS_MODULE` to an importable `workflow-tool-executors` module path if you want the mutation tools enabled
 - `ask_user_questions` and `secure_env_collect` require an MCP client that supports form elicitation
 - session/read tools do not depend on this bridge
 
@@ -231,8 +231,8 @@ Resolve a pending blocker in a session by sending a response to the blocked UI r
 
 | Variable | Description |
 |----------|-------------|
-| `GSD_CLI_PATH` | Absolute path to the GSD CLI binary. If not set, the server resolves `gsd` via `which`. |
-| `GSD_WORKFLOW_EXECUTORS_MODULE` | Optional absolute path or `file:` URL for the shared GSD workflow executor module used by workflow mutation tools. |
+| `GWD_CLI_PATH` | Absolute path to the GSD CLI binary. If not set, the server resolves `gsd` via `which`. |
+| `GWD_WORKFLOW_EXECUTORS_MODULE` | Optional absolute path or `file:` URL for the shared GSD workflow executor module used by workflow mutation tools. |
 
 The server also hydrates supported model-provider and tool credentials from `~/.gsd/agent/auth.json` on startup. Keys saved through `/gsd config` or `/gsd keys` become available to the MCP server process automatically, and any explicitly-set environment variable still wins.
 
@@ -242,12 +242,12 @@ Remote secrets pushed by `secure_env_collect` to Vercel or Convex are not hydrat
 
 ```
 ┌─────────────────┐     stdio      ┌──────────────────┐
-│  MCP Client     │ ◄────────────► │  @gsd-build/mcp-server │
+│  MCP Client     │ ◄────────────► │  @gwd-build/mcp-server │
 │  (Claude Code,  │    JSON-RPC    │                  │
 │   Cursor, etc.) │                │  SessionManager  │
 └─────────────────┘                │       │          │
                                    │       ▼          │
-                                   │  @gsd-build/rpc-client │
+                                   │  @gwd-build/rpc-client │
                                    │       │          │
                                    │       ▼          │
                                    │  GSD CLI (child  │
@@ -255,9 +255,9 @@ Remote secrets pushed by `secure_env_collect` to Vercel or Convex are not hydrat
                                    └──────────────────┘
 ```
 
-- **@gsd-build/mcp-server** — MCP protocol adapter. Translates MCP tool calls into SessionManager operations.
+- **@gwd-build/mcp-server** — MCP protocol adapter. Translates MCP tool calls into SessionManager operations.
 - **SessionManager** — Manages RpcClient lifecycle. One session per project directory. Tracks events in a ring buffer (last 50), detects blockers, accumulates cost.
-- **@gsd-build/rpc-client** — Low-level RPC client that spawns and communicates with the GSD CLI process via JSON-RPC over stdio.
+- **@gwd-build/rpc-client** — Low-level RPC client that spawns and communicates with the GSD CLI process via JSON-RPC over stdio.
 
 ## License
 

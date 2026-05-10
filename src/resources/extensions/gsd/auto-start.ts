@@ -611,11 +611,11 @@ export async function bootstrapAutoSession(
     ?? null;
 
   try {
-    // Validate GSD_PROJECT_ID early so the user gets immediate feedback
-    const customProjectId = process.env.GSD_PROJECT_ID;
+    // Validate GWD_PROJECT_ID early so the user gets immediate feedback
+    const customProjectId = process.env.GWD_PROJECT_ID;
     if (customProjectId && !validateProjectId(customProjectId)) {
       ctx.ui.notify(
-        `GSD_PROJECT_ID must contain only alphanumeric characters, hyphens, and underscores. Got: "${customProjectId}"`,
+        `GWD_PROJECT_ID must contain only alphanumeric characters, hyphens, and underscores. Got: "${customProjectId}"`,
         "error",
       );
       return releaseLockAndReturn();
@@ -691,7 +691,7 @@ export async function bootstrapAutoSession(
     );
 
     // ── Debug mode ──
-    if (!isDebugEnabled() && process.env.GSD_DEBUG === "1") {
+    if (!isDebugEnabled() && process.env.GWD_DEBUG === "1") {
       enableDebug(base);
     }
     if (isDebugEnabled()) {
@@ -1217,11 +1217,11 @@ export async function bootstrapAutoSession(
     s.manualSessionModelOverride = manualSessionOverride ?? null;
 
     // Apply worker model override from parallel orchestrator (#worker-model).
-    // GSD_WORKER_MODEL is injected by the coordinator when parallel.worker_model
+    // GWD_WORKER_MODEL is injected by the coordinator when parallel.worker_model
     // is configured, so parallel milestone workers use a cheaper model than the
     // coordinator session (e.g. Haiku for execution, Sonnet for planning).
-    const workerModelOverride = process.env.GSD_WORKER_MODEL;
-    if (workerModelOverride && process.env.GSD_PARALLEL_WORKER === "1") {
+    const workerModelOverride = process.env.GWD_WORKER_MODEL;
+    if (workerModelOverride && process.env.GWD_PARALLEL_WORKER === "1") {
       const availableModels = ctx.modelRegistry.getAvailable();
       const { resolveModelId } = await import("./auto-model-selection.js");
       const overrideModel = resolveModelId(workerModelOverride, availableModels, ctx.model?.provider);

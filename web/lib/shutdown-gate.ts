@@ -8,7 +8,7 @@
  *   refresh  → GET  /api/boot     → cancelShutdown()   → timer cleared
  *   tab close → timer fires → drains SSE streams → process.exit(0)
  *
- * When GSD_WEB_DAEMON_MODE=1, the server is running as a persistent daemon
+ * When GWD_WEB_DAEMON_MODE=1, the server is running as a persistent daemon
  * (e.g. behind a reverse proxy for remote access). In this mode,
  * scheduleShutdown() is a no-op — no client tab should be able to exit the
  * server. The /api/shutdown endpoint still returns { ok: true } so the
@@ -105,7 +105,7 @@ if (!gate.handlersRegistered) {
  * In daemon mode, shutdown requests from browser tabs are ignored.
  */
 export function isDaemonMode(): boolean {
-  return process.env.GSD_WEB_DAEMON_MODE === "1";
+  return process.env.GWD_WEB_DAEMON_MODE === "1";
 }
 
 /**
@@ -137,7 +137,7 @@ export function recordBoot(): void {
  * If cancelShutdown() is called before the timer fires (e.g. a page refresh
  * triggers a boot request), the exit is aborted.
  *
- * No-op when GSD_WEB_DAEMON_MODE=1 — the server should outlive any
+ * No-op when GWD_WEB_DAEMON_MODE=1 — the server should outlive any
  * individual browser session.
  */
 export function scheduleShutdown(): void {

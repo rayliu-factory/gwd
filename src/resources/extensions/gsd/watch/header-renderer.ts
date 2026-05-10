@@ -15,7 +15,7 @@ import { gsdHome } from "../gsd-home.js";
  * GSD ASCII logo — inlined here because the canonical src/logo.ts is outside
  * the resources rootDir and cannot be imported directly.
  */
-const GSD_LOGO: readonly string[] = [
+const GWD_LOGO: readonly string[] = [
   '   ██████╗ ███████╗██████╗ ',
   '  ██╔════╝ ██╔════╝██╔══██╗',
   '  ██║  ███╗███████╗██║  ██║',
@@ -99,14 +99,14 @@ export function readGitBranch(projectRoot: string): string {
 }
 
 /**
- * Read MCP server names from .mcp.json, .gsd/mcp.json, and the global
- * ~/.gsd/mcp.json (or $GSD_HOME/mcp.json).
+ * Read MCP server names from .mcp.json, .gwd/mcp.json, and the global
+ * ~/.gwd/mcp.json (or $GWD_HOME/mcp.json).
  * Returns array of server name strings.
  */
 export function readMcpServerNames(projectRoot: string): string[] {
   const configPaths = [
     join(projectRoot, ".mcp.json"),
-    join(projectRoot, ".gsd", "mcp.json"),
+    join(projectRoot, ".gwd", "mcp.json"),
     join(gsdHome(), "mcp.json"),
   ];
   const names: string[] = [];
@@ -201,7 +201,7 @@ export function renderHeaderLines(data: HeaderData, width: number): string[] {
   const lines: string[] = [];
 
   // Logo is 6 lines tall. Info panel has: title + blank + model + provider + directory + branch = 6 lines
-  const logoLines = GSD_LOGO;
+  const logoLines = GWD_LOGO;
   const logoWidth = Math.max(...logoLines.map(l => visibleWidth(l)));
 
   // Calculate available width for the info panel

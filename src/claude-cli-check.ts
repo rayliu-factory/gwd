@@ -2,7 +2,7 @@
 // Lightweight check used at onboarding time (before extensions load).
 // The full readiness check with caching lives in the claude-code-cli extension.
 //
-// Set GSD_CLAUDE_DEBUG=1 to log probe output to stderr. Useful when
+// Set GWD_CLAUDE_DEBUG=1 to log probe output to stderr. Useful when
 // diagnosing platform-specific detection failures (Issue #4997).
 
 import { execFileSync } from 'node:child_process'
@@ -67,7 +67,7 @@ const VERSION_TIMEOUT_MS = 5_000
 const AUTH_TIMEOUT_MS = 15_000
 
 function debugLog(...parts: unknown[]): void {
-  if (process.env.GSD_CLAUDE_DEBUG) {
+  if (process.env.GWD_CLAUDE_DEBUG) {
     process.stderr.write(`[claude-cli-check] ${parts.map(p => (typeof p === 'string' ? p : JSON.stringify(p))).join(' ')}\n`)
   }
 }

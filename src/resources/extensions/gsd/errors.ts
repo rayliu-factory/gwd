@@ -8,13 +8,13 @@
 
 // ─── Error Codes ──────────────────────────────────────────────────────────────
 
-export const GSD_STALE_STATE = "GSD_STALE_STATE";
-export const GSD_LOCK_HELD = "GSD_LOCK_HELD";
-export const GSD_ARTIFACT_MISSING = "GSD_ARTIFACT_MISSING";
-export const GSD_GIT_ERROR = "GSD_GIT_ERROR";
-export const GSD_MERGE_CONFLICT = "GSD_MERGE_CONFLICT";
-export const GSD_PARSE_ERROR = "GSD_PARSE_ERROR";
-export const GSD_IO_ERROR = "GSD_IO_ERROR";
+export const GWD_STALE_STATE = "GWD_STALE_STATE";
+export const GWD_LOCK_HELD = "GWD_LOCK_HELD";
+export const GWD_ARTIFACT_MISSING = "GWD_ARTIFACT_MISSING";
+export const GWD_GIT_ERROR = "GWD_GIT_ERROR";
+export const GWD_MERGE_CONFLICT = "GWD_MERGE_CONFLICT";
+export const GWD_PARSE_ERROR = "GWD_PARSE_ERROR";
+export const GWD_IO_ERROR = "GWD_IO_ERROR";
 
 // ─── Base Error ───────────────────────────────────────────────────────────────
 

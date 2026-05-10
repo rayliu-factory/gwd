@@ -1,7 +1,7 @@
 {
-  "name": "@gsd-build/engine-win32-x64-msvc",
+  "name": "@gwd-build/engine-win32-x64-msvc",
   "version": "2.81.0",
-  "description": "GSD native engine binary for Windows x64 (MSVC)",
+  "description": "GWD native engine binary for Windows x64 (MSVC)",
   "os": [
     "win32"
   ],
@@ -15,6 +15,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gsd-build/gsd-2.git"
+    "url": "git+https://github.com/gwd-build/gwd-2.git"
   }
 }

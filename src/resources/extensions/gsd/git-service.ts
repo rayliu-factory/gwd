@@ -39,7 +39,7 @@ import {
   nativeCommitSubject,
   _resetHasChangesCache,
 } from "./native-git-bridge.js";
-import { GSDError, GSD_MERGE_CONFLICT, GSD_GIT_ERROR } from "./errors.js";
+import { GSDError, GWD_MERGE_CONFLICT, GWD_GIT_ERROR } from "./errors.js";
 import { getErrorMessage } from "./error-utils.js";
 import { isInfrastructureError } from "./auto/infra-errors.js";
 
@@ -287,7 +287,7 @@ export class MergeConflictError extends GSDError {
     mainBranch: string,
   ) {
     super(
-      GSD_MERGE_CONFLICT,
+      GWD_MERGE_CONFLICT,
       `${strategy === "merge" ? "Merge" : "Squash-merge"} of "${branch}" into "${mainBranch}" ` +
       `failed with conflicts in ${conflictedFiles.length} non-.gsd file(s): ${conflictedFiles.join(", ")}`,
     );
@@ -312,7 +312,7 @@ export interface PreMergeCheckResult {
  * GSD runtime paths that should be excluded from smart staging.
  * These are transient/generated artifacts that should never be committed.
  *
- * NOTE: GSD_RUNTIME_PATTERNS in gitignore.ts is the canonical source of truth.
+ * NOTE: GWD_RUNTIME_PATTERNS in gitignore.ts is the canonical source of truth.
  * This array must stay synchronized with it.
  */
 export const RUNTIME_EXCLUSION_PATHS: readonly string[] = [
@@ -638,7 +638,7 @@ export function runGit(basePath: string, args: string[], options: { allowFailure
   } catch (error) {
     if (options.allowFailure) return "";
     const message = getErrorMessage(error);
-    throw new GSDError(GSD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}: ${filterGitSvnNoise(message)}`);
+    throw new GSDError(GWD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}: ${filterGitSvnNoise(message)}`);
   }
 }
 
@@ -725,11 +725,11 @@ export class GitServiceImpl {
     const allExclusions = [...RUNTIME_EXCLUSION_PATHS, ...extraExclusions];
 
     // ── Parallel worker milestone scope (#1991) ──
-    // When GSD_MILESTONE_LOCK is set, this process is a parallel worker that
+    // When GWD_MILESTONE_LOCK is set, this process is a parallel worker that
     // must only commit files belonging to its own milestone. Exclude all other
     // milestone directories from staging to prevent cross-milestone pollution
     // (e.g., an M033 worker fabricating M032 artifacts in the same commit).
-    const milestoneLock = process.env.GSD_MILESTONE_LOCK;
+    const milestoneLock = process.env.GWD_MILESTONE_LOCK;
     if (milestoneLock) {
       const msDir = join(gsdRoot(this.basePath), "milestones");
       if (existsSync(msDir)) {
@@ -885,13 +885,13 @@ export class GitServiceImpl {
       // Opt-in guard — users can disable to keep snapshot commits for forensics
       if (this.prefs.absorb_snapshot_commits === false) return;
 
-      const GSD_SNAPSHOT_PREFIX = "gsd snapshot:";
+      const GWD_SNAPSHOT_PREFIX = "gsd snapshot:";
       let count = 0;
 
       // Walk back from HEAD~1 counting consecutive snapshot commits (cap at 10)
       for (let i = 1; i <= 10; i++) {
         const subject = nativeCommitSubject(this.basePath, `HEAD~${i}`);
-        if (!subject.startsWith(GSD_SNAPSHOT_PREFIX)) break;
+        if (!subject.startsWith(GWD_SNAPSHOT_PREFIX)) break;
         count = i;
       }
 

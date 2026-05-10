@@ -85,13 +85,13 @@ function assistantCtx(): any {
 // then holds the lock for a moment before releasing.
 //
 // Environment variables:
-//   GSD_TEST_LOCK_PATH — absolute path to the .lock file to create
-//   GSD_TEST_HOLD_MS   — how long (ms) to hold the lock before releasing
+//   GWD_TEST_LOCK_PATH — absolute path to the .lock file to create
+//   GWD_TEST_HOLD_MS   — how long (ms) to hold the lock before releasing
 //
 const PID_STAMP_WORKER = `
 const { openSync, closeSync, writeFileSync, unlinkSync } = require('node:fs');
-const lockPath = process.env.GSD_TEST_LOCK_PATH;
-const holdMs = parseInt(process.env.GSD_TEST_HOLD_MS || '200', 10);
+const lockPath = process.env.GWD_TEST_LOCK_PATH;
+const holdMs = parseInt(process.env.GWD_TEST_HOLD_MS || '200', 10);
 
 const deadline = Date.now() + 2000;
 while (Date.now() < deadline) {
@@ -124,10 +124,10 @@ const { openSync, closeSync, unlinkSync, existsSync, readFileSync, writeFileSync
 const { dirname } = require('node:path');
 const { randomBytes } = require('node:crypto');
 
-const metricsPath = process.env.GSD_TEST_METRICS_PATH;
-const milestoneId = process.env.GSD_TEST_MILESTONE_ID;
+const metricsPath = process.env.GWD_TEST_METRICS_PATH;
+const milestoneId = process.env.GWD_TEST_MILESTONE_ID;
 const lockPath = metricsPath + '.lock';
-const STALE_MS = parseInt(process.env.GSD_TEST_STALE_MS || '4000', 10);
+const STALE_MS = parseInt(process.env.GWD_TEST_STALE_MS || '4000', 10);
 
 function acquireLock(lockPath, timeoutMs) {
   const deadline = Date.now() + timeoutMs;
@@ -258,8 +258,8 @@ describe("metrics lock hardening (M3)", () => {
       {
         env: {
           ...process.env,
-          GSD_TEST_LOCK_PATH: lp,
-          GSD_TEST_HOLD_MS: "200",
+          GWD_TEST_LOCK_PATH: lp,
+          GWD_TEST_HOLD_MS: "200",
         },
         encoding: "utf-8",
         timeout: 5000,
@@ -326,9 +326,9 @@ describe("metrics lock hardening (M3)", () => {
       const r = spawnSync(process.execPath, ["-e", MERGE_WORKER], {
         env: {
           ...process.env,
-          GSD_TEST_METRICS_PATH: mp,
-          GSD_TEST_MILESTONE_ID: milestoneId,
-          GSD_TEST_STALE_MS: String(STALE_LOCK_THRESHOLD_MS),
+          GWD_TEST_METRICS_PATH: mp,
+          GWD_TEST_MILESTONE_ID: milestoneId,
+          GWD_TEST_STALE_MS: String(STALE_LOCK_THRESHOLD_MS),
         },
         encoding: "utf-8",
         timeout: 10_000,
@@ -378,9 +378,9 @@ describe("metrics lock hardening (M3)", () => {
     const r = spawnSync(process.execPath, ["-e", MERGE_WORKER], {
       env: {
         ...process.env,
-        GSD_TEST_METRICS_PATH: mp,
-        GSD_TEST_MILESTONE_ID: "M002",
-        GSD_TEST_STALE_MS: String(STALE_LOCK_THRESHOLD_MS),
+        GWD_TEST_METRICS_PATH: mp,
+        GWD_TEST_MILESTONE_ID: "M002",
+        GWD_TEST_STALE_MS: String(STALE_LOCK_THRESHOLD_MS),
       },
       encoding: "utf-8",
       timeout: 10_000,

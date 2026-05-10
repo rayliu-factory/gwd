@@ -11,7 +11,7 @@ import {
 import {
   dispatchBrowserSlashCommand,
   getBrowserSlashCommandTerminalNotice,
-  GSD_HELP_TEXT,
+  GWD_HELP_TEXT,
   type BrowserSlashCommandDispatchResult,
   type BrowserSlashCommandSurface,
 } from "./browser-slash-command-dispatch"
@@ -4073,7 +4073,7 @@ export class GSDWorkspaceStore {
           this.patchState({
             terminalLines: withTerminalLine(
               withTerminalLine(this.state.terminalLines, createTerminalLine("input", trimmed)),
-              createTerminalLine("system", GSD_HELP_TEXT),
+              createTerminalLine("system", GWD_HELP_TEXT),
             ),
           })
           return outcome

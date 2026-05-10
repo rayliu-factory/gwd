@@ -4,7 +4,7 @@ import { evaluateWebProxyAuth } from "./lib/proxy-auth"
 /**
  * Next.js proxy - validates bearer token and origin on all API routes.
  *
- * The GSD_WEB_AUTH_TOKEN env var is set at server launch. Every /api/* request
+ * The GWD_WEB_AUTH_TOKEN env var is set at server launch. Every /api/* request
  * must carry a matching `Authorization: Bearer <token>` header. EventSource
  * (SSE) connections may use the `_token` query parameter instead since the
  * EventSource API cannot set custom headers.

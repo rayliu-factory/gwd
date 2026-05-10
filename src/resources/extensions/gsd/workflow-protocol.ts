@@ -82,7 +82,7 @@ export function buildDoctorHealIssuePayload(
 }
 
 function getWorkflowProtocolExcerptLimit(): number {
-  const raw = process.env.PI_GSD_WORKFLOW_PROTOCOL_MAX_CHARS;
+  const raw = process.env.PI_GWD_WORKFLOW_PROTOCOL_MAX_CHARS;
   if (!raw) return DEFAULT_WORKFLOW_PROTOCOL_EXCERPT_CHARS;
   const parsed = Number(raw);
   if (!Number.isFinite(parsed) || parsed < MIN_WORKFLOW_PROTOCOL_EXCERPT_CHARS) {

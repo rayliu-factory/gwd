@@ -95,7 +95,7 @@ function warnDeprecatedAgentInstructions(): void {
       console.warn(
         `[GSD] DEPRECATED: ${path} is no longer loaded. ` +
         `Migrate your instructions to AGENTS.md (or CLAUDE.md) in the same directory. ` +
-        `See https://github.com/gsd-build/GSD-2/issues/1492`,
+        `See https://github.com/gwd-build/gwd-2/issues/1492`,
       );
     }
   }
@@ -286,7 +286,7 @@ export function buildContextMessage(opts: {
 }
 
 function getContextMessageCharLimit(): number | null {
-  const raw = process.env.PI_GSD_CONTEXT_MAX_CHARS;
+  const raw = process.env.PI_GWD_CONTEXT_MAX_CHARS;
   if (!raw) return DEFAULT_CONTEXT_MESSAGE_MAX_CHARS;
   if (raw === "0") return null;
   const parsed = Number(raw);
@@ -417,7 +417,7 @@ export function loadKnowledgeBlock(gsdHomeDir: string, cwd: string): { block: st
 }
 
 function getKnowledgeCharLimit(): number | null {
-  const raw = process.env.PI_GSD_KNOWLEDGE_MAX_CHARS;
+  const raw = process.env.PI_GWD_KNOWLEDGE_MAX_CHARS;
   if (!raw) return DEFAULT_KNOWLEDGE_MAX_CHARS;
   if (raw === "0") return null;
   const parsed = Number(raw);

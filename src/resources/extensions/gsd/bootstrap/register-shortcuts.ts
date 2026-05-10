@@ -4,7 +4,7 @@ import { join } from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
 import { Key } from "@gwd/pi-tui";
 
-import { GSD_SHORTCUTS } from "../shortcut-defs.js";
+import { GWD_SHORTCUTS } from "../shortcut-defs.js";
 import { shortcutDesc } from "../../shared/mod.js";
 
 async function getProjectRoot(): Promise<string> {
@@ -72,30 +72,30 @@ export function registerShortcuts(pi: ExtensionAPI): void {
     );
   };
 
-  pi.registerShortcut(Key.ctrlAlt(GSD_SHORTCUTS.dashboard.key), {
-    description: shortcutDesc(GSD_SHORTCUTS.dashboard.action, GSD_SHORTCUTS.dashboard.command),
+  pi.registerShortcut(Key.ctrlAlt(GWD_SHORTCUTS.dashboard.key), {
+    description: shortcutDesc(GWD_SHORTCUTS.dashboard.action, GWD_SHORTCUTS.dashboard.command),
     handler: openDashboardOverlay,
   });
 
   // Fallback for terminals where Ctrl+Alt letter chords are not forwarded reliably.
-  pi.registerShortcut(Key.ctrlShift(GSD_SHORTCUTS.dashboard.key), {
-    description: shortcutDesc(`${GSD_SHORTCUTS.dashboard.action} (fallback)`, GSD_SHORTCUTS.dashboard.command),
+  pi.registerShortcut(Key.ctrlShift(GWD_SHORTCUTS.dashboard.key), {
+    description: shortcutDesc(`${GWD_SHORTCUTS.dashboard.action} (fallback)`, GWD_SHORTCUTS.dashboard.command),
     handler: openDashboardOverlay,
   });
 
-  pi.registerShortcut(Key.ctrlAlt(GSD_SHORTCUTS.notifications.key), {
-    description: shortcutDesc(GSD_SHORTCUTS.notifications.action, GSD_SHORTCUTS.notifications.command),
+  pi.registerShortcut(Key.ctrlAlt(GWD_SHORTCUTS.notifications.key), {
+    description: shortcutDesc(GWD_SHORTCUTS.notifications.action, GWD_SHORTCUTS.notifications.command),
     handler: openNotificationsOverlay,
   });
 
   // Fallback for terminals where Ctrl+Alt letter chords are not forwarded reliably.
-  pi.registerShortcut(Key.ctrlShift(GSD_SHORTCUTS.notifications.key), {
-    description: shortcutDesc(`${GSD_SHORTCUTS.notifications.action} (fallback)`, GSD_SHORTCUTS.notifications.command),
+  pi.registerShortcut(Key.ctrlShift(GWD_SHORTCUTS.notifications.key), {
+    description: shortcutDesc(`${GWD_SHORTCUTS.notifications.action} (fallback)`, GWD_SHORTCUTS.notifications.command),
     handler: openNotificationsOverlay,
   });
 
-  pi.registerShortcut(Key.ctrlAlt(GSD_SHORTCUTS.parallel.key), {
-    description: shortcutDesc(GSD_SHORTCUTS.parallel.action, GSD_SHORTCUTS.parallel.command),
+  pi.registerShortcut(Key.ctrlAlt(GWD_SHORTCUTS.parallel.key), {
+    description: shortcutDesc(GWD_SHORTCUTS.parallel.action, GWD_SHORTCUTS.parallel.command),
     handler: openParallelOverlay,
   });
 

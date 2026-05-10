@@ -36,16 +36,16 @@ function makeTmpBase(): string {
 }
 
 beforeEach(() => {
-  savedGsdHome = process.env.GSD_HOME;
+  savedGsdHome = process.env.GWD_HOME;
   const fakeHome = makeTmpBase();
-  process.env.GSD_HOME = fakeHome;
+  process.env.GWD_HOME = fakeHome;
 });
 
 afterEach(() => {
   if (savedGsdHome === undefined) {
-    delete process.env.GSD_HOME;
+    delete process.env.GWD_HOME;
   } else {
-    process.env.GSD_HOME = savedGsdHome;
+    process.env.GWD_HOME = savedGsdHome;
   }
   for (const d of tmpDirs) {
     try { rmSync(d, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }); } catch { /* non-fatal */ }
@@ -65,7 +65,7 @@ function writeProjectPlugin(basePath: string, filename: string, content: string)
 }
 
 function writeGlobalPlugin(filename: string, content: string): void {
-  const dir = join(process.env.GSD_HOME!, "workflows");
+  const dir = join(process.env.GWD_HOME!, "workflows");
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, filename), content, "utf-8");
 }

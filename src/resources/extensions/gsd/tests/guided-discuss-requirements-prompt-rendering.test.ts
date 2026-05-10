@@ -8,19 +8,19 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test("guided requirements prompt renders compact capability and persistence guidance", async (t) => {
-  const previousGsdHome = process.env.GSD_HOME;
-  const providedGsdHome = process.env.GSD_TEST_HOME;
+  const previousGsdHome = process.env.GWD_HOME;
+  const providedGsdHome = process.env.GWD_TEST_HOME;
   const isolatedHome = providedGsdHome ?? mkdtempSync(join(tmpdir(), "gsd-guided-requirements-render-"));
-  process.env.GSD_HOME = isolatedHome;
+  process.env.GWD_HOME = isolatedHome;
   t.after(() => {
-    if (previousGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = previousGsdHome;
+    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGsdHome;
     if (!providedGsdHome) rmSync(isolatedHome, { recursive: true, force: true });
   });
 
   const { loadPrompt } = await import(`../prompt-loader.ts?test=${Date.now()}`);
   const prompt = loadPrompt("guided-discuss-requirements", {
-    workingDirectory: process.env.GSD_TEST_WORKSPACE_ROOT ?? process.cwd(),
+    workingDirectory: process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd(),
     structuredQuestionsAvailable: "true",
     inlinedTemplates: "## Active\n\n## Validated\n\n## Deferred\n\n## Out of Scope\n\n## Traceability\n\n## Coverage Summary",
     commitInstruction: "Do not commit during this test.",

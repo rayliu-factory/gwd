@@ -132,17 +132,17 @@ Use keywords from the user's problem description and the anomaly summaries in th
 
 1. **Search closed issues** for similar keywords:
    \`\`\`
-   gh issue list --repo gsd-build/gsd-2 --state closed --search "<keywords from root cause>" --limit 20
+   gh issue list --repo gwd-build/gwd-2 --state closed --search "<keywords from root cause>" --limit 20
    \`\`\`
 
 2. **Search open PRs** that might contain the fix:
    \`\`\`
-   gh pr list --repo gsd-build/gsd-2 --state open --search "<keywords>" --limit 10
+   gh pr list --repo gwd-build/gwd-2 --state open --search "<keywords>" --limit 10
    \`\`\`
 
 3. **Search merged PRs** that may have already fixed this:
    \`\`\`
-   gh pr list --repo gsd-build/gsd-2 --state merged --search "<keywords>" --limit 10
+   gh pr list --repo gwd-build/gwd-2 --state merged --search "<keywords>" --limit 10
    \`\`\`
 
 ### Analysis
@@ -1307,7 +1307,7 @@ function redactForGitHub(text: string, basePath: string): string {
 
   // Replace absolute paths
   result = result.replace(pathRe(basePath), ".");
-  // Redact GSD_HOME first (when it's outside ~), then OS home.
+  // Redact GWD_HOME first (when it's outside ~), then OS home.
   // Order matters: longer path must be replaced before the shorter prefix.
   const gsdHomePath = gsdHome();
   if (!gsdHomePath.startsWith(homedir())) {

@@ -133,8 +133,8 @@ export async function load(url, context, nextLoad) {
       cwd: process.cwd(),
       env: {
         ...process.env,
-        GSD_HOME: join(tempDir, 'home'),
-        GSD_RTK_DISABLED: '1',
+        GWD_HOME: join(tempDir, 'home'),
+        GWD_RTK_DISABLED: '1',
       },
       encoding: 'utf8',
       input: '',

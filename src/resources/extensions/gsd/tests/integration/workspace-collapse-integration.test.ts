@@ -312,12 +312,12 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
-    savedGsdHome = process.env.GSD_HOME;
+    savedGsdHome = process.env.GWD_HOME;
 
     // Prevent ~/.gsd interference
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
-    process.env.GSD_HOME = join(fakeHome, ".gsd");
+    process.env.GWD_HOME = join(fakeHome, ".gsd");
 
     clearPathCache();
   });
@@ -327,8 +327,8 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
     else process.env.HOME = savedHome;
     if (savedUserProfile === undefined) delete process.env.USERPROFILE;
     else process.env.USERPROFILE = savedUserProfile;
-    if (savedGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = savedGsdHome;
+    if (savedGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = savedGsdHome;
 
     clearPathCache();
     rmSync(projectDir, { recursive: true, force: true });

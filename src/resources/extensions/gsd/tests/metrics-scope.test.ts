@@ -264,8 +264,8 @@ const { openSync, closeSync, unlinkSync, existsSync, readFileSync, mkdirSync, re
 const { dirname } = require('node:path');
 const { randomBytes } = require('node:crypto');
 
-const metricsPath = process.env.GSD_SCOPE_METRICS_PATH;
-const milestoneId = process.env.GSD_SCOPE_MILESTONE_ID;
+const metricsPath = process.env.GWD_SCOPE_METRICS_PATH;
+const milestoneId = process.env.GWD_SCOPE_MILESTONE_ID;
 const lockPath = metricsPath + '.lock';
 
 function acquireLock(lp, ms) {
@@ -317,8 +317,8 @@ try {
     const result = spawnSync(process.execPath, ["-e", MERGE_WORKER], {
       env: {
         ...process.env,
-        GSD_SCOPE_METRICS_PATH: metricsPath,
-        GSD_SCOPE_MILESTONE_ID: milestoneId,
+        GWD_SCOPE_METRICS_PATH: metricsPath,
+        GWD_SCOPE_MILESTONE_ID: milestoneId,
       },
       encoding: "utf-8",
       timeout: 10_000,

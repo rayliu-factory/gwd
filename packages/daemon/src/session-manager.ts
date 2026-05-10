@@ -275,24 +275,24 @@ export class SessionManager extends EventEmitter {
   }
 
   /**
-   * Resolve the GSD CLI path.
+   * Resolve the GWD CLI path.
    *
-   * 1. GSD_CLI_PATH env var (highest priority)
-   * 2. `which gsd` → resolve to the actual dist/cli.js
+   * 1. GWD_CLI_PATH env var (highest priority)
+   * 2. `which gwd` → resolve to the actual dist/cli.js
    */
   static resolveCLIPath(): string {
-    const envPath = process.env['GSD_CLI_PATH'];
+    const envPath = process.env['GWD_CLI_PATH'];
     if (envPath) return resolve(envPath);
 
     try {
-      const gsdBin = execSync('which gsd', { encoding: 'utf-8' }).trim();
-      if (gsdBin) return resolve(gsdBin);
+      const gwdBin = execSync('which gwd', { encoding: 'utf-8' }).trim();
+      if (gwdBin) return resolve(gwdBin);
     } catch {
       // which failed
     }
 
     throw new Error(
-      'Cannot find GSD CLI. Set GSD_CLI_PATH environment variable or ensure `gsd` is in PATH.'
+      'Cannot find GWD CLI. Set GWD_CLI_PATH environment variable or ensure `gwd` is in PATH.'
     );
   }
 

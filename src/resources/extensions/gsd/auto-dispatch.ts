@@ -264,7 +264,7 @@ const MAX_REWRITE_ATTEMPTS = 3;
 // ─── Disk-persisted rewrite attempt counter ──────────────────────────────────
 // The counter must survive session restarts (crash recovery, pause/resume,
 // step-mode). Storing it on the in-memory session object caused the circuit
-// breaker to never trip — see https://github.com/gsd-build/gsd-2/issues/2203
+// breaker to never trip — see https://github.com/gwd-build/gwd-2/issues/2203
 function rewriteCountPath(basePath: string): string {
   return join(gsdRoot(basePath), "runtime", "rewrite-count.json");
 }
@@ -317,7 +317,7 @@ export function incrementUatCount(basePath: string, mid: string, sid: string): n
  * operational verification is needed.  Covers common phrasings the planning
  * agent may use: "None", "None required", "N/A", "Not applicable", etc.
  *
- * @see https://github.com/gsd-build/gsd-2/issues/2931
+ * @see https://github.com/gwd-build/gwd-2/issues/2931
  */
 export function isVerificationNotApplicable(value: string): boolean {
   const v = (value ?? "").toLowerCase().trim().replace(/[.\s]+$/, "");
@@ -393,7 +393,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
       if (!EXECUTION_ENTRY_PHASES.has(state.phase)) return null;
       if (!MILESTONE_ID_RE.test(mid)) return null;
       // Align with the plan-v2 gate's lookup semantics: whitespace-only counts
-      // as missing, and an auto worktree may fall back to GSD_PROJECT_ROOT.
+      // as missing, and an auto worktree may fall back to GWD_PROJECT_ROOT.
       if (hasFinalizedMilestoneContext(basePath, mid)) return null;
       // H6 fix (#4973): non-deep auto-mode has no human to answer the
       // depth-verification question, so pre-marking avoids a write-gate
@@ -465,7 +465,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
           uatContent ?? "",
           basePath,
         ),
-        pauseAfterDispatch: !process.env.GSD_HEADLESS && uatType !== "artifact-driven" && uatType !== "browser-executable" && uatType !== "runtime-executable",
+        pauseAfterDispatch: !process.env.GWD_HEADLESS && uatType !== "artifact-driven" && uatType !== "browser-executable" && uatType !== "runtime-executable",
       };
     },
   },

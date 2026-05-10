@@ -235,9 +235,9 @@ test("assembled lifecycle: boot → onboard → prompt → streaming text → to
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      GWD_WEB_PROJECT_CWD: fixture.projectCwd,
+      GWD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      GWD_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn(command: string, args: readonly string[], options: Record<string, unknown>) {
       void command;
@@ -592,9 +592,9 @@ test("assembled settings controls keep retry visibility and daily-use mutations 
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      GWD_WEB_PROJECT_CWD: fixture.projectCwd,
+      GWD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      GWD_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn(command: string, args: readonly string[], options: Record<string, unknown>) {
       void command;
@@ -814,9 +814,9 @@ test("assembled recovery route exposes actionable browser diagnostics without ra
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      GWD_WEB_PROJECT_CWD: fixture.projectCwd,
+      GWD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      GWD_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn(command: string, args: readonly string[], options: Record<string, unknown>) {
       void command;
@@ -904,9 +904,9 @@ test("assembled slash-command behavior keeps built-ins safe while preserving GSD
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      GWD_WEB_PROJECT_CWD: fixture.projectCwd,
+      GWD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      GWD_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn(command: string, args: readonly string[], options: Record<string, unknown>) {
       void command;

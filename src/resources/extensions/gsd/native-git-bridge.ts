@@ -8,14 +8,14 @@
 import { execSync, execFileSync } from "node:child_process";
 import { existsSync, readFileSync, unlinkSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { GSDError, GSD_GIT_ERROR } from "./errors.js";
+import { GSDError, GWD_GIT_ERROR } from "./errors.js";
 import { GIT_NO_PROMPT_ENV } from "./git-constants.js";
 import { getErrorMessage } from "./error-utils.js";
 import { isInfrastructureError } from "./auto/infra-errors.js";
 
 // Issue #453: keep auto-mode bookkeeping on the stable git CLI path unless a
 // caller explicitly opts into the native helper.
-const NATIVE_GSD_GIT_ENABLED = process.env.GSD_ENABLE_NATIVE_GSD_GIT === "1";
+const NATIVE_GWD_GIT_ENABLED = process.env.GWD_ENABLE_NATIVE_GWD_GIT === "1";
 
 // ─── Native Module Types ──────────────────────────────────────────────────
 
@@ -118,7 +118,7 @@ let loadAttempted = false;
 function loadNative(): typeof nativeModule {
   if (loadAttempted) return nativeModule;
   loadAttempted = true;
-  if (!NATIVE_GSD_GIT_ENABLED) return nativeModule;
+  if (!NATIVE_GWD_GIT_ENABLED) return nativeModule;
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -146,7 +146,7 @@ function gitExec(basePath: string, args: string[], allowFailure = false): string
     }).trim();
   } catch {
     if (allowFailure) return "";
-    throw new GSDError(GSD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
+    throw new GSDError(GWD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
   }
 }
 
@@ -161,7 +161,7 @@ function gitFileExec(basePath: string, args: string[], allowFailure = false): st
     }).trim();
   } catch {
     if (allowFailure) return "";
-    throw new GSDError(GSD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
+    throw new GSDError(GWD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
   }
 }
 
@@ -880,7 +880,7 @@ export function nativeAddAllWithExclusions(basePath: string, exclusions: readonl
       return;
     }
     const stderrDetail = stderr.trim() ? `; stderr: ${stderr.trim()}` : "";
-    throw new GSDError(GSD_GIT_ERROR, `git add -A with exclusions failed in ${basePath}: ${getErrorMessage(err)}${stderrDetail}`);
+    throw new GSDError(GWD_GIT_ERROR, `git add -A with exclusions failed in ${basePath}: ${getErrorMessage(err)}${stderrDetail}`);
   }
 }
 
@@ -1205,7 +1205,7 @@ function runGitWorktreeAdd(
 export function assertWorktreeMaterialized(wtPath: string): void {
   if (existsSync(join(wtPath, ".git"))) return;
   throw new GSDError(
-    GSD_GIT_ERROR,
+    GWD_GIT_ERROR,
     `git worktree add did not materialize a valid worktree at ${wtPath}: missing .git file`,
   );
 }

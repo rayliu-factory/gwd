@@ -5,9 +5,9 @@ import {
 	APPROVAL_MODES,
 	type ApprovalMode,
 	describeApprovalEvent,
-	GSD_APPROVAL_CONFIG_KEY,
-	GSD_APPROVAL_CONFIG_PATH,
-	GSD_APPROVAL_CONFIG_SECTION,
+	GWD_APPROVAL_CONFIG_KEY,
+	GWD_APPROVAL_CONFIG_PATH,
+	GWD_APPROVAL_CONFIG_SECTION,
 	nextApprovalMode,
 } from "./approval-mode.js";
 
@@ -24,13 +24,13 @@ export class GsdPermissionManager implements vscode.Disposable {
 
 	constructor(private readonly client: GsdClient) {
 		// Load saved mode from configuration
-		this._mode = vscode.workspace.getConfiguration(GSD_APPROVAL_CONFIG_SECTION).get<ApprovalMode>(GSD_APPROVAL_CONFIG_KEY, "auto-approve");
+		this._mode = vscode.workspace.getConfiguration(GWD_APPROVAL_CONFIG_SECTION).get<ApprovalMode>(GWD_APPROVAL_CONFIG_KEY, "auto-approve");
 
 		this.disposables.push(
 			this._onModeChange,
 			vscode.workspace.onDidChangeConfiguration((e) => {
-				if (e.affectsConfiguration(GSD_APPROVAL_CONFIG_PATH)) {
-					this._mode = vscode.workspace.getConfiguration(GSD_APPROVAL_CONFIG_SECTION).get<ApprovalMode>(GSD_APPROVAL_CONFIG_KEY, "auto-approve");
+				if (e.affectsConfiguration(GWD_APPROVAL_CONFIG_PATH)) {
+					this._mode = vscode.workspace.getConfiguration(GWD_APPROVAL_CONFIG_SECTION).get<ApprovalMode>(GWD_APPROVAL_CONFIG_KEY, "auto-approve");
 					this._onModeChange.fire(this._mode);
 				}
 			}),
@@ -54,7 +54,7 @@ export class GsdPermissionManager implements vscode.Disposable {
 	async cycleMode(): Promise<void> {
 		this._mode = nextApprovalMode(this._mode);
 
-		await vscode.workspace.getConfiguration(GSD_APPROVAL_CONFIG_SECTION).update(GSD_APPROVAL_CONFIG_KEY, this._mode, vscode.ConfigurationTarget.Workspace);
+		await vscode.workspace.getConfiguration(GWD_APPROVAL_CONFIG_SECTION).update(GWD_APPROVAL_CONFIG_KEY, this._mode, vscode.ConfigurationTarget.Workspace);
 		this._onModeChange.fire(this._mode);
 
 		vscode.window.showInformationMessage(`Approval mode: ${APPROVAL_MODE_LABELS[this._mode]}`);
@@ -81,7 +81,7 @@ export class GsdPermissionManager implements vscode.Disposable {
 
 		if (selected) {
 			this._mode = selected.mode;
-			await vscode.workspace.getConfiguration(GSD_APPROVAL_CONFIG_SECTION).update(GSD_APPROVAL_CONFIG_KEY, this._mode, vscode.ConfigurationTarget.Workspace);
+			await vscode.workspace.getConfiguration(GWD_APPROVAL_CONFIG_SECTION).update(GWD_APPROVAL_CONFIG_KEY, this._mode, vscode.ConfigurationTarget.Workspace);
 			this._onModeChange.fire(this._mode);
 		}
 	}

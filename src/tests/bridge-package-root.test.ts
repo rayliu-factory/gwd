@@ -10,7 +10,7 @@ import assert from 'node:assert/strict'
  * On Windows, fileURLToPath() rejects this with "File URL path must be
  * absolute". The fix wraps the derivation in safePackageRootFromImportUrl()
  * so the module-level constant never throws, and resolveBridgeRuntimeConfig
- * falls through to the GSD_WEB_PACKAGE_ROOT env var.
+ * falls through to the GWD_WEB_PACKAGE_ROOT env var.
  */
 
 import { safePackageRootFromImportUrl } from '../web/safe-import-meta-resolve.ts'
@@ -50,9 +50,9 @@ test('safePackageRootFromImportUrl respects ancestorLevels', () => {
 
 test('resolveBridgeRuntimeConfig accepts explicit package root when standalone import.meta.url is unusable', () => {
   const config = resolveBridgeRuntimeConfig({
-    GSD_WEB_PROJECT_CWD: '/tmp/project',
-    GSD_WEB_PROJECT_SESSIONS_DIR: '/tmp/sessions',
-    GSD_WEB_PACKAGE_ROOT: '/tmp/package-root',
+    GWD_WEB_PROJECT_CWD: '/tmp/project',
+    GWD_WEB_PROJECT_SESSIONS_DIR: '/tmp/sessions',
+    GWD_WEB_PACKAGE_ROOT: '/tmp/package-root',
   } as NodeJS.ProcessEnv)
 
   assert.deepEqual(config, {
@@ -64,8 +64,8 @@ test('resolveBridgeRuntimeConfig accepts explicit package root when standalone i
 
 test('resolveBridgeRuntimeConfig falls back to a lazy default package root', () => {
   const config = resolveBridgeRuntimeConfig({
-    GSD_WEB_PROJECT_CWD: '/tmp/project',
-    GSD_WEB_PROJECT_SESSIONS_DIR: '/tmp/sessions',
+    GWD_WEB_PROJECT_CWD: '/tmp/project',
+    GWD_WEB_PROJECT_SESSIONS_DIR: '/tmp/sessions',
   } as NodeJS.ProcessEnv)
 
   assert.equal(config.projectCwd, '/tmp/project')

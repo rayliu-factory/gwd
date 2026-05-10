@@ -4,10 +4,10 @@ import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const ownsGsdHome = process.env.GSD_HOME_TEST_OVERRIDE === undefined;
-const previousGsdHome = process.env.GSD_HOME;
+const ownsGsdHome = process.env.GWD_HOME_TEST_OVERRIDE === undefined;
+const previousGsdHome = process.env.GWD_HOME;
 const synthesizedGsdHome = join(tmpdir(), `gsd-test-home-${process.pid}-${Date.now()}`);
-process.env.GSD_HOME = process.env.GSD_HOME_TEST_OVERRIDE
+process.env.GWD_HOME = process.env.GWD_HOME_TEST_OVERRIDE
   ?? synthesizedGsdHome;
 
 after(() => {
@@ -15,9 +15,9 @@ after(() => {
     rmSync(synthesizedGsdHome, { recursive: true, force: true });
   }
   if (previousGsdHome === undefined) {
-    delete process.env.GSD_HOME;
+    delete process.env.GWD_HOME;
   } else {
-    process.env.GSD_HOME = previousGsdHome;
+    process.env.GWD_HOME = previousGsdHome;
   }
 });
 

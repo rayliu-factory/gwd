@@ -19,7 +19,7 @@
  *     turn is missing from the pending list.
  */
 
-import { GSDError, GSD_PARSE_ERROR } from "./errors.js";
+import { GSDError, GWD_PARSE_ERROR } from "./errors.js";
 import type { GateId, GateRow, GateScope } from "./types.js";
 
 /** Which workflow turn is responsible for evaluating / closing a gate. */
@@ -191,7 +191,7 @@ export function getGateDefinition(id: string): GateDefinition | undefined {
 export function getOwnerTurn(id: GateId): OwnerTurn {
   const def = GATE_REGISTRY[id];
   if (!def) {
-    throw new GSDError(GSD_PARSE_ERROR, `gate-registry: unknown gate id "${id}"`);
+    throw new GSDError(GWD_PARSE_ERROR, `gate-registry: unknown gate id "${id}"`);
   }
   return def.ownerTurn;
 }
@@ -231,7 +231,7 @@ export function assertGateCoverage(
 
   if (unknown.length > 0) {
     throw new GSDError(
-      GSD_PARSE_ERROR,
+      GWD_PARSE_ERROR,
       `assertGateCoverage: turn "${turn}" received pending gates it does not own: ${unknown.join(", ")}`,
     );
   }
@@ -243,7 +243,7 @@ export function assertGateCoverage(
     }
     if (missing.length > 0) {
       throw new GSDError(
-        GSD_PARSE_ERROR,
+        GWD_PARSE_ERROR,
         `assertGateCoverage: turn "${turn}" is missing required gates: ${missing.join(", ")}`,
       );
     }

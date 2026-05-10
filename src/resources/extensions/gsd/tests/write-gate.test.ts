@@ -635,10 +635,10 @@ test('write-gate: loadWriteGateSnapshot returns empty default when persist file 
   const base = join(tmpdir(), `gsd-write-gate-4343-${randomUUID()}`);
   mkdirSync(join(base, '.gsd', 'runtime'), { recursive: true });
   const stateFilePath = join(base, '.gsd', 'runtime', 'write-gate-state.json');
-  const originalEnv = process.env.GSD_PERSIST_WRITE_GATE_STATE;
+  const originalEnv = process.env.GWD_PERSIST_WRITE_GATE_STATE;
 
   try {
-    process.env.GSD_PERSIST_WRITE_GATE_STATE = '1';
+    process.env.GWD_PERSIST_WRITE_GATE_STATE = '1';
 
     // Write a state file with a pending gate and verified milestone
     writeFileSync(stateFilePath, JSON.stringify({
@@ -676,9 +676,9 @@ test('write-gate: loadWriteGateSnapshot returns empty default when persist file 
     assert.strictEqual(unblocked.block, false, 'unblocked after fresh depth verification');
   } finally {
     if (originalEnv === undefined) {
-      delete process.env.GSD_PERSIST_WRITE_GATE_STATE;
+      delete process.env.GWD_PERSIST_WRITE_GATE_STATE;
     } else {
-      process.env.GSD_PERSIST_WRITE_GATE_STATE = originalEnv;
+      process.env.GWD_PERSIST_WRITE_GATE_STATE = originalEnv;
     }
     clearDiscussionFlowState(base);
     try {
@@ -693,10 +693,10 @@ test('write-gate: resetWriteGateState persists through dangling .gsd symlink', (
   const base = join(tmpdir(), `gsd-write-gate-dangling-${randomUUID()}`);
   const externalState = join(tmpdir(), `gsd-write-gate-external-${randomUUID()}`);
   const stateFilePath = join(base, '.gsd', 'runtime', 'write-gate-state.json');
-  const originalEnv = process.env.GSD_PERSIST_WRITE_GATE_STATE;
+  const originalEnv = process.env.GWD_PERSIST_WRITE_GATE_STATE;
 
   try {
-    process.env.GSD_PERSIST_WRITE_GATE_STATE = '1';
+    process.env.GWD_PERSIST_WRITE_GATE_STATE = '1';
     mkdirSync(base, { recursive: true });
     symlinkSync(externalState, join(base, '.gsd'), 'junction');
     assert.strictEqual(existsSync(join(base, '.gsd')), false, 'precondition: .gsd symlink target is missing');
@@ -713,9 +713,9 @@ test('write-gate: resetWriteGateState persists through dangling .gsd symlink', (
     });
   } finally {
     if (originalEnv === undefined) {
-      delete process.env.GSD_PERSIST_WRITE_GATE_STATE;
+      delete process.env.GWD_PERSIST_WRITE_GATE_STATE;
     } else {
-      process.env.GSD_PERSIST_WRITE_GATE_STATE = originalEnv;
+      process.env.GWD_PERSIST_WRITE_GATE_STATE = originalEnv;
     }
     clearDiscussionFlowState(base);
     try {

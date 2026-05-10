@@ -10,7 +10,7 @@ import { applyLoaderCliEntrypointEnv, resolveLoaderCliEntrypoint } from "../load
 
 const devCli = await import("../../scripts/dev-cli-helpers.mjs");
 
-test("source dev CLI remains the child-process GSD_BIN_PATH", (t) => {
+test("source dev CLI remains the child-process GWD_BIN_PATH", (t) => {
   const root = mkdtempSync(join(tmpdir(), "gsd-loader-entrypoint-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
 
@@ -26,7 +26,7 @@ test("source dev CLI remains the child-process GSD_BIN_PATH", (t) => {
 });
 
 test("explicit CLI path overrides the invoked source loader path", () => {
-  const env = { GSD_CLI_PATH: "/custom/gsd" } as NodeJS.ProcessEnv;
+  const env = { GWD_CLI_PATH: "/custom/gsd" } as NodeJS.ProcessEnv;
   const resolved = applyLoaderCliEntrypointEnv(env, {
     gsdRoot: "/repo",
     invokedBinPath: "/repo/src/loader.ts",
@@ -34,16 +34,16 @@ test("explicit CLI path overrides the invoked source loader path", () => {
   });
 
   assert.equal(resolved, resolve("/custom/gsd"));
-  assert.equal(env.GSD_BIN_PATH, resolve("/custom/gsd"));
-  assert.equal(env.GSD_CLI_PATH, "/custom/gsd");
+  assert.equal(env.GWD_BIN_PATH, resolve("/custom/gsd"));
+  assert.equal(env.GWD_CLI_PATH, "/custom/gsd");
 });
 
 test("dev CLI wrapper passes itself as every child-process CLI entrypoint", () => {
   const env = devCli.buildDevCliChildEnv({ PATH: "/usr/bin" }, "/repo/scripts/dev-cli.js");
   assert.equal(env.PATH, "/usr/bin");
-  assert.equal(env.GSD_DEV_CLI_PATH, "/repo/scripts/dev-cli.js");
-  assert.equal(env.GSD_CLI_PATH, "/repo/scripts/dev-cli.js");
-  assert.equal(env.GSD_BIN_PATH, "/repo/scripts/dev-cli.js");
+  assert.equal(env.GWD_DEV_CLI_PATH, "/repo/scripts/dev-cli.js");
+  assert.equal(env.GWD_CLI_PATH, "/repo/scripts/dev-cli.js");
+  assert.equal(env.GWD_BIN_PATH, "/repo/scripts/dev-cli.js");
 
   assert.deepEqual(
     devCli.buildDevCliSpawnArgs({

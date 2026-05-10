@@ -267,7 +267,7 @@ let workflowExecutionQueue: Promise<void> = Promise.resolve();
 let workflowWriteGatePromise: Promise<WorkflowWriteGateModule> | null = null;
 
 function getAllowedProjectRoot(env: NodeJS.ProcessEnv = process.env): string | null {
-  const configuredRoot = env.GSD_WORKFLOW_PROJECT_ROOT?.trim();
+  const configuredRoot = env.GWD_WORKFLOW_PROJECT_ROOT?.trim();
   return configuredRoot ? resolve(configuredRoot) : null;
 }
 
@@ -513,12 +513,12 @@ function buildImportCandidates(relativePath: string): string[] {
 
 function getWriteGateModuleCandidates(): string[] {
   const candidates: string[] = [];
-  const explicitModule = process.env.GSD_WORKFLOW_WRITE_GATE_MODULE?.trim();
+  const explicitModule = process.env.GWD_WORKFLOW_WRITE_GATE_MODULE?.trim();
   if (explicitModule) {
     if (/^[a-z]{2,}:/i.test(explicitModule) && !explicitModule.startsWith("file:")) {
-      throw new Error("GSD_WORKFLOW_WRITE_GATE_MODULE only supports file: URLs or filesystem paths.");
+      throw new Error("GWD_WORKFLOW_WRITE_GATE_MODULE only supports file: URLs or filesystem paths.");
     }
-    warnCustomWorkflowModule("GSD_WORKFLOW_WRITE_GATE_MODULE", explicitModule);
+    warnCustomWorkflowModule("GWD_WORKFLOW_WRITE_GATE_MODULE", explicitModule);
     candidates.push(explicitModule.startsWith("file:") ? explicitModule : toFileUrl(explicitModule));
   }
 
@@ -537,8 +537,8 @@ function toFileUrl(modulePath: string): string {
 const warnedCustomWorkflowModuleVars = new Set<string>();
 
 /**
- * Emit a one-time stderr warning when GSD_WORKFLOW_EXECUTORS_MODULE or
- * GSD_WORKFLOW_WRITE_GATE_MODULE is set. These overrides exist for dev/test
+ * Emit a one-time stderr warning when GWD_WORKFLOW_EXECUTORS_MODULE or
+ * GWD_WORKFLOW_WRITE_GATE_MODULE is set. These overrides exist for dev/test
  * use, but they let the env owner load arbitrary local modules. The warning
  * makes accidental or hostile use loud rather than silent.
  */
@@ -591,12 +591,12 @@ async function loadProjectPreferences(projectDir: string): Promise<unknown | nul
 
 function getWorkflowExecutorModuleCandidates(env: NodeJS.ProcessEnv = process.env): string[] {
   const candidates: string[] = [];
-  const explicitModule = env.GSD_WORKFLOW_EXECUTORS_MODULE?.trim();
+  const explicitModule = env.GWD_WORKFLOW_EXECUTORS_MODULE?.trim();
   if (explicitModule) {
     if (/^[a-z]{2,}:/i.test(explicitModule) && !explicitModule.startsWith("file:")) {
-      throw new Error("GSD_WORKFLOW_EXECUTORS_MODULE only supports file: URLs or filesystem paths.");
+      throw new Error("GWD_WORKFLOW_EXECUTORS_MODULE only supports file: URLs or filesystem paths.");
     }
-    warnCustomWorkflowModule("GSD_WORKFLOW_EXECUTORS_MODULE", explicitModule);
+    warnCustomWorkflowModule("GWD_WORKFLOW_EXECUTORS_MODULE", explicitModule);
     candidates.push(explicitModule.startsWith("file:") ? explicitModule : toFileUrl(explicitModule));
   }
 
@@ -626,7 +626,7 @@ async function getWorkflowToolExecutors(): Promise<WorkflowToolExecutors> {
 
       throw new Error(
         "Unable to load GSD workflow executor bridge for MCP mutation tools. " +
-        "Set GSD_WORKFLOW_EXECUTORS_MODULE to an importable workflow-tool-executors module, " +
+        "Set GWD_WORKFLOW_EXECUTORS_MODULE to an importable workflow-tool-executors module, " +
         "or run the MCP server from a GSD checkout that includes src/resources/extensions/gsd/tools/workflow-tool-executors.(js|ts). " +
         `Attempts: ${attempts.join("; ")}`,
       );
@@ -679,7 +679,7 @@ export const WORKFLOW_TOOL_NAMES = CONTRACT_WORKFLOW_TOOL_NAMES;
 const DEFAULT_WORKFLOW_OP_TIMEOUT_MS = 5 * 60 * 1000;
 
 function getWorkflowOpTimeoutMs(env: NodeJS.ProcessEnv = process.env): number {
-  const raw = env.GSD_MCP_WORKFLOW_TIMEOUT_MS?.trim();
+  const raw = env.GWD_MCP_WORKFLOW_TIMEOUT_MS?.trim();
   if (!raw) return DEFAULT_WORKFLOW_OP_TIMEOUT_MS;
   const parsed = Number.parseInt(raw, 10);
   if (!Number.isFinite(parsed) || parsed < 0) return DEFAULT_WORKFLOW_OP_TIMEOUT_MS;
@@ -761,7 +761,7 @@ async function runSerializedWorkflowOperation<T>(fn: () => Promise<T>): Promise<
     let timer: NodeJS.Timeout | undefined;
     const timeoutPromise = new Promise<never>((_, reject) => {
       timer = setTimeout(() => {
-        reject(new Error(`Workflow operation exceeded ${timeoutMs}ms deadline (GSD_MCP_WORKFLOW_TIMEOUT_MS)`));
+        reject(new Error(`Workflow operation exceeded ${timeoutMs}ms deadline (GWD_MCP_WORKFLOW_TIMEOUT_MS)`));
       }, timeoutMs);
     });
     try {

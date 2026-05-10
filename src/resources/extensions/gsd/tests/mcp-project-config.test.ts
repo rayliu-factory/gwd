@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 
 import {
   ensureProjectWorkflowMcpConfig,
-  GSD_WORKFLOW_MCP_SERVER_NAME,
+  GWD_WORKFLOW_MCP_SERVER_NAME,
 } from "../mcp-project-config.ts";
 
 test("ensureProjectWorkflowMcpConfig creates .mcp.json with the workflow server", () => {
@@ -21,14 +21,14 @@ test("ensureProjectWorkflowMcpConfig creates .mcp.json with the workflow server"
     const parsed = JSON.parse(readFileSync(result.configPath, "utf-8")) as {
       mcpServers?: Record<string, { command?: string; args?: string[]; env?: Record<string, string> }>;
     };
-    const server = parsed.mcpServers?.[GSD_WORKFLOW_MCP_SERVER_NAME];
+    const server = parsed.mcpServers?.[GWD_WORKFLOW_MCP_SERVER_NAME];
     assert.ok(server, "workflow server should be written to mcpServers");
     assert.equal(typeof server?.command, "string");
     assert.equal(Array.isArray(server?.args), true);
-    assert.equal(server?.env?.GSD_WORKFLOW_PROJECT_ROOT, projectRoot);
-    assert.match(server?.env?.GSD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
-    assert.match(server?.env?.GSD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
-    if ((server?.env?.GSD_WORKFLOW_EXECUTORS_MODULE ?? "").endsWith(".ts")) {
+    assert.equal(server?.env?.GWD_WORKFLOW_PROJECT_ROOT, projectRoot);
+    assert.match(server?.env?.GWD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
+    assert.match(server?.env?.GWD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
+    if ((server?.env?.GWD_WORKFLOW_EXECUTORS_MODULE ?? "").endsWith(".ts")) {
       assert.match(server?.env?.NODE_OPTIONS ?? "", /--experimental-strip-types/);
       assert.match(server?.env?.NODE_OPTIONS ?? "", /resolve-ts\.mjs/);
     }
@@ -66,7 +66,7 @@ test("ensureProjectWorkflowMcpConfig preserves existing mcp servers", () => {
       command: "npx",
       args: ["railway-mcp"],
     });
-    assert.ok(parsed.mcpServers?.[GSD_WORKFLOW_MCP_SERVER_NAME]);
+    assert.ok(parsed.mcpServers?.[GWD_WORKFLOW_MCP_SERVER_NAME]);
   } finally {
     rmSync(projectRoot, { recursive: true, force: true });
   }

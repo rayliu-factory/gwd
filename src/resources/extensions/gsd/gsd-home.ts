@@ -1,30 +1,30 @@
 /**
- * GSD home directory resolution.
+ * GWD home directory resolution.
  *
- * Exports gsdHome() which returns the GSD configuration directory,
- * defaulting to ~/.gsd with a GSD_HOME env var override.
+ * Exports gsdHome() which returns the GWD configuration directory,
+ * defaulting to ~/.gwd with a GWD_HOME env var override.
  *
  * For the user's home directory, use os.homedir() directly — it handles
  * platform-specific env lookup (USERPROFILE on Windows, HOME on POSIX)
  * with appropriate fallbacks.
  *
- * @see https://github.com/gsd-build/gsd-2/issues/5015
+ * @see https://github.com/gwd-build/gwd-2/issues/5015
  */
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 
 /**
- * Resolve the GSD home directory (typically ~/.gsd).
+ * Resolve the GWD home directory (typically ~/.gwd).
  *
- * `GSD_HOME` env var overrides the default location.
- * Falls back to `homedir()/.gsd`.
+ * `GWD_HOME` env var overrides the default location.
+ * Falls back to `homedir()/.gwd`.
  *
  * Always returns an absolute, normalized path — `resolve()` canonicalizes
- * any relative or non-canonical `GSD_HOME` value so downstream comparison
+ * any relative or non-canonical `GWD_HOME` value so downstream comparison
  * and redaction sites don't have to.
  */
 export function gsdHome(): string {
-  return process.env.GSD_HOME
-    ? resolve(process.env.GSD_HOME)
-    : join(homedir(), ".gsd");
+  return process.env.GWD_HOME
+    ? resolve(process.env.GWD_HOME)
+    : join(homedir(), ".gwd");
 }

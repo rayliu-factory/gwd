@@ -309,10 +309,10 @@ describe(
 				const isolatedAgentDir = join(tempDir, '.gsd', 'agent');
 				const settingsPath = join(isolatedAgentDir, 'settings.json');
 				rmSync(isolatedAgentDir, { recursive: true, force: true });
-				process.env.GSD_CODING_AGENT_DIR = isolatedAgentDir;
+				process.env.GWD_CODING_AGENT_DIR = isolatedAgentDir;
 
 				t.after(() => {
-					delete process.env.GSD_CODING_AGENT_DIR;
+					delete process.env.GWD_CODING_AGENT_DIR;
 					rmSync(isolatedAgentDir, { recursive: true, force: true });
 				});
 

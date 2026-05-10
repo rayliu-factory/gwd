@@ -23,7 +23,7 @@ const DEPTH_VERIFICATION_MILESTONE_RE = /depth_verification[_-](M\d+(?:-[a-z0-9]
  * Path segment that identifies .gsd/ planning artifacts.
  * Writes to these paths are allowed during queue mode.
  */
-const GSD_DIR_RE = /(^|[/\\])\.gsd([/\\]|$)/;
+const GWD_DIR_RE = /(^|[/\\])\.gsd([/\\]|$)/;
 
 /**
  * Read-only tool names that are always safe during queue mode.
@@ -135,12 +135,12 @@ export interface WriteGateSnapshot {
 
 /**
  * Persistence is ON by default (opt-out).
- * Set GSD_PERSIST_WRITE_GATE_STATE="0" or GSD_PERSIST_WRITE_GATE_STATE="false"
+ * Set GWD_PERSIST_WRITE_GATE_STATE="0" or GWD_PERSIST_WRITE_GATE_STATE="false"
  * to disable. All other values — including unset — persist the snapshot.
  * (Inverted from the original opt-in guard; see #4950.)
  */
 function shouldPersistWriteGateSnapshot(env: NodeJS.ProcessEnv = process.env): boolean {
-  const v = env.GSD_PERSIST_WRITE_GATE_STATE;
+  const v = env.GWD_PERSIST_WRITE_GATE_STATE;
   return v !== "0" && v !== "false";
 }
 
@@ -624,7 +624,7 @@ export function shouldBlockQueueExecutionInSnapshot(
 
   // write/edit — allow if targeting .gsd/ planning artifacts
   if (toolName === "write" || toolName === "edit") {
-    if (GSD_DIR_RE.test(input)) return { block: false };
+    if (GWD_DIR_RE.test(input)) return { block: false };
     return {
       block: true,
       reason: `Blocked: /gsd queue is a planning tool — it creates milestones, not executes work. ` +
@@ -957,7 +957,7 @@ function isPathContained(target: string, container: string): boolean {
  *
  * Allow rules (in order):
  *   1. Tool isn't a planning-write (write/edit/multi_edit/notebook_edit).
- *   2. `GSD_DISABLE_WORKTREE_WRITE_GUARD=1` self-hosting bypass.
+ *   2. `GWD_DISABLE_WORKTREE_WRITE_GUARD=1` self-hosting bypass.
  *   3. Isolation mode is not "worktree".
  *   4. Active unit is a bootstrap unit (discuss-milestone/plan-milestone/init).
  *   5. Target is inside `<projectRoot>/.gsd/worktrees/` (a real worktree).
@@ -977,7 +977,7 @@ export function shouldBlockWorktreeWrite(
 ): { block: boolean; reason?: string } {
   const tool = canonicalToolName(toolName);
   if (!PLANNING_WRITE_TOOLS.has(tool)) return { block: false };
-  if (process.env.GSD_DISABLE_WORKTREE_WRITE_GUARD === "1") return { block: false };
+  if (process.env.GWD_DISABLE_WORKTREE_WRITE_GUARD === "1") return { block: false };
   if (getIsolationMode(effectiveBasePath) !== "worktree") return { block: false };
   if (currentUnitType && WORKTREE_GATE_BOOTSTRAP_UNITS.has(currentUnitType)) return { block: false };
 
@@ -1029,7 +1029,7 @@ export function shouldBlockWorktreeWrite(
       `(auto-post-unit) commits work, and it never runs outside the loop.`,
       `Required action: start auto-mode with \`/gsd\` so the milestone worktree is created,`,
       `then write inside it. To disable this guard for self-hosting development, set`,
-      `GSD_DISABLE_WORKTREE_WRITE_GUARD=1.`,
+      `GWD_DISABLE_WORKTREE_WRITE_GUARD=1.`,
     ].join(" "),
   };
 }

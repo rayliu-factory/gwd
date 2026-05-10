@@ -341,20 +341,20 @@ function registerAutoWorkerForSession(
 
 function captureProjectRootEnv(projectRoot: string): void {
   if (!s.projectRootEnvCaptured) {
-    s.hadProjectRootEnv = Object.prototype.hasOwnProperty.call(process.env, "GSD_PROJECT_ROOT");
-    s.previousProjectRootEnv = process.env.GSD_PROJECT_ROOT ?? null;
+    s.hadProjectRootEnv = Object.prototype.hasOwnProperty.call(process.env, "GWD_PROJECT_ROOT");
+    s.previousProjectRootEnv = process.env.GWD_PROJECT_ROOT ?? null;
     s.projectRootEnvCaptured = true;
   }
-  process.env.GSD_PROJECT_ROOT = projectRoot;
+  process.env.GWD_PROJECT_ROOT = projectRoot;
 }
 
 function restoreProjectRootEnv(): void {
   if (!s.projectRootEnvCaptured) return;
 
   if (s.hadProjectRootEnv && s.previousProjectRootEnv !== null) {
-    process.env.GSD_PROJECT_ROOT = s.previousProjectRootEnv;
+    process.env.GWD_PROJECT_ROOT = s.previousProjectRootEnv;
   } else {
-    delete process.env.GSD_PROJECT_ROOT;
+    delete process.env.GWD_PROJECT_ROOT;
   }
 
   s.previousProjectRootEnv = null;
@@ -372,15 +372,15 @@ export function _restoreProjectRootEnvForTest(): void {
 
 function captureMilestoneLockEnv(milestoneId: string | null): void {
   if (!s.milestoneLockEnvCaptured) {
-    s.hadMilestoneLockEnv = Object.prototype.hasOwnProperty.call(process.env, "GSD_MILESTONE_LOCK");
-    s.previousMilestoneLockEnv = process.env.GSD_MILESTONE_LOCK ?? null;
+    s.hadMilestoneLockEnv = Object.prototype.hasOwnProperty.call(process.env, "GWD_MILESTONE_LOCK");
+    s.previousMilestoneLockEnv = process.env.GWD_MILESTONE_LOCK ?? null;
     s.milestoneLockEnvCaptured = true;
   }
 
   if (milestoneId) {
-    process.env.GSD_MILESTONE_LOCK = milestoneId;
+    process.env.GWD_MILESTONE_LOCK = milestoneId;
   } else {
-    delete process.env.GSD_MILESTONE_LOCK;
+    delete process.env.GWD_MILESTONE_LOCK;
   }
 }
 
@@ -388,9 +388,9 @@ function restoreMilestoneLockEnv(): void {
   if (!s.milestoneLockEnvCaptured) return;
 
   if (s.hadMilestoneLockEnv && s.previousMilestoneLockEnv !== null) {
-    process.env.GSD_MILESTONE_LOCK = s.previousMilestoneLockEnv;
+    process.env.GWD_MILESTONE_LOCK = s.previousMilestoneLockEnv;
   } else {
-    delete process.env.GSD_MILESTONE_LOCK;
+    delete process.env.GWD_MILESTONE_LOCK;
   }
 
   s.previousMilestoneLockEnv = null;
@@ -706,7 +706,7 @@ export async function refreshResumeResourcesAndDb(
 ): Promise<void> {
   const env = deps.env ?? process.env;
   const importModule = deps.importModule ?? ((specifier: string) => import(specifier));
-  const agentDir = env.GSD_CODING_AGENT_DIR || join(gsdHome(), "agent");
+  const agentDir = env.GWD_CODING_AGENT_DIR || join(gsdHome(), "agent");
   const pkgRoot = env.GWD_PKG_ROOT;
   const resourceLoaderPath = pkgRoot
     ? pathToFileURL(join(pkgRoot, "dist", "resource-loader.js")).href

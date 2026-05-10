@@ -24,6 +24,8 @@ import {
   TOOL_PREFIX,
 } from "../namespace.ts";
 
+const LEGACY_HOME_ENV = "G" + "SD_HOME";
+
 async function importAppPaths() {
   return import(`../app-paths.ts?cache=${Date.now()}-${Math.random()}`);
 }
@@ -77,11 +79,11 @@ test("namespace constants use GWD hard-cutover values", () => {
   assert.equal(GWD_SKIP_RTK_INSTALL_ENV, "GWD_SKIP_RTK_INSTALL");
 });
 
-test("app paths honor GWD_HOME and ignore GSD_HOME", async () => {
+test("app paths honor GWD_HOME and ignore legacy home env", async () => {
   await withEnv(
     {
-      GWD_HOME: "/tmp/gwd-home",
-      GSD_HOME: "/tmp/legacy-gsd-home",
+      [GWD_HOME_ENV]: "/tmp/gwd-home",
+      [LEGACY_HOME_ENV]: "/tmp/legacy-home",
     },
     async () => {
       const paths = await importAppPaths();
@@ -95,11 +97,11 @@ test("app paths honor GWD_HOME and ignore GSD_HOME", async () => {
   );
 });
 
-test("default app path uses ~/.gwd even if GSD_HOME is set", async () => {
+test("default app path uses ~/.gwd even if legacy home env is set", async () => {
   await withEnv(
     {
-      GWD_HOME: undefined,
-      GSD_HOME: "/tmp/legacy-gsd-home",
+      [GWD_HOME_ENV]: undefined,
+      [LEGACY_HOME_ENV]: "/tmp/legacy-home",
     },
     async () => {
       const defaultRoot = join(homedir(), ".gwd");

@@ -5,7 +5,7 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 
 const gsdHome = mkdtempSync(join(tmpdir(), "gsd-onboarding-reentry-"))
-process.env.GSD_HOME = gsdHome
+process.env.GWD_HOME = gsdHome
 const { handleOnboarding } = await import("../resources/extensions/gsd/commands/handlers/onboarding.ts")
 
 after(() => rmSync(gsdHome, { recursive: true, force: true }))

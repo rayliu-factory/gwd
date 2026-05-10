@@ -279,7 +279,7 @@ describe("complete-milestone", () => {
 
     // Step 11 must explicitly name the `write` tool so the LLM doesn't
     // confuse it with `edit` (which requires path + oldText + newText).
-    // See: https://github.com/gsd-build/gsd-2/issues/2946
+    // See: https://github.com/gwd-build/gwd-2/issues/2946
     assert.ok(
       /PROJECT\.md.*\bwrite\b/i.test(prompt) || /\bwrite\b.*PROJECT\.md/i.test(prompt),
       "step 11 must name the `write` tool when updating PROJECT.md",
@@ -416,15 +416,15 @@ describe("complete-milestone", () => {
       assert.ok(Array.isArray(sanitized.lessonsLearned), "lessonsLearned is array after sanitization");
       assert.strictEqual(typeof sanitized.verificationPassed, "boolean", "verificationPassed is boolean after sanitization");
 
-      // Calling handleCompleteMilestone may throw GSD_STALE_STATE (no DB in test env)
+      // Calling handleCompleteMilestone may throw GWD_STALE_STATE (no DB in test env)
       // but it should NOT throw TypeError from type mismatches — that's the bug fix.
       try {
         await handleCompleteMilestone(sanitized, base);
       } catch (err: any) {
-        // GSD_STALE_STATE or "No database open" is acceptable — it means we got past
+        // GWD_STALE_STATE or "No database open" is acceptable — it means we got past
         // the type-sensitive code and failed on DB access, which is expected in tests.
         assert.ok(
-          err.code === "GSD_STALE_STATE" || err.message?.includes("database"),
+          err.code === "GWD_STALE_STATE" || err.message?.includes("database"),
           `expected DB error, got: ${err.message}`,
         );
       }
