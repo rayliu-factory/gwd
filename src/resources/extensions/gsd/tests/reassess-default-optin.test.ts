@@ -136,7 +136,7 @@ test("ADR-003 §4: rendered plan-slice prompt documents reassess sliceChanges sh
     const msDir = join(base, ".gsd", "milestones", "M001");
     writeFileSync(join(msDir, "M001-ROADMAP.md"), "# Roadmap\n\n## Slices\n\n- [ ] **S01: First** `risk:low` `depends:[]`\n");
     const prompt = await buildPlanSlicePrompt("M001", "Test", "S01", "First", base, "minimal");
-    assert.match(prompt, /gwd_reassess_roadmap/);
+    assert.match(prompt, /gsd_reassess_roadmap/);
     assert.match(prompt, /sliceChanges\.modified/);
     assert.match(prompt, /sliceChanges\.added/);
     assert.match(prompt, /sliceChanges\.removed/);

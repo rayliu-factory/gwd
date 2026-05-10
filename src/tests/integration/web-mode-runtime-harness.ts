@@ -155,7 +155,7 @@ export function ensureRuntimeArtifacts(): void {
 }
 
 export function parseStartedUrl(stderr: string): string {
-  const match = stderr.match(/\[gsd\] Web mode startup: status=started[^\n]*url=(http:\/\/[^\s]+)/)
+  const match = stderr.match(/\[gwd\] Web mode startup: status=started[^\n]*url=(http:\/\/[^\s]+)/)
   if (!match) {
     throw new Error(`Did not find successful web startup line in stderr:\n${stderr}`)
   }
@@ -163,7 +163,7 @@ export function parseStartedUrl(stderr: string): string {
 }
 
 function parseReadyAuthToken(stderr: string): string | null {
-  const match = stderr.match(/\[gsd\] Ready → http:\/\/[^\s]+\/#token=([a-f0-9]{64})/)
+  const match = stderr.match(/\[gwd\] Ready → http:\/\/[^\s]+\/#token=([a-f0-9]{64})/)
   return match?.[1] ?? null
 }
 

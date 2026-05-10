@@ -60,7 +60,7 @@ test("loader sets all 4 GWD_ env vars and PI_PACKAGE_DIR", async (t) => {
     process.env.GWD_CODING_AGENT_DIR = agentDir;
     process.env.GWD_BIN_PATH = process.argv[1];
     const resourcesDir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'resources');
-    process.env.GWD_WORKFLOW_PATH = join(resourcesDir, 'GSD-WORKFLOW.md');
+    process.env.GWD_WORKFLOW_PATH = join(resourcesDir, 'GWD-WORKFLOW.md');
     const exts = ['extensions/gsd/index.ts'].map(r => join(resourcesDir, r));
     process.env.GWD_BUNDLED_EXTENSION_PATHS = exts.join(delimiter);
 

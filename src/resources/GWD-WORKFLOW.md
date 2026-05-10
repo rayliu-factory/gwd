@@ -586,7 +586,7 @@ The system reads the task summary after execution and builds a meaningful commit
 - **Subject**: `{type}: {one-liner}` — the one-liner from the summary frontmatter, sanitized to one line
 - **Type**: Inferred from the task title and one-liner (`feat`, `fix`, `test`, `refactor`, `docs`, `perf`, `chore`)
 - **Body**: Key files from the summary frontmatter (up to 8 files listed)
-- **Trailers**: `GSD-Task: S##/T##`; if GitHub sync linked an issue, `Resolves #N`
+- **Trailers**: `GWD-Task: S##/T##`; if GitHub sync linked an issue, `Resolves #N`
 
 Commit types: `feat`, `fix`, `test`, `refactor`, `docs`, `perf`, `chore`
 

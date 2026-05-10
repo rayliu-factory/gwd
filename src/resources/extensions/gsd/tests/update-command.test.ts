@@ -35,7 +35,7 @@ test("/gwd update appears in subcommand completions", () => {
   const pi = createMockPi();
   registerGSDCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
+  const gsd = pi.commands.get("gwd");
   assert.ok(gsd, "registerGSDCommand should register /gwd");
 
   const completions = gsd.getArgumentCompletions("update");
@@ -48,7 +48,7 @@ test("/gwd update appears in help description", () => {
   const pi = createMockPi();
   registerGSDCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
+  const gsd = pi.commands.get("gwd");
   assert.ok(gsd?.description?.includes("update"), "description should mention update");
 });
 
@@ -56,7 +56,7 @@ test("/gwd update is listed in completions with correct description", () => {
   const pi = createMockPi();
   registerGSDCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
+  const gsd = pi.commands.get("gwd");
   const completions = gsd.getArgumentCompletions("");
   const updateEntry = completions.find((c: any) => c.value === "update");
   assert.ok(updateEntry, "update should appear in full completion list");
@@ -70,7 +70,7 @@ test("/gwd codebase appears in top-level completions", () => {
   const pi = createMockPi();
   registerGSDCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
+  const gsd = pi.commands.get("gwd");
   const completions = gsd.getArgumentCompletions("code");
   const codebaseEntry = completions.find((c: any) => c.value === "codebase");
   assert.ok(codebaseEntry, "codebase should appear in completions");
@@ -81,6 +81,6 @@ test("/gwd codebase appears in help description", () => {
   const pi = createMockPi();
   registerGSDCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
+  const gsd = pi.commands.get("gwd");
   assert.ok(gsd?.description?.includes("codebase"), "description should mention codebase");
 });

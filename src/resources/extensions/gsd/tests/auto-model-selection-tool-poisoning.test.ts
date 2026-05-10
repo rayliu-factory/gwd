@@ -324,7 +324,7 @@ test("genuinely-impossible (a): workflow tool incompatible with candidate API â†
     const err = thrown as ModelPolicyDispatchBlockedError;
     assert.equal(err.unitType, "plan-slice");
     assert.match(err.message, /tool policy denied/, "throw must surface the tool-compatibility deny reason");
-    assert.match(err.message, /gwd_plan_slice/, "throw must name the incompatible tool");
+    assert.match(err.message, /gsd_plan_slice/, "throw must name the incompatible tool");
     assert.match(err.message, /ollama-chat/, "throw must name the api for which the tool was filtered");
   } finally {
     resetToolCompatibilityRegistry();

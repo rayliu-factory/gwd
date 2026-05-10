@@ -50,8 +50,8 @@ describe("extension bootstrap isolation (#4168, #4172)", () => {
     await registerExtension(pi as any);
     const names = registered.map(([n]) => n);
     assert.ok(
-      names.includes("gsd"),
-      `expected 'gsd' in registered commands, got ${JSON.stringify(names)}`,
+      names.includes("gwd"),
+      `expected 'gwd' in registered commands, got ${JSON.stringify(names)}`,
     );
   });
 
@@ -63,7 +63,7 @@ describe("extension bootstrap isolation (#4168, #4172)", () => {
     const registered: Array<[string, unknown]> = [];
     const pi = {
       registerCommand: (name: string, def: unknown) => {
-        if (name !== "gsd" && name !== "worktree" && name !== "exit") {
+        if (name !== "gwd" && name !== "worktree" && name !== "exit") {
           // Let /gwd, /worktree, /exit succeed (they precede the non-core
           // loop); throw when the first non-core registration fires.
         }
@@ -82,13 +82,13 @@ describe("extension bootstrap isolation (#4168, #4172)", () => {
 
     const names = registered.map(([n]) => n);
     assert.ok(
-      names.includes("gsd"),
-      "expected 'gsd' to be registered even when a later command registration throws",
+      names.includes("gwd"),
+      "expected 'gwd' to be registered even when a later command registration throws",
     );
   });
 
   test("degraded path: /gwd registered BEFORE any non-core command", async () => {
-    // Ordering guard: the first registerCommand call must be for 'gsd',
+    // Ordering guard: the first registerCommand call must be for 'gwd',
     // because index.ts awaits registerGSDCommand(pi) before importing
     // register-extension. Regression scenario: if a future refactor moves
     // registerGSDCommand into the try block or after other registrations,
@@ -107,8 +107,8 @@ describe("extension bootstrap isolation (#4168, #4172)", () => {
     assert.ok(calls.length > 0, "expected at least one registerCommand call");
     assert.equal(
       calls[0],
-      "gsd",
-      `expected 'gsd' to be the first command registered, got ${JSON.stringify(calls)}`,
+      "gwd",
+      `expected 'gwd' to be the first command registered, got ${JSON.stringify(calls)}`,
     );
   });
 });

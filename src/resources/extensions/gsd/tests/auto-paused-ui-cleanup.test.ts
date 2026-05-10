@@ -283,7 +283,7 @@ test("stopAuto completion closeout reroots session, restores cwd, and preserves 
     assert.match(output, /Outcome/);
     assert.match(output, /Added budget warning output/);
     assert.match(output, /Verification/);
-    assert.match(output, /Files: src\/resources\/extensions\/gwd\/auto-dashboard\.ts/);
+    assert.match(output, /Files: src\/resources\/extensions\/gsd\/auto-dashboard\.ts/);
     assert.match(output, /Lessons: Milestone endings need report output/);
     assert.match(output, /2\/3 slices/);
     assert.doesNotMatch(output, /COMPLETE-MILESTONE/);

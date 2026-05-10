@@ -109,6 +109,7 @@ const MAX_BUFFER_BYTES = 512 * 1024;
  * Prevents CPU spinning when deltas arrive faster than regex evaluation (#468).
  */
 const JS_FALLBACK_CHECK_INTERVAL_MS = 50;
+const JS_FALLBACK_THROTTLE_MIN_BUFFER_BYTES = 64 * 1024;
 
 const DEFAULT_SCOPE: TtsrScope = {
 	allowText: true,
@@ -381,13 +382,15 @@ export class TtsrManager {
 		// ── JS fallback: per-rule regex iteration ─────────────────────────
 		// Throttle JS regex checks to prevent CPU spinning on fast token
 		// streams — regex on a growing buffer is O(rules × buffer_size) (#468).
-		const now = Date.now();
-		const lastCheck = this.#lastJsCheckAt.get(bufferKey) ?? 0;
-		if (now - lastCheck < JS_FALLBACK_CHECK_INTERVAL_MS) {
-			stopTimer({ bufferSize: nextBuffer.length, throttled: true });
-			return [];
+		if (nextBuffer.length >= JS_FALLBACK_THROTTLE_MIN_BUFFER_BYTES) {
+			const now = Date.now();
+			const lastCheck = this.#lastJsCheckAt.get(bufferKey) ?? 0;
+			if (now - lastCheck < JS_FALLBACK_CHECK_INTERVAL_MS) {
+				stopTimer({ bufferSize: nextBuffer.length, throttled: true });
+				return [];
+			}
+			this.#lastJsCheckAt.set(bufferKey, now);
 		}
-		this.#lastJsCheckAt.set(bufferKey, now);
 
 		const matches: Rule[] = [];
 		for (const [name, entry] of this.#rules) {

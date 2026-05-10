@@ -125,7 +125,7 @@ describe("resume: missing worktree warning emission", () => {
       "warning should mention project-root mode fallback",
     );
     assert.ok(
-      logs[0].message.includes("gsd-debug"),
+      logs[0].message.includes("gwd-debug"),
       "warning should suggest /gwd-debug recovery action",
     );
   });

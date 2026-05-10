@@ -130,7 +130,7 @@ describe("Gate 1b orphan discrimination in checkAutoStartAfterDiscuss", () => {
     );
     assert.match(
       cap.messages[0].payload.content,
-      /gwd_plan_milestone/,
+      /gsd_plan_milestone/,
       "recovery message content must mention gsd_plan_milestone",
     );
 

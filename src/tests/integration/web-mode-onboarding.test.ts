@@ -219,7 +219,7 @@ function configureBridgeRuntime(
       void optionsArg;
       spawnCalls += 1;
       const generation = {
-        authVisibleAtStart: authStorage.hasAuth("openai"),
+        authVisibleAtStart: authStorage.has("openai"),
         promptMessages: [] as string[],
       };
       generations.push(generation);

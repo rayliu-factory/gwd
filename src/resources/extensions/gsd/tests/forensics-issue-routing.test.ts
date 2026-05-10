@@ -20,14 +20,14 @@ test("forensics prompt explicitly forbids github_issues tool for issue creation"
   );
 });
 
-test("forensics prompt requires gh CLI with --repo gwd-build/gwd-2 for issue creation", () => {
+test("forensics prompt requires gh CLI with --repo rayliu-factory/gwd for issue creation", () => {
   const prompt = readPrompt("forensics");
 
   // Must contain the exact gh CLI command with the correct repo flag
   assert.match(
     prompt,
-    /gh issue create --repo gsd-build\/gwd-2/,
-    "Prompt must specify gh issue create --repo gwd-build/gwd-2",
+    /gh issue create --repo rayliu-factory\/gwd/,
+    "Prompt must specify gh issue create --repo rayliu-factory/gwd",
   );
 });
 

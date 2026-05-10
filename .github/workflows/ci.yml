@@ -162,10 +162,10 @@ jobs:
       - name: Scan for base64-encoded secrets
         run: bash scripts/base64-scan.sh --diff origin/main
 
-      - name: Ensure .gsd/ is not checked in
+      - name: Ensure .gwd/ is not checked in
         run: |
-          if [ -d ".gsd" ]; then
-            echo "::error::.gsd/ directory must not be checked in"
+          if [ -d ".gwd" ]; then
+            echo "::error::.gwd/ directory must not be checked in"
             exit 1
           fi
 
@@ -293,6 +293,9 @@ jobs:
 
       - name: Build core
         run: npm run build:core
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
 
       - name: Run integration tests
         run: npm run test:integration

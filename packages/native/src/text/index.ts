@@ -131,6 +131,11 @@ function wrapTextWithAnsiFallback(text: string, width: number, tabWidth?: number
   const widthLimit = Math.max(1, Math.trunc(width));
   const wrapped: string[] = [];
   for (const line of text.split("\n")) {
+    if (!ANSI_RE.test(line)) {
+      wrapped.push(...wrapPlainLineFallback(line, widthLimit, tabWidth));
+      continue;
+    }
+    ANSI_RE.lastIndex = 0;
     let current = "";
     let currentWidth = 0;
     for (const token of tokenize(line, tabWidth)) {
@@ -149,6 +154,54 @@ function wrapTextWithAnsiFallback(text: string, width: number, tabWidth?: number
     wrapped.push(current);
   }
   return wrapped.length > 0 ? wrapped : [""];
+}
+
+function wrapPlainLineFallback(line: string, widthLimit: number, tabWidth?: number): string[] {
+  const words = line.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return [""];
+
+  const lines: string[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const wordWidth = visibleWidthFallback(word, tabWidth);
+    if (wordWidth > widthLimit) {
+      if (current) {
+        lines.push(current);
+        current = "";
+      }
+      let chunk = "";
+      let chunkWidth = 0;
+      for (const { segment } of segmenter.segment(word)) {
+        const width = charWidth(segment, tabWidth);
+        if (chunkWidth > 0 && chunkWidth + width > widthLimit) {
+          lines.push(chunk);
+          chunk = "";
+          chunkWidth = 0;
+        }
+        chunk += segment;
+        chunkWidth += width;
+      }
+      if (chunk) lines.push(chunk);
+      continue;
+    }
+
+    if (!current) {
+      current = word;
+      continue;
+    }
+
+    const next = `${current} ${word}`;
+    if (visibleWidthFallback(next, tabWidth) <= widthLimit) {
+      current = next;
+    } else {
+      lines.push(current);
+      current = word;
+    }
+  }
+
+  if (current) lines.push(current);
+  return lines;
 }
 
 function sliceWithWidthFallback(

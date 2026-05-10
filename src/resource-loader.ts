@@ -554,7 +554,7 @@ function pruneRemovedBundledExtensions(
  *
  * - extensions/ → ~/.gwd/agent/extensions/   (overwrite when version changes)
  * - agents/     → ~/.gwd/agent/agents/        (overwrite when version changes)
- * - GSD-WORKFLOW.md → ~/.gwd/agent/GSD-WORKFLOW.md (fallback for env var miss)
+ * - GWD-WORKFLOW.md → ~/.gwd/agent/GWD-WORKFLOW.md (fallback for env var miss)
  *
  * Skills are NOT synced here. They are installed by the user via the
  * skills.sh CLI (`npx skills add <repo>`) into ~/.agents/skills/ — the
@@ -608,11 +608,11 @@ export function initResources(agentDir: string, skillsDir: string = join(homedir
   syncResourceDir(join(resourcesDir, 'agents'), join(agentDir, 'agents'))
   syncResourceDir(join(resourcesDir, 'skills'), skillsDir)
 
-  // Sync GSD-WORKFLOW.md to agentDir as a fallback for when GWD_WORKFLOW_PATH
+  // Sync GWD-WORKFLOW.md to agentDir as a fallback for when GWD_WORKFLOW_PATH
   // env var is not set (e.g. fork/dev builds, alternative entry points).
-  const workflowSrc = join(resourcesDir, 'GSD-WORKFLOW.md')
+  const workflowSrc = join(resourcesDir, 'GWD-WORKFLOW.md')
   if (existsSync(workflowSrc)) {
-    try { copyFileSync(workflowSrc, join(agentDir, 'GSD-WORKFLOW.md')) } catch { /* non-fatal */ }
+    try { copyFileSync(workflowSrc, join(agentDir, 'GWD-WORKFLOW.md')) } catch { /* non-fatal */ }
   }
 
   // Ensure all newly copied files are owner-writable so the next run can

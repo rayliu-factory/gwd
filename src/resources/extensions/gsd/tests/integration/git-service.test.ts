@@ -508,7 +508,7 @@ describe('git-service', async () => {
 
     // Without task context, autoCommit uses generic chore message
     const msg = svc.autoCommit("task", "T01");
-    assert.deepStrictEqual(msg, "chore: auto-commit after task\n\nGSD-Unit: T01", "autoCommit returns generic format with trailer");
+    assert.deepStrictEqual(msg, "chore: auto-commit after task\n\nGWD-Unit: T01", "autoCommit returns generic format with trailer");
 
     const log = run("git log --oneline -1", repo);
     assert.ok(log.includes("chore: auto-commit after task"), "generic commit message is in git log");
@@ -639,7 +639,7 @@ describe('git-service', async () => {
 
     // Auto-commit with .gsd/ excluded (simulates pre-switch)
     const msg = svc.autoCommit("pre-switch", "main", [".gsd/"]);
-    assert.deepStrictEqual(msg, "chore: auto-commit after pre-switch\n\nGSD-Unit: main", "pre-switch autoCommit with .gsd/ exclusion commits");
+    assert.deepStrictEqual(msg, "chore: auto-commit after pre-switch\n\nGWD-Unit: main", "pre-switch autoCommit with .gsd/ exclusion commits");
 
     // Verify .gsd/ file was NOT committed
     const show = run("git show --stat HEAD", repo);
@@ -700,8 +700,8 @@ describe('git-service', async () => {
 
     assert.deepStrictEqual(svc.getCurrentBranch(), "main", "getCurrentBranch returns main on main branch");
 
-    run("git checkout -b gsd/M001/S01", repo);
-    assert.deepStrictEqual(svc.getCurrentBranch(), "gsd/M001/S01", "getCurrentBranch returns slice branch name");
+    run("git checkout -b gwd/M001/S01", repo);
+    assert.deepStrictEqual(svc.getCurrentBranch(), "gwd/M001/S01", "getCurrentBranch returns slice branch name");
 
     run("git checkout -b feature/foo", repo);
     assert.deepStrictEqual(svc.getCurrentBranch(), "feature/foo", "getCurrentBranch returns feature branch name");
@@ -753,7 +753,7 @@ describe('git-service', async () => {
     svc.commit({ message: "snapshot test commit" });
 
     // Create snapshot ref for this branch
-    svc.createSnapshot("gsd/M001/S01");
+    svc.createSnapshot("gwd/M001/S01");
 
     // Verify ref exists under refs/gwd/snapshots/
     const refs = run("git for-each-ref refs/gwd/snapshots/", repo);
@@ -768,12 +768,12 @@ describe('git-service', async () => {
     const repo = initBranchTestRepo();
     const svc = new GitServiceImpl(repo, { snapshots: false });
 
-    run("git checkout -b gsd/M001/S01", repo);
+    run("git checkout -b gwd/M001/S01", repo);
     createFile(repo, "src/no-snap.ts", "no snapshot");
     svc.commit({ message: "no snapshot commit" });
 
     // createSnapshot should be a no-op when disabled
-    svc.createSnapshot("gsd/M001/S01");
+    svc.createSnapshot("gwd/M001/S01");
 
     const refs = run("git for-each-ref refs/gwd/snapshots/", repo);
     assert.deepStrictEqual(refs, "", "no snapshot ref created when prefs.snapshots is false");

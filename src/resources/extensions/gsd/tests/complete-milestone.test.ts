@@ -577,7 +577,7 @@ describe("complete-milestone", () => {
     const successCriteria = findStep(/Verify every \*\*success criterion\*\*/);
     const defOfDone = findStep(/Verify \*\*definition of done\*\*/);
     const completeMilestone = findStep(/Persist completion through `gsd_complete_milestone`/);
-    const requirementUpdate = findStep(/gwd_requirement_update/);
+    const requirementUpdate = findStep(/gsd_requirement_update/);
 
     // Gate clause references the verification steps.
     const gateLine = prompt.split("\n").find(l => l.includes("Verification failure was recorded") || l.includes("verification failure was recorded"));

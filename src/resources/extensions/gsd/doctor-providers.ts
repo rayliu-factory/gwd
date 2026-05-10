@@ -197,7 +197,7 @@ function isCliBinaryInPath(providerId: string): boolean {
 function modelsJsonPaths(): string[] {
   const home = homedir();
   return [
-    join(home, ".gsd", "agent", "models.json"),
+    join(home, ".gwd", "agent", "models.json"),
     // Keep parity with custom-provider discovery during auto bootstrap.
     join(home, ".pi", "agent", "models.json"),
   ];

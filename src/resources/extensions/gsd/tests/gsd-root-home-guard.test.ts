@@ -27,7 +27,7 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
 
   beforeEach(() => {
     fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-home-guard-')));
-    mkdirSync(join(fakeHome, '.gsd'), { recursive: true });
+    mkdirSync(join(fakeHome, '.gwd'), { recursive: true });
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
@@ -52,23 +52,12 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
     rmSync(fakeHome, { recursive: true, force: true });
   });
 
-  test('throws when basePath is the home directory and result equals gsdHome()', () => {
-    assert.throws(
-      () => gsdRoot(fakeHome),
-      (err: unknown) => {
-        assert.ok(err instanceof Error, 'should throw an Error');
-        assert.match(
-          (err as Error).message,
-          /global GWD home|project .gsd directory/i,
-          'message should explain the refusal',
-        );
-        return true;
-      },
-    );
+  test('does not use the global GWD home when basePath is the home directory', () => {
+    assert.equal(gsdRoot(fakeHome), join(fakeHome, '.gsd'));
   });
 
   test('does NOT throw for paths under ~/.gwd/projects/<hash>/', () => {
-    const projectStateDir = join(fakeHome, '.gsd', 'projects', 'abcdef123456');
+    const projectStateDir = join(fakeHome, '.gwd', 'projects', 'abcdef123456');
     mkdirSync(join(projectStateDir, '.gsd'), { recursive: true });
     _clearGsdRootCache();
 
@@ -102,7 +91,7 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gwd', ()
     // Init a bare-minimum git repo so git rev-parse --show-toplevel returns fakeHome.
     spawnSync('git', ['init', fakeHome], { encoding: 'utf-8' });
     // Create ~/.gwd (the global home that must NOT be used for project subdirs).
-    mkdirSync(join(fakeHome, '.gsd'), { recursive: true });
+    mkdirSync(join(fakeHome, '.gwd'), { recursive: true });
     // Create a subdir inside the git repo — this is the project basePath.
     subDir = join(fakeHome, 'projects', 'foo');
     mkdirSync(subDir, { recursive: true });

@@ -80,7 +80,7 @@ describe("auditOrphanedPreflightStashes", () => {
 
     // The stash entry must remain (apply, not pop) so the user has a backup.
     const list = git(repo, "stash", "list");
-    assert.match(list, /gwd-preflight-stash:M002:/);
+    assert.match(list, /gsd-preflight-stash:M002:/);
   });
 
   test("ignores stashes whose milestone is not complete", () => {
@@ -134,7 +134,7 @@ describe("auditOrphanedPreflightStashes", () => {
     assert.match(result.warnings[0], /git stash apply/);
 
     const list = git(repo, "stash", "list");
-    assert.match(list, /gwd-preflight-stash:M005:/);
+    assert.match(list, /gsd-preflight-stash:M005:/);
   });
 
   test("returns empty result when basePath is not a git repo", () => {

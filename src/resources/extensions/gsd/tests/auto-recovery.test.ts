@@ -717,14 +717,14 @@ test("hasImplementationArtifacts finds milestone implementation commits after re
     mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
     writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"), "# Roadmap");
     execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
-    execFileSync("git", ["commit", "-m", "chore: auto-commit after plan-milestone\n\nGSD-Unit: M001"], { cwd: base, stdio: "ignore" });
+    execFileSync("git", ["commit", "-m", "chore: auto-commit after plan-milestone\n\nGWD-Unit: M001"], { cwd: base, stdio: "ignore" });
 
     mkdirSync(join(base, "src"), { recursive: true });
     mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
     writeFileSync(join(base, "src", "feature.ts"), "export function feature() {}");
     writeFileSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md"), "# Summary");
     execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
-    execFileSync("git", ["commit", "-m", "feat: add milestone feature\n\nGSD-Task: S01/T01"], { cwd: base, stdio: "ignore" });
+    execFileSync("git", ["commit", "-m", "feat: add milestone feature\n\nGWD-Task: S01/T01"], { cwd: base, stdio: "ignore" });
 
     const result = hasImplementationArtifacts(base, "M001");
     assert.equal(result, "present", "main self-diff retry should find production execute-task commits");
@@ -740,7 +740,7 @@ test("hasImplementationArtifacts rejects milestone-scoped main history with only
     writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"), "# Roadmap");
     writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-SUMMARY.md"), "# Summary");
     execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
-    execFileSync("git", ["commit", "-m", "chore: auto-commit after complete-milestone\n\nGSD-Unit: M001"], { cwd: base, stdio: "ignore" });
+    execFileSync("git", ["commit", "-m", "chore: auto-commit after complete-milestone\n\nGWD-Unit: M001"], { cwd: base, stdio: "ignore" });
 
     const result = hasImplementationArtifacts(base, "M001");
     assert.equal(result, "absent", "milestone-scoped fallback must not treat .gsd-only commits as implementation");
@@ -755,7 +755,7 @@ test("hasImplementationArtifacts finds integration implementation-only commits w
     mkdirSync(join(base, "src"), { recursive: true });
     writeFileSync(join(base, "src", "feature.ts"), "export function feature() {}\n");
     execFileSync("git", ["add", "src/feature.ts"], { cwd: base, stdio: "ignore" });
-    execFileSync("git", ["commit", "-m", "feat: add milestone feature\n\nGSD-Task: S01/T01"], { cwd: base, stdio: "ignore" });
+    execFileSync("git", ["commit", "-m", "feat: add milestone feature\n\nGWD-Task: S01/T01"], { cwd: base, stdio: "ignore" });
 
     mkdirSync(join(base, ".gsd"), { recursive: true });
     openDatabase(join(base, ".gsd", "gsd.db"));
@@ -780,7 +780,7 @@ test("hasImplementationArtifacts finds integration implementation-only commits w
     writeIntegrationBranch(base, "M001", "main");
     writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-SUMMARY.md"), "# Milestone Summary\nDone.");
     execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
-    execFileSync("git", ["commit", "-m", "chore: auto-commit after complete-milestone\n\nGSD-Unit: M001"], { cwd: base, stdio: "ignore" });
+    execFileSync("git", ["commit", "-m", "chore: auto-commit after complete-milestone\n\nGWD-Unit: M001"], { cwd: base, stdio: "ignore" });
 
     const result = hasImplementationArtifacts(base, "M001");
     assert.equal(
@@ -937,7 +937,7 @@ test("hasImplementationArtifacts uses milestone path history instead of rolling 
     writeFileSync(join(base, "src", "feature.ts"), "export function feature() {}");
     writeFileSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md"), "# Summary");
     execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
-    execFileSync("git", ["commit", "-m", "feat: old milestone implementation\n\nGSD-Task: S01/T01"], { cwd: base, stdio: "ignore" });
+    execFileSync("git", ["commit", "-m", "feat: old milestone implementation\n\nGWD-Task: S01/T01"], { cwd: base, stdio: "ignore" });
 
     mkdirSync(join(base, "docs"), { recursive: true });
     for (let i = 0; i < 205; i++) {
@@ -971,7 +971,7 @@ test("hasImplementationArtifacts finds implementation commits when .gsd/ is giti
     execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
     execFileSync(
       "git",
-      ["commit", "-m", "feat: materialize M001 evidence\n\nGSD-Task: S01/T01"],
+      ["commit", "-m", "feat: materialize M001 evidence\n\nGWD-Task: S01/T01"],
       { cwd: base, stdio: "ignore" },
     );
 
@@ -1014,7 +1014,7 @@ test("hasImplementationArtifacts binds GWD-Task trailer to milestone via DB stat
     execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
     execFileSync(
       "git",
-      ["commit", "-m", "feat: add feature\n\nGSD-Task: S01/T01"],
+      ["commit", "-m", "feat: add feature\n\nGWD-Task: S01/T01"],
       { cwd: base, stdio: "ignore" },
     );
 
@@ -1038,7 +1038,7 @@ test("hasImplementationArtifacts does not bind GWD-Task trailer without mileston
     execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
     execFileSync(
       "git",
-      ["commit", "-m", "feat: add feature\n\nGSD-Task: S01/T01"],
+      ["commit", "-m", "feat: add feature\n\nGWD-Task: S01/T01"],
       { cwd: base, stdio: "ignore" },
     );
 
@@ -1063,7 +1063,7 @@ test("hasImplementationArtifacts ignores malformed milestone IDs in commit-messa
     execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
     execFileSync(
       "git",
-      ["commit", "-m", "feat: materialize M001(foo evidence\n\nGSD-Task: S01/T01"],
+      ["commit", "-m", "feat: materialize M001(foo evidence\n\nGWD-Task: S01/T01"],
       { cwd: base, stdio: "ignore" },
     );
 
@@ -1137,7 +1137,7 @@ test("verifyExpectedArtifact complete-milestone passes on main retry with milest
     writeFileSync(join(base, "src", "app.ts"), "console.log('hello');");
     writeFileSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md"), "# Summary");
     execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });
-    execFileSync("git", ["commit", "-m", "feat: implementation already on main\n\nGSD-Task: S01/T01"], { cwd: base, stdio: "ignore" });
+    execFileSync("git", ["commit", "-m", "feat: implementation already on main\n\nGWD-Task: S01/T01"], { cwd: base, stdio: "ignore" });
 
     const result = verifyExpectedArtifact("complete-milestone", "M001", base);
     assert.equal(result, true, "complete-milestone should not fail solely because HEAD vs main is a self-diff");

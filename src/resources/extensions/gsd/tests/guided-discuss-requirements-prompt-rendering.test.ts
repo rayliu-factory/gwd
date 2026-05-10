@@ -36,8 +36,8 @@ test("guided requirements prompt renders compact capability and persistence guid
   assert.match(prompt, /class-assignment and status questions are exempt/);
   assert.match(prompt, /artifact_type: "REQUIREMENTS-DRAFT"/);
   assert.match(prompt, /depth_verification_requirements_confirm/);
-  assert.match(prompt, /gwd_requirement_save/);
-  assert.match(prompt, /gwd_summary_save/);
+  assert.match(prompt, /gsd_requirement_save/);
+  assert.match(prompt, /gsd_summary_save/);
   assert.match(prompt, /artifact_type: "REQUIREMENTS"/);
   assert.match(prompt, /Do NOT use `artifact_type: "CONTEXT"`/);
   assert.match(prompt, /Requirements written\./);
