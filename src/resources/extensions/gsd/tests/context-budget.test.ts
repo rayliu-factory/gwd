@@ -270,6 +270,19 @@ describe("context-budget: resolveExecutorContextWindow", () => {
     assert.equal(result, 131_072);
   });
 
+  it("context_window_override is not capped by provider effective-window rules", () => {
+    const registry = makeRegistry([
+      makeModel("claude-sonnet-4-6", "claude-code", 1_000_000),
+    ]);
+    const prefs: MinimalPreferences = {
+      context_window_override: 1_000_000,
+      models: { execution: "claude-code/claude-sonnet-4-6" },
+    };
+
+    const result = resolveExecutorContextWindow(registry, prefs, undefined, "claude-code");
+    assert.equal(result, 1_000_000);
+  });
+
   it("falls back to sessionContextWindow when executor model not found", () => {
     const registry = makeRegistry([
       makeModel("claude-opus-4-6", "anthropic", 200_000),
