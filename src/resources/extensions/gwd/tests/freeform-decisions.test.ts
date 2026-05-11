@@ -21,7 +21,7 @@ import {
 
 function makeTmpDir(): string {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-freeform-'));
-  fs.mkdirSync(path.join(dir, '.gsd'), { recursive: true });
+  fs.mkdirSync(path.join(dir, '.gwd'), { recursive: true });
   return dir;
 }
 
@@ -63,8 +63,8 @@ describe('freeform-decisions', () => {
 
   test('saveDecisionToDb destroys freeform DECISIONS.md content', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
-    const mdPath = path.join(tmpDir, '.gsd', 'DECISIONS.md');
+    const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
+    const mdPath = path.join(tmpDir, '.gwd', 'DECISIONS.md');
     openDatabase(dbPath);
 
     const freeformContent = `# Project Decisions
@@ -173,8 +173,8 @@ describe('freeform-decisions', () => {
 
   test('saveDecisionToDb with table-format DECISIONS.md still regenerates normally', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
-    const mdPath = path.join(tmpDir, '.gsd', 'DECISIONS.md');
+    const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
+    const mdPath = path.join(tmpDir, '.gwd', 'DECISIONS.md');
     openDatabase(dbPath);
 
     // Pre-populate with canonical table format
@@ -228,8 +228,8 @@ describe('freeform-decisions', () => {
 
   test('saveDecisionToDb with no existing DECISIONS.md creates table', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
-    const mdPath = path.join(tmpDir, '.gsd', 'DECISIONS.md');
+    const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
+    const mdPath = path.join(tmpDir, '.gwd', 'DECISIONS.md');
     openDatabase(dbPath);
 
     // No DECISIONS.md exists at all
@@ -264,7 +264,7 @@ describe('freeform-decisions', () => {
 
   test('parallel saveDecisionToDb calls assign unique IDs', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
     openDatabase(dbPath);
 
     try {
@@ -278,7 +278,7 @@ describe('freeform-decisions', () => {
       assert.strictEqual(ids.size, 3, `expected 3 unique IDs but got: ${[r1.id, r2.id, r3.id]}`);
 
       // Verify all 3 decisions exist in the markdown file
-      const mdPath = path.join(tmpDir, '.gsd', 'DECISIONS.md');
+      const mdPath = path.join(tmpDir, '.gwd', 'DECISIONS.md');
       const content = fs.readFileSync(mdPath, 'utf-8');
       assert.ok(content.includes('Decision A'), 'Decision A in file');
       assert.ok(content.includes('Decision B'), 'Decision B in file');

@@ -36,8 +36,8 @@ Then say: "Domain research finds table-stakes capabilities, ecosystem norms, and
 
 Once the answer is captured:
 
-1. Make sure `.gsd/runtime/` exists: `mkdir -p .gsd/runtime/`
-2. Write `.gsd/runtime/research-decision.json` containing:
+1. Make sure `.gwd/runtime/` exists: `mkdir -p .gwd/runtime/`
+2. Write `.gwd/runtime/research-decision.json` containing:
    ```json
    {
      "decision": "research" | "skip",

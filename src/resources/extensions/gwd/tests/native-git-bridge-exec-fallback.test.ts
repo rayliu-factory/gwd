@@ -134,7 +134,7 @@ describe("native-git-bridge #4180: fallback runtime behaviour", () => {
   });
 
   test("nativeWorktreeAdd materializes a valid .git marker", (t) => {
-    const wtPath = join(repo, ".gsd", "worktrees", "M001");
+    const wtPath = join(repo, ".gwd", "worktrees", "M001");
     t.after(() => {
       try { git(["worktree", "remove", "--force", wtPath], repo); } catch { /* noop */ }
     });

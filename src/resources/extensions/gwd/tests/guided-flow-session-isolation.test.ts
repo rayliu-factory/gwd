@@ -103,7 +103,7 @@ describe("#2985 Bug 4 — getDiscussionMilestoneId must be keyed by basePath", (
 test("checkAutoStartAfterDiscuss ignores missing manifest for single-milestone discuss on established project", () => {
   const base = mkdtempSync(join(tmpdir(), "gsd-auto-start-manifest-"));
   try {
-    const gsdDir = join(base, ".gsd");
+    const gsdDir = join(base, ".gwd");
     const milestoneDir = join(gsdDir, "milestones", "M001");
     mkdirSync(milestoneDir, { recursive: true });
     mkdirSync(join(gsdDir, "milestones", "M002"), { recursive: true });

@@ -46,7 +46,7 @@ export async function showQueue(
   pi: ExtensionAPI,
   basePath: string,
 ): Promise<void> {
-  // ── Ensure .gsd/ exists ─────────────────────────────────────────────
+  // ── Ensure .gwd/ exists ─────────────────────────────────────────────
   const gsd = gsdRoot(basePath);
   if (!existsSync(gsd)) {
     ctx.ui.notify("No GWD project found. Run /gwd to start one first.", "warning");
@@ -140,9 +140,9 @@ export async function handleQueueReorder(
   syncProjectMdSequence(basePath, state.registry, result.order);
 
   // Commit the change
-  const filesToAdd = [".gsd/QUEUE-ORDER.json", ".gsd/PROJECT.md"];
+  const filesToAdd = [".gwd/QUEUE-ORDER.json", ".gwd/PROJECT.md"];
   for (const r of result.depsToRemove) {
-    filesToAdd.push(`.gsd/milestones/${r.milestone}/${r.milestone}-CONTEXT.md`);
+    filesToAdd.push(`.gwd/milestones/${r.milestone}/${r.milestone}-CONTEXT.md`);
   }
   try {
     nativeAddPaths(basePath, filesToAdd);
@@ -201,7 +201,7 @@ export async function showQueueAdd(
     preamble,
     existingMilestonesContext: existingContext,
     inlinedTemplates: queueInlinedTemplates,
-    commitInstruction: "Do not commit planning artifacts — .gsd/ is managed externally.",
+    commitInstruction: "Do not commit planning artifacts — .gwd/ is managed externally.",
   });
 
   pi.sendMessage(

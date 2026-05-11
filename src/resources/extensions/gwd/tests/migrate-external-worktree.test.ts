@@ -42,13 +42,13 @@ describe("migrate-external worktree guard (#2970)", () => {
     run('git commit -m "init"', base);
 
     // Create a worktree
-    worktreePath = join(base, ".gsd", "worktrees", "M001");
+    worktreePath = join(base, ".gwd", "worktrees", "M001");
     run(`git worktree add -b milestone/M001 ${worktreePath}`, base);
 
-    // Populate worktree with a .gsd directory (simulating syncGsdStateToWorktree)
-    const worktreeGsd = join(worktreePath, ".gsd");
-    mkdirSync(worktreeGsd, { recursive: true });
-    writeFileSync(join(worktreeGsd, "PREFERENCES.md"), "# prefs\n", "utf-8");
+    // Populate worktree with a .gwd directory (simulating syncGsdStateToWorktree)
+    const worktreeGwd = join(worktreePath, ".gwd");
+    mkdirSync(worktreeGwd, { recursive: true });
+    writeFileSync(join(worktreeGwd, "PREFERENCES.md"), "# prefs\n", "utf-8");
   });
 
   after(() => {
@@ -60,23 +60,23 @@ describe("migrate-external worktree guard (#2970)", () => {
   });
 
   test("migrateToExternalState skips when basePath is a git worktree", () => {
-    // The worktree has a real .gsd directory — migration would normally run.
+    // The worktree has a real .gwd directory — migration would normally run.
     // But since this is a worktree, it should be skipped.
     const result = migrateToExternalState(worktreePath);
 
     assert.equal(result.migrated, false, "should not migrate inside a worktree");
     assert.equal(result.error, undefined, "should not report an error");
 
-    // .gsd should still exist as a real directory (not renamed/removed)
+    // .gwd should still exist as a real directory (not renamed/removed)
     assert.ok(
-      existsSync(join(worktreePath, ".gsd")),
-      ".gsd directory should still exist after skipped migration"
+      existsSync(join(worktreePath, ".gwd")),
+      ".gwd directory should still exist after skipped migration"
     );
 
-    // .gsd.migrating should NOT exist
+    // .gwd.migrating should NOT exist
     assert.ok(
-      !existsSync(join(worktreePath, ".gsd.migrating")),
-      ".gsd.migrating should not be created in a worktree"
+      !existsSync(join(worktreePath, ".gwd.migrating")),
+      ".gwd.migrating should not be created in a worktree"
     );
   });
 
@@ -92,9 +92,9 @@ describe("migrate-external worktree guard (#2970)", () => {
       run("git add README.md", mainBase);
       run('git commit -m "init"', mainBase);
 
-      // Create a .gsd directory with content
-      mkdirSync(join(mainBase, ".gsd"), { recursive: true });
-      writeFileSync(join(mainBase, ".gsd", "PREFERENCES.md"), "# prefs\n", "utf-8");
+      // Create a .gwd directory with content
+      mkdirSync(join(mainBase, ".gwd"), { recursive: true });
+      writeFileSync(join(mainBase, ".gwd", "PREFERENCES.md"), "# prefs\n", "utf-8");
 
       const result = migrateToExternalState(mainBase);
       assert.equal(result.migrated, true, "should migrate on main repo");

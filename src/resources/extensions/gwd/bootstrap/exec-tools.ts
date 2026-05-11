@@ -30,7 +30,7 @@ export function registerExecTools(pi: ExtensionAPI): void {
     label: "Exec (Sandboxed)",
     description:
       "Run a short script (bash/node/python) in a subprocess. Capped stdout/stderr and metadata persist to " +
-      ".gsd/exec/<id>.{stdout,stderr,meta.json}; only a short digest returns in context. Use " +
+      ".gwd/exec/<id>.{stdout,stderr,meta.json}; only a short digest returns in context. Use " +
       "this instead of reading many files or emitting large tool outputs — e.g. have the script " +
       "count/grep/summarize and log the finding. Enabled by default; opt out via " +
       "preferences.context_mode.enabled=false.",
@@ -71,7 +71,7 @@ export function registerExecTools(pi: ExtensionAPI): void {
     name: "gsd_exec_search",
     label: "Search gsd_exec History",
     description:
-      "List prior gsd_exec runs (most recent first) from .gsd/exec/*.meta.json. Useful for " +
+      "List prior gsd_exec runs (most recent first) from .gwd/exec/*.meta.json. Useful for " +
       "rediscovering the stdout_path of an earlier run without re-executing it. Read-only.",
     promptSnippet: "Search prior gsd_exec runs by substring, runtime, or failing-only filter",
     promptGuidelines: [
@@ -102,7 +102,7 @@ export function registerExecTools(pi: ExtensionAPI): void {
     name: "gsd_resume",
     label: "Resume (Read Snapshot)",
     description:
-      "Return the contents of .gsd/last-snapshot.md — a ≤2 KB digest of top memories, recent " +
+      "Return the contents of .gwd/last-snapshot.md — a ≤2 KB digest of top memories, recent " +
       "gsd_exec runs, and active context, written automatically on session_before_compact. Use " +
       "this after compaction or session resume to re-orient quickly.",
     promptSnippet: "Read the pre-compaction snapshot to re-orient after context loss",

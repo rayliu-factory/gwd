@@ -64,7 +64,7 @@ function setupTestEnvironment(): void {
   tempDir = join(tmpdir(), `post-exec-retry-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(tempDir, { recursive: true });
 
-  const gsdDir = join(tempDir, ".gsd");
+  const gsdDir = join(tempDir, ".gwd");
   mkdirSync(gsdDir, { recursive: true });
 
   const milestonesDir = join(gsdDir, "milestones", "M001", "slices", "S01", "tasks");
@@ -73,7 +73,7 @@ function setupTestEnvironment(): void {
   process.chdir(tempDir);
   _clearGsdRootCache();
 
-  dbPath = join(gsdDir, "gsd.db");
+  dbPath = join(gsdDir, "gwd.db");
   openDatabase(dbPath);
 }
 
@@ -103,7 +103,7 @@ ${yamlLines.join("\n")}
 
 # GWD Preferences
 `;
-  writeFileSync(join(tempDir, ".gsd", "PREFERENCES.md"), prefsContent);
+  writeFileSync(join(tempDir, ".gwd", "PREFERENCES.md"), prefsContent);
   invalidateAllCaches();
   _clearGsdRootCache();
 }

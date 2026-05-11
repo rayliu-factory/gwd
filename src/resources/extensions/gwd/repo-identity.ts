@@ -3,7 +3,7 @@
  *
  * Computes a stable per-repo identity hash, resolves the external
  * `~/.gwd/projects/<hash>/` state directory, and manages the
- * `<project>/.gsd → external` symlink.
+ * `<project>/.gwd → external` symlink.
  */
 
 import { createHash } from "node:crypto";
@@ -103,7 +103,7 @@ export function readRepoMeta(externalPath: string): RepoMeta | null {
  * Returns true when ALL of:
  *   1. basePath is inside a git repo (git rev-parse succeeds)
  *   2. The resolved git root is a proper ancestor of basePath
- *   3. There is no *project* `.gsd` directory at the git root or any
+ *   3. There is no *project* `.gwd` directory at the git root or any
  *      intermediate ancestor (the parent project has not been
  *      initialised with GWD)
  *
@@ -111,7 +111,7 @@ export function readRepoMeta(externalPath: string): RepoMeta | null {
  * `repoIdentity()` produces a hash unique to this directory, preventing
  * cross-project state leaks (#1639).
  *
- * When the git root already has a project `.gsd`, the directory is a
+ * When the git root already has a project `.gwd`, the directory is a
  * legitimate subdirectory of an existing GWD project — `cd src/ && /gwd`
  * should still load the parent project's milestones.
  */
@@ -122,17 +122,17 @@ export function isInheritedRepo(basePath: string): boolean {
     const normalizedRoot = canonicalizeExistingPath(root);
     if (normalizedBase === normalizedRoot) return false; // basePath IS the root
 
-    // The git root is a proper ancestor. Check whether it already has .gsd
+    // The git root is a proper ancestor. Check whether it already has .gwd
     // (i.e. the parent project was initialised with GWD).
-    if (isProjectGsd(join(root, ".gsd"))) return false;
+    if (isProjectGsd(join(root, ".gwd"))) return false;
 
-    // Walk up from basePath's parent to the git root checking for .gsd.
+    // Walk up from basePath's parent to the git root checking for .gwd.
     // Start at dirname(normalizedBase), NOT normalizedBase itself — finding
-    // .gsd at basePath means GWD state is set up for THIS project, which
+    // .gwd at basePath means GWD state is set up for THIS project, which
     // says nothing about whether the git repo is inherited from an ancestor.
     let dir = dirname(normalizedBase);
     while (dir !== normalizedRoot && dir !== dirname(dir)) {
-      if (isProjectGsd(join(dir, ".gsd"))) return false;
+      if (isProjectGsd(join(dir, ".gwd"))) return false;
       dir = dirname(dir);
     }
 
@@ -143,15 +143,15 @@ export function isInheritedRepo(basePath: string): boolean {
 }
 
 /**
- * Distinguish a *project* `.gsd` from the global `~/.gwd` state directory.
+ * Distinguish a *project* `.gwd` from the global `~/.gwd` state directory.
  *
- * A project `.gsd` is either:
+ * A project `.gwd` is either:
  *   - A symlink to an external state directory (normal post-migration layout)
  *   - A legacy real directory that is NOT the global GWD home
  *
  * When the user's home directory is itself a git repo (e.g. dotfile managers),
- * `~/.gwd` exists but is the global state directory — not a project `.gsd`.
- * Treating it as a project `.gsd` would cause isInheritedRepo() to wrongly
+ * `~/.gwd` exists but is the global state directory — not a project `.gwd`.
+ * Treating it as a project `.gwd` would cause isInheritedRepo() to wrongly
  * conclude that subdirectories are part of the home "project" (#2393).
  */
 function isProjectGsd(gsdPath: string): boolean {
@@ -160,7 +160,7 @@ function isProjectGsd(gsdPath: string): boolean {
   try {
     const stat = lstatSync(gsdPath);
 
-    // Symlinks are always project .gsd (created by ensureGsdSymlink).
+    // Symlinks are always project .gwd (created by ensureGsdSymlink).
     if (stat.isSymbolicLink()) return true;
 
     // For real directories, check that this isn't the global GWD home.
@@ -174,7 +174,7 @@ function isProjectGsd(gsdPath: string): boolean {
       return true;
     }
   } catch {
-    // lstat failed — treat as no .gsd present
+    // lstat failed — treat as no .gwd present
   }
 
   return false;
@@ -279,7 +279,7 @@ export function validateProjectId(id: string): boolean {
  * this makes the identity stable across directory moves/renames (#2750).
  *
  * For local-only repos (no remote), includes the git root in the hash.
- * Local repos use a `.gsd-id` marker file for recovery after moves.
+ * Local repos use a `.gwd-id` marker file for recovery after moves.
  *
  * Deterministic: same repo always produces the same hash regardless of
  * which worktree the caller is inside.
@@ -326,19 +326,19 @@ export function externalProjectsRoot(): string {
 // ─── Numbered Variant Cleanup ────────────────────────────────────────────────
 
 /**
- * macOS collision pattern: `.gsd 2`, `.gsd 3`, `.gsd 4`, etc.
+ * macOS collision pattern: `.gwd 2`, `.gwd 3`, `.gwd 4`, etc.
  *
- * When `symlinkSync` (or Finder) tries to create `.gsd` but a real directory
+ * When `symlinkSync` (or Finder) tries to create `.gwd` but a real directory
  * already exists at that path, macOS APFS silently renames the new entry to
- * `.gsd 2`, then `.gsd 3`, and so on. These numbered variants confuse GWD
- * because the canonical `.gsd` path no longer resolves to the external state
+ * `.gwd 2`, then `.gwd 3`, and so on. These numbered variants confuse GWD
+ * because the canonical `.gwd` path no longer resolves to the external state
  * directory, making tracked planning files appear deleted.
  *
- * This helper scans the project root for entries matching `.gsd <digits>` and
+ * This helper scans the project root for entries matching `.gwd <digits>` and
  * removes them. It is called early in `ensureGsdSymlink()` so that the
- * canonical `.gsd` path is always the one in use.
+ * canonical `.gwd` path is always the one in use.
  */
-const GWD_NUMBERED_VARIANT_RE = /^\.gsd \d+$/;
+const GWD_NUMBERED_VARIANT_RE = /^\.gwd \d+$/;
 
 export function cleanNumberedGsdVariants(projectPath: string): string[] {
   const removed: string[] = [];
@@ -361,10 +361,10 @@ export function cleanNumberedGsdVariants(projectPath: string): string[] {
   return removed;
 }
 
-// ─── .gsd-id Marker ─────────────────────────────────────────────────────────
+// ─── .gwd-id Marker ─────────────────────────────────────────────────────────
 
 /**
- * Write a `.gsd-id` marker file in the project root.
+ * Write a `.gwd-id` marker file in the project root.
  *
  * This file records the identity hash used for the external state directory.
  * For local-only repos (no remote), this marker survives directory moves and
@@ -375,7 +375,7 @@ export function cleanNumberedGsdVariants(projectPath: string): string[] {
  */
 function writeGsdIdMarker(projectPath: string, identity: string): void {
   try {
-    const markerPath = join(projectPath, ".gsd-id");
+    const markerPath = join(projectPath, ".gwd-id");
     // Only write if content differs to avoid unnecessary disk writes.
     if (existsSync(markerPath)) {
       try {
@@ -389,12 +389,12 @@ function writeGsdIdMarker(projectPath: string, identity: string): void {
 }
 
 /**
- * Read the `.gsd-id` marker from the project root.
+ * Read the `.gwd-id` marker from the project root.
  * Returns the identity hash, or null if the marker doesn't exist or is unreadable.
  */
 function readGsdIdMarker(projectPath: string): string | null {
   try {
-    const markerPath = join(projectPath, ".gsd-id");
+    const markerPath = join(projectPath, ".gwd-id");
     if (!existsSync(markerPath)) return null;
     const content = readFileSync(markerPath, "utf-8").trim();
     return /^[a-zA-Z0-9_-]+$/.test(content) ? content : null;
@@ -422,7 +422,7 @@ function hasProjectState(externalPath: string): boolean {
  * Resolve the external state directory, with recovery for relocated projects.
  *
  * For local-only repos where the computed identity produces an empty state dir,
- * checks the `.gsd-id` marker for the original identity hash and recovers
+ * checks the `.gwd-id` marker for the original identity hash and recovers
  * the old state directory if it still exists and contains data (#2750).
  *
  * Returns the resolved external path (may differ from the computed identity).
@@ -436,7 +436,7 @@ function resolveExternalPathWithRecovery(projectPath: string): string {
     return computedPath;
   }
 
-  // Check for .gsd-id marker from a previous location.
+  // Check for .gwd-id marker from a previous location.
   const markerId = readGsdIdMarker(projectPath);
   if (markerId && markerId !== computedId) {
     // The marker points to a different identity — the repo was likely moved.
@@ -476,24 +476,24 @@ function resolveExternalPathWithRecovery(projectPath: string): string {
 // ─── Symlink Management ─────────────────────────────────────────────────────
 
 /**
- * Ensure the `<project>/.gsd` symlink points to the external state directory.
+ * Ensure the `<project>/.gwd` symlink points to the external state directory.
  *
- * 1. Clean up any macOS numbered collision variants (`.gsd 2`, `.gsd 3`, etc.)
- * 2. Resolve external dir (with relocation recovery via `.gsd-id` marker)
+ * 1. Clean up any macOS numbered collision variants (`.gwd 2`, `.gwd 3`, etc.)
+ * 2. Resolve external dir (with relocation recovery via `.gwd-id` marker)
  * 3. mkdir -p the external dir
- * 4. If `<project>/.gsd` doesn't exist → create symlink
- * 5. If `<project>/.gsd` is already the correct symlink → no-op
- * 6. If `<project>/.gsd` is a real directory → return as-is (migration handles later)
- * 7. Write `.gsd-id` marker for future relocation recovery
+ * 4. If `<project>/.gwd` doesn't exist → create symlink
+ * 5. If `<project>/.gwd` is already the correct symlink → no-op
+ * 6. If `<project>/.gwd` is a real directory → return as-is (migration handles later)
+ * 7. Write `.gwd-id` marker for future relocation recovery
  *
  * Returns the resolved external path.
  */
 export function ensureGsdSymlink(projectPath: string): string {
   const result = ensureGsdSymlinkCore(projectPath);
 
-  // Write .gsd-id marker so future relocations can recover this state (#2750).
+  // Write .gwd-id marker so future relocations can recover this state (#2750).
   // Only write for the project root (not subdirectories or worktrees that
-  // delegate to a parent .gsd).
+  // delegate to a parent .gwd).
   if (!isInsideWorktree(projectPath)) {
     writeGsdIdMarker(projectPath, repoIdentity(projectPath));
   }
@@ -503,11 +503,11 @@ export function ensureGsdSymlink(projectPath: string): string {
 
 function ensureGsdSymlinkCore(projectPath: string): string {
   const externalPath = resolveExternalPathWithRecovery(projectPath);
-  const localGsd = join(projectPath, ".gsd");
+  const localGsd = join(projectPath, ".gwd");
   const inWorktree = isInsideWorktree(projectPath);
 
   // Guard: Never create a symlink at ~/.gwd — that's the user-level GWD home,
-  // not a project .gsd. This can happen if resolveProjectRoot() or
+  // not a project .gwd. This can happen if resolveProjectRoot() or
   // escapeStaleWorktree() returned ~ as the project root (#1676).
   // Canonical normalization: resolve symlinks, trim trailing slashes, case-fold on Windows.
   const normalizeForGuard = (p: string): string => {
@@ -523,17 +523,17 @@ function ensureGsdSymlinkCore(projectPath: string): string {
   }
 
   // Guard: If projectPath is a plain subdirectory (not a worktree) of a git
-  // repo that already has a .gsd at the git root, do not create a duplicate
-  // symlink in the subdirectory — that causes `.gsd 2` collision variants on
+  // repo that already has a .gwd at the git root, do not create a duplicate
+  // symlink in the subdirectory — that causes `.gwd 2` collision variants on
   // macOS (#2380). Worktrees are excluded because they legitimately need their
-  // own .gsd symlink pointing at the shared external state dir.
+  // own .gwd symlink pointing at the shared external state dir.
   if (!inWorktree) {
     try {
       const gitRoot = resolveGitRoot(projectPath);
       const normalizedProject = canonicalizeExistingPath(projectPath);
       const normalizedRoot = canonicalizeExistingPath(gitRoot);
       if (normalizedProject !== normalizedRoot) {
-        const rootGsd = join(gitRoot, ".gsd");
+        const rootGsd = join(gitRoot, ".gwd");
         if (existsSync(rootGsd)) {
           try {
             const rootStat = lstatSync(rootGsd);
@@ -541,7 +541,7 @@ function ensureGsdSymlinkCore(projectPath: string): string {
               return rootStat.isSymbolicLink() ? realpathSync(rootGsd) : rootGsd;
             }
           } catch {
-            // Fall through to normal logic if we can't stat root .gsd
+            // Fall through to normal logic if we can't stat root .gwd
           }
         }
       }
@@ -550,7 +550,7 @@ function ensureGsdSymlinkCore(projectPath: string): string {
     }
   }
 
-  // Clean up macOS numbered collision variants (.gsd 2, .gsd 3, etc.) before
+  // Clean up macOS numbered collision variants (.gwd 2, .gwd 3, etc.) before
   // any existence checks — otherwise they accumulate and confuse state (#2205).
   cleanNumberedGsdVariants(projectPath);
 
@@ -630,7 +630,7 @@ function ensureGsdSymlinkCore(projectPath: string): string {
     if (stat.isDirectory()) {
       // Real directory in the main repo — migration will handle this later.
       // In worktrees, keep the directory in place and let syncGsdStateToWorktree
-      // refresh its contents. Replacing a git-tracked .gsd directory with a
+      // refresh its contents. Replacing a git-tracked .gwd directory with a
       // symlink makes git think tracked planning files were deleted.
       return localGsd;
     }

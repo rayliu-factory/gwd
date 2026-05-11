@@ -498,7 +498,7 @@ export async function handleDebug(args: string, ctx: ExtensionCommandContext, pi
           lines.push(`  - ${malformed.artifactPath}`);
           lines.push(`    ${malformed.message}`);
         }
-        lines.push("Remediation: repair/remove malformed JSON artifacts under .gsd/debug/sessions/.");
+        lines.push("Remediation: repair/remove malformed JSON artifacts under .gwd/debug/sessions/.");
       }
 
       ctx.ui.notify(lines.join("\n"), listed.malformed.length > 0 ? "warning" : "info");

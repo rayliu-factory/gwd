@@ -45,7 +45,7 @@ function buildState(phase: Phase): GSDState {
 
 function makeBasePath(prefix: string): string {
   const dir = mkdtempSync(join(tmpdir(), `gsd-4671-${prefix}-`));
-  mkdirSync(join(dir, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(dir, ".gwd", "milestones", "M001"), { recursive: true });
   return dir;
 }
 
@@ -89,7 +89,7 @@ describe("#4671 execution-entry phase missing-context recovery", () => {
     const basePath = makeBasePath("has-context");
     try {
       writeFileSync(
-        join(basePath, ".gsd", "milestones", "M001", "M001-CONTEXT.md"),
+        join(basePath, ".gwd", "milestones", "M001", "M001-CONTEXT.md"),
         "# M001 Context\n\nSome real context.\n",
       );
       const action = await findRule().match(buildCtx(basePath, buildState("executing")));
@@ -105,7 +105,7 @@ describe("#4671 execution-entry phase missing-context recovery", () => {
     const prevProjectRoot = process.env.GWD_PROJECT_ROOT;
     try {
       writeFileSync(
-        join(projectRoot, ".gsd", "milestones", "M001", "M001-CONTEXT.md"),
+        join(projectRoot, ".gwd", "milestones", "M001", "M001-CONTEXT.md"),
         "# M001 Context\n\nFinalized context at project root.\n",
       );
       process.env.GWD_PROJECT_ROOT = projectRoot;
@@ -145,7 +145,7 @@ describe("#4671 execution-entry phase missing-context recovery", () => {
     const basePath = makeBasePath("empty-context");
     try {
       writeFileSync(
-        join(basePath, ".gsd", "milestones", "M001", "M001-CONTEXT.md"),
+        join(basePath, ".gwd", "milestones", "M001", "M001-CONTEXT.md"),
         "   \n\t\n",
       );
       const action = await findRule().match(buildCtx(basePath, buildState("summarizing")));

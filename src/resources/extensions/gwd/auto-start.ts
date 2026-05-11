@@ -270,7 +270,7 @@ export function auditOrphanedMilestoneBranches(
       const wtDir = getWorktreeDir(basePath, milestoneId);
       const wtDirExists = existsSync(wtDir);
       const wtSuffix = wtDirExists
-        ? ` Worktree directory at .gsd/worktrees/${milestoneId}/ holds the live work.`
+        ? ` Worktree directory at .gwd/worktrees/${milestoneId}/ holds the live work.`
         : "";
       warnings.push(
         `Branch ${branch} has ${commitsAhead} commit(s) ahead of ${mainBranch} for in-progress milestone ${milestoneId}.` +
@@ -319,7 +319,7 @@ export function auditOrphanedMilestoneBranches(
 
         // If the directory still exists after git worktree remove (either it
         // wasn't registered or the remove was a noop), fall back to direct
-        // filesystem removal — but only inside .gsd/worktrees/ for safety (#2365).
+        // filesystem removal — but only inside .gwd/worktrees/ for safety (#2365).
         if (existsSync(wtDir)) {
           if (isInsideWorktreesDir(basePath, wtDir)) {
             try {
@@ -329,7 +329,7 @@ export function auditOrphanedMilestoneBranches(
               warnings.push(`Failed to remove worktree directory for ${milestoneId}: ${err2 instanceof Error ? err2.message : String(err2)}`);
             }
           } else {
-            warnings.push(`Orphaned worktree directory for ${milestoneId} is outside .gsd/worktrees/ — skipping removal for safety.`);
+            warnings.push(`Orphaned worktree directory for ${milestoneId} is outside .gwd/worktrees/ — skipping removal for safety.`);
           }
         } else {
           recovered.push(`Removed orphaned worktree directory for ${milestoneId}.`);
@@ -635,7 +635,7 @@ export async function bootstrapAutoSession(
     // nativeIsRepo() uses `git rev-parse` which traverses up to parent dirs,
     // so a parent repo can make it return true even when base has no .git of
     // its own. Check for a local .git instead (defense-in-depth for the case
-    // where isInheritedRepo() returns a false negative, e.g. stale .gsd at
+    // where isInheritedRepo() returns a false negative, e.g. stale .gwd at
     // the parent git root). See #2393 and related issue.
     const hasLocalGit = existsSync(join(base, ".git"));
     if (!hasLocalGit || isInheritedRepo(base)) {
@@ -644,9 +644,9 @@ export async function bootstrapAutoSession(
       nativeInit(base, mainBranch);
     }
 
-    // Migrate legacy in-project .gsd/ to external state directory.
-    // Migration MUST run before ensureGitignore to avoid adding ".gsd" to
-    // .gitignore when .gsd/ is git-tracked (data-loss bug #1364).
+    // Migrate legacy in-project .gwd/ to external state directory.
+    // Migration MUST run before ensureGitignore to avoid adding ".gwd" to
+    // .gitignore when .gwd/ is git-tracked (data-loss bug #1364).
     recoverFailedMigration(base);
     const migration = migrateToExternalState(base);
     if (migration.error) {
@@ -656,17 +656,17 @@ export async function bootstrapAutoSession(
     ensureGsdSymlink(base);
 
     // Ensure .gitignore has baseline patterns.
-    // ensureGitignore checks for git-tracked .gsd/ files and skips the
-    // ".gsd" pattern if the project intentionally tracks .gsd/ in git.
+    // ensureGitignore checks for git-tracked .gwd/ files and skips the
+    // ".gwd" pattern if the project intentionally tracks .gwd/ in git.
     const gitPrefs = loadEffectiveGSDPreferences(base)?.preferences?.git;
     const manageGitignore = gitPrefs?.manage_gitignore;
     ensureGitignore(base, { manageGitignore });
     if (manageGitignore !== false) untrackRuntimeFiles(base);
 
     // Bootstrap milestones/ if it doesn't exist.
-    // Check milestones/ directly — ensureGsdSymlink above already created .gsd/,
-    // so checking .gsd/ existence would be dead code (#2942).
-    const gsdDir = join(base, ".gsd");
+    // Check milestones/ directly — ensureGsdSymlink above already created .gwd/,
+    // so checking .gwd/ existence would be dead code (#2942).
+    const gsdDir = join(base, ".gwd");
     const milestonesPath = join(gsdDir, "milestones");
     if (!existsSync(milestonesPath)) {
       mkdirSync(milestonesPath, { recursive: true });
@@ -823,7 +823,7 @@ export async function bootstrapAutoSession(
       (state.phase === "pre-planning" || state.phase === "complete") &&
       getIsolationMode(base) !== "none" &&
       !detectWorktreeName(base) &&
-      !base.includes(`${pathSep}.gsd${pathSep}worktrees${pathSep}`)
+      !base.includes(`${pathSep}.gwd${pathSep}worktrees${pathSep}`)
     ) {
       const milestoneBranch = `milestone/${state.activeMilestone.id}`;
       const { nativeBranchExists } = await import("./native-git-bridge.js");
@@ -1101,14 +1101,14 @@ export async function bootstrapAutoSession(
     // live here is gone.
 
     const isUnderGsdWorktrees = (p: string): boolean => {
-      // Direct layout: /.gsd/worktrees/
-      const marker = `${pathSep}.gsd${pathSep}worktrees${pathSep}`;
+      // Direct layout: /.gwd/worktrees/
+      const marker = `${pathSep}.gwd${pathSep}worktrees${pathSep}`;
       if (p.includes(marker)) return true;
-      const worktreesSuffix = `${pathSep}.gsd${pathSep}worktrees`;
+      const worktreesSuffix = `${pathSep}.gwd${pathSep}worktrees`;
       if (p.endsWith(worktreesSuffix)) return true;
-      // Symlink-resolved layout: /.gsd/projects/<hash>/worktrees/
+      // Symlink-resolved layout: /.gwd/projects/<hash>/worktrees/
       const symlinkRe = new RegExp(
-        `\\${pathSep}\\.gsd\\${pathSep}projects\\${pathSep}[a-f0-9]+\\${pathSep}worktrees(?:\\${pathSep}|$)`,
+        `\\${pathSep}\\.gwd\\${pathSep}projects\\${pathSep}[a-f0-9]+\\${pathSep}worktrees(?:\\${pathSep}|$)`,
       );
       return symlinkRe.test(p);
     };
@@ -1155,7 +1155,7 @@ export async function bootstrapAutoSession(
 
     // ── DB lifecycle ──
     const gsdDbPath = resolveProjectRootDbPath(s.basePath);
-    const gsdDirPath = join(s.basePath, ".gsd");
+    const gsdDirPath = join(s.basePath, ".gwd");
     if (existsSync(gsdDirPath) && !existsSync(gsdDbPath)) {
       try {
         const { openDatabase: openDb } = await import("./gwd-db.js");
@@ -1258,7 +1258,7 @@ export async function bootstrapAutoSession(
     const contextOverride = loadEffectiveGSDPreferences(base)?.preferences.context_window_override;
     if (providerReportedWindow > 500_000 && contextOverride === undefined) {
       ctx.ui.notify(
-        `Model reports a ${Math.round(providerReportedWindow / 1000)}K context window. If the provider's real API limit is lower, set context_window_override in .gsd/PREFERENCES.md so wrap-up signals fire before context overflow.`,
+        `Model reports a ${Math.round(providerReportedWindow / 1000)}K context window. If the provider's real API limit is lower, set context_window_override in .gwd/PREFERENCES.md so wrap-up signals fire before context overflow.`,
         "warning",
       );
     }
@@ -1342,7 +1342,7 @@ export async function bootstrapAutoSession(
 
     // Pre-flight: validate milestone queue
     try {
-      const msDir = join(base, ".gsd", "milestones");
+      const msDir = join(base, ".gwd", "milestones");
       if (existsSync(msDir)) {
         const milestoneIds = readdirSync(msDir, { withFileTypes: true })
           .filter((d) => d.isDirectory() && /^M\d{3}/.test(d.name))

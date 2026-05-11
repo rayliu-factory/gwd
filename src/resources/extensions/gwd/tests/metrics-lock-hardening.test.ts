@@ -38,12 +38,12 @@ import {
 
 function makeProjectDir(): string {
   const dir = mkdtempSync(join(tmpdir(), "gsd-metrics-lock-"));
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   return dir;
 }
 
 function metricsPath(base: string): string {
-  return join(base, ".gsd", "metrics.json");
+  return join(base, ".gwd", "metrics.json");
 }
 
 function lockPath(base: string): string {

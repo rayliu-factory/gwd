@@ -291,7 +291,7 @@ test("RTK savings label formats the dashboard footer text", () => {
 
 test("updateProgressWidget refreshes slice progress cache immediately", (t) => {
   const dir = makeTempDir("progress-cache");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
 
   t.after(() => {
     closeDatabase();
@@ -299,7 +299,7 @@ test("updateProgressWidget refreshes slice progress cache immediately", (t) => {
     cleanup(dir);
   });
 
-  openDatabase(join(dir, ".gsd", "gsd.db"));
+  openDatabase(join(dir, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "Milestone", status: "active" });
   insertSlice({ milestoneId: "M001", id: "S01", title: "Done", status: "complete", sequence: 1 });
   insertSlice({ milestoneId: "M001", id: "S02", title: "Active", status: "pending", sequence: 2 });
@@ -425,11 +425,11 @@ test("extractUatSliceId returns null for invalid formats", () => {
 test("widget mode respects project preference precedence and persists there", (t) => {
   const homeDir = makeTempDir("home");
   const projectDir = makeTempDir("project");
-  const globalPrefsPath = join(homeDir, ".gsd", "preferences.md");
-  const projectPrefsPath = join(projectDir, ".gsd", "preferences.md");
+  const globalPrefsPath = join(homeDir, ".gwd", "preferences.md");
+  const projectPrefsPath = join(projectDir, ".gwd", "preferences.md");
 
-  mkdirSync(join(homeDir, ".gsd"), { recursive: true });
-  mkdirSync(join(projectDir, ".gsd"), { recursive: true });
+  mkdirSync(join(homeDir, ".gwd"), { recursive: true });
+  mkdirSync(join(projectDir, ".gwd"), { recursive: true });
   writeFileSync(globalPrefsPath, "---\nversion: 1\nwidget_mode: off\n---\n", "utf-8");
   writeFileSync(projectPrefsPath, "---\nversion: 1\nwidget_mode: small\n---\n", "utf-8");
 

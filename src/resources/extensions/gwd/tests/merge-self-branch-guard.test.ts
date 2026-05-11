@@ -61,7 +61,7 @@ function assertSelfMergeRefIsRejected(recordedIntegrationBranch: string): void {
     // milestone branch itself. Commit it so mergeMilestoneToMain's
     // autoCommitDirtyState pre-step has nothing to capture and the
     // postcondition (no new commits) cleanly reflects the guard.
-    const msDir = join(tempDir, ".gsd", "milestones", "M001");
+    const msDir = join(tempDir, ".gwd", "milestones", "M001");
     mkdirSync(msDir, { recursive: true });
     writeFileSync(
       join(msDir, "M001-META.json"),

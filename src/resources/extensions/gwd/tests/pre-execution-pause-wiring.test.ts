@@ -108,8 +108,8 @@ function setupTestEnvironment(): void {
   tempDir = join(tmpdir(), `pre-exec-pause-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(tempDir, { recursive: true });
   
-  // Create .gsd directory structure
-  const gsdDir = join(tempDir, ".gsd");
+  // Create .gwd directory structure
+  const gsdDir = join(tempDir, ".gwd");
   mkdirSync(gsdDir, { recursive: true });
   
   // Create milestones directory structure
@@ -119,11 +119,11 @@ function setupTestEnvironment(): void {
   // Change cwd so loadEffectiveGSDPreferences finds our PREFERENCES.md
   process.chdir(tempDir);
   
-  // Clear caches so it finds the new .gsd directory and preferences.
+  // Clear caches so it finds the new .gwd directory and preferences.
   resetAllCaches();
   
   // Initialize DB
-  dbPath = join(gsdDir, "gsd.db");
+  dbPath = join(gsdDir, "gwd.db");
   openDatabase(dbPath);
 }
 
@@ -164,7 +164,7 @@ ${yamlLines.join("\n")}
 
 # GWD Preferences
 `;
-  writeFileSync(join(tempDir, ".gsd", "PREFERENCES.md"), prefsContent);
+  writeFileSync(join(tempDir, ".gwd", "PREFERENCES.md"), prefsContent);
   // Invalidate caches so the new preferences file is found
   resetAllCaches();
 }
@@ -343,7 +343,7 @@ describe("Pre-execution checks → pauseAuto wiring", () => {
       "failure notification should summarize truncated blocking checks",
     );
     assert.ok(
-      errorMessage.includes(join(".gsd", "milestones", "M001", "slices", "S01", "S01-PRE-EXEC-VERIFY.json")),
+      errorMessage.includes(join(".gwd", "milestones", "M001", "slices", "S01", "S01-PRE-EXEC-VERIFY.json")),
       "failure notification should point to the relative pre-exec evidence file path",
     );
   });
@@ -507,7 +507,7 @@ describe("Pre-execution checks → pauseAuto wiring", () => {
     // Create a separate "worktree" directory with the referenced files present.
     const worktreeDir = join(tempDir, "worktree");
     mkdirSync(join(worktreeDir, "lib"), { recursive: true });
-    mkdirSync(join(worktreeDir, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
+    mkdirSync(join(worktreeDir, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
     writeFileSync(join(worktreeDir, "lib", "types.ts"), "export type Habit = { id: string; name: string; };");
     writeFileSync(join(worktreeDir, "lib", "useLocalStorage.ts"), "export function useLocalStorage() {}");
 

@@ -30,11 +30,11 @@ test("resolveWorktreeProjectRoot: external GWD home is not treated as a project 
   const dir = mkdtempSync(join(tmpdir(), "gsd-root-"));
   const fakeHome = join(dir, "home");
   const projectDir = join(fakeHome, "work", "project");
-  mkdirSync(join(fakeHome, ".gsd"), { recursive: true });
+  mkdirSync(join(fakeHome, ".gwd"), { recursive: true });
   mkdirSync(join(fakeHome, ".git"), { recursive: true });
-  writeFileSync(join(fakeHome, ".gsd", "PREFERENCES.md"), "---\n---\n", "utf-8");
+  writeFileSync(join(fakeHome, ".gwd", "PREFERENCES.md"), "---\n---\n", "utf-8");
   mkdirSync(projectDir, { recursive: true });
-  process.env.GWD_HOME = join(fakeHome, ".gsd");
+  process.env.GWD_HOME = join(fakeHome, ".gwd");
 
   t.after(() => {
     if (previous === undefined) {
@@ -52,7 +52,7 @@ test("resolveWorktreeProjectRoot: GWD_PROJECT_ROOT still anchors auto-worktree p
   const previous = process.env.GWD_PROJECT_ROOT;
   const dir = mkdtempSync(join(tmpdir(), "gsd-root-"));
   const projectDir = join(dir, "project");
-  const worktreeDir = join(projectDir, ".gsd", "worktrees", "M001");
+  const worktreeDir = join(projectDir, ".gwd", "worktrees", "M001");
   mkdirSync(worktreeDir, { recursive: true });
   process.env.GWD_PROJECT_ROOT = projectDir;
 

@@ -19,7 +19,7 @@ test("cleanupAfterLoopExit preserves paused auto badge after provider pause", as
   autoSession.reset();
   autoSession.active = true;
   autoSession.paused = true;
-  autoSession.basePath = join(base, ".gsd", "worktrees", "M001");
+  autoSession.basePath = join(base, ".gwd", "worktrees", "M001");
   autoSession.originalBasePath = base;
 
   try {
@@ -72,7 +72,7 @@ test("cleanupAfterLoopExit clears status and widget when auto is not paused", as
 
 test("cleanupAfterLoopExit restores project root through lifecycle and preserves chdir", async (t) => {
   const base = mkdtempSync(join(tmpdir(), "gsd-cleanup-lifecycle-"));
-  const worktree = join(base, ".gsd", "worktrees", "M001");
+  const worktree = join(base, ".gwd", "worktrees", "M001");
   const previousCwd = process.cwd();
   let restoreCalls = 0;
   const originalRestore = WorktreeLifecycle.prototype.restoreToProjectRoot;
@@ -108,7 +108,7 @@ test("cleanupAfterLoopExit restores project root through lifecycle and preserves
 
 test("cleanupAfterLoopExit keeps cleanup best-effort when lifecycle restore throws", async (t) => {
   const base = mkdtempSync(join(tmpdir(), "gsd-cleanup-restore-throw-"));
-  const worktree = join(base, ".gsd", "worktrees", "M001");
+  const worktree = join(base, ".gwd", "worktrees", "M001");
   const previousCwd = process.cwd();
   t.mock.method(WorktreeLifecycle.prototype, "restoreToProjectRoot", () => {
     throw new Error("restore failed");
@@ -165,7 +165,7 @@ test("stopAuto completion closeout reroots session, restores cwd, and preserves 
     restoreCalls += 1;
     return originalRestore.call(this);
   });
-  const milestoneDir = join(base, ".gsd", "milestones", "M003");
+  const milestoneDir = join(base, ".gwd", "milestones", "M003");
   mkdirSync(milestoneDir, { recursive: true });
   writeFileSync(join(milestoneDir, "M003-SUMMARY.md"), [
     "---",
@@ -215,7 +215,7 @@ test("stopAuto completion closeout reroots session, restores cwd, and preserves 
 
   autoSession.active = true;
   autoSession.paused = false;
-  autoSession.basePath = join(base, ".gsd", "worktrees", "M003");
+  autoSession.basePath = join(base, ".gwd", "worktrees", "M003");
   autoSession.originalBasePath = base;
   autoSession.currentMilestoneId = "M003";
   autoSession.autoStartTime = Date.now() - 60_000;

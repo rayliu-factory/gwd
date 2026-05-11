@@ -9,15 +9,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const promptsDir = join(__dirname, "..", "prompts");
 
-test("prompt templates do not reference legacy milestone-root .gsd paths", () => {
+test("prompt templates do not reference legacy milestone-root .gwd paths", () => {
   const offenders: string[] = [];
   for (const file of readdirSync(promptsDir)) {
     if (!file.endsWith(".md")) continue;
     const content = readFileSync(join(promptsDir, file), "utf-8");
     const legacyPatterns = [
-      /\.gsd\/\{\{(?:milestoneId|mid)\}\}\//g,
-      /\.gsd\/<milestone-id>\//g,
-      /\.gsd\/<ID>\//g,
+      /\.gwd\/\{\{(?:milestoneId|mid)\}\}\//g,
+      /\.gwd\/<milestone-id>\//g,
+      /\.gwd\/<ID>\//g,
     ];
     for (const pattern of legacyPatterns) {
       if (pattern.test(content)) {
@@ -29,7 +29,7 @@ test("prompt templates do not reference legacy milestone-root .gsd paths", () =>
   assert.deepEqual(
     offenders,
     [],
-    "Milestone artifacts must use .gsd/milestones/<MID>/..., not legacy .gsd/<MID>/...",
+    "Milestone artifacts must use .gwd/milestones/<MID>/..., not legacy .gwd/<MID>/...",
   );
 });
 

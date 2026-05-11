@@ -25,7 +25,7 @@ describe("gate-state canonicalization (#4950)", () => {
 
   beforeEach(() => {
     tmpDir = mkdtempSync(join(tmpdir(), "gate-canon-test-"));
-    dbPath = join(tmpDir, "gsd.db");
+    dbPath = join(tmpDir, "gwd.db");
     openDatabase(dbPath);
     insertMilestone({ id: "M001", title: "Test Milestone", status: "active" });
     insertSlice({

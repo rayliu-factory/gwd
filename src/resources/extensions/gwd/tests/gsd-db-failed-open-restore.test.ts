@@ -20,7 +20,7 @@ import type { GsdWorkspace } from "../workspace.ts";
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeProjectDir(base: string): string {
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }
 
@@ -63,9 +63,9 @@ describe("openDatabaseByWorkspace: restores previous connection on failure", () 
       contract: {
         projectRoot: "/does-not-exist-gsd-test-ws-restore",
         workRoot: "/does-not-exist-gsd-test-ws-restore",
-        projectGsd: "/does-not-exist-gsd-test-ws-restore/.gsd",
-        projectDb: "/does-not-exist-gsd-test-ws-restore/.gsd/does-not-exist.db",
-        worktreeGsd: null,
+        projectGwd: "/does-not-exist-gsd-test-ws-restore/.gwd",
+        projectDb: "/does-not-exist-gsd-test-ws-restore/.gwd/does-not-exist.db",
+        worktreeGwd: null,
         isWorktree: false,
       },
       lockRoot: "/does-not-exist-gsd-test-ws-restore",
@@ -95,9 +95,9 @@ describe("openDatabaseByWorkspace: restores previous connection on failure", () 
       contract: {
         projectRoot: "/does-not-exist-gsd-cache-test",
         workRoot: "/does-not-exist-gsd-cache-test",
-        projectGsd: "/does-not-exist-gsd-cache-test/.gsd",
-        projectDb: "/does-not-exist-gsd-cache-test/.gsd/no.db",
-        worktreeGsd: null,
+        projectGwd: "/does-not-exist-gsd-cache-test/.gwd",
+        projectDb: "/does-not-exist-gsd-cache-test/.gwd/no.db",
+        worktreeGwd: null,
         isWorktree: false,
       },
       lockRoot: "/does-not-exist-gsd-cache-test",

@@ -34,7 +34,7 @@ import type { Requirement } from '../types.ts';
 
 function makeTmpDir(): string {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-tools-'));
-  fs.mkdirSync(path.join(dir, '.gsd'), { recursive: true });
+  fs.mkdirSync(path.join(dir, '.gwd'), { recursive: true });
   return dir;
 }
 
@@ -54,7 +54,7 @@ describe('gsd-tools', () => {
   test('gsd_decision_save', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
       openDatabase(dbPath);
       assert.ok(isDbAvailable(), 'DB should be available after open');
 
@@ -81,7 +81,7 @@ describe('gsd-tools', () => {
       assert.deepStrictEqual(row!.choice, 'SQLite', 'Decision choice should match');
 
       // Verify DECISIONS.md was generated
-      const mdPath = path.join(tmpDir, '.gsd', 'DECISIONS.md');
+      const mdPath = path.join(tmpDir, '.gwd', 'DECISIONS.md');
       assert.ok(fs.existsSync(mdPath), 'DECISIONS.md should be created');
       const mdContent = fs.readFileSync(mdPath, 'utf-8');
       assert.ok(mdContent.includes('D001'), 'DECISIONS.md should contain D001');
@@ -119,7 +119,7 @@ describe('gsd-tools', () => {
   test('gsd_requirement_update', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
       openDatabase(dbPath);
 
       // Seed a requirement
@@ -156,7 +156,7 @@ describe('gsd-tools', () => {
       assert.deepStrictEqual(updated!.primary_owner, 'S03', 'Primary owner should be preserved');
 
       // Verify REQUIREMENTS.md was generated
-      const mdPath = path.join(tmpDir, '.gsd', 'REQUIREMENTS.md');
+      const mdPath = path.join(tmpDir, '.gwd', 'REQUIREMENTS.md');
       assert.ok(fs.existsSync(mdPath), 'REQUIREMENTS.md should be created');
       const mdContent = fs.readFileSync(mdPath, 'utf-8');
       assert.ok(mdContent.includes('R001'), 'REQUIREMENTS.md should contain R001');
@@ -177,7 +177,7 @@ describe('gsd-tools', () => {
   test('gsd_summary_save', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
       openDatabase(dbPath);
 
       // (c) Summary tool creates artifact row
@@ -204,7 +204,7 @@ describe('gsd-tools', () => {
       assert.deepStrictEqual(rows[0]['slice_id'] as string, 'S01', 'Slice ID should match');
 
       // Verify file was written to disk
-      const filePath = path.join(tmpDir, '.gsd', 'milestones', 'M001', 'slices', 'S01', 'S01-SUMMARY.md');
+      const filePath = path.join(tmpDir, '.gwd', 'milestones', 'M001', 'slices', 'S01', 'S01-SUMMARY.md');
       assert.ok(fs.existsSync(filePath), 'Summary file should be written to disk');
       const fileContent = fs.readFileSync(filePath, 'utf-8');
       assert.ok(fileContent.includes('S01 Summary'), 'File should contain summary content');
@@ -220,7 +220,7 @@ describe('gsd-tools', () => {
         tmpDir,
       );
 
-      const mFilePath = path.join(tmpDir, '.gsd', 'milestones', 'M001', 'M001-CONTEXT.md');
+      const mFilePath = path.join(tmpDir, '.gwd', 'milestones', 'M001', 'M001-CONTEXT.md');
       assert.ok(fs.existsSync(mFilePath), 'Milestone-level artifact file should be created');
 
       // Test task-level artifact
@@ -236,7 +236,7 @@ describe('gsd-tools', () => {
         tmpDir,
       );
 
-      const tFilePath = path.join(tmpDir, '.gsd', 'milestones', 'M001', 'slices', 'S01', 'tasks', 'T01-SUMMARY.md');
+      const tFilePath = path.join(tmpDir, '.gwd', 'milestones', 'M001', 'slices', 'S01', 'tasks', 'T01-SUMMARY.md');
       assert.ok(fs.existsSync(tFilePath), 'Task-level artifact file should be created');
 
       closeDatabase();
@@ -248,7 +248,7 @@ describe('gsd-tools', () => {
   test('gsd_summary_save supports CONTEXT-DRAFT persistence', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
       openDatabase(dbPath);
 
       await saveArtifactToDb(
@@ -261,7 +261,7 @@ describe('gsd-tools', () => {
         tmpDir,
       );
 
-      const draftPath = path.join(tmpDir, '.gsd', 'milestones', 'M001', 'M001-CONTEXT-DRAFT.md');
+      const draftPath = path.join(tmpDir, '.gwd', 'milestones', 'M001', 'M001-CONTEXT-DRAFT.md');
       assert.ok(fs.existsSync(draftPath), 'Draft context file should be created');
       const draftContent = fs.readFileSync(draftPath, 'utf-8');
       assert.ok(draftContent.includes('Draft Context'), 'Draft context file should contain draft content');
@@ -296,7 +296,7 @@ describe('gsd-tools', () => {
   test('gsd_requirement_save creates new requirement', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
       openDatabase(dbPath);
 
       // (a) saveRequirementToDb creates a new requirement with auto-assigned ID
@@ -321,7 +321,7 @@ describe('gsd-tools', () => {
       assert.deepStrictEqual(row!.status, 'active', 'Status should match');
 
       // Verify REQUIREMENTS.md was generated
-      const mdPath = path.join(tmpDir, '.gsd', 'REQUIREMENTS.md');
+      const mdPath = path.join(tmpDir, '.gwd', 'REQUIREMENTS.md');
       assert.ok(fs.existsSync(mdPath), 'REQUIREMENTS.md should be created');
       const mdContent = fs.readFileSync(mdPath, 'utf-8');
       assert.ok(mdContent.includes('R001'), 'REQUIREMENTS.md should contain R001');
@@ -349,7 +349,7 @@ describe('gsd-tools', () => {
   test('nextRequirementId computes correct next ID', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
       openDatabase(dbPath);
 
       // No requirements yet
@@ -384,7 +384,7 @@ describe('gsd-tools', () => {
   test('gsd_requirement_update upserts when requirement not in DB', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
       openDatabase(dbPath);
 
       // Requirement R025 does NOT exist in DB — simulates the bug scenario
@@ -402,7 +402,7 @@ describe('gsd-tools', () => {
       assert.deepStrictEqual(created!.validation, 'Integration tests pass', 'Validation should be set');
 
       // Verify REQUIREMENTS.md was generated
-      const mdPath = path.join(tmpDir, '.gsd', 'REQUIREMENTS.md');
+      const mdPath = path.join(tmpDir, '.gwd', 'REQUIREMENTS.md');
       assert.ok(fs.existsSync(mdPath), 'REQUIREMENTS.md should be created');
 
       closeDatabase();
@@ -414,7 +414,7 @@ describe('gsd-tools', () => {
   test('Tool result format', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
       openDatabase(dbPath);
 
       // Verify result follows AgentToolResult interface: {content: [{type: "text", text}], details}

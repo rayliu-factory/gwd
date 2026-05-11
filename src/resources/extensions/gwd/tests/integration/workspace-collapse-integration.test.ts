@@ -39,7 +39,7 @@ import {
 
 function makeProjectDir(): string {
   const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-collapse-int-")));
-  mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   return dir;
 }
 
@@ -80,7 +80,7 @@ describe("workspace-collapse integration: Test 1 — cwd-drift path agreement", 
   });
 
   test("contextFile() returns same absolute path before and after cwd change", () => {
-    const worktreeDir = join(projectDir, ".gsd", "worktrees", "M001");
+    const worktreeDir = join(projectDir, ".gwd", "worktrees", "M001");
     mkdirSync(worktreeDir, { recursive: true });
 
     const ws = createWorkspace(projectDir);
@@ -144,7 +144,7 @@ describe("workspace-collapse integration: Test 2 — abort teardown clears stale
   test("STATE.md and M001-META.json are removed by teardownAutoWorktree", () => {
     // Phase C pt 2: auto.lock no longer exists as a file — it migrated
     // to the workers + unit_dispatches tables.
-    const gsdDir = join(repoDir, ".gsd");
+    const gsdDir = join(repoDir, ".gwd");
     const milestonesDir = join(gsdDir, "milestones", "M001");
     mkdirSync(milestonesDir, { recursive: true });
 
@@ -239,8 +239,8 @@ describe("workspace-collapse integration: Test 4 — sibling worktrees share DB 
   });
 
   test("ws1 and ws2 (sibling worktrees) have same identityKey", () => {
-    const wt1 = join(projectDir, ".gsd", "worktrees", "M001");
-    const wt2 = join(projectDir, ".gsd", "worktrees", "M002");
+    const wt1 = join(projectDir, ".gwd", "worktrees", "M001");
+    const wt2 = join(projectDir, ".gwd", "worktrees", "M002");
     mkdirSync(wt1, { recursive: true });
     mkdirSync(wt2, { recursive: true });
 
@@ -260,8 +260,8 @@ describe("workspace-collapse integration: Test 4 — sibling worktrees share DB 
   });
 
   test("openDatabaseByWorkspace for sibling worktrees resolves to the same DB path", () => {
-    const wt1 = join(projectDir, ".gsd", "worktrees", "M001");
-    const wt2 = join(projectDir, ".gsd", "worktrees", "M002");
+    const wt1 = join(projectDir, ".gwd", "worktrees", "M001");
+    const wt2 = join(projectDir, ".gwd", "worktrees", "M002");
     mkdirSync(wt1, { recursive: true });
     mkdirSync(wt2, { recursive: true });
 
@@ -306,7 +306,7 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
 
   beforeEach(() => {
     projectDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-cache-int-")));
-    mkdirSync(join(projectDir, ".gsd"), { recursive: true });
+    mkdirSync(join(projectDir, ".gwd"), { recursive: true });
 
     fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-cache-int-home-")));
 
@@ -317,7 +317,7 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
     // Prevent ~/.gwd interference
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
-    process.env.GWD_HOME = join(fakeHome, ".gsd");
+    process.env.GWD_HOME = join(fakeHome, ".gwd");
 
     clearPathCache();
   });
@@ -346,8 +346,8 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
     );
     assert.equal(
       withoutSlash,
-      join(projectDir, ".gsd"),
-      "both calls must resolve to projectDir/.gsd",
+      join(projectDir, ".gwd"),
+      "both calls must resolve to projectDir/.gwd",
     );
   });
 

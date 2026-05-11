@@ -40,12 +40,12 @@ describe("guided-flow → auto-prompts consolidation (#5183)", () => {
 
   beforeEach(() => {
     base = mkdtempSync(join(tmpdir(), "gsd-prompt-consolidation-"));
-    const sliceDir = join(base, ".gsd", "milestones", MID, "slices", SID);
+    const sliceDir = join(base, ".gwd", "milestones", MID, "slices", SID);
     const tasksDir = join(sliceDir, "tasks");
     mkdirSync(tasksDir, { recursive: true });
 
     writeFileSync(
-      join(base, ".gsd", "milestones", MID, `${MID}-ROADMAP.md`),
+      join(base, ".gwd", "milestones", MID, `${MID}-ROADMAP.md`),
       "# Roadmap\n- [ ] **S01: Test slice**\n",
     );
     writeFileSync(
@@ -107,7 +107,7 @@ describe("guided-flow → auto-prompts consolidation (#5183)", () => {
 
   test("buildExecuteTaskPrompt omits Context Mode when disabled", async () => {
     writeFileSync(
-      join(base, ".gsd", "PREFERENCES.md"),
+      join(base, ".gwd", "PREFERENCES.md"),
       ["---", "context_mode:", "  enabled: false", "---", ""].join("\n"),
     );
 

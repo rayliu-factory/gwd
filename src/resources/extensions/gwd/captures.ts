@@ -1,11 +1,11 @@
 /**
  * GWD Captures — Fire-and-forget thought capture with triage classification
  *
- * Append-only capture file at `.gsd/CAPTURES.md`. Each capture is an H3 section
+ * Append-only capture file at `.gwd/CAPTURES.md`. Each capture is an H3 section
  * with bold metadata fields, parseable by the same patterns used in files.ts.
  *
  * Worktree-aware: captures always resolve to the original project root's
- * `.gsd/CAPTURES.md`, not the worktree's local `.gsd/`.
+ * `.gwd/CAPTURES.md`, not the worktree's local `.gwd/`.
  */
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
@@ -50,23 +50,23 @@ const VALID_CLASSIFICATIONS: readonly string[] = [
 /**
  * Resolve the path to CAPTURES.md, aware of worktree context.
  *
- * In worktree-isolated mode, basePath is `.gsd/worktrees/<MID>/`.
- * Captures must resolve to the *original* project root's `.gsd/CAPTURES.md`,
- * not the worktree-local `.gsd/`. This ensures all captures go to one file
+ * In worktree-isolated mode, basePath is `.gwd/worktrees/<MID>/`.
+ * Captures must resolve to the *original* project root's `.gwd/CAPTURES.md`,
+ * not the worktree-local `.gwd/`. This ensures all captures go to one file
  * regardless of which worktree the agent is running in.
  *
- * Detection: if basePath contains `/.gsd/worktrees/`, walk up to the
- * directory that contains `.gsd/worktrees/` — that's the project root.
+ * Detection: if basePath contains `/.gwd/worktrees/`, walk up to the
+ * directory that contains `.gwd/worktrees/` — that's the project root.
  */
 export function resolveCapturesPath(basePath: string): string {
   const resolved = resolve(basePath);
-  // Direct layout: /.gsd/worktrees/
-  const worktreeMarker = `${sep}.gsd${sep}worktrees${sep}`;
+  // Direct layout: /.gwd/worktrees/
+  const worktreeMarker = `${sep}.gwd${sep}worktrees${sep}`;
   let idx = resolved.indexOf(worktreeMarker);
   if (idx === -1) {
-    // Symlink-resolved layout: /.gsd/projects/<hash>/worktrees/
+    // Symlink-resolved layout: /.gwd/projects/<hash>/worktrees/
     const symlinkRe = new RegExp(
-      `\\${sep}\\.gsd\\${sep}projects\\${sep}[a-f0-9]+\\${sep}worktrees\\${sep}`,
+      `\\${sep}\\.gwd\\${sep}projects\\${sep}[a-f0-9]+\\${sep}worktrees\\${sep}`,
     );
     const match = resolved.match(symlinkRe);
     if (match && match.index !== undefined) idx = match.index;
@@ -74,7 +74,7 @@ export function resolveCapturesPath(basePath: string): string {
   if (idx !== -1) {
     // basePath is inside a worktree — resolve to project root
     const projectRoot = resolved.slice(0, idx);
-    return join(projectRoot, ".gsd", CAPTURES_FILENAME);
+    return join(projectRoot, ".gwd", CAPTURES_FILENAME);
   }
   return join(gsdRoot(basePath), CAPTURES_FILENAME);
 }
@@ -83,7 +83,7 @@ export function resolveCapturesPath(basePath: string): string {
 
 /**
  * Append a new capture entry to CAPTURES.md.
- * Creates `.gsd/` and the file if they don't exist.
+ * Creates `.gwd/` and the file if they don't exist.
  * Returns the generated capture ID.
  */
 export function appendCapture(basePath: string, text: string): string {

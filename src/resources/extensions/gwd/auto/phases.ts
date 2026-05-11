@@ -302,7 +302,7 @@ async function generateMilestoneReport(
     phase: snapData.phase,
   });
   ctx.ui.notify(
-    `Report saved: .gsd/reports/${basename(outPath)} — open index.html to browse progression.`,
+    `Report saved: .gwd/reports/${basename(outPath)} — open index.html to browse progression.`,
     "info",
   );
 }

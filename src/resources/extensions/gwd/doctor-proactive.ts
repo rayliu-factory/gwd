@@ -220,7 +220,7 @@ export async function preDispatchHealthGate(basePath: string): Promise<PreDispat
   // If a stale lock exists, the crash recovery path should handle it,
   // not a new dispatch. This prevents double-dispatch after crashes.
   try {
-    if (existsSync(join(gsdRoot(basePath), "gsd.db"))) {
+    if (existsSync(join(gsdRoot(basePath), "gwd.db"))) {
       await ensureDbOpen(basePath);
     }
     const lock = readCrashLock(basePath);

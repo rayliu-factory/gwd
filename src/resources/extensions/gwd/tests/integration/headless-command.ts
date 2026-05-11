@@ -2,7 +2,7 @@
  * Integration test for `gsd headless` CLI subcommand
  *
  * Validates that the headless CLI entry point works end-to-end:
- *   1. Creates a temp dir with a complete .gsd/ project fixture
+ *   1. Creates a temp dir with a complete .gwd/ project fixture
  *   2. Initializes a git repo in the temp dir
  *   3. Spawns `node dist/loader.js headless --json next` as a child process
  *   4. Waits for the process to exit (with a 5-minute timeout)
@@ -29,7 +29,7 @@ const TIMEOUT_MS = parseInt(process.env.HEADLESS_TIMEOUT_MS ?? "300000", 10); //
 const DRY_RUN = process.argv.includes("--dry-run");
 
 // ── Fixture Data ─────────────────────────────────────────────────────────────
-// A complete .gsd/ project state that deriveState() can parse.
+// A complete .gwd/ project state that deriveState() can parse.
 // The trivial task asks the agent to create a single file — zero questions needed.
 
 const FIXTURE_PROJECT_MD = `# Project
@@ -247,8 +247,8 @@ function createFixture(): string {
   execSync('git config user.email "test@test.com"', { cwd: tmpDir, stdio: "pipe" });
   execSync('git config user.name "Test"', { cwd: tmpDir, stdio: "pipe" });
 
-  // Create .gsd/ structure
-  const gsdDir = join(tmpDir, ".gsd");
+  // Create .gwd/ structure
+  const gsdDir = join(tmpDir, ".gwd");
   const milestonesDir = join(gsdDir, "milestones");
   const m001Dir = join(milestonesDir, "M001");
   const slicesDir = join(m001Dir, "slices");
@@ -267,11 +267,11 @@ function createFixture(): string {
 
   // Add .gitignore for runtime files
   writeFileSync(join(tmpDir, ".gitignore"), [
-    ".gsd/auto.lock",
-    ".gsd/completed-units.json",
-    ".gsd/metrics.json",
-    ".gsd/activity/",
-    ".gsd/runtime/",
+    ".gwd/auto.lock",
+    ".gwd/completed-units.json",
+    ".gwd/metrics.json",
+    ".gwd/activity/",
+    ".gwd/runtime/",
   ].join("\n") + "\n");
 
   // Initial commit so GWD has a clean git state
@@ -330,12 +330,12 @@ async function main(): Promise<void> {
 
   // Validate fixture structure
   const requiredFiles = [
-    ".gsd/PROJECT.md",
-    ".gsd/STATE.md",
-    ".gsd/milestones/M001/M001-CONTEXT.md",
-    ".gsd/milestones/M001/M001-ROADMAP.md",
-    ".gsd/milestones/M001/slices/S01/S01-PLAN.md",
-    ".gsd/milestones/M001/slices/S01/tasks/T01-PLAN.md",
+    ".gwd/PROJECT.md",
+    ".gwd/STATE.md",
+    ".gwd/milestones/M001/M001-CONTEXT.md",
+    ".gwd/milestones/M001/M001-ROADMAP.md",
+    ".gwd/milestones/M001/slices/S01/S01-PLAN.md",
+    ".gwd/milestones/M001/slices/S01/tasks/T01-PLAN.md",
   ];
 
   for (const file of requiredFiles) {

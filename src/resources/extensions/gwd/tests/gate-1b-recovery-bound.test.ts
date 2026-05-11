@@ -56,9 +56,9 @@ function mkPi(cap: MockCapture): any {
 
 function mkBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-gate1b-bound-"));
-  mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md"),
+    join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md"),
     "# M001: Bound Test\n\nContext written by discuss phase.\n",
   );
   return base;

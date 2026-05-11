@@ -64,7 +64,7 @@ describe("write-gate shouldBlock readers respect explicit basePath", () => {
     markDepthVerified("M001", baseDirA);
     process.chdir(baseDirB);
 
-    const contextPath = join(baseDirA, ".gsd", "milestones", "M001", "M001-CONTEXT.md");
+    const contextPath = join(baseDirA, ".gwd", "milestones", "M001", "M001-CONTEXT.md");
     const result = shouldBlockContextWrite("write", contextPath, "M001", undefined, baseDirA);
 
     assert.equal(result.block, false, "explicit basePath should resolve to baseDirA's verified state");
@@ -77,7 +77,7 @@ describe("write-gate shouldBlock readers respect explicit basePath", () => {
     markDepthVerified("M001", baseDirA);
     process.chdir(baseDirB);
 
-    const contextPath = join(baseDirA, ".gsd", "milestones", "M001", "M001-CONTEXT.md");
+    const contextPath = join(baseDirA, ".gwd", "milestones", "M001", "M001-CONTEXT.md");
     const result = shouldBlockContextWrite("write", contextPath, "M001");
 
     assert.equal(result.block, true, "default-to-cwd path resolves to baseDirB and misses baseDirA state");

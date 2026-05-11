@@ -22,7 +22,7 @@ interface Fixture {
 
 function makeFixture(): Fixture {
   const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-decoupled-')));
-  mkdirSync(join(projectDir, '.gsd'), { recursive: true });
+  mkdirSync(join(projectDir, '.gwd'), { recursive: true });
 
   const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-decoupled-home-')));
 
@@ -33,7 +33,7 @@ function makeFixture(): Fixture {
   // Redirect HOME so gsdRoot never accidentally resolves to the real ~/.gwd.
   process.env.HOME = fakeHome;
   process.env.USERPROFILE = fakeHome;
-  process.env.GWD_HOME = join(fakeHome, '.gsd');
+  process.env.GWD_HOME = join(fakeHome, '.gwd');
 
   _clearGsdRootCache();
 
@@ -65,13 +65,13 @@ describe('gsdRoot cache population', () => {
 
   test('first call populates cache; second call returns same value without re-probing', (t) => {
     const first = gsdRoot(f.projectDir);
-    assert.equal(first, join(f.projectDir, '.gsd'), 'must resolve to projectDir/.gsd');
+    assert.equal(first, join(f.projectDir, '.gwd'), 'must resolve to projectDir/.gwd');
 
-    // Hide .gsd so a re-probe would yield the creation fallback (same path in this
+    // Hide .gwd so a re-probe would yield the creation fallback (same path in this
     // case, but the rename lets us verify no re-probe happens).
-    renameSync(join(f.projectDir, '.gsd'), join(f.projectDir, '.gsd-hidden'));
+    renameSync(join(f.projectDir, '.gwd'), join(f.projectDir, '.gwd-hidden'));
     t.after(() => {
-      try { renameSync(join(f.projectDir, '.gsd-hidden'), join(f.projectDir, '.gsd')); } catch { /* ignore */ }
+      try { renameSync(join(f.projectDir, '.gwd-hidden'), join(f.projectDir, '.gwd')); } catch { /* ignore */ }
     });
 
     const second = gsdRoot(f.projectDir);
@@ -91,12 +91,12 @@ describe('clearPathCache() does not evict gsdRootCache', () => {
   test('cached gsdRoot survives clearPathCache()', (t) => {
     // Prime the cache.
     const primed = gsdRoot(f.projectDir);
-    assert.equal(primed, join(f.projectDir, '.gsd'));
+    assert.equal(primed, join(f.projectDir, '.gwd'));
 
     // Mutate the filesystem so a fresh probe would return a different path.
-    renameSync(join(f.projectDir, '.gsd'), join(f.projectDir, '.gsd-gone'));
+    renameSync(join(f.projectDir, '.gwd'), join(f.projectDir, '.gwd-gone'));
     t.after(() => {
-      try { renameSync(join(f.projectDir, '.gsd-gone'), join(f.projectDir, '.gsd')); } catch { /* ignore */ }
+      try { renameSync(join(f.projectDir, '.gwd-gone'), join(f.projectDir, '.gwd')); } catch { /* ignore */ }
     });
 
     // clearPathCache() only clears volatile dir caches — must not touch gsdRootCache.
@@ -113,9 +113,9 @@ describe('clearPathCache() does not evict gsdRootCache', () => {
   test('multiple clearPathCache() calls still preserve gsdRoot cache', (t) => {
     const primed = gsdRoot(f.projectDir);
 
-    renameSync(join(f.projectDir, '.gsd'), join(f.projectDir, '.gsd-gone'));
+    renameSync(join(f.projectDir, '.gwd'), join(f.projectDir, '.gwd-gone'));
     t.after(() => {
-      try { renameSync(join(f.projectDir, '.gsd-gone'), join(f.projectDir, '.gsd')); } catch { /* ignore */ }
+      try { renameSync(join(f.projectDir, '.gwd-gone'), join(f.projectDir, '.gwd')); } catch { /* ignore */ }
     });
 
     // Simulate many agent turn-ends.
@@ -141,29 +141,29 @@ describe('_clearGsdRootCache() evicts gsdRootCache', () => {
   test('gsdRoot re-probes after _clearGsdRootCache()', (t) => {
     // Prime the cache.
     const primed = gsdRoot(f.projectDir);
-    assert.equal(primed, join(f.projectDir, '.gsd'));
+    assert.equal(primed, join(f.projectDir, '.gwd'));
 
-    // Hide .gsd — next probe would see it absent.
-    renameSync(join(f.projectDir, '.gsd'), join(f.projectDir, '.gsd-hidden'));
+    // Hide .gwd — next probe would see it absent.
+    renameSync(join(f.projectDir, '.gwd'), join(f.projectDir, '.gwd-hidden'));
     t.after(() => {
-      try { renameSync(join(f.projectDir, '.gsd-hidden'), join(f.projectDir, '.gsd')); } catch { /* ignore */ }
+      try { renameSync(join(f.projectDir, '.gwd-hidden'), join(f.projectDir, '.gwd')); } catch { /* ignore */ }
     });
 
     // _clearGsdRootCache() must evict, triggering a fresh probe.
     _clearGsdRootCache();
     const afterRootClear = gsdRoot(f.projectDir);
 
-    // Probe with .gsd absent falls through to creation fallback (same path value,
+    // Probe with .gwd absent falls through to creation fallback (same path value,
     // but the probe definitely ran). Restore and re-prime to confirm it returns
     // the live value rather than a stale cached one.
-    renameSync(join(f.projectDir, '.gsd-hidden'), join(f.projectDir, '.gsd'));
+    renameSync(join(f.projectDir, '.gwd-hidden'), join(f.projectDir, '.gwd'));
     _clearGsdRootCache();
     const reprobe = gsdRoot(f.projectDir);
-    assert.equal(reprobe, join(f.projectDir, '.gsd'), 're-probe with .gsd restored must find it');
+    assert.equal(reprobe, join(f.projectDir, '.gwd'), 're-probe with .gwd restored must find it');
 
     // The result after root-clear + removal fell back to the creation path (same
     // string as primed), which confirms the probe ran (not from cache).
-    assert.equal(afterRootClear, join(f.projectDir, '.gsd'));
+    assert.equal(afterRootClear, join(f.projectDir, '.gwd'));
   });
 });
 
@@ -180,8 +180,8 @@ describe('realpath normalization: trailing slash shares cache entry', () => {
   test('/foo and /foo/ map to the same cache entry', () => {
     const withoutSlash = gsdRoot(f.projectDir);
 
-    // Hide .gsd — if a re-probe happened, the result would differ.
-    renameSync(join(f.projectDir, '.gsd'), join(f.projectDir, '.gsd-hidden'));
+    // Hide .gwd — if a re-probe happened, the result would differ.
+    renameSync(join(f.projectDir, '.gwd'), join(f.projectDir, '.gwd-hidden'));
     try {
       const withSlash = gsdRoot(f.projectDir + '/');
       assert.equal(
@@ -190,7 +190,7 @@ describe('realpath normalization: trailing slash shares cache entry', () => {
         'trailing-slash variant must hit the same cache entry as no-slash variant',
       );
     } finally {
-      try { renameSync(join(f.projectDir, '.gsd-hidden'), join(f.projectDir, '.gsd')); } catch { /* ignore */ }
+      try { renameSync(join(f.projectDir, '.gwd-hidden'), join(f.projectDir, '.gwd')); } catch { /* ignore */ }
     }
   });
 

@@ -187,7 +187,7 @@ test("Context Mode composer: workflow-preferences and research-decision render n
 
 function makeFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-composer-pilot-"));
-  mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;
 }
 
@@ -198,7 +198,7 @@ function cleanup(base: string): void {
 }
 
 function seed(base: string, mid: string): void {
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: mid, title: "Test", status: "active", depends_on: [] });
   upsertMilestonePlanning(mid, {
     title: "Test",
@@ -229,11 +229,11 @@ function seed(base: string, mid: string): void {
 
 function writeArtifacts(base: string): void {
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"),
+    join(base, ".gwd", "milestones", "M001", "M001-ROADMAP.md"),
     "# M001\n## Slices\n- [x] **S01: First** `risk:low` `depends:[]`\n",
   );
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md"),
+    join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md"),
     "---\nid: S01\nparent: M001\n---\n# S01 Summary\n**One-liner**\n\n## What Happened\nDone.\n",
   );
 }
@@ -272,7 +272,7 @@ test("Context Mode resume injection: eligible prompts include one bounded snapsh
   seed(base, "M001");
   writeArtifacts(base);
   writeFileSync(
-    join(base, ".gsd", "last-snapshot.md"),
+    join(base, ".gwd", "last-snapshot.md"),
     "# GWD context snapshot\n\nResume evidence.\n",
     "utf-8",
   );
@@ -280,7 +280,7 @@ test("Context Mode resume injection: eligible prompts include one bounded snapsh
   const prompt = await buildReassessRoadmapPrompt("M001", "Test", "S01", base);
 
   assert.equal(prompt.match(/## Context Snapshot/g)?.length, 1);
-  assert.match(prompt, /Source: `\.gsd\/last-snapshot\.md`/);
+  assert.match(prompt, /Source: `\.gwd\/last-snapshot\.md`/);
   assert.match(prompt, /Resume evidence/);
   assert.ok(prompt.indexOf("## Context Mode") < prompt.indexOf("## Context Snapshot"));
   assert.ok(prompt.indexOf("## Context Snapshot") < prompt.indexOf("## Inlined Context"));
@@ -307,8 +307,8 @@ test("Context Mode resume injection: disabled mode suppresses guidance and snaps
 
   seed(base, "M001");
   writeArtifacts(base);
-  writeFileSync(join(base, ".gsd", "PREFERENCES.md"), "---\ncontext_mode:\n  enabled: false\n---\n", "utf-8");
-  writeFileSync(join(base, ".gsd", "last-snapshot.md"), "# GWD context snapshot\n\nDo not inject.\n", "utf-8");
+  writeFileSync(join(base, ".gwd", "PREFERENCES.md"), "---\ncontext_mode:\n  enabled: false\n---\n", "utf-8");
+  writeFileSync(join(base, ".gwd", "last-snapshot.md"), "# GWD context snapshot\n\nDo not inject.\n", "utf-8");
 
   const prompt = await buildReassessRoadmapPrompt("M001", "Test", "S01", base);
 
@@ -320,7 +320,7 @@ test("Context Mode resume injection: disabled mode suppresses guidance and snaps
 test("Context Mode resume injection: none-mode units do not inject snapshots", async () => {
   const base = makeFixtureBase();
   try {
-    writeFileSync(join(base, ".gsd", "last-snapshot.md"), "# GWD context snapshot\n\nNo lane.\n", "utf-8");
+    writeFileSync(join(base, ".gwd", "last-snapshot.md"), "# GWD context snapshot\n\nNo lane.\n", "utf-8");
     const prompt = await buildWorkflowPreferencesPrompt(base);
     assert.doesNotMatch(prompt, /## Context Mode/);
     assert.doesNotMatch(prompt, /## Context Snapshot/);
@@ -338,8 +338,8 @@ test("Context Mode prompt suppression: disabled inlined, phase-anchor, and neste
   seed(base, "M001");
   writeArtifacts(base);
   insertGateRow({ milestoneId: "M001", sliceId: "S01", gateId: "Q3", scope: "slice" });
-  writeFileSync(join(base, ".gsd", "PREFERENCES.md"), "---\ncontext_mode:\n  enabled: false\n---\n", "utf-8");
-  writeFileSync(join(base, ".gsd", "last-snapshot.md"), "# GWD context snapshot\n\nDo not inject.\n", "utf-8");
+  writeFileSync(join(base, ".gwd", "PREFERENCES.md"), "---\ncontext_mode:\n  enabled: false\n---\n", "utf-8");
+  writeFileSync(join(base, ".gwd", "last-snapshot.md"), "# GWD context snapshot\n\nDo not inject.\n", "utf-8");
 
   const inlinedPrompt = await buildReassessRoadmapPrompt("M001", "Test", "S01", base);
   assert.doesNotMatch(inlinedPrompt, /## Context Mode|Context Mode \(|## Context Snapshot/);

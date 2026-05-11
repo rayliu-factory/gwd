@@ -12,7 +12,7 @@ test("handleExport --html --all generates reports for milestones missing from th
   const { loadReportsIndex } = await import("../reports.js");
 
   const tmp = join(tmpdir(), `gsd-export-all-test-${Date.now()}`);
-  const gsdDir = join(tmp, ".gsd");
+  const gsdDir = join(tmp, ".gwd");
   const reportsDir = join(gsdDir, "reports");
   mkdirSync(reportsDir, { recursive: true });
 

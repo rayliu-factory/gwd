@@ -58,7 +58,7 @@ interface UnitTrace {
   mtime: number;
 }
 
-/** Summary of .gsd/activity/ directory metadata. */
+/** Summary of .gwd/activity/ directory metadata. */
 interface ActivityLogMeta {
   fileCount: number;
   totalSizeBytes: number;
@@ -67,7 +67,7 @@ interface ActivityLogMeta {
 }
 
 /**
- * Summary of .gsd/journal/ data for forensic investigation.
+ * Summary of .gwd/journal/ data for forensic investigation.
  *
  * To avoid loading huge journal histories into memory, only the most recent
  * daily files are fully parsed. Older files are line-counted for totals.
@@ -837,7 +837,7 @@ export function detectWorktreeOrphans(
       type: "worktree-unmerged-exit",
       severity: "warning",
       summary: `${summary.exitsWithUnmergedWork} auto-exit(s) left milestone work unmerged`,
-      details: `Exit reasons: ${reasonBreakdown || "(none)"} · Producer-side signal for #4761-class orphans. Inspect .gsd/journal/*.jsonl with eventType:"auto-exit" for per-exit detail.`,
+      details: `Exit reasons: ${reasonBreakdown || "(none)"} · Producer-side signal for #4761-class orphans. Inspect .gwd/journal/*.jsonl with eventType:"auto-exit" for per-exit detail.`,
     });
   }
 }

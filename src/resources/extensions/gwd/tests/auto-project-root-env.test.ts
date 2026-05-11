@@ -45,7 +45,7 @@ test("cleanupAfterLoopExit restores captured GWD_PROJECT_ROOT", async () => {
 
   autoSession.reset();
   autoSession.active = true;
-  autoSession.basePath = join(base, ".gsd", "worktrees", "M001");
+  autoSession.basePath = join(base, ".gwd", "worktrees", "M001");
   autoSession.originalBasePath = base;
   autoSession.projectRootEnvCaptured = true;
   autoSession.hadProjectRootEnv = true;

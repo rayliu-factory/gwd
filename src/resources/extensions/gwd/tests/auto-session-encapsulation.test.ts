@@ -38,7 +38,7 @@ test("AutoSession.lockBasePath uses GWD_PROJECT_ROOT for symlink-resolved worktr
   process.env.GWD_PROJECT_ROOT = "/real/project";
   try {
     const session = new AutoSession();
-    session.basePath = "/Users/dev/.gsd/projects/abc123/worktrees/M001/slices/S01";
+    session.basePath = "/Users/dev/.gwd/projects/abc123/worktrees/M001/slices/S01";
 
     assert.equal(session.lockBasePath, "/real/project");
   } finally {

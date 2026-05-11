@@ -73,7 +73,7 @@ test("session_switch toggles gsd-health from runtime auto state without touching
     tmpdir(),
     `gsd-session-switch-widget-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   const tempGsdHome = join(dir, "home");
   mkdirSync(tempGsdHome, { recursive: true });
 
@@ -288,7 +288,7 @@ test("session_start and session_switch apply disabled model provider policy from
     tmpdir(),
     `gsd-disabled-provider-policy-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   const tempGsdHome = join(dir, "home");
   mkdirSync(tempGsdHome, { recursive: true });
 
@@ -305,7 +305,7 @@ test("session_start and session_switch apply disabled model provider policy from
 
   const writePrefs = (providers: string[]) => {
     writeFileSync(
-      join(dir, ".gsd", "PREFERENCES.md"),
+      join(dir, ".gwd", "PREFERENCES.md"),
       [
         "---",
         "version: 1",

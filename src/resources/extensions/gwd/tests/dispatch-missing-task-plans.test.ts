@@ -45,7 +45,7 @@ function makeContext(basePath: string, stateOverrides?: Partial<GSDState>): Disp
 // ─── Scaffold helpers ──────────────────────────────────────────────────────
 
 function scaffoldSlicePlan(basePath: string, mid: string, sid: string): void {
-  const dir = join(basePath, ".gsd", "milestones", mid, "slices", sid);
+  const dir = join(basePath, ".gwd", "milestones", mid, "slices", sid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${sid}-PLAN.md`), [
     `# ${sid}: Third Slice`,
@@ -58,7 +58,7 @@ function scaffoldSlicePlan(basePath: string, mid: string, sid: string): void {
 }
 
 function scaffoldMilestoneContext(basePath: string, mid: string): void {
-  const dir = join(basePath, ".gsd", "milestones", mid);
+  const dir = join(basePath, ".gwd", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-CONTEXT.md`), [
     `# ${mid}: Test Milestone`,
@@ -69,7 +69,7 @@ function scaffoldMilestoneContext(basePath: string, mid: string): void {
 }
 
 function scaffoldTaskPlan(basePath: string, mid: string, sid: string, tid: string): void {
-  const dir = join(basePath, ".gsd", "milestones", mid, "slices", sid, "tasks");
+  const dir = join(basePath, ".gwd", "milestones", mid, "slices", sid, "tasks");
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${tid}-PLAN.md`), [
     `# ${tid}: Do something`,

@@ -171,9 +171,9 @@ test("agent-end recovery applies context_window_override to Ollama Apple Silicon
     cleanupOllamaAppleSiliconAgentEndTest();
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   writeFileSync(
-    join(tempProject, ".gsd", "PREFERENCES.md"),
+    join(tempProject, ".gwd", "PREFERENCES.md"),
     "---\ncontext_window_override: 131072\n---\n",
     "utf-8",
   );

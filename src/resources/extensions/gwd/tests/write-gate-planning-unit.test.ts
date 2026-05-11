@@ -65,10 +65,10 @@ test('planning-unit: blocks write to user source via relative path', () => {
   assert.strictEqual(r.block, true);
 });
 
-test('planning-unit: allows write to .gsd/ artifacts (planning artifacts live here)', () => {
+test('planning-unit: allows write to .gwd/ artifacts (planning artifacts live here)', () => {
   const r = shouldBlockPlanningUnit(
     'write',
-    join(BASE, '.gsd', 'milestones', 'M001', 'M001-CONTEXT.md'),
+    join(BASE, '.gwd', 'milestones', 'M001', 'M001-CONTEXT.md'),
     BASE,
     'discuss-milestone',
     PLANNING,
@@ -76,16 +76,16 @@ test('planning-unit: allows write to .gsd/ artifacts (planning artifacts live he
   assert.strictEqual(r.block, false);
 });
 
-test('planning-unit: allows edit to .gsd/ via relative path', () => {
-  const r = shouldBlockPlanningUnit('edit', '.gsd/PROJECT.md', BASE, 'plan-milestone', PLANNING);
+test('planning-unit: allows edit to .gwd/ via relative path', () => {
+  const r = shouldBlockPlanningUnit('edit', '.gwd/PROJECT.md', BASE, 'plan-milestone', PLANNING);
   assert.strictEqual(r.block, false);
 });
 
-test('planning-unit: rejects sibling directory that prefixes ".gsd"', () => {
-  // <BASE>/.gsd-snapshot/x.md must NOT slip through a naive startsWith check.
+test('planning-unit: rejects sibling directory that prefixes ".gwd"', () => {
+  // <BASE>/.gwd-snapshot/x.md must NOT slip through a naive startsWith check.
   const r = shouldBlockPlanningUnit(
     'write',
-    join(BASE, '.gsd-snapshot', 'x.md'),
+    join(BASE, '.gwd-snapshot', 'x.md'),
     BASE,
     'plan-milestone',
     PLANNING,
@@ -96,7 +96,7 @@ test('planning-unit: rejects sibling directory that prefixes ".gsd"', () => {
 test('planning-unit: rejects path traversal escaping basePath', () => {
   const r = shouldBlockPlanningUnit(
     'write',
-    join(BASE, '.gsd', '..', '..', 'etc', 'passwd'),
+    join(BASE, '.gwd', '..', '..', 'etc', 'passwd'),
     BASE,
     'discuss-milestone',
     PLANNING,
@@ -247,10 +247,10 @@ test('planning-dispatch: still blocks writes to user source (write isolation pre
   assert.strictEqual(r.block, true);
 });
 
-test('planning-dispatch: still allows writes inside .gsd/', () => {
+test('planning-dispatch: still allows writes inside .gwd/', () => {
   const r = shouldBlockPlanningUnit(
     'write',
-    join(BASE, '.gsd', 'milestones', 'M001', 'slices', 'S01', 'PLAN.md'),
+    join(BASE, '.gwd', 'milestones', 'M001', 'slices', 'S01', 'PLAN.md'),
     BASE,
     'plan-slice',
     PLANNING_DISPATCH,
@@ -299,10 +299,10 @@ test('all-mode: execute-task can dispatch subagents', () => {
 
 // ─── read-only mode ───────────────────────────────────────────────────────
 
-test('read-only: blocks any edit even to .gsd/', () => {
+test('read-only: blocks any edit even to .gwd/', () => {
   const r = shouldBlockPlanningUnit(
     'edit',
-    join(BASE, '.gsd', 'PROJECT.md'),
+    join(BASE, '.gwd', 'PROJECT.md'),
     BASE,
     'observer-unit',
     READ_ONLY,
@@ -354,8 +354,8 @@ test('docs-mode: blocks deep .md outside docs/', () => {
   assert.strictEqual(r.block, true);
 });
 
-test('docs-mode: still allows .gsd/ writes', () => {
-  const r = shouldBlockPlanningUnit('write', '.gsd/PROJECT.md', BASE, 'rewrite-docs', DOCS);
+test('docs-mode: still allows .gwd/ writes', () => {
+  const r = shouldBlockPlanningUnit('write', '.gwd/PROJECT.md', BASE, 'rewrite-docs', DOCS);
   assert.strictEqual(r.block, false);
 });
 
@@ -379,10 +379,10 @@ test('undefined policy: pass-through', () => {
 // ─── Windows path separator handling ──────────────────────────────────────
 
 if (sep === '\\') {
-  test('planning-unit: handles Windows backslash paths under .gsd', () => {
+  test('planning-unit: handles Windows backslash paths under .gwd', () => {
     const r = shouldBlockPlanningUnit(
       'write',
-      `${BASE}\\.gsd\\PROJECT.md`,
+      `${BASE}\\.gwd\\PROJECT.md`,
       BASE,
       'discuss-milestone',
       PLANNING,

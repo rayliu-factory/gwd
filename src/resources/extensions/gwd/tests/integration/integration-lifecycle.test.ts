@@ -119,9 +119,9 @@ const ROADMAP_CONTENT = `# M001: Test Milestone\n\n**Vision:** Integration test 
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('integration-lifecycle: full pipeline', async () => {
-    // ── Step 1: Set up temp dir with realistic .gsd/ structure ──────────
+    // ── Step 1: Set up temp dir with realistic .gwd/ structure ──────────
     const base = mkdtempSync(join(tmpdir(), 'gsd-int-lifecycle-'));
-    const gsdDir = join(base, '.gsd');
+    const gsdDir = join(base, '.gwd');
     mkdirSync(gsdDir, { recursive: true });
     mkdirSync(join(gsdDir, 'milestones', 'M001'), { recursive: true });
     mkdirSync(join(gsdDir, 'milestones', 'M002'), { recursive: true });

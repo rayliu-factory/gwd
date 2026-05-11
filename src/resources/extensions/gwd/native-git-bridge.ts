@@ -706,7 +706,7 @@ export function nativeAddTracked(basePath: string): void {
 }
 
 function isDotGsdIgnored(basePath: string): boolean {
-  for (const path of [".gsd", ".gsd/"]) {
+  for (const path of [".gwd", ".gwd/"]) {
     try {
       execFileSync("git", ["check-ignore", "-q", path], {
         cwd: basePath,
@@ -723,7 +723,7 @@ function isDotGsdIgnored(basePath: string): boolean {
 
 /**
  * Determine whether the project opts out of GWD-managed `.gitignore` via
- * `git.manage_gitignore: false` in `.gsd/PREFERENCES.md`. Uses a minimal
+ * `git.manage_gitignore: false` in `.gwd/PREFERENCES.md`. Uses a minimal
  * inline parser to avoid importing the full preferences module (which would
  * introduce a circular dependency back into this low-level bridge).
  *
@@ -731,7 +731,7 @@ function isDotGsdIgnored(basePath: string): boolean {
  * file returns false (default: GWD may manage `.gitignore`).
  */
 function isGitignoreManagementDisabled(basePath: string): boolean {
-  const prefsPath = join(basePath, ".gsd", "PREFERENCES.md");
+  const prefsPath = join(basePath, ".gwd", "PREFERENCES.md");
   if (!existsSync(prefsPath)) return false;
   try {
     const content = readFileSync(prefsPath, "utf-8");
@@ -745,11 +745,11 @@ function isGitignoreManagementDisabled(basePath: string): boolean {
 }
 
 /**
- * Self-heal path for the symlinked-`.gsd` staging failure: append `.gsd` to
+ * Self-heal path for the symlinked-`.gwd` staging failure: append `.gwd` to
  * `.gitignore` so subsequent `git add -A` calls succeed without the symlink
  * pathspec error. Honors the `git.manage_gitignore: false` opt-out.
  *
- * Returns true when `.gitignore` now contains an entry covering `.gsd`
+ * Returns true when `.gitignore` now contains an entry covering `.gwd`
  * (either pre-existing or newly appended). Returns false when the opt-out
  * is set or the write fails.
  */
@@ -762,10 +762,10 @@ function trySelfHealGsdGitignore(basePath: string): boolean {
     const lines = new Set(
       existing.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("#")),
     );
-    if (lines.has(".gsd") || lines.has(".gsd/")) return true;
+    if (lines.has(".gwd") || lines.has(".gwd/")) return true;
 
     const prefix = existing.length > 0 && !existing.endsWith("\n") ? "\n" : "";
-    const block = `${prefix}\n# ── GWD self-heal: .gsd is a symlink to external state ──\n.gsd\n`;
+    const block = `${prefix}\n# ── GWD self-heal: .gwd is a symlink to external state ──\n.gwd\n`;
     writeFileSync(gitignorePath, existing + block, "utf-8");
     return true;
   } catch {
@@ -774,8 +774,8 @@ function trySelfHealGsdGitignore(basePath: string): boolean {
 }
 
 /**
- * Stage untracked files individually while skipping anything under `.gsd`.
- * Used as a last-resort when `.gsd` is a symlink, not gitignored, and
+ * Stage untracked files individually while skipping anything under `.gwd`.
+ * Used as a last-resort when `.gwd` is a symlink, not gitignored, and
  * `git.manage_gitignore: false` forbids the self-heal path. Protects user
  * work by never silently dropping new real files.
  */
@@ -799,10 +799,10 @@ function stageUntrackedExcludingDotGsd(basePath: string): void {
     if (code !== "??") continue;
     // Skip GWD runtime artifacts. Under `manage_gitignore: false` the user
     // may not have these in `.gitignore`, so we filter explicitly to avoid
-    // committing transient state (.gsd external link, migration lock,
+    // committing transient state (.gwd external link, migration lock,
     // background shell scratch dir).
-    if (path === ".gsd" || path.startsWith(".gsd/")) continue;
-    if (path === ".gsd-id" || path === ".gsd.migrating") continue;
+    if (path === ".gwd" || path.startsWith(".gwd/")) continue;
+    if (path === ".gwd-id" || path === ".gwd.migrating") continue;
     if (path === ".bg-shell" || path.startsWith(".bg-shell/")) continue;
     untracked.push(path);
   }
@@ -817,7 +817,7 @@ function stageUntrackedExcludingDotGsd(basePath: string): void {
 
 /**
  * Handle `nativeAddAllWithExclusions` failing with "beyond a symbolic link"
- * when `.gsd` is a symlink. Self-heals by adding `.gsd` to `.gitignore`, or
+ * when `.gwd` is a symlink. Self-heals by adding `.gwd` to `.gitignore`, or
  * falls back to explicit per-file staging so user work is never dropped.
  */
 function fallbackStageWithSymlinkedDotGsd(basePath: string): void {
@@ -870,9 +870,9 @@ export function nativeAddAllWithExclusions(basePath: string, exclusions: readonl
     if (stderr.includes("ignored by one of your .gitignore files")) {
       return;
     }
-    // When .gsd is a symlink, git rejects `:!.gsd/...` pathspecs with
+    // When .gwd is a symlink, git rejects `:!.gwd/...` pathspecs with
     // "beyond a symbolic link". Hand off to the self-heal fallback which
-    // either adds `.gsd` to `.gitignore` and retries `git add -A`, or stages
+    // either adds `.gwd` to `.gitignore` and retries `git add -A`, or stages
     // real files explicitly when `git.manage_gitignore: false` forbids the
     // self-heal path. Either way, user work is protected from silent drops.
     if (stderr.includes("beyond a symbolic link")) {
@@ -1019,7 +1019,7 @@ export function nativeMergeSquash(basePath: string, branch: string): GitMergeRes
       stderr.includes("overwritten by merge")
     ) {
       // Extract filenames from git stderr so callers can report which files
-      // are dirty instead of generically blaming .gsd/ (#2151).
+      // are dirty instead of generically blaming .gwd/ (#2151).
       // Git lists them as tab-indented lines between the "would be overwritten"
       // header and the "Please commit" footer.
       const dirtyFiles = stderr

@@ -53,7 +53,7 @@ test("uok writer produces monotonic sequence records across turns", (t) => {
     token: token1,
     category: "audit",
     operation: "append",
-    path: ".gsd/audit/events.jsonl",
+    path: ".gwd/audit/events.jsonl",
   });
   releaseWriterToken(basePath, token1);
 

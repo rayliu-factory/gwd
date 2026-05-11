@@ -18,7 +18,7 @@ import { createWorkspace, scopeMilestone } from "../workspace.ts";
 
 function makeProjectDir(): string {
   const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-ws-test-")));
-  mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   return dir;
 }
 
@@ -43,8 +43,8 @@ describe("createWorkspace", () => {
   });
 
   test("from a worktree path produces mode=worktree, worktreeRoot=realpath, projectRoot=realpath of project", () => {
-    // Construct a worktree path: <projectDir>/.gsd/worktrees/M001
-    const worktreePath = join(projectDir, ".gsd", "worktrees", "M001");
+    // Construct a worktree path: <projectDir>/.gwd/worktrees/M001
+    const worktreePath = join(projectDir, ".gwd", "worktrees", "M001");
     mkdirSync(worktreePath, { recursive: true });
 
     const ws = createWorkspace(worktreePath);
@@ -121,7 +121,7 @@ describe("scopeMilestone path methods", () => {
   test("produces correct paths for a known milestone ID", () => {
     const ws = createWorkspace(projectDir);
     const scope = scopeMilestone(ws, MID);
-    const gsd = ws.contract.projectGsd;
+    const gsd = ws.contract.projectGwd;
 
     assert.equal(scope.milestoneId, MID);
     assert.equal(scope.contextFile(), join(gsd, "milestones", MID, `${MID}-CONTEXT.md`));
@@ -146,7 +146,7 @@ describe("scopeMilestone path methods", () => {
   });
 });
 
-describe("createWorkspace: contract.projectGsd is realpath-canonicalized when basePath is a symlink", () => {
+describe("createWorkspace: contract.projectGwd is realpath-canonicalized when basePath is a symlink", () => {
   let projectDir = "";
   let linkParent = "";
   let linkPath = "";
@@ -166,7 +166,7 @@ describe("createWorkspace: contract.projectGsd is realpath-canonicalized when ba
     projectDir = "";
   });
 
-  test("contract.projectGsd matches realpath of projectRoot when workspace is created via symlink", () => {
+  test("contract.projectGwd matches realpath of projectRoot when workspace is created via symlink", () => {
     const ws = createWorkspace(linkPath);
 
     const canonicalProjectRoot = realpathSync(projectDir);
@@ -175,12 +175,12 @@ describe("createWorkspace: contract.projectGsd is realpath-canonicalized when ba
     assert.equal(ws.identityKey, canonicalProjectRoot);
     assert.equal(ws.projectRoot, canonicalProjectRoot);
 
-    // contract.projectGsd must start with the canonical project root —
-    // not with the symlink path. If the bug is present, contract.projectGsd
-    // would be linkPath + "/.gsd" instead of canonicalProjectRoot + "/.gsd".
+    // contract.projectGwd must start with the canonical project root —
+    // not with the symlink path. If the bug is present, contract.projectGwd
+    // would be linkPath + "/.gwd" instead of canonicalProjectRoot + "/.gwd".
     assert.ok(
-      ws.contract.projectGsd.startsWith(canonicalProjectRoot),
-      `contract.projectGsd ("${ws.contract.projectGsd}") must be under the realpath'd projectRoot ("${canonicalProjectRoot}"), not the symlink path`,
+      ws.contract.projectGwd.startsWith(canonicalProjectRoot),
+      `contract.projectGwd ("${ws.contract.projectGwd}") must be under the realpath'd projectRoot ("${canonicalProjectRoot}"), not the symlink path`,
     );
   });
 

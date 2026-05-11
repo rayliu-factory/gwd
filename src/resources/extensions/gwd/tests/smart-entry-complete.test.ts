@@ -9,7 +9,7 @@ import { tmpdir } from "node:os";
 import { deriveState } from "../state.js";
 
 function writeCompleteMilestone(base: string): void {
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".gwd", "milestones", "M001");
   mkdirSync(milestoneDir, { recursive: true });
   writeFileSync(
     join(milestoneDir, "M001-ROADMAP.md"),

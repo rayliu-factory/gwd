@@ -314,7 +314,7 @@ test('Full pipeline: parse → transform → preview → write → deriveState',
       assert.ok(result.paths.length > 0, 'pipeline: files written');
 
       // Key files exist
-      const gsd = join(writeTarget, '.gsd');
+      const gsd = join(writeTarget, '.gwd');
       assert.ok(existsSync(join(gsd, 'PROJECT.md')), 'pipeline: PROJECT.md written');
       assert.ok(existsSync(join(gsd, 'STATE.md')), 'pipeline: STATE.md written');
       assert.ok(existsSync(join(gsd, 'REQUIREMENTS.md')), 'pipeline: REQUIREMENTS.md written');
@@ -342,17 +342,17 @@ test('Full pipeline: parse → transform → preview → write → deriveState',
     }
 });
 
-  // ─── Test 6: .gsd/ exists detection ────────────────────────────────────
+  // ─── Test 6: .gwd/ exists detection ────────────────────────────────────
 
-test('.gsd/ exists detection', () => {
+test('.gwd/ exists detection', () => {
     const base = mkdtempSync(join(tmpdir(), 'gsd-cmd-exists-'));
     try {
-      // No .gsd/ yet
-      assert.ok(!existsSync(join(base, '.gsd')), 'exists-detection: .gsd absent initially');
+      // No .gwd/ yet
+      assert.ok(!existsSync(join(base, '.gwd')), 'exists-detection: .gwd absent initially');
 
-      // Create .gsd/
-      mkdirSync(join(base, '.gsd'), { recursive: true });
-      assert.ok(existsSync(join(base, '.gsd')), 'exists-detection: .gsd detected after creation');
+      // Create .gwd/
+      mkdirSync(join(base, '.gwd'), { recursive: true });
+      assert.ok(existsSync(join(base, '.gwd')), 'exists-detection: .gwd detected after creation');
     } finally {
       rmSync(base, { recursive: true, force: true });
     }

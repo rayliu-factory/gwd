@@ -221,9 +221,9 @@ export function _roadmapHasParseableSlicesForTest(
 
 // ─── Commit Instruction Helpers ──────────────────────────────────────────────
 
-/** Build commit instruction for planning prompts. .gsd/ is managed externally and always gitignored. */
+/** Build commit instruction for planning prompts. .gwd/ is managed externally and always gitignored. */
 function buildDocsCommitInstruction(_message: string): string {
-  return "Do not commit planning artifacts — .gsd/ is managed externally.";
+  return "Do not commit planning artifacts — .gwd/ is managed externally.";
 }
 
 // ─── Auto-start after discuss ─────────────────────────────────────────────────
@@ -679,7 +679,7 @@ export function checkAutoStartAfterDiscuss(): boolean {
   // The LLM writes DISCUSSION-MANIFEST.json after each Phase 3 gate decision.
   // When it exists, validate it before auto-starting. Project history alone is
   // not a reliable signal for the current discussion mode.
-  const manifestPath = join(entry.scope.workspace.contract.projectGsd, "DISCUSSION-MANIFEST.json");
+  const manifestPath = join(entry.scope.workspace.contract.projectGwd, "DISCUSSION-MANIFEST.json");
   if (existsSync(manifestPath)) {
     try {
       const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
@@ -1196,7 +1196,7 @@ function resolveAvailableModel<T extends { id: string; provider: string }>(
  * Used by all three "new milestone" paths (first ever, no active, all complete).
  */
 function buildDiscussPrompt(nextId: string, preamble: string, _basePath: string, pi: ExtensionAPI, ctx: ExtensionCommandContext, preparationContext?: string): string {
-  const milestoneRel = `.gsd/milestones/${nextId}`;
+  const milestoneRel = `.gwd/milestones/${nextId}`;
   const structuredQuestionsAvailable = getStructuredQuestionsAvailability(pi, ctx);
   const inlinedTemplates = [
     inlineTemplate("project", "Project"),
@@ -1223,7 +1223,7 @@ function buildDiscussPrompt(nextId: string, preamble: string, _basePath: string,
  * Uses the discuss-headless prompt template with seed context injected.
  */
 function buildHeadlessDiscussPrompt(nextId: string, seedContext: string, _basePath: string): string {
-  const milestoneRel = `.gsd/milestones/${nextId}`;
+  const milestoneRel = `.gwd/milestones/${nextId}`;
   const inlinedTemplates = [
     inlineTemplate("project", "Project"),
     inlineTemplate("requirements", "Requirements"),
@@ -1296,8 +1296,8 @@ async function prepareAndBuildDiscussPrompt(
 }
 
 /**
- * Bootstrap a .gsd/ project from scratch for headless use.
- * Ensures git repo, .gsd/ structure, gitignore, and preferences all exist.
+ * Bootstrap a .gwd/ project from scratch for headless use.
+ * Ensures git repo, .gwd/ structure, gitignore, and preferences all exist.
  */
 function bootstrapGsdProject(basePath: string): void {
   if (!nativeIsRepo(basePath) || isInheritedRepo(basePath)) {
@@ -1328,7 +1328,7 @@ export async function showHeadlessMilestoneCreation(
   // Clear stale reservations from previous cancelled sessions (#2488)
   clearReservedMilestoneIds();
 
-  // Ensure .gsd/ is bootstrapped
+  // Ensure .gwd/ is bootstrapped
   bootstrapGsdProject(basePath);
 
   const { ensureDbOpen } = await import("./bootstrap/dynamic-tools.js");
@@ -1436,7 +1436,7 @@ async function buildDiscussSlicePrompt(
     ? `## Inlined Context (preloaded — do not re-read these files)\n\n${inlined.join("\n\n---\n\n")}`
     : `## Inlined Context\n\n_(no context files found yet — go in blind and ask broad questions)_`;
 
-  const sliceDirPath = `.gsd/milestones/${mid}/slices/${sid}`;
+  const sliceDirPath = `.gwd/milestones/${mid}/slices/${sid}`;
   const sliceContextPath = `${sliceDirPath}/${sid}-CONTEXT.md`;
 
   // When re-discussing, inject a preamble so the agent treats this as an update interview
@@ -1469,7 +1469,7 @@ export async function showDiscuss(
   pi: ExtensionAPI,
   basePath: string,
 ): Promise<void> {
-  // Guard: no .gsd/ project
+  // Guard: no .gwd/ project
   if (!existsSync(gsdRoot(basePath))) {
     ctx.ui.notify("No GWD project found. Run /gwd to start one first.", "warning");
     return;
@@ -2013,8 +2013,8 @@ export async function showSmartEntry(
   }
 
   // ── Detection preamble — run before any bootstrap ────────────────────
-  // Check bootstrap completeness, not just .gsd/ directory existence.
-  // A zombie .gsd/ state (symlink exists but missing PREFERENCES.md and
+  // Check bootstrap completeness, not just .gwd/ directory existence.
+  // A zombie .gwd/ state (symlink exists but missing PREFERENCES.md and
   // milestones/) must trigger the init wizard, not skip it (#2942).
   const gsdPath = gsdRoot(basePath);
   const hasBootstrapArtifacts = hasGsdBootstrapArtifacts(gsdPath);
@@ -2035,18 +2035,18 @@ export async function showSmartEntry(
       // "fresh" — fall through to init wizard
     }
 
-    // No .gsd/ or zombie .gsd/ — run the project init wizard
+    // No .gwd/ or zombie .gwd/ — run the project init wizard
     const result = await showProjectInit(ctx, pi, basePath, detection);
     if (!result.completed) return; // User cancelled
     skipGitBootstrap = shouldSkipGitBootstrapAfterInit(result);
 
-    // Init wizard bootstrapped .gsd/ — fall through to the normal flow below
+    // Init wizard bootstrapped .gwd/ — fall through to the normal flow below
     // which will detect "no milestones" and start the discuss prompt
   }
 
   // ── Ensure git repo exists — GWD needs it for worktree isolation ──────
   // Also handle inherited repos: if basePath is a subdirectory of another
-  // git repo that has no .gsd, create a fresh repo to prevent cross-project
+  // git repo that has no .gwd, create a fresh repo to prevent cross-project
   // state leaks (#1639).
   if (!skipGitBootstrap && (!nativeIsRepo(basePath) || isInheritedRepo(basePath))) {
     const mainBranch = loadEffectiveGSDPreferences()?.preferences?.git?.main_branch || "main";
@@ -2059,7 +2059,7 @@ export async function showSmartEntry(
     untrackRuntimeFiles(basePath);
   }
 
-  // Deep setup can pre-create .gsd/PREFERENCES.md before the normal init
+  // Deep setup can pre-create .gwd/PREFERENCES.md before the normal init
   // wizard path runs. If that path also initialized git, make HEAD reachable
   // now so later worktree/git-log operations do not run on an unborn branch.
   if (!skipGitBootstrap && nativeIsRepo(basePath) && !nativeHasCommittedHead(basePath)) {
@@ -2125,13 +2125,13 @@ export async function showSmartEntry(
       const result = await autoImportMarkdownHierarchyIfDbMismatch(basePath);
       if (result.action === "imported") {
         ctx.ui.notify(
-          `Recovered migrated planning state into gsd.db (${result.reason}): ${result.afterDb.milestones} milestone(s), ${result.afterDb.slices} slice(s), ${result.afterDb.tasks} task(s).`,
+          `Recovered migrated planning state into gwd.db (${result.reason}): ${result.afterDb.milestones} milestone(s), ${result.afterDb.slices} slice(s), ${result.afterDb.tasks} task(s).`,
           "info",
         );
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      ctx.ui.notify(`GWD could not auto-import existing planning state into gsd.db: ${message}`, "warning");
+      ctx.ui.notify(`GWD could not auto-import existing planning state into gwd.db: ${message}`, "warning");
       logWarning("guided", `planning state auto-import failed: ${message}`, { file: "guided-flow.ts" });
     }
   }
@@ -2221,7 +2221,7 @@ export async function showSmartEntry(
       ctx.ui.setStatus("gsd-step", "New Milestone · answer the questions above to plan");
       setPendingAutoStart(basePath, { ctx, pi, basePath, milestoneId: nextId, step: stepMode });
       await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
-        `New project, milestone ${nextId}. Do NOT read or explore .gsd/ — it's empty scaffolding.`,
+        `New project, milestone ${nextId}. Do NOT read or explore .gwd/ — it's empty scaffolding.`,
         basePath
       ), "gsd-run", ctx, "discuss-milestone");
     } else {

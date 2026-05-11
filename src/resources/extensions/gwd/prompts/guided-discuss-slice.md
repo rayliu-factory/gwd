@@ -10,7 +10,7 @@ Do **not** center the discussion on tech stack trivia, naming, or speculative ar
 
 ### Project Shape
 
-Before the first question round, read `.gsd/PROJECT.md` and look for `## Project Shape` → `**Complexity:**`. Verdicts are **`simple`** or **`complex`**; default to `complex` if missing or unclear.
+Before the first question round, read `.gwd/PROJECT.md` and look for `## Project Shape` → `**Complexity:**`. Verdicts are **`simple`** or **`complex`**; default to `complex` if missing or unclear.
 
 - **`simple`** — use 1–2 plain-text rounds, then write context. Skip parallel-research investigation.
 - **`complex`** — investigate first, then ask structured 3–4-option questions.
@@ -31,7 +31,7 @@ Do **not** go deep; stop when you can ask grounded questions.
 
 **Never fabricate or simulate user input.** Never generate fake transcript markers like `[User]`, `[Human]`, or `User:`. Ask one question round, then wait for the user's actual response before continuing.
 
-**If `{{structuredQuestionsAvailable}}` is `true`:** Ask **1–3 questions per round** using `ask_user_questions`. In **`complex`** mode, each multi-choice question MUST present **3 or 4 concrete, researched options** plus final **"Other — let me discuss"** option; options must be grounded in the investigation above (codebase signals, library docs, prior `.gsd/` artifacts), not placeholders. In **`simple`** mode, 2 options is fine. Binary wrap-up gates are exempt. **Call `ask_user_questions` exactly once per turn — never make multiple calls with the same or overlapping questions. Wait for the user's response before asking the next round.**
+**If `{{structuredQuestionsAvailable}}` is `true`:** Ask **1–3 questions per round** using `ask_user_questions`. In **`complex`** mode, each multi-choice question MUST present **3 or 4 concrete, researched options** plus final **"Other — let me discuss"** option; options must be grounded in the investigation above (codebase signals, library docs, prior `.gwd/` artifacts), not placeholders. In **`simple`** mode, 2 options is fine. Binary wrap-up gates are exempt. **Call `ask_user_questions` exactly once per turn — never make multiple calls with the same or overlapping questions. Wait for the user's response before asking the next round.**
 **If `{{structuredQuestionsAvailable}}` is `false`:** Ask **1–3 numbered plain-text questions per round**, then wait.
 Focus questions on:
 - **UX and user-facing behaviour** — what users see, click, trigger, or experience.

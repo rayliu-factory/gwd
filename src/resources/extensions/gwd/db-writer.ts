@@ -716,7 +716,7 @@ export interface SaveArtifactOpts {
 
 /**
  * Save a root-level artifact (no milestone) to DB and write to disk,
- * routing path construction through workspace.contract.projectGsd directly.
+ * routing path construction through workspace.contract.projectGwd directly.
  * Use this instead of saveArtifactToDbByScope when milestone_id is absent.
  */
 export async function saveArtifactToDbForWorkspace(
@@ -726,12 +726,12 @@ export async function saveArtifactToDbForWorkspace(
   try {
     const db = await import('./gwd-db.js');
 
-    const gsdDir = workspace.contract.projectGsd;
+    const gsdDir = workspace.contract.projectGwd;
     const fullPath = resolve(gsdDir, opts.path);
 
     const rel0 = relative(gsdDir, fullPath);
     if (rel0.startsWith('..') || isAbsolute(rel0)) {
-      throw new GSDError(GWD_IO_ERROR, `saveArtifactToDbForWorkspace: path escapes .gsd/ directory: ${opts.path}`);
+      throw new GSDError(GWD_IO_ERROR, `saveArtifactToDbForWorkspace: path escapes .gwd/ directory: ${opts.path}`);
     }
 
     let contentToPersist = opts.content;
@@ -782,8 +782,8 @@ export async function saveArtifactToDbForWorkspace(
  * Save an artifact to DB and write the corresponding markdown file to disk,
  * routing all path construction through the workspace contract.
  *
- * The path is relative to .gsd/ (e.g. "milestones/M001/slices/S06/tasks/T01-SUMMARY.md").
- * The full file path is computed as scope.workspace.contract.projectGsd + '/' + path.
+ * The path is relative to .gwd/ (e.g. "milestones/M001/slices/S06/tasks/T01-SUMMARY.md").
+ * The full file path is computed as scope.workspace.contract.projectGwd + '/' + path.
  */
 export async function saveArtifactToDbByScope(
   scope: MilestoneScope,
@@ -798,14 +798,14 @@ export async function saveArtifactToDbByScope(
   try {
     const db = await import('./gwd-db.js');
 
-    // Use contract.projectGsd as the canonical .gsd directory — never a hand-rolled basePath join.
-    const gsdDir = scope.workspace.contract.projectGsd;
+    // Use contract.projectGwd as the canonical .gwd directory — never a hand-rolled basePath join.
+    const gsdDir = scope.workspace.contract.projectGwd;
     const fullPath = resolve(gsdDir, opts.path);
 
     // Guard against path traversal before any reads/writes
     const rel1 = relative(gsdDir, fullPath);
     if (rel1.startsWith('..') || isAbsolute(rel1)) {
-      throw new GSDError(GWD_IO_ERROR, `saveArtifactToDbByScope: path escapes .gsd/ directory: ${opts.path}`);
+      throw new GSDError(GWD_IO_ERROR, `saveArtifactToDbByScope: path escapes .gwd/ directory: ${opts.path}`);
     }
 
     let contentToPersist = opts.content;
@@ -861,8 +861,8 @@ export async function saveArtifactToDbByScope(
 
 /**
  * Save an artifact to DB and write the corresponding markdown file to disk.
- * The path is relative to .gsd/ (e.g. "milestones/M001/slices/S06/tasks/T01-SUMMARY.md").
- * The full file path is computed as basePath + '.gsd/' + path.
+ * The path is relative to .gwd/ (e.g. "milestones/M001/slices/S06/tasks/T01-SUMMARY.md").
+ * The full file path is computed as basePath + '.gwd/' + path.
  *
  * @deprecated Use saveArtifactToDbByScope instead, which routes through the
  * workspace contract for canonical path resolution.

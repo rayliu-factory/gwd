@@ -10,7 +10,7 @@ import { deriveState } from "../state.js";
 import { resolveMilestoneFile } from "../paths.js";
 
 function writeDraftOnlyMilestone(base: string): void {
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".gwd", "milestones", "M001");
   mkdirSync(milestoneDir, { recursive: true });
   writeFileSync(
     join(milestoneDir, "M001-CONTEXT-DRAFT.md"),

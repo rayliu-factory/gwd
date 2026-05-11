@@ -25,30 +25,30 @@ import { GIT_NO_PROMPT_ENV } from "./git-constants.js";
  * but retained for backwards compatibility during migration.
  */
 const GWD_RUNTIME_PATTERNS = [
-  ".gsd/activity/",
-  ".gsd/audit/",
-  ".gsd/forensics/",
-  ".gsd/runtime/",
-  ".gsd/worktrees/",
-  ".gsd/parallel/",
-  ".gsd/auto.lock",
-  ".gsd/metrics.json",
-  ".gsd/completed-units*.json", // covers completed-units.json and archived completed-units-{MID}.json
-  ".gsd/state-manifest.json",
-  ".gsd/STATE.md",
-  ".gsd/gwd.db*",
-  ".gsd/journal/",
-  ".gsd/doctor-history.jsonl",
-  ".gsd/event-log.jsonl",
-  ".gsd/DISCUSSION-MANIFEST.json",
-  ".gsd/milestones/**/*-CONTINUE.md",
-  ".gsd/milestones/**/continue.md",
+  ".gwd/activity/",
+  ".gwd/audit/",
+  ".gwd/forensics/",
+  ".gwd/runtime/",
+  ".gwd/worktrees/",
+  ".gwd/parallel/",
+  ".gwd/auto.lock",
+  ".gwd/metrics.json",
+  ".gwd/completed-units*.json", // covers completed-units.json and archived completed-units-{MID}.json
+  ".gwd/state-manifest.json",
+  ".gwd/STATE.md",
+  ".gwd/gwd.db*",
+  ".gwd/journal/",
+  ".gwd/doctor-history.jsonl",
+  ".gwd/event-log.jsonl",
+  ".gwd/DISCUSSION-MANIFEST.json",
+  ".gwd/milestones/**/*-CONTINUE.md",
+  ".gwd/milestones/**/continue.md",
 ] as const;
 
 const BASELINE_PATTERNS = [
   // ── GWD state directory (symlink to external storage) ──
-  ".gsd",
-  ".gsd-id",
+  ".gwd",
+  ".gwd-id",
   ".mcp.json",
   ".bg-shell/",
 
@@ -95,22 +95,22 @@ const BASELINE_PATTERNS = [
 ];
 
 /**
- * Check whether `.gsd` is covered by the project's `.gitignore`.
+ * Check whether `.gwd` is covered by the project's `.gitignore`.
  *
  * Uses `git check-ignore` for accurate evaluation — this respects nested
  * .gitignore files, global gitignore, and negation patterns. Returns true
- * only when git would actually ignore `.gsd/`.
+ * only when git would actually ignore `.gwd/`.
  *
  * Returns false (not ignored) if:
  *   - No `.gitignore` exists
- *   - `.gsd` is not listed in any active ignore rule
+ *   - `.gwd` is not listed in any active ignore rule
  *   - Not a git repo or git is unavailable
  */
 export function isGsdGitignored(basePath: string): boolean {
-  // Check both `.gsd` and `.gsd/` because `.gsd/` in .gitignore (trailing
+  // Check both `.gwd` and `.gwd/` because `.gwd/` in .gitignore (trailing
   // slash = directory-only pattern) only matches the directory form. Using
   // both paths covers all gitignore pattern variants.
-  for (const path of [".gsd", ".gsd/"]) {
+  for (const path of [".gwd", ".gwd/"]) {
     try {
       // git check-ignore exits 0 when the path IS ignored, 1 when it is NOT.
       execFileSync("git", ["check-ignore", "-q", path], {
@@ -118,7 +118,7 @@ export function isGsdGitignored(basePath: string): boolean {
         stdio: "pipe",
         env: GIT_NO_PROMPT_ENV,
       });
-      return true; // exit 0 → .gsd is ignored
+      return true; // exit 0 → .gwd is ignored
     } catch {
       // exit 1 → this form is NOT ignored, try the other
     }
@@ -127,21 +127,21 @@ export function isGsdGitignored(basePath: string): boolean {
 }
 
 /**
- * Check whether `.gsd/` contains files tracked by git.
- * If so, the project intentionally keeps `.gsd/` in version control
- * and we must NOT add `.gsd` to `.gitignore` or attempt migration.
+ * Check whether `.gwd/` contains files tracked by git.
+ * If so, the project intentionally keeps `.gwd/` in version control
+ * and we must NOT add `.gwd` to `.gitignore` or attempt migration.
  *
- * Returns true if git tracks at least one file under `.gsd/`.
+ * Returns true if git tracks at least one file under `.gwd/`.
  * Returns false (safe to ignore) if:
  *   - Not a git repo
- *   - `.gsd/` is a symlink (external state, should be ignored)
- *   - `.gsd/` doesn't exist
- *   - No tracked files found under `.gsd/`
+ *   - `.gwd/` is a symlink (external state, should be ignored)
+ *   - `.gwd/` doesn't exist
+ *   - No tracked files found under `.gwd/`
  */
 export function hasGitTrackedGsdFiles(basePath: string): boolean {
-  const localGsd = join(basePath, ".gsd");
+  const localGsd = join(basePath, ".gwd");
 
-  // If .gsd doesn't exist or is already a symlink, no tracked files concern
+  // If .gwd doesn't exist or is already a symlink, no tracked files concern
   if (!existsSync(localGsd)) return false;
   try {
     if (lstatSync(localGsd).isSymbolicLink()) return false;
@@ -149,9 +149,9 @@ export function hasGitTrackedGsdFiles(basePath: string): boolean {
     return false;
   }
 
-  // Check if git tracks any files under .gsd/
+  // Check if git tracks any files under .gwd/
   try {
-    const tracked = nativeLsFiles(basePath, ".gsd");
+    const tracked = nativeLsFiles(basePath, ".gwd");
     if (tracked.length > 0) return true;
 
     // nativeLsFiles swallows git failures and returns []. An empty result
@@ -176,9 +176,9 @@ export function hasGitTrackedGsdFiles(basePath: string): boolean {
  * Creates the file if missing; appends missing patterns.
  * Returns true if the file was created or modified, false if already complete.
  *
- * **Safety check:** If `.gsd/` contains git-tracked files (i.e., the project
- * intentionally keeps `.gsd/` in version control), the `.gsd` ignore pattern
- * is excluded to prevent data loss. Only the `.gsd` pattern is affected —
+ * **Safety check:** If `.gwd/` contains git-tracked files (i.e., the project
+ * intentionally keeps `.gwd/` in version control), the `.gwd` ignore pattern
+ * is excluded to prevent data loss. Only the `.gwd` pattern is affected —
  * all other baseline patterns are still applied normally.
  */
 export function ensureGitignore(
@@ -203,11 +203,11 @@ export function ensureGitignore(
       .filter((l) => l && !l.startsWith("#")),
   );
 
-  // Determine which patterns to apply. If .gsd/ has tracked files,
-  // exclude the ".gsd" pattern to prevent deleting tracked state.
+  // Determine which patterns to apply. If .gwd/ has tracked files,
+  // exclude the ".gwd" pattern to prevent deleting tracked state.
   const gsdIsTracked = hasGitTrackedGsdFiles(basePath);
   const patternsToApply = gsdIsTracked
-    ? BASELINE_PATTERNS.filter((p) => p !== ".gsd")
+    ? BASELINE_PATTERNS.filter((p) => p !== ".gwd")
     : BASELINE_PATTERNS;
 
   // Find patterns not yet present
@@ -240,7 +240,7 @@ export function ensureGitignore(
  *
  * Note: These are strictly runtime/ephemeral paths (activity logs, lock files,
  * metrics, STATE.md). They are always safe to untrack, even when the project
- * intentionally keeps other `.gsd/` files (like PROJECT.md, milestones/) in
+ * intentionally keeps other `.gwd/` files (like PROJECT.md, milestones/) in
  * version control.
  */
 export function untrackRuntimeFiles(basePath: string): void {
@@ -258,7 +258,7 @@ export function untrackRuntimeFiles(basePath: string): void {
 }
 
 /**
- * Ensure basePath/.gsd/PREFERENCES.md exists as an empty template.
+ * Ensure basePath/.gwd/PREFERENCES.md exists as an empty template.
  * Creates the file with frontmatter only if it doesn't exist.
  * Returns true if created, false if already exists.
  *

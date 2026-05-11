@@ -60,13 +60,13 @@ function mkBase(): string {
   // realpathSync to normalize the macOS /var → /private/var symlink so the
   // basePath we pass matches what the workspace projectRoot resolves to.
   const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-ready-guard-")));
-  mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md"),
+    join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md"),
     "# M001: Ready Guard Test\n\nContext.\n",
   );
   writeFileSync(
-    join(base, ".gsd", "STATE.md"),
+    join(base, ".gwd", "STATE.md"),
     "# State\n\nactive: M001\n",
   );
   return base;

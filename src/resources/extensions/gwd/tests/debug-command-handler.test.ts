@@ -10,7 +10,7 @@ import { loadPrompt } from "../prompt-loader.ts";
 
 function makeBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-debug-command-"));
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -251,7 +251,7 @@ describe("handleDebug lifecycle", () => {
 
     try {
       createDebugSession(base, { issue: "Healthy issue", createdAt: 1 });
-      writeFileSync(join(base, ".gsd", "debug", "sessions", "broken.json"), "{ nope", "utf-8");
+      writeFileSync(join(base, ".gwd", "debug", "sessions", "broken.json"), "{ nope", "utf-8");
 
       const listCtx = createMockCtx();
       await handleDebug("list", listCtx as any);
@@ -363,7 +363,7 @@ describe("handleDebug lifecycle", () => {
 
     try {
       createDebugSession(base, { issue: "Healthy issue", createdAt: 1 });
-      writeFileSync(join(base, ".gsd", "debug", "sessions", "broken.json"), "{ nope", "utf-8");
+      writeFileSync(join(base, ".gwd", "debug", "sessions", "broken.json"), "{ nope", "utf-8");
 
       const ctx = createMockCtx();
       await handleDebug("--diagnose billing webhook is dropping events", ctx as any);

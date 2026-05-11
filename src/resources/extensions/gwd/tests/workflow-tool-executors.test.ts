@@ -31,7 +31,7 @@ import {
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `gsd-workflow-executors-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -40,7 +40,7 @@ function cleanup(base: string): void {
 }
 
 function openTestDb(base: string): void {
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
 }
 
 async function inProjectDir<T>(dir: string, fn: () => Promise<T>): Promise<T> {
@@ -70,7 +70,7 @@ function seedSlice(milestoneId: string, sliceId: string, status: string): void {
 }
 
 function writeRoadmap(base: string, milestoneId: string, sliceIds: string[]): void {
-  const milestoneDir = join(base, ".gsd", "milestones", milestoneId);
+  const milestoneDir = join(base, ".gwd", "milestones", milestoneId);
   mkdirSync(milestoneDir, { recursive: true });
   const lines = [
     `# ${milestoneId}: Workflow MCP planning`,
@@ -97,7 +97,7 @@ test("executeSummarySave persists artifact and returns computed path", async () 
     assert.equal(result.details.operation, "save_summary");
     assert.equal(result.details.path, "milestones/M001/slices/S01/S01-SUMMARY.md");
 
-    const filePath = join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md");
+    const filePath = join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md");
     assert.ok(existsSync(filePath), "summary artifact should be written to disk");
     assert.match(readFileSync(filePath, "utf-8"), /# Summary/);
   } finally {
@@ -110,7 +110,7 @@ test("executeTaskComplete coerces string verificationEvidence entries", async ()
   const base = makeTmpBase();
   try {
     openTestDb(base);
-    const planDir = join(base, ".gsd", "milestones", "M001", "slices", "S01");
+    const planDir = join(base, ".gwd", "milestones", "M001", "slices", "S01");
     mkdirSync(planDir, { recursive: true });
     writeFileSync(join(planDir, "S01-PLAN.md"), "# S01\n\n- [ ] **T01: Demo** `est:5m`\n");
 
@@ -401,7 +401,7 @@ test("executeCompleteMilestone returns success for already-complete milestones w
     seedMilestone("M003", "Milestone Three", "complete");
     seedSlice("M003", "S03", "complete");
     writeRoadmap(base, "M003", ["S03"]);
-    const milestoneDir = join(base, ".gsd", "milestones", "M003");
+    const milestoneDir = join(base, ".gwd", "milestones", "M003");
     mkdirSync(milestoneDir, { recursive: true });
     const summaryPath = join(milestoneDir, "M003-SUMMARY.md");
     writeFileSync(summaryPath, "# Existing Summary\n");
@@ -691,7 +691,7 @@ test("executeSummarySave removes sibling CONTEXT-DRAFT when writing milestone CO
     openTestDb(base);
     markDepthVerified("M001", base);
 
-    const milestoneDir = join(base, ".gsd", "milestones", "M001");
+    const milestoneDir = join(base, ".gwd", "milestones", "M001");
     mkdirSync(milestoneDir, { recursive: true });
     const draftPath = join(milestoneDir, "M001-CONTEXT-DRAFT.md");
     writeFileSync(draftPath, "# Draft\n\nincremental notes");
@@ -742,7 +742,7 @@ test("executeSummarySave supports root-level deep planning artifacts", async () 
     }, base));
     assert.equal(project.isError, undefined);
     assert.equal(project.details.path, "PROJECT.md");
-    assert.ok(existsSync(join(base, ".gsd", "PROJECT.md")));
+    assert.ok(existsSync(join(base, ".gwd", "PROJECT.md")));
 
     upsertRequirement({
       id: "R001",
@@ -766,7 +766,7 @@ test("executeSummarySave supports root-level deep planning artifacts", async () 
     assert.equal(requirements.isError, undefined);
     assert.equal(requirements.details.path, "REQUIREMENTS.md");
     assert.equal(requirements.details.content_source, "requirements_table");
-    assert.ok(existsSync(join(base, ".gsd", "REQUIREMENTS.md")));
+    assert.ok(existsSync(join(base, ".gwd", "REQUIREMENTS.md")));
 
     const db = _getAdapter();
     const rows = db!.prepare(
@@ -806,7 +806,7 @@ test("executeSummarySave registers PROJECT milestone sequence for the next run",
         "",
         "## Capability Contract",
         "",
-        "See .gsd/REQUIREMENTS.md.",
+        "See .gwd/REQUIREMENTS.md.",
         "",
         "## Milestone Sequence",
         "",
@@ -879,7 +879,7 @@ test("executeSummarySave hard-fails when milestone registration throws so silent
     assert.match(String(result.details.registration_error), /simulated milestone registration failure/);
     assert.match(result.content[0].text, /milestone registration failed/);
     assert.match(result.content[0].text, /idempotent/);
-    assert.ok(existsSync(join(base, ".gsd", "PROJECT.md")));
+    assert.ok(existsSync(join(base, ".gwd", "PROJECT.md")));
     const artifact = originalPrepare("SELECT path FROM artifacts WHERE path = ?").get("PROJECT.md");
     assert.equal(artifact?.path, "PROJECT.md");
   } finally {
@@ -902,14 +902,14 @@ test("executeSummarySave blocks final root artifacts while approval gate is pend
     assert.equal(result.isError, true);
     assert.equal(result.details.error, "root_artifact_write_blocked");
     assert.match(result.content[0].text, /has not been confirmed/);
-    assert.equal(existsSync(join(base, ".gsd", "REQUIREMENTS.md")), false);
+    assert.equal(existsSync(join(base, ".gwd", "REQUIREMENTS.md")), false);
 
     const draft = await inProjectDir(base, () => executeSummarySave({
       artifact_type: "REQUIREMENTS-DRAFT",
       content: "# Draft Requirements\n",
     }, base));
     assert.equal(draft.isError, undefined);
-    assert.ok(existsSync(join(base, ".gsd", "REQUIREMENTS-DRAFT.md")));
+    assert.ok(existsSync(join(base, ".gwd", "REQUIREMENTS-DRAFT.md")));
   } finally {
     clearDiscussionFlowState(base);
     closeDatabase();
@@ -920,7 +920,7 @@ test("executeSummarySave blocks final root artifacts while approval gate is pend
 test("executeSummarySave requires verified root approval in deep mode", async () => {
   const base = makeTmpBase();
   try {
-    writeFileSync(join(base, ".gsd", "PREFERENCES.md"), "---\nplanning_depth: deep\n---\n");
+    writeFileSync(join(base, ".gwd", "PREFERENCES.md"), "---\nplanning_depth: deep\n---\n");
     openTestDb(base);
 
     const projectFixture = [
@@ -944,7 +944,7 @@ test("executeSummarySave requires verified root approval in deep mode", async ()
     assert.equal(blocked.isError, true);
     assert.equal(blocked.details.error, "root_artifact_write_blocked");
     assert.match(blocked.content[0].text, /fail-closed/);
-    assert.equal(existsSync(join(base, ".gsd", "PROJECT.md")), false);
+    assert.equal(existsSync(join(base, ".gwd", "PROJECT.md")), false);
 
     markApprovalGateVerified("depth_verification_project_confirm", base);
 
@@ -955,7 +955,7 @@ test("executeSummarySave requires verified root approval in deep mode", async ()
 
     assert.equal(unblocked.isError, undefined);
     assert.equal(unblocked.details.path, "PROJECT.md");
-    assert.ok(existsSync(join(base, ".gsd", "PROJECT.md")));
+    assert.ok(existsSync(join(base, ".gwd", "PROJECT.md")));
   } finally {
     clearDiscussionFlowState(base);
     closeDatabase();
@@ -984,7 +984,7 @@ test("executeSummarySave renders final REQUIREMENTS from the DB source of truth"
       superseded_by: null,
     });
 
-    const requirementsPath = join(base, ".gsd", "REQUIREMENTS.md");
+    const requirementsPath = join(base, ".gwd", "REQUIREMENTS.md");
     const bloatedMarkdown = [
       "# Requirements",
       "",
@@ -1088,7 +1088,7 @@ test("executeSummarySave removes sibling CONTEXT-DRAFT when writing slice CONTEX
   try {
     openTestDb(base);
 
-    const sliceDir = join(base, ".gsd", "milestones", "M001", "slices", "S01");
+    const sliceDir = join(base, ".gwd", "milestones", "M001", "slices", "S01");
     mkdirSync(sliceDir, { recursive: true });
     const draftPath = join(sliceDir, "S01-CONTEXT-DRAFT.md");
     writeFileSync(draftPath, "# Slice Draft\n\nincremental slice notes");
@@ -1122,7 +1122,7 @@ test("executeSummarySave leaves sibling CONTEXT-DRAFT intact for non-CONTEXT art
   try {
     openTestDb(base);
 
-    const milestoneDir = join(base, ".gsd", "milestones", "M001");
+    const milestoneDir = join(base, ".gwd", "milestones", "M001");
     mkdirSync(milestoneDir, { recursive: true });
     const draftPath = join(milestoneDir, "M001-CONTEXT-DRAFT.md");
     writeFileSync(draftPath, "# Draft\n\nstill in progress");
@@ -1166,10 +1166,10 @@ test("executeSummarySave CONTEXT HARD BLOCK clears after write-gate state file i
     );
 
     // Verify the state file was written (persist mode is active)
-    const stateFilePath = join(base, ".gsd", "runtime", "write-gate-state.json");
+    const stateFilePath = join(base, ".gwd", "runtime", "write-gate-state.json");
     // The state file may or may not exist at this point (block doesn't write state).
     // Write a fake state file simulating stale persisted block state.
-    mkdirSync(join(base, ".gsd", "runtime"), { recursive: true });
+    mkdirSync(join(base, ".gwd", "runtime"), { recursive: true });
     writeFileSync(stateFilePath, JSON.stringify({
       verifiedDepthMilestones: [],
       activeQueuePhase: false,

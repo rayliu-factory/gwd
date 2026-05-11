@@ -38,7 +38,7 @@ function createRepo(): string {
   git(["add", "."], dir);
   git(["commit", "-m", "init"], dir);
   git(["branch", "-M", "main"], dir);
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   return dir;
 }
 
@@ -134,9 +134,9 @@ describe("mergeSliceToMain", () => {
 
   test("merges slices to the recorded integration branch", () => {
     git(["checkout", "-b", "develop"], dir);
-    mkdirSync(join(dir, ".gsd", "milestones", "M001"), { recursive: true });
+    mkdirSync(join(dir, ".gwd", "milestones", "M001"), { recursive: true });
     writeFileSync(
-      join(dir, ".gsd", "milestones", "M001", "M001-META.json"),
+      join(dir, ".gwd", "milestones", "M001", "M001-META.json"),
       JSON.stringify({ integrationBranch: "develop" }, null, 2) + "\n",
     );
 
@@ -153,9 +153,9 @@ describe("mergeSliceToMain", () => {
   });
 
   test("advances milestone branch when it is checked out in a worktree", () => {
-    commitFile(dir, ".gitignore", ".gsd/worktrees/\n", "chore: ignore worktrees");
-    const wtPath = join(dir, ".gsd", "worktrees", "M001");
-    mkdirSync(join(dir, ".gsd", "worktrees"), { recursive: true });
+    commitFile(dir, ".gitignore", ".gwd/worktrees/\n", "chore: ignore worktrees");
+    const wtPath = join(dir, ".gwd", "worktrees", "M001");
+    mkdirSync(join(dir, ".gwd", "worktrees"), { recursive: true });
     git(["worktree", "add", "-b", "milestone/M001", wtPath, "main"], dir);
     commitFile(wtPath, "worktree-slice.txt", "slice work\n", "feat: S01 worktree");
 

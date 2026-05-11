@@ -1,6 +1,6 @@
 // GWD Compaction Snapshot — writes a ≤2 KB markdown digest of durable
 // project state before the session context is compacted. On resume, an
-// agent can `gsd_resume` (or Read .gsd/last-snapshot.md) to re-orient
+// agent can `gsd_resume` (or Read .gwd/last-snapshot.md) to re-orient
 // without re-deriving the same memories.
 //
 // Inspired by mksglu/context-mode. Independent implementation.
@@ -125,7 +125,7 @@ export function writeCompactionSnapshot(
     },
     opts,
   );
-  const gsdDir = resolve(baseDir, ".gsd");
+  const gsdDir = resolve(baseDir, ".gwd");
   if (!existsSync(gsdDir)) mkdirSync(gsdDir, { recursive: true });
   const path = resolve(gsdDir, SNAPSHOT_FILENAME);
   const finalContent = `${content}\n`;
@@ -139,7 +139,7 @@ export function writeCompactionSnapshot(
 }
 
 export function readCompactionSnapshot(baseDir: string): string | null {
-  const path = resolve(baseDir, ".gsd", SNAPSHOT_FILENAME);
+  const path = resolve(baseDir, ".gwd", SNAPSHOT_FILENAME);
   if (!existsSync(path)) return null;
   try {
     return readFileSync(path, "utf-8");

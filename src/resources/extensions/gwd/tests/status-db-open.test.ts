@@ -26,15 +26,15 @@ describe("status opens DB before deriveState (#3691)", () => {
     assert.ok(notifications.length >= 0);
   });
 
-  test("quick task commit instructions handle external .gsd roots without staging quick files", () => {
-    const instruction = buildQuickCommitInstruction("/project", "/external/.gsd");
+  test("quick task commit instructions handle external .gwd roots without staging quick files", () => {
+    const instruction = buildQuickCommitInstruction("/project", "/external/.gwd");
 
-    assert.match(instruction, /do not stage or commit `\.gsd\/quick\/\.\.\.`/);
+    assert.match(instruction, /do not stage or commit `\.gwd\/quick\/\.\.\.`/);
     assert.match(instruction, /nothing in the project repo to commit/);
   });
 
-  test("quick task commit instructions include normal commit guidance for in-project .gsd roots", () => {
-    const instruction = buildQuickCommitInstruction("/project", "/project/.gsd");
+  test("quick task commit instructions include normal commit guidance for in-project .gwd roots", () => {
+    const instruction = buildQuickCommitInstruction("/project", "/project/.gwd");
 
     assert.doesNotMatch(instruction, /nothing in the project repo to commit/);
     assert.match(instruction, /Commit your changes atomically/);

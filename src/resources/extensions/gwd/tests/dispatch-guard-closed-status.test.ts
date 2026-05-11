@@ -20,9 +20,9 @@ describe("dispatch-guard isClosedStatus migration (#3653)", () => {
 
   beforeEach(() => {
     base = mkdtempSync(join(tmpdir(), "gsd-dispatch-guard-closed-"));
-    mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
-    writeFileSync(join(base, ".gsd", "milestones", "M001", "CONTEXT.md"), "# M001\n");
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
+    writeFileSync(join(base, ".gwd", "milestones", "M001", "CONTEXT.md"), "# M001\n");
+    openDatabase(join(base, ".gwd", "gwd.db"));
   });
 
   afterEach(() => {

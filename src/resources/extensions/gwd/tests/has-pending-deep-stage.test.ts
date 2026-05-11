@@ -21,7 +21,7 @@ import { loadEffectiveGSDPreferences } from "../preferences.ts";
 
 function makeBase(): string {
   const base = join(tmpdir(), `gsd-deep-pending-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -94,7 +94,7 @@ test("hasPendingDeepStage: returns true in deep mode when only some gates pass",
   const base = makeBase();
   try {
     writeFileSync(
-      join(base, ".gsd", "PREFERENCES.md"),
+      join(base, ".gwd", "PREFERENCES.md"),
       "---\nplanning_depth: deep\nworkflow_prefs_captured: true\n---\n",
     );
     assert.equal(hasPendingDeepStage(deepPrefs, base), true);
@@ -111,7 +111,7 @@ test("loadEffectiveGSDPreferences: planning_depth survives the validate + merge 
   const base = makeBase();
   try {
     writeFileSync(
-      join(base, ".gsd", "PREFERENCES.md"),
+      join(base, ".gwd", "PREFERENCES.md"),
       "---\nplanning_depth: deep\n---\n",
     );
     const loaded = loadEffectiveGSDPreferences(base);

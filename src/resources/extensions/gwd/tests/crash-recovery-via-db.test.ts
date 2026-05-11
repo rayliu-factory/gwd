@@ -34,7 +34,7 @@ import { writeUnitRuntimeRecord } from "../unit-runtime.ts";
 
 function makeBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-crash-recovery-"));
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -61,14 +61,14 @@ function setWorkerPid(workerId: string, pid: number): void {
 test("readCrashLock returns null when no workers exist", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   assert.equal(readCrashLock(base), null);
 });
 
 test("readCrashLock returns null when only fresh (un-expired) workers exist", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   registerAutoWorker({ projectRootRealpath: normalizeRealPath(base) });
   // Heartbeat is fresh — not stale yet.
   assert.equal(readCrashLock(base), null);
@@ -77,7 +77,7 @@ test("readCrashLock returns null when only fresh (un-expired) workers exist", (t
 test("readCrashLock ignores a stale heartbeat when the worker PID is still alive", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   const projectRoot = normalizeRealPath(base);
   const workerId = registerAutoWorker({ projectRootRealpath: projectRoot });
   expireWorker(workerId);
@@ -88,7 +88,7 @@ test("readCrashLock ignores a stale heartbeat when the worker PID is still alive
 test("readCrashLock synthesizes LockData from a stale dead worker (no dispatches yet)", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   const projectRoot = normalizeRealPath(base);
   const workerId = registerAutoWorker({ projectRootRealpath: projectRoot });
   setWorkerPid(workerId, 99999);
@@ -106,7 +106,7 @@ test("readCrashLock synthesizes LockData from a stale dead worker (no dispatches
 test("readCrashLock falls back to latest in-flight runtime record when dispatch claim is missing", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   const projectRoot = normalizeRealPath(base);
   const workerId = registerAutoWorker({ projectRootRealpath: projectRoot });
   writeUnitRuntimeRecord(base, "execute-task", "M008/S04/T02", 1778069087937, {
@@ -127,7 +127,7 @@ test("readCrashLock falls back to latest in-flight runtime record when dispatch 
 test("readCrashLock includes the most recent dispatch as unitType/unitId", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "T", status: "active" });
   const projectRoot = normalizeRealPath(base);
   const workerId = registerAutoWorker({ projectRootRealpath: projectRoot });
@@ -150,7 +150,7 @@ test("readCrashLock includes the most recent dispatch as unitType/unitId", (t) =
 test("readCrashLock surfaces sessionFile from runtime_kv", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   const projectRoot = normalizeRealPath(base);
   const workerId = registerAutoWorker({ projectRootRealpath: projectRoot });
   setRuntimeKv("worker", workerId, "session_file", "/tmp/pi-session-abc.jsonl");
@@ -188,7 +188,7 @@ test("isLockProcessAlive returns false for a dead PID", () => {
 test("writeLock stores the session_file in runtime_kv (worker scope)", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   const projectRoot = normalizeRealPath(base);
   const workerId = registerAutoWorker({ projectRootRealpath: projectRoot });
 
@@ -209,7 +209,7 @@ test("writeLock stores the session_file in runtime_kv (worker scope)", (t) => {
 test("clearLock removes the session_file row for the active worker", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   const projectRoot = normalizeRealPath(base);
   const workerId = registerAutoWorker({ projectRootRealpath: projectRoot });
 

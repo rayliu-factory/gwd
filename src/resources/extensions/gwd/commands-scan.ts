@@ -3,7 +3,7 @@
  *
  * Rapid codebase assessment — lightweight alternative to /gwd map-codebase.
  * Spawns one focused AI analysis pass and writes structured documents to
- * .gsd/codebase/ for use by planning and execution phases.
+ * .gwd/codebase/ for use by planning and execution phases.
  *
  * Usage:
  *   /gwd scan                   — tech+arch focus (default)
@@ -66,11 +66,11 @@ export function resolveScanDocuments(focus: string): string[] {
 
 /**
  * Build absolute output paths for the documents produced by a scan focus.
- * All documents live under <basePath>/.gsd/codebase/
+ * All documents live under <basePath>/.gwd/codebase/
  */
 export function buildScanOutputPaths(focus: string, basePath: string): string[] {
   const docs = resolveScanDocuments(focus);
-  return docs.map((doc) => join(basePath, ".gsd", "codebase", `${doc}.md`));
+  return docs.map((doc) => join(basePath, ".gwd", "codebase", `${doc}.md`));
 }
 
 /**
@@ -89,7 +89,7 @@ export async function handleScan(
 ): Promise<void> {
   const basePath = currentDirectoryRoot();
   const { focus } = parseScanArgs(args);
-  const outputDir = join(basePath, ".gsd", "codebase");
+  const outputDir = join(basePath, ".gwd", "codebase");
   const outputPaths = buildScanOutputPaths(focus, basePath);
   const existing = checkExistingDocuments(outputPaths);
 

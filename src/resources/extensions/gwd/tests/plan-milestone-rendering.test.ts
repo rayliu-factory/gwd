@@ -25,12 +25,12 @@ test("plan-milestone prompt renders compact DB-backed planning guidance", async 
     milestoneTitle: "Reduce prompt cost",
     workingDirectory: fixtureRoot,
     inlinedContext: "## Roadmap\n\nUse the roadmap template.",
-    outputPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+    outputPath: ".gwd/milestones/M001/M001-ROADMAP.md",
     skillDiscoveryMode: "filtered",
     skillDiscoveryInstructions: "Use only relevant skills.",
     sourceFilePaths: "- src/resources/extensions/gwd/prompts/plan-milestone.md",
-    researchOutputPath: ".gsd/milestones/M001/M001-RESEARCH.md",
-    secretsOutputPath: ".gsd/milestones/M001/SECRETS.md",
+    researchOutputPath: ".gwd/milestones/M001/M001-RESEARCH.md",
+    secretsOutputPath: ".gwd/milestones/M001/SECRETS.md",
   });
 
   assert.match(prompt, /Explore First, Then Decompose/);

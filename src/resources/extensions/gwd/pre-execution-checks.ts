@@ -355,7 +355,7 @@ function extractPathFromAnnotation(raw: string): string {
   // like a path or URL. Handles prose-annotated bullets such as:
   //   `path/` directory listing (...)
   //   Prefix prose `https://...` suffix prose
-  //   Citing `.gsd/REQUIREMENTS.md` mid-sentence
+  //   Citing `.gwd/REQUIREMENTS.md` mid-sentence
   // Skips non-path backticked tokens like `note` or `npm test`.
   const backtickTokens = trimmed.matchAll(/`([^`]+)`/g);
   for (const match of backtickTokens) {

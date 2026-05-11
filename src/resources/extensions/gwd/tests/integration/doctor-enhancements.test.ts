@@ -10,7 +10,7 @@ import { formatDoctorReportJson } from "../../doctor-format.js";
 
 function makeBase(): { base: string; gsd: string; mDir: string } {
   const base = mkdtempSync(join(tmpdir(), "gsd-doctor-enh-"));
-  const gsd = join(base, ".gsd");
+  const gsd = join(base, ".gwd");
   const mDir = join(gsd, "milestones", "M001");
   mkdirSync(join(mDir, "slices"), { recursive: true });
   return { base, gsd, mDir };

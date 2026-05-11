@@ -58,7 +58,7 @@ function mkPi(cap: MockCapture, opts: { sendThrows?: boolean } = {}): any {
 
 function mkBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-4573-"));
-  mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   return base;
 }
 
@@ -161,7 +161,7 @@ describe("#4573 maybeHandleReadyPhraseWithoutFiles", () => {
   test("files present → no nudge (happy path already fired)", () => {
     const base = mkBase();
     try {
-      writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md"), "# ctx");
+      writeFileSync(join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md"), "# ctx");
       const cap = mkCapture();
       setPendingAutoStart(base, {
         basePath: base,
@@ -196,7 +196,7 @@ describe("#4573 maybeHandleReadyPhraseWithoutFiles", () => {
     // cache returns the empty listing it captured in step (a).
     const base = mkBase();
     try {
-      const mDir = join(base, ".gsd", "milestones", "M001");
+      const mDir = join(base, ".gwd", "milestones", "M001");
 
       // (a) Prime the cache with a listing that DOES NOT include M001's
       //     CONTEXT/ROADMAP files. mkBase() has already created the M001
@@ -255,8 +255,8 @@ describe("#4573 maybeHandleReadyPhraseWithoutFiles", () => {
   test("legacy unprefixed files present → no nudge", () => {
     const base = mkBase();
     try {
-      writeFileSync(join(base, ".gsd", "milestones", "M001", "CONTEXT.md"), "# ctx");
-      writeFileSync(join(base, ".gsd", "milestones", "M001", "ROADMAP.md"), "# roadmap");
+      writeFileSync(join(base, ".gwd", "milestones", "M001", "CONTEXT.md"), "# ctx");
+      writeFileSync(join(base, ".gwd", "milestones", "M001", "ROADMAP.md"), "# roadmap");
       const cap = mkCapture();
       setPendingAutoStart(base, {
         basePath: base,

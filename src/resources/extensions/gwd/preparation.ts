@@ -868,14 +868,14 @@ const MAX_PRIOR_CONTEXT_CHARS = 6000;
 /**
  * Aggregate prior context from GWD artifacts.
  *
- * Reads DECISIONS.md, REQUIREMENTS.md, KNOWLEDGE.md from the .gsd directory
+ * Reads DECISIONS.md, REQUIREMENTS.md, KNOWLEDGE.md from the .gwd directory
  * and milestone summaries from each milestone's MILESTONE-SUMMARY.md file.
  *
- * @param basePath - Root directory of the project (contains .gsd/)
+ * @param basePath - Root directory of the project (contains .gwd/)
  * @returns PriorContextBrief with aggregated context
  */
 export async function aggregatePriorContext(basePath: string): Promise<PriorContextBrief> {
-  const gsdPath = join(basePath, ".gsd");
+  const gsdPath = join(basePath, ".gwd");
 
   // Load decisions
   const decisionsContent = await loadFile(join(gsdPath, "DECISIONS.md"));

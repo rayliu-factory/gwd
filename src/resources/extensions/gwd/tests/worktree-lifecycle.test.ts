@@ -53,11 +53,11 @@ function makeDeps(
     calls,
     enterAutoWorktree: (basePath, milestoneId) => {
       calls.push({ fn: "enterAutoWorktree", args: [basePath, milestoneId] });
-      return `/project/.gsd/worktrees/${milestoneId}`;
+      return `/project/.gwd/worktrees/${milestoneId}`;
     },
     createAutoWorktree: (basePath, milestoneId) => {
       calls.push({ fn: "createAutoWorktree", args: [basePath, milestoneId] });
-      return `/project/.gsd/worktrees/${milestoneId}`;
+      return `/project/.gwd/worktrees/${milestoneId}`;
     },
     enterBranchModeForMilestone: (basePath, milestoneId) => {
       calls.push({
@@ -128,7 +128,7 @@ function makeCtx(): NotifyCtx & {
 
 function makeDbBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-lifecycle-"));
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -150,9 +150,9 @@ test("enterMilestone returns ok:true mode:worktree on successful create", () => 
   assert.equal(result.ok, true);
   if (result.ok) {
     assert.equal(result.mode, "worktree");
-    assert.equal(result.path, "/project/.gsd/worktrees/M001");
+    assert.equal(result.path, "/project/.gwd/worktrees/M001");
   }
-  assert.equal(s.basePath, "/project/.gsd/worktrees/M001");
+  assert.equal(s.basePath, "/project/.gwd/worktrees/M001");
   assert.equal(
     deps.calls.filter((c) => c.fn === "invalidateAllCaches").length,
     1,
@@ -254,7 +254,7 @@ test("enterMilestone returns ok:false reason:creation-failed when branch mode th
 test("enterMilestone enters existing worktree when path resolves", () => {
   const s = makeSession();
   const deps = makeDeps({
-    getAutoWorktreePath: () => "/project/.gsd/worktrees/M001",
+    getAutoWorktreePath: () => "/project/.gwd/worktrees/M001",
   });
   const ctx = makeCtx();
   const lifecycle = new WorktreeLifecycle(s, deps);
@@ -269,7 +269,7 @@ test("enterMilestone enters existing worktree when path resolves", () => {
 test("enterMilestone returns ok:false reason:lease-conflict when another worker holds the lease", (t) => {
   const base = makeDbBase();
   t.after(() => cleanupDbBase(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "Test", status: "active" });
   const holder = registerAutoWorker({ projectRootRealpath: base });
   const contender = registerAutoWorker({ projectRootRealpath: base });
@@ -294,7 +294,7 @@ test("enterMilestone returns ok:false reason:lease-conflict when another worker 
 
 test("enterMilestone is idempotent when already in the milestone worktree", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.gwd/worktrees/M001",
     originalBasePath: "/project",
     currentMilestoneId: "M001",
   });
@@ -307,9 +307,9 @@ test("enterMilestone is idempotent when already in the milestone worktree", () =
   assert.equal(result.ok, true);
   if (result.ok) {
     assert.equal(result.mode, "worktree");
-    assert.equal(result.path, "/project/.gsd/worktrees/M001");
+    assert.equal(result.path, "/project/.gwd/worktrees/M001");
   }
-  assert.equal(s.basePath, "/project/.gsd/worktrees/M001");
+  assert.equal(s.basePath, "/project/.gwd/worktrees/M001");
   assert.equal(deps.calls.filter((c) => c.fn === "createAutoWorktree").length, 0);
   assert.equal(deps.calls.filter((c) => c.fn === "enterAutoWorktree").length, 0);
 });
@@ -431,7 +431,7 @@ test("degradeToBranchMode marks degraded and notifies on branch-mode failure", (
 test("restoreToProjectRoot restores basePath to originalBasePath and rebuilds git service", () => {
   const s = makeSession();
   s.originalBasePath = "/project";
-  s.basePath = "/project/.gsd/worktrees/M001";
+  s.basePath = "/project/.gwd/worktrees/M001";
   const deps = makeDeps();
   const lifecycle = new WorktreeLifecycle(s, deps);
 
@@ -576,7 +576,7 @@ test("adoptOrphanWorktree swaps to worktree path and reverts to base on !merged"
   s.originalBasePath = "/old";
   s.active = true;
   const deps = makeDeps({
-    getAutoWorktreePath: () => "/project/.gsd/worktrees/M001",
+    getAutoWorktreePath: () => "/project/.gwd/worktrees/M001",
   });
   const lifecycle = new WorktreeLifecycle(s, deps);
 
@@ -587,7 +587,7 @@ test("adoptOrphanWorktree swaps to worktree path and reverts to base on !merged"
   });
 
   // Inside callback: swap was applied
-  assert.equal(basePathInsideCallback, "/project/.gsd/worktrees/M001");
+  assert.equal(basePathInsideCallback, "/project/.gwd/worktrees/M001");
   // After failed merge: reverted to base
   assert.equal(s.basePath, "/project");
   assert.equal(s.originalBasePath, "/project");
@@ -600,7 +600,7 @@ test("adoptOrphanWorktree holds the swap on merged && active", () => {
   s.originalBasePath = "/old";
   s.active = true;
   const deps = makeDeps({
-    getAutoWorktreePath: () => "/project/.gsd/worktrees/M001",
+    getAutoWorktreePath: () => "/project/.gwd/worktrees/M001",
   });
   const lifecycle = new WorktreeLifecycle(s, deps);
 
@@ -609,7 +609,7 @@ test("adoptOrphanWorktree holds the swap on merged && active", () => {
   }));
 
   // Merged && active — swap held
-  assert.equal(s.basePath, "/project/.gsd/worktrees/M001");
+  assert.equal(s.basePath, "/project/.gwd/worktrees/M001");
   assert.equal(s.originalBasePath, "/project");
 });
 
@@ -619,7 +619,7 @@ test("adoptOrphanWorktree restores prior paths on merged && !active", () => {
   s.originalBasePath = "/prior-original";
   s.active = false;
   const deps = makeDeps({
-    getAutoWorktreePath: () => "/project/.gsd/worktrees/M001",
+    getAutoWorktreePath: () => "/project/.gwd/worktrees/M001",
   });
   const lifecycle = new WorktreeLifecycle(s, deps);
 
@@ -766,14 +766,14 @@ test("adoptOrphanWorktree restores prior paths when callback throws", () => {
   const lifecycle = new WorktreeLifecycle(
     s,
     makeDeps({
-      getAutoWorktreePath: () => "/project/.gsd/worktrees/M001",
+      getAutoWorktreePath: () => "/project/.gwd/worktrees/M001",
     }),
   );
 
   assert.throws(
     () =>
       lifecycle.adoptOrphanWorktree("M001", "/project", () => {
-        assert.equal(s.basePath, "/project/.gsd/worktrees/M001");
+        assert.equal(s.basePath, "/project/.gwd/worktrees/M001");
         assert.equal(s.originalBasePath, "/project");
         throw new Error("merge exploded");
       }),

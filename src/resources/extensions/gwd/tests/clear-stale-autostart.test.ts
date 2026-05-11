@@ -25,7 +25,7 @@ describe("clear stale pending auto-start (#3667)", () => {
   test("setPendingAutoStart defaults createdAt to Date.now()", (t) => {
     const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-pending-autostart-")));
     t.after(() => rmSync(base, { recursive: true, force: true }));
-    mkdirSync(join(base, ".gsd"), { recursive: true });
+    mkdirSync(join(base, ".gwd"), { recursive: true });
     const before = Date.now();
 
     setPendingAutoStart(base, { basePath: base, milestoneId: "M001" });
@@ -39,7 +39,7 @@ describe("clear stale pending auto-start (#3667)", () => {
   test("setPendingAutoStart preserves explicit createdAt for stale-entry checks", (t) => {
     const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-pending-autostart-old-")));
     t.after(() => rmSync(base, { recursive: true, force: true }));
-    mkdirSync(join(base, ".gsd"), { recursive: true });
+    mkdirSync(join(base, ".gwd"), { recursive: true });
 
     setPendingAutoStart(base, { basePath: base, milestoneId: "M001", createdAt: 123 });
 

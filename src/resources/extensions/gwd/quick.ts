@@ -5,7 +5,7 @@
  * Lightweight task execution with GWD guarantees (atomic commits, state
  * tracking) but without the full milestone/slice ceremony.
  *
- * Quick tasks live in `.gsd/quick/` and are tracked in STATE.md's
+ * Quick tasks live in `.gwd/quick/` and are tracked in STATE.md's
  * "Quick Tasks Completed" table.
  */
 
@@ -94,8 +94,8 @@ export function buildQuickCommitInstruction(basePath: string, root: string): str
   const externalState = isExternalGsdRoot(basePath, root);
   if (externalState) {
     return [
-      "Commit repo changes atomically, but do not stage or commit `.gsd/quick/...`:",
-      "   - `.gsd/` resolves outside this git repository, so Git cannot stage quick-task summary files from the project repo.",
+      "Commit repo changes atomically, but do not stage or commit `.gwd/quick/...`:",
+      "   - `.gwd/` resolves outside this git repository, so Git cannot stage quick-task summary files from the project repo.",
       "   - Write the quick summary file directly at the requested path; that file is persisted by GWD external state.",
       "   - Stage and commit only implementation/test/docs files that live inside the repository.",
       "   - If the task only writes quick-task research/summary files and no repository files changed, do not run `git commit`; report that there was nothing in the project repo to commit.",
@@ -199,10 +199,10 @@ export async function handleQuick(
   const basePath = process.cwd();
   const root = gsdRoot(basePath);
 
-  // Validate: .gsd/ must exist
+  // Validate: .gwd/ must exist
   if (!existsSync(root)) {
     ctx.ui.notify(
-      "No .gsd/ directory found. Run /gwd to initialize a project first.",
+      "No .gwd/ directory found. Run /gwd to initialize a project first.",
       "error",
     );
     return;
@@ -223,7 +223,7 @@ export async function handleQuick(
   const taskNum = getNextTaskNum(quickDir);
   const slug = slugify(description);
   const taskDir = ensureQuickDir(basePath, taskNum, slug);
-  const taskDirRel = `.gsd/quick/${taskNum}-${slug}`;
+  const taskDirRel = `.gwd/quick/${taskNum}-${slug}`;
   const date = new Date().toISOString().split("T")[0];
 
   // Create git branch for the quick task (unless isolation:none — #3337)

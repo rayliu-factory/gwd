@@ -52,7 +52,7 @@ export const BUNDLED_SKILL_TRIGGERS: Array<{ trigger: string; skill: string }> =
   { trigger: "Block completion claims until verification evidence has been produced in this message", skill: "verify-before-complete" },
   { trigger: "Create a Model Context Protocol (MCP) server — tool design, error handling, Inspector testing, evals", skill: "create-mcp-server" },
   { trigger: "Write documentation, proposals, specs, RFCs, or READMEs for a fresh reader", skill: "write-docs" },
-  { trigger: "Post-mortem a failed GWD auto-mode run using .gsd/activity, .gsd/journal, and .gsd/metrics.json", skill: "forensics" },
+  { trigger: "Post-mortem a failed GWD auto-mode run using .gwd/activity, .gwd/journal, and .gwd/metrics.json", skill: "forensics" },
   { trigger: "Prepare a clean cross-session handoff — continue.md + summary updates (pause/resume work)", skill: "handoff" },
   { trigger: "Security review with STRIDE threat modeling and exploit-scenario reporting", skill: "security-review" },
   { trigger: "HTTP/REST/GraphQL API design — verbs, status codes, pagination, errors, idempotency, versioning", skill: "api-design" },
@@ -88,7 +88,7 @@ function buildBundledSkillsTable(): string {
 function warnDeprecatedAgentInstructions(): void {
   const paths = [
     join(gsdHome(), "agent-instructions.md"),
-    join(process.cwd(), ".gsd", "agent-instructions.md"),
+    join(process.cwd(), ".gwd", "agent-instructions.md"),
   ];
   for (const path of paths) {
     if (existsSync(path)) {
@@ -105,7 +105,7 @@ export async function buildBeforeAgentStartResult(
   event: { prompt: string; systemPrompt: string },
   ctx: ExtensionContext,
 ): Promise<{ systemPrompt: string; message?: { customType: string; content: string; display: false } } | undefined> {
-  if (!existsSync(join(process.cwd(), ".gsd"))) return undefined;
+  if (!existsSync(join(process.cwd(), ".gwd"))) return undefined;
 
   const stopContextTimer = debugTime("context-inject");
   const systemContent = loadPrompt("system", {
@@ -194,11 +194,11 @@ export async function buildBeforeAgentStartResult(
       const rawContent = rawCodebase.trim();
       if (rawContent) {
         // Cap injection size to ~2 000 tokens to avoid bloating every request.
-        // Full map is always available at .gsd/CODEBASE.md.
+        // Full map is always available at .gwd/CODEBASE.md.
         const generatedMatch = rawContent.match(/Generated: (\S+)/);
         const generatedAt = generatedMatch?.[1] ?? "unknown";
         const content = rawContent.length > DEFAULT_CODEBASE_MAX_CHARS
-          ? rawContent.slice(0, DEFAULT_CODEBASE_MAX_CHARS) + "\n\n*(truncated — see .gsd/CODEBASE.md for full map)*"
+          ? rawContent.slice(0, DEFAULT_CODEBASE_MAX_CHARS) + "\n\n*(truncated — see .gwd/CODEBASE.md for full map)*"
           : rawContent;
         codebaseBlock = `\n\n[PROJECT CODEBASE — File structure and descriptions (generated ${generatedAt}, auto-refreshed when GWD detects tracked file changes; use /gwd codebase stats for status)]\n\n${content}`;
       }
@@ -298,7 +298,7 @@ function getContextMessageCharLimit(): number | null {
 
 function limitContextMessageContent(content: string, limit: number | null): string {
   if (!limit || content.length <= limit) return content;
-  const suffix = "\n\n[GWD Context Truncated]\nFull context is available from the referenced .gsd files and tools; read on demand only if this excerpt lacks required evidence.";
+  const suffix = "\n\n[GWD Context Truncated]\nFull context is available from the referenced .gwd files and tools; read on demand only if this excerpt lacks required evidence.";
   const headBudget = Math.max(0, limit - suffix.length);
   return `${content.slice(0, headBudget).trimEnd()}${suffix}`;
 }
@@ -386,7 +386,7 @@ export function loadKnowledgeBlock(gsdHomeDir: string, cwd: string): { block: st
     }
   }
 
-  // 2. Project knowledge (.gsd/KNOWLEDGE.md) — project-specific
+  // 2. Project knowledge (.gwd/KNOWLEDGE.md) — project-specific
   let projectKnowledge = "";
   const knowledgePath = resolveGsdRootFile(cwd, "KNOWLEDGE");
   if (existsSync(knowledgePath)) {
@@ -473,7 +473,7 @@ function buildWorktreeContextBlock(): string {
       `- Branch: ${autoWorktree.branch}`,
       "",
       "All file operations, bash commands, and GWD state resolve against the worktree path above.",
-      "Write every .gsd artifact in the worktree path above, never in the main project tree.",
+      "Write every .gwd artifact in the worktree path above, never in the main project tree.",
     ].join("\n");
   }
 
@@ -716,7 +716,7 @@ export function buildForensicsContextInjection(basePath: string, prompt: string)
  * is complete or the session expires.
  */
 export function clearForensicsMarker(basePath: string): void {
-  const markerPath = join(basePath, ".gsd", "runtime", "active-forensics.json");
+  const markerPath = join(basePath, ".gwd", "runtime", "active-forensics.json");
   if (existsSync(markerPath)) {
     try {
       unlinkSync(markerPath);

@@ -162,13 +162,13 @@ function hasCheckedTaskCompletionOnDisk(base: string, mid: string, sid: string, 
 }
 
 /**
- * Check whether a milestone produced implementation artifacts (non-`.gsd/`
+ * Check whether a milestone produced implementation artifacts (non-`.gwd/`
  * files) in git history. The primary signal is the branch diff against the
  * integration branch. When a retry is already on the integration branch, that
  * diff is a self-diff; if a milestone ID is available, fall back to recent
  * GWD-tagged commits for that milestone.
  *
- * Returns "present" if implementation files found, "absent" if only .gsd/ files,
+ * Returns "present" if implementation files found, "absent" if only .gwd/ files,
  * "unknown" if git is unavailable or check failed (callers decide how to handle).
  */
 export function hasImplementationArtifacts(basePath: string, milestoneId?: string): "present" | "absent" | "unknown" {
@@ -213,7 +213,7 @@ export function hasImplementationArtifacts(basePath: string, milestoneId?: strin
     if (branchClassification === "present") return "present";
 
     // A completing milestone branch can have a non-empty diff containing only
-    // .gsd/ closeout files after implementation commits already landed on the
+    // .gwd/ closeout files after implementation commits already landed on the
     // recorded integration branch. In that topology, the branch diff alone is
     // insufficient; use the same milestone-tagged evidence fallback as the
     // self-diff retry path before declaring the milestone implementation-free.
@@ -250,7 +250,7 @@ function classifyImplementationFiles(files: readonly string[]): "present" | "abs
 }
 
 function isImplementationPath(file: string): boolean {
-  return !file.startsWith(".gsd/") && !file.startsWith(".gsd\\");
+  return !file.startsWith(".gwd/") && !file.startsWith(".gwd\\");
 }
 
 function normalizeRepoPath(file: string): string {
@@ -329,15 +329,15 @@ function getChangedFilesFromMilestoneTaggedCommits(
   basePath: string,
   milestoneId: string,
 ): { ok: boolean; matched: boolean; files: string[] } {
-  // Primary: path-scoped log against .gsd/milestones/<id>. Fast and unbounded
-  // by depth when .gsd/ is tracked in git.
+  // Primary: path-scoped log against .gwd/milestones/<id>. Fast and unbounded
+  // by depth when .gwd/ is tracked in git.
   const scoped = scanGsdTaggedCommits(basePath, milestoneId, [
-    "log", "--format=%H%x1f%B%x1e", "HEAD", "--", `.gsd/milestones/${milestoneId}`,
+    "log", "--format=%H%x1f%B%x1e", "HEAD", "--", `.gwd/milestones/${milestoneId}`,
   ]);
   if (!scoped.ok) return scoped;
   if (scoped.matched && classifyImplementationFiles(scoped.files) === "present") return scoped;
 
-  // Fallback (#5033): when .gsd/ is gitignored / external / untracked, the
+  // Fallback (#5033): when .gwd/ is gitignored / external / untracked, the
   // path-scoped scan matches no commits even though GWD-tagged commits
   // referencing the milestone exist on the integration branch. Re-scan all
   // of HEAD's history and rely on commitMatchesMilestone to bind by
@@ -542,7 +542,7 @@ function commitMatchesMilestone(basePath: string, message: string, milestoneId: 
   // Meaningful execute-task commits currently store task scope as Sxx/Tyy
   // rather than Mxx/Sxx/Tyy. Bind those commits back to the milestone when
   // either the commit touched this milestone's artifacts, or — for projects
-  // where .gsd/ is gitignored/external (#5033) — the message explicitly
+  // where .gwd/ is gitignored/external (#5033) — the message explicitly
   // names the milestone or local GWD state proves the task belongs here.
   if (/^GWD-Task:\s*S[^/\s]+\/T\S+/m.test(message)) {
     if (files.some((file) => isMilestoneArtifactPath(file, milestoneId))) return true;
@@ -583,8 +583,8 @@ function commitTrailerStartsWithMilestone(message: string, milestoneId: string):
 }
 
 function isMilestoneArtifactPath(file: string, milestoneId: string): boolean {
-  return file.startsWith(`.gsd/milestones/${milestoneId}/`)
-    || file.startsWith(`.gsd\\milestones\\${milestoneId}\\`);
+  return file.startsWith(`.gwd/milestones/${milestoneId}/`)
+    || file.startsWith(`.gwd\\milestones\\${milestoneId}\\`);
 }
 
 /**
@@ -901,7 +901,7 @@ export function verifyExpectedArtifact(
   }
 
   // complete-milestone must have produced implementation artifacts (#1703).
-  // A milestone with only .gsd/ plan files and zero implementation code is
+  // A milestone with only .gwd/ plan files and zero implementation code is
   // not genuinely complete — the LLM wrote plan files but skipped actual work.
   if (unitType === "complete-milestone") {
     const summaryOutcome = classifyMilestoneSummaryContent(readFileSync(absPath, "utf-8"));
@@ -1112,7 +1112,7 @@ function reconcileOtherInProgressGitOps(
 /**
  * Detect leftover merge state from a prior session and reconcile it.
  * If MERGE_HEAD or SQUASH_MSG exists, check whether conflicts are resolved.
- * If resolved: finalize the commit. If only .gsd conflicts remain: auto-resolve.
+ * If resolved: finalize the commit. If only .gwd conflicts remain: auto-resolve.
  * If code conflicts remain: fail safe without modifying the worktree.
  */
 export function reconcileMergeState(
@@ -1152,32 +1152,32 @@ export function reconcileMergeState(
       return "blocked";
     }
   } else {
-    // Still conflicted — try auto-resolving .gsd/ state file conflicts (#530)
-    const gsdConflicts = conflictedFiles.filter((f) => f.startsWith(".gsd/"));
-    const codeConflicts = conflictedFiles.filter((f) => !f.startsWith(".gsd/"));
+    // Still conflicted — try auto-resolving .gwd/ state file conflicts (#530)
+    const gsdConflicts = conflictedFiles.filter((f) => f.startsWith(".gwd/"));
+    const codeConflicts = conflictedFiles.filter((f) => !f.startsWith(".gwd/"));
 
     if (gsdConflicts.length > 0 && codeConflicts.length === 0) {
-      // All conflicts are in .gsd/ state files — auto-resolve by accepting theirs
+      // All conflicts are in .gwd/ state files — auto-resolve by accepting theirs
       let resolved = true;
       try {
         nativeCheckoutTheirs(basePath, gsdConflicts);
         nativeAddPaths(basePath, gsdConflicts);
       } catch (e) {
-        logError("recovery", `auto-resolve .gsd/ conflicts failed: ${(e as Error).message}`);
+        logError("recovery", `auto-resolve .gwd/ conflicts failed: ${(e as Error).message}`);
         resolved = false;
       }
       if (resolved) {
         try {
           nativeCommit(
             basePath,
-            "chore: auto-resolve .gsd/ state file conflicts",
+            "chore: auto-resolve .gwd/ state file conflicts",
           );
           ctx.ui.notify(
-            `Auto-resolved ${gsdConflicts.length} .gsd/ state file conflict(s) from prior merge.`,
+            `Auto-resolved ${gsdConflicts.length} .gwd/ state file conflict(s) from prior merge.`,
             "info",
           );
         } catch (e) {
-          logError("recovery", `auto-commit .gsd/ conflict resolution failed: ${(e as Error).message}`);
+          logError("recovery", `auto-commit .gwd/ conflict resolution failed: ${(e as Error).message}`);
           resolved = false;
         }
       }

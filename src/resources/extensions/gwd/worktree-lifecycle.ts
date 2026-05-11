@@ -713,7 +713,7 @@ function _mergeWorktreeModeImpl(
 
     // Resolve roadmap — try project root first, then worktree path as
     // fallback. The worktree may hold the only copy when state-back
-    // projection silently dropped it or .gsd/ is not symlinked. Without
+    // projection silently dropped it or .gwd/ is not symlinked. Without
     // the fallback, a missing roadmap triggers bare teardown which
     // deletes the branch and orphans all milestone commits (#1573).
     let roadmapPath = deps.resolveMilestoneFile(
@@ -783,10 +783,10 @@ function _mergeWorktreeModeImpl(
         "info",
       );
     } else {
-      // #1906 — milestone produced only .gsd/ metadata. Surface
+      // #1906 — milestone produced only .gwd/ metadata. Surface
       // clearly so the user knows the milestone is not truly complete.
       notify(
-        `WARNING: Milestone ${milestoneId} merged to main but contained NO code changes — only .gsd/ metadata files. ` +
+        `WARNING: Milestone ${milestoneId} merged to main but contained NO code changes — only .gwd/ metadata files. ` +
           `The milestone summary may describe planned work that was never implemented. ` +
           `Review the milestone output and re-run if code is missing.`,
         "warning",
@@ -945,7 +945,7 @@ function _mergeBranchModeImpl(
       );
     } else {
       notify(
-        `WARNING: Milestone ${milestoneId} merged (branch mode) but contained NO code changes — only .gsd/ metadata. ` +
+        `WARNING: Milestone ${milestoneId} merged (branch mode) but contained NO code changes — only .gwd/ metadata. ` +
           `Review the milestone output and re-run if code is missing.`,
         "warning",
       );

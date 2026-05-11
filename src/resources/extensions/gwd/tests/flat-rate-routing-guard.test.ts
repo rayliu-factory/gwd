@@ -46,9 +46,9 @@ describe("flat-rate provider routing guard (#3453)", () => {
     // config from tier_models — it should return undefined so the
     // user's selected model is preserved.
     try {
-      mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+      mkdirSync(join(tempProject, ".gwd"), { recursive: true });
       writeFileSync(
-        join(tempProject, ".gsd", "PREFERENCES.md"),
+        join(tempProject, ".gwd", "PREFERENCES.md"),
         [
           "---",
           "dynamic_routing:",
@@ -228,9 +228,9 @@ describe("flat-rate routing opt-in (#4386)", () => {
     const tempProject = mkdtempSync(join(tmpdir(), "gsd-4386-project-"));
     const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-4386-home-"));
     try {
-      mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+      mkdirSync(join(tempProject, ".gwd"), { recursive: true });
       writeFileSync(
-        join(tempProject, ".gsd", "PREFERENCES.md"),
+        join(tempProject, ".gwd", "PREFERENCES.md"),
         ["---", "version: 1", prefsYaml, "---"].join("\n"),
         "utf-8",
       );

@@ -146,7 +146,7 @@ describe("metrics atomic merge — parallel workers", () => {
 
   beforeEach(() => {
     tmpDir = mkdtempSync(join(tmpdir(), "gsd-metrics-atomic-"));
-    gsdDir = join(tmpDir, ".gsd");
+    gsdDir = join(tmpDir, ".gwd");
     mkdirSync(gsdDir, { recursive: true });
     metricsPath = join(gsdDir, "metrics.json");
   });

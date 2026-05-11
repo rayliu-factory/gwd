@@ -14,7 +14,7 @@ export function registerQueryTools(pi: ExtensionAPI): void {
     description:
       "Read the current status of a milestone and all its slices from the GWD database. " +
       "Returns milestone metadata, per-slice status, and task counts per slice. " +
-      "Use this instead of querying .gsd/gwd.db directly via sqlite3 or better-sqlite3.",
+      "Use this instead of querying .gwd/gwd.db directly via sqlite3 or better-sqlite3.",
     promptSnippet: "Get milestone status, slice statuses, and task counts for a given milestoneId",
     promptGuidelines: [
       "Use this tool — not sqlite3 or better-sqlite3 — to inspect milestone or slice state from the DB.",
@@ -39,13 +39,13 @@ export function registerQueryTools(pi: ExtensionAPI): void {
     name: "gsd_checkpoint_db",
     label: "Checkpoint GWD Database",
     description:
-      "Flush the SQLite WAL (Write-Ahead Log) into the base gsd.db file. " +
-      "Call this before `git add .gsd/gwd.db` to ensure the committed database " +
+      "Flush the SQLite WAL (Write-Ahead Log) into the base gwd.db file. " +
+      "Call this before `git add .gwd/gwd.db` to ensure the committed database " +
       "contains current milestone/slice/task state rather than stale pre-session content. " +
       "Safe to call at any time while GWD is running.",
-    promptSnippet: "Flush WAL into gsd.db so git add stages current state",
+    promptSnippet: "Flush WAL into gwd.db so git add stages current state",
     promptGuidelines: [
-      "Call gsd_checkpoint_db immediately before staging .gsd/gwd.db with git add.",
+      "Call gsd_checkpoint_db immediately before staging .gwd/gwd.db with git add.",
       "Do not use sqlite3 or shell commands to checkpoint — they are blocked. Use this tool instead.",
     ],
     parameters: Type.Object({}),
@@ -60,7 +60,7 @@ export function registerQueryTools(pi: ExtensionAPI): void {
       const { checkpointDatabase } = await import("../gwd-db.js");
       checkpointDatabase();
       return {
-        content: [{ type: "text", text: "WAL checkpoint complete. gsd.db is now up to date and safe to stage with git add." }],
+        content: [{ type: "text", text: "WAL checkpoint complete. gwd.db is now up to date and safe to stage with git add." }],
         details: { operation: "checkpoint_db", status: "ok" },
       };
     },

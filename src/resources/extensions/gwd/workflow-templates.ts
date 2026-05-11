@@ -241,7 +241,7 @@ export function getTemplateInfo(name: string): string | null {
     "",
     `Description: ${t.description}`,
     `Complexity:  ${t.estimated_complexity}`,
-    `Requires .gsd/: ${t.requires_project ? "yes" : "no"}`,
+    `Requires .gwd/: ${t.requires_project ? "yes" : "no"}`,
     "",
     "Phases:",
     ...t.phases.map((p, i) => `  ${i + 1}. ${p}`),

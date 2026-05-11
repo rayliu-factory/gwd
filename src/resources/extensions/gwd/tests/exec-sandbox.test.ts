@@ -40,7 +40,7 @@ test('runExecSandbox: captures stdout, persists artifacts, returns digest', asyn
     assert.equal(result.exit_code, 0);
     assert.equal(result.timed_out, false);
     assert.ok(result.digest.includes('hello world'), `digest should contain stdout: ${result.digest}`);
-    assert.ok(result.stdout_path.startsWith(join(base, '.gsd', 'exec')), 'stdout path under .gsd/exec');
+    assert.ok(result.stdout_path.startsWith(join(base, '.gwd', 'exec')), 'stdout path under .gwd/exec');
     assert.equal(readFileSync(result.stdout_path, 'utf-8').trim(), 'hello world');
     const meta = JSON.parse(readFileSync(result.meta_path, 'utf-8')) as Record<string, unknown>;
     assert.equal(meta.runtime, 'bash');

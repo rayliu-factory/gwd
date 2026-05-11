@@ -79,7 +79,7 @@ describe("write-gate basePath regression", () => {
     markDepthVerified("M001", baseDirA);
 
     // Confirm the snapshot file was written under baseDirA.
-    const snapshotPath = join(baseDirA, ".gsd", "runtime", "write-gate-state.json");
+    const snapshotPath = join(baseDirA, ".gwd", "runtime", "write-gate-state.json");
     assert.ok(existsSync(snapshotPath), "snapshot file should exist under baseDirA");
 
     // Simulate what happens when cwd changes to a different project root.

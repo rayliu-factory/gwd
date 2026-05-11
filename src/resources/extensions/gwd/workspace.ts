@@ -1,7 +1,7 @@
 // GWD-2 + Workspace handle: single source of truth for path resolution per milestone
 
 import { join, resolve } from "node:path";
-import { type GsdPathContract, resolveGsdPathContract, normalizeRealPath } from "./paths.js";
+import { type GwdPathContract, resolveGwdPathContract, normalizeRealPath } from "./paths.js";
 import { isGsdWorktreePath, resolveWorktreeProjectRoot } from "./worktree-root.js";
 
 export type GsdWorkspaceMode = "project" | "worktree";
@@ -10,7 +10,7 @@ export interface GsdWorkspace {
   readonly projectRoot: string;          // realpath-normalized absolute
   readonly worktreeRoot: string | null;  // realpath-normalized absolute, null when no worktree
   readonly mode: GsdWorkspaceMode;
-  readonly contract: GsdPathContract;    // pre-resolved, frozen
+  readonly contract: GwdPathContract;    // pre-resolved, frozen
   readonly identityKey: string;          // canonical key (realpath of projectRoot) for dedup/cache
   readonly lockRoot: string;             // where auto.lock and {MID}-META.json live (always projectRoot)
 }
@@ -46,12 +46,12 @@ export function createWorkspace(rawBasePath: string): GsdWorkspace {
   const worktreeRoot = isWorktree ? tryRealpath(resolvedBase) : null;
 
   // Derive a canonical base from the already-realpath-normalized paths so that
-  // resolveGsdPathContract always receives a canonical path. Using the raw
-  // resolvedBase here can produce a non-canonical projectGsd when the input
-  // path contains symlinks, causing contract.projectGsd to diverge from the
+  // resolveGwdPathContract always receives a canonical path. Using the raw
+  // resolvedBase here can produce a non-canonical projectGwd when the input
+  // path contains symlinks, causing contract.projectGwd to diverge from the
   // realpath-normalized projectRoot / identityKey.
   const canonicalBase = isWorktree ? (worktreeRoot ?? resolvedBase) : projectRoot;
-  const contract = Object.freeze(resolveGsdPathContract(canonicalBase));
+  const contract = Object.freeze(resolveGwdPathContract(canonicalBase));
 
   const identityKey = tryRealpath(projectRoot);
 
@@ -71,14 +71,14 @@ export function createWorkspace(rawBasePath: string): GsdWorkspace {
 
 /**
  * Bind a milestoneId to a workspace, producing an immutable MilestoneScope
- * with path-returning closures that resolve via the authoritative projectGsd.
+ * with path-returning closures that resolve via the authoritative projectGwd.
  *
- * All milestone-content paths route to contract.projectGsd (canonical),
+ * All milestone-content paths route to contract.projectGwd (canonical),
  * since that is the authoritative source of truth regardless of worktree mode.
  */
 export function scopeMilestone(workspace: GsdWorkspace, milestoneId: string): MilestoneScope {
   const { contract } = workspace;
-  const gsd = contract.projectGsd;
+  const gsd = contract.projectGwd;
 
   const scope: MilestoneScope = Object.freeze({
     workspace,

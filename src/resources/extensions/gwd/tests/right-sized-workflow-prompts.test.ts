@@ -19,8 +19,8 @@ function git(cwd: string, args: string[]): string {
 function makeRepo(files: Record<string, string>): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-right-size-"));
   git(base, ["init", "-b", "main"]);
-  mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
-  writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md"), "# Context\n\nTest milestone.");
+  mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
+  writeFileSync(join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md"), "# Context\n\nTest milestone.");
   for (const [path, content] of Object.entries(files)) {
     const abs = join(base, path);
     mkdirSync(join(abs, ".."), { recursive: true });
@@ -32,7 +32,7 @@ function makeRepo(files: Record<string, string>): string {
 }
 
 function writeCompleteMilestoneFiles(base: string, validation: string): void {
-  const dir = join(base, ".gsd", "milestones", "M001");
+  const dir = join(base, ".gwd", "milestones", "M001");
   mkdirSync(join(dir, "slices", "S01"), { recursive: true });
   writeFileSync(join(dir, "M001-ROADMAP.md"), "# M001\n\n## Slices\n- [x] **S01: One** `risk:low` `depends:[]`\n  > Done\n");
   writeFileSync(join(dir, "M001-VALIDATION.md"), validation);
@@ -43,9 +43,9 @@ function validationMetadata(): string {
   return [
     "validation_metadata:",
     "  covered_artifacts:",
-    "    - `.gsd/milestones/M001/M001-VALIDATION.md`",
-    "    - `.gsd/milestones/M001/M001-ROADMAP.md`",
-    "    - `.gsd/milestones/M001/slices/S01/S01-SUMMARY.md`",
+    "    - `.gwd/milestones/M001/M001-VALIDATION.md`",
+    "    - `.gwd/milestones/M001/M001-ROADMAP.md`",
+    "    - `.gwd/milestones/M001/slices/S01/S01-SUMMARY.md`",
   ].join("\n");
 }
 
@@ -164,8 +164,8 @@ test("complete-milestone prompt does not trust pass validation missing current s
       "# Validation",
       "validation_metadata:",
       "  covered_artifacts:",
-      "    - `.gsd/milestones/M001/M001-VALIDATION.md`",
-      "    - `.gsd/milestones/M001/M001-ROADMAP.md`",
+      "    - `.gwd/milestones/M001/M001-VALIDATION.md`",
+      "    - `.gwd/milestones/M001/M001-ROADMAP.md`",
       "",
       "All checks passed.",
     ].join("\n"));

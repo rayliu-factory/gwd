@@ -8,7 +8,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
-import { resolveGsdPathContract } from "./paths.js";
+import { resolveGwdPathContract } from "./paths.js";
 import { getAutoWorktreePath } from "./auto-worktree.js";
 import { buildWorktreeLifecycleDeps } from "./auto.js";
 import {
@@ -39,11 +39,11 @@ export type MergeOrder = "sequential" | "by-completion";
 /**
  * Check whether a milestone is complete by querying the canonical project DB.
  * Uses a subprocess to avoid disrupting the global DB singleton.
- * Returns true when milestones.status = 'complete' in project gsd.db.
+ * Returns true when milestones.status = 'complete' in project gwd.db.
  */
 export function isMilestoneCompleteInProjectDb(basePath: string, mid: string): boolean {
-  const workRoot = join(basePath, ".gsd", "worktrees", mid);
-  const dbPath = resolveGsdPathContract(workRoot, basePath).projectDb;
+  const workRoot = join(basePath, ".gwd", "worktrees", mid);
+  const dbPath = resolveGwdPathContract(workRoot, basePath).projectDb;
   if (!existsSync(dbPath)) return false;
 
   try {
@@ -65,7 +65,7 @@ export function isMilestoneCompleteInProjectDb(basePath: string, mid: string): b
  */
 function discoverDbCompletedMilestones(basePath: string): Set<string> {
   const completed = new Set<string>();
-  const worktreeDir = join(basePath, ".gsd", "worktrees");
+  const worktreeDir = join(basePath, ".gwd", "worktrees");
   try {
     for (const entry of readdirSync(worktreeDir)) {
       if (entry.startsWith("M") && isMilestoneCompleteInProjectDb(basePath, entry)) {
@@ -120,7 +120,7 @@ export function determineMergeOrder(
         title: mid,
         pid: 0,
         process: null,
-        worktreePath: basePath ? join(basePath, ".gsd", "worktrees", mid) : "",
+        worktreePath: basePath ? join(basePath, ".gwd", "worktrees", mid) : "",
         startedAt: 0,
         state: "stopped",
         cost: 0,

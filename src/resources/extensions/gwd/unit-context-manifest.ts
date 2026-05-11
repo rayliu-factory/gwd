@@ -117,21 +117,21 @@ export type ContextModePolicy =
  *   - "read-only"  — Read tools only. No file mutation. No shell. No subagent
  *                    dispatch. Reserved for future units that should be
  *                    strictly observational (none today).
- *   - "planning"   — Read tools always; writes restricted to .gsd/** under
+ *   - "planning"   — Read tools always; writes restricted to .gwd/** under
  *                    basePath; Bash limited to a per-unit safe allowlist;
  *                    Task subagent dispatch denied. Catches the bug class
  *                    where a discuss-milestone turn modifies user source
  *                    files (forensics: ~/Github/test-apps/b23, #4934).
  *   - "planning-dispatch"
- *                  — Same read + .gsd/** write + safe-Bash surface as
+ *                  — Same read + .gwd/** write + safe-Bash surface as
  *                    "planning", but permits controlled subagent dispatch
  *                    only to the agents listed in the ToolsPolicy
  *                    `allowedSubagents` field. See write-gate.ts for the
  *                    runtime agent-class enforcement details.
- *   - "docs"       — Read tools always; writes restricted to .gsd/** AND
+ *   - "docs"       — Read tools always; writes restricted to .gwd/** AND
  *                    the explicit `allowedPathGlobs` set; Bash safe-allowlist;
  *                    no subagents. Reserved for rewrite-docs, which legitimately
- *                    edits project markdown outside .gsd/.
+ *                    edits project markdown outside .gwd/.
  *
  * The allowlist for "docs" is declared per-manifest rather than hardcoded so
  * projects with non-standard doc layouts can extend it without forking the
@@ -407,7 +407,7 @@ export const UNIT_MANIFESTS: Record<UnitType, UnitContextManifest> = {
     // planning-dispatch: validation is a verification-fan-out unit. It reads
     // the milestone surface and dispatches reviewer/security/tester subagents
     // to report findings without touching user source. Mirrors
-    // complete-milestone's policy. Write isolation to .gsd/ is preserved.
+    // complete-milestone's policy. Write isolation to .gwd/ is preserved.
     tools: TOOLS_PLANNING_DISPATCH_REVIEW,
     artifacts: {
       inline: ["roadmap", "slice-summary", "slice-uat", "requirements", "decisions", "templates"],
@@ -425,7 +425,7 @@ export const UNIT_MANIFESTS: Record<UnitType, UnitContextManifest> = {
     contextMode: "verification",
     // planning-dispatch: completion is a high-leverage place to fan out to
     // reviewer / security / tester subagents. They read the diff and report
-    // findings; they do not write user source. Write isolation to .gsd/ is
+    // findings; they do not write user source. Write isolation to .gwd/ is
     // preserved.
     tools: TOOLS_PLANNING_DISPATCH_REVIEW,
     artifacts: {
@@ -464,7 +464,7 @@ export const UNIT_MANIFESTS: Record<UnitType, UnitContextManifest> = {
     contextMode: "planning",
     // planning-dispatch: allows subagent dispatch so the planner can fan out
     // to scout for codebase recon and to planner/decompose-style specialists
-    // for sub-decomposition. Write-isolation to .gsd/ is preserved.
+    // for sub-decomposition. Write-isolation to .gwd/ is preserved.
     tools: TOOLS_PLANNING_DISPATCH_RECON,
     artifacts: {
       inline: ["roadmap", "slice-research", "dependency-summaries", "requirements", "decisions", "templates"],

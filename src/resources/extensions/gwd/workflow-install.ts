@@ -7,7 +7,7 @@
  *   - gh:owner/repo/path[@ref] → raw.githubusercontent.com/owner/repo/<ref>/path
  *
  * Installed files land in `~/.gwd/workflows/<name>.<ext>` by default, or
- * `.gsd/workflows/<name>.<ext>` with the `--project` flag.
+ * `.gwd/workflows/<name>.<ext>` with the `--project` flag.
  *
  * A provenance file `~/.gwd/workflows/.installed.json` (or project equivalent)
  * records source URL, timestamp, and sha256 so `/gwd workflow uninstall` can
@@ -77,7 +77,7 @@ export function globalInstallDir(): string {
 }
 
 export function projectInstallDir(basePath: string): string {
-  return join(basePath, ".gsd", "workflows");
+  return join(basePath, ".gwd", "workflows");
 }
 
 /**

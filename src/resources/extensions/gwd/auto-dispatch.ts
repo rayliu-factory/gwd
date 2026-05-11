@@ -620,7 +620,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
     // Deep mode research gate: capture user's research decision.
     // Fires after discuss-requirements (REQUIREMENTS.md exists) when no decision
     // marker has been written yet. Asks one yes/no question via ask_user_questions
-    // and writes .gsd/runtime/research-decision.json. Downstream research-project
+    // and writes .gwd/runtime/research-decision.json. Downstream research-project
     // rule reads the marker to decide whether to fan out 4 parallel research subagents.
     // Light mode skips entirely.
     name: "deep: pre-planning (no research decision) → research-decision",
@@ -664,7 +664,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
       const researchInFlightStop = {
         action: "stop" as const,
         reason:
-          "Project research is already in progress. Wait for it to finish, or clear `.gsd/runtime/research-project-inflight` if the prior run crashed.",
+          "Project research is already in progress. Wait for it to finish, or clear `.gwd/runtime/research-project-inflight` if the prior run crashed.",
         level: "info" as const,
       };
       if (existsSync(inflightMarkerPath)) return researchInFlightStop;
@@ -1349,13 +1349,13 @@ export const DISPATCH_RULES: DispatchRule[] = [
       }
 
       // Safety guard (#1703): verify the milestone produced implementation
-      // artifacts (non-.gsd/ files). A milestone with only plan files and
+      // artifacts (non-.gwd/ files). A milestone with only plan files and
       // zero implementation code should not be marked complete.
       const artifactCheck = hasImplementationArtifacts(basePath, mid);
       if (artifactCheck === "absent") {
         return {
           action: "stop",
-          reason: `Cannot complete milestone ${mid}: no implementation files found outside .gsd/. The milestone has only plan files — actual code changes are required.`,
+          reason: `Cannot complete milestone ${mid}: no implementation files found outside .gwd/. The milestone has only plan files — actual code changes are required.`,
           level: "error",
         };
       }

@@ -51,15 +51,15 @@ function cleanupDir(dirPath: string): void {
 }
 
 /**
- * Create a temp project directory with .gsd structure and roadmap for handler tests.
+ * Create a temp project directory with .gwd structure and roadmap for handler tests.
  */
 function createTempProject(): { basePath: string; roadmapPath: string } {
   const basePath = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-slice-handler-'));
-  const sliceDir = path.join(basePath, '.gsd', 'milestones', 'M001', 'slices', 'S01');
+  const sliceDir = path.join(basePath, '.gwd', 'milestones', 'M001', 'slices', 'S01');
   const tasksDir = path.join(sliceDir, 'tasks');
   fs.mkdirSync(tasksDir, { recursive: true });
 
-  const roadmapPath = path.join(basePath, '.gsd', 'milestones', 'M001', 'M001-ROADMAP.md');
+  const roadmapPath = path.join(basePath, '.gwd', 'milestones', 'M001', 'M001-ROADMAP.md');
   fs.writeFileSync(roadmapPath, `# M001: Test Milestone
 
 ## Slices
@@ -385,7 +385,7 @@ console.log('\n=== complete-slice: handler with missing roadmap ===');
 
   // Create a temp dir WITHOUT a roadmap file
   const basePath = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-no-roadmap-'));
-  const sliceDir = path.join(basePath, '.gsd', 'milestones', 'M001', 'slices', 'S01');
+  const sliceDir = path.join(basePath, '.gwd', 'milestones', 'M001', 'slices', 'S01');
   fs.mkdirSync(sliceDir, { recursive: true });
 
   // Set up DB state

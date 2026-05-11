@@ -14,7 +14,7 @@ Discuss milestone {{milestoneId}} ("{{milestoneTitle}}"). Identify real gray are
 
 ### Read project shape
 
-Before asking, read `.gsd/PROJECT.md` and find `## Project Shape` -> `**Complexity:**`. Use `simple` or `complex`; default to `complex` if missing, stale, or unclear.
+Before asking, read `.gwd/PROJECT.md` and find `## Project Shape` -> `**Complexity:**`. Use `simple` or `complex`; default to `complex` if missing, stale, or unclear.
 
 - `simple`: 1-2 plain-text rounds; skip parallel-research investigation; use `ask_user_questions` only for concrete alternatives.
 - `complex`: investigate first, use 3-4-option structured questions, and expect multiple rounds.

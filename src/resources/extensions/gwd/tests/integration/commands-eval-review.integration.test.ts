@@ -78,7 +78,7 @@ function buildLayout(opts: { withSpec?: boolean; summaryBytes?: number } = {}): 
   const basePath = mkdtempSync(join(tmpdir(), "gsd-eval-review-int-"));
   const milestoneId = "M001";
   const sliceId = "S07";
-  const sliceDir = join(basePath, ".gsd", "milestones", milestoneId, "slices", sliceId);
+  const sliceDir = join(basePath, ".gwd", "milestones", milestoneId, "slices", sliceId);
   mkdirSync(sliceDir, { recursive: true });
   const summary = opts.summaryBytes != null
     ? "S".repeat(opts.summaryBytes)
@@ -185,11 +185,11 @@ describe("integration: prompt-schema round-trip", () => {
       milestoneId: "M001",
       sliceId: "S07",
       summary: "fake",
-      summaryPath: "/fake/.gsd/milestones/M001/slices/S07/S07-SUMMARY.md",
+      summaryPath: "/fake/.gwd/milestones/M001/slices/S07/S07-SUMMARY.md",
       spec: "fake",
-      specPath: "/fake/.gsd/milestones/M001/slices/S07/S07-AI-SPEC.md",
-      outputPath: "/fake/.gsd/milestones/M001/slices/S07/S07-EVAL-REVIEW.md",
-      relativeOutputPath: ".gsd/milestones/M001/slices/S07/S07-EVAL-REVIEW.md",
+      specPath: "/fake/.gwd/milestones/M001/slices/S07/S07-AI-SPEC.md",
+      outputPath: "/fake/.gwd/milestones/M001/slices/S07/S07-EVAL-REVIEW.md",
+      relativeOutputPath: ".gwd/milestones/M001/slices/S07/S07-EVAL-REVIEW.md",
       truncated: false,
       generatedAt: "2026-04-28T14:00:00Z",
     } as const;

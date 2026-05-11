@@ -3,7 +3,7 @@ import { join, resolve } from "node:path";
 import { gsdHome } from "./gwd-home.js";
 
 export interface WorktreeSegment {
-  gsdIdx: number;
+  gwdIdx: number;
   afterWorktrees: number;
 }
 
@@ -24,17 +24,17 @@ export function normalizeWorktreePathForCompare(path: string): string {
  * symlink-resolved external-state layout used by ~/.gwd/projects/<hash>.
  */
 export function findWorktreeSegment(normalizedPath: string): WorktreeSegment | null {
-  const directMarker = "/.gsd/worktrees/";
+  const directMarker = "/.gwd/worktrees/";
   const directIdx = normalizedPath.indexOf(directMarker);
   if (directIdx !== -1) {
-    return { gsdIdx: directIdx, afterWorktrees: directIdx + directMarker.length };
+    return { gwdIdx: directIdx, afterWorktrees: directIdx + directMarker.length };
   }
 
-  const externalRe = /\/\.gsd\/projects\/[^/]+\/worktrees\//;
+  const externalRe = /\/\.gwd\/projects\/[^/]+\/worktrees\//;
   const externalMatch = normalizedPath.match(externalRe);
   if (externalMatch && externalMatch.index !== undefined) {
     return {
-      gsdIdx: externalMatch.index,
+      gwdIdx: externalMatch.index,
       afterWorktrees: externalMatch.index + externalMatch[0].length,
     };
   }
@@ -51,7 +51,7 @@ export function isGsdWorktreePath(path: string): boolean {
  *
  * `originalBasePath` wins when available because session state already knows the
  * root. `GWD_PROJECT_ROOT` is the next strongest signal for worker processes.
- * Otherwise, derive the root from direct `.gsd/worktrees` paths, or recover it
+ * Otherwise, derive the root from direct `.gwd/worktrees` paths, or recover it
  * from the worktree `.git` file for symlink-resolved ~/.gwd/project paths.
  */
 export function resolveWorktreeProjectRoot(
@@ -77,14 +77,14 @@ function resolveProjectRootFromPath(path: string): string {
   }
 
   const sepChar = path.includes("\\") ? "\\" : "/";
-  const gsdMarker = `${sepChar}.gsd${sepChar}`;
+  const gsdMarker = `${sepChar}.gwd${sepChar}`;
   const markerIdx = path.indexOf(gsdMarker);
   const candidate = markerIdx !== -1
     ? path.slice(0, markerIdx)
-    : path.slice(0, segment.gsdIdx);
+    : path.slice(0, segment.gwdIdx);
 
   const gsdHomeNorm = normalizeWorktreePathForCompare(gsdHome());
-  const candidateGsdPath = normalizeWorktreePathForCompare(join(candidate, ".gsd"));
+  const candidateGsdPath = normalizeWorktreePathForCompare(join(candidate, ".gwd"));
 
   if (candidateGsdPath === gsdHomeNorm || candidateGsdPath.startsWith(`${gsdHomeNorm}/`)) {
     const realRoot = resolveProjectRootFromGitFile(path);
@@ -103,7 +103,7 @@ function resolveNearestBootstrappedGsdRoot(path: string): string | null {
 
     for (let i = 0; i < 30; i++) {
       if (normalizeWorktreePathForCompare(dir) === externalStateParent) return null;
-      if (hasGsdBootstrapArtifacts(join(dir, ".gsd"))) return dir;
+      if (hasGsdBootstrapArtifacts(join(dir, ".gwd"))) return dir;
 
       const gitPath = join(dir, ".git");
       if (existsSync(gitPath)) return null;

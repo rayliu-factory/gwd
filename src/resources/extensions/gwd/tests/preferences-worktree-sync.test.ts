@@ -17,8 +17,8 @@ import { syncWorktreeStateBack } from "../auto-worktree.ts";
 test("#2684: syncWorktreeStateBack does not overwrite project PREFERENCES.md", () => {
   const mainBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-main-"));
   const wtBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-worktree-"));
-  const mainGsd = join(mainBase, ".gsd");
-  const wtGsd = join(wtBase, ".gsd");
+  const mainGsd = join(mainBase, ".gwd");
+  const wtGsd = join(wtBase, ".gwd");
   mkdirSync(mainGsd, { recursive: true });
   mkdirSync(wtGsd, { recursive: true });
 
@@ -39,15 +39,15 @@ test("#2684: syncWorktreeStateBack does not overwrite project PREFERENCES.md", (
 });
 
 // Phase C: copyPlanningArtifacts was deleted. Worktrees no longer
-// maintain a parallel .gsd/ projection; preference seeding is now
+// maintain a parallel .gwd/ projection; preference seeding is now
 // handled exclusively by syncGsdStateToWorktree() (covered below).
 
 test("syncGsdStateToWorktree copies canonical PREFERENCES.md", async () => {
   // Functional test: create a mock source and destination, call the sync
   const srcBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-src-"));
   const dstBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-dst-"));
-  const srcGsd = join(srcBase, ".gsd");
-  const dstGsd = join(dstBase, ".gsd");
+  const srcGsd = join(srcBase, ".gwd");
+  const dstGsd = join(dstBase, ".gwd");
   mkdirSync(srcGsd, { recursive: true });
   mkdirSync(dstGsd, { recursive: true });
 
@@ -82,8 +82,8 @@ test("syncGsdStateToWorktree copies canonical PREFERENCES.md", async () => {
 test("syncGsdStateToWorktree falls back to legacy lowercase preferences.md", async () => {
   const srcBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-legacy-src-"));
   const dstBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-legacy-dst-"));
-  const srcGsd = join(srcBase, ".gsd");
-  const dstGsd = join(dstBase, ".gsd");
+  const srcGsd = join(srcBase, ".gwd");
+  const dstGsd = join(dstBase, ".gwd");
   mkdirSync(srcGsd, { recursive: true });
   mkdirSync(dstGsd, { recursive: true });
 

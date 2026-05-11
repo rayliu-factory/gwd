@@ -25,7 +25,7 @@ const dirEntryCache = new Map<string, Dirent[]>();
 const dirListCache = new Map<string, string[]>();
 
 // ─── Native Tree Cache ────────────────────────────────────────────────────────
-// When the native module is available, scan the entire .gsd/ tree in one call
+// When the native module is available, scan the entire .gwd/ tree in one call
 // and serve directory listings from memory instead of individual readdirSync calls.
 
 let nativeTreeCache: Map<string, GsdTreeEntry[]> | null = null;
@@ -66,7 +66,7 @@ function cachedReaddirWithTypes(dirPath: string): Dirent[] {
   const cached = dirEntryCache.get(dirPath);
   if (cached) return cached;
 
-  // Try native tree cache for paths under .gsd/
+  // Try native tree cache for paths under .gwd/
   if (nativeTreeBase) {
     const key = nativeTreeKey(dirPath, nativeTreeBase);
     if (key && nativeTreeCache) {
@@ -108,7 +108,7 @@ function cachedReaddir(dirPath: string): string[] {
   const cached = dirListCache.get(dirPath);
   if (cached) return cached;
 
-  // Try native tree cache for paths under .gsd/
+  // Try native tree cache for paths under .gwd/
   if (nativeTreeBase) {
     const key = nativeTreeKey(dirPath, nativeTreeBase);
     if (key && nativeTreeCache) {
@@ -307,52 +307,52 @@ const LEGACY_GWD_ROOT_FILES: Record<GSDRootFileKey, string> = {
 // process exit) — NOT inside clearPathCache(), which runs on every agent turn.
 const gsdRootCache = new Map<string, string>();
 
-export interface GsdPathContract {
+export interface GwdPathContract {
   /** Canonical repo/project root where authoritative state lives. */
   projectRoot: string;
   /** Current execution root, which may be an auto-worktree. */
   workRoot: string;
-  /** Canonical authoritative .gsd directory. */
-  projectGsd: string;
-  /** Legacy worktree-local .gsd projection directory, when applicable. */
-  worktreeGsd: string | null;
+  /** Canonical authoritative .gwd directory. */
+  projectGwd: string;
+  /** Legacy worktree-local .gwd projection directory, when applicable. */
+  worktreeGwd: string | null;
   /** Canonical authoritative SQLite DB path. */
   projectDb: string;
   /** True when workRoot is inside a GWD worktree layout. */
   isWorktree: boolean;
 }
 
-export function resolveGsdPathContract(
+export function resolveGwdPathContract(
   workRoot: string,
   originalProjectRoot?: string | null,
-): GsdPathContract {
+): GwdPathContract {
   const resolvedWorkRoot = resolve(workRoot || process.cwd());
   const isWorktree = isGsdWorktreePath(resolvedWorkRoot);
   if (isWorktree && !originalProjectRoot?.trim()) {
-    const externalMatch = /[/\\]\.gsd[/\\]projects[/\\][^/\\]+[/\\]worktrees(?:[/\\]|$)/.exec(resolvedWorkRoot);
+    const externalMatch = /[/\\]\.gwd[/\\]projects[/\\][^/\\]+[/\\]worktrees(?:[/\\]|$)/.exec(resolvedWorkRoot);
     if (externalMatch) {
       const worktreesIdx = externalMatch[0].search(/[/\\]worktrees(?:[/\\]|$)/);
-      const projectGsd = resolvedWorkRoot.slice(0, externalMatch.index + worktreesIdx);
+      const projectGwd = resolvedWorkRoot.slice(0, externalMatch.index + worktreesIdx);
       return {
-        projectRoot: dirname(dirname(projectGsd)),
+        projectRoot: dirname(dirname(projectGwd)),
         workRoot: resolvedWorkRoot,
-        projectGsd,
-        worktreeGsd: join(resolvedWorkRoot, ".gsd"),
-        projectDb: join(projectGsd, "gsd.db"),
+        projectGwd,
+        worktreeGwd: join(resolvedWorkRoot, ".gwd"),
+        projectDb: join(projectGwd, "gwd.db"),
         isWorktree,
       };
     }
   }
   const projectRoot = resolve(resolveWorktreeProjectRoot(resolvedWorkRoot, originalProjectRoot));
-  const projectGsd = join(projectRoot, ".gsd");
-  const worktreeGsd = isWorktree ? join(resolvedWorkRoot, ".gsd") : null;
+  const projectGwd = join(projectRoot, ".gwd");
+  const worktreeGwd = isWorktree ? join(resolvedWorkRoot, ".gwd") : null;
 
   return {
     projectRoot,
     workRoot: resolvedWorkRoot,
-    projectGsd,
-    worktreeGsd,
-    projectDb: join(projectGsd, "gsd.db"),
+    projectGwd,
+    worktreeGwd,
+    projectDb: join(projectGwd, "gwd.db"),
     isWorktree,
   };
 }
@@ -389,13 +389,13 @@ function normCacheKey(p: string): string {
 }
 
 /**
- * Resolve the `.gsd` directory for a given project base path.
+ * Resolve the `.gwd` directory for a given project base path.
  *
  * Probe order:
- *   1. basePath/.gsd         — fast path (common case)
+ *   1. basePath/.gwd         — fast path (common case)
  *   2. git rev-parse root    — handles cwd-is-a-subdirectory
- *   3. Walk up from basePath — handles moved .gsd in an ancestor (bounded by git root)
- *   4. basePath/.gsd         — creation fallback (init scenario)
+ *   3. Walk up from basePath — handles moved .gwd in an ancestor (bounded by git root)
+ *   4. basePath/.gwd         — creation fallback (init scenario)
  *
  * Result is cached per normalized basePath for the process lifetime.
  * Keys are realpath-normalized so /foo and /foo/ share the same cache entry.
@@ -442,30 +442,30 @@ function assertNotGlobalGsdHome(basePath: string, result: string): void {
   }
   if (baseNorm === homeNorm && resultNorm === gsdHomeNorm) {
     throw new Error(
-      `Refusing to use ${result} as a project .gsd directory — that is the global GWD home. ` +
+      `Refusing to use ${result} as a project .gwd directory — that is the global GWD home. ` +
       `Run GWD from inside a project directory.`,
     );
   }
 }
 
 /**
- * Detect if a path is inside a .gsd/worktrees/<name>/ structure.
+ * Detect if a path is inside a .gwd/worktrees/<name>/ structure.
  *
- * GWD auto-worktrees live at <project>/.gsd/worktrees/<milestoneId>/.
+ * GWD auto-worktrees live at <project>/.gwd/worktrees/<milestoneId>/.
  * When gsdRoot() is called with such a path, we must NOT walk up to the
- * project root's .gsd — each worktree manages its own .gsd state (#2594).
+ * project root's .gwd — each worktree manages its own .gwd state (#2594).
  *
  * Matches both forward-slash and platform-native separators to handle
  * Windows paths (path.sep = '\\') and normalized Unix paths.
  */
 function isInsideGsdWorktree(p: string): boolean {
-  // Match /.gsd/worktrees/<name> where <name> is the final segment or
+  // Match /.gwd/worktrees/<name> where <name> is the final segment or
   // followed by a separator. The <name> segment must be non-empty.
   const sepFwd = "/";
   const sepNative = "\\";
   const markers = [
-    `${sepFwd}.gsd${sepFwd}worktrees${sepFwd}`,
-    `${sepNative}.gsd${sepNative}worktrees${sepNative}`,
+    `${sepFwd}.gwd${sepFwd}worktrees${sepFwd}`,
+    `${sepNative}.gwd${sepNative}worktrees${sepNative}`,
   ];
   for (const marker of markers) {
     const idx = p.indexOf(marker);
@@ -481,17 +481,17 @@ function isInsideGsdWorktree(p: string): boolean {
 }
 
 function probeGsdRoot(rawBasePath: string): string {
-  const contract = resolveGsdPathContract(rawBasePath);
-  if (contract.isWorktree) return contract.projectGsd;
+  const contract = resolveGwdPathContract(rawBasePath);
+  if (contract.isWorktree) return contract.projectGwd;
 
   // 1. Fast path — check the input path directly
-  const local = join(rawBasePath, ".gsd");
+  const local = join(rawBasePath, ".gwd");
   if (existsSync(local)) return local;
 
-  // 1b. Worktree guard (#2594) — if basePath is inside a .gsd/worktrees/<name>/
-  //     structure, return the worktree-local .gsd path immediately. Without this,
+  // 1b. Worktree guard (#2594) — if basePath is inside a .gwd/worktrees/<name>/
+  //     structure, return the worktree-local .gwd path immediately. Without this,
   //     the git-root probe (step 2) or walk-up (step 3) escapes to the project
-  //     root's .gsd, causing ensurePreconditions() and deriveState() to read/write
+  //     root's .gwd, causing ensurePreconditions() and deriveState() to read/write
   //     state in the wrong location.
   if (isInsideGsdWorktree(rawBasePath)) return local;
 
@@ -529,7 +529,7 @@ function probeGsdRoot(rawBasePath: string): string {
   try { gsdHomeNorm = normPath(gsdHome()); } catch { gsdHomeNorm = ""; }
 
   if (gitRoot) {
-    const candidate = join(gitRoot, ".gsd");
+    const candidate = join(gitRoot, ".gwd");
     // Skip if the candidate resolves to the global GWD home — a subdir basePath
     // must not be anchored to ~/.gwd just because $HOME is a git repo.
     if (existsSync(candidate) && normPath(candidate) !== gsdHomeNorm) return candidate;
@@ -539,7 +539,7 @@ function probeGsdRoot(rawBasePath: string): string {
   if (gitRoot && basePath !== gitRoot) {
     let cur = dirname(basePath);
     while (cur !== basePath) {
-      const candidate = join(cur, ".gsd");
+      const candidate = join(cur, ".gwd");
       if (existsSync(candidate) && normPath(candidate) !== gsdHomeNorm) return candidate;
       if (cur === gitRoot) break;
       basePath = cur;
@@ -568,7 +568,7 @@ export function resolveGsdRootFile(basePath: string, key: GSDRootFileKey): strin
 }
 
 export function relGsdRootFile(key: GSDRootFileKey): string {
-  return `.gsd/${GWD_ROOT_FILES[key]}`;
+  return `.gwd/${GWD_ROOT_FILES[key]}`;
 }
 
 /**
@@ -642,20 +642,20 @@ export function resolveTaskFile(
   return file ? join(tDir, file) : null;
 }
 
-// ─── Relative Path Builders (for prompts — .gsd/milestones/...) ────────────
+// ─── Relative Path Builders (for prompts — .gwd/milestones/...) ────────────
 
 /**
- * Build relative .gsd/ path to a milestone directory.
+ * Build relative .gwd/ path to a milestone directory.
  * Uses the actual directory name on disk if it exists, otherwise bare ID.
  */
 export function relMilestonePath(basePath: string, milestoneId: string): string {
   const dir = resolveDir(milestonesDir(basePath), milestoneId);
-  if (dir) return `.gsd/milestones/${dir}`;
-  return `.gsd/milestones/${milestoneId}`;
+  if (dir) return `.gwd/milestones/${dir}`;
+  return `.gwd/milestones/${milestoneId}`;
 }
 
 /**
- * Build relative .gsd/ path to a milestone file.
+ * Build relative .gwd/ path to a milestone file.
  */
 export function relMilestoneFile(
   basePath: string, milestoneId: string, suffix: string
@@ -670,7 +670,7 @@ export function relMilestoneFile(
 }
 
 /**
- * Build relative .gsd/ path to a slice directory.
+ * Build relative .gwd/ path to a slice directory.
  */
 export function relSlicePath(
   basePath: string, milestoneId: string, sliceId: string
@@ -686,7 +686,7 @@ export function relSlicePath(
 }
 
 /**
- * Build relative .gsd/ path to a slice file.
+ * Build relative .gwd/ path to a slice file.
  */
 export function relSliceFile(
   basePath: string, milestoneId: string, sliceId: string, suffix: string
@@ -701,7 +701,7 @@ export function relSliceFile(
 }
 
 /**
- * Build relative .gsd/ path to a task file.
+ * Build relative .gwd/ path to a task file.
  */
 export function relTaskFile(
   basePath: string, milestoneId: string, sliceId: string,

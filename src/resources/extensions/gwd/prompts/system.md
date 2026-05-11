@@ -15,7 +15,7 @@ Operating posture:
 
 Never use: "Great question!" / "I'd be happy to help!" / "Absolutely!" / "Let me help you with that!" / performed excitement / sycophantic filler / fake warmth.
 
-Leave the project ready for the next agent to understand and continue. Artifacts live in `.gsd/`.
+Leave the project ready for the next agent to understand and continue. Artifacts live in `.gwd/`.
 
 ## Skills
 
@@ -45,7 +45,7 @@ Directories use bare IDs. Files use ID-SUFFIX format. Milestones: `M001/` or `M{
 ### Directory Structure
 
 ```
-.gsd/
+.gwd/
   PROJECT.md, REQUIREMENTS.md, DECISIONS.md, KNOWLEDGE.md, CODEBASE.md, OVERRIDES.md, QUEUE.md, STATE.md
   runtime/, activity/, worktrees/
   milestones/M001/
@@ -59,7 +59,7 @@ Directories use bare IDs. Files use ID-SUFFIX format. Milestones: `M001/` or `M{
 
 ### Isolation Model
 
-Auto-mode isolation is configured in `.gsd/PREFERENCES.md` under `git.isolation`: **none** works on the current branch; **worktree** uses `.gsd/worktrees/<MID>/` on `milestone/<MID>` and merges back on completion; **branch** uses `milestone/<MID>` in-place. Slices commit sequentially on the active branch; no per-slice branches.
+Auto-mode isolation is configured in `.gwd/PREFERENCES.md` under `git.isolation`: **none** works on the current branch; **worktree** uses `.gwd/worktrees/<MID>/` on `milestone/<MID>` and merges back on completion; **branch** uses `milestone/<MID>` in-place. Slices commit sequentially on the active branch; no per-slice branches.
 
 **If you are executing in auto-mode, your working directory is shown in the Working Directory section of your prompt.** Use relative paths. Do not navigate to any other copy of the project.
 
@@ -92,7 +92,7 @@ Templates are in `{{templatesDir}}`.
 - `/gwd status` - progress dashboard overlay
 - `/gwd queue` - queue future milestones (safe while auto-mode is running)
 - `/gwd quick <task>` - quick task with GWD guarantees (atomic commits, state tracking) but no milestone ceremony
-- `/gwd codebase [generate|update|stats]` - manage the `.gsd/CODEBASE.md` cache used for prompt context
+- `/gwd codebase [generate|update|stats]` - manage the `.gwd/CODEBASE.md` cache used for prompt context
 - `{{shortcutDashboard}}` - toggle dashboard overlay
 - `{{shortcutShell}}` - show shell processes
 
@@ -133,7 +133,7 @@ Templates are in `{{templatesDir}}`.
 - Never guess library APIs; use `get_library_docs`.
 - Never ask the user to run/check/set something you can do.
 - Never await stale async jobs after editing source; cancel then re-run.
-- Never query `.gsd/gwd.db` directly via `sqlite3`, `better-sqlite3`, or `node -e require('better-sqlite3')`; the engine owns a single-writer WAL connection. Use `gsd_milestone_status`, `gsd_journal_query`, or other `gsd_*` tools.
+- Never query `.gwd/gwd.db` directly via `sqlite3`, `better-sqlite3`, or `node -e require('better-sqlite3')`; the engine owns a single-writer WAL connection. Use `gsd_milestone_status`, `gsd_journal_query`, or other `gsd_*` tools.
 
 ### Ask vs infer
 

@@ -12,8 +12,8 @@ import { createWorkspace, scopeMilestone } from "../workspace.js";
 
 function makeProjectRoot(): { dir: string; cleanup: () => void } {
   const dir = mkdtempSync(join(tmpdir(), "gsd-projection-"));
-  // .gsd directory is required for the workspace contract resolution
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  // .gwd directory is required for the workspace contract resolution
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   return {
     dir,
     cleanup: () => rmSync(dir, { recursive: true, force: true }),

@@ -192,7 +192,7 @@ async function isTerminalMilestoneSummaryFile(
 // ── deriveState memoization ─────────────────────────────────────────────────
 // Cache the most recent deriveState() result keyed by basePath. Within a single
 // dispatch cycle (~100ms window), repeated calls return the cached value instead
-// of re-reading the entire .gsd/ tree from disk.
+// of re-reading the entire .gwd/ tree from disk.
 
 interface StateCache {
   basePath: string;
@@ -301,7 +301,7 @@ export async function deriveState(
 ): Promise<GSDState> {
   // Use the canonical project root (when provided) as the cache key so that
   // two calls with different basePath strings (e.g. worktree path vs project
-  // root) but the same canonical .gsd/ share a single cache entry. The same
+  // root) but the same canonical .gwd/ share a single cache entry. The same
   // key is used for both the lookup AND the write below — keying lookup on
   // canonical-root while writing on basePath would silently return stale
   // results across path-form alternation.
@@ -873,8 +873,8 @@ export async function _deriveStateImpl(
 ): Promise<GSDState> {
   // When the caller supplies a canonical project root for reads (e.g.
   // s.canonicalProjectRoot from auto-mode), route all artifact reads through
-  // it. This prevents the worktree-local empty `.gsd/` from being consulted
-  // when the canonical state lives at the project root (or via a `.gsd`
+  // it. This prevents the worktree-local empty `.gwd/` from being consulted
+  // when the canonical state lives at the project root (or via a `.gwd`
   // symlink into the external state dir).
   if (opts?.projectRootForReads) {
     basePath = opts.projectRootForReads;
@@ -897,7 +897,7 @@ export async function _deriveStateImpl(
   }
 
   // ── Batch-parse file cache ──────────────────────────────────────────────
-  // When the native Rust parser is available, read every .md file under .gsd/
+  // When the native Rust parser is available, read every .md file under .gwd/
   // in one call and build an in-memory content map keyed by absolute path.
   // This eliminates O(N) individual fs.readFile calls during traversal.
   const fileContentCache = new Map<string, string>();

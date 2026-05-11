@@ -151,7 +151,7 @@ export function resolveDeepProjectSetupState(
       return {
         status: "pending",
         stage: "workflow-preferences",
-        reason: ".gsd/PREFERENCES.md is missing workflow_prefs_captured: true.",
+        reason: ".gwd/PREFERENCES.md is missing workflow_prefs_captured: true.",
       };
     }
   }
@@ -161,14 +161,14 @@ export function resolveDeepProjectSetupState(
     return {
       status: "pending",
       stage: "project",
-      reason: ".gsd/PROJECT.md is missing.",
+      reason: ".gwd/PROJECT.md is missing.",
     };
   }
   if (!validateArtifact(projectPath, "project").ok) {
     return {
       status: "pending",
       stage: "project",
-      reason: ".gsd/PROJECT.md is invalid.",
+      reason: ".gwd/PROJECT.md is invalid.",
     };
   }
 
@@ -177,14 +177,14 @@ export function resolveDeepProjectSetupState(
     return {
       status: "pending",
       stage: "requirements",
-      reason: ".gsd/REQUIREMENTS.md is missing.",
+      reason: ".gwd/REQUIREMENTS.md is missing.",
     };
   }
   if (!validateArtifact(requirementsPath, "requirements").ok) {
     return {
       status: "pending",
       stage: "requirements",
-      reason: ".gsd/REQUIREMENTS.md is invalid.",
+      reason: ".gwd/REQUIREMENTS.md is invalid.",
     };
   }
 
@@ -235,7 +235,7 @@ export function resolveDeepProjectSetupState(
       status: "blocked",
       stage: "project-research",
       reason:
-        "Project research produced only dimension blocker files, so no usable research exists. Fix the blocker cause, delete the dimension blocker files in `.gsd/research/`, and rerun auto.",
+        "Project research produced only dimension blocker files, so no usable research exists. Fix the blocker cause, delete the dimension blocker files in `.gwd/research/`, and rerun auto.",
     };
   }
   if (!researchStatus.complete) {

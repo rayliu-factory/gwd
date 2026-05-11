@@ -15,9 +15,9 @@ function withRoutingPrefs<T>(fn: () => T): T {
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-interactive-routing-home-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       [
         "---",
         "dynamic_routing:",

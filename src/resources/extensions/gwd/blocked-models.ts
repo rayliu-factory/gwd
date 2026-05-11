@@ -1,7 +1,7 @@
 // GWD — Persistent per-project blocklist of provider/model pairs that the
 // provider has rejected at request time for account entitlement reasons.
 //
-// Lives at `.gsd/runtime/blocked-models.json` so the block survives /gwd auto
+// Lives at `.gwd/runtime/blocked-models.json` so the block survives /gwd auto
 // restarts.  Auto-mode model selection skips blocked entries; agent-end
 // recovery adds entries when a runtime rejection is classified as
 // `unsupported-model`.  See issue #4513.

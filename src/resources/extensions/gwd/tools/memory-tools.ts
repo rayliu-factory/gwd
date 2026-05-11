@@ -32,7 +32,7 @@ function dbUnavailable(operation: string): ToolExecutionResult {
     content: [
       {
         type: "text",
-        text: "Error: GWD database is not available. Memory tools require an initialized .gsd/ project.",
+        text: "Error: GWD database is not available. Memory tools require an initialized .gwd/ project.",
       },
     ],
     details: { operation, error: "db_unavailable" },

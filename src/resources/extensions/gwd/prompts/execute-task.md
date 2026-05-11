@@ -37,7 +37,7 @@ You execute. The inlined task plan is authoritative. Verify referenced files and
 3. {{skillActivation}} Follow activated skills before code edits.
 4. Execute the task plan. Before any `Write` that creates an artifact or output file, check whether that path already exists. If it does, read it first and decide whether the work is already done, should be extended, or truly needs replacement.
 5. Build real behavior through the intended surface; stubs/mocks belong in tests only.
-6. Add or update tests. Tests must use git-tracked files or inline fixtures, never .gitignore/gitignored local paths such as `.gsd/`, `.planning/`, or `.audits/`.
+6. Add or update tests. Tests must use git-tracked files or inline fixtures, never .gitignore/gitignored local paths such as `.gwd/`, `.planning/`, or `.audits/`.
 7. Preserve useful observability for non-trivial async, API, background, or error-path work.
 
 **Background process rule:** never run bare `command &`. Redirect output first, e.g. `command > /dev/null 2>&1 &`, or use `bg_shell` when available.

@@ -66,7 +66,7 @@ export async function checkRuntimeHealth(
   }
 
   // ── Stranded lock directory ────────────────────────────────────────────
-  // proper-lockfile creates a `.gsd.lock/` directory as the OS-level lock
+  // proper-lockfile creates a `.gwd.lock/` directory as the OS-level lock
   // mechanism. If the process was SIGKILLed or crashed hard, this directory
   // can remain on disk without any live process holding it. The next session
   // fails to acquire the lock until the directory is removed (#1245).
@@ -127,7 +127,7 @@ export async function checkRuntimeHealth(
           scope: "project",
           unitId: status.milestoneId,
           message: `Stale parallel session for ${status.milestoneId} (PID ${status.pid}, started ${new Date(status.startedAt).toISOString()}, last heartbeat ${new Date(status.lastHeartbeat).toISOString()}) — process is no longer running`,
-          file: `.gsd/parallel/${status.milestoneId}.status.json`,
+          file: `.gwd/parallel/${status.milestoneId}.status.json`,
           fixable: true,
         });
 
@@ -168,7 +168,7 @@ export async function checkRuntimeHealth(
           scope: "project",
           unitId: "project",
           message: `${orphaned.length} completed-unit key(s) reference missing artifacts: ${orphaned.slice(0, 3).join(", ")}${orphaned.length > 3 ? "..." : ""}`,
-          file: ".gsd/completed-units.json",
+          file: ".gwd/completed-units.json",
           fixable: true,
         });
 
@@ -205,7 +205,7 @@ export async function checkRuntimeHealth(
             scope: "project",
             unitId: "project",
             message: `hook-state.json has ${Object.keys(state.cycleCounts).length} residual cycle count(s) from a previous session`,
-            file: ".gsd/hook-state.json",
+            file: ".gwd/hook-state.json",
             fixable: true,
           });
 
@@ -248,7 +248,7 @@ export async function checkRuntimeHealth(
           scope: "slice",
           unitId: `${mid}/${sid}`,
           message: `run-uat for ${mid}/${sid} exhausted ${count - 1} retry attempt(s) without an ASSESSMENT verdict. Reset the retry counter after fixing the underlying UAT/tool issue, then rerun /gwd auto.`,
-          file: `.gsd/runtime/${fileName}`,
+          file: `.gwd/runtime/${fileName}`,
           fixable: true,
         });
 
@@ -287,7 +287,7 @@ export async function checkRuntimeHealth(
           scope: "project",
           unitId: "project",
           message: `Activity logs: ${files.length} files, ${totalMB.toFixed(1)}MB (thresholds: ${BLOAT_FILE_THRESHOLD} files / ${BLOAT_SIZE_MB}MB)`,
-          file: ".gsd/activity/",
+          file: ".gwd/activity/",
           fixable: true,
         });
 
@@ -315,7 +315,7 @@ export async function checkRuntimeHealth(
           scope: "project",
           unitId: "project",
           message: "STATE.md is missing — state display will not work",
-          file: ".gsd/STATE.md",
+          file: ".gwd/STATE.md",
           fixable: true,
         });
 
@@ -349,7 +349,7 @@ export async function checkRuntimeHealth(
             scope: "project",
             unitId: "project",
             message: `STATE.md is stale — shows "${current.phase}" but derived state is "${fresh.phase}"`,
-            file: ".gsd/STATE.md",
+            file: ".gwd/STATE.md",
             fixable: true,
           });
 
@@ -377,16 +377,16 @@ export async function checkRuntimeHealth(
       // NOTE: GWD_RUNTIME_PATTERNS in gitignore.ts is the canonical source of truth.
       // This is a minimal subset for the doctor check.
       const criticalPatterns = [
-        ".gsd/activity/",
-        ".gsd/runtime/",
-        ".gsd/auto.lock",
-        ".gsd/gwd.db*",
-        ".gsd/completed-units*.json",
-        ".gsd/event-log.jsonl",
+        ".gwd/activity/",
+        ".gwd/runtime/",
+        ".gwd/auto.lock",
+        ".gwd/gwd.db*",
+        ".gwd/completed-units*.json",
+        ".gwd/event-log.jsonl",
       ];
 
-      // If blanket .gsd/ or .gsd is present, all patterns are covered
-      const hasBlanketIgnore = existingLines.has(".gsd/") || existingLines.has(".gsd");
+      // If blanket .gwd/ or .gwd is present, all patterns are covered
+      const hasBlanketIgnore = existingLines.has(".gwd/") || existingLines.has(".gwd");
 
       if (!hasBlanketIgnore) {
         const missing = criticalPatterns.filter(p => !existingLines.has(p));
@@ -414,26 +414,26 @@ export async function checkRuntimeHealth(
 
   // ── External state symlink health ──────────────────────────────────────
   try {
-    const localGsd = join(basePath, ".gsd");
+    const localGsd = join(basePath, ".gwd");
     if (existsSync(localGsd)) {
       const stat = lstatSync(localGsd);
 
-      // Check for .gsd.migrating (failed migration)
-      const migratingPath = join(basePath, ".gsd.migrating");
+      // Check for .gwd.migrating (failed migration)
+      const migratingPath = join(basePath, ".gwd.migrating");
       if (existsSync(migratingPath)) {
         issues.push({
           severity: "error",
           code: "failed_migration",
           scope: "project",
           unitId: "project",
-          message: "Found .gsd.migrating — a previous external state migration failed. State may be incomplete.",
-          file: ".gsd.migrating",
+          message: "Found .gwd.migrating — a previous external state migration failed. State may be incomplete.",
+          file: ".gwd.migrating",
           fixable: true,
         });
 
         if (shouldFix("failed_migration")) {
           if (recoverFailedMigration(basePath)) {
-            fixesApplied.push("recovered failed migration (.gsd.migrating → .gsd)");
+            fixesApplied.push("recovered failed migration (.gwd.migrating → .gwd)");
           }
         }
       }
@@ -448,14 +448,14 @@ export async function checkRuntimeHealth(
             code: "broken_symlink",
             scope: "project",
             unitId: "project",
-            message: ".gsd symlink target does not exist. External state directory may have been deleted.",
-            file: ".gsd",
+            message: ".gwd symlink target does not exist. External state directory may have been deleted.",
+            file: ".gwd",
             fixable: false,
           });
         }
 
-        // ── Symlinked .gsd without .gitignore entry (#4423) ──
-        // When `.gsd` is a symlink AND not gitignored, `git add -A -- :!.gsd/...`
+        // ── Symlinked .gwd without .gitignore entry (#4423) ──
+        // When `.gwd` is a symlink AND not gitignored, `git add -A -- :!.gwd/...`
         // pathspecs fail with "beyond a symbolic link". Without self-heal this
         // silently drops new user files during auto-commit.
         if (nativeIsRepo(basePath) && !isGsdGitignored(basePath)) {
@@ -464,14 +464,14 @@ export async function checkRuntimeHealth(
             code: "symlinked_gsd_unignored",
             scope: "project",
             unitId: "project",
-            message: ".gsd is a symlink to external state but is not listed in .gitignore. This causes git pathspec exclusions to fail and can lead to silently dropped new files during auto-commit. Add `.gsd` to .gitignore.",
+            message: ".gwd is a symlink to external state but is not listed in .gitignore. This causes git pathspec exclusions to fail and can lead to silently dropped new files during auto-commit. Add `.gwd` to .gitignore.",
             file: ".gitignore",
             fixable: true,
           });
 
           if (shouldFix("symlinked_gsd_unignored")) {
             const modified = ensureGitignore(basePath);
-            if (modified) fixesApplied.push("added .gsd to .gitignore (symlinked external state)");
+            if (modified) fixesApplied.push("added .gwd to .gitignore (symlinked external state)");
           }
         }
       }
@@ -480,11 +480,11 @@ export async function checkRuntimeHealth(
     // Non-fatal — external state check failed
   }
 
-  // ── Numbered .gsd collision variants (#2205) ───────────────────────────
-  // macOS APFS can create ".gsd 2", ".gsd 3" etc. when a directory blocks
-  // symlink creation. These must be removed so the canonical .gsd is used.
+  // ── Numbered .gwd collision variants (#2205) ───────────────────────────
+  // macOS APFS can create ".gwd 2", ".gwd 3" etc. when a directory blocks
+  // symlink creation. These must be removed so the canonical .gwd is used.
   try {
-    const variantPattern = /^\.gsd \d+$/;
+    const variantPattern = /^\.gwd \d+$/;
     const entries = readdirSync(basePath);
     const variants = entries.filter(e => variantPattern.test(e));
     if (variants.length > 0) {
@@ -503,7 +503,7 @@ export async function checkRuntimeHealth(
       if (shouldFix("numbered_gsd_variant")) {
         const removed = cleanNumberedGsdVariants(basePath);
         for (const name of removed) {
-          fixesApplied.push(`removed numbered .gsd variant: ${name}`);
+          fixesApplied.push(`removed numbered .gwd variant: ${name}`);
         }
       }
     }
@@ -525,7 +525,7 @@ export async function checkRuntimeHealth(
             scope: "project",
             unitId: "project",
             message: "metrics.json has an unexpected structure (version !== 1 or units is not an array) — metrics data may be unreliable",
-            file: ".gsd/metrics.json",
+            file: ".gwd/metrics.json",
             fixable: false,
           });
         }
@@ -536,7 +536,7 @@ export async function checkRuntimeHealth(
           scope: "project",
           unitId: "project",
           message: "metrics.json is not valid JSON — metrics data may be corrupt",
-          file: ".gsd/metrics.json",
+          file: ".gwd/metrics.json",
           fixable: false,
         });
       }
@@ -564,7 +564,7 @@ export async function checkRuntimeHealth(
             scope: "project",
             unitId: "project",
             message: `metrics.json has ${parsed.units.length} unit entries (${fileSizeMB}MB) — threshold is ${BLOAT_UNITS_THRESHOLD}. Run /gwd doctor --fix to prune to the newest 1500 entries.`,
-            file: ".gsd/metrics.json",
+            file: ".gwd/metrics.json",
             fixable: true,
           });
           if (shouldFix("metrics_ledger_bloat")) {
@@ -673,7 +673,7 @@ export async function checkRuntimeHealth(
   // for a phantom forward-reference. Surface as a fixable warning.
   try {
     const milestoneIds = findMilestoneIds(basePath);
-    const hasDbFile = existsSync(join(root, "gsd.db"));
+    const hasDbFile = existsSync(join(root, "gwd.db"));
     for (const mid of milestoneIds) {
       const isOrphan = isReusableGhostMilestone(basePath, mid)
         || (!hasDbFile && isGhostMilestone(basePath, mid));
@@ -684,7 +684,7 @@ export async function checkRuntimeHealth(
           scope: "milestone",
           unitId: mid,
           message: `Orphan milestone directory: ${mid} — directory exists on disk with no DB row, no worktree, and no content files. This stub skews milestone ID generation and should be removed.`,
-          file: `.gsd/milestones/${mid}`,
+          file: `.gwd/milestones/${mid}`,
           fixable: true,
         });
 

@@ -45,7 +45,7 @@ import {
 } from "../../workflow-install.js";
 
 /**
- * Refuses interactive commands that mutate durable .gsd/ planning state while
+ * Refuses interactive commands that mutate durable .gwd/ planning state while
  * auto-mode holds the worktree. Returns true if the command was blocked and
  * the caller should return immediately; false if it is safe to proceed.
  *
@@ -414,7 +414,7 @@ async function handleCustomWorkflow(
       }
     } else {
       // Legacy fallback path for names that don't resolve via plugins.
-      const defPath = join(base, ".gsd", "workflow-defs", `${rest}.yaml`);
+      const defPath = join(base, ".gwd", "workflow-defs", `${rest}.yaml`);
       if (!existsSync(defPath)) {
         ctx.ui.notify(`Definition not found: ${defPath}`, "error");
         return true;
@@ -532,7 +532,7 @@ export async function handleWorkflowCommand(trimmed: string, ctx: ExtensionComma
     const args = trimmed.replace(/^new-milestone\s*/, "").trim();
     if (/(^|\s)--deep(\s|$)/.test(args)) {
       setPlanningDepth(basePath, "deep");
-      ctx.ui.notify("Deep planning mode enabled (.gsd/PREFERENCES.md updated).", "info");
+      ctx.ui.notify("Deep planning mode enabled (.gwd/PREFERENCES.md updated).", "info");
     }
     const headlessContextPath = join(gsdRoot(basePath), "runtime", "headless-context.md");
     if (existsSync(headlessContextPath)) {
@@ -554,7 +554,7 @@ export async function handleWorkflowCommand(trimmed: string, ctx: ExtensionComma
     const args = trimmed.replace(/^new-project\s*/, "").trim();
     if (/(^|\s)--deep(\s|$)/.test(args)) {
       setPlanningDepth(basePath, "deep");
-      ctx.ui.notify("Deep planning mode enabled (.gsd/PREFERENCES.md updated).", "info");
+      ctx.ui.notify("Deep planning mode enabled (.gwd/PREFERENCES.md updated).", "info");
     }
     const { showSmartEntry } = await import("../../guided-flow.js");
     await showSmartEntry(ctx, pi, basePath);

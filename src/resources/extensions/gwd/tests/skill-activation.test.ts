@@ -32,8 +32,8 @@ function loadOnlyTestSkills(base: string): void {
 }
 
 function writeProjectPreferences(base: string, preferences: string): void {
-  mkdirSync(join(base, ".gsd"), { recursive: true });
-  writeFileSync(join(base, ".gsd", "PREFERENCES.md"), `---\n${preferences}---\n`);
+  mkdirSync(join(base, ".gwd"), { recursive: true });
+  writeFileSync(join(base, ".gwd", "PREFERENCES.md"), `---\n${preferences}---\n`);
 }
 
 function buildBlock(

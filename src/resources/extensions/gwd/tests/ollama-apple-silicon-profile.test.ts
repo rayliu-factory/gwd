@@ -118,7 +118,7 @@ test("resolveOllamaAppleSiliconPreset respects explicit runtime prefs when baseP
   const tempRoot = mkdtempSync(join(tmpdir(), "ollama-profile-runtime-prefs-"));
 
   try {
-    mkdirSync(join(tempRoot, ".gsd"), { recursive: true });
+    mkdirSync(join(tempRoot, ".gwd"), { recursive: true });
 
     assert.equal(resolveOllamaAppleSiliconPreset({
       isAutoMode: true,
@@ -142,12 +142,12 @@ test("resolveOllamaAppleSiliconPreset reads basePath preference files for opt ou
     const globalHome = join(tempRoot, "home");
     const projectRoot = join(tempRoot, "project");
     mkdirSync(globalHome, { recursive: true });
-    mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
+    mkdirSync(join(projectRoot, ".gwd"), { recursive: true });
     process.env.GWD_HOME = globalHome;
     process.chdir(projectRoot);
 
     const globalPrefsPath = join(globalHome, "PREFERENCES.md");
-    const projectPrefsPath = join(projectRoot, ".gsd", "PREFERENCES.md");
+    const projectPrefsPath = join(projectRoot, ".gwd", "PREFERENCES.md");
 
     writeFileSync(globalPrefsPath, "---\nmodels:\n  execution: ollama/custom\n---\n", "utf-8");
     assert.equal(preferenceOptOutPreset(projectRoot), undefined, "global models");

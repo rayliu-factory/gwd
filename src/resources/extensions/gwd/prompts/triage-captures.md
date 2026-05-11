@@ -53,7 +53,7 @@ Classify each capture as one of:
    Auto-confirm **stop** and **backtrack** because they are urgent user directives.
    For captures classified as **quick-task**, **inject**, or **replan**, ask the user to confirm or choose a different classification. **Non-bypassable:** If `ask_user_questions` fails, errors, or the user does not respond, you MUST re-ask — never auto-confirm these classifications without explicit user approval.
 
-3. **Update** `.gsd/CAPTURES.md` — for each capture, update its section with the confirmed classification:
+3. **Update** `.gwd/CAPTURES.md` — for each capture, update its section with the confirmed classification:
    - Change `**Status:** pending` to `**Status:** resolved`
    - Add `**Classification:** <type>`
    - Add `**Resolution:** <brief description of what will happen>`

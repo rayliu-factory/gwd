@@ -44,7 +44,7 @@ afterEach(() => {
 test('write-gate: blocks CONTEXT.md write during discussion without depth verification (absolute path)', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '/Users/dev/project/.gsd/milestones/M001/M001-CONTEXT.md',
+    '/Users/dev/project/.gwd/milestones/M001/M001-CONTEXT.md',
     'M001',
     false,
   );
@@ -57,7 +57,7 @@ test('write-gate: blocks CONTEXT.md write during discussion without depth verifi
 test('write-gate: blocks CONTEXT.md write during discussion without depth verification (relative path)', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M005/M005-CONTEXT.md',
+    '.gwd/milestones/M005/M005-CONTEXT.md',
     'M005',
     false,
   );
@@ -72,7 +72,7 @@ test('write-gate: allows CONTEXT.md write after depth verification', () => {
   markDepthVerified('M001');
   const result = shouldBlockContextWrite(
     'write',
-    '/Users/dev/project/.gsd/milestones/M001/M001-CONTEXT.md',
+    '/Users/dev/project/.gwd/milestones/M001/M001-CONTEXT.md',
     'M001',
   );
   assert.strictEqual(result.block, false, 'should not block after depth verification');
@@ -84,7 +84,7 @@ test('write-gate: allows CONTEXT.md write after depth verification', () => {
 test('write-gate: blocks CONTEXT.md write when milestoneId is ambiguous', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/M001-CONTEXT.md',
+    '.gwd/milestones/M001/M001-CONTEXT.md',
     null,
   );
   assert.strictEqual(result.block, true, 'should block when milestone context is ambiguous');
@@ -96,7 +96,7 @@ test('write-gate: allows non-CONTEXT.md writes during discussion', () => {
   // DISCUSSION.md
   const r1 = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/M001-DISCUSSION.md',
+    '.gwd/milestones/M001/M001-DISCUSSION.md',
     'M001',
   );
   assert.strictEqual(r1.block, false, 'DISCUSSION.md should pass');
@@ -104,7 +104,7 @@ test('write-gate: allows non-CONTEXT.md writes during discussion', () => {
   // Slice file
   const r2 = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/slices/S01/S01-PLAN.md',
+    '.gwd/milestones/M001/slices/S01/S01-PLAN.md',
     'M001',
   );
   assert.strictEqual(r2.block, false, 'slice plan should pass');
@@ -123,7 +123,7 @@ test('write-gate: allows non-CONTEXT.md writes during discussion', () => {
 test('write-gate: regex does not match slice context files (S01-CONTEXT.md)', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/slices/S01/S01-CONTEXT.md',
+    '.gwd/milestones/M001/slices/S01/S01-CONTEXT.md',
     'M001',
   );
   assert.strictEqual(result.block, false, 'S01-CONTEXT.md should not be blocked');
@@ -134,7 +134,7 @@ test('write-gate: regex does not match slice context files (S01-CONTEXT.md)', ()
 test('write-gate: blocked reason contains depth_verification keyword and anti-bypass language', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M999/M999-CONTEXT.md',
+    '.gwd/milestones/M999/M999-CONTEXT.md',
     'M999',
   );
   assert.strictEqual(result.block, true);
@@ -149,7 +149,7 @@ test('write-gate: blocked reason contains depth_verification keyword and anti-by
 test('write-gate: blocks CONTEXT.md write in queue mode without depth verification', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/M001-CONTEXT.md',
+    '.gwd/milestones/M001/M001-CONTEXT.md',
     null,   // no milestoneId in queue mode
     true,   // queue phase active
   );
@@ -164,7 +164,7 @@ test('write-gate: allows CONTEXT.md write in queue mode after depth verification
   markDepthVerified('M001');
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/M001-CONTEXT.md',
+    '.gwd/milestones/M001/M001-CONTEXT.md',
     null,   // no milestoneId in queue mode
     true,   // queue phase active
   );
@@ -179,14 +179,14 @@ test('write-gate: markDepthVerified unlocks only the matching milestone', () => 
 
   const allowed = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/M001-CONTEXT.md',
+    '.gwd/milestones/M001/M001-CONTEXT.md',
     null,
   );
   assert.strictEqual(allowed.block, false, 'should allow the verified milestone');
 
   const blockedOther = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M002/M002-CONTEXT.md',
+    '.gwd/milestones/M002/M002-CONTEXT.md',
     null,
   );
   assert.strictEqual(blockedOther.block, true, 'other milestones should remain blocked');
@@ -633,8 +633,8 @@ test('write-gate: isDepthConfirmationAnswer fails closed when options are missin
 
 test('write-gate: loadWriteGateSnapshot returns empty default when persist file is deleted (#4343)', () => {
   const base = join(tmpdir(), `gsd-write-gate-4343-${randomUUID()}`);
-  mkdirSync(join(base, '.gsd', 'runtime'), { recursive: true });
-  const stateFilePath = join(base, '.gsd', 'runtime', 'write-gate-state.json');
+  mkdirSync(join(base, '.gwd', 'runtime'), { recursive: true });
+  const stateFilePath = join(base, '.gwd', 'runtime', 'write-gate-state.json');
   const originalEnv = process.env.GWD_PERSIST_WRITE_GATE_STATE;
 
   try {
@@ -687,24 +687,24 @@ test('write-gate: loadWriteGateSnapshot returns empty default when persist file 
   }
 });
 
-// ─── Scenario 30: write-gate persistence recreates dangling external .gsd target ──
+// ─── Scenario 30: write-gate persistence recreates dangling external .gwd target ──
 
-test('write-gate: resetWriteGateState persists through dangling .gsd symlink', () => {
+test('write-gate: resetWriteGateState persists through dangling .gwd symlink', () => {
   const base = join(tmpdir(), `gsd-write-gate-dangling-${randomUUID()}`);
   const externalState = join(tmpdir(), `gsd-write-gate-external-${randomUUID()}`);
-  const stateFilePath = join(base, '.gsd', 'runtime', 'write-gate-state.json');
+  const stateFilePath = join(base, '.gwd', 'runtime', 'write-gate-state.json');
   const originalEnv = process.env.GWD_PERSIST_WRITE_GATE_STATE;
 
   try {
     process.env.GWD_PERSIST_WRITE_GATE_STATE = '1';
     mkdirSync(base, { recursive: true });
-    symlinkSync(externalState, join(base, '.gsd'), 'junction');
-    assert.strictEqual(existsSync(join(base, '.gsd')), false, 'precondition: .gsd symlink target is missing');
+    symlinkSync(externalState, join(base, '.gwd'), 'junction');
+    assert.strictEqual(existsSync(join(base, '.gwd')), false, 'precondition: .gwd symlink target is missing');
 
     resetWriteGateState(base);
 
     assert.ok(existsSync(externalState), 'missing external state target was recreated');
-    assert.ok(existsSync(stateFilePath), 'write-gate snapshot persisted under .gsd/runtime');
+    assert.ok(existsSync(stateFilePath), 'write-gate snapshot persisted under .gwd/runtime');
     assert.deepEqual(loadWriteGateSnapshot(base), {
       verifiedDepthMilestones: [],
       verifiedApprovalGates: [],

@@ -64,7 +64,7 @@ test("bare /gwd stays in the foreground smart-entry flow (#5125 regression)", ()
   );
 });
 
-test("auto bootstrap validates blocked directories before touching .gsd migration state", () => {
+test("auto bootstrap validates blocked directories before touching .gwd migration state", () => {
   const autoSrc = readGsdFile("auto.ts");
   const autoStartSrc = readGsdFile("auto-start.ts");
 
@@ -78,7 +78,7 @@ test("auto bootstrap validates blocked directories before touching .gsd migratio
   assert.ok(startAutoRecoveryIdx > -1, "startAuto should still recover failed migrations for safe projects");
   assert.ok(
     startAutoValidationIdx < startAutoRecoveryIdx,
-    "startAuto must reject blocked directories before recovering or migrating .gsd state",
+    "startAuto must reject blocked directories before recovering or migrating .gwd state",
   );
 
   const bootstrapIdx = autoStartSrc.indexOf("export async function bootstrapAutoSession(");
@@ -93,7 +93,7 @@ test("auto bootstrap validates blocked directories before touching .gsd migratio
   assert.ok(bootstrapMigrationIdx > -1, "bootstrapAutoSession should still migrate safe projects");
   assert.ok(
     bootstrapValidationIdx < lockIdx && bootstrapValidationIdx < bootstrapMigrationIdx,
-    "fresh bootstrap must reject blocked directories before locking or migrating .gsd state",
+    "fresh bootstrap must reject blocked directories before locking or migrating .gwd state",
   );
 });
 

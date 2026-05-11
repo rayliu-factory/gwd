@@ -37,7 +37,7 @@ import { invalidateAllCaches } from "../cache.ts";
 
 function createBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-needs-discussion-"));
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }
 
@@ -46,19 +46,19 @@ function cleanup(base: string): void {
 }
 
 function writeContextDraft(base: string, mid: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid);
+  const dir = join(base, ".gwd", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-CONTEXT-DRAFT.md`), content);
 }
 
 function writeContext(base: string, mid: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid);
+  const dir = join(base, ".gwd", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-CONTEXT.md`), content);
 }
 
 function writeRoadmap(base: string, mid: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid);
+  const dir = join(base, ".gwd", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-ROADMAP.md`), content);
 }

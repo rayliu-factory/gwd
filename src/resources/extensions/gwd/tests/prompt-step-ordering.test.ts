@@ -17,7 +17,7 @@ import { registerHooks } from '../bootstrap/register-hooks.ts';
 
 function makePromptBase(): string {
   const base = mkdtempSync(join(tmpdir(), 'gsd-prompt-order-'));
-  const msDir = join(base, '.gsd', 'milestones', 'M001');
+  const msDir = join(base, '.gwd', 'milestones', 'M001');
   const sliceDir = join(msDir, 'slices', 'S01');
   mkdirSync(sliceDir, { recursive: true });
   writeFileSync(

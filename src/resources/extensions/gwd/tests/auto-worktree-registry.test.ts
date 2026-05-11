@@ -30,7 +30,7 @@ function createTempRepo(t: { after: (fn: () => void) => void }): string {
   git(["config", "user.email", "test@test.com"], dir);
   git(["config", "user.name", "Test"], dir);
   writeFileSync(join(dir, "README.md"), "# test\n");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   git(["add", "."], dir);
   git(["commit", "-m", "init"], dir);
   git(["branch", "-M", "main"], dir);
@@ -64,7 +64,7 @@ describe("auto-worktree workspace registry", () => {
 
   test("behavioral equivalence: createAutoWorktree populates registry; teardown clears it", (t) => {
     const tempDir = createTempRepo(t);
-    const msDir = join(tempDir, ".gsd", "milestones", "M001");
+    const msDir = join(tempDir, ".gwd", "milestones", "M001");
     mkdirSync(msDir, { recursive: true });
     writeFileSync(join(msDir, "CONTEXT.md"), "# M001 Context\n");
     git(["add", "."], tempDir);
@@ -103,7 +103,7 @@ describe("auto-worktree workspace registry", () => {
 
   test("behavioral equivalence: enterAutoWorktree also populates registry", (t) => {
     const tempDir = createTempRepo(t);
-    const msDir = join(tempDir, ".gsd", "milestones", "M002");
+    const msDir = join(tempDir, ".gwd", "milestones", "M002");
     mkdirSync(msDir, { recursive: true });
     writeFileSync(join(msDir, "CONTEXT.md"), "# M002 Context\n");
     git(["add", "."], tempDir);
@@ -141,14 +141,14 @@ describe("auto-worktree workspace registry", () => {
     const dir2 = createTempRepo(t);
 
     // Set up milestone in dir1
-    const ms1Dir = join(dir1, ".gsd", "milestones", "M010");
+    const ms1Dir = join(dir1, ".gwd", "milestones", "M010");
     mkdirSync(ms1Dir, { recursive: true });
     writeFileSync(join(ms1Dir, "CONTEXT.md"), "# M010\n");
     git(["add", "."], dir1);
     git(["commit", "-m", "add milestone"], dir1);
 
     // Set up milestone in dir2
-    const ms2Dir = join(dir2, ".gsd", "milestones", "M020");
+    const ms2Dir = join(dir2, ".gwd", "milestones", "M020");
     mkdirSync(ms2Dir, { recursive: true });
     writeFileSync(join(ms2Dir, "CONTEXT.md"), "# M020\n");
     git(["add", "."], dir2);

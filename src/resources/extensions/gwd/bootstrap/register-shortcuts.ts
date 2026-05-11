@@ -25,8 +25,8 @@ export function registerShortcuts(pi: ExtensionAPI): void {
       import("../dashboard-overlay.js"),
       getProjectRoot(),
     ]);
-    if (!existsSync(join(basePath, ".gsd"))) {
-      ctx.ui.notify("No .gsd/ directory found. Run /gwd to start.", "info");
+    if (!existsSync(join(basePath, ".gwd"))) {
+      ctx.ui.notify("No .gwd/ directory found. Run /gwd to start.", "info");
       return;
     }
     await ctx.ui.custom<boolean>(
@@ -57,7 +57,7 @@ export function registerShortcuts(pi: ExtensionAPI): void {
 
   const openParallelOverlay = async (ctx: ExtensionContext) => {
     const basePath = await getProjectRoot();
-    const parallelDir = join(basePath, ".gsd", "parallel");
+    const parallelDir = join(basePath, ".gwd", "parallel");
     if (!existsSync(parallelDir)) {
       ctx.ui.notify("No parallel workers found. Run /gwd parallel start first.", "info");
       return;

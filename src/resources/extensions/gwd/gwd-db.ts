@@ -10,7 +10,7 @@
 // ─── Single-writer invariant ─────────────────────────────────────────────
 // This file is the ONLY place in the codebase that issues write SQL
 // (INSERT / UPDATE / DELETE / REPLACE / BEGIN-COMMIT transactions) against
-// the engine database at `.gsd/gwd.db`. All other modules must call the
+// the engine database at `.gwd/gwd.db`. All other modules must call the
 // typed wrappers exported here. The structural test
 // `tests/single-writer-invariant.test.ts` fails CI if a new bypass appears.
 //
@@ -18,7 +18,7 @@
 // (context-store, memory-store queries, doctor checks, projections).
 // Do NOT use it for writes — add a wrapper here instead.
 //
-// The separate `.gsd/unit-claims.db` managed by `unit-ownership.ts` is an
+// The separate `.gwd/unit-claims.db` managed by `unit-ownership.ts` is an
 // intentionally independent store for cross-worktree claim races and is
 // excluded from this invariant.
 
@@ -706,7 +706,7 @@ export function vacuumDatabase(): void {
   } catch (e) { logWarning("db", `VACUUM failed: ${(e as Error).message}`); }
 }
 
-/** Flush WAL into gsd.db so `git add .gsd/gwd.db` stages current state — safe while DB is open. */
+/** Flush WAL into gwd.db so `git add .gwd/gwd.db` stages current state — safe while DB is open. */
 export function checkpointDatabase(): void {
   if (!currentDb) return;
   try {

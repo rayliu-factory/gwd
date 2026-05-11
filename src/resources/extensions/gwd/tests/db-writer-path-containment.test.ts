@@ -16,7 +16,7 @@ import {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeProjectDir(base: string): string {
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }
 
@@ -29,7 +29,7 @@ describe("saveArtifactToDbForWorkspace: path.relative containment guard", () => 
   beforeEach(() => {
     tmp = mkdtempSync(join(tmpdir(), "gsd-path-contain-fw-"));
     projectDir = makeProjectDir(tmp);
-    openDatabase(join(projectDir, ".gsd", "gsd.db"));
+    openDatabase(join(projectDir, ".gwd", "gwd.db"));
   });
 
   afterEach(() => {
@@ -37,18 +37,18 @@ describe("saveArtifactToDbForWorkspace: path.relative containment guard", () => 
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  // Attack: /foo/.gsd-other/file resolves to a path that startsWith("/foo/.gsd")
-  // but is NOT inside /foo/.gsd/. The path.relative fix correctly detects this.
+  // Attack: /foo/.gwd-other/file resolves to a path that startsWith("/foo/.gwd")
+  // but is NOT inside /foo/.gwd/. The path.relative fix correctly detects this.
   test("rejects sibling directory that startsWith would have accepted", async () => {
-    // Create a sibling directory next to .gsd that shares the prefix
-    const sibling = join(projectDir, ".gsd-other");
+    // Create a sibling directory next to .gwd that shares the prefix
+    const sibling = join(projectDir, ".gwd-other");
     mkdirSync(sibling, { recursive: true });
 
     const ws = createWorkspace(projectDir);
-    // Craft an opts.path that traverses out of .gsd into .gsd-other
-    // resolve(gsdDir, "../.gsd-other/evil.md") === projectDir + "/.gsd-other/evil.md"
-    // which startsWith(projectDir + "/.gsd") because ".gsd-other" starts with ".gsd"
-    const traversalPath = "../.gsd-other/evil.md";
+    // Craft an opts.path that traverses out of .gwd into .gwd-other
+    // resolve(gsdDir, "../.gwd-other/evil.md") === projectDir + "/.gwd-other/evil.md"
+    // which startsWith(projectDir + "/.gwd") because ".gwd-other" starts with ".gwd"
+    const traversalPath = "../.gwd-other/evil.md";
 
     await assert.rejects(
       () =>
@@ -57,7 +57,7 @@ describe("saveArtifactToDbForWorkspace: path.relative containment guard", () => 
           artifact_type: "CONTEXT",
           content: "attack",
         }),
-      /path escapes \.gsd\/ directory/,
+      /path escapes \.gwd\/ directory/,
     );
   });
 
@@ -70,13 +70,13 @@ describe("saveArtifactToDbForWorkspace: path.relative containment guard", () => 
           artifact_type: "CONTEXT",
           content: "attack",
         }),
-      /path escapes \.gsd\/ directory/,
+      /path escapes \.gwd\/ directory/,
     );
   });
 
-  test("accepts a legitimate path inside .gsd/", async () => {
+  test("accepts a legitimate path inside .gwd/", async () => {
     const ws = createWorkspace(projectDir);
-    // Should not throw — CONTEXT.md inside .gsd is valid
+    // Should not throw — CONTEXT.md inside .gwd is valid
     await assert.doesNotReject(() =>
       saveArtifactToDbForWorkspace(ws, {
         path: "CONTEXT.md",
@@ -94,7 +94,7 @@ describe("saveArtifactToDbByScope: path.relative containment guard", () => {
   beforeEach(() => {
     tmp = mkdtempSync(join(tmpdir(), "gsd-path-contain-bs-"));
     projectDir = makeProjectDir(tmp);
-    openDatabase(join(projectDir, ".gsd", "gsd.db"));
+    openDatabase(join(projectDir, ".gwd", "gwd.db"));
   });
 
   afterEach(() => {
@@ -103,12 +103,12 @@ describe("saveArtifactToDbByScope: path.relative containment guard", () => {
   });
 
   test("rejects sibling directory that startsWith would have accepted", async () => {
-    const sibling = join(projectDir, ".gsd-other");
+    const sibling = join(projectDir, ".gwd-other");
     mkdirSync(sibling, { recursive: true });
 
     const ws = createWorkspace(projectDir);
     const scope = scopeMilestone(ws, "M001");
-    const traversalPath = "../.gsd-other/evil.md";
+    const traversalPath = "../.gwd-other/evil.md";
 
     await assert.rejects(
       () =>
@@ -117,7 +117,7 @@ describe("saveArtifactToDbByScope: path.relative containment guard", () => {
           artifact_type: "CONTEXT",
           content: "attack",
         }),
-      /path escapes \.gsd\/ directory/,
+      /path escapes \.gwd\/ directory/,
     );
   });
 
@@ -131,12 +131,12 @@ describe("saveArtifactToDbByScope: path.relative containment guard", () => {
           artifact_type: "CONTEXT",
           content: "attack",
         }),
-      /path escapes \.gsd\/ directory/,
+      /path escapes \.gwd\/ directory/,
     );
   });
 
-  test("accepts a legitimate milestone-relative path inside .gsd/", async () => {
-    mkdirSync(join(projectDir, ".gsd", "milestones", "M001"), {
+  test("accepts a legitimate milestone-relative path inside .gwd/", async () => {
+    mkdirSync(join(projectDir, ".gwd", "milestones", "M001"), {
       recursive: true,
     });
     const ws = createWorkspace(projectDir);

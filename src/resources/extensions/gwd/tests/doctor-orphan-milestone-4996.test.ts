@@ -20,17 +20,17 @@ import type { DoctorIssue, DoctorIssueCode } from "../doctor-types.ts";
 
 function makeBase(prefix = "gsd-doctor-orphan-"): string {
   const base = mkdtempSync(join(tmpdir(), prefix));
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }
 
 function stubDir(base: string, mid: string): void {
-  mkdirSync(join(base, ".gsd", "milestones", mid, "slices"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", mid, "slices"), { recursive: true });
 }
 
 function populateDir(base: string, mid: string): void {
-  mkdirSync(join(base, ".gsd", "milestones", mid), { recursive: true });
-  writeFileSync(join(base, ".gsd", "milestones", mid, `${mid}-CONTEXT.md`), `# ${mid}\n`);
+  mkdirSync(join(base, ".gwd", "milestones", mid), { recursive: true });
+  writeFileSync(join(base, ".gwd", "milestones", mid, `${mid}-CONTEXT.md`), `# ${mid}\n`);
 }
 
 describe("gsd_doctor orphan milestone directory check (#4996)", () => {
@@ -73,7 +73,7 @@ describe("gsd_doctor orphan milestone directory check (#4996)", () => {
     base = makeBase();
     stubDir(base, "M003");
     // Simulate a legitimate in-flight worktree
-    mkdirSync(join(base, ".gsd", "worktrees", "M003"), { recursive: true });
+    mkdirSync(join(base, ".gwd", "worktrees", "M003"), { recursive: true });
 
     const issues: DoctorIssue[] = [];
     const fixes: string[] = [];
@@ -86,7 +86,7 @@ describe("gsd_doctor orphan milestone directory check (#4996)", () => {
   it("(d) queued DB row (in-flight ID) is NOT reported as orphan", async () => {
     base = makeBase();
     stubDir(base, "M003");
-    const dbPath = join(base, ".gsd", "gsd.db");
+    const dbPath = join(base, ".gwd", "gwd.db");
     openDatabase(dbPath);
     insertMilestone({ id: "M003", status: "queued" });
 

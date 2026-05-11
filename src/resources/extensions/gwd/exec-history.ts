@@ -1,6 +1,6 @@
 // GWD Exec History — read-side helpers for the exec sandbox.
 //
-// Pure I/O: scans `.gsd/exec/*.meta.json` under a base directory and
+// Pure I/O: scans `.gwd/exec/*.meta.json` under a base directory and
 // returns lightweight records. Used by the gsd_exec_search tool and
 // any future compaction-snapshot enrichment.
 
@@ -44,7 +44,7 @@ export interface ExecSearchHit {
 }
 
 function listMetaFiles(baseDir: string): string[] {
-  const dir = resolve(baseDir, ".gsd", "exec");
+  const dir = resolve(baseDir, ".gwd", "exec");
   try {
     return readdirSync(dir)
       .filter((name) => name.endsWith(".meta.json"))

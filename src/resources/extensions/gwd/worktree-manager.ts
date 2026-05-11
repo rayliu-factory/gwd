@@ -1,17 +1,17 @@
 /**
  * GWD Worktree Manager
  *
- * Creates and manages git worktrees under .gsd/worktrees/<name>/.
+ * Creates and manages git worktrees under .gwd/worktrees/<name>/.
  * Each worktree gets its own branch (worktree/<name>) and a full
  * working copy of the project, enabling parallel work streams.
  *
- * The merge helper compares .gsd/ artifacts between a worktree and
+ * The merge helper compares .gwd/ artifacts between a worktree and
  * the main branch, then dispatches an LLM-guided merge flow.
  *
  * Flow:
- *   1. create()  — git worktree add .gsd/worktrees/<name> -b worktree/<name>
+ *   1. create()  — git worktree add .gwd/worktrees/<name> -b worktree/<name>
  *   2. user works in the worktree (new plans, milestones, etc.)
- *   3. merge()   — LLM-guided reconciliation of .gsd/ artifacts back to main
+ *   3. merge()   — LLM-guided reconciliation of .gwd/ artifacts back to main
  *   4. remove()  — git worktree remove + branch cleanup
  */
 
@@ -62,11 +62,11 @@ export interface FileLineStat {
 }
 
 export interface WorktreeDiffSummary {
-  /** Files only in the worktree .gsd/ (new artifacts) */
+  /** Files only in the worktree .gwd/ (new artifacts) */
   added: string[];
   /** Files in both but with different content */
   modified: string[];
-  /** Files only in main .gsd/ (deleted in worktree) */
+  /** Files only in main .gwd/ (deleted in worktree) */
   removed: string[];
 }
 
@@ -134,7 +134,7 @@ export function resolveGitDir(basePath: string): string {
 }
 
 export function worktreesDir(basePath: string): string {
-  return join(resolveWorktreeProjectRoot(basePath), ".gsd", "worktrees");
+  return join(resolveWorktreeProjectRoot(basePath), ".gwd", "worktrees");
 }
 
 export function worktreePath(basePath: string, name: string): string {
@@ -146,7 +146,7 @@ export function worktreeBranchName(name: string): string {
 }
 
 /**
- * Validate that a path is inside the .gsd/worktrees/ directory.
+ * Validate that a path is inside the .gwd/worktrees/ directory.
  * Resolves symlinks and normalizes ".." traversals before comparison
  * so that a symlink-resolved or crafted path cannot escape containment.
  *
@@ -158,14 +158,14 @@ export function isInsideWorktreesDir(basePath: string, targetPath: string): bool
   const wtDir = existsSync(wtDirPath) ? realpathSync(wtDirPath) : resolve(wtDirPath);
   const resolved = existsSync(targetPath) ? realpathSync(targetPath) : resolve(targetPath);
   // The resolved path must start with the worktrees dir followed by a separator,
-  // not merely be a prefix match (e.g. ".gsd/worktrees-extra" must not match).
+  // not merely be a prefix match (e.g. ".gwd/worktrees-extra" must not match).
   return resolved === wtDir || resolved.startsWith(wtDir + sep);
 }
 
 /**
  * Return the canonical path from which a milestone's artifacts should be read.
  *
- * If a live git worktree exists for this milestone at `.gsd/worktrees/<MID>/`
+ * If a live git worktree exists for this milestone at `.gwd/worktrees/<MID>/`
  * (directory present AND a `.git` file indicating a registered worktree),
  * returns that worktree path. Otherwise returns `basePath` unchanged.
  *
@@ -217,7 +217,7 @@ export function resolveCanonicalMilestoneRoot(
 // ─── Core Operations ───────────────────────────────────────────────────────
 
 /**
- * Create a new git worktree under .gsd/worktrees/<name>/ with branch worktree/<name>.
+ * Create a new git worktree under .gwd/worktrees/<name>/ with branch worktree/<name>.
  * The branch is created from the current HEAD of the main branch.
  *
  * @param opts.branch — override the default `worktree/<name>` branch name
@@ -247,7 +247,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
     }
   }
 
-  // Ensure the .gsd/worktrees/ directory exists
+  // Ensure the .gwd/worktrees/ directory exists
   const wtDir = worktreesDir(basePath);
   mkdirSync(wtDir, { recursive: true });
 
@@ -324,7 +324,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
 
 /**
  * List all GWD-managed worktrees.
- * Uses native worktree list and filters to those under .gsd/worktrees/.
+ * Uses native worktree list and filters to those under .gwd/worktrees/.
  */
 export function listWorktrees(basePath: string): WorktreeInfo[] {
   basePath = normalizeBasePathForWorktreeOps(basePath);
@@ -336,7 +336,7 @@ export function listWorktrees(basePath: string): WorktreeInfo[] {
   const seenRoots = new Set<string>();
   const worktreeRoots = baseVariants
     .map(baseVariant => {
-      const path = join(baseVariant, ".gsd", "worktrees");
+      const path = join(baseVariant, ".gwd", "worktrees");
       return {
         normalized: normalizePathForComparison(path),
       };
@@ -379,7 +379,7 @@ export function listWorktrees(basePath: string): WorktreeInfo[] {
       ? normalizedEntryVariants.some(entryVariant => entryVariant.split("/").pop() === branchWorktreeName)
       : false;
 
-    // Only include worktrees under .gsd/worktrees/
+    // Only include worktrees under .gwd/worktrees/
     if (!matchedRoot && !matchesBranchLeaf) continue;
 
     const matchedEntryPath = normalizedEntryVariants.find(entryVariant =>
@@ -417,14 +417,14 @@ export function listWorktrees(basePath: string): WorktreeInfo[] {
 
 /** Directories to skip when scanning for nested .git dirs. */
 const NESTED_GIT_SKIP_DIRS = new Set([
-  ".git", ".gsd", ".bg-shell", "node_modules", ".next", ".nuxt", "dist", "build",
+  ".git", ".gwd", ".bg-shell", "node_modules", ".next", ".nuxt", "dist", "build",
   "__pycache__", ".tox", ".venv", "venv", "target", "vendor",
 ]);
 
 /**
  * Recursively find nested .git directories inside a worktree root.
  * Returns paths to directories that contain their own .git (directory, not file).
- * Skips node_modules, .gsd, and other non-project directories for performance.
+ * Skips node_modules, .gwd, and other non-project directories for performance.
  *
  * A nested .git *directory* (not a .git file — which is a legitimate worktree
  * pointer) indicates a scaffolded repo that will become an orphaned gitlink.
@@ -500,10 +500,10 @@ export function removeWorktree(
   const { deleteBranch = true, force = true } = opts;
 
   // Resolve the ACTUAL worktree path from git's worktree list.
-  // The computed path may differ when .gsd/ is (or was) a symlink to an
+  // The computed path may differ when .gwd/ is (or was) a symlink to an
   // external state directory — git resolves symlinks at worktree creation
   // time, so its registered path points to the resolved external location.
-  // If syncStateToProjectRoot later creates a real .gsd/ directory that
+  // If syncStateToProjectRoot later creates a real .gwd/ directory that
   // shadows the symlink, the computed path diverges from git's record.
   let gitReportedPath: string | null = null;
   try {
@@ -515,14 +515,14 @@ export function removeWorktree(
   } catch (e) { logWarning("worktree", `nativeWorktreeList parse failed: ${(e as Error).message}`); }
 
   // Safety gate (#2365): only use the git-reported path if it is actually
-  // inside .gsd/worktrees/.  When .gsd/ was a symlink, git may have resolved
+  // inside .gwd/worktrees/.  When .gwd/ was a symlink, git may have resolved
   // it to an external directory (e.g. a project data folder).  Using that
   // path for removal would destroy user data.
   if (gitReportedPath && isInsideWorktreesDir(basePath, gitReportedPath)) {
     wtPath = gitReportedPath;
   } else if (gitReportedPath) {
     console.error(
-      `[GWD] WARNING: git worktree list reported path outside .gsd/worktrees/: ${gitReportedPath}\n` +
+      `[GWD] WARNING: git worktree list reported path outside .gwd/worktrees/: ${gitReportedPath}\n` +
         `  Refusing to use it for removal — falling back to computed path: ${wtPath}`,
     );
     // Still tell git to unregister the worktree entry via its reported path,
@@ -533,7 +533,7 @@ export function removeWorktree(
   const resolvedWtPath = existsSync(wtPath) ? realpathSync(wtPath) : wtPath;
 
   // Double-check: the resolved path (after symlink resolution) must also be
-  // inside .gsd/worktrees/ — a symlink inside the directory could point out.
+  // inside .gwd/worktrees/ — a symlink inside the directory could point out.
   const resolvedPathSafe = isInsideWorktreesDir(basePath, resolvedWtPath);
 
   // If we're inside the worktree, move out first — git can't remove an in-use directory
@@ -671,7 +671,7 @@ export function removeWorktree(
     // Path is outside containment — only do a non-force git worktree remove
     // (which refuses to delete dirty worktrees) and never fall back to rmSync.
     console.error(
-      `[GWD] WARNING: Resolved worktree path is outside .gsd/worktrees/: ${resolvedWtPath}\n` +
+      `[GWD] WARNING: Resolved worktree path is outside .gwd/worktrees/: ${resolvedWtPath}\n` +
         `  Skipping forced removal to prevent data loss.`,
     );
     try { nativeWorktreeRemove(basePath, resolvedWtPath, false); } catch (e) { logWarning("worktree", `non-force worktree remove failed for ${resolvedWtPath}: ${e instanceof Error ? e.message : String(e)}`); }
@@ -693,26 +693,26 @@ export function removeWorktree(
  * This module uses a split representation (paths/exact/prefixes) for efficient matching.
  */
 const SKIP_PATHS = [
-  ".gsd/worktrees/",
-  ".gsd/runtime/",
-  ".gsd/activity/",
-  ".gsd/audit/",
-  ".gsd/forensics/",
-  ".gsd/parallel/",
-  ".gsd/journal/",
+  ".gwd/worktrees/",
+  ".gwd/runtime/",
+  ".gwd/activity/",
+  ".gwd/audit/",
+  ".gwd/forensics/",
+  ".gwd/parallel/",
+  ".gwd/journal/",
 ];
 const SKIP_EXACT = [
-  ".gsd/STATE.md",
-  ".gsd/auto.lock",
-  ".gsd/metrics.json",
-  ".gsd/state-manifest.json",
-  ".gsd/doctor-history.jsonl",
-  ".gsd/event-log.jsonl",
+  ".gwd/STATE.md",
+  ".gwd/auto.lock",
+  ".gwd/metrics.json",
+  ".gwd/state-manifest.json",
+  ".gwd/doctor-history.jsonl",
+  ".gwd/event-log.jsonl",
 ];
-/** File prefixes to skip (for wildcard patterns like completed-units*.json, gsd.db*). */
+/** File prefixes to skip (for wildcard patterns like completed-units*.json, gwd.db*). */
 const SKIP_PREFIXES = [
-  ".gsd/completed-units",
-  ".gsd/gwd.db",
+  ".gwd/completed-units",
+  ".gwd/gwd.db",
 ];
 
 function shouldSkipPath(filePath: string): boolean {
@@ -746,7 +746,7 @@ function parseDiffNameStatus(entries: { status: string; path: string }[]): Workt
 }
 
 /**
- * Diff the .gsd/ directory between the worktree branch and main branch.
+ * Diff the .gwd/ directory between the worktree branch and main branch.
  * Returns a summary of added, modified, and removed GWD artifacts.
  */
 export function diffWorktreeGSD(basePath: string, name: string): WorktreeDiffSummary {
@@ -755,7 +755,7 @@ export function diffWorktreeGSD(basePath: string, name: string): WorktreeDiffSum
   const branch = worktreeBranchName(name);
   const mainBranch = nativeDetectMainBranch(basePath);
 
-  const entries = nativeDiffNameStatus(basePath, mainBranch, branch, ".gsd/", true);
+  const entries = nativeDiffNameStatus(basePath, mainBranch, branch, ".gwd/", true);
 
   return parseDiffNameStatus(entries);
 }
@@ -798,7 +798,7 @@ export function diffWorktreeNumstat(basePath: string, name: string, branchOverri
 }
 
 /**
- * Get the full diff content for .gsd/ between the worktree branch and main.
+ * Get the full diff content for .gwd/ between the worktree branch and main.
  * Returns the raw unified diff for LLM consumption.
  */
 export function getWorktreeGSDDiff(basePath: string, name: string): string {
@@ -807,11 +807,11 @@ export function getWorktreeGSDDiff(basePath: string, name: string): string {
   const branch = worktreeBranchName(name);
   const mainBranch = nativeDetectMainBranch(basePath);
 
-  return nativeDiffContent(basePath, mainBranch, branch, ".gsd/", undefined, true);
+  return nativeDiffContent(basePath, mainBranch, branch, ".gwd/", undefined, true);
 }
 
 /**
- * Get the full diff content for non-.gsd/ files between the worktree branch and main.
+ * Get the full diff content for non-.gwd/ files between the worktree branch and main.
  * Returns the raw unified diff for LLM consumption.
  */
 export function getWorktreeCodeDiff(basePath: string, name: string): string {
@@ -820,7 +820,7 @@ export function getWorktreeCodeDiff(basePath: string, name: string): string {
   const branch = worktreeBranchName(name);
   const mainBranch = nativeDetectMainBranch(basePath);
 
-  return nativeDiffContent(basePath, mainBranch, branch, undefined, ".gsd/", true);
+  return nativeDiffContent(basePath, mainBranch, branch, undefined, ".gwd/", true);
 }
 
 /**

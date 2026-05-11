@@ -219,7 +219,7 @@ export async function handleCapture(args: string, ctx: ExtensionCommandContext):
 
   const basePath = currentDirectoryRoot();
 
-  // Ensure .gsd/ exists — capture should work even without a milestone
+  // Ensure .gwd/ exists — capture should work even without a milestone
   const gsdDir = gsdRoot(basePath);
   if (!existsSync(gsdDir)) {
     mkdirSync(gsdDir, { recursive: true });
@@ -307,7 +307,7 @@ export async function handleSteer(change: string, ctx: ExtensionCommandContext, 
   const targetPath = wtPath ?? basePath;
   await appendOverride(targetPath, change, appliedAt);
 
-  const overrideLoc = wtPath ? "worktree `.gsd/OVERRIDES.md`" : "`.gsd/OVERRIDES.md`";
+  const overrideLoc = wtPath ? "worktree `.gwd/OVERRIDES.md`" : "`.gwd/OVERRIDES.md`";
 
   if (isAutoActive()) {
     pi.sendMessage({

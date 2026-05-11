@@ -1,9 +1,9 @@
 /**
  * GWD Init Wizard — Per-project onboarding.
  *
- * Guides users through project setup when entering a directory without .gsd/.
+ * Guides users through project setup when entering a directory without .gwd/.
  * Detects project ecosystem, offers v1 migration, configures project preferences,
- * bootstraps .gsd/ structure, and transitions to the first milestone discussion.
+ * bootstraps .gwd/ structure, and transitions to the first milestone discussion.
  */
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
@@ -24,7 +24,7 @@ import { handlePrefsWizard, writePreferencesFile } from "./commands-prefs-wizard
 interface InitWizardResult {
   /** Whether the wizard completed (vs cancelled) */
   completed: boolean;
-  /** Whether .gsd/ was created */
+  /** Whether .gwd/ was created */
   bootstrapped: boolean;
   /** Whether git is available or was initialized during setup. */
   gitEnabled?: boolean;
@@ -62,7 +62,7 @@ const DEFAULT_PREFS: ProjectPreferences = {
 
 /**
  * Run the project init wizard.
- * Called when entering a directory without .gsd/ (or via /gwd init).
+ * Called when entering a directory without .gwd/ (or via /gwd init).
  */
 export async function showProjectInit(
   ctx: ExtensionCommandContext,
@@ -265,12 +265,12 @@ export async function showProjectInit(
   });
 
   if (reviewChoice === "not_yet") {
-    // User deferred — don't create .gsd/ or persist preferences. Pre-step state
+    // User deferred — don't create .gwd/ or persist preferences. Pre-step state
     // (e.g. git init from Step 2) remains as-is, matching prior step semantics.
     return { completed: false, bootstrapped: false };
   }
 
-  // ── Step 10: Bootstrap .gsd/ + write preferences ───────────────────────────
+  // ── Step 10: Bootstrap .gwd/ + write preferences ───────────────────────────
   bootstrapGsdDirectoryStructure(basePath, signals);
   const prefillPrefs = mapInitPrefsToWizardShape(prefs);
   // Always derive the preferences path from basePath so init writing the
@@ -382,13 +382,13 @@ export async function offerMigration(
       {
         id: "migrate",
         label: "Migrate to GWD v2",
-        description: "Convert .planning/ to .gsd/ format",
+        description: "Convert .planning/ to .gwd/ format",
         recommended: true,
       },
       {
         id: "fresh",
         label: "Start fresh",
-        description: "Ignore .planning/ and create new .gsd/",
+        description: "Ignore .planning/ and create new .gwd/",
       },
     ],
     notYetMessage: "Run /gwd init when ready.",
@@ -401,7 +401,7 @@ export async function offerMigration(
 // ─── Re-init Handler ────────────────────────────────────────────────────────────
 
 /**
- * Handle /gwd init when .gsd/ already exists.
+ * Handle /gwd init when .gwd/ already exists.
  * Offers preference reset without destructive milestone deletion.
  */
 export async function handleReinit(
@@ -525,7 +525,7 @@ async function customizeAdvancedPrefs(
 // ─── Bootstrap ──────────────────────────────────────────────────────────────────
 
 /**
- * Create .gsd/ directory structure and seed CONTEXT.md.
+ * Create .gwd/ directory structure and seed CONTEXT.md.
  *
  * Preferences are written separately by the caller via the unified
  * writePreferencesFile helper so init and the prefs wizard share one path.

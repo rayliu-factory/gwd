@@ -55,7 +55,7 @@ describe("_resolveReportBasePath", () => {
     try {
       const session = {
         originalBasePath: "",
-        basePath: "/Users/dev/.gsd/projects/abc123/worktrees/M001/slices/S01",
+        basePath: "/Users/dev/.gwd/projects/abc123/worktrees/M001/slices/S01",
       };
 
       assert.equal(_resolveReportBasePath(session), "/real/project");

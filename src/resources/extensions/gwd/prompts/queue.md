@@ -28,7 +28,7 @@ Never fabricate or simulate user input during this discussion. Never emit `[User
 - Use `search-the-web`, `fetch_page`, or `search_and_read` only for current external facts; budget 3-5 searches per turn.
 - Scout code with `ls`, `find`, `rg`, or `scout`.
 
-Surface technical unknowns, integration surfaces, proof needed before committing, milestone overlap/dependencies, and any Active/Deferred `.gsd/REQUIREMENTS.md` items advanced by this work.
+Surface technical unknowns, integration surfaces, proof needed before committing, milestone overlap/dependencies, and any Active/Deferred `.gwd/REQUIREMENTS.md` items advanced by this work.
 
 **Then use ask_user_questions** for gray areas: scope boundaries, proof expectations, integration choices, material tech preferences, and in/out scope. Ask 1-3 questions per round, then wait for the user's response before asking the next round.
 
@@ -45,7 +45,7 @@ Before writing, assess new work against existing milestones:
 1. **Dedup check** — If covered, explain what is planned and do not duplicate it.
 2. **Extension check** — If it belongs in a pending milestone, propose extending that context.
 3. **Dependency check** — Capture dependencies on in-progress or planned work.
-4. **Requirement check** — If `.gsd/REQUIREMENTS.md` exists, note advanced Active/Deferred requirements or new contract scope.
+4. **Requirement check** — If `.gwd/REQUIREMENTS.md` exists, note advanced Active/Deferred requirements or new contract scope.
 
 If the new work is already fully covered, say so and stop; do not create duplicates.
 
@@ -103,7 +103,7 @@ The user confirms or corrects before you write. Use one depth verification per m
 
 Once the user is satisfied, in one pass for **each** new milestone:
 
-1. Call `gsd_milestone_generate_id`; never invent IDs. Then `mkdir -p .gsd/milestones/<ID>/slices`.
+1. Call `gsd_milestone_generate_id`; never invent IDs. Then `mkdir -p .gwd/milestones/<ID>/slices`.
 2. Call `gsd_summary_save` with `artifact_type: "CONTEXT"` and full context markdown. The tool computes path and persists DB + disk. Capture intent, scope, risks, constraints, integration points, and requirements. Mark status "Queued — pending auto-mode execution." **If dependent, include YAML frontmatter:**
    ```yaml
    ---
@@ -114,14 +114,14 @@ Once the user is satisfied, in one pass for **each** new milestone:
 
 After all milestone directories and context files are written:
 
-3. Update `.gsd/PROJECT.md` by adding new milestones to the Milestone Sequence. Keep existing entries exactly as-is; only add new lines.
-4. If `.gsd/REQUIREMENTS.md` exists and the queued work introduces new in-scope capabilities or promotes Deferred items, update it.
-5. If discussion produced decisions relevant to existing work, append to `.gsd/DECISIONS.md`.
-6. Append to `.gsd/QUEUE.md`.
+3. Update `.gwd/PROJECT.md` by adding new milestones to the Milestone Sequence. Keep existing entries exactly as-is; only add new lines.
+4. If `.gwd/REQUIREMENTS.md` exists and the queued work introduces new in-scope capabilities or promotes Deferred items, update it.
+5. If discussion produced decisions relevant to existing work, append to `.gwd/DECISIONS.md`.
+6. Append to `.gwd/QUEUE.md`.
 7. {{commitInstruction}}
 
 **Do NOT write roadmaps for queued milestones.**
-**Do NOT update `.gsd/STATE.md`.**
+**Do NOT update `.gwd/STATE.md`.**
 
 After writing the files and committing, say exactly: "Queued N milestone(s). Auto-mode will pick them up after current work completes." — nothing else.
 

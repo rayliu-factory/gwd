@@ -14,7 +14,7 @@ import { deriveState, invalidateStateCache } from '../state.ts';
 
 function makeTmpBase(): string {
   const base = mkdtempSync(join(tmpdir(), 'gsd-plan-slice-'));
-  mkdirSync(join(base, '.gsd', 'milestones', 'M001', 'slices', 'S02', 'tasks'), { recursive: true });
+  mkdirSync(join(base, '.gwd', 'milestones', 'M001', 'slices', 'S02', 'tasks'), { recursive: true });
   return base;
 }
 
@@ -66,7 +66,7 @@ function validParams() {
 
 test('handlePlanSlice writes slice/task planning state and renders plan artifacts', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gwd', 'gwd.db'));
 
   try {
     seedParentSlice();
@@ -85,14 +85,14 @@ test('handlePlanSlice writes slice/task planning state and renders plan artifact
     assert.equal(tasks[0]?.description, 'Implement the slice planning handler.');
     assert.equal(tasks[1]?.estimate, '30m');
 
-    const planPath = join(base, '.gsd', 'milestones', 'M001', 'slices', 'S02', 'S02-PLAN.md');
+    const planPath = join(base, '.gwd', 'milestones', 'M001', 'slices', 'S02', 'S02-PLAN.md');
     assert.ok(existsSync(planPath), 'slice plan should be rendered to disk');
     const parsedPlan = parsePlan(readFileSync(planPath, 'utf-8'));
     assert.equal(parsedPlan.goal, 'Persist slice planning through the DB.');
     assert.equal(parsedPlan.tasks.length, 2);
     assert.equal(parsedPlan.tasks[0]?.id, 'T01');
 
-    const taskPlanPath = join(base, '.gsd', 'milestones', 'M001', 'slices', 'S02', 'tasks', 'T01-PLAN.md');
+    const taskPlanPath = join(base, '.gwd', 'milestones', 'M001', 'slices', 'S02', 'tasks', 'T01-PLAN.md');
     assert.ok(existsSync(taskPlanPath), 'task plan should be rendered to disk');
     const taskPlan = parseTaskPlanFile(readFileSync(taskPlanPath, 'utf-8'));
     assert.deepEqual(taskPlan.frontmatter.skills_used, []);
@@ -103,7 +103,7 @@ test('handlePlanSlice writes slice/task planning state and renders plan artifact
 
 test('handlePlanSlice advances DB-derived state out of planning immediately', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gwd', 'gwd.db'));
 
   try {
     seedParentSlice();
@@ -127,7 +127,7 @@ test('handlePlanSlice advances DB-derived state out of planning immediately', as
 
 test('handlePlanSlice leaves omitted enrichment fields empty instead of rendering placeholders', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gwd', 'gwd.db'));
 
   try {
     seedParentSlice();
@@ -147,7 +147,7 @@ test('handlePlanSlice leaves omitted enrichment fields empty instead of renderin
     assert.equal(slice?.integration_closure, '');
     assert.equal(slice?.observability_impact, '');
 
-    const planPath = join(base, '.gsd', 'milestones', 'M001', 'slices', 'S02', 'S02-PLAN.md');
+    const planPath = join(base, '.gwd', 'milestones', 'M001', 'slices', 'S02', 'S02-PLAN.md');
     const content = readFileSync(planPath, 'utf-8');
     assert.doesNotMatch(content, /Not provided/i);
     assert.doesNotMatch(content, /^## Proof Level$/m);
@@ -160,7 +160,7 @@ test('handlePlanSlice leaves omitted enrichment fields empty instead of renderin
 
 test('handlePlanSlice rejects invalid payloads', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gwd', 'gwd.db'));
 
   try {
     seedParentSlice();
@@ -174,7 +174,7 @@ test('handlePlanSlice rejects invalid payloads', async () => {
 
 test('handlePlanSlice rejects absolute task IO paths outside the active worktree', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gwd', 'gwd.db'));
 
   try {
     seedParentSlice();
@@ -200,7 +200,7 @@ test('handlePlanSlice rejects absolute task IO paths outside the active worktree
 
 test('handlePlanSlice accepts absolute task IO paths inside the active worktree', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gwd', 'gwd.db'));
 
   try {
     seedParentSlice();
@@ -224,7 +224,7 @@ test('handlePlanSlice accepts absolute task IO paths inside the active worktree'
 
 test('handlePlanSlice rejects missing parent slice', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gwd', 'gwd.db'));
 
   try {
     insertMilestone({ id: 'M001', title: 'Milestone', status: 'active' });
@@ -238,11 +238,11 @@ test('handlePlanSlice rejects missing parent slice', async () => {
 
 test('handlePlanSlice surfaces render failures without changing parse-visible task-plan state for the failing task', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gwd', 'gwd.db'));
 
   try {
     seedParentSlice();
-    const failingTaskPlanPath = join(base, '.gsd', 'milestones', 'M001', 'slices', 'S02', 'tasks', 'T01-PLAN.md');
+    const failingTaskPlanPath = join(base, '.gwd', 'milestones', 'M001', 'slices', 'S02', 'tasks', 'T01-PLAN.md');
     writeFileSync(failingTaskPlanPath, '---\nestimated_steps: 1\nestimated_files: 1\nskills_used: []\n---\n\n# T01: Cached task\n', 'utf-8');
     rmSync(failingTaskPlanPath, { force: true });
     mkdirSync(failingTaskPlanPath, { recursive: true });
@@ -261,7 +261,7 @@ test('handlePlanSlice surfaces render failures without changing parse-visible ta
 test('handlePlanSlice reactivates a deferred parent slice to pending', async (t) => {
   const base = makeTmpBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gwd', 'gwd.db'));
 
   insertMilestone({ id: 'M001', title: 'Milestone', status: 'active' });
   insertSlice({ id: 'S02', milestoneId: 'M001', title: 'Planning slice', status: 'deferred', demo: 'Rendered plans exist.' });
@@ -277,11 +277,11 @@ test('handlePlanSlice reactivates a deferred parent slice to pending', async (t)
 
 test('handlePlanSlice reruns idempotently and refreshes parse-visible state', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gwd', 'gwd.db'));
 
   try {
     seedParentSlice();
-    writeFileSync(join(base, '.gsd', 'milestones', 'M001', 'slices', 'S02', 'S02-PLAN.md'), '# S02: Cached\n\n**Goal:** old value\n\n## Tasks\n\n- [ ] **T01: Cached task**\n', 'utf-8');
+    writeFileSync(join(base, '.gwd', 'milestones', 'M001', 'slices', 'S02', 'S02-PLAN.md'), '# S02: Cached\n\n**Goal:** old value\n\n## Tasks\n\n- [ ] **T01: Cached task**\n', 'utf-8');
 
     const first = await handlePlanSlice(validParams(), base);
     assert.ok(!('error' in first));
@@ -296,7 +296,7 @@ test('handlePlanSlice reruns idempotently and refreshes parse-visible state', as
     }, base);
     assert.ok(!('error' in second));
 
-    const parsedAfter = parsePlan(readFileSync(join(base, '.gsd', 'milestones', 'M001', 'slices', 'S02', 'S02-PLAN.md'), 'utf-8'));
+    const parsedAfter = parsePlan(readFileSync(join(base, '.gwd', 'milestones', 'M001', 'slices', 'S02', 'S02-PLAN.md'), 'utf-8'));
     assert.equal(parsedAfter.goal, 'Updated goal from rerun.');
     const task = getTask('M001', 'S02', 'T01');
     assert.equal(task?.description, 'Updated slice handler description.');

@@ -22,7 +22,7 @@ test("discuss-headless prompt renders compact investigation and audit guidance",
   const prompt = loadPrompt("discuss-headless", {
     seedContext: "# Spec\n\nBuild the thing.",
     milestoneId: "M001",
-    contextPath: ".gsd/milestones/M001/M001-CONTEXT.md",
+    contextPath: ".gwd/milestones/M001/M001-CONTEXT.md",
     commitInstruction: "Commit the created milestone artifacts.",
     multiMilestoneCommitInstruction: "Commit the created milestone artifacts.",
     inlinedTemplates: "## Template\n\nUse standard GWD artifacts.",

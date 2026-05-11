@@ -12,7 +12,7 @@ import { deriveState, invalidateStateCache } from "../state.ts";
 
 function createPlanningFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-compact-checkpoint-"));
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".gwd", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   mkdirSync(sliceDir, { recursive: true });
 
@@ -40,7 +40,7 @@ function createPlanningFixtureBase(): string {
 `,
   );
 
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "Test Milestone", status: "active" });
   insertSlice({ id: "S01", milestoneId: "M001", title: "Test Slice", status: "active", risk: "low", depends: [] });
   closeDatabase();
@@ -86,7 +86,7 @@ test("register-hooks writes CONTINUE checkpoint during planning phase without ac
     await handler({});
   }
 
-  const continuePath = join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-CONTINUE.md");
+  const continuePath = join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-CONTINUE.md");
   assert.ok(existsSync(continuePath), "compaction should create slice CONTINUE checkpoint");
 
   const parsed = parseContinue(readFileSync(continuePath, "utf-8"));
@@ -132,7 +132,7 @@ test("register-hooks writes Context Mode snapshot before active auto cancels com
   const result = await compactHandlers![0]({});
 
   assert.deepEqual(result, { cancel: true }, "active auto should still cancel compaction");
-  const snapshotPath = join(base, ".gsd", "last-snapshot.md");
+  const snapshotPath = join(base, ".gwd", "last-snapshot.md");
   assert.ok(existsSync(snapshotPath), "active auto cancel should still leave a Context Mode snapshot");
   assert.match(readFileSync(snapshotPath, "utf-8"), /GWD context snapshot/);
 });
@@ -140,7 +140,7 @@ test("register-hooks writes Context Mode snapshot before active auto cancels com
 test("register-hooks does not write Context Mode snapshot when disabled", async (t) => {
   const base = createPlanningFixtureBase();
   writeFileSync(
-    join(base, ".gsd", "PREFERENCES.md"),
+    join(base, ".gwd", "PREFERENCES.md"),
     "---\ncontext_mode:\n  enabled: false\n---\n",
     "utf-8",
   );
@@ -177,7 +177,7 @@ test("register-hooks does not write Context Mode snapshot when disabled", async 
   }
 
   assert.ok(
-    !existsSync(join(base, ".gsd", "last-snapshot.md")),
+    !existsSync(join(base, ".gwd", "last-snapshot.md")),
     "disabled Context Mode should not write a snapshot",
   );
 });

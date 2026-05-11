@@ -28,7 +28,7 @@ GWD extension source: `{{gsdSourceDir}}`
 ### Runtime Paths
 
 ```
-.gsd/
+.gwd/
 ├── PROJECT.md, REQUIREMENTS.md, DECISIONS.md, KNOWLEDGE.md, QUEUE.md, STATE.md, OVERRIDES.md, RUNTIME.md
 ├── auto.lock, metrics.json, completed-units.json, doctor-history.jsonl
 ├── activity/{seq}-{unitType}-{unitId}.jsonl
@@ -46,7 +46,7 @@ GWD extension source: `{{gsdSourceDir}}`
 - `usage` has input/output/cache/token/cost fields
 - To trace failure: inspect the last activity log, find `isError: true`, and read preceding reasoning
 
-### Journal Format (`.gsd/journal/`)
+### Journal Format (`.gwd/journal/`)
 
 The journal is a structured event log for auto-mode iterations. Daily files contain JSONL:
 
@@ -81,7 +81,7 @@ A unit dispatched more than once (`type/id` repeated) indicates a stuck loop: un
 
 5. Read actual source at `{{gsdSourceDir}}` to confirm or deny each hypothesis. Do not guess.
 
-   **DB inspection:** Use `gsd_milestone_status`; never run `sqlite3 .gsd/gwd.db` or `node -e require('better-sqlite3')`. The engine owns the WAL connection; direct access can fail or return stale data.
+   **DB inspection:** Use `gsd_milestone_status`; never run `sqlite3 .gwd/gwd.db` or `node -e require('better-sqlite3')`. The engine owns the WAL connection; direct access can fail or return stale data.
 
 6. Trace from entry point, usually `auto-loop.ts` or `auto-dispatch.ts`, to failure across files.
 

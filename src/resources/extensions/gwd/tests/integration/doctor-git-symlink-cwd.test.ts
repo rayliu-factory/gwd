@@ -22,7 +22,7 @@ function createRepoWithCompletedMilestone(): string {
   run("git commit -m init", dir);
   run("git branch -M main", dir);
 
-  const milestoneDir = join(dir, ".gsd", "milestones", "M001");
+  const milestoneDir = join(dir, ".gwd", "milestones", "M001");
   mkdirSync(milestoneDir, { recursive: true });
   writeFileSync(join(milestoneDir, "ROADMAP.md"), `---
 id: M001
@@ -73,11 +73,11 @@ test("doctor removes orphaned milestone worktree when cwd uses a symlink alias",
     rmSync(dir, { recursive: true, force: true });
   });
 
-  mkdirSync(join(dir, ".gsd", "worktrees"), { recursive: true });
-  run("git worktree add -b milestone/M001 .gsd/worktrees/M001", dir);
+  mkdirSync(join(dir, ".gwd", "worktrees"), { recursive: true });
+  run("git worktree add -b milestone/M001 .gwd/worktrees/M001", dir);
 
   symlinkSync(dir, alias);
-  process.chdir(join(alias, ".gsd", "worktrees", "M001"));
+  process.chdir(join(alias, ".gwd", "worktrees", "M001"));
 
   const fixed = await runGSDDoctor(dir, { fix: true, isolationMode: "worktree" });
   assert.ok(

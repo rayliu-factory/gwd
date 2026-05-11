@@ -29,7 +29,7 @@ import { setRuntimeKv, getRuntimeKv } from "../db/runtime-kv.ts";
 
 function makeBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-stuck-state-db-"));
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -41,7 +41,7 @@ function cleanup(base: string): void {
 test("getRecentUnitKeysForWorker reconstructs the recentUnits sliding window", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "T", status: "active" });
   const worker = registerAutoWorker({ projectRootRealpath: base });
   const lease = claimMilestoneLease(worker, "M001");
@@ -70,7 +70,7 @@ test("getRecentUnitKeysForWorker reconstructs the recentUnits sliding window", (
 test("getRecentUnitKeysForWorker honors the limit parameter", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "T", status: "active" });
   const worker = registerAutoWorker({ projectRootRealpath: base });
   const lease = claimMilestoneLease(worker, "M001");
@@ -95,7 +95,7 @@ test("getRecentUnitKeysForWorker honors the limit parameter", (t) => {
 test("stuckRecoveryAttempts round-trips via runtime_kv (stable project scope)", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   registerAutoWorker({ projectRootRealpath: base });
 
   setRuntimeKv("global", base, "stuck_recovery_attempts", 3);
@@ -107,7 +107,7 @@ test("stuckRecoveryAttempts round-trips via runtime_kv (stable project scope)", 
 test("getRecentUnitKeysForWorker filters by worker_id (no cross-worker bleed)", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "T", status: "active" });
   insertMilestone({ id: "M002", title: "U", status: "active" });
   const w1 = registerAutoWorker({ projectRootRealpath: base });

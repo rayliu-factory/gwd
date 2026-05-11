@@ -221,7 +221,7 @@ export function _shouldDispatchQuickTaskForTest(
     state.currentUnit.type !== "quick-task";
 }
 
-/** Unit types that only touch `.gsd/` internal state files (no code changes).
+/** Unit types that only touch `.gwd/` internal state files (no code changes).
  *  Auto-commit is skipped for these — their state files are picked up by the
  *  next actual task commit via `smartStage()`. */
 const LIFECYCLE_ONLY_UNITS = new Set([
@@ -984,7 +984,7 @@ export async function postUnitPreVerification(pctx: PostUnitContext, opts?: PreV
           if (mid && sid) {
             // Phase C: write to the canonical project root (#5236 scope)
             // so non-symlinked worktrees no longer maintain a separate
-            // local .gsd/ projection. copyPlanningArtifacts has been
+            // local .gwd/ projection. copyPlanningArtifacts has been
             // deleted; reads + writes converge at projectRoot.
             const regenerated = await regenerateIfMissing(s.canonicalProjectRoot, mid, sid, "PLAN");
             if (regenerated) {
@@ -1384,7 +1384,7 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
         // Write evidence JSON to slice artifacts directory
         const slicePath = resolveSlicePath(preExecutionBasePath, mid, sid);
         const evidenceFileName = `${sid}-PRE-EXEC-VERIFY.json`;
-        let evidencePath = join(".gsd", "milestones", mid, "slices", sid, evidenceFileName);
+        let evidencePath = join(".gwd", "milestones", mid, "slices", sid, evidenceFileName);
         if (slicePath) {
           writePreExecutionEvidence(result, slicePath, mid, sid);
           evidencePath = relative(preExecutionBasePath, join(slicePath, evidenceFileName)) || evidenceFileName;

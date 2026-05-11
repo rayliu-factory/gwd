@@ -9,7 +9,7 @@ import { createBashTool, createEditTool, createReadTool, createWriteTool } from 
 
 import { DEFAULT_BASH_TIMEOUT_SECS } from "../constants.js";
 import { setLogBasePath, logWarning } from "../workflow-logger.js";
-import { resolveGsdPathContract } from "../paths.js";
+import { resolveGwdPathContract } from "../paths.js";
 
 export function safeWorkspaceCwd(): string {
   try {
@@ -31,20 +31,20 @@ export function resolveCtxCwd(ctx?: unknown): string {
 
 /**
  * Resolve the correct DB path for the current working directory.
- * If `basePath` is inside a `.gsd/worktrees/<MID>/` directory, returns
- * the project root's `.gsd/gwd.db` (shared WAL — R012). Otherwise
- * returns `<basePath>/.gsd/gwd.db`.
+ * If `basePath` is inside a `.gwd/worktrees/<MID>/` directory, returns
+ * the project root's `.gwd/gwd.db` (shared WAL — R012). Otherwise
+ * returns `<basePath>/.gwd/gwd.db`.
  */
 export function resolveProjectRootDbPath(basePath: string): string {
-  return resolveGsdPathContract(basePath).projectDb;
+  return resolveGwdPathContract(basePath).projectDb;
 }
 
 export async function ensureDbOpen(basePath: string = safeWorkspaceCwd()): Promise<boolean> {
   try {
     const db = await import("../gwd-db.js");
-    const contract = resolveGsdPathContract(basePath);
+    const contract = resolveGwdPathContract(basePath);
     const dbPath = contract.projectDb;
-    const gsdDir = contract.projectGsd;
+    const gsdDir = contract.projectGwd;
     const projectRoot = dirname(dirname(dbPath));
 
     // Open existing DB file (may be at project root for worktrees)
@@ -62,7 +62,7 @@ export async function ensureDbOpen(basePath: string = safeWorkspaceCwd()): Promi
       return opened;
     }
 
-    logWarning("bootstrap", "ensureDbOpen failed — no .gsd directory found");
+    logWarning("bootstrap", "ensureDbOpen failed — no .gwd directory found");
     return false;
   } catch (err) {
     logWarning("bootstrap", `ensureDbOpen failed: ${(err as Error).message ?? String(err)}`);

@@ -280,7 +280,7 @@ test("loadEffectiveGSDPreferences preserves disabled_model_providers across merg
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-disabled-provider-home-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
       join(tempGsdHome, "PREFERENCES.md"),
@@ -295,7 +295,7 @@ test("loadEffectiveGSDPreferences preserves disabled_model_providers across merg
     );
 
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       [
         "---",
         "version: 1",
@@ -682,7 +682,7 @@ test("loadEffectiveGSDPreferences preserves experimental prefs across global+pro
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-home-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
       join(tempGsdHome, "preferences.md"),
@@ -697,7 +697,7 @@ test("loadEffectiveGSDPreferences preserves experimental prefs across global+pro
     );
 
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       [
         "---",
         "version: 1",
@@ -731,10 +731,10 @@ test("loadEffectiveGSDPreferences exposes slice_parallel prefs to runtime caller
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-slice-parallel-home-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       [
         "---",
         "version: 1",
@@ -769,7 +769,7 @@ test("loadEffectiveGSDPreferences merges min_request_interval_ms with project ov
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-rate-limit-home-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
       join(tempGsdHome, "PREFERENCES.md"),
@@ -784,7 +784,7 @@ test("loadEffectiveGSDPreferences merges min_request_interval_ms with project ov
     );
 
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       [
         "---",
         "version: 1",
@@ -817,7 +817,7 @@ test("loadEffectiveGSDPreferences does not inherit global planning_depth into fr
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-depth-global-home-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
       join(tempGsdHome, "PREFERENCES.md"),
@@ -854,7 +854,7 @@ test("loadEffectiveGSDPreferences keeps project-local planning_depth explicit", 
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-depth-local-home-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
       join(tempGsdHome, "PREFERENCES.md"),
@@ -862,7 +862,7 @@ test("loadEffectiveGSDPreferences keeps project-local planning_depth explicit", 
       "utf-8",
     );
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       ["---", "version: 1", "planning_depth: light", "---"].join("\n"),
       "utf-8",
     );
@@ -889,15 +889,15 @@ test("preferences paths use canonical uppercase filenames", () => {
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-canonical-home-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
     process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     assert.equal(basename(getGlobalGSDPreferencesPath()), "PREFERENCES.md");
     assert.ok(
-      getProjectGSDPreferencesPath().endsWith("/.gsd/PREFERENCES.md")
-        || getProjectGSDPreferencesPath().endsWith("\\.gsd\\PREFERENCES.md"),
-      "project preferences path should use .gsd/PREFERENCES.md",
+      getProjectGSDPreferencesPath().endsWith("/.gwd/PREFERENCES.md")
+        || getProjectGSDPreferencesPath().endsWith("\\.gwd\\PREFERENCES.md"),
+      "project preferences path should use .gwd/PREFERENCES.md",
     );
   } finally {
     process.chdir(originalCwd);
@@ -924,9 +924,9 @@ test("explicit base path preference loading survives a deleted cwd (#4498)", (t)
     rmSync(deletedCwd, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   writeFileSync(
-    join(tempProject, ".gsd", "PREFERENCES.md"),
+    join(tempProject, ".gwd", "PREFERENCES.md"),
     "---\nversion: 1\nlanguage: Swedish\ngit:\n  isolation: worktree\n---\n",
     "utf-8",
   );
@@ -955,9 +955,9 @@ test("loadEffectiveGSDPreferences preserves context_window_override through toke
     rmSync(tempGsdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   writeFileSync(
-    join(tempProject, ".gsd", "PREFERENCES.md"),
+    join(tempProject, ".gwd", "PREFERENCES.md"),
     "---\ntoken_profile: burn-max\ncontext_window_override: 131072\n---\n",
     "utf-8",
   );
@@ -977,12 +977,12 @@ test("uppercase PREFERENCES.md wins over legacy lowercase preferences.md", () =>
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-priority-home-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(join(tempGsdHome, "preferences.md"), "---\nversion: 1\nmode: solo\n---\n", "utf-8");
     writeFileSync(join(tempGsdHome, "PREFERENCES.md"), "---\nversion: 1\nmode: team\n---\n", "utf-8");
-    writeFileSync(join(tempProject, ".gsd", "preferences.md"), "---\nversion: 1\nlanguage: German\n---\n", "utf-8");
-    writeFileSync(join(tempProject, ".gsd", "PREFERENCES.md"), "---\nversion: 1\nlanguage: Japanese\n---\n", "utf-8");
+    writeFileSync(join(tempProject, ".gwd", "preferences.md"), "---\nversion: 1\nlanguage: German\n---\n", "utf-8");
+    writeFileSync(join(tempProject, ".gwd", "PREFERENCES.md"), "---\nversion: 1\nlanguage: Japanese\n---\n", "utf-8");
 
     process.env.GWD_HOME = tempGsdHome;
     process.chdir(tempProject);
@@ -995,9 +995,9 @@ test("uppercase PREFERENCES.md wins over legacy lowercase preferences.md", () =>
     assert.equal(projectPrefs!.preferences.language, "Japanese");
     assert.equal(basename(globalPrefs!.path), "PREFERENCES.md");
     assert.ok(
-      projectPrefs!.path.endsWith("/.gsd/PREFERENCES.md")
-        || projectPrefs!.path.endsWith("\\.gsd\\PREFERENCES.md"),
-      "project loader should prefer .gsd/PREFERENCES.md",
+      projectPrefs!.path.endsWith("/.gwd/PREFERENCES.md")
+        || projectPrefs!.path.endsWith("\\.gwd\\PREFERENCES.md"),
+      "project loader should prefer .gwd/PREFERENCES.md",
     );
   } finally {
     process.chdir(originalCwd);
@@ -1157,7 +1157,7 @@ test("language: project setting overrides global via loadEffectiveGSDPreferences
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-lang-home-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
       join(tempGsdHome, "preferences.md"),
@@ -1166,7 +1166,7 @@ test("language: project setting overrides global via loadEffectiveGSDPreferences
     );
 
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       ["---", "version: 1", "language: Japanese", "---"].join("\n"),
       "utf-8",
     );
@@ -1193,7 +1193,7 @@ test("language: global setting used when project has none", () => {
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-lang-nhome-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
       join(tempGsdHome, "preferences.md"),
@@ -1202,7 +1202,7 @@ test("language: global setting used when project has none", () => {
     );
 
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       ["---", "version: 1", "---"].join("\n"),
       "utf-8",
     );

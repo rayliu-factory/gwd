@@ -22,7 +22,7 @@ type AutoPromptBuilders = typeof import("../auto-prompts.ts");
 
 function makeBase(prefix: string): string {
   const base = mkdtempSync(join(tmpdir(), prefix));
-  mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;
 }
 
@@ -45,7 +45,7 @@ async function loadAutoPromptBuilders(t: TestContext): Promise<AutoPromptBuilder
 }
 
 function seedDb(base: string, taskStatus = "complete"): void {
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "Prompt Cuts", status: "active", depends_on: [] });
   upsertMilestonePlanning("M001", {
     title: "Prompt Cuts",
@@ -83,7 +83,7 @@ function seedDb(base: string, taskStatus = "complete"): void {
 
 function writeRoadmapAndPlan(base: string): void {
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"),
+    join(base, ".gwd", "milestones", "M001", "M001-ROADMAP.md"),
     [
       "# M001 Roadmap",
       "## Slices",
@@ -91,7 +91,7 @@ function writeRoadmapAndPlan(base: string): void {
     ].join("\n"),
   );
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
+    join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
     [
       "# S01 Plan",
       "",
@@ -106,7 +106,7 @@ function writeRoadmapAndPlan(base: string): void {
 function writeTaskSummary(base: string, options?: { blocker?: boolean; repeatedNarrative?: string }): void {
   const narrative = options?.repeatedNarrative ?? "This full implementation narrative should stay out of closer prompts.";
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md"),
+    join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md"),
     [
       "---",
       "id: T01",
@@ -150,7 +150,7 @@ test("execute-task rendering makes memory_query and template disk reads fallback
   seedDb(base, "pending");
   writeRoadmapAndPlan(base);
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md"),
+    join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md"),
     "# T01 Plan\n\nDo the prompt edit.\n",
   );
 
@@ -179,7 +179,7 @@ test("complete-slice renders task summary excerpts without full summary bodies",
   const prompt = await buildCompleteSlicePrompt("M001", "Prompt Cuts", "S01", "Prompt Slice", base);
 
   assert.match(prompt, /### Task Summary: T01 \(excerpt\)/);
-  assert.match(prompt, /On-demand.*read `\.gsd\/milestones\/M001\/slices\/S01\/tasks\/T01-SUMMARY\.md` only when this excerpt is absent\/truncated/s);
+  assert.match(prompt, /On-demand.*read `\.gwd\/milestones\/M001\/slices\/S01\/tasks\/T01-SUMMARY\.md` only when this excerpt is absent\/truncated/s);
   assert.doesNotMatch(prompt, /FULL_TASK_BODY_SHOULD_NOT_RENDER/);
   assert.match(prompt, /Review the inlined task-summary excerpts/);
 });
@@ -192,7 +192,7 @@ test("complete-slice caps malformed task summaries instead of inlining full bodi
   seedDb(base);
   writeRoadmapAndPlan(base);
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md"),
+    join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md"),
     [
       "# Legacy summary without frontmatter id",
       "LEGACY_FULL_BODY_SHOULD_BE_CAPPED ".repeat(200),

@@ -189,22 +189,22 @@ test("classifyProject: generated framework/cache dirs do not count as content", 
   assert.equal(classification.kind, "greenfield");
 });
 
-test("detectProjectState: directory with .gsd/milestones/M001 returns v2-gsd", (t) => {
+test("detectProjectState: directory with .gwd/milestones/M001 returns v2-gsd", (t) => {
   const dir = makeTempDir("v2-gsd");
   t.after(() => cleanup(dir));
 
-  mkdirSync(join(dir, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(dir, ".gwd", "milestones", "M001"), { recursive: true });
   const result = detectProjectState(dir);
   assert.equal(result.state, "v2-gsd");
   assert.ok(result.v2);
   assert.equal(result.v2!.milestoneCount, 1);
 });
 
-test("detectProjectState: directory with empty .gsd/milestones returns v2-gsd-empty", (t) => {
+test("detectProjectState: directory with empty .gwd/milestones returns v2-gsd-empty", (t) => {
   const dir = makeTempDir("v2-empty");
   t.after(() => cleanup(dir));
 
-  mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   const result = detectProjectState(dir);
   assert.equal(result.state, "v2-gsd-empty");
   assert.ok(result.v2);
@@ -229,18 +229,18 @@ test("detectProjectState: v2 takes priority over v1 when both exist", (t) => {
   const dir = makeTempDir("both");
   t.after(() => cleanup(dir));
 
-  mkdirSync(join(dir, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(dir, ".gwd", "milestones", "M001"), { recursive: true });
   mkdirSync(join(dir, ".planning"), { recursive: true });
   const result = detectProjectState(dir);
   assert.equal(result.state, "v2-gsd");
 });
 
-test("detectProjectState: detects preferences in .gsd/", (t) => {
+test("detectProjectState: detects preferences in .gwd/", (t) => {
   const dir = makeTempDir("prefs");
   t.after(() => cleanup(dir));
 
-  mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
-  writeFileSync(join(dir, ".gsd", "PREFERENCES.md"), "---\nversion: 1\n---\n", "utf-8");
+  mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
+  writeFileSync(join(dir, ".gwd", "PREFERENCES.md"), "---\nversion: 1\n---\n", "utf-8");
   const result = detectProjectState(dir);
   assert.ok(result.v2);
   assert.equal(result.v2!.hasPreferences, true);
@@ -1332,7 +1332,7 @@ test("detectProjectSignals: Spring Boot settings-defined catalog accessor emits 
 
 // ─── scanProjectFiles: RECURSIVE_SCAN_IGNORED_DIRS ──────────────────────
 
-test("scanProjectFiles: excludes .claude, .gsd, .planning, .plans, .cursor, .vscode directories", () => {
+test("scanProjectFiles: excludes .claude, .gwd, .planning, .plans, .cursor, .vscode directories", () => {
   const dir = makeTempDir("scan-ignore-dotdirs");
   try {
     // Create project files that should be included
@@ -1341,7 +1341,7 @@ test("scanProjectFiles: excludes .claude, .gsd, .planning, .plans, .cursor, .vsc
     writeFileSync(join(dir, "README.md"), "# Project\n", "utf-8");
 
     // Create tool directories that should be excluded
-    const excludedDirs = [".claude", ".gsd", ".planning", ".plans", ".cursor", ".vscode"];
+    const excludedDirs = [".claude", ".gwd", ".planning", ".plans", ".cursor", ".vscode"];
     for (const d of excludedDirs) {
       mkdirSync(join(dir, d), { recursive: true });
       writeFileSync(join(dir, d, "config.json"), "{}\n", "utf-8");

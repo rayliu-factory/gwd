@@ -52,7 +52,7 @@ export async function handleInspect(ctx: ExtensionCommandContext): Promise<void>
 
     if (!isDbAvailable()) {
       const gsdDir = gsdRoot(process.cwd());
-      const dbPath = join(gsdDir, "gsd.db");
+      const dbPath = join(gsdDir, "gwd.db");
       if (!existsSync(gsdDir) || !existsSync(dbPath) || !openDatabase(dbPath)) {
         ctx.ui.notify("No GWD database available. Run /gwd auto to create one.", "info");
         return;

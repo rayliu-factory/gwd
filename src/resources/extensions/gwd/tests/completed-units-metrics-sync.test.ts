@@ -13,20 +13,20 @@ test("#2313: syncStateToProjectRoot copies metrics and completed-units to the pr
   const root = mkdtempSync(join(tmpdir(), "gsd-sync-metrics-"));
   const projectRoot = join(root, "project");
   const worktree = join(root, "worktree");
-  mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
-  mkdirSync(join(worktree, ".gsd"), { recursive: true });
-  writeFileSync(join(worktree, ".gsd", "metrics.json"), JSON.stringify({ tokens: 42 }));
-  writeFileSync(join(worktree, ".gsd", "completed-units.json"), JSON.stringify([{ id: "T01" }]));
+  mkdirSync(join(projectRoot, ".gwd"), { recursive: true });
+  mkdirSync(join(worktree, ".gwd"), { recursive: true });
+  writeFileSync(join(worktree, ".gwd", "metrics.json"), JSON.stringify({ tokens: 42 }));
+  writeFileSync(join(worktree, ".gwd", "completed-units.json"), JSON.stringify([{ id: "T01" }]));
 
   try {
     syncStateToProjectRoot(worktree, projectRoot, "M001");
 
     assert.deepEqual(
-      JSON.parse(readFileSync(join(projectRoot, ".gsd", "metrics.json"), "utf-8")),
+      JSON.parse(readFileSync(join(projectRoot, ".gwd", "metrics.json"), "utf-8")),
       { tokens: 42 },
     );
     assert.deepEqual(
-      JSON.parse(readFileSync(join(projectRoot, ".gsd", "completed-units.json"), "utf-8")),
+      JSON.parse(readFileSync(join(projectRoot, ".gwd", "completed-units.json"), "utf-8")),
       [{ id: "T01" }],
     );
   } finally {
@@ -36,7 +36,7 @@ test("#2313: syncStateToProjectRoot copies metrics and completed-units to the pr
 
 test("#2313: functional — completed-units archive creates milestone-specific file", () => {
   const tmpBase = mkdtempSync(join(tmpdir(), "gsd-completed-units-"));
-  const gsdDir = join(tmpBase, ".gsd");
+  const gsdDir = join(tmpBase, ".gwd");
   mkdirSync(gsdDir, { recursive: true });
 
   try {

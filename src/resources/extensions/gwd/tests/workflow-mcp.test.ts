@@ -218,7 +218,7 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server relative to the 
 
 test("workflow MCP launch config reaches mutation tools over stdio", async () => {
   const projectRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-transport-"));
-  mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
+  mkdirSync(join(projectRoot, ".gwd"), { recursive: true });
   // Isolate the spawned MCP server from the developer's real ~/.gwd so it
   // can't pick up a configured Discord/Slack/Telegram channel from global
   // PREFERENCES.md and route ask_user_questions through a remote adapter
@@ -384,12 +384,12 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
       /Planned slice S01/,
     );
     assert.ok(
-      existsSync(join(projectRoot, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md")),
+      existsSync(join(projectRoot, ".gwd", "milestones", "M001", "slices", "S01", "S01-PLAN.md")),
       "expected slice plan artifact to be written through stdio MCP",
     );
     assert.ok(
       existsSync(
-        join(projectRoot, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md"),
+        join(projectRoot, ".gwd", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md"),
       ),
       "expected task plan artifact to be written through stdio MCP",
     );
@@ -402,7 +402,7 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
 
 test("workflow MCP ask_user_questions uses stdio elicitation round-trip", async () => {
   const projectRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-elicit-"));
-  mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
+  mkdirSync(join(projectRoot, ".gwd"), { recursive: true });
   const isolatedGsdHome = mkdtempSync(join(tmpdir(), "gsd-workflow-home-"));
 
   const launch = detectWorkflowMcpLaunchConfig(projectRoot, {});

@@ -25,9 +25,9 @@ test("resolvePreferredModelConfig synthesizes heavy routing ceiling when models 
   const tempGsdHome = makeTempDir("gsd-routing-home-");
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       [
         "---",
         "dynamic_routing:",
@@ -69,9 +69,9 @@ test("resolvePreferredModelConfig falls back to auto start model when heavy tier
   const tempGsdHome = makeTempDir("gsd-routing-home-");
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       [
         "---",
         "dynamic_routing:",
@@ -112,9 +112,9 @@ test("resolvePreferredModelConfig keeps explicit phase models as the ceiling", (
   const tempGsdHome = makeTempDir("gsd-routing-home-");
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       [
         "---",
         "models:",
@@ -158,9 +158,9 @@ test("selectAndApplyModel honors explicit phase models without downgrading (#361
   let beforeModelSelectCalled = false;
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".gwd"), { recursive: true });
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".gwd", "PREFERENCES.md"),
       [
         "---",
         "models:",
@@ -244,9 +244,9 @@ test("selectAndApplyModel escalates dynamic routing tier when retry metadata is 
     rmSync(tempGsdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   writeFileSync(
-    join(tempProject, ".gsd", "PREFERENCES.md"),
+    join(tempProject, ".gwd", "PREFERENCES.md"),
     [
       "---",
       "dynamic_routing:",
@@ -375,9 +375,9 @@ test("model change notify in selectAndApplyModel is gated behind verbose flag", 
     rmSync(tempProject, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   writeFileSync(
-    join(tempProject, ".gsd", "PREFERENCES.md"),
+    join(tempProject, ".gwd", "PREFERENCES.md"),
     ["---", "models:", "  planning: claude-sonnet-4-6", "---"].join("\n"),
     "utf-8",
   );
@@ -419,9 +419,9 @@ test("selectAndApplyModel re-applies captured thinking level after setModel succ
     rmSync(tempProject, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   writeFileSync(
-    join(tempProject, ".gsd", "PREFERENCES.md"),
+    join(tempProject, ".gwd", "PREFERENCES.md"),
     ["---", "models:", "  planning: claude-sonnet-4-6", "---"].join("\n"),
     "utf-8",
   );
@@ -473,7 +473,7 @@ test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for standar
     rmSync(tempGsdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   process.env.GWD_HOME = tempGsdHome;
   process.chdir(tempProject);
 
@@ -530,7 +530,7 @@ test("selectAndApplyModel keeps Ollama Apple profile routing enabled under burn-
     rmSync(tempGsdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   process.env.GWD_HOME = tempGsdHome;
   process.chdir(tempProject);
 
@@ -586,9 +586,9 @@ test("selectAndApplyModel keeps Ollama Apple profile routing with effective burn
     rmSync(tempGsdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   writeFileSync(
-    join(tempProject, ".gsd", "PREFERENCES.md"),
+    join(tempProject, ".gwd", "PREFERENCES.md"),
     ["---", "token_profile: burn-max", "---"].join("\n"),
     "utf-8",
   );
@@ -650,7 +650,7 @@ test("selectAndApplyModel applies context_window_override to Ollama Qwen request
     rmSync(tempGsdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   process.env.GWD_HOME = tempGsdHome;
   process.chdir(tempProject);
 
@@ -718,7 +718,7 @@ test("selectAndApplyModel applies context_window_override to pinned Ollama Qwen 
     rmSync(tempGsdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   process.env.GWD_HOME = tempGsdHome;
   process.chdir(tempProject);
 
@@ -778,7 +778,7 @@ test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for heavy w
     rmSync(tempGsdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   process.env.GWD_HOME = tempGsdHome;
   process.chdir(tempProject);
 
@@ -835,7 +835,7 @@ test("selectAndApplyModel falls back to 27B for heavy work when 35B tag is missi
     rmSync(tempGsdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   process.env.GWD_HOME = tempGsdHome;
   process.chdir(tempProject);
 
@@ -890,7 +890,7 @@ test("selectAndApplyModel falls back to 27B for heavy work when 35B is suppresse
     rmSync(tempGsdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   process.env.GWD_HOME = tempGsdHome;
   process.chdir(tempProject);
 
@@ -945,9 +945,9 @@ test("selectAndApplyModel does not synthesize Ollama Apple profile when dynamic_
     rmSync(tempGsdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   writeFileSync(
-    join(tempProject, ".gsd", "PREFERENCES.md"),
+    join(tempProject, ".gwd", "PREFERENCES.md"),
     ["---", "dynamic_routing:", "  enabled: false", "---"].join("\n"),
     "utf-8",
   );

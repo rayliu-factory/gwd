@@ -332,10 +332,10 @@ test("runProviderChecks detects custom provider keys from models.json", () => {
   const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-custom-repo-")));
   const agentDir = join(tmpHome, ".gwd", "agent");
   mkdirSync(agentDir, { recursive: true });
-  mkdirSync(join(repo, ".gsd"), { recursive: true });
+  mkdirSync(join(repo, ".gwd"), { recursive: true });
 
   writeFileSync(
-    join(repo, ".gsd", "PREFERENCES.md"),
+    join(repo, ".gwd", "PREFERENCES.md"),
     [
       "---",
       "models:",
@@ -379,10 +379,10 @@ test("runProviderChecks detects custom provider keys from models.json", () => {
 test("runProviderChecks reports missing custom provider key without models.json apiKey", () => {
   const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-custom-missing-home-")));
   const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-custom-missing-repo-")));
-  mkdirSync(join(repo, ".gsd"), { recursive: true });
+  mkdirSync(join(repo, ".gwd"), { recursive: true });
 
   writeFileSync(
-    join(repo, ".gsd", "PREFERENCES.md"),
+    join(repo, ".gwd", "PREFERENCES.md"),
     [
       "---",
       "models:",
@@ -509,9 +509,9 @@ test("runProviderChecks reports ok via Copilot auth.json for Anthropic", () => {
 test("runProviderChecks uses provider-qualified anthropic-vertex model IDs", () => {
   const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-vertex-prefix-home-")));
   const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-vertex-prefix-repo-")));
-  mkdirSync(join(repo, ".gsd"), { recursive: true });
+  mkdirSync(join(repo, ".gwd"), { recursive: true });
   writeFileSync(
-    join(repo, ".gsd", "PREFERENCES.md"),
+    join(repo, ".gwd", "PREFERENCES.md"),
     [
       "---",
       "models:",
@@ -544,9 +544,9 @@ test("runProviderChecks uses provider-qualified anthropic-vertex model IDs", () 
 test("runProviderChecks uses object provider field for anthropic-vertex models", () => {
   const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-vertex-provider-home-")));
   const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-vertex-provider-repo-")));
-  mkdirSync(join(repo, ".gsd"), { recursive: true });
+  mkdirSync(join(repo, ".gwd"), { recursive: true });
   writeFileSync(
-    join(repo, ".gsd", "PREFERENCES.md"),
+    join(repo, ".gwd", "PREFERENCES.md"),
     [
       "---",
       "models:",
@@ -581,9 +581,9 @@ test("runProviderChecks uses object provider field for anthropic-vertex models",
 
 test("runProviderChecks reports ok for Google via google-gemini-cli auth.json (#2922)", () => {
   const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-gemini-cli-repo-")));
-  mkdirSync(join(repo, ".gsd"), { recursive: true });
+  mkdirSync(join(repo, ".gwd"), { recursive: true });
   writeFileSync(
-    join(repo, ".gsd", "PREFERENCES.md"),
+    join(repo, ".gwd", "PREFERENCES.md"),
     [
       "---",
       "models:",
@@ -623,9 +623,9 @@ test("runProviderChecks reports ok for Google via google-gemini-cli auth.json (#
 
 test("runProviderChecks reports ok for OpenAI via openai-codex auth.json (#2922)", () => {
   const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-codex-repo-")));
-  mkdirSync(join(repo, ".gsd"), { recursive: true });
+  mkdirSync(join(repo, ".gwd"), { recursive: true });
   writeFileSync(
-    join(repo, ".gsd", "PREFERENCES.md"),
+    join(repo, ".gwd", "PREFERENCES.md"),
     [
       "---",
       "models:",
@@ -668,9 +668,9 @@ test("runProviderChecks reports ok for OpenAI via openai-codex auth.json (#2922)
 
 test("runProviderChecks reports ok for claude-code without any API key", () => {
   const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-cc-repo-")));
-  mkdirSync(join(repo, ".gsd"), { recursive: true });
+  mkdirSync(join(repo, ".gwd"), { recursive: true });
   writeFileSync(
-    join(repo, ".gsd", "PREFERENCES.md"),
+    join(repo, ".gwd", "PREFERENCES.md"),
     [
       "---",
       "models:",

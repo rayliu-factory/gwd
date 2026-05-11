@@ -23,8 +23,8 @@ test("complete milestone prompt renders compact verification and completion guid
     workingDirectory: process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd(),
     milestoneId: "M001",
     milestoneTitle: "Baseline And Safety",
-    roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
-    milestoneSummaryPath: ".gsd/milestones/M001/M001-SUMMARY.md",
+    roadmapPath: ".gwd/milestones/M001/M001-ROADMAP.md",
+    milestoneSummaryPath: ".gwd/milestones/M001/M001-SUMMARY.md",
     inlinedContext: "## Milestone Summary\n\n## Horizontal Checklist\n\n## Decision Re-evaluation",
     extractLearningsSteps: "Write M001-LEARNINGS.md and call capture_thought.",
   });
@@ -37,7 +37,7 @@ test("complete milestone prompt renders compact verification and completion guid
   assert.match(prompt, /gsd_complete_milestone/);
   assert.match(prompt, /verificationPassed/);
   assert.match(prompt, /gsd_milestone_status/);
-  assert.match(prompt, /Do NOT query.*\.gsd\/gwd\.db/i);
+  assert.match(prompt, /Do NOT query.*\.gwd\/gwd\.db/i);
   assert.match(prompt, /Horizontal Checklist/);
   assert.match(prompt, /Decision Re-evaluation/);
   assert.match(prompt, /self-diff/i);

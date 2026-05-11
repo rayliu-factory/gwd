@@ -28,7 +28,7 @@ import {
 
 function makeBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-dispatches-"));
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -38,7 +38,7 @@ function cleanup(base: string): void {
 }
 
 function setup(base: string): { workerId: string; leaseToken: number } {
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "Test", status: "active" });
   insertSlice({ id: "S01", milestoneId: "M001", title: "Slice" });
   const workerId = registerAutoWorker({ projectRootRealpath: base });

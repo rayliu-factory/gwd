@@ -4,7 +4,7 @@
  * Used by doctor-checks.ts for health audits and by worktree-command.ts
  * for the enhanced `/worktree list` display.
  *
- * Only inspects worktrees under .gsd/worktrees/ — GWD owns what GWD creates.
+ * Only inspects worktrees under .gwd/worktrees/ — GWD owns what GWD creates.
  */
 
 import { existsSync } from "node:fs";

@@ -32,7 +32,7 @@ const { resolveAgentEnd, _resetPendingResolve } = await import("../auto/resolve.
 const { runUnit } = await import("../auto/run-unit.ts");
 
 function writeMilestone(base: string, mid = "M001", title = "Worktree Path Injection"): void {
-  const milestoneDir = join(base, ".gsd", "milestones", mid);
+  const milestoneDir = join(base, ".gwd", "milestones", mid);
   mkdirSync(milestoneDir, { recursive: true });
   writeFileSync(
     join(milestoneDir, `${mid}-CONTEXT.md`),
@@ -54,7 +54,7 @@ function writeMilestone(base: string, mid = "M001", title = "Worktree Path Injec
 }
 
 function makeLiveMilestoneWorktree(base: string, mid = "M001"): string {
-  const worktreeRoot = join(base, ".gsd", "worktrees", mid);
+  const worktreeRoot = join(base, ".gwd", "worktrees", mid);
   mkdirSync(worktreeRoot, { recursive: true });
   writeFileSync(
     join(worktreeRoot, ".git"),

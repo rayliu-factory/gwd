@@ -26,7 +26,7 @@ function makeMockPi() {
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `gsd-query-tool-test-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -35,7 +35,7 @@ function cleanup(base: string): void {
 }
 
 function openTestDb(base: string): void {
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
 }
 
 async function executeToolInDir(tool: any, params: Record<string, unknown>, dir: string) {
@@ -183,7 +183,7 @@ test("gsd_milestone_status returns not-found for missing milestone", async () =>
 // ─── DB unavailable ───────────────────────────────────────────────────────────
 
 test("gsd_milestone_status handles missing DB gracefully", async () => {
-  // Create a directory without .gsd/ to ensure ensureDbOpen has nothing to open
+  // Create a directory without .gwd/ to ensure ensureDbOpen has nothing to open
   const base = join(tmpdir(), `gsd-no-db-${randomUUID()}`);
   mkdirSync(base, { recursive: true });
   closeDatabase(); // ensure no prior DB is open

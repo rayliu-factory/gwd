@@ -35,15 +35,15 @@ test("execute-task prompt renders compact execution and completion gates", async
     taskPlanInline: "## Task Plan\n\n1. Edit prompt.",
     slicePlanExcerpt: "## Slice Plan\n\nReduce prompt size.",
     gatesToClose: "- Gate: prompt markers retained.",
-    planPath: ".gsd/milestones/M001/slices/S01/S01-PLAN.md",
-    taskPlanPath: ".gsd/milestones/M001/slices/S01/tasks/T01-PLAN.md",
+    planPath: ".gwd/milestones/M001/slices/S01/S01-PLAN.md",
+    taskPlanPath: ".gwd/milestones/M001/slices/S01/tasks/T01-PLAN.md",
     priorTaskLines: "- None",
     skillActivation: "Load relevant skills.",
     inlinedTemplates: "### Output Template: Task Summary\nSource: `templates/task-summary.md`",
     templatesDir: join(fixtureRoot, "templates"),
-    taskSummaryTemplatePath: "C:\\Users\\Test\\.gsd\\agent\\extensions\\gsd\\templates\\task-summary.md",
+    taskSummaryTemplatePath: "C:\\Users\\Test\\.gwd\\agent\\extensions\\gsd\\templates\\task-summary.md",
     verificationBudget: "~10K chars",
-    taskSummaryPath: ".gsd/milestones/M001/slices/S01/tasks/T01-SUMMARY.md",
+    taskSummaryPath: ".gwd/milestones/M001/slices/S01/tasks/T01-SUMMARY.md",
   });
 
   assert.match(prompt, /You execute\./);
@@ -53,7 +53,7 @@ test("execute-task prompt renders compact execution and completion gates", async
   assert.match(prompt, /Background process rule/);
   assert.match(prompt, /blocker_discovered: true/);
   assert.match(prompt, /Use the inlined Task Summary template below/);
-  assert.match(prompt, /Read `C:\\Users\\Test\\.gsd\\agent\\extensions\\gsd\\templates\\task-summary\.md` only if the inlined template is absent or visibly truncated/);
+  assert.match(prompt, /Read `C:\\Users\\Test\\.gwd\\agent\\extensions\\gsd\\templates\\task-summary\.md` only if the inlined template is absent or visibly truncated/);
   assert.match(prompt, /### Output Template: Task Summary/);
   assert.doesNotMatch(prompt, /\{\{templatesDir\}\}\/task-summary\.md/);
   assert.match(prompt, /Call `gsd_task_complete`/);

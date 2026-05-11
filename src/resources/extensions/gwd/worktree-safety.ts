@@ -146,7 +146,7 @@ export function createWorktreeSafetyModule(
 
       const projectRoot = resolve(input.projectRoot);
       const unitRoot = resolve(input.unitRoot);
-      const expectedRoot = join(projectRoot, ".gsd", "worktrees", milestoneId);
+      const expectedRoot = join(projectRoot, ".gwd", "worktrees", milestoneId);
       if (!samePath(unitRoot, expectedRoot)) {
         return failure(
           "invalid-root",

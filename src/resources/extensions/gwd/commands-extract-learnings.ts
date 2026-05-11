@@ -74,7 +74,7 @@ export interface ExtractLearningsPromptContext {
   uatContent: string | null;
   /** Filenames of optional artefacts that were not available for inlining. */
   missingArtifacts: string[];
-  /** Display name of the enclosing project (from `.gsd/PROJECT.md` or dir basename). */
+  /** Display name of the enclosing project (from `.gwd/PROJECT.md` or dir basename). */
   projectName: string;
 }
 
@@ -385,7 +385,7 @@ missing_artifacts:${missingValue}
 }
 
 /**
- * Extracts the project display name from `.gsd/PROJECT.md` frontmatter.
+ * Extracts the project display name from `.gwd/PROJECT.md` frontmatter.
  *
  * Falls back to the project directory's basename if PROJECT.md is missing,
  * unreadable, or has no `name:` field. Never throws — surfacing the raw

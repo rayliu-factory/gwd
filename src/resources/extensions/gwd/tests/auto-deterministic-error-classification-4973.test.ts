@@ -38,7 +38,7 @@ const tmpDirs: string[] = [];
 function makeTmpBase(): string {
   const base = mkdtempSync(join(tmpdir(), `gsd-test-4973-${randomUUID().slice(0, 8)}-`));
   tmpDirs.push(base);
-  mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   return base;
 }
 
@@ -223,7 +223,7 @@ describe("Test 5 — postUnitPreVerification short-circuits on deterministic err
     assert.strictEqual(pauseCalled, false, "pauseAuto must NOT be called for deterministic errors");
 
     // The blocker placeholder must exist on disk so the pipeline can advance.
-    const placeholderPath = join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md");
+    const placeholderPath = join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md");
     assert.ok(
       existsSync(placeholderPath),
       `blocker placeholder must be written at ${placeholderPath}`,

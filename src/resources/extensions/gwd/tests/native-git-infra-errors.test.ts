@@ -35,7 +35,7 @@ test("nativeAddAllWithExclusions preserves infrastructure failures from git add"
     const { nativeAddAllWithExclusions } = await import("../native-git-bridge.ts");
 
     assert.throws(
-      () => nativeAddAllWithExclusions(repo, [".gsd/activity/"]),
+      () => nativeAddAllWithExclusions(repo, [".gwd/activity/"]),
       (err) => {
         const shaped = err as { code?: string; stderr?: string; message?: string };
         assert.notEqual(shaped.code, GWD_GIT_ERROR);

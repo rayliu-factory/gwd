@@ -18,7 +18,7 @@ import { installEpipeGuard } from "../bootstrap/register-extension.ts";
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `gsd-test-${randomUUID()}`);
-  mkdirSync(join(base, '.gsd'), { recursive: true });
+  mkdirSync(join(base, '.gwd'), { recursive: true });
   return base;
 }
 

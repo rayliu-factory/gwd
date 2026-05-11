@@ -24,13 +24,13 @@ function makeTmp(name: string): string {
 }
 
 /**
- * Build a minimal .gsd structure: milestone with one slice, one task
+ * Build a minimal .gwd structure: milestone with one slice, one task
  * marked done with a summary — but no slice summary and roadmap unchecked.
  * Previously this triggered reconciliation; now it should produce no
  * reconciliation issue codes.
  */
 function buildScaffold(base: string) {
-  const gsd = join(base, ".gsd");
+  const gsd = join(base, ".gwd");
   const m = join(gsd, "milestones", "M001");
   const s = join(m, "slices", "S01", "tasks");
   mkdirSync(s, { recursive: true });
@@ -105,11 +105,11 @@ test("fixLevel:all — no reconciliation issue codes are reported", async (t) =>
   }
 
   // Summary and UAT stubs should NOT be created (no reconciliation)
-  const sliceSummaryPath = join(tmp, ".gsd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md");
+  const sliceSummaryPath = join(tmp, ".gwd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md");
   assert.ok(!existsSync(sliceSummaryPath), "should NOT have created summary stub");
 
   // Roadmap should remain unchecked (no reconciliation)
-  const roadmapContent = readFileSync(join(tmp, ".gsd", "milestones", "M001", "M001-ROADMAP.md"), "utf8");
+  const roadmapContent = readFileSync(join(tmp, ".gwd", "milestones", "M001", "M001-ROADMAP.md"), "utf8");
   assert.ok(roadmapContent.includes("- [ ] **S01"), "roadmap should remain unchecked");
 });
 
@@ -123,7 +123,7 @@ test("legacy roadmap fallback: future slices are treated as pending, active slic
   // Force the legacy parser branch.
   try { closeDatabase(); } catch { /* noop */ }
 
-  const gsd = join(tmp, ".gsd");
+  const gsd = join(tmp, ".gwd");
   const m = join(gsd, "milestones", "M001");
   const s01 = join(m, "slices", "S01", "tasks");
   mkdirSync(s01, { recursive: true });
@@ -184,7 +184,7 @@ test("db skipped slices do not report missing directories", async (t) => {
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  const gsd = join(tmp, ".gsd");
+  const gsd = join(tmp, ".gwd");
   const m = join(gsd, "milestones", "M001");
   mkdirSync(m, { recursive: true });
 
@@ -196,7 +196,7 @@ test("db skipped slices do not report missing directories", async (t) => {
   > Intentionally skipped
 `);
 
-  openDatabase(join(gsd, "gsd.db"));
+  openDatabase(join(gsd, "gwd.db"));
   insertMilestone({ id: "M001", title: "Test", status: "active" });
   insertSlice({ id: "S05", milestoneId: "M001", title: "Skipped Slice", status: "skipped", sequence: 5 });
 
@@ -232,7 +232,7 @@ test("fixLevel:all — delimiter_in_title still fixable", async (t) => {
   const tmp = makeTmp("delimiter-fix");
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
-  const gsd = join(tmp, ".gsd");
+  const gsd = join(tmp, ".gwd");
   const m = join(gsd, "milestones", "M001");
   const s = join(m, "slices", "S01", "tasks");
   mkdirSync(s, { recursive: true });

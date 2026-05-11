@@ -1,7 +1,7 @@
 /**
  * GWD Command — /gwd codebase
  *
- * Generate and manage the codebase map (.gsd/CODEBASE.md).
+ * Generate and manage the codebase map (.gwd/CODEBASE.md).
  * Subcommands: generate, update, stats, help
  */
 

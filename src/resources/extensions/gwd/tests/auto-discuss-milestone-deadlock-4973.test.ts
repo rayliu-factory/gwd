@@ -80,7 +80,7 @@ describe('auto-discuss-milestone-deadlock-4973', () => {
   test('Test 2: raw write to M001-CONTEXT.md unblocks after markDepthVerified (auto-mode)', () => {
     _setAutoActiveForTest(true);
 
-    const contextPath = '.gsd/milestones/M001/M001-CONTEXT.md';
+    const contextPath = '.gwd/milestones/M001/M001-CONTEXT.md';
 
     // Before mark: blocked
     const beforeResult = shouldBlockContextWrite('write', contextPath, 'M001');
@@ -172,7 +172,7 @@ describe('auto-discuss-milestone-deadlock-4973', () => {
     // Raw write to CONTEXT.md is still blocked
     const writeResult = shouldBlockContextWrite(
       'write',
-      '.gsd/milestones/M002/M002-CONTEXT.md',
+      '.gwd/milestones/M002/M002-CONTEXT.md',
       'M002',
     );
     assert.strictEqual(
@@ -204,7 +204,7 @@ describe('auto-discuss-milestone-deadlock-4973', () => {
     // commit 73bb7e085) — without this, the rule writes the snapshot under
     // basePath but the test would read process.cwd() and never see it.
     const tempBase = mkdtempSync(join(tmpdir(), '4973-rule-test-'));
-    const snapshotFile = join(tempBase, '.gsd', 'runtime', 'write-gate-state.json');
+    const snapshotFile = join(tempBase, '.gwd', 'runtime', 'write-gate-state.json');
     try {
       const baseCtx = {
         basePath: tempBase,

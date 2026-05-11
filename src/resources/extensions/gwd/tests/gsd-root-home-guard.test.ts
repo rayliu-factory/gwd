@@ -2,7 +2,7 @@
  * GSD2 — regression tests for #5187 and git-root anchor guard:
  *
  * #5187: gsdRoot() must refuse to use the global GWD home (~/.gwd) as a
- * project .gsd directory when basePath resolves to $HOME. Paths under
+ * project .gwd directory when basePath resolves to $HOME. Paths under
  * ~/.gwd/projects/<hash>/ remain valid.
  *
  * git-root anchor guard: when $HOME is itself a git repo and ~/.gwd exists,
@@ -53,25 +53,25 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
   });
 
   test('does not use the global GWD home when basePath is the home directory', () => {
-    assert.equal(gsdRoot(fakeHome), join(fakeHome, '.gsd'));
+    assert.equal(gsdRoot(fakeHome), join(fakeHome, '.gwd'));
   });
 
   test('does NOT throw for paths under ~/.gwd/projects/<hash>/', () => {
     const projectStateDir = join(fakeHome, '.gwd', 'projects', 'abcdef123456');
-    mkdirSync(join(projectStateDir, '.gsd'), { recursive: true });
+    mkdirSync(join(projectStateDir, '.gwd'), { recursive: true });
     _clearGsdRootCache();
 
     const resolved = gsdRoot(projectStateDir);
-    assert.equal(resolved, join(projectStateDir, '.gsd'));
+    assert.equal(resolved, join(projectStateDir, '.gwd'));
   });
 
-  test('does NOT throw for an unrelated project directory that has its own .gsd', () => {
+  test('does NOT throw for an unrelated project directory that has its own .gwd', () => {
     const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-home-guard-proj-')));
-    mkdirSync(join(projectDir, '.gsd'), { recursive: true });
+    mkdirSync(join(projectDir, '.gwd'), { recursive: true });
     _clearGsdRootCache();
     try {
       const resolved = gsdRoot(projectDir);
-      assert.equal(resolved, join(projectDir, '.gsd'));
+      assert.equal(resolved, join(projectDir, '.gwd'));
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
     }
@@ -121,17 +121,17 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gwd', ()
 
   test('does NOT return ~/.gwd when $HOME is a git repo and basePath is a subdir', () => {
     // fakeHome IS the git root AND $HOME, so git rev-parse returns fakeHome,
-    // and ~/.gwd (fakeHome/.gsd) exists. The guard must skip that candidate
-    // and fall through to the creation fallback: subDir/.gsd.
+    // and ~/.gwd (fakeHome/.gwd) exists. The guard must skip that candidate
+    // and fall through to the creation fallback: subDir/.gwd.
     const result = gsdRoot(subDir);
     assert.notEqual(
       result,
-      join(fakeHome, '.gsd'),
+      join(fakeHome, '.gwd'),
       'gsdRoot must not return ~/.gwd for a subdir basePath',
     );
     assert.equal(
       result,
-      join(subDir, '.gsd'),
+      join(subDir, '.gwd'),
       'gsdRoot should fall through to the creation fallback for a subdir',
     );
   });

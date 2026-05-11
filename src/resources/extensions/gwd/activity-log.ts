@@ -1,5 +1,5 @@
 /**
- * GWD Activity Log — Save raw chat sessions to .gsd/activity/
+ * GWD Activity Log — Save raw chat sessions to .gwd/activity/
  *
  * Before each context wipe in auto-mode, dumps the full session
  * as JSONL. No formatting, no truncation, no information loss.

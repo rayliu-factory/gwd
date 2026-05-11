@@ -47,7 +47,7 @@ describe("hook dispatch session workspace root", () => {
   test("dispatchHookUnit passes basePath explicitly to newSession", async (t) => {
     const originalCwd = process.cwd();
     const basePath = mkdtempSync(join(tmpdir(), "gsd-hook-cwd-"));
-    mkdirSync(join(basePath, ".gsd"), { recursive: true });
+    mkdirSync(join(basePath, ".gwd"), { recursive: true });
     autoSession.reset();
     t.after(() => {
       try {
@@ -103,7 +103,7 @@ describe("deep setup approval questions pause immediately", () => {
     const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-deferred-approval-")));
     const previousCwd = process.cwd();
     try {
-      mkdirSync(join(base, ".gsd", "milestones", "M003"), { recursive: true });
+      mkdirSync(join(base, ".gwd", "milestones", "M003"), { recursive: true });
       process.chdir(base);
       clearDiscussionFlowState(base);
       autoSession.reset();

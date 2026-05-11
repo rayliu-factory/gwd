@@ -25,18 +25,18 @@ import { openDatabase, closeDatabase } from "../gwd-db.ts";
 
 function makeProjectDir(): string {
   const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-dbwriter-root-")));
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   return dir;
 }
 
-// ─── Suite 1: saveArtifactToDb with undefined milestone_id writes to .gsd/ root, not milestones/ ──
+// ─── Suite 1: saveArtifactToDb with undefined milestone_id writes to .gwd/ root, not milestones/ ──
 
-describe("saveArtifactToDb: root artifact (no milestone_id) routes to workspace .gsd root", () => {
+describe("saveArtifactToDb: root artifact (no milestone_id) routes to workspace .gwd root", () => {
   let tmp: string;
 
   beforeEach(() => {
     tmp = makeProjectDir();
-    openDatabase(join(tmp, ".gsd", "gsd.db"));
+    openDatabase(join(tmp, ".gwd", "gwd.db"));
   });
 
   afterEach(() => {
@@ -44,7 +44,7 @@ describe("saveArtifactToDb: root artifact (no milestone_id) routes to workspace 
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  test("opts.milestone_id = undefined writes artifact at .gsd/REQUIREMENTS.md, not inside milestones/", async () => {
+  test("opts.milestone_id = undefined writes artifact at .gwd/REQUIREMENTS.md, not inside milestones/", async () => {
     const content = "# Requirements\n\nTest root artifact.\n";
     const opts = {
       path: "REQUIREMENTS.md",
@@ -56,17 +56,17 @@ describe("saveArtifactToDb: root artifact (no milestone_id) routes to workspace 
     await saveArtifactToDb(opts, tmp);
 
     const ws = createWorkspace(tmp);
-    const expectedPath = resolve(ws.contract.projectGsd, "REQUIREMENTS.md");
+    const expectedPath = resolve(ws.contract.projectGwd, "REQUIREMENTS.md");
 
-    assert.ok(existsSync(expectedPath), "root artifact written at .gsd/REQUIREMENTS.md");
+    assert.ok(existsSync(expectedPath), "root artifact written at .gwd/REQUIREMENTS.md");
     assert.equal(readFileSync(expectedPath, "utf-8"), content, "content matches");
 
     // Must NOT be inside milestones/ — the latent trap being fixed
-    const wrongPath = resolve(ws.contract.projectGsd, "milestones", "", "REQUIREMENTS.md");
+    const wrongPath = resolve(ws.contract.projectGwd, "milestones", "", "REQUIREMENTS.md");
     assert.ok(!existsSync(wrongPath), "artifact NOT written inside milestones/");
   });
 
-  test("opts.milestone_id = null writes artifact at .gsd/ root", async () => {
+  test("opts.milestone_id = null writes artifact at .gwd/ root", async () => {
     const content = "# Project\n\nRoot project doc.\n";
     const opts = {
       path: "PROJECT.md",
@@ -78,13 +78,13 @@ describe("saveArtifactToDb: root artifact (no milestone_id) routes to workspace 
     await saveArtifactToDb(opts, tmp);
 
     const ws = createWorkspace(tmp);
-    const expectedPath = resolve(ws.contract.projectGsd, "PROJECT.md");
+    const expectedPath = resolve(ws.contract.projectGwd, "PROJECT.md");
 
-    assert.ok(existsSync(expectedPath), "PROJECT.md written at .gsd/PROJECT.md");
+    assert.ok(existsSync(expectedPath), "PROJECT.md written at .gwd/PROJECT.md");
     assert.equal(readFileSync(expectedPath, "utf-8"), content, "content matches");
   });
 
-  test("path resolves via workspace.contract.projectGsd, not a hand-rolled join", async () => {
+  test("path resolves via workspace.contract.projectGwd, not a hand-rolled join", async () => {
     const content = "# Knowledge\n";
     const opts = {
       path: "KNOWLEDGE.md",
@@ -96,13 +96,13 @@ describe("saveArtifactToDb: root artifact (no milestone_id) routes to workspace 
     await saveArtifactToDb(opts, tmp);
 
     const ws = createWorkspace(tmp);
-    // The canonical path must equal contract.projectGsd + '/KNOWLEDGE.md'
-    const canonicalPath = join(ws.contract.projectGsd, "KNOWLEDGE.md");
-    assert.ok(existsSync(canonicalPath), "file at contract.projectGsd/KNOWLEDGE.md");
+    // The canonical path must equal contract.projectGwd + '/KNOWLEDGE.md'
+    const canonicalPath = join(ws.contract.projectGwd, "KNOWLEDGE.md");
+    assert.ok(existsSync(canonicalPath), "file at contract.projectGwd/KNOWLEDGE.md");
     assert.equal(
       canonicalPath,
-      join(ws.projectRoot, ".gsd", "KNOWLEDGE.md"),
-      "contract.projectGsd-based path equals projectRoot/.gsd/KNOWLEDGE.md",
+      join(ws.projectRoot, ".gwd", "KNOWLEDGE.md"),
+      "contract.projectGwd-based path equals projectRoot/.gwd/KNOWLEDGE.md",
     );
   });
 });
@@ -114,7 +114,7 @@ describe("saveArtifactToDb: milestone_id present routes to milestones/ (no regre
 
   beforeEach(() => {
     tmp = makeProjectDir();
-    openDatabase(join(tmp, ".gsd", "gsd.db"));
+    openDatabase(join(tmp, ".gwd", "gwd.db"));
   });
 
   afterEach(() => {
@@ -122,7 +122,7 @@ describe("saveArtifactToDb: milestone_id present routes to milestones/ (no regre
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  test("milestone_id = 'M001' writes to .gsd/milestones/M001/...", async () => {
+  test("milestone_id = 'M001' writes to .gwd/milestones/M001/...", async () => {
     const relPath = "milestones/M001/M001-CONTEXT.md";
     const content = "# M001 Context\n";
     const opts = {
@@ -135,7 +135,7 @@ describe("saveArtifactToDb: milestone_id present routes to milestones/ (no regre
     await saveArtifactToDb(opts, tmp);
 
     const ws = createWorkspace(tmp);
-    const expectedPath = resolve(ws.contract.projectGsd, relPath);
+    const expectedPath = resolve(ws.contract.projectGwd, relPath);
 
     assert.ok(existsSync(expectedPath), "milestone artifact written at correct path");
     assert.equal(readFileSync(expectedPath, "utf-8"), content, "content matches");
@@ -149,7 +149,7 @@ describe("saveArtifactToDbByScope: empty milestoneId throws defensive error", ()
 
   beforeEach(() => {
     tmp = makeProjectDir();
-    openDatabase(join(tmp, ".gsd", "gsd.db"));
+    openDatabase(join(tmp, ".gwd", "gwd.db"));
   });
 
   afterEach(() => {
@@ -184,14 +184,14 @@ describe("saveArtifactToDbByScope: empty milestoneId throws defensive error", ()
   });
 });
 
-// ─── Suite 4: saveArtifactToDbForWorkspace writes at contract.projectGsd, not milestones/ ──
+// ─── Suite 4: saveArtifactToDbForWorkspace writes at contract.projectGwd, not milestones/ ──
 
-describe("saveArtifactToDbForWorkspace: writes directly to .gsd root via workspace contract", () => {
+describe("saveArtifactToDbForWorkspace: writes directly to .gwd root via workspace contract", () => {
   let tmp: string;
 
   beforeEach(() => {
     tmp = makeProjectDir();
-    openDatabase(join(tmp, ".gsd", "gsd.db"));
+    openDatabase(join(tmp, ".gwd", "gwd.db"));
   });
 
   afterEach(() => {
@@ -199,7 +199,7 @@ describe("saveArtifactToDbForWorkspace: writes directly to .gsd root via workspa
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  test("root artifact lands at contract.projectGsd/path, not milestones/", async () => {
+  test("root artifact lands at contract.projectGwd/path, not milestones/", async () => {
     const ws = createWorkspace(tmp);
     const content = "# Requirements\n";
     const opts = {
@@ -210,12 +210,12 @@ describe("saveArtifactToDbForWorkspace: writes directly to .gsd root via workspa
 
     await saveArtifactToDbForWorkspace(ws, opts);
 
-    const expectedPath = resolve(ws.contract.projectGsd, "REQUIREMENTS.md");
-    assert.ok(existsSync(expectedPath), "artifact written at contract.projectGsd/REQUIREMENTS.md");
+    const expectedPath = resolve(ws.contract.projectGwd, "REQUIREMENTS.md");
+    assert.ok(existsSync(expectedPath), "artifact written at contract.projectGwd/REQUIREMENTS.md");
     assert.equal(readFileSync(expectedPath, "utf-8"), content, "content matches");
 
     // Must not have landed inside milestones/
-    const milestonePath = join(ws.contract.projectGsd, "milestones", "", "REQUIREMENTS.md");
+    const milestonePath = join(ws.contract.projectGwd, "milestones", "", "REQUIREMENTS.md");
     assert.ok(!existsSync(milestonePath), "artifact NOT inside milestones/empty-string/");
   });
 });

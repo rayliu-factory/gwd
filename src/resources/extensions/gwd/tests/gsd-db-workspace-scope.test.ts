@@ -30,18 +30,18 @@ import {
  */
 function makeProjectDir(): string {
   const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-db-ws-scope-")));
-  // hasGsdBootstrapArtifacts checks for .gsd/milestones or .gsd/PREFERENCES.md
-  mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
+  // hasGsdBootstrapArtifacts checks for .gwd/milestones or .gwd/PREFERENCES.md
+  mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   return dir;
 }
 
 /**
- * Create a worktree path inside a project's .gsd/worktrees/<MID>/ layout.
- * createWorkspace() will detect the /.gsd/worktrees/ segment and resolve the
+ * Create a worktree path inside a project's .gwd/worktrees/<MID>/ layout.
+ * createWorkspace() will detect the /.gwd/worktrees/ segment and resolve the
  * project root back to `projectDir`.
  */
 function makeWorktreeDir(projectDir: string, mid: string): string {
-  const worktreeDir = join(projectDir, ".gsd", "worktrees", mid);
+  const worktreeDir = join(projectDir, ".gwd", "worktrees", mid);
   mkdirSync(worktreeDir, { recursive: true });
   return worktreeDir;
 }

@@ -28,7 +28,7 @@ import { resolveMilestoneFile } from "../paths.ts";
 
 function createBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-discuss-queued-"));
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }
 
@@ -37,22 +37,22 @@ function cleanup(base: string): void {
 }
 
 function writeMilestoneDir(base: string, mid: string): void {
-  mkdirSync(join(base, ".gsd", "milestones", mid), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", mid), { recursive: true });
 }
 
 function writeContext(base: string, mid: string, content: string): void {
   writeMilestoneDir(base, mid);
-  writeFileSync(join(base, ".gsd", "milestones", mid, `${mid}-CONTEXT.md`), content);
+  writeFileSync(join(base, ".gwd", "milestones", mid, `${mid}-CONTEXT.md`), content);
 }
 
 function writeContextDraft(base: string, mid: string, content: string): void {
   writeMilestoneDir(base, mid);
-  writeFileSync(join(base, ".gsd", "milestones", mid, `${mid}-CONTEXT-DRAFT.md`), content);
+  writeFileSync(join(base, ".gwd", "milestones", mid, `${mid}-CONTEXT-DRAFT.md`), content);
 }
 
 function writeRoadmap(base: string, mid: string, content: string): void {
   writeMilestoneDir(base, mid);
-  writeFileSync(join(base, ".gsd", "milestones", mid, `${mid}-ROADMAP.md`), content);
+  writeFileSync(join(base, ".gwd", "milestones", mid, `${mid}-ROADMAP.md`), content);
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────

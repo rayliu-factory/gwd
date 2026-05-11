@@ -55,8 +55,8 @@ export function hasFileConflict(
   sliceA: string,
   sliceB: string,
 ): boolean {
-  const planPathA = join(basePath, ".gsd", "milestones", mid, sliceA, "PLAN.md");
-  const planPathB = join(basePath, ".gsd", "milestones", mid, sliceB, "PLAN.md");
+  const planPathA = join(basePath, ".gwd", "milestones", mid, sliceA, "PLAN.md");
+  const planPathB = join(basePath, ".gwd", "milestones", mid, sliceB, "PLAN.md");
 
   // Conservative: missing PLAN = block
   if (!existsSync(planPathA) || !existsSync(planPathB)) {

@@ -6,10 +6,10 @@ import { realpathSync } from "node:fs";
 import { resolve } from "node:path";
 
 /**
- * Patterns matching authoritative .gsd/ state files that agents must NOT write directly.
+ * Patterns matching authoritative .gwd/ state files that agents must NOT write directly.
  *
  * Only STATE.md is blocked — it is purely engine-rendered from DB state.
- * All other .gsd/ files are agent-authored content that agents create and
+ * All other .gwd/ files are agent-authored content that agents create and
  * update during discuss, plan, and execute phases:
  * - REQUIREMENTS.md — agents create during discuss, read during planning
  * - PROJECT.md — agents create during discuss, update at milestone close
@@ -19,13 +19,13 @@ import { resolve } from "node:path";
 const BLOCKED_PATTERNS: RegExp[] = [
   // STATE.md is the only purely engine-rendered file.
   // Case-insensitive to prevent bypass on macOS (case-insensitive APFS).
-  // (^|[/\\]) matches both absolute paths (/project/.gsd/…) and bare relative
-  // paths (.gsd/STATE.md) so a path without a leading separator is also blocked.
-  /(^|[/\\])\.gsd[/\\]STATE\.md$/i,
+  // (^|[/\\]) matches both absolute paths (/project/.gwd/…) and bare relative
+  // paths (.gwd/STATE.md) so a path without a leading separator is also blocked.
+  /(^|[/\\])\.gwd[/\\]STATE\.md$/i,
   // Also match resolved symlink paths under ~/.gwd/projects/ (Pitfall #6)
   /(^|[/\\])\.gwd[/\\]projects[/\\][^/\\]+[/\\]STATE\.md$/i,
-  // GWD DB and legacy gsd.db WAL/SHM files — single-writer WAL connection managed by engine (#3625)
-  /(^|[/\\])\.gsd[/\\](?:gwd|gsd)\.db(-wal|-shm)?$/i,
+  // GWD DB and legacy gwd.db WAL/SHM files — single-writer WAL connection managed by engine (#3625)
+  /(^|[/\\])\.gwd[/\\](?:gwd|gsd)\.db(-wal|-shm)?$/i,
   /(^|[/\\])\.gwd[/\\]projects[/\\][^/\\]+[/\\](?:gwd|gsd)\.db(-wal|-shm)?$/i,
 ];
 
@@ -53,7 +53,7 @@ const BASH_STATE_PATTERNS: RegExp[] = [
 ];
 
 /**
- * Tests whether the given file path matches a blocked authoritative .gsd/ state file.
+ * Tests whether the given file path matches a blocked authoritative .gwd/ state file.
  * Resolves `..` segments via path.resolve() and attempts realpathSync for symlinks.
  */
 export function isBlockedStateFile(filePath: string): boolean {
@@ -87,10 +87,10 @@ function matchesBlockedPattern(path: string): boolean {
 }
 
 /**
- * Error message returned when an agent attempts to directly write an authoritative .gsd/ state file.
+ * Error message returned when an agent attempts to directly write an authoritative .gwd/ state file.
  * Directs the agent to use engine tool calls instead.
  */
-export const BLOCKED_WRITE_ERROR = `Direct writes to .gsd/STATE.md and .gsd/gwd.db are blocked. Use engine tool calls instead:
+export const BLOCKED_WRITE_ERROR = `Direct writes to .gwd/STATE.md and .gwd/gwd.db are blocked. Use engine tool calls instead:
 - To complete a task: call gsd_task_complete(milestone_id, slice_id, task_id, summary)
 - To complete a slice: call gsd_slice_complete(milestone_id, slice_id, summary, uat_result)
 - To save a decision: call gsd_decision_save(scope, decision, choice, rationale)

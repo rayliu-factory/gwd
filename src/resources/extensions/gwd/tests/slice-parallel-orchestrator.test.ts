@@ -46,7 +46,7 @@ function readProcessStartFingerprint(pid: number): string | null {
 
 function makeTempProject(): string {
   const basePath = mkdtempSync(join(tmpdir(), "gsd-slice-parallel-"));
-  mkdirSync(join(basePath, ".gsd"), { recursive: true });
+  mkdirSync(join(basePath, ".gwd"), { recursive: true });
   return basePath;
 }
 
@@ -59,7 +59,7 @@ function writeSliceOrchestratorState(
   },
 ): void {
   writeFileSync(
-    join(basePath, ".gsd", "slice-orchestrator.json"),
+    join(basePath, ".gwd", "slice-orchestrator.json"),
     JSON.stringify({
       active: true,
       workers: [{
@@ -68,7 +68,7 @@ function writeSliceOrchestratorState(
         pid: worker.pid,
         workerToken: worker.workerToken,
         processStartFingerprint: worker.processStartFingerprint,
-        worktreePath: join(basePath, ".gsd", "worktrees", "M900-S01"),
+        worktreePath: join(basePath, ".gwd", "worktrees", "M900-S01"),
         startedAt: Date.now(),
         state: "running",
         completedUnits: 0,
@@ -123,7 +123,7 @@ describe("slice-parallel-orchestrator recovery identity", () => {
       const restored = restoreSliceState(basePath);
       assert.equal(restored, null, "mismatched fingerprint is treated as a dead worker");
       assert.equal(
-        existsSync(join(basePath, ".gsd", "slice-orchestrator.json")),
+        existsSync(join(basePath, ".gwd", "slice-orchestrator.json")),
         false,
         "state file is removed when no recovered worker identity validates",
       );
@@ -185,7 +185,7 @@ describe("slice_parallel preference and state gating", () => {
     const oldWorker = process.env.GWD_PARALLEL_WORKER;
     const oldSlice = process.env.GWD_SLICE_LOCK;
     try {
-      const msDir = join(basePath, ".gsd", "milestones", "M001");
+      const msDir = join(basePath, ".gwd", "milestones", "M001");
       mkdirSync(msDir, { recursive: true });
       writeFileSync(
         join(msDir, "M001-ROADMAP.md"),

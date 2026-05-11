@@ -61,7 +61,7 @@ import type { WorkerInfo } from "../parallel-orchestrator.js";
 
 function makeTmpBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-parallel-test-"));
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -304,7 +304,7 @@ describe("parallel-orchestrator: lifecycle", () => {
         startedAt: Date.now(),
         configSnapshot: { max_workers: 2 },
       };
-      writeFileSync(join(base, ".gsd", "orchestrator.json"), JSON.stringify(persisted, null, 2), "utf-8");
+      writeFileSync(join(base, ".gwd", "orchestrator.json"), JSON.stringify(persisted, null, 2), "utf-8");
       const workers = getWorkerStatuses(base);
       assert.equal(workers.length, 1);
       assert.equal(workers[0].milestoneId, "M001");

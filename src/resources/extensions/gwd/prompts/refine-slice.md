@@ -67,7 +67,7 @@ Then:
 5. Decompose the slice into tasks that fit one context window each. Every task must have Why / Files / Do / Verify / Done-when, plus a task plan with description, steps, must-haves, verification, inputs (backtick-wrapped paths), and expected output (backtick-wrapped paths).
 6. **Persist planning state through `gsd_plan_slice`.** Call it with the full payload. The tool writes to the DB and renders `{{outputPath}}` and `{{slicePath}}/tasks/T##-PLAN.md` automatically. Do NOT rely on direct `PLAN.md` writes.
 7. **Self-audit the plan.** If every task were completed exactly as written, the slice goal/demo should be true. Every must-have maps to a task. Inputs and Expected Output are backtick-wrapped file paths.
-8. If refinement produced structural decisions that diverge from the sketch, append them to `.gsd/DECISIONS.md`.
+8. If refinement produced structural decisions that diverge from the sketch, append them to `.gwd/DECISIONS.md`.
 9. {{commitInstruction}}
 
 The slice directory and tasks/ subdirectory already exist. Do NOT mkdir.

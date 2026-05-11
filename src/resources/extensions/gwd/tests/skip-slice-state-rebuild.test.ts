@@ -24,8 +24,8 @@ test("gsd_skip_slice marks a slice skipped and refreshes STATE.md", async () => 
   const pi = { registerTool: (tool: any) => tools.set(tool.name, tool) };
 
   try {
-    mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
+    openDatabase(join(base, ".gwd", "gwd.db"));
     insertMilestone({ id: "M001", title: "Skip Test", status: "active", depends_on: [] });
     insertSlice({
       id: "S01",
@@ -53,7 +53,7 @@ test("gsd_skip_slice marks a slice skipped and refreshes STATE.md", async () => 
     assert.equal(result.details.operation, "skip_slice");
     assert.equal(getSlice("M001", "S01")?.status, "skipped");
 
-    const statePath = join(base, ".gsd", "STATE.md");
+    const statePath = join(base, ".gwd", "STATE.md");
     assert.equal(existsSync(statePath), true, "STATE.md should be rebuilt");
     assert.match(readFileSync(statePath, "utf-8"), /Active Slice:\*\* None/);
   } finally {

@@ -59,11 +59,11 @@ function mkPi(cap: MockCapture): any {
 }
 
 /**
- * Create a minimal temp tree with a .gsd/milestones/M001 directory.
+ * Create a minimal temp tree with a .gwd/milestones/M001 directory.
  */
 function mkBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-gate1b-"));
-  mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   return base;
 }
 
@@ -95,7 +95,7 @@ describe("Gate 1b orphan discrimination in checkAutoStartAfterDiscuss", () => {
 
     // CONTEXT.md on disk (discuss phase completed)
     writeFileSync(
-      join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md"),
+      join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md"),
       "# M001: Test Milestone\n\nContext written by discuss phase.\n",
     );
 

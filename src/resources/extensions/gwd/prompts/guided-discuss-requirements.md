@@ -1,6 +1,6 @@
-**Working directory:** `{{workingDirectory}}`. All file reads, writes, and shell commands MUST operate relative to this directory. Do NOT `cd` elsewhere. For `.gsd` files, use absolute paths rooted at `{{workingDirectory}}`, not `Glob`.
+**Working directory:** `{{workingDirectory}}`. All file reads, writes, and shell commands MUST operate relative to this directory. Do NOT `cd` elsewhere. For `.gwd` files, use absolute paths rooted at `{{workingDirectory}}`, not `Glob`.
 
-Discuss **project-level requirements**. Read `.gsd/PROJECT.md` first; it is authoritative for vision, core value, anti-goals, and milestone sequence. Requirements must trace to it. Ask capability gray areas, then write `.gsd/REQUIREMENTS.md` using v2 `R###` format and the **Requirements** template.
+Discuss **project-level requirements**. Read `.gwd/PROJECT.md` first; it is authoritative for vision, core value, anti-goals, and milestone sequence. Requirements must trace to it. Ask capability gray areas, then write `.gwd/REQUIREMENTS.md` using v2 `R###` format and the **Requirements** template.
 
 This runs once after `discuss-project` and before milestone work, creating the capability contract for milestones, slices, and verification.
 
@@ -20,9 +20,9 @@ Before your first action, print this banner verbatim in chat:
 
 ## Pre-flight
 
-1. Read `.gsd/PROJECT.md` end-to-end. If missing, STOP and emit: `"PROJECT.md missing — run discuss-project first."`
+1. Read `.gwd/PROJECT.md` end-to-end. If missing, STOP and emit: `"PROJECT.md missing — run discuss-project first."`
 2. Extract Core Value, Anti-goals, Constraints, Milestone Sequence, and project shape from `## Project Shape` -> `**Complexity:**` (`simple` or `complex`; default to `complex` if missing/unclear).
-3. If `.gsd/REQUIREMENTS.md` exists, read it as the working set.
+3. If `.gwd/REQUIREMENTS.md` exists, read it as the working set.
 
 **Shape-dependent cadence:**
 - **`simple`**: one fast pass. Extract from PROJECT.md, ask 1-2 plain-text clarifiers only when class/status is ambiguous, then write REQUIREMENTS.md.
@@ -91,9 +91,9 @@ Once the user confirms:
 
 1. Use the **Requirements** output template to render final markdown in memory.
 2. Every entry must use `R###` and all fields. Use `gsd_requirement_save` for each requirement so DB state is saved first.
-3. After all `gsd_requirement_save` calls, call `gsd_summary_save` with `artifact_type: "REQUIREMENTS"`; omit `milestone_id`. The requirements table is source of truth, and this tool renders `.gsd/REQUIREMENTS.md` from DB state. Pass markdown as audit context only; do not rely on markdown to update DB rows.
+3. After all `gsd_requirement_save` calls, call `gsd_summary_save` with `artifact_type: "REQUIREMENTS"`; omit `milestone_id`. The requirements table is source of truth, and this tool renders `.gwd/REQUIREMENTS.md` from DB state. Pass markdown as audit context only; do not rely on markdown to update DB rows.
 4. The file MUST contain all required sections: `## Active`, `## Validated`, `## Deferred`, `## Out of Scope`, `## Traceability`, `## Coverage Summary`. Empty sections are OK; missing sections are not.
 5. Print the final coverage summary in chat: `Active: N | Validated: N | Deferred: N | Out of Scope: N | Mapped to slices: N | Unmapped active: N`.
-6. Do NOT use `artifact_type: "CONTEXT"` and do NOT pass `milestone_id: "REQUIREMENTS"`; that creates a fake milestone instead of `.gsd/REQUIREMENTS.md`.
+6. Do NOT use `artifact_type: "CONTEXT"` and do NOT pass `milestone_id: "REQUIREMENTS"`; that creates a fake milestone instead of `.gwd/REQUIREMENTS.md`.
 7. {{commitInstruction}}
 8. End your response with exactly: `Requirements written.`

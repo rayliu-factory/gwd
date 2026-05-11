@@ -30,7 +30,7 @@ import { logWarning } from "./workflow-logger.js";
 
 /**
  * Canonical escalation artifact path, parallel to T##-SUMMARY.md:
- *   .gsd/milestones/{M}/slices/{S}/tasks/{T}-ESCALATION.json
+ *   .gwd/milestones/{M}/slices/{S}/tasks/{T}-ESCALATION.json
  */
 export function escalationArtifactPath(
   basePath: string, milestoneId: string, sliceId: string, taskId: string,

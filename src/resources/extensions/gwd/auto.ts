@@ -3,7 +3,7 @@
 /**
  * GWD Auto Mode — Fresh Session Per Unit
  *
- * State machine driven by .gsd/ files on disk. Each "unit" of work
+ * State machine driven by .gwd/ files on disk. Each "unit" of work
  * (plan slice, execute task, complete slice) gets a fresh session via
  * the stashed ctx.newSession() pattern.
  *
@@ -2099,11 +2099,11 @@ export async function startAuto(
     return;
   }
 
-  // Heal .gsd.migrating before any branching — covers both fresh-start and
+  // Heal .gwd.migrating before any branching — covers both fresh-start and
   // resume paths (#4416). The matching call in auto-start.ts covers the
   // bootstrap-only path; this call ensures the resume path is also protected.
   if (recoverFailedMigration(base)) {
-    ctx.ui.notify("Recovered unfinished migration (.gsd.migrating → .gsd).", "info");
+    ctx.ui.notify("Recovered unfinished migration (.gwd.migrating → .gwd).", "info");
   }
 
   const freshStartAssessment = await (interruptedAssessment

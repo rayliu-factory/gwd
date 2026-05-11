@@ -44,9 +44,9 @@ function makeTempProject(): { dir: string; cleanup: () => void; restoreEnv: () =
   const originalGsdHome = process.env.GWD_HOME;
   const dir = mkdtempSync(join(tmpdir(), "gsd-policy-poison-"));
   const home = mkdtempSync(join(tmpdir(), "gsd-policy-home-"));
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   // Empty PREFERENCES so default uok.model_policy.enabled = true applies.
-  writeFileSync(join(dir, ".gsd", "PREFERENCES.md"), "---\n---\n", "utf-8");
+  writeFileSync(join(dir, ".gwd", "PREFERENCES.md"), "---\n---\n", "utf-8");
   process.env.GWD_HOME = home;
   process.chdir(dir);
   return {
@@ -135,7 +135,7 @@ test("vacuous-truth (a): unit type with empty workflow-required tools → dispat
     // returns a non-undefined modelConfig — only then does selectAndApplyModel
     // run the policy filter we want to exercise.
     writeFileSync(
-      join(env.dir, ".gsd", "PREFERENCES.md"),
+      join(env.dir, ".gwd", "PREFERENCES.md"),
       ["---", "dynamic_routing:", "  enabled: true", "  tier_models:", "    heavy: anthropic/claude-sonnet-4-6", "---"].join("\n"),
       "utf-8",
     );
@@ -286,7 +286,7 @@ test("genuinely-impossible (a): workflow tool incompatible with candidate API �
     // non-undefined modelConfig — without that, selectAndApplyModel skips the
     // entire policy block and we never reach the tool-compat denial path.
     writeFileSync(
-      join(env.dir, ".gsd", "PREFERENCES.md"),
+      join(env.dir, ".gwd", "PREFERENCES.md"),
       ["---", "dynamic_routing:", "  enabled: true", "  tier_models:", "    heavy: ollama/ollama-llama-3", "---"].join("\n"),
       "utf-8",
     );
@@ -362,7 +362,7 @@ test("genuinely-impossible (b): cross-provider routing disabled + provider misma
     // Set dynamic_routing.cross_provider=false via PREFERENCES so the policy
     // disables cross-provider routing.
     writeFileSync(
-      join(env.dir, ".gsd", "PREFERENCES.md"),
+      join(env.dir, ".gwd", "PREFERENCES.md"),
       ["---", "dynamic_routing:", "  enabled: true", "  cross_provider: false", "  tier_models:", "    heavy: other-provider/other-model", "---"].join("\n"),
       "utf-8",
     );
@@ -462,7 +462,7 @@ test("error carries deny reason fragment from applyModelPolicyFilter", async () 
   const env = makeTempProject();
   try {
     writeFileSync(
-      join(env.dir, ".gsd", "PREFERENCES.md"),
+      join(env.dir, ".gwd", "PREFERENCES.md"),
       ["---", "dynamic_routing:", "  enabled: true", "  cross_provider: false", "  tier_models:", "    heavy: other-provider/other-model", "---"].join("\n"),
       "utf-8",
     );

@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { loadFile, parseSummary, saveFile, parseTaskPlanMustHaves, countMustHavesMentionedInSummary } from "./files.js";
 import { parseRoadmap as parseLegacyRoadmap, parsePlan as parseLegacyPlan } from "./parsers-legacy.js";
 import { isDbAvailable, openDatabase, getMilestoneSlices, getSliceTasks } from "./gwd-db.js";
-import { resolveMilestoneFile, resolveMilestonePath, resolveSliceFile, resolveSlicePath, resolveTaskFile, resolveTasksDir, milestonesDir, gsdRoot, relMilestoneFile, relSliceFile, relTaskFile, relSlicePath, relGsdRootFile, resolveGsdRootFile, relMilestonePath, resolveGsdPathContract } from "./paths.js";
+import { resolveMilestoneFile, resolveMilestonePath, resolveSliceFile, resolveSlicePath, resolveTaskFile, resolveTasksDir, milestonesDir, gsdRoot, relMilestoneFile, relSliceFile, relTaskFile, relSlicePath, relGsdRootFile, resolveGsdRootFile, relMilestonePath, resolveGwdPathContract } from "./paths.js";
 import { deriveState, isMilestoneComplete } from "./state.js";
 import { invalidateAllCaches } from "./cache.js";
 import { loadEffectiveGSDPreferences, type GSDPreferences } from "./preferences.js";
@@ -339,7 +339,7 @@ export async function runGSDDoctor(basePath: string, options?: { fix?: boolean; 
   // CLI doctor can run before any tool handler has opened the DB. Runtime
   // health checks need the existing project DB to surface DB-backed crash
   // locks, paused sessions, and coordination rows.
-  const dbPath = resolveGsdPathContract(basePath).projectDb;
+  const dbPath = resolveGwdPathContract(basePath).projectDb;
   if (existsSync(dbPath)) {
     try { openDatabase(dbPath); } catch { /* surfaced later as db_unavailable */ }
   }

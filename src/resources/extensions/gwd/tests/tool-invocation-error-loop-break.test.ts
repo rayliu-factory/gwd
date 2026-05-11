@@ -105,7 +105,7 @@ describe("#2883: isToolInvocationError classification", () => {
     resetWriteGateState(process.cwd());
     const result = shouldBlockContextWrite(
       "write",
-      "/tmp/project/.gsd/milestones/M001/M001-CONTEXT.md",
+      "/tmp/project/.gwd/milestones/M001/M001-CONTEXT.md",
       "M001",
       false,
     );

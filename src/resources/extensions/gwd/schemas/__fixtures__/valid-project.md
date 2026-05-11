@@ -18,7 +18,7 @@ TypeScript monorepo with markdown artifacts, AJV-style validators, parser-then-s
 
 ## Capability Contract
 
-See `.gsd/REQUIREMENTS.md` for the explicit capability contract.
+See `.gwd/REQUIREMENTS.md` for the explicit capability contract.
 
 ## Milestone Sequence
 

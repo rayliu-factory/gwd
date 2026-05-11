@@ -38,7 +38,7 @@ describe("Worktree Safety module", () => {
   beforeEach(() => {
     root = mkdtempSync(join(tmpdir(), "gsd-worktree-safety-"));
     projectRoot = join(root, "project");
-    unitRoot = join(projectRoot, ".gsd", "worktrees", "M001");
+    unitRoot = join(projectRoot, ".gwd", "worktrees", "M001");
     mkdirSync(unitRoot, { recursive: true });
     writeFileSync(join(unitRoot, ".git"), "gitdir: ../../../.git/worktrees/M001\n", "utf-8");
   });

@@ -14,7 +14,7 @@ import { runGSDDoctor } from "../../doctor.js";
 
 test("doctor fix=true sanitizes em-dash in milestone title", async (t) => {
   const tmpBase = mkdtempSync(join(tmpdir(), "gsd-doctor-delim-"));
-  const gsd = join(tmpBase, ".gsd");
+  const gsd = join(tmpBase, ".gwd");
   const mDir = join(gsd, "milestones", "M001");
   const sDir = join(mDir, "slices", "S01");
   const tDir = join(sDir, "tasks");
@@ -60,7 +60,7 @@ test("doctor fix=true sanitizes em-dash in milestone title", async (t) => {
 
 test("doctor fix=false still reports delimiter_in_title as warning", async (t) => {
   const tmpBase = mkdtempSync(join(tmpdir(), "gsd-doctor-delim-nf-"));
-  const gsd = join(tmpBase, ".gsd");
+  const gsd = join(tmpBase, ".gwd");
   const mDir = join(gsd, "milestones", "M001");
   const sDir = join(mDir, "slices", "S01");
   const tDir = join(sDir, "tasks");

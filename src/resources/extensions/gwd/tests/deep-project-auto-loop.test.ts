@@ -34,14 +34,14 @@ import type { GSDState } from "../types.ts";
 
 function makeBase(): string {
   const base = join(tmpdir(), `gsd-deep-project-loop-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
-  writeFileSync(join(base, ".gsd", "PREFERENCES.md"), "---\nplanning_depth: deep\n---\n");
+  mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
+  writeFileSync(join(base, ".gwd", "PREFERENCES.md"), "---\nplanning_depth: deep\n---\n");
   return base;
 }
 
 function makeCommandBase(): string {
   const base = join(tmpdir(), `gsd-deep-project-command-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   writeFileSync(join(base, "package.json"), '{"name":"gsd-command-test"}\n');
   return base;
 }
@@ -111,7 +111,7 @@ function makePlanningState(): GSDState {
 
 function writeCapturedDeepPrefs(base: string): void {
   writeFileSync(
-    join(base, ".gsd", "PREFERENCES.md"),
+    join(base, ".gwd", "PREFERENCES.md"),
     "---\nplanning_depth: deep\nworkflow_prefs_captured: true\n---\n",
   );
 }
@@ -125,8 +125,8 @@ function writeValidProjectAndRequirements(base: string): void {
     new URL("../schemas/__fixtures__/valid-requirements.md", import.meta.url),
     "utf-8",
   );
-  writeFileSync(join(base, ".gsd", "PROJECT.md"), validProject);
-  writeFileSync(join(base, ".gsd", "REQUIREMENTS.md"), validRequirements);
+  writeFileSync(join(base, ".gwd", "PROJECT.md"), validProject);
+  writeFileSync(join(base, ".gwd", "REQUIREMENTS.md"), validRequirements);
 }
 
 function makeRepo(): string {
@@ -362,10 +362,10 @@ test("deep project setup: bootstrap continues queued M002 without milestone cont
   try {
     writeCapturedDeepPrefs(base);
     writeValidProjectAndRequirements(base);
-    mkdirSync(join(base, ".gsd", "runtime"), { recursive: true });
-    writeFileSync(join(base, ".gsd", "runtime", "research-decision.json"), '{"decision":"skip"}\n');
+    mkdirSync(join(base, ".gwd", "runtime"), { recursive: true });
+    writeFileSync(join(base, ".gwd", "runtime", "research-decision.json"), '{"decision":"skip"}\n');
 
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gwd", "gwd.db"));
     insertMilestone({ id: "M001", title: "First milestone", status: "complete" });
     insertMilestone({ id: "M002", title: "Second milestone", status: "queued" });
     closeDatabase();
@@ -521,8 +521,8 @@ test("deep project setup: pre-dispatch does not rewrite execution state to PROJE
   try {
     writeCapturedDeepPrefs(base);
     writeValidProjectAndRequirements(base);
-    mkdirSync(join(base, ".gsd", "runtime"), { recursive: true });
-    writeFileSync(join(base, ".gsd", "runtime", "research-decision.json"), JSON.stringify({ decision: "skip" }));
+    mkdirSync(join(base, ".gwd", "runtime"), { recursive: true });
+    writeFileSync(join(base, ".gwd", "runtime", "research-decision.json"), JSON.stringify({ decision: "skip" }));
 
     const s = new AutoSession();
     s.basePath = base;
@@ -578,9 +578,9 @@ test("deep project setup: pending project research cannot dispatch PROJECT/S01",
   try {
     writeCapturedDeepPrefs(base);
     writeValidProjectAndRequirements(base);
-    mkdirSync(join(base, ".gsd", "runtime"), { recursive: true });
+    mkdirSync(join(base, ".gwd", "runtime"), { recursive: true });
     writeFileSync(
-      join(base, ".gsd", "runtime", "research-decision.json"),
+      join(base, ".gwd", "runtime", "research-decision.json"),
       JSON.stringify({ decision: "research", source: "research-decision" }),
     );
 
@@ -650,7 +650,7 @@ test("deep project setup: new-project command only writes planning_depth with --
   try {
     writeCommandGlobalDeepPrefs(lightBase);
     const lightMessages = await runNewProjectCommand(lightBase, "new-project");
-    const lightPrefsPath = join(lightBase, ".gsd", "PREFERENCES.md");
+    const lightPrefsPath = join(lightBase, ".gwd", "PREFERENCES.md");
     if (existsSync(lightPrefsPath)) {
       assert.doesNotMatch(
         readFileSync(lightPrefsPath, "utf-8"),
@@ -666,7 +666,7 @@ test("deep project setup: new-project command only writes planning_depth with --
     );
 
     const deepMessages = await runNewProjectCommand(deepBase, "new-project --deep");
-    const deepPrefs = readFileSync(join(deepBase, ".gsd", "PREFERENCES.md"), "utf-8");
+    const deepPrefs = readFileSync(join(deepBase, ".gwd", "PREFERENCES.md"), "utf-8");
     assert.match(deepPrefs, /planning_depth:\s*deep/);
     assert.match(deepPrefs, /workflow_prefs_captured:\s*true/);
     assert.equal(deepMessages.length, 1, "deep new-project should dispatch the foreground project setup interview");
@@ -685,7 +685,7 @@ test("deep project setup: bare /gwd ignores global planning_depth without projec
     writeCommandGlobalDeepPrefs(base);
 
     const messages = await runBareGsdCommand(base);
-    const prefsPath = join(base, ".gsd", "PREFERENCES.md");
+    const prefsPath = join(base, ".gwd", "PREFERENCES.md");
 
     if (existsSync(prefsPath)) {
       assert.doesNotMatch(
@@ -718,7 +718,7 @@ test("deep project setup: new-project --deep creates a reachable HEAD in unborn 
     }).trim();
     assert.equal(subject, "chore: init project");
 
-    const deepPrefs = readFileSync(join(base, ".gsd", "PREFERENCES.md"), "utf-8");
+    const deepPrefs = readFileSync(join(base, ".gwd", "PREFERENCES.md"), "utf-8");
     assert.match(deepPrefs, /planning_depth:\s*deep/);
     assert.equal(messages.length, 1, "deep new-project should still dispatch foreground setup");
     assert.match(String((messages[0] as any).content), /Foreground Deep Setup Question Policy/);
@@ -755,10 +755,10 @@ test("deep project setup: new-project --deep uses cwd when nested inside a paren
     const { handleWorkflowCommand } = await import("../commands/handlers/workflow.ts");
     await handleWorkflowCommand("new-project --deep", ctx, pi);
 
-    const childPrefs = readFileSync(join(child, ".gsd", "PREFERENCES.md"), "utf-8");
+    const childPrefs = readFileSync(join(child, ".gwd", "PREFERENCES.md"), "utf-8");
     assert.match(childPrefs, /planning_depth:\s*deep/);
     assert.equal(
-      existsSync(join(parent, ".gsd", "PREFERENCES.md")),
+      existsSync(join(parent, ".gwd", "PREFERENCES.md")),
       false,
       "new-project must not write deep prefs to the parent git root",
     );
@@ -768,7 +768,7 @@ test("deep project setup: new-project --deep uses cwd when nested inside a paren
       new URL("../schemas/__fixtures__/valid-project.md", import.meta.url),
       "utf-8",
     );
-    writeFileSync(join(child, ".gsd", "PROJECT.md"), validProject);
+    writeFileSync(join(child, ".gwd", "PROJECT.md"), validProject);
 
     const advanced = await checkDeepProjectSetupAfterTurn(
       { messages: [{ role: "assistant", content: "Project context written." }] },
@@ -845,7 +845,7 @@ test("deep project setup: new-project asks interview stages in foreground", asyn
       new URL("../schemas/__fixtures__/valid-project.md", import.meta.url),
       "utf-8",
     );
-    writeFileSync(join(base, ".gsd", "PROJECT.md"), validProject);
+    writeFileSync(join(base, ".gwd", "PROJECT.md"), validProject);
 
     const advanced = await checkDeepProjectSetupAfterTurn(
       { messages: [{ role: "assistant", content: "Project captured." }] },
@@ -963,7 +963,7 @@ test("deep project setup: unrelated agent_end sessions do not advance pending se
       new URL("../schemas/__fixtures__/valid-project.md", import.meta.url),
       "utf-8",
     );
-    writeFileSync(join(base, ".gsd", "PROJECT.md"), validProject);
+    writeFileSync(join(base, ".gwd", "PROJECT.md"), validProject);
 
     const ignored = await checkDeepProjectSetupAfterTurn(
       { messages: [{ role: "assistant", content: "Unrelated light workflow completed." }] },
@@ -1011,7 +1011,7 @@ test("deep project setup: same project advances when agent_end session id change
       new URL("../schemas/__fixtures__/valid-project.md", import.meta.url),
       "utf-8",
     );
-    writeFileSync(join(base, ".gsd", "PROJECT.md"), validProject);
+    writeFileSync(join(base, ".gwd", "PROJECT.md"), validProject);
 
     const advanced = await checkDeepProjectSetupAfterTurn(
       { messages: [{ role: "assistant", content: "Project captured." }] },
@@ -1042,7 +1042,7 @@ test("deep project setup: project-level units verify their real artifacts", () =
   try {
     assert.equal(verifyExpectedArtifact("workflow-preferences", "WORKFLOW-PREFS", base), false);
     writeFileSync(
-      join(base, ".gsd", "PREFERENCES.md"),
+      join(base, ".gwd", "PREFERENCES.md"),
       "---\nplanning_depth: deep\nworkflow_prefs_captured: true\n---\n",
     );
     assert.equal(verifyExpectedArtifact("workflow-preferences", "WORKFLOW-PREFS", base), true);
@@ -1051,25 +1051,25 @@ test("deep project setup: project-level units verify their real artifacts", () =
       new URL("../schemas/__fixtures__/valid-project.md", import.meta.url),
       "utf-8",
     );
-    writeFileSync(join(base, ".gsd", "PROJECT.md"), validProject);
+    writeFileSync(join(base, ".gwd", "PROJECT.md"), validProject);
     assert.equal(verifyExpectedArtifact("discuss-project", "PROJECT", base), true);
-    writeFileSync(join(base, ".gsd", "PROJECT.md"), "# Project\n");
+    writeFileSync(join(base, ".gwd", "PROJECT.md"), "# Project\n");
     assert.equal(verifyExpectedArtifact("discuss-project", "PROJECT", base), false);
 
     const validRequirements = readFileSync(
       new URL("../schemas/__fixtures__/valid-requirements.md", import.meta.url),
       "utf-8",
     );
-    writeFileSync(join(base, ".gsd", "REQUIREMENTS.md"), validRequirements);
+    writeFileSync(join(base, ".gwd", "REQUIREMENTS.md"), validRequirements);
     assert.equal(verifyExpectedArtifact("discuss-requirements", "REQUIREMENTS", base), true);
 
-    mkdirSync(join(base, ".gsd", "runtime"), { recursive: true });
-    writeFileSync(join(base, ".gsd", "runtime", "research-decision.json"), '{"decision":"maybe"}\n');
+    mkdirSync(join(base, ".gwd", "runtime"), { recursive: true });
+    writeFileSync(join(base, ".gwd", "runtime", "research-decision.json"), '{"decision":"maybe"}\n');
     assert.equal(verifyExpectedArtifact("research-decision", "RESEARCH-DECISION", base), false);
-    writeFileSync(join(base, ".gsd", "runtime", "research-decision.json"), '{"decision":"skip"}\n');
+    writeFileSync(join(base, ".gwd", "runtime", "research-decision.json"), '{"decision":"skip"}\n');
     assert.equal(verifyExpectedArtifact("research-decision", "RESEARCH-DECISION", base), true);
 
-    const researchDir = join(base, ".gsd", "research");
+    const researchDir = join(base, ".gwd", "research");
     mkdirSync(researchDir, { recursive: true });
     writeFileSync(join(researchDir, "STACK.md"), "# Stack\n");
     writeFileSync(join(researchDir, "FEATURES.md"), "# Features\n");
@@ -1094,9 +1094,9 @@ test("deep project setup: research-project blocker placeholder is a file, not th
   const base = makeBase();
   try {
     const expectedPath = resolveExpectedArtifactPath("research-project", "PROJECT-RESEARCH", base);
-    assert.equal(expectedPath, join(realpathSync(base), ".gsd", "research", "PROJECT-RESEARCH-BLOCKER.md"));
+    assert.equal(expectedPath, join(realpathSync(base), ".gwd", "research", "PROJECT-RESEARCH-BLOCKER.md"));
 
-    mkdirSync(join(base, ".gsd", "research"), { recursive: true });
+    mkdirSync(join(base, ".gwd", "research"), { recursive: true });
     const diagnosis = writeBlockerPlaceholder(
       "research-project",
       "PROJECT-RESEARCH",
@@ -1105,9 +1105,9 @@ test("deep project setup: research-project blocker placeholder is a file, not th
     );
 
     assert.match(diagnosis ?? "", /research/i);
-    assert.equal(existsSync(join(base, ".gsd", "research", "PROJECT-RESEARCH-BLOCKER.md")), true);
+    assert.equal(existsSync(join(base, ".gwd", "research", "PROJECT-RESEARCH-BLOCKER.md")), true);
     assert.match(
-      readFileSync(join(base, ".gsd", "research", "PROJECT-RESEARCH-BLOCKER.md"), "utf-8"),
+      readFileSync(join(base, ".gwd", "research", "PROJECT-RESEARCH-BLOCKER.md"), "utf-8"),
       /fail-closed/,
     );
     assert.equal(
@@ -1128,10 +1128,10 @@ test("deep project setup: research-project partial output writes dimension block
     s.basePath = base;
     s.currentUnit = { type: "research-project", id: "RESEARCH-PROJECT", startedAt: Date.now() };
 
-    mkdirSync(join(base, ".gsd", "runtime"), { recursive: true });
-    writeFileSync(join(base, ".gsd", "runtime", "research-project-inflight"), "{}\n");
-    mkdirSync(join(base, ".gsd", "research"), { recursive: true });
-    writeFileSync(join(base, ".gsd", "research", "STACK.md"), "# Stack\n");
+    mkdirSync(join(base, ".gwd", "runtime"), { recursive: true });
+    writeFileSync(join(base, ".gwd", "runtime", "research-project-inflight"), "{}\n");
+    mkdirSync(join(base, ".gwd", "research"), { recursive: true });
+    writeFileSync(join(base, ".gwd", "research", "STACK.md"), "# Stack\n");
 
     const notifications: string[] = [];
     const result = await postUnitPreVerification(
@@ -1149,9 +1149,9 @@ test("deep project setup: research-project partial output writes dimension block
     );
 
     assert.equal(result, "continue");
-    assert.equal(existsSync(join(base, ".gsd", "runtime", "research-project-inflight")), false);
+    assert.equal(existsSync(join(base, ".gwd", "runtime", "research-project-inflight")), false);
     for (const name of ["FEATURES", "ARCHITECTURE", "PITFALLS"]) {
-      assert.equal(existsSync(join(base, ".gsd", "research", `${name}-BLOCKER.md`)), true);
+      assert.equal(existsSync(join(base, ".gwd", "research", `${name}-BLOCKER.md`)), true);
     }
     assert.equal(verifyExpectedArtifact("research-project", "RESEARCH-PROJECT", base), true);
     assert.equal(s.pendingVerificationRetry, null);
@@ -1173,8 +1173,8 @@ test("deep project setup: research-project empty output writes global blocker wi
     s.basePath = base;
     s.currentUnit = { type: "research-project", id: "RESEARCH-PROJECT", startedAt: Date.now() };
 
-    mkdirSync(join(base, ".gsd", "runtime"), { recursive: true });
-    writeFileSync(join(base, ".gsd", "runtime", "research-project-inflight"), "{}\n");
+    mkdirSync(join(base, ".gwd", "runtime"), { recursive: true });
+    writeFileSync(join(base, ".gwd", "runtime", "research-project-inflight"), "{}\n");
 
     const notifications: string[] = [];
     const result = await postUnitPreVerification(
@@ -1192,8 +1192,8 @@ test("deep project setup: research-project empty output writes global blocker wi
     );
 
     assert.equal(result, "continue");
-    assert.equal(existsSync(join(base, ".gsd", "runtime", "research-project-inflight")), false);
-    assert.equal(existsSync(join(base, ".gsd", "research", "PROJECT-RESEARCH-BLOCKER.md")), true);
+    assert.equal(existsSync(join(base, ".gwd", "runtime", "research-project-inflight")), false);
+    assert.equal(existsSync(join(base, ".gwd", "research", "PROJECT-RESEARCH-BLOCKER.md")), true);
     assert.equal(verifyExpectedArtifact("research-project", "RESEARCH-PROJECT", base), false);
     assert.equal(s.pendingVerificationRetry, null);
     assert.equal(s.verificationRetryCount.size, 0);
@@ -1209,14 +1209,14 @@ test("deep project setup: research-project empty output writes global blocker wi
 test("deep project setup: project research timeout finalizer removes stale marker", () => {
   const base = makeBase();
   try {
-    mkdirSync(join(base, ".gsd", "runtime"), { recursive: true });
-    writeFileSync(join(base, ".gsd", "runtime", "research-project-inflight"), "{}\n");
+    mkdirSync(join(base, ".gwd", "runtime"), { recursive: true });
+    writeFileSync(join(base, ".gwd", "runtime", "research-project-inflight"), "{}\n");
 
     const outcome = finalizeProjectResearchTimeout(base, "test hard timeout");
 
     assert.equal(outcome.kind, "global-blocker");
-    assert.equal(existsSync(join(base, ".gsd", "runtime", "research-project-inflight")), false);
-    assert.equal(existsSync(join(base, ".gsd", "research", "PROJECT-RESEARCH-BLOCKER.md")), true);
+    assert.equal(existsSync(join(base, ".gwd", "runtime", "research-project-inflight")), false);
+    assert.equal(existsSync(join(base, ".gwd", "research", "PROJECT-RESEARCH-BLOCKER.md")), true);
   } finally {
     rmSync(base, { recursive: true, force: true });
   }
@@ -1278,25 +1278,25 @@ test("deep project setup: empty legacy pseudo-milestone dirs do not block first 
       "utf-8",
     );
     writeFileSync(
-      join(base, ".gsd", "PREFERENCES.md"),
+      join(base, ".gwd", "PREFERENCES.md"),
       "---\nplanning_depth: deep\nworkflow_prefs_captured: true\n---\n",
     );
-    writeFileSync(join(base, ".gsd", "PROJECT.md"), validProject);
-    writeFileSync(join(base, ".gsd", "REQUIREMENTS.md"), validRequirements);
-    mkdirSync(join(base, ".gsd", "runtime"), { recursive: true });
-    writeFileSync(join(base, ".gsd", "runtime", "research-decision.json"), '{"decision":"skip"}\n');
+    writeFileSync(join(base, ".gwd", "PROJECT.md"), validProject);
+    writeFileSync(join(base, ".gwd", "REQUIREMENTS.md"), validRequirements);
+    mkdirSync(join(base, ".gwd", "runtime"), { recursive: true });
+    writeFileSync(join(base, ".gwd", "runtime", "research-decision.json"), '{"decision":"skip"}\n');
 
     for (const legacy of ["PROJECT", "RESEARCH-PROJECT", "WORKFLOW-PREFS"]) {
-      mkdirSync(join(base, ".gsd", "milestones", legacy), { recursive: true });
+      mkdirSync(join(base, ".gwd", "milestones", legacy), { recursive: true });
     }
 
     const messages: unknown[] = [];
     await showSmartEntry(makeCtx(`legacy-${randomUUID()}`) as any, makePi(messages) as any, base);
 
     assert.equal(messages.length, 1, "first real milestone discussion should dispatch");
-    assert.equal(existsSync(join(base, ".gsd", "milestones", "PROJECT")), false);
-    assert.equal(existsSync(join(base, ".gsd", "milestones", "RESEARCH-PROJECT")), false);
-    assert.equal(existsSync(join(base, ".gsd", "milestones", "WORKFLOW-PREFS")), false);
+    assert.equal(existsSync(join(base, ".gwd", "milestones", "PROJECT")), false);
+    assert.equal(existsSync(join(base, ".gwd", "milestones", "RESEARCH-PROJECT")), false);
+    assert.equal(existsSync(join(base, ".gwd", "milestones", "WORKFLOW-PREFS")), false);
   } finally {
     if (previousWorkflowPath === undefined) delete process.env.GWD_WORKFLOW_PATH;
     else process.env.GWD_WORKFLOW_PATH = previousWorkflowPath;
@@ -1625,7 +1625,7 @@ test("deep project setup: approval wait wins over deterministic write-gate place
     assert.equal(result, "dispatched");
     assert.equal(pauseCalled, true);
     assert.equal(s.lastToolInvocationError, null);
-    assert.equal(existsSync(join(base, ".gsd", "REQUIREMENTS.md")), false);
+    assert.equal(existsSync(join(base, ".gwd", "REQUIREMENTS.md")), false);
     assert.ok(
       notifications.some((message) => message.includes("waiting for your input")),
       "should pause on the user wait instead of writing a blocker placeholder",

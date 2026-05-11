@@ -1,4 +1,4 @@
-// GSD2 — paths cache normalization and clearPathCache() invalidation tests
+// GWD — paths cache normalization and clearPathCache() invalidation tests
 
 import { describe, test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -16,10 +16,10 @@ describe('gsdRootCache key normalization', () => {
   let savedGsdHome: string | undefined;
 
   beforeEach(() => {
-    projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-cache-norm-')));
-    mkdirSync(join(projectDir, '.gsd'), { recursive: true });
+    projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gwd-cache-norm-')));
+    mkdirSync(join(projectDir, '.gwd'), { recursive: true });
 
-    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-cache-home-')));
+    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gwd-cache-home-')));
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
@@ -28,7 +28,7 @@ describe('gsdRootCache key normalization', () => {
     // Point HOME and GWD_HOME at an unrelated temp dir to prevent ~/.gwd interference.
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
-    process.env.GWD_HOME = join(fakeHome, '.gsd');
+    process.env.GWD_HOME = join(fakeHome, '.gwd');
 
     _clearGsdRootCache();
   });
@@ -58,20 +58,20 @@ describe('gsdRootCache key normalization', () => {
     );
     assert.equal(
       withoutSlash,
-      join(projectDir, '.gsd'),
-      'both calls should resolve to projectDir/.gsd',
+      join(projectDir, '.gwd'),
+      'both calls should resolve to projectDir/.gwd',
     );
   });
 
   test('second call with trailing slash hits cache set by first call without slash', () => {
     // Prime the cache with the no-slash form.
     const first = gsdRoot(projectDir);
-    // Now remove .gsd so a fresh probe would return a different path.
-    renameSync(join(projectDir, '.gsd'), join(projectDir, '.gsd-hidden'));
+    // Now remove .gwd so a fresh probe would return a different path.
+    renameSync(join(projectDir, '.gwd'), join(projectDir, '.gwd-hidden'));
     // Call with trailing slash — must hit the normalized cache entry (no re-probe).
     const second = gsdRoot(projectDir + '/');
     // Restore for cleanup.
-    renameSync(join(projectDir, '.gsd-hidden'), join(projectDir, '.gsd'));
+    renameSync(join(projectDir, '.gwd-hidden'), join(projectDir, '.gwd'));
 
     assert.equal(
       second,
@@ -89,10 +89,10 @@ describe('clearPathCache() does NOT invalidate gsdRootCache (process-lifetime se
   let savedGsdHome: string | undefined;
 
   beforeEach(() => {
-    projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-cache-clear-')));
-    mkdirSync(join(projectDir, '.gsd'), { recursive: true });
+    projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gwd-cache-clear-')));
+    mkdirSync(join(projectDir, '.gwd'), { recursive: true });
 
-    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-cache-home2-')));
+    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gwd-cache-home2-')));
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
@@ -100,7 +100,7 @@ describe('clearPathCache() does NOT invalidate gsdRootCache (process-lifetime se
 
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
-    process.env.GWD_HOME = join(fakeHome, '.gsd');
+    process.env.GWD_HOME = join(fakeHome, '.gwd');
 
     _clearGsdRootCache();
   });
@@ -122,12 +122,12 @@ describe('clearPathCache() does NOT invalidate gsdRootCache (process-lifetime se
   test('clearPathCache() does NOT evict a cached gsdRoot result', (t) => {
     // Prime the cache.
     const firstResult = gsdRoot(projectDir);
-    assert.equal(firstResult, join(projectDir, '.gsd'));
+    assert.equal(firstResult, join(projectDir, '.gwd'));
 
-    // Remove .gsd so a fresh probe would return a different (fallback) result.
-    renameSync(join(projectDir, '.gsd'), join(projectDir, '.gsd-hidden'));
+    // Remove .gwd so a fresh probe would return a different (fallback) result.
+    renameSync(join(projectDir, '.gwd'), join(projectDir, '.gwd-hidden'));
     t.after(() => {
-      try { renameSync(join(projectDir, '.gsd-hidden'), join(projectDir, '.gsd')); } catch { /* ignore */ }
+      try { renameSync(join(projectDir, '.gwd-hidden'), join(projectDir, '.gwd')); } catch { /* ignore */ }
     });
 
     // clearPathCache() only clears volatile dir caches — gsdRootCache is untouched.
@@ -143,12 +143,12 @@ describe('clearPathCache() does NOT invalidate gsdRootCache (process-lifetime se
   test('_clearGsdRootCache() DOES evict gsdRootCache, causing re-probe', (t) => {
     // Prime the cache.
     const firstResult = gsdRoot(projectDir);
-    assert.equal(firstResult, join(projectDir, '.gsd'));
+    assert.equal(firstResult, join(projectDir, '.gwd'));
 
-    // Remove .gsd so a fresh probe returns the creation fallback.
-    renameSync(join(projectDir, '.gsd'), join(projectDir, '.gsd-hidden'));
+    // Remove .gwd so a fresh probe returns the creation fallback.
+    renameSync(join(projectDir, '.gwd'), join(projectDir, '.gwd-hidden'));
     t.after(() => {
-      try { renameSync(join(projectDir, '.gsd-hidden'), join(projectDir, '.gsd')); } catch { /* ignore */ }
+      try { renameSync(join(projectDir, '.gwd-hidden'), join(projectDir, '.gwd')); } catch { /* ignore */ }
     });
 
     // _clearGsdRootCache() evicts the entry — next call re-probes.
@@ -156,15 +156,15 @@ describe('clearPathCache() does NOT invalidate gsdRootCache (process-lifetime se
     const afterClearRoot = gsdRoot(projectDir);
     assert.equal(
       afterClearRoot,
-      join(projectDir, '.gsd'),
+      join(projectDir, '.gwd'),
       'after _clearGsdRootCache, gsdRoot must re-probe and return creation fallback',
     );
     // The two results are equal (same path) but the key point is re-probe occurred;
     // the cached firstResult also happened to equal the fallback path.
-    // Verify: if we prime again without removing .gsd, clearing root re-probes to gsd.
-    renameSync(join(projectDir, '.gsd-hidden'), join(projectDir, '.gsd'));
+    // Verify: if we prime again without removing .gwd, clearing root re-probes to gwd.
+    renameSync(join(projectDir, '.gwd-hidden'), join(projectDir, '.gwd'));
     _clearGsdRootCache();
     const reprobe = gsdRoot(projectDir);
-    assert.equal(reprobe, join(projectDir, '.gsd'), 're-probe after restore returns .gsd');
+    assert.equal(reprobe, join(projectDir, '.gwd'), 're-probe after restore returns .gwd');
   });
 });

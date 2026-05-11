@@ -16,7 +16,7 @@ import {
 
 function makeProjectDir(): string {
   const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-pas-scope-")));
-  mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   return dir;
 }
 
@@ -45,9 +45,9 @@ describe("pendingAutoStart scope pinning (C1)", () => {
     assert.ok(entry.scope, "entry.scope should be set");
     assert.equal(entry.scope.milestoneId, "M001");
 
-    const expectedContext = join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md");
-    const expectedRoadmap = join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md");
-    const expectedState = join(base, ".gsd", "STATE.md");
+    const expectedContext = join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md");
+    const expectedRoadmap = join(base, ".gwd", "milestones", "M001", "M001-ROADMAP.md");
+    const expectedState = join(base, ".gwd", "STATE.md");
 
     assert.equal(entry.scope.contextFile(), expectedContext);
     assert.equal(entry.scope.roadmapFile(), expectedRoadmap);

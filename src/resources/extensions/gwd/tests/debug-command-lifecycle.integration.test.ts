@@ -42,7 +42,7 @@ interface MockCtx {
 
 function makeBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-debug-lifecycle-int-"));
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -177,7 +177,7 @@ test("/gwd debug lifecycle integration handles invalid slugs and malformed artif
     assert.equal(diagnosed.level, "warning");
     assert.match(diagnosed.message, /Debug session diagnostics:/);
     assert.match(diagnosed.message, /malformedArtifacts=1/);
-    assert.match(diagnosed.message, /Remediation: repair\/remove malformed JSON artifacts under \.gsd\/debug\/sessions\//);
+    assert.match(diagnosed.message, /Remediation: repair\/remove malformed JSON artifacts under \.gwd\/debug\/sessions\//);
   } finally {
     process.chdir(saved);
     rmSync(base, { recursive: true, force: true });
@@ -192,7 +192,7 @@ test("/gwd debug lifecycle integration keeps session artifacts isolated from deb
   try {
     const ctx = createMockCtx();
 
-    const debugDir = join(base, ".gsd", "debug");
+    const debugDir = join(base, ".gwd", "debug");
     mkdirSync(debugDir, { recursive: true });
     writeFileSync(join(debugDir, "payment-timeout.log"), "log seed\n", "utf-8");
 
@@ -207,14 +207,14 @@ test("/gwd debug lifecycle integration keeps session artifacts isolated from deb
     assert.equal(secondStarted.level, "info");
     assert.match(secondStarted.message, /Debug session started: payment-timeout-2/);
 
-    assert.equal(existsSync(join(base, ".gsd", "debug", "payment-timeout.json")), false);
-    assert.equal(existsSync(join(base, ".gsd", "debug", "sessions", "payment-timeout.json")), true);
-    assert.equal(existsSync(join(base, ".gsd", "debug", "sessions", "payment-timeout-2.json")), true);
+    assert.equal(existsSync(join(base, ".gwd", "debug", "payment-timeout.json")), false);
+    assert.equal(existsSync(join(base, ".gwd", "debug", "sessions", "payment-timeout.json")), true);
+    assert.equal(existsSync(join(base, ".gwd", "debug", "sessions", "payment-timeout-2.json")), true);
 
     await handleGSDCommand("logs debug", ctx as any, {} as any);
     const logsListed = lastNotification(ctx);
     assert.equal(logsListed.level, "info");
-    assert.match(logsListed.message, /Debug Logs \(\.gsd\/debug\/\):/);
+    assert.match(logsListed.message, /Debug Logs \(\.gwd\/debug\/\):/);
     assert.match(logsListed.message, /payment-timeout\.log/);
     assert.doesNotMatch(logsListed.message, /payment-timeout\.json/);
 

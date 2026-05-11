@@ -19,7 +19,7 @@ import {
 
 function makeBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-auto-workers-"));
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -31,7 +31,7 @@ function cleanup(base: string): void {
 test("registerAutoWorker creates a row with active status and heartbeat", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
 
   const id = registerAutoWorker({ projectRootRealpath: base });
   assert.match(id, /^auto-/, "worker_id has expected prefix");
@@ -46,7 +46,7 @@ test("registerAutoWorker creates a row with active status and heartbeat", (t) =>
 test("heartbeatAutoWorker updates last_heartbeat_at", async (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
 
   const id = registerAutoWorker({ projectRootRealpath: base });
   const initial = getAutoWorker(id)!;
@@ -63,7 +63,7 @@ test("heartbeatAutoWorker updates last_heartbeat_at", async (t) => {
 test("markWorkerStopping flips status to stopping", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
 
   const id = registerAutoWorker({ projectRootRealpath: base });
   markWorkerStopping(id);
@@ -74,7 +74,7 @@ test("markWorkerStopping flips status to stopping", (t) => {
 test("markWorkerCrashed flips status to crashed", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
 
   const id = registerAutoWorker({ projectRootRealpath: base });
   markWorkerCrashed(id);
@@ -85,7 +85,7 @@ test("markWorkerCrashed flips status to crashed", (t) => {
 test("getActiveAutoWorkers filters by status and TTL", (t) => {
   const base = makeBase();
   t.after(() => cleanup(base));
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
 
   const a = registerAutoWorker({ projectRootRealpath: base });
   const b = registerAutoWorker({ projectRootRealpath: base });

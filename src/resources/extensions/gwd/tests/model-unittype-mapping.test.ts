@@ -81,9 +81,9 @@ test("discuss-slice has discussion metrics and dashboard labels", () => {
 test("discuss-slice resolves to the slice context artifact path", () => {
   const base = mkdtempSync(join(tmpdir(), "gsd-discuss-artifact-"));
   try {
-    mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
+    mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
     const path = resolveExpectedArtifactPath("discuss-slice", "M001/S01", base);
-    assert.equal(path, join(realpathSync(base), ".gsd", "milestones", "M001", "slices", "S01", "S01-CONTEXT.md"));
+    assert.equal(path, join(realpathSync(base), ".gwd", "milestones", "M001", "slices", "S01", "S01-CONTEXT.md"));
   } finally {
     rmSync(base, { recursive: true, force: true });
   }

@@ -5,7 +5,7 @@ name: api-breaking-change
 version: 1
 mode: markdown-phase
 requires_project: false
-artifact_dir: .gsd/workflows/api-breaks/
+artifact_dir: .gwd/workflows/api-breaks/
 </template_meta>
 
 <purpose>

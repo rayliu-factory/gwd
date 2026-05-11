@@ -9,7 +9,7 @@
  *   - The bug-hardened invariants encoded in `syncProjectRootToWorktree` /
  *     `syncStateToProjectRoot` (additive milestone copy #1886, ASSESSMENT
  *     verdict overwrite #2821, completed-units forward-sync, WAL/SHM
- *     cleanup #2478, .gsd symlink edge case #2184)
+ *     cleanup #2478, .gwd symlink edge case #2184)
  *
  * Slice 7 (#5591): the bodies of the three projection verbs and their
  * private helpers (`isSamePath`, `forceOverwriteAssessmentsWithVerdict`,
@@ -32,7 +32,7 @@ import {
 import { join } from "node:path";
 
 import { reconcileWorktreeDb } from "./gwd-db.js";
-import { resolveGsdPathContract } from "./paths.js";
+import { resolveGwdPathContract } from "./paths.js";
 import { safeCopy, safeCopyRecursive } from "./safe-fs.js";
 import type { MilestoneScope } from "./workspace.js";
 import { logError, logWarning } from "./workflow-logger.js";
@@ -43,8 +43,8 @@ import { logError, logWarning } from "./workflow-logger.js";
  * Check if two filesystem paths resolve to the same real location.
  * Returns false if either path cannot be resolved (e.g. doesn't exist).
  *
- * Detects the .gsd-as-symlink case (#2184) where the worktree's `.gsd`
- * resolves to the same physical directory as the project root's `.gsd` —
+ * Detects the .gwd-as-symlink case (#2184) where the worktree's `.gwd`
+ * resolves to the same physical directory as the project root's `.gwd` —
  * a `cpSync` over those would fail with `ERR_FS_CP_EINVAL`.
  */
 function isSamePath(a: string, b: string): boolean {
@@ -124,7 +124,7 @@ function forceOverwriteAssessmentsWithVerdict(
 }
 
 /**
- * Root-level .gsd/ files copied from worktree back to project root for
+ * Root-level .gwd/ files copied from worktree back to project root for
  * post-merge diagnostics. Markdown projections are NOT in this list — DB
  * remains authoritative.
  */
@@ -143,7 +143,7 @@ const ROOT_DIAGNOSTIC_FILES = [
 /**
  * Project state from project root onto the auto-worktree (raw-path body).
  *
- * Owns the rules: identity-key safety check (#2184 .gsd symlink), additive
+ * Owns the rules: identity-key safety check (#2184 .gwd symlink), additive
  * milestone copy preserving worktree-local files (#1886), ASSESSMENT
  * verdict force-overwrite (#2821), forward-sync of `completed-units.json`,
  * WAL/SHM cleanup on legacy worktree-local DB (#2478).
@@ -156,11 +156,11 @@ export function _projectRootToWorktreeImpl(
   if (!worktreePath_ || !projectRoot || worktreePath_ === projectRoot) return;
   if (!milestoneId) return;
 
-  const contract = resolveGsdPathContract(worktreePath_, projectRoot);
-  const prGsd = contract.projectGsd;
-  const wtGsd = contract.worktreeGsd ?? join(worktreePath_, ".gsd");
+  const contract = resolveGwdPathContract(worktreePath_, projectRoot);
+  const prGsd = contract.projectGwd;
+  const wtGsd = contract.worktreeGwd ?? join(worktreePath_, ".gwd");
 
-  // When .gsd is a symlink to the same external directory in both locations,
+  // When .gwd is a symlink to the same external directory in both locations,
   // cpSync rejects the copy because source === destination (ERR_FS_CP_EINVAL).
   // Compare realpaths and skip when they resolve to the same physical path (#2184).
   if (isSamePath(prGsd, wtGsd)) return;
@@ -198,11 +198,11 @@ export function _projectRootToWorktreeImpl(
     { force: true },
   );
 
-  // Delete a legacy worktree-local gsd.db ONLY if it is empty (0 bytes).
+  // Delete a legacy worktree-local gwd.db ONLY if it is empty (0 bytes).
   // Runtime opens contract.projectDb; this cleanup only removes corrupt
   // pre-upgrade local DB projections.
   try {
-    const wtDb = join(wtGsd, "gsd.db");
+    const wtDb = join(wtGsd, "gwd.db");
     let deleteSidecars = false;
     if (existsSync(wtDb)) {
       const size = statSync(wtDb).size;
@@ -250,11 +250,11 @@ export function _projectWorktreeToRootImpl(
   if (!worktreePath_ || !projectRoot || worktreePath_ === projectRoot) return;
   if (!milestoneId) return;
 
-  const contract = resolveGsdPathContract(worktreePath_, projectRoot);
-  const wtGsd = contract.worktreeGsd ?? join(worktreePath_, ".gsd");
-  const prGsd = contract.projectGsd;
+  const contract = resolveGwdPathContract(worktreePath_, projectRoot);
+  const wtGsd = contract.worktreeGwd ?? join(worktreePath_, ".gwd");
+  const prGsd = contract.projectGwd;
 
-  // When .gsd is a symlink to the same external directory in both locations,
+  // When .gwd is a symlink to the same external directory in both locations,
   // cpSync rejects the copy because source === destination (ERR_FS_CP_EINVAL).
   // Compare realpaths and skip when they resolve to the same physical path (#2184).
   if (isSamePath(wtGsd, prGsd)) return;
@@ -296,9 +296,9 @@ export function _finalizeProjectionForMergeImpl(
   worktreePath: string,
   milestoneId: string,
 ): { synced: string[] } {
-  const contract = resolveGsdPathContract(worktreePath, mainBasePath);
-  const mainGsd = contract.projectGsd;
-  const wtGsd = contract.worktreeGsd ?? join(worktreePath, ".gsd");
+  const contract = resolveGwdPathContract(worktreePath, mainBasePath);
+  const mainGsd = contract.projectGwd;
+  const wtGsd = contract.worktreeGwd ?? join(worktreePath, ".gwd");
   const synced: string[] = [];
 
   // If both resolve to the same directory (symlink), no sync needed
@@ -307,16 +307,16 @@ export function _finalizeProjectionForMergeImpl(
   if (!existsSync(wtGsd) || !existsSync(mainGsd)) return { synced };
 
   // ── 0. Pre-upgrade worktree DB reconciliation ────────────────────────
-  // If the worktree has its own gsd.db (copied before the WAL transition),
+  // If the worktree has its own gwd.db (copied before the WAL transition),
   // reconcile its hierarchy data into the project root DB before syncing
   // files. This handles in-flight worktrees that were created before the
   // upgrade to shared WAL mode.
-  const wtLocalDb = join(wtGsd, "gsd.db");
+  const wtLocalDb = join(wtGsd, "gwd.db");
   const mainDb = contract.projectDb;
   if (existsSync(wtLocalDb) && existsSync(mainDb)) {
     try {
       reconcileWorktreeDb(mainDb, wtLocalDb);
-      synced.push("gsd.db (pre-upgrade reconcile)");
+      synced.push("gwd.db (pre-upgrade reconcile)");
     } catch (err) {
       // Non-fatal — file sync below is the fallback
       logError(

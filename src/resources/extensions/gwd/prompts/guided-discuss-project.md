@@ -1,6 +1,6 @@
-**Working directory:** `{{workingDirectory}}`. All file reads, writes, and shell commands MUST operate relative to this directory. Do NOT `cd` elsewhere. For `.gsd` files, use absolute paths rooted at `{{workingDirectory}}`, not `Glob`.
+**Working directory:** `{{workingDirectory}}`. All file reads, writes, and shell commands MUST operate relative to this directory. Do NOT `cd` elsewhere. For `.gwd` files, use absolute paths rooted at `{{workingDirectory}}`, not `Glob`.
 
-Discuss the **project** as a whole: vision, users, anti-goals, constraints, and rough milestone sequence. Ask only real gray areas, then write `.gsd/PROJECT.md` with the **Project** template below. If a `GWD Skill Preferences` block exists, use it; artifact rules still apply.
+Discuss the **project** as a whole: vision, users, anti-goals, constraints, and rough milestone sequence. Ask only real gray areas, then write `.gwd/PROJECT.md` with the **Project** template below. If a `GWD Skill Preferences` block exists, use it; artifact rules still apply.
 
 This runs once before milestone discussion. Later milestones, requirements, and roadmaps depend on it.
 
@@ -40,7 +40,7 @@ Persist the verdict to PROJECT.md -> `## Project Shape`; downstream `discuss-req
 
 Investigate enough to avoid assumption-driven questions:
 - Scout code with `rg`, `find`, or `scout` for greenfield/brownfield and framework signals.
-- Check prior `.planning/` or `.gsd/` artifacts.
+- Check prior `.planning/` or `.gwd/` artifacts.
 - Use `resolve_library` / `get_library_docs` for unfamiliar mentioned libraries.
 
 **Web search budget:** typically 3-5 per turn. Prefer docs tools; use 2-3 searches first and save the rest.
@@ -65,7 +65,7 @@ After each round, investigate only new unknowns, then ask the next round.
 
 After each round, decide whether PROJECT.md would be strong enough.
 
-- **Incremental persistence:** After every 2 question rounds, silently save `.gsd/PROJECT-DRAFT.md` via `gsd_summary_save` with `artifact_type: "PROJECT-DRAFT"` and no `milestone_id`. Do NOT mention this save to the user.
+- **Incremental persistence:** After every 2 question rounds, silently save `.gwd/PROJECT-DRAFT.md` via `gsd_summary_save` with `artifact_type: "PROJECT-DRAFT"` and no `milestone_id`. Do NOT mention this save to the user.
 - If not ready, continue to the next round.
 - Use a wrap-up prompt only when the depth checklist is satisfied or the user wants to stop.
 
@@ -104,9 +104,9 @@ The depth verification is the only required confirmation gate. Do not add a seco
 Once the user confirms depth:
 
 1. Use the **Project** output template (inlined above).
-2. Call `gsd_summary_save` with `artifact_type: "PROJECT"` and full project markdown as `content`; omit `milestone_id`. The tool writes `.gsd/PROJECT.md` and persists to DB. Preserve the user's terms and framing.
+2. Call `gsd_summary_save` with `artifact_type: "PROJECT"` and full project markdown as `content`; omit `milestone_id`. The tool writes `.gwd/PROJECT.md` and persists to DB. Preserve the user's terms and framing.
 3. The `## Project Shape` section MUST contain `**Complexity:** simple` or `**Complexity:** complex` (matching the verdict you announced) plus a one-line `**Why:**` rationale. Downstream stages read this line.
-4. The `## Capability Contract` section MUST reference `.gsd/REQUIREMENTS.md` — that file does not yet exist; the next stage (`discuss-requirements`) will produce it.
+4. The `## Capability Contract` section MUST reference `.gwd/REQUIREMENTS.md` — that file does not yet exist; the next stage (`discuss-requirements`) will produce it.
 5. The `## Milestone Sequence` MUST list at least M001 with title and one-liner. Subsequent milestones may be listed as known intents; they will be elaborated in their own discuss-milestone stages.
 6. Do NOT use `artifact_type: "CONTEXT"` and do NOT pass `milestone_id: "PROJECT"`; that creates a fake milestone named PROJECT.
 7. {{commitInstruction}}

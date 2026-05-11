@@ -47,13 +47,13 @@ describe("parseExtractLearningsArgs", () => {
 
 describe("buildLearningsOutputPath", () => {
   it("builds the correct output path", () => {
-    const result = buildLearningsOutputPath("/base/.gsd/milestones/M001", "M001");
-    assert.equal(result, "/base/.gsd/milestones/M001/M001-LEARNINGS.md");
+    const result = buildLearningsOutputPath("/base/.gwd/milestones/M001", "M001");
+    assert.equal(result, "/base/.gwd/milestones/M001/M001-LEARNINGS.md");
   });
 
   it("builds path for different milestone ID", () => {
-    const result = buildLearningsOutputPath("/project/.gsd/milestones/M005", "M005");
-    assert.equal(result, "/project/.gsd/milestones/M005/M005-LEARNINGS.md");
+    const result = buildLearningsOutputPath("/project/.gwd/milestones/M005", "M005");
+    assert.equal(result, "/project/.gwd/milestones/M005/M005-LEARNINGS.md");
   });
 });
 
@@ -159,8 +159,8 @@ describe("buildExtractLearningsPrompt", () => {
     const result = buildExtractLearningsPrompt({
       milestoneId: "M001",
       milestoneName: "Test Milestone",
-      outputPath: "/project/.gsd/milestones/M001/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      outputPath: "/project/.gwd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M001/M001-LEARNINGS.md",
       roadmapContent: "# Roadmap content",
       summaryContent: "# Summary content",
       verificationContent: null,
@@ -170,7 +170,7 @@ describe("buildExtractLearningsPrompt", () => {
     });
 
     assert.ok(result.includes("M001"));
-    assert.ok(result.includes("/project/.gsd/milestones/M001/M001-LEARNINGS.md"));
+    assert.ok(result.includes("/project/.gwd/milestones/M001/M001-LEARNINGS.md"));
   });
 
   it("includes all 4 learning categories", () => {
@@ -178,7 +178,7 @@ describe("buildExtractLearningsPrompt", () => {
       milestoneId: "M001",
       milestoneName: "Test Milestone",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M001/M001-LEARNINGS.md",
       roadmapContent: "# Roadmap",
       summaryContent: "# Summary",
       verificationContent: null,
@@ -198,7 +198,7 @@ describe("buildExtractLearningsPrompt", () => {
       milestoneId: "M001",
       milestoneName: "Test Milestone",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M001/M001-LEARNINGS.md",
       roadmapContent: "ROADMAP_CONTENT_UNIQUE_123",
       summaryContent: "SUMMARY_CONTENT_UNIQUE_456",
       verificationContent: null,
@@ -216,7 +216,7 @@ describe("buildExtractLearningsPrompt", () => {
       milestoneId: "M001",
       milestoneName: "Test Milestone",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M001/M001-LEARNINGS.md",
       roadmapContent: "# Roadmap",
       summaryContent: "# Summary",
       verificationContent: "VERIFICATION_UNIQUE_789",
@@ -234,7 +234,7 @@ describe("buildExtractLearningsPrompt", () => {
       milestoneId: "M001",
       milestoneName: "Test Milestone",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M001/M001-LEARNINGS.md",
       roadmapContent: "# Roadmap",
       summaryContent: "# Summary",
       verificationContent: null,
@@ -251,7 +251,7 @@ describe("buildExtractLearningsPrompt", () => {
       milestoneId: "M001",
       milestoneName: "Test Milestone",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M001/M001-LEARNINGS.md",
       roadmapContent: "# Roadmap",
       summaryContent: "# Summary",
       verificationContent: null,
@@ -271,7 +271,7 @@ describe("buildExtractLearningsPrompt", () => {
       milestoneId: "M001",
       milestoneName: "Test Milestone",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M001/M001-LEARNINGS.md",
       roadmapContent: "# Roadmap",
       summaryContent: "# Summary",
       verificationContent: null,
@@ -291,7 +291,7 @@ describe("buildExtractLearningsPrompt", () => {
       milestoneId: "M001",
       milestoneName: "Test Milestone",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M001/M001-LEARNINGS.md",
       roadmapContent: "# Roadmap",
       summaryContent: "# Summary",
       verificationContent: null,
@@ -378,7 +378,7 @@ describe("extractProjectName", () => {
 
   beforeEach(() => {
     tmpBase = join(tmpdir(), `gsd-projname-test-${randomUUID()}`);
-    mkdirSync(join(tmpBase, ".gsd"), { recursive: true });
+    mkdirSync(join(tmpBase, ".gwd"), { recursive: true });
   });
 
   afterEach(() => {
@@ -387,7 +387,7 @@ describe("extractProjectName", () => {
 
   it("reads name from PROJECT.md frontmatter", () => {
     writeFileSync(
-      join(tmpBase, ".gsd", "PROJECT.md"),
+      join(tmpBase, ".gwd", "PROJECT.md"),
       "---\nname: My Cool Project\nversion: 1\n---\n# Project\n",
       "utf-8",
     );
@@ -404,7 +404,7 @@ describe("extractProjectName", () => {
 
   it("falls back to directory name when PROJECT.md has no name field", () => {
     writeFileSync(
-      join(tmpBase, ".gsd", "PROJECT.md"),
+      join(tmpBase, ".gwd", "PROJECT.md"),
       "---\nversion: 1\n---\n# Project\n",
       "utf-8",
     );
@@ -424,8 +424,8 @@ describe("extractProjectName", () => {
 describe("buildExtractionStepsBlock", () => {
   const ctx = {
     milestoneId: "M042",
-    outputPath: "/project/.gsd/milestones/M042/M042-LEARNINGS.md",
-    relativeOutputPath: ".gsd/milestones/M042/M042-LEARNINGS.md",
+    outputPath: "/project/.gwd/milestones/M042/M042-LEARNINGS.md",
+    relativeOutputPath: ".gwd/milestones/M042/M042-LEARNINGS.md",
   };
 
   it("declares itself as the structured extraction procedure", () => {
@@ -518,7 +518,7 @@ describe("buildExtractionStepsBlock", () => {
     assert.ok(!block.includes("| # | What Happened | Root Cause | Fix | Scope |"), "Lessons table scaffolding must be removed");
     assert.ok(!/\| P<NNN>/.test(block), "Pattern row template must be removed");
     assert.ok(!/\| L<NNN>/.test(block), "Lesson row template must be removed");
-    assert.ok(!block.includes(".gsd/KNOWLEDGE.md"), "extraction flow must not reference KNOWLEDGE.md as a write target");
+    assert.ok(!block.includes(".gwd/KNOWLEDGE.md"), "extraction flow must not reference KNOWLEDGE.md as a write target");
   });
 
   it("removes the gsd_save_decision call (ADR-013 step 6 cutover)", () => {
@@ -549,8 +549,8 @@ describe("buildExtractionStepsBlock", () => {
   it("substitutes the milestone ID into every placeholder callout", () => {
     const block = buildExtractionStepsBlock({
       milestoneId: "M999",
-      outputPath: "/p/.gsd/milestones/M999/M999-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M999/M999-LEARNINGS.md",
+      outputPath: "/p/.gwd/milestones/M999/M999-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M999/M999-LEARNINGS.md",
     });
     assert.ok(!block.includes("M042"));
     assert.ok(block.includes("M999"));
@@ -563,8 +563,8 @@ describe("buildExtractLearningsPrompt composes the steps block", () => {
   it("embeds the exact buildExtractionStepsBlock output for the same context", () => {
     const shared = {
       milestoneId: "M007",
-      outputPath: "/p/.gsd/milestones/M007/M007-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M007/M007-LEARNINGS.md",
+      outputPath: "/p/.gwd/milestones/M007/M007-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M007/M007-LEARNINGS.md",
     };
     const expected = buildExtractionStepsBlock(shared);
     const prompt = buildExtractLearningsPrompt({
@@ -586,7 +586,7 @@ describe("buildExtractLearningsPrompt composes the steps block", () => {
       milestoneId: "M001",
       milestoneName: "Test",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M001/M001-LEARNINGS.md",
       roadmapContent: "# Roadmap",
       summaryContent: "# Summary",
       verificationContent: null,
@@ -606,17 +606,17 @@ describe("complete-milestone loadPrompt round-trip (#4429)", () => {
     const { loadPrompt } = await import("../prompt-loader.js");
     const stepsBlock = buildExtractionStepsBlock({
       milestoneId: "M123",
-      outputPath: "/p/.gsd/milestones/M123/M123-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M123/M123-LEARNINGS.md",
+      outputPath: "/p/.gwd/milestones/M123/M123-LEARNINGS.md",
+      relativeOutputPath: ".gwd/milestones/M123/M123-LEARNINGS.md",
     });
 
     const rendered = loadPrompt("complete-milestone", {
       workingDirectory: "/p",
       milestoneId: "M123",
       milestoneTitle: "Test Milestone",
-      roadmapPath: ".gsd/milestones/M123/M123-ROADMAP.md",
+      roadmapPath: ".gwd/milestones/M123/M123-ROADMAP.md",
       inlinedContext: "(inlined context stub)",
-      milestoneSummaryPath: "/p/.gsd/milestones/M123/M123-SUMMARY.md",
+      milestoneSummaryPath: "/p/.gwd/milestones/M123/M123-SUMMARY.md",
       extractLearningsSteps: stepsBlock,
     });
 

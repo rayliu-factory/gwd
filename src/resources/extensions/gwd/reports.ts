@@ -1,10 +1,10 @@
 /**
  * GWD Reports Registry
  *
- * Manages .gsd/reports/ — the persistent progression log of HTML snapshots.
+ * Manages .gwd/reports/ — the persistent progression log of HTML snapshots.
  *
  * Layout:
- *   .gsd/reports/
+ *   .gwd/reports/
  *     reports.json          lightweight metadata index (never re-parses HTML)
  *     index.html            auto-regenerated on every new snapshot
  *     M001-20260101T120000.html    per-milestone snapshot
@@ -110,7 +110,7 @@ export interface WriteReportSnapshotArgs {
 }
 
 /**
- * Write a report snapshot to .gsd/reports/, update reports.json, regenerate index.html.
+ * Write a report snapshot to .gwd/reports/, update reports.json, regenerate index.html.
  * Returns the path of the written report file.
  */
 export function writeReportSnapshot(args: WriteReportSnapshotArgs): string {

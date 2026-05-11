@@ -218,7 +218,7 @@ function renderContextModeBlockForPrompt(
   const snapshot = readCompactionSnapshot(base);
   if (!snapshot?.trim()) return contextMode;
 
-  return `${contextMode}\n\n## Context Snapshot\nSource: \`.gsd/last-snapshot.md\`\n\n${snapshot.trimEnd()}`;
+  return `${contextMode}\n\n## Context Snapshot\nSource: \`.gwd/last-snapshot.md\`\n\n${snapshot.trimEnd()}`;
 }
 
 function prependContextModeToBlock(
@@ -776,7 +776,7 @@ export async function inlineDependencySummaries(
 }
 
 /**
- * Load a well-known .gsd/ root file for optional inlining.
+ * Load a well-known .gwd/ root file for optional inlining.
  * Handles the existsSync check internally.
  */
 export async function inlineGsdRootFile(
@@ -821,7 +821,7 @@ export async function inlineDecisionsFromDb(
         const formatted = inlineLevel !== "full"
           ? formatDecisionsCompact(decisions)
           : formatDecisionsForPrompt(decisions);
-        return `### Decisions\nSource: \`.gsd/DECISIONS.md\`\n\n${formatted}`;
+        return `### Decisions\nSource: \`.gwd/DECISIONS.md\`\n\n${formatted}`;
       }
       // DB available but cascade returned empty — intentional per D020, don't fall back to file
       return null;
@@ -851,7 +851,7 @@ export async function inlineRequirementsFromDb(
         const formatted = inlineLevel !== "full"
           ? formatRequirementsCompact(requirements)
           : formatRequirementsForPrompt(requirements);
-        return `### Requirements\nSource: \`.gsd/REQUIREMENTS.md\`\n\n${formatted}`;
+        return `### Requirements\nSource: \`.gwd/REQUIREMENTS.md\`\n\n${formatted}`;
       }
     }
   } catch (err) {
@@ -873,7 +873,7 @@ export async function inlineProjectFromDb(
       const { queryProject } = await import("./context-store.js");
       const content = queryProject();
       if (content) {
-        return `### Project\nSource: \`.gsd/PROJECT.md\`\n\n${content}`;
+        return `### Project\nSource: \`.gwd/PROJECT.md\`\n\n${content}`;
       }
     }
   } catch (err) {
@@ -1656,7 +1656,7 @@ export async function buildDiscussMilestonePrompt(
     milestoneTitle: midTitle,
     inlinedTemplates: discussTemplates,
     structuredQuestionsAvailable,
-    commitInstruction: "Do not commit planning artifacts — .gsd/ is managed externally.",
+    commitInstruction: "Do not commit planning artifacts — .gwd/ is managed externally.",
     fastPathInstruction: "",
   });
   const promptWithContextMode = prependContextModeToBlock("discuss-milestone", base, basePrompt);
@@ -1675,7 +1675,7 @@ export async function buildDiscussMilestonePrompt(
 /**
  * Build a prompt for the workflow-preferences unit type (deep mode).
  * Default-writing stage: records high-impact workflow defaults in
- * .gsd/PREFERENCES.md. Runs ONCE per project, early
+ * .gwd/PREFERENCES.md. Runs ONCE per project, early
  * in deep-mode bootstrap before discuss-project.
  */
 export async function buildWorkflowPreferencesPrompt(
@@ -1691,7 +1691,7 @@ export async function buildWorkflowPreferencesPrompt(
 /**
  * Build a prompt for the research-project (parallel) unit type (deep mode).
  * Orchestrator that spawns 4 parallel Task() calls covering stack, features,
- * architecture, and pitfalls. Each subagent writes its findings to .gsd/research/.
+ * architecture, and pitfalls. Each subagent writes its findings to .gwd/research/.
  * Fires after research-decision marker says "research" and project research files
  * are missing. Skipped entirely if user picked "skip".
  */
@@ -1708,7 +1708,7 @@ export async function buildResearchProjectPrompt(
 /**
  * Build a prompt for the research-decision unit type (deep mode).
  * Fixed-question stage: asks "research first or skip?" via ask_user_questions
- * and writes .gsd/runtime/research-decision.json. Fires after discuss-requirements
+ * and writes .gwd/runtime/research-decision.json. Fires after discuss-requirements
  * and before research-project-parallel.
  */
 export async function buildResearchDecisionPrompt(
@@ -1723,7 +1723,7 @@ export async function buildResearchDecisionPrompt(
 
 /**
  * Build a prompt for the discuss-project unit type (deep mode).
- * Project-level interview: produces .gsd/PROJECT.md.
+ * Project-level interview: produces .gwd/PROJECT.md.
  * Fires before any milestone-level work when planning_depth === "deep" and
  * PROJECT.md is missing.
  */
@@ -1737,13 +1737,13 @@ export async function buildDiscussProjectPrompt(
     workingDirectory: base,
     inlinedTemplates,
     structuredQuestionsAvailable,
-    commitInstruction: "Do not commit planning artifacts — .gsd/ is managed externally.",
+    commitInstruction: "Do not commit planning artifacts — .gwd/ is managed externally.",
   }));
 }
 
 /**
  * Build a prompt for the discuss-requirements unit type (deep mode).
- * Requirements-level interview: produces .gsd/REQUIREMENTS.md using the
+ * Requirements-level interview: produces .gwd/REQUIREMENTS.md using the
  * structured R### format. Reads PROJECT.md as authoritative context.
  * Fires when planning_depth === "deep", PROJECT.md exists, and REQUIREMENTS.md is missing.
  */
@@ -1757,7 +1757,7 @@ export async function buildDiscussRequirementsPrompt(
     workingDirectory: base,
     inlinedTemplates,
     structuredQuestionsAvailable,
-    commitInstruction: "Do not commit planning artifacts — .gsd/ is managed externally.",
+    commitInstruction: "Do not commit planning artifacts — .gwd/ is managed externally.",
   }));
 }
 
@@ -2093,7 +2093,7 @@ async function renderSlicePrompt(options: {
   );
   const executorContextConstraints = formatExecutorConstraints(sessionContextWindow, modelRegistry, sessionProvider);
   const outputRelPath = relSliceFile(base, mid, sid, "PLAN");
-  const commitInstruction = "Do not commit — .gsd/ planning docs are managed externally and not tracked in git.";
+  const commitInstruction = "Do not commit — .gwd/ planning docs are managed externally and not tracked in git.";
 
   return loadPrompt(promptTemplate, {
     workingDirectory: base,
@@ -2343,7 +2343,7 @@ export async function buildExecuteTaskPrompt(
   const runtimePath = resolveRuntimeFile(base);
   const runtimeContent = existsSync(runtimePath) ? await loadFile(runtimePath) : null;
   const runtimeContext = runtimeContent
-    ? `### Runtime Context\nSource: \`.gsd/RUNTIME.md\`\n\n${runtimeContent.trim()}`
+    ? `### Runtime Context\nSource: \`.gwd/RUNTIME.md\`\n\n${runtimeContent.trim()}`
     : "";
 
   let phaseAnchorSection = planAnchor ? formatAnchorForPrompt(planAnchor) : "";
@@ -3020,7 +3020,7 @@ export async function buildReassessRoadmapPrompt(
     logWarning("prompt", `loadDeferredCaptures failed: ${err instanceof Error ? err.message : String(err)}`);
   }
 
-  const reassessCommitInstruction = "Do not commit — .gsd/ planning docs are managed externally and not tracked in git.";
+  const reassessCommitInstruction = "Do not commit — .gwd/ planning docs are managed externally and not tracked in git.";
 
   return loadPrompt("reassess-roadmap", {
     workingDirectory: base,

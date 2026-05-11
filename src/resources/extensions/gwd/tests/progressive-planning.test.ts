@@ -23,14 +23,14 @@ import type { DispatchContext } from "../auto-dispatch.ts";
 
 function makeFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-adr011-"));
-  mkdirSync(join(base, ".gsd"), { recursive: true });
-  mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S02"), { recursive: true });
-  mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S02"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
   return base;
 }
 
 function writePreferences(base: string, phasesBlock: string): void {
-  const prefsPath = join(base, ".gsd", "PREFERENCES.md");
+  const prefsPath = join(base, ".gwd", "PREFERENCES.md");
   const body = [
     "---",
     "version: 1",
@@ -41,7 +41,7 @@ function writePreferences(base: string, phasesBlock: string): void {
 }
 
 function seedMilestoneWithSketchedS02(base: string): void {
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "Test", status: "active" });
   // S01: full slice, complete
   insertSlice({
@@ -71,8 +71,8 @@ function seedMilestoneWithSketchedS02(base: string): void {
 }
 
 function writeS01Artifacts(base: string): void {
-  writeFileSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"), "# S01 Plan\n");
-  writeFileSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md"), "# S01 Summary\n");
+  writeFileSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"), "# S01 Plan\n");
+  writeFileSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md"), "# S01 Summary\n");
 }
 
 function cleanup(base: string, originalCwd: string): void {
@@ -184,14 +184,14 @@ test("ADR-011: autoHealSketchFlags flips is_sketch=0 when PLAN file exists", asy
   // Simulate crash between plan-slice write and sketch flip: PLAN.md exists
   // but is_sketch is still 1.
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "slices", "S02", "S02-PLAN.md"),
+    join(base, ".gwd", "milestones", "M001", "slices", "S02", "S02-PLAN.md"),
     "# S02 Plan\n",
   );
   assert.equal(getSlice("M001", "S02")?.is_sketch, 1, "pre: flagged as sketch");
 
   const { existsSync } = await import("node:fs");
   autoHealSketchFlags("M001", (sid) => {
-    const planPath = join(base, ".gsd", "milestones", "M001", "slices", sid, `${sid}-PLAN.md`);
+    const planPath = join(base, ".gwd", "milestones", "M001", "slices", sid, `${sid}-PLAN.md`);
     return existsSync(planPath);
   });
 
@@ -209,7 +209,7 @@ test("ADR-011: schema v16 is idempotent — re-opening DB preserves is_sketch an
     rmSync(base, { recursive: true, force: true });
   });
 
-  const dbPath = join(base, "gsd.db");
+  const dbPath = join(base, "gwd.db");
   openDatabase(dbPath);
   // Insert a sketch slice — round-trip proves the columns exist with correct
   // defaults. If migration hadn't run, insertSlice would throw on the new
@@ -255,7 +255,7 @@ test("ADR-011 ON CONFLICT: omitted isSketch preserves existing is_sketch=1", asy
     try { closeDatabase(); } catch { /* noop */ }
     rmSync(base, { recursive: true, force: true });
   });
-  openDatabase(join(base, "gsd.db"));
+  openDatabase(join(base, "gwd.db"));
   insertMilestone({ id: "M001", title: "Test", status: "active" });
 
   // Seed: S01 is a sketch.
@@ -286,7 +286,7 @@ test("ADR-011 ON CONFLICT: explicit isSketch=false clears existing sketch flag",
     try { closeDatabase(); } catch { /* noop */ }
     rmSync(base, { recursive: true, force: true });
   });
-  openDatabase(join(base, "gsd.db"));
+  openDatabase(join(base, "gwd.db"));
   insertMilestone({ id: "M001", title: "Test", status: "active" });
 
   insertSlice({
@@ -313,7 +313,7 @@ test("ADR-011 ON CONFLICT: isSketch=true upgrades existing non-sketch to sketch"
     try { closeDatabase(); } catch { /* noop */ }
     rmSync(base, { recursive: true, force: true });
   });
-  openDatabase(join(base, "gsd.db"));
+  openDatabase(join(base, "gwd.db"));
   insertMilestone({ id: "M001", title: "Test", status: "active" });
 
   // Seed as full slice.
@@ -335,7 +335,7 @@ test("ADR-011 ON CONFLICT: empty-string sketchScope clears existing scope (not p
     try { closeDatabase(); } catch { /* noop */ }
     rmSync(base, { recursive: true, force: true });
   });
-  openDatabase(join(base, "gsd.db"));
+  openDatabase(join(base, "gwd.db"));
   insertMilestone({ id: "M001", title: "Test", status: "active" });
 
   insertSlice({
@@ -372,7 +372,7 @@ test("ADR-011 P3 #19: refine-slice prompt incorporates prior slice findings + sk
   const base = makeFixtureBase();
   t.after(() => cleanup(base, originalCwd));
 
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "Integration test milestone", status: "active" });
   insertSlice({
     id: "S01", milestoneId: "M001", title: "Foundation",
@@ -394,7 +394,7 @@ test("ADR-011 P3 #19: refine-slice prompt incorporates prior slice findings + sk
 
   // Minimal roadmap so inlineRoadmapExcerpt has something to read.
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "ROADMAP.md"),
+    join(base, ".gwd", "milestones", "M001", "ROADMAP.md"),
     [
       "# M001: Integration test milestone",
       "",
@@ -410,7 +410,7 @@ test("ADR-011 P3 #19: refine-slice prompt incorporates prior slice findings + sk
   // Write S01 artifacts — the SUMMARY carries findings that S02's refine pass
   // must incorporate. The specific markers below are what the assertion pins.
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
+    join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
     "# S01 Plan\n",
   );
   const s01Findings = [
@@ -426,7 +426,7 @@ test("ADR-011 P3 #19: refine-slice prompt incorporates prior slice findings + sk
     "- Do not introduce a background worker yet — premature.",
   ].join("\n");
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md"),
+    join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md"),
     s01Findings,
   );
 
@@ -496,7 +496,7 @@ test("ADR-011 P3 #26: refine-slice dispatch latency is bounded vs plan-slice bas
   seedMilestoneWithSketchedS02(base);
   writeS01Artifacts(base);
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "ROADMAP.md"),
+    join(base, ".gwd", "milestones", "M001", "ROADMAP.md"),
     [
       "# M001: Test",
       "",

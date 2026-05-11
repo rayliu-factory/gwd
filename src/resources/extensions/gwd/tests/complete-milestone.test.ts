@@ -34,24 +34,24 @@ function loadPromptFromWorktree(name: string, vars: Record<string, string> = {})
 
 function createFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-complete-ms-test-"));
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }
 
 function writeRoadmap(base: string, mid: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid);
+  const dir = join(base, ".gwd", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-ROADMAP.md`), content);
 }
 
 function writeMilestoneSummary(base: string, mid: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid);
+  const dir = join(base, ".gwd", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-SUMMARY.md`), content);
 }
 
 function writeMilestoneValidation(base: string, mid: string, verdict: string = "pass"): void {
-  const dir = join(base, ".gsd", "milestones", mid);
+  const dir = join(base, ".gwd", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-VALIDATION.md`), `---\nverdict: ${verdict}\nremediation_round: 0\n---\n\n# Validation\nValidated.`);
 }
@@ -74,7 +74,7 @@ describe("complete-milestone", () => {
         workingDirectory: "/tmp/test-project",
         milestoneId: "M001",
         milestoneTitle: "Test Milestone",
-        roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+        roadmapPath: ".gwd/milestones/M001/M001-ROADMAP.md",
         inlinedContext: "test context block",
       });
     } catch (err) {
@@ -91,13 +91,13 @@ describe("complete-milestone", () => {
       workingDirectory: "/tmp/test-project",
       milestoneId: "M001",
       milestoneTitle: "Integration Feature",
-      roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+      roadmapPath: ".gwd/milestones/M001/M001-ROADMAP.md",
       inlinedContext: "--- inlined slice summaries and context ---",
     });
 
     assert.ok(prompt.includes("M001"), "prompt contains milestoneId 'M001'");
     assert.ok(prompt.includes("Integration Feature"), "prompt contains milestoneTitle");
-    assert.ok(prompt.includes(".gsd/milestones/M001/M001-ROADMAP.md"), "prompt contains roadmapPath");
+    assert.ok(prompt.includes(".gwd/milestones/M001/M001-ROADMAP.md"), "prompt contains roadmapPath");
     assert.ok(prompt.includes("--- inlined slice summaries and context ---"), "prompt contains inlinedContext");
     assert.ok(!prompt.includes("{{milestoneId}}"), "no un-substituted {{milestoneId}}");
     assert.ok(!prompt.includes("{{milestoneTitle}}"), "no un-substituted {{milestoneTitle}}");
@@ -110,7 +110,7 @@ describe("complete-milestone", () => {
       workingDirectory: "/tmp/test-project",
       milestoneId: "M002",
       milestoneTitle: "Completion Workflow",
-      roadmapPath: ".gsd/milestones/M002/M002-ROADMAP.md",
+      roadmapPath: ".gwd/milestones/M002/M002-ROADMAP.md",
       inlinedContext: "context",
     });
 
@@ -125,7 +125,7 @@ describe("complete-milestone", () => {
       workingDirectory: "/tmp/test-project",
       milestoneId: "M001",
       milestoneTitle: "Gate Test",
-      roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+      roadmapPath: ".gwd/milestones/M001/M001-ROADMAP.md",
       inlinedContext: "context",
     });
 
@@ -159,12 +159,12 @@ describe("complete-milestone", () => {
       workingDirectory: "/tmp/test-project",
       milestoneId: "M001",
       milestoneTitle: "Main Retry Test",
-      roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+      roadmapPath: ".gwd/milestones/M001/M001-ROADMAP.md",
       inlinedContext: "context",
     });
 
     assert.ok(
-      !prompt.includes("git diff --stat HEAD $(git merge-base HEAD main) -- ':!.gsd/'"),
+      !prompt.includes("git diff --stat HEAD $(git merge-base HEAD main) -- ':!.gwd/'"),
       "prompt must not require the known self-diff command from #4699",
     );
     assert.match(
@@ -271,9 +271,9 @@ describe("complete-milestone", () => {
       workingDirectory: "/tmp/test-project",
       milestoneId: "M001",
       milestoneTitle: "Tool Guidance Test",
-      roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+      roadmapPath: ".gwd/milestones/M001/M001-ROADMAP.md",
       inlinedContext: "context",
-      milestoneSummaryPath: ".gsd/milestones/M001/M001-SUMMARY.md",
+      milestoneSummaryPath: ".gwd/milestones/M001/M001-SUMMARY.md",
       skillActivation: "",
     });
 
@@ -288,7 +288,7 @@ describe("complete-milestone", () => {
     // The prompt must NOT leave tool choice ambiguous for PROJECT.md
     // Verify it mentions the required parameter (`content` or `path`)
     assert.ok(
-      prompt.includes("`.gsd/PROJECT.md`") || prompt.includes('".gsd/PROJECT.md"'),
+      prompt.includes("`.gwd/PROJECT.md`") || prompt.includes('".gwd/PROJECT.md"'),
       "step 11 must reference the PROJECT.md path explicitly",
     );
   });
@@ -439,7 +439,7 @@ describe("complete-milestone", () => {
     const { handleCompleteMilestone } = await import("../tools/complete-milestone.ts");
     const base = createFixtureBase();
     const mid = "M001";
-    const dbPath = join(base, ".gsd", "gsd.db");
+    const dbPath = join(base, ".gwd", "gwd.db");
     try {
       // Set up DB with milestone and a complete slice + task
       openDatabase(dbPath);
@@ -448,7 +448,7 @@ describe("complete-milestone", () => {
       insertTask({ id: "T01", sliceId: "S01", milestoneId: mid, title: "Task One", status: "complete" });
 
       // Pre-write an existing SUMMARY.md to simulate a prior completion
-      const milestoneDir = join(base, ".gsd", "milestones", mid);
+      const milestoneDir = join(base, ".gwd", "milestones", mid);
       mkdirSync(milestoneDir, { recursive: true });
       const summaryPath = join(milestoneDir, `${mid}-SUMMARY.md`);
       const originalContent = "original content — must not be overwritten";
@@ -487,7 +487,7 @@ describe("complete-milestone", () => {
       assert.ok(!("error" in repeatResult), "repeated re-dispatch should also succeed");
       assert.strictEqual(repeatResult.alreadyComplete, true, "repeated re-dispatch is identified as already-complete");
       assert.ok(
-        repeatResult.summaryPath.endsWith(join(".gsd", "milestones", mid, `${mid}-SUMMARY.md`)),
+        repeatResult.summaryPath.endsWith(join(".gwd", "milestones", mid, `${mid}-SUMMARY.md`)),
         "repeated re-dispatch returns the existing summary path",
       );
       assert.strictEqual(
@@ -525,7 +525,7 @@ describe("complete-milestone", () => {
 
       // Verify isMilestoneComplete returns true
       const { loadFile } = await import("../files.ts");
-      const roadmapPath = join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md");
+      const roadmapPath = join(base, ".gwd", "milestones", "M001", "M001-ROADMAP.md");
       const roadmapContent = await loadFile(roadmapPath);
       const roadmap = parseRoadmap(roadmapContent!);
       assert.ok(isMilestoneComplete(roadmap), "isMilestoneComplete returns true when all slices are [x]");
@@ -557,9 +557,9 @@ describe("complete-milestone", () => {
       workingDirectory: "/tmp/test-project",
       milestoneId: "M001",
       milestoneTitle: "Step Number Drift",
-      roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+      roadmapPath: ".gwd/milestones/M001/M001-ROADMAP.md",
       inlinedContext: "context",
-      milestoneSummaryPath: ".gsd/milestones/M001/M001-SUMMARY.md",
+      milestoneSummaryPath: ".gwd/milestones/M001/M001-SUMMARY.md",
       skillActivation: "{{skillActivation block}}",
       extractLearningsSteps: "{{extract learnings block}}",
     });
@@ -649,7 +649,7 @@ describe("complete-milestone", () => {
     const { handleCompleteMilestone } = await import("../tools/complete-milestone.ts");
     const base = createFixtureBase();
     const mid = "M001";
-    const dbPath = join(base, ".gsd", "gsd.db");
+    const dbPath = join(base, ".gwd", "gwd.db");
     try {
       openDatabase(dbPath);
       insertMilestone({ id: mid, title: "Empty Enrichment", status: "active" });

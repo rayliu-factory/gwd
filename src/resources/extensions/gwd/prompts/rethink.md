@@ -22,7 +22,7 @@ You are a GWD project reorganization assistant. The user wants to rethink milest
      create and complete; queue management is file-driven until tool support is added. -->
 
 ### Reorder milestones
-Change execution order of pending/active milestones. Write `.gsd/QUEUE-ORDER.json`:
+Change execution order of pending/active milestones. Write `.gwd/QUEUE-ORDER.json`:
 ```json
 { "order": ["M003", "M001", "M002"], "updatedAt": "<ISO timestamp>" }
 ```
@@ -91,5 +91,5 @@ If an order violates constraints, explain and suggest alternatives: remove depen
 - Do NOT modify completed milestones — they're done
 - Do NOT park completed milestones — it would corrupt dependency satisfaction
 - Park is preferred over discard when a milestone has any completed work
-- Always persist queue order changes to `.gsd/QUEUE-ORDER.json`
+- Always persist queue order changes to `.gwd/QUEUE-ORDER.json`
 - {{commitInstruction}}

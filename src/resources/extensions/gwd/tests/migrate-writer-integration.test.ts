@@ -1,5 +1,5 @@
 // Migration writer integration test
-// Writes a complete .gsd tree to a temp dir, verifies file existence,
+// Writes a complete .gwd tree to a temp dir, verifies file existence,
 // parses key files, and asserts deriveState() returns coherent state.
 // Also tests generatePreview() for correct counts.
 
@@ -143,7 +143,7 @@ test('Scenario 1: Incomplete project — write, parse, deriveState', async () =>
 
       // (a) Key files exist
       console.log('  --- file existence ---');
-      const gsd = join(base, '.gsd');
+      const gsd = join(base, '.gwd');
       const m = join(gsd, 'milestones', 'M001');
 
       assert.ok(existsSync(join(m, 'M001-ROADMAP.md')), 'incomplete: M001-ROADMAP.md exists');
@@ -307,10 +307,10 @@ test('Scenario 2: Fully complete project — deriveState phase', async () => {
       await writeGSDDirectory(project, base);
 
       // Null research should NOT produce a file
-      const m = join(base, '.gsd', 'milestones', 'M001');
+      const m = join(base, '.gwd', 'milestones', 'M001');
       assert.ok(!existsSync(join(m, 'M001-RESEARCH.md')), 'complete: M001-RESEARCH.md NOT written (null)');
       // No REQUIREMENTS.md since empty requirements
-      assert.ok(!existsSync(join(base, '.gsd', 'REQUIREMENTS.md')), 'complete: REQUIREMENTS.md NOT written (empty)');
+      assert.ok(!existsSync(join(base, '.gwd', 'REQUIREMENTS.md')), 'complete: REQUIREMENTS.md NOT written (empty)');
       // Completed milestone should have VALIDATION and SUMMARY from migration (#819)
       assert.ok(existsSync(join(m, 'M001-VALIDATION.md')), 'complete: M001-VALIDATION.md written for completed milestone');
       assert.ok(existsSync(join(m, 'M001-SUMMARY.md')), 'complete: M001-SUMMARY.md written for completed milestone');

@@ -50,7 +50,7 @@ const baseAccessors = {
 
 test("updateProgressWidget installs an EMPTY-rendering header (not undefined) — addresses codex P1 finding that setHeader(undefined) restores the built-in logo+instructions header", (t) => {
   const dir = makeTempDir("empty-header");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   t.after(() => cleanup(dir));
 
   const captured: CapturedSetHeader = { factory: undefined };
@@ -85,7 +85,7 @@ test("updateProgressWidget installs an EMPTY-rendering header (not undefined) �
 
 test("updateProgressWidget clears the gsd-step wizard badge when auto-mode activates", (t) => {
   const dir = makeTempDir("step-badge");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   t.after(() => cleanup(dir));
 
   const statusCalls: Array<[string, string | undefined]> = [];
@@ -113,7 +113,7 @@ test("updateProgressWidget clears the gsd-step wizard badge when auto-mode activ
 
 test("updateProgressWidget gracefully no-ops when ctx.ui lacks setHeader/setStatus (RPC mode)", (t) => {
   const dir = makeTempDir("rpc-mode");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   t.after(() => cleanup(dir));
 
   // ctx.ui without setHeader / setStatus — must not throw.
@@ -135,7 +135,7 @@ test("updateProgressWidget gracefully no-ops when ctx.ui lacks setHeader/setStat
 
 test("auto-dashboard widget render output includes Ctrl+N guidance when isStepMode is true", (t) => {
   const dir = makeTempDir("step-hint");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   t.after(() => cleanup(dir));
 
   let widgetFactory: ((tui: unknown, theme: unknown) => any) | undefined;
@@ -175,7 +175,7 @@ test("auto-dashboard widget render output includes Ctrl+N guidance when isStepMo
 
 test("auto-dashboard widget render output omits Ctrl+N guidance when isStepMode is false", (t) => {
   const dir = makeTempDir("no-step-hint");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   t.after(() => cleanup(dir));
 
   let widgetFactory: ((tui: unknown, theme: unknown) => any) | undefined;
@@ -215,7 +215,7 @@ test("auto-dashboard widget render output omits Ctrl+N guidance when isStepMode 
 
 test("completion dashboard keeps final milestone roll-up in the progress widget", (t) => {
   const dir = makeTempDir("completion-widget");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   t.after(() => cleanup(dir));
 
   let widgetFactory: ((tui: unknown, theme: unknown) => any) | undefined;

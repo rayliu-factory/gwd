@@ -94,7 +94,7 @@ function createTempRepo(t: { after: (fn: () => void) => void }): string {
   git(["config", "user.email", "test@test.com"], dir);
   git(["config", "user.name", "Test"], dir);
   writeFileSync(join(dir, "README.md"), "# test\n");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   git(["add", "."], dir);
   git(["commit", "-m", "init"], dir);
   git(["branch", "-M", "main"], dir);
@@ -134,11 +134,11 @@ function makeDeps(overrides?: Partial<LegacyTestDeps>): LegacyTestDeps & { calls
     },
     createAutoWorktree: (basePath: string, milestoneId: string) => {
       calls.push({ fn: "createAutoWorktree", args: [basePath, milestoneId] });
-      return `${basePath}/.gsd/worktrees/${milestoneId}`;
+      return `${basePath}/.gwd/worktrees/${milestoneId}`;
     },
     enterAutoWorktree: (basePath: string, milestoneId: string) => {
       calls.push({ fn: "enterAutoWorktree", args: [basePath, milestoneId] });
-      return `${basePath}/.gsd/worktrees/${milestoneId}`;
+      return `${basePath}/.gwd/worktrees/${milestoneId}`;
     },
     getAutoWorktreePath: (basePath: string, milestoneId: string) => {
       calls.push({ fn: "getAutoWorktreePath", args: [basePath, milestoneId] });
@@ -215,7 +215,7 @@ describe("getAutoWorktreeOriginalBase() is realpath-normalised", () => {
   test("returns canonical realpath even when called from a realpath-resolved dir", (t) => {
     const tempDir = createTempRepo(t);
     // tempDir is already realpathSync()-resolved by createTempRepo
-    const msDir = join(tempDir, ".gsd", "milestones", "M001");
+    const msDir = join(tempDir, ".gwd", "milestones", "M001");
     mkdirSync(msDir, { recursive: true });
     writeFileSync(join(msDir, "CONTEXT.md"), "# M001\n");
     git(["add", "."], tempDir);
@@ -344,7 +344,7 @@ describe("WorktreeResolver: roadmap-fallback skipped when basePath is same physi
     // originalBase is the project root
     const projectRoot = "/tmp/m5-test-project";
     // s.basePath is inside a worktree — a physically different path
-    const worktreePath = projectRoot + "/.gsd/worktrees/M002";
+    const worktreePath = projectRoot + "/.gwd/worktrees/M002";
 
     const s = makeSession({
       basePath: worktreePath,

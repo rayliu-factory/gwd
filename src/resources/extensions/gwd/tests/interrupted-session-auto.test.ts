@@ -24,7 +24,7 @@ import { normalizeRealPath } from "../paths.ts";
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `gsd-auto-interrupted-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -34,7 +34,7 @@ function cleanup(base: string): void {
 }
 
 function openFixtureDb(base: string): void {
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
 }
 
 function expireWorker(workerId: string): void {
@@ -85,7 +85,7 @@ function writePausedSession(base: string, milestoneId = "M001", stepMode = false
 }
 
 function writeRoadmap(base: string, checked = false): void {
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".gwd", "milestones", "M001");
   mkdirSync(join(milestoneDir, "slices", "S01", "tasks"), { recursive: true });
   writeFileSync(
     join(milestoneDir, "M001-ROADMAP.md"),
@@ -116,7 +116,7 @@ function writeRoadmap(base: string, checked = false): void {
 }
 
 function writeCompleteArtifacts(base: string): void {
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".gwd", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
   mkdirSync(sliceDir, { recursive: true });

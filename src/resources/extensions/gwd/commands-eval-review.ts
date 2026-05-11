@@ -228,7 +228,7 @@ export function detectEvalReviewState(
     const milestoneDir = resolveMilestonePath(basePath, milestoneId);
     const expectedDir = milestoneDir
       ? join(milestoneDir, "slices", sliceId)
-      : join(basePath, ".gsd", "milestones", milestoneId, "slices", sliceId);
+      : join(basePath, ".gwd", "milestones", milestoneId, "slices", sliceId);
     return { kind: "no-slice-dir", sliceId, expectedDir };
   }
 

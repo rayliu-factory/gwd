@@ -1783,7 +1783,7 @@ export async function ensurePreferencesFile(
 /**
  * Handle `/gwd language [code]` — set or clear the global language preference.
  * Without an argument, shows the current setting.
- * Project-level override can be set by editing `.gsd/PREFERENCES.md` directly
+ * Project-level override can be set by editing `.gwd/PREFERENCES.md` directly
  * (project language overrides global when both are set).
  */
 export async function handleLanguage(args: string, ctx: ExtensionCommandContext): Promise<void> {

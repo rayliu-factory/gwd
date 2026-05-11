@@ -34,14 +34,14 @@ Subagents report only; they do not write user source. Fold any findings into Dec
 1. **Duplicate completion guard:** Call `gsd_milestone_status` for `{{milestoneId}}` before any durable writes. If the returned milestone **status is `complete`**, this is a stale or duplicate closeout turn: do NOT mutate requirements, do NOT refresh the project document, do NOT write LEARNINGS, and do NOT persist milestone completion again. Say: "Milestone {{milestoneId}} is already complete." and stop.
 2. Use the **Milestone Summary** output template from the inlined context above
 3. {{skillActivation}}
-4. **Verify code changes exist.** Compare milestone work against the integration branch (`main`, `master`, or recorded branch), using merge-base as older revision and `HEAD` as newer. If the diff lists non-`.gsd/` files, pass. If `HEAD` equals the integration branch/merge-base, treat it as a self-diff retry: inspect milestone-scoped commit evidence (`GWD-Unit: {{milestoneId}}` or production `GWD-Task: Sxx/Tyy` trailers touching `.gsd/milestones/{{milestoneId}}/`) and verify those commits touched non-`.gsd/` files. Record **verification failure** only when neither source shows implementation files.
+4. **Verify code changes exist.** Compare milestone work against the integration branch (`main`, `master`, or recorded branch), using merge-base as older revision and `HEAD` as newer. If the diff lists non-`.gwd/` files, pass. If `HEAD` equals the integration branch/merge-base, treat it as a self-diff retry: inspect milestone-scoped commit evidence (`GWD-Unit: {{milestoneId}}` or production `GWD-Task: Sxx/Tyy` trailers touching `.gwd/milestones/{{milestoneId}}/`) and verify those commits touched non-`.gwd/` files. Record **verification failure** only when neither source shows implementation files.
 5. Verify every **success criterion** from `{{roadmapPath}}`. If passing validation is present, summarize the validation evidence instead of re-auditing it; otherwise verify with evidence from summaries, tests, or observable behavior. Record unmet criteria as **verification failure**.
 6. Verify **definition of done**: all slices `[x]`, summaries exist, and integrations work. If passing validation is present, trust its integration/verification verdict unless inconsistent with current artifacts. Record unmet items as **verification failure**.
 7. If the roadmap includes a **Horizontal Checklist**, verify each item and note unchecked items in the summary.
-8. Fill the **Decision Re-evaluation** table: compare each key `.gsd/DECISIONS.md` decision from this milestone with what shipped, and flag decisions to revisit.
+8. Fill the **Decision Re-evaluation** table: compare each key `.gwd/DECISIONS.md` decision from this milestone with what shipped, and flag decisions to revisit.
 9. Validate **requirement status transitions**. For each changed requirement, confirm evidence supports the new status. Requirements may move between Active, Validated, Deferred, Blocked, or Out of Scope only with proof.
 
-**DB access safety:** Do NOT query `.gsd/gwd.db` directly via `sqlite3` or `node -e require('better-sqlite3')`; the engine owns the WAL connection. Use `gsd_milestone_status`, inlined context, or `gsd_*` tools; never direct SQL.
+**DB access safety:** Do NOT query `.gwd/gwd.db` directly via `sqlite3` or `node -e require('better-sqlite3')`; the engine owns the WAL connection. Use `gsd_milestone_status`, inlined context, or `gsd_*` tools; never direct SQL.
 
 ### Verification Gate — STOP if verification failed
 
@@ -49,15 +49,15 @@ Subagents report only; they do not write user source. Fold any findings into Dec
 
 **Failure path** (verification failed):
 - Do NOT call `gsd_complete_milestone`.
-- Do NOT update `.gsd/PROJECT.md` to reflect completion.
-- Do NOT update `.gsd/REQUIREMENTS.md` to mark requirements validated.
+- Do NOT update `.gwd/PROJECT.md` to reflect completion.
+- Do NOT update `.gwd/REQUIREMENTS.md` to mark requirements validated.
 - Write a clear failed-verification summary for the next attempt.
 - Say: "Milestone {{milestoneId}} verification FAILED — not complete." and stop.
 
 **Success path** (all verifications passed):
 
-10. For each requirement whose status changed in step 9, call `gsd_requirement_update` with the requirement ID and updated `status` and `validation` fields — the tool regenerates `.gsd/REQUIREMENTS.md` automatically. Do this BEFORE completing the milestone so requirement updates are persisted.
-11. Update `.gsd/PROJECT.md`: use the `write` tool with `path: ".gsd/PROJECT.md"` and `content` containing the full updated document reflecting milestone completion and current project state. Do NOT use the `edit` tool for this — PROJECT.md is a full-document refresh.
+10. For each requirement whose status changed in step 9, call `gsd_requirement_update` with the requirement ID and updated `status` and `validation` fields — the tool regenerates `.gwd/REQUIREMENTS.md` automatically. Do this BEFORE completing the milestone so requirement updates are persisted.
+11. Update `.gwd/PROJECT.md`: use the `write` tool with `path: ".gwd/PROJECT.md"` and `content` containing the full updated document reflecting milestone completion and current project state. Do NOT use the `edit` tool for this — PROJECT.md is a full-document refresh.
 12. Extract structured learnings from this milestone and persist them to the GWD memory store. Follow the procedure block immediately below — it writes `{{milestoneId}}-LEARNINGS.md` as the audit trail and persists Patterns, Lessons, and Decisions via `capture_thought` (categories: pattern, gotcha/convention, architecture). The memory store is the single source of truth for cross-session durable knowledge (ADR-013).
 
 {{extractLearningsSteps}}

@@ -4,10 +4,10 @@ import assert from "node:assert/strict";
 // Test the filtering logic used by /gwd pr-branch.
 // Full integration requires git operations, so we test the path filtering.
 
-test("pr-branch: identifies .gsd/ paths", () => {
+test("pr-branch: identifies .gwd/ paths", () => {
   const files = [
-    ".gsd/milestones/M001/ROADMAP.md",
-    ".gsd/metrics.json",
+    ".gwd/milestones/M001/ROADMAP.md",
+    ".gwd/metrics.json",
     "src/main.ts",
     "package.json",
     ".planning/PLAN.md",
@@ -15,21 +15,21 @@ test("pr-branch: identifies .gsd/ paths", () => {
   ];
 
   const codeFiles = files.filter(
-    (f) => !f.startsWith(".gsd/") && !f.startsWith(".planning/") && f !== "PLAN.md",
+    (f) => !f.startsWith(".gwd/") && !f.startsWith(".planning/") && f !== "PLAN.md",
   );
 
   assert.deepEqual(codeFiles, ["src/main.ts", "package.json"]);
 });
 
-test("pr-branch: all .gsd/ files returns empty", () => {
+test("pr-branch: all .gwd/ files returns empty", () => {
   const files = [
-    ".gsd/milestones/M001/ROADMAP.md",
-    ".gsd/metrics.json",
-    ".gsd/BACKLOG.md",
+    ".gwd/milestones/M001/ROADMAP.md",
+    ".gwd/metrics.json",
+    ".gwd/BACKLOG.md",
   ];
 
   const codeFiles = files.filter(
-    (f) => !f.startsWith(".gsd/") && !f.startsWith(".planning/") && f !== "PLAN.md",
+    (f) => !f.startsWith(".gwd/") && !f.startsWith(".planning/") && f !== "PLAN.md",
   );
 
   assert.equal(codeFiles.length, 0);
@@ -37,13 +37,13 @@ test("pr-branch: all .gsd/ files returns empty", () => {
 
 test("pr-branch: mixed commits with code changes", () => {
   const files = [
-    ".gsd/milestones/M001/ROADMAP.md",
+    ".gwd/milestones/M001/ROADMAP.md",
     "src/auth.ts",
     "src/auth.test.ts",
   ];
 
   const hasCodeChanges = files.some(
-    (f) => !f.startsWith(".gsd/") && !f.startsWith(".planning/") && f !== "PLAN.md",
+    (f) => !f.startsWith(".gwd/") && !f.startsWith(".planning/") && f !== "PLAN.md",
   );
 
   assert.ok(hasCodeChanges);

@@ -38,7 +38,7 @@ function setupDependencyFixture(
   deps: string[],
   summaries: Record<string, string>,
 ): void {
-  const msDir = join(base, ".gsd", "milestones", mid);
+  const msDir = join(base, ".gwd", "milestones", mid);
   mkdirSync(msDir, { recursive: true });
 
   // Build roadmap content — sid depends on deps
@@ -151,7 +151,7 @@ describe("prompt-budget: inlineDependencySummaries truncation", () => {
   });
 
   it("returns no-dependencies marker when slice has no deps", async () => {
-    const msDir = join(base, ".gsd", "milestones", "M001");
+    const msDir = join(base, ".gwd", "milestones", "M001");
     mkdirSync(msDir, { recursive: true });
     const roadmap = "# Roadmap\n\n## Slices\n\n- [ ] **S01: Solo** `risk:low` `depends:[]`\n";
     writeFileSync(join(msDir, "M001-ROADMAP.md"), roadmap);
@@ -331,10 +331,10 @@ describe("prompt-budget: execute-task template", () => {
   it("rendered execute-task prompt includes verification budget", async () => {
     const base = createFixtureBase();
     try {
-      const sliceDir = join(base, ".gsd", "milestones", "M001", "slices", "S01");
+      const sliceDir = join(base, ".gwd", "milestones", "M001", "slices", "S01");
       const taskDir = join(sliceDir, "tasks");
       mkdirSync(taskDir, { recursive: true });
-      writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"), "# Roadmap\n");
+      writeFileSync(join(base, ".gwd", "milestones", "M001", "M001-ROADMAP.md"), "# Roadmap\n");
       writeFileSync(join(sliceDir, "S01-PLAN.md"), "# Slice Plan\n");
       writeFileSync(join(taskDir, "T01-PLAN.md"), "# Task Plan\n");
 
@@ -527,10 +527,10 @@ describe("prompt-budget: modelRegistry + sessionContextWindow behavior", () => {
   it("buildExecuteTaskPrompt output changes when sessionContextWindow changes", async () => {
     const base = createFixtureBase();
     try {
-      const sliceDir = join(base, ".gsd", "milestones", "M001", "slices", "S01");
+      const sliceDir = join(base, ".gwd", "milestones", "M001", "slices", "S01");
       const taskDir = join(sliceDir, "tasks");
       mkdirSync(taskDir, { recursive: true });
-      writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"), "# Roadmap\n");
+      writeFileSync(join(base, ".gwd", "milestones", "M001", "M001-ROADMAP.md"), "# Roadmap\n");
       writeFileSync(join(sliceDir, "S01-PLAN.md"), "# Slice Plan\n");
       writeFileSync(join(taskDir, "T01-PLAN.md"), "# Task Plan\n");
 

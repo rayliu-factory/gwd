@@ -13,9 +13,9 @@ import { closeDatabase, insertMilestone, openDatabase } from "../gwd-db.ts";
 
 function makeBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-complete-dispatch-"));
-  mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
-  writeFileSync(join(base, ".gsd", "milestones", "M001", "ROADMAP.md"), "# M001\n\n## Slices\n\n- [x] **S01**: Done\n");
-  writeFileSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "SUMMARY.md"), "# Summary\n");
+  mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
+  writeFileSync(join(base, ".gwd", "milestones", "M001", "ROADMAP.md"), "# M001\n\n## Slices\n\n- [x] **S01**: Done\n");
+  writeFileSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "SUMMARY.md"), "# Summary\n");
   writeFileSync(join(base, "implementation.txt"), "done\n");
   return base;
 }
@@ -54,7 +54,7 @@ describe("completing-milestone dispatch guard (#4324)", () => {
 
   test("skips complete-milestone dispatch when the DB milestone is already closed", async () => {
     base = makeBase();
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gwd", "gwd.db"));
     insertMilestone({ id: "M001", title: "Milestone One", status: "complete" });
 
     const result = await rule.match(buildDispatchCtx(base));
@@ -64,7 +64,7 @@ describe("completing-milestone dispatch guard (#4324)", () => {
 
   test("dispatches complete-milestone when the DB milestone is still active", async () => {
     base = makeBase();
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gwd", "gwd.db"));
     insertMilestone({ id: "M001", title: "Milestone One", status: "active" });
 
     const result = await rule.match(buildDispatchCtx(base));

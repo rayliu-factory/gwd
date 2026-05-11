@@ -48,7 +48,7 @@ function buildState(overrides: Partial<GSDState> = {}): GSDState {
 
 function makeBasePath(prefix: string): string {
   const dir = mkdtempSync(join(tmpdir(), `gsd-req-slice-${prefix}-`));
-  mkdirSync(join(dir, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
+  mkdirSync(join(dir, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
   return dir;
 }
 
@@ -140,7 +140,7 @@ describe("require_slice_discussion dispatch rule (#3454)", () => {
     const basePath = makeBasePath("ctx-present");
     try {
       // Seed the CONTEXT file that /gwd discuss would have written.
-      const sliceDir = join(basePath, ".gsd", "milestones", "M001", "slices", "S01");
+      const sliceDir = join(basePath, ".gwd", "milestones", "M001", "slices", "S01");
       writeFileSync(join(sliceDir, "S01-CONTEXT.md"), "# Discussion notes\n", "utf-8");
 
       const prefs = { phases: { require_slice_discussion: true } } as unknown as GSDPreferences;

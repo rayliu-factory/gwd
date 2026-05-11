@@ -1,4 +1,4 @@
-// GSD2 — Ecosystem extension loader for ./.gsd/extensions/
+// GSD2 — Ecosystem extension loader for ./.gwd/extensions/
 // Discovers and registers single-file extensions that consume GSDExtensionAPI.
 // Trust-gated (mirrors pi's `.pi/extensions/` model) and isolated from pi's
 // own loader chain — handlers run in GWD's own dispatch step, not pi's.
@@ -43,7 +43,7 @@ let _readyPromise: Promise<void> | null = null;
 let _untrustedWarned = false;
 
 /**
- * Discover and register ecosystem extensions from `./.gsd/extensions/`.
+ * Discover and register ecosystem extensions from `./.gwd/extensions/`.
  * Idempotent: subsequent calls with the same arguments return the same
  * pending promise (no double-load).
  */
@@ -79,7 +79,7 @@ async function _loadEcosystemExtensionsImpl(
   sharedHandlers: GSDEcosystemBeforeAgentStartHandler[],
   cwd: string,
 ): Promise<void> {
-  const extDir = path.join(cwd, ".gsd", "extensions");
+  const extDir = path.join(cwd, ".gwd", "extensions");
   if (!fs.existsSync(extDir)) return;
 
   // Trust gate: refuse to load arbitrary code from untrusted project dirs.
@@ -88,7 +88,7 @@ async function _loadEcosystemExtensionsImpl(
       _untrustedWarned = true;
       logWarning(
         "ecosystem",
-        ".gsd/extensions present but project is not trusted — skipping ecosystem extensions. Run `pi trust` to opt in.",
+        ".gwd/extensions present but project is not trusted — skipping ecosystem extensions. Run `pi trust` to opt in.",
       );
     }
     return;

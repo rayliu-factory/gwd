@@ -8,7 +8,7 @@ import { runGSDDoctor, selectDoctorScope, filterDoctorIssues } from "../../docto
 
 test("auto-preflight scopes to active milestone, ignoring historical", async (t) => {
   const tmpBase = mkdtempSync(join(tmpdir(), "gsd-auto-preflight-test-"));
-  const gsd = join(tmpBase, ".gsd");
+  const gsd = join(tmpBase, ".gwd");
 
   mkdirSync(join(gsd, "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   mkdirSync(join(gsd, "milestones", "M009", "slices", "S01", "tasks"), { recursive: true });

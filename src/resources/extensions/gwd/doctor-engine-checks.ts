@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import type { DoctorIssue } from "./doctor-types.js";
 import { isDbAvailable, _getAdapter } from "./gwd-db.js";
-import { resolveGsdPathContract, resolveMilestoneFile } from "./paths.js";
+import { resolveGwdPathContract, resolveMilestoneFile } from "./paths.js";
 import { deriveState } from "./state.js";
 import { readEvents } from "./workflow-events.js";
 import { renderAllProjections } from "./workflow-projections.js";
@@ -13,7 +13,7 @@ export async function checkEngineHealth(
   issues: DoctorIssue[],
   fixesApplied: string[],
 ): Promise<void> {
-  const dbPath = resolveGsdPathContract(basePath).projectDb;
+  const dbPath = resolveGwdPathContract(basePath).projectDb;
 
   if (!isDbAvailable() && existsSync(dbPath)) {
     issues.push({
@@ -22,7 +22,7 @@ export async function checkEngineHealth(
       scope: "project",
       unitId: "project",
       message: "Database unavailable — using filesystem state derivation (degraded mode). State queries may be slower and less reliable.",
-      file: ".gsd/gwd.db",
+      file: ".gwd/gwd.db",
       fixable: false,
     });
   }
@@ -161,7 +161,7 @@ export async function checkEngineHealth(
   // relative to the event log and re-render them.
   try {
     if (isDbAvailable()) {
-      const eventLogPath = join(basePath, ".gsd", "event-log.jsonl");
+      const eventLogPath = join(basePath, ".gwd", "event-log.jsonl");
       const events = readEvents(eventLogPath);
       if (events.length > 0) {
         const lastEventTs = new Date(events[events.length - 1]!.ts).getTime();

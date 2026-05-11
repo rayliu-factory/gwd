@@ -20,10 +20,10 @@ const CONTEXT_MILESTONE_RE = /(?:^|[/\\])(M\d+(?:-[a-z0-9]{6})?)-CONTEXT\.md$/i;
 const DEPTH_VERIFICATION_MILESTONE_RE = /depth_verification[_-](M\d+(?:-[a-z0-9]{6})?)/i;
 
 /**
- * Path segment that identifies .gsd/ planning artifacts.
+ * Path segment that identifies .gwd/ planning artifacts.
  * Writes to these paths are allowed during queue mode.
  */
-const GWD_DIR_RE = /(^|[/\\])\.gsd([/\\]|$)/;
+const GWD_DIR_RE = /(^|[/\\])\.gwd([/\\]|$)/;
 
 /**
  * Read-only tool names that are always safe during queue mode.
@@ -64,7 +64,7 @@ const QUEUE_SAFE_TOOLS = new Set([
  *   env / printenv      — print environment variables
  *   true / false        — shell no-ops / test exit codes
  */
-const BASH_READ_ONLY_RE = /^\s*(cat|head|tail|less|more|wc|file|stat|du|df|which|type|echo|printf|ls|find|grep|rg|awk|sed\b(?!.*-i)|sort|uniq|diff|comm|tr|cut|tee\s+-a\s+\/dev\/null|git\s+(log|show|diff|status|branch|tag|remote|rev-parse|ls-files|blame|shortlog|describe|stash\s+list|config\s+--get|cat-file)|gh\s+(issue|pr|api|repo|release)\s+(view|list|diff|status|checks)|mkdir\s+-p\s+\.gsd|rtk\s|npm\s+run\s+(test|test:\w+|lint|lint:\w+|typecheck|type-check|type-check:\w+|check|verify|audit|outdated|format:check|ci|validate)\b|npm\s+(ls|list|info|view|show|outdated|audit|explain|doctor|ping|--version|-v)\b|npx\s|tsx\s|node\s+(--print|--version|-v\b)|python[23]?\s+(-c\s+'[^']*'|--version|-V\b|-m\s+(pip\s+show|pip\s+list|site))|pip[23]?\s+(show|list|freeze|check|index\s+versions)\b|jq\s|yq\s|curl\s+(-s\b|--silent\b)(?!\s+[^|>]*\s-[oO]\b)(?!\s+[^|>]*\s--output\b)[^|>]*$|openssl\s+(version|x509|s_client)|env\b|printenv\b|true\b|false\b)/;
+const BASH_READ_ONLY_RE = /^\s*(cat|head|tail|less|more|wc|file|stat|du|df|which|type|echo|printf|ls|find|grep|rg|awk|sed\b(?!.*-i)|sort|uniq|diff|comm|tr|cut|tee\s+-a\s+\/dev\/null|git\s+(log|show|diff|status|branch|tag|remote|rev-parse|ls-files|blame|shortlog|describe|stash\s+list|config\s+--get|cat-file)|gh\s+(issue|pr|api|repo|release)\s+(view|list|diff|status|checks)|mkdir\s+-p\s+\.gwd|rtk\s|npm\s+run\s+(test|test:\w+|lint|lint:\w+|typecheck|type-check|type-check:\w+|check|verify|audit|outdated|format:check|ci|validate)\b|npm\s+(ls|list|info|view|show|outdated|audit|explain|doctor|ping|--version|-v)\b|npx\s|tsx\s|node\s+(--print|--version|-v\b)|python[23]?\s+(-c\s+'[^']*'|--version|-V\b|-m\s+(pip\s+show|pip\s+list|site))|pip[23]?\s+(show|list|freeze|check|index\s+versions)\b|jq\s|yq\s|curl\s+(-s\b|--silent\b)(?!\s+[^|>]*\s-[oO]\b)(?!\s+[^|>]*\s--output\b)[^|>]*$|openssl\s+(version|x509|s_client)|env\b|printenv\b|true\b|false\b)/;
 
 interface InMemoryWriteGateState {
   verifiedDepthMilestones: Set<string>;
@@ -145,11 +145,11 @@ function shouldPersistWriteGateSnapshot(env: NodeJS.ProcessEnv = process.env): b
 }
 
 function writeGateSnapshotPath(basePath: string): string {
-  return join(basePath, ".gsd", "runtime", "write-gate-state.json");
+  return join(basePath, ".gwd", "runtime", "write-gate-state.json");
 }
 
 function ensureWriteGateSnapshotDirectory(basePath: string): void {
-  const gsdPath = join(basePath, ".gsd");
+  const gsdPath = join(basePath, ".gwd");
   if (!existsSync(gsdPath)) {
     try {
       const stat = lstatSync(gsdPath);
@@ -158,7 +158,7 @@ function ensureWriteGateSnapshotDirectory(basePath: string): void {
         mkdirSync(isAbsolute(target) ? target : resolve(basePath, target), { recursive: true });
       }
     } catch {
-      // If .gsd truly does not exist, the runtime mkdir below will create it.
+      // If .gwd truly does not exist, the runtime mkdir below will create it.
     }
   }
   mkdirSync(join(gsdPath, "runtime"), { recursive: true });
@@ -596,7 +596,7 @@ export function shouldBlockRootArtifactSaveInSnapshot(
  * When the queue phase is active, the agent should only create planning
  * artifacts (milestones, CONTEXT.md, QUEUE.md, etc.) — never execute work.
  * This function blocks write/edit/bash tool calls that would modify source
- * code outside of .gsd/.
+ * code outside of .gwd/.
  *
  * @param toolName  The tool being called (write, edit, bash, etc.)
  * @param input     For write/edit: the file path. For bash: the command string.
@@ -622,7 +622,7 @@ export function shouldBlockQueueExecutionInSnapshot(
   // Always-safe tools (read-only, discussion, planning)
   if (QUEUE_SAFE_TOOLS.has(toolName)) return { block: false };
 
-  // write/edit — allow if targeting .gsd/ planning artifacts
+  // write/edit — allow if targeting .gwd/ planning artifacts
   if (toolName === "write" || toolName === "edit") {
     if (GWD_DIR_RE.test(input)) return { block: false };
     return {
@@ -731,7 +731,7 @@ const PLANNING_SAFE_TOOLS = new Set([
 ]);
 
 function isPathUnderGsd(absPath: string, basePath: string): boolean {
-  const gsdRoot = resolve(basePath, ".gsd");
+  const gsdRoot = resolve(basePath, ".gwd");
   const rel = relative(gsdRoot, absPath);
   return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
 }
@@ -759,7 +759,7 @@ function blockReason(unitType: string, mode: string, what: string): string {
  *
  *   - "all"        → never blocks.
  *   - "read-only"  → blocks all writes, bash, and subagent dispatch.
- *   - "planning"   → blocks writes to paths outside <basePath>/.gsd/,
+ *   - "planning"   → blocks writes to paths outside <basePath>/.gwd/,
  *                    bash that isn't read-only, and subagent dispatch.
  *   - "planning-dispatch"
  *                  → like "planning", but permits subagent dispatch only
@@ -878,7 +878,7 @@ export function shouldBlockPlanningUnit(
     }
     const absPath = isAbsolute(pathOrCommand) ? pathOrCommand : resolve(basePath, pathOrCommand);
 
-    // Always allow .gsd/ writes — that's where planning artifacts live.
+    // Always allow .gwd/ writes — that's where planning artifacts live.
     if (isPathUnderGsd(absPath, basePath)) return { block: false };
 
     // docs mode additionally allows the manifest's allowedPathGlobs.
@@ -891,7 +891,7 @@ export function shouldBlockPlanningUnit(
       reason: blockReason(
         unitType,
         policy.mode,
-        `cannot ${tool} "${pathOrCommand}" — writes are restricted to .gsd/${policy.mode === "docs" ? " and " + policy.allowedPathGlobs.join(", ") : ""}`,
+        `cannot ${tool} "${pathOrCommand}" — writes are restricted to .gwd/${policy.mode === "docs" ? " and " + policy.allowedPathGlobs.join(", ") : ""}`,
       ),
     };
   }
@@ -960,10 +960,10 @@ function isPathContained(target: string, container: string): boolean {
  *   2. `GWD_DISABLE_WORKTREE_WRITE_GUARD=1` self-hosting bypass.
  *   3. Isolation mode is not "worktree".
  *   4. Active unit is a bootstrap unit (discuss-milestone/plan-milestone/init).
- *   5. Target is inside `<projectRoot>/.gsd/worktrees/` (a real worktree).
- *   6. Target is inside `<projectRoot>/.gsd/` and isn't masquerading as a
- *      worktrees sibling (rejects the `.gsd/worktrees-extra/…` prefix trick).
- *   7. Auto is live AND `effectiveBasePath` is itself a `.gsd/worktrees/…` path.
+ *   5. Target is inside `<projectRoot>/.gwd/worktrees/` (a real worktree).
+ *   6. Target is inside `<projectRoot>/.gwd/` and isn't masquerading as a
+ *      worktrees sibling (rejects the `.gwd/worktrees-extra/…` prefix trick).
+ *   7. Auto is live AND `effectiveBasePath` is itself a `.gwd/worktrees/…` path.
  *
  * Otherwise: block with a message that points the agent at `/gwd` to start
  * auto-mode.
@@ -992,18 +992,18 @@ export function shouldBlockWorktreeWrite(
   }
 
   // Resolve the target relative to the project root, then realpath to defeat
-  // symlink-based escapes and prefix tricks (e.g. .gsd/worktrees-extra/).
+  // symlink-based escapes and prefix tricks (e.g. .gwd/worktrees-extra/).
   const projectRoot = resolveWorktreeProjectRoot(effectiveBasePath);
   const absTarget = isAbsolute(targetPath) ? targetPath : resolve(projectRoot, targetPath);
   const realTarget = realpathOrResolve(absTarget);
   const realRoot = realpathOrResolve(projectRoot);
-  const realGsd = realpathOrResolve(join(projectRoot, ".gsd"));
-  const realWorktreesDir = realpathOrResolve(join(projectRoot, ".gsd", "worktrees"));
+  const realGsd = realpathOrResolve(join(projectRoot, ".gwd"));
+  const realWorktreesDir = realpathOrResolve(join(projectRoot, ".gwd", "worktrees"));
 
   // Allow writes inside the legitimate worktrees subtree.
   if (isPathContained(realTarget, realWorktreesDir)) return { block: false };
 
-  // Allow writes to .gsd/ planning artifacts, but reject siblings whose name
+  // Allow writes to .gwd/ planning artifacts, but reject siblings whose name
   // starts with "worktrees" (the worktrees-extra prefix trick — case 4).
   if (isPathContained(realTarget, realGsd)) {
     const rel = relative(realGsd, realTarget);
@@ -1024,7 +1024,7 @@ export function shouldBlockWorktreeWrite(
     block: true,
     reason: [
       `HARD BLOCK: Worktree isolation is configured (\`git.isolation: worktree\`) but auto-mode is`,
-      `not running and the target "${displayTarget}" is not inside \`.gsd/worktrees/<MID>/\`.`,
+      `not running and the target "${displayTarget}" is not inside \`.gwd/worktrees/<MID>/\`.`,
       `Code edits at the project root would be lost — only the auto-mode commit pipeline`,
       `(auto-post-unit) commits work, and it never runs outside the loop.`,
       `Required action: start auto-mode with \`/gwd\` so the milestone worktree is created,`,

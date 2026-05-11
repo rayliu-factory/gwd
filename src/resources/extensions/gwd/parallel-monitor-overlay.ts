@@ -17,7 +17,7 @@ import { truncateToWidth, visibleWidth, matchesKey, Key } from "@gwd/pi-tui";
 
 import { formatDuration, STATUS_GLYPH, STATUS_COLOR } from "../shared/mod.js";
 import { formattedShortcutPair } from "./shortcut-defs.js";
-import { resolveGsdPathContract } from "./paths.js";
+import { resolveGwdPathContract } from "./paths.js";
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
@@ -99,8 +99,8 @@ function tailRead(filePath: string, maxBytes: number): string {
 }
 
 function discoverWorkers(basePath: string): string[] {
-  const parallelDir = join(basePath, ".gsd", "parallel");
-  const worktreeDir = join(basePath, ".gsd", "worktrees");
+  const parallelDir = join(basePath, ".gwd", "parallel");
+  const worktreeDir = join(basePath, ".gwd", "worktrees");
   const mids = new Set<string>();
 
   if (existsSync(parallelDir)) {
@@ -116,7 +116,7 @@ function discoverWorkers(basePath: string): string[] {
   if (existsSync(worktreeDir)) {
     try {
       for (const d of readdirSync(worktreeDir)) {
-        if (d.startsWith("M") && existsSync(join(worktreeDir, d, ".gsd", "auto.lock"))) {
+        if (d.startsWith("M") && existsSync(join(worktreeDir, d, ".gwd", "auto.lock"))) {
           mids.add(d);
         }
       }
@@ -127,8 +127,8 @@ function discoverWorkers(basePath: string): string[] {
 }
 
 function querySliceProgress(basePath: string, mid: string): SliceProgress[] {
-  const workRoot = join(basePath, ".gsd", "worktrees", mid);
-  const dbPath = resolveGsdPathContract(workRoot, basePath).projectDb;
+  const workRoot = join(basePath, ".gwd", "worktrees", mid);
+  const dbPath = resolveGwdPathContract(workRoot, basePath).projectDb;
   if (!existsSync(dbPath)) return [];
 
   try {
@@ -146,7 +146,7 @@ function querySliceProgress(basePath: string, mid: string): SliceProgress[] {
 }
 
 function extractCostFromNdjson(basePath: string, mid: string): number {
-  const stdoutPath = join(basePath, ".gsd", "parallel", `${mid}.stdout.log`);
+  const stdoutPath = join(basePath, ".gwd", "parallel", `${mid}.stdout.log`);
   if (!existsSync(stdoutPath)) return 0;
   try {
     const content = readFileSync(stdoutPath, "utf-8");
@@ -168,8 +168,8 @@ function extractCostFromNdjson(basePath: string, mid: string): number {
 }
 
 function queryRecentCompletions(basePath: string, mid: string): string[] {
-  const workRoot = join(basePath, ".gsd", "worktrees", mid);
-  const dbPath = resolveGsdPathContract(workRoot, basePath).projectDb;
+  const workRoot = join(basePath, ".gwd", "worktrees", mid);
+  const dbPath = resolveGwdPathContract(workRoot, basePath).projectDb;
   if (!existsSync(dbPath)) return [];
   try {
     const sql = `SELECT id, slice_id, one_liner FROM tasks WHERE milestone_id='${mid}' AND status='complete' AND completed_at IS NOT NULL ORDER BY completed_at DESC LIMIT 5`;
@@ -187,12 +187,12 @@ function queryRecentCompletions(basePath: string, mid: string): string[] {
 
 function collectWorkerData(basePath: string): WorkerView[] {
   const mids = discoverWorkers(basePath);
-  const parallelDir = join(basePath, ".gsd", "parallel");
+  const parallelDir = join(basePath, ".gwd", "parallel");
   const workers: WorkerView[] = [];
 
   for (const mid of mids) {
     const status = readJsonSafe<StatusJson>(join(parallelDir, `${mid}.status.json`));
-    const lock = readJsonSafe<AutoLock>(join(basePath, ".gsd", "worktrees", mid, ".gsd", "auto.lock"));
+    const lock = readJsonSafe<AutoLock>(join(basePath, ".gwd", "worktrees", mid, ".gwd", "auto.lock"));
     const slices = querySliceProgress(basePath, mid);
 
     const pid = lock?.pid || status?.pid || 0;

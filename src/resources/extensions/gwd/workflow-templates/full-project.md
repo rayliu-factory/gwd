@@ -5,7 +5,7 @@ name: full-project
 version: 1
 mode: auto-milestone
 requires_project: true
-artifact_dir: .gsd/
+artifact_dir: .gwd/
 </template_meta>
 
 <purpose>
@@ -18,7 +18,7 @@ When selected, it routes to the standard /gwd init → /gwd auto pipeline.
 </purpose>
 
 <phases>
-1. init    — Initialize project, detect stack, create .gsd/
+1. init    — Initialize project, detect stack, create .gwd/
 2. discuss — Define requirements, decisions, and architecture
 3. plan    — Create roadmap with milestones and slices
 4. execute — Execute slices: research → plan → implement → verify per slice
@@ -32,8 +32,8 @@ When selected, it routes to the standard /gwd init → /gwd auto pipeline.
 This template is a convenience entry point. When selected via `/gwd start full-project`,
 it should route to the standard GWD workflow:
 
-1. If `.gsd/` doesn't exist: Run `/gwd init` to bootstrap the project
-2. If `.gsd/` exists but no milestones: Start the discuss phase via `/gwd discuss`
+1. If `.gwd/` doesn't exist: Run `/gwd init` to bootstrap the project
+2. If `.gwd/` exists but no milestones: Start the discuss phase via `/gwd discuss`
 3. If milestones exist: Resume via `/gwd auto` or `/gwd next`
 
 The full GWD workflow protocol is defined in `GWD-WORKFLOW.md` and handles all

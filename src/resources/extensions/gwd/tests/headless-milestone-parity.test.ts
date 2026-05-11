@@ -67,8 +67,8 @@ describe("headless milestone bootstrap — parity with interactive flow", () => 
     );
     // All four required artifacts must appear as checkboxes, not a prose list.
     for (const artifact of [
-      "`.gsd/PROJECT.md`",
-      "`.gsd/REQUIREMENTS.md`",
+      "`.gwd/PROJECT.md`",
+      "`.gwd/REQUIREMENTS.md`",
       "`{{contextPath}}`",
       "`gsd_plan_milestone`",
     ]) {
@@ -98,10 +98,10 @@ describe("headless milestone bootstrap — parity with interactive flow", () => 
       "multi-milestone ready-phrase section must be present",
     );
     for (const artifact of [
-      "`.gsd/PROJECT.md`",
-      "`.gsd/REQUIREMENTS.md`",
+      "`.gwd/PROJECT.md`",
+      "`.gwd/REQUIREMENTS.md`",
       "`gsd_plan_milestone`",
-      "`.gsd/DISCUSSION-MANIFEST.json`",
+      "`.gwd/DISCUSSION-MANIFEST.json`",
     ]) {
       const escaped = artifact.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       assert.ok(

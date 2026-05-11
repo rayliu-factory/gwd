@@ -43,18 +43,18 @@ function activeData(overrides: Partial<HealthWidgetData> = {}): HealthWidgetData
   };
 }
 
-test("detectHealthWidgetProjectState: no .gsd returns none", (t) => {
+test("detectHealthWidgetProjectState: no .gwd returns none", (t) => {
   const dir = makeTempDir("none");
   t.after(() => { cleanup(dir); });
 
   assert.equal(detectHealthWidgetProjectState(dir), "none");
 });
 
-test("detectHealthWidgetProjectState: bootstrapped .gsd without milestones returns initialized", (t) => {
+test("detectHealthWidgetProjectState: bootstrapped .gwd without milestones returns initialized", (t) => {
   const dir = makeTempDir("initialized");
   t.after(() => { cleanup(dir); });
 
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   assert.equal(detectHealthWidgetProjectState(dir), "initialized");
 });
 
@@ -62,7 +62,7 @@ test("detectHealthWidgetProjectState: milestone without metrics returns active",
   const dir = makeTempDir("active");
   t.after(() => { cleanup(dir); });
 
-  mkdirSync(join(dir, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(dir, ".gwd", "milestones", "M001"), { recursive: true });
   assert.equal(detectHealthWidgetProjectState(dir), "active");
 });
 
@@ -180,9 +180,9 @@ test("detectHealthWidgetProjectState: metrics file alone does not imply project"
   const dir = makeTempDir("metrics-only");
   t.after(() => { cleanup(dir); });
 
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   writeFileSync(
-    join(dir, ".gsd", "metrics.json"),
+    join(dir, ".gwd", "metrics.json"),
     JSON.stringify({ version: 1, projectStartedAt: Date.now(), units: [] }),
     "utf-8",
   );
@@ -191,7 +191,7 @@ test("detectHealthWidgetProjectState: metrics file alone does not imply project"
 
 test("session_start bootstraps the health widget alongside notifications", async (t) => {
   const dir = makeTempDir("bootstrap");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
 
   const originalCwd = process.cwd();
   process.chdir(dir);

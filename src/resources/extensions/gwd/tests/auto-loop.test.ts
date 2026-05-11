@@ -2673,7 +2673,7 @@ test("autoLoop stops when Worktree Safety finds no .git marker for execute-task 
   ctx.ui.notify = (msg: string) => { notifications.push(msg); };
 
   const projectRoot = mkdtempSync(join(tmpdir(), "gsd-wt-safety-loop-"));
-  const worktreeRoot = join(projectRoot, ".gsd", "worktrees", "M001");
+  const worktreeRoot = join(projectRoot, ".gwd", "worktrees", "M001");
   mkdirSync(worktreeRoot, { recursive: true });
   t.after(() => rmSync(projectRoot, { recursive: true, force: true }));
 
@@ -2722,7 +2722,7 @@ test("dispatch Worktree Safety wins before stuck detection for execute-task with
   ctx.ui.notify = (msg: string) => { notifications.push(msg); };
 
   const projectRoot = mkdtempSync(join(tmpdir(), "gsd-wt-safety-dispatch-"));
-  const worktreeRoot = join(projectRoot, ".gsd", "worktrees", "M001");
+  const worktreeRoot = join(projectRoot, ".gwd", "worktrees", "M001");
   mkdirSync(worktreeRoot, { recursive: true });
   t.after(() => rmSync(projectRoot, { recursive: true, force: true }));
 
@@ -2789,7 +2789,7 @@ test("dispatch Worktree Safety stops unknown unit types with missing Tool Contra
   ctx.ui.notify = (msg: string) => { notifications.push(msg); };
 
   const projectRoot = mkdtempSync(join(tmpdir(), "gsd-wt-safety-missing-contract-"));
-  const worktreeRoot = join(projectRoot, ".gsd", "worktrees", "M001");
+  const worktreeRoot = join(projectRoot, ".gwd", "worktrees", "M001");
   mkdirSync(worktreeRoot, { recursive: true });
   t.after(() => rmSync(projectRoot, { recursive: true, force: true }));
 

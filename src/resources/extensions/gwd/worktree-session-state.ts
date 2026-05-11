@@ -15,7 +15,7 @@ export function clearWorktreeOriginalCwd(): void {
 
 export function ensureWorktreeOriginalCwdFromPath(cwd: string = process.cwd()): string | null {
   if (originalCwd) return originalCwd;
-  const marker = `${/\\/.test(cwd) ? "\\" : "/"}.gsd${/\\/.test(cwd) ? "\\" : "/"}worktrees${/\\/.test(cwd) ? "\\" : "/"}`;
+  const marker = `${/\\/.test(cwd) ? "\\" : "/"}.gwd${/\\/.test(cwd) ? "\\" : "/"}worktrees${/\\/.test(cwd) ? "\\" : "/"}`;
   const markerIdx = cwd.indexOf(marker);
   if (markerIdx !== -1) {
     originalCwd = cwd.slice(0, markerIdx);
@@ -26,7 +26,7 @@ export function ensureWorktreeOriginalCwdFromPath(cwd: string = process.cwd()): 
 export function getActiveWorktreeName(): string | null {
   if (!originalCwd) return null;
   const cwd = process.cwd();
-  const wtDir = `${originalCwd.replace(/[\\/]+$/, "")}/.gsd/worktrees`.replaceAll("\\", "/");
+  const wtDir = `${originalCwd.replace(/[\\/]+$/, "")}/.gwd/worktrees`.replaceAll("\\", "/");
   const normalizedCwd = cwd.replaceAll("\\", "/");
   if (!normalizedCwd.startsWith(`${wtDir}/`)) return null;
   const rel = normalizedCwd.slice(wtDir.length + 1);

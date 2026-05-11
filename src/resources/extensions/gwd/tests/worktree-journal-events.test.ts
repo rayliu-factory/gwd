@@ -58,9 +58,9 @@ function makeDeps(
     syncWorktreeStateBack: () => ({ synced: [] }),
     teardownAutoWorktree: () => {},
     createAutoWorktree: (_basePath: string, milestoneId: string) =>
-      `/project/.gsd/worktrees/${milestoneId}`,
+      `/project/.gwd/worktrees/${milestoneId}`,
     enterAutoWorktree: (_basePath: string, milestoneId: string) =>
-      `/project/.gsd/worktrees/${milestoneId}`,
+      `/project/.gwd/worktrees/${milestoneId}`,
     getAutoWorktreePath: () => null,
     autoCommitCurrentBranch: (
       _basePath: string,
@@ -72,7 +72,7 @@ function makeDeps(
     checkoutBranch: () => {},
     autoWorktreeBranch: (milestoneId: string) => `milestone/${milestoneId}`,
     resolveMilestoneFile: (_basePath: string, milestoneId: string) =>
-      `/project/.gsd/milestones/${milestoneId}/${milestoneId}-ROADMAP.md`,
+      `/project/.gwd/milestones/${milestoneId}/${milestoneId}-ROADMAP.md`,
     readFileSync: () => "# Roadmap\n- [x] S01: Slice one\n",
     GitServiceImpl: class {
       constructor() {}
@@ -93,9 +93,9 @@ function makeNotifyCtx(): NotifyCtx {
   };
 }
 
-/** Read all journal entries from a temp .gsd/journal directory. */
+/** Read all journal entries from a temp .gwd/journal directory. */
 function readJournalEntries(basePath: string): JournalEntry[] {
-  const journalDir = join(basePath, ".gsd", "journal");
+  const journalDir = join(basePath, ".gwd", "journal");
   try {
     const files = readdirSync(journalDir).filter(f => f.endsWith(".jsonl")).sort();
     const entries: JournalEntry[] = [];
@@ -144,7 +144,7 @@ describe("worktree journal events", () => {
   test("enterMilestone emits worktree-enter with created=false for existing worktree", () => {
     const s = makeSession({ basePath: tmp, originalBasePath: tmp });
     const deps = makeDeps({
-      getAutoWorktreePath: () => "/project/.gsd/worktrees/M001",
+      getAutoWorktreePath: () => "/project/.gwd/worktrees/M001",
     });
     new WorktreeLifecycle(s, deps).enterMilestone("M001", makeNotifyCtx());
 

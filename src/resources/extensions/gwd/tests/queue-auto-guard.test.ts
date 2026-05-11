@@ -1,7 +1,7 @@
 /**
  * Tests that /gwd queue is blocked when auto-mode is active.
  *
- * Relates to #4704: /gwd queue writes .gsd/PROJECT.md + QUEUE-ORDER.json
+ * Relates to #4704: /gwd queue writes .gwd/PROJECT.md + QUEUE-ORDER.json
  * directly into the project-root worktree, racing with auto-mode's
  * pre-merge dirty-tree check and causing __dirty_working_tree__ failures.
  *

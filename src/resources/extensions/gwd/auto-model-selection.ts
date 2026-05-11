@@ -525,7 +525,7 @@ export async function selectAndApplyModel(
       }
 
       // Skip models the provider has previously rejected for this account
-      // (issue #4513).  The block is persisted in .gsd/runtime/blocked-models.json
+      // (issue #4513).  The block is persisted in .gwd/runtime/blocked-models.json
       // so it survives /gwd auto restarts — without this, the same dead model
       // gets reselected after every restart.
       if (isModelBlocked(basePath, model.provider, model.id)) {

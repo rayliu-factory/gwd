@@ -26,8 +26,8 @@ import { invalidateAllCaches } from "../cache.ts";
 
 function setupTestProject(): { tmpDir: string; dbPath: string } {
   const tmpDir = mkdtempSync(join(tmpdir(), "gate-dispatch-"));
-  const dbPath = join(tmpDir, ".gsd", "gsd.db");
-  mkdirSync(join(tmpDir, ".gsd"), { recursive: true });
+  const dbPath = join(tmpDir, ".gwd", "gwd.db");
+  mkdirSync(join(tmpDir, ".gwd"), { recursive: true });
   openDatabase(dbPath);
 
   // Create milestone
@@ -48,7 +48,7 @@ function setupTestProject(): { tmpDir: string; dbPath: string } {
   });
 
   // Write roadmap file (required for deriveState)
-  const milestoneDir = join(tmpDir, ".gsd", "milestones", "M001");
+  const milestoneDir = join(tmpDir, ".gwd", "milestones", "M001");
   mkdirSync(milestoneDir, { recursive: true });
   writeFileSync(
     join(milestoneDir, "M001-ROADMAP.md"),

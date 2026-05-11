@@ -32,12 +32,12 @@ import {
 
 function makeTempDir(): string {
   const dir = mkdtempSync(join(tmpdir(), "gsd-crash-recovery-"));
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   return dir;
 }
 
 function stateFilePath(basePath: string): string {
-  return join(basePath, ".gsd", "orchestrator.json");
+  return join(basePath, ".gwd", "orchestrator.json");
 }
 
 function writeStateFile(basePath: string, state: PersistedState): void {
@@ -209,7 +209,7 @@ test('Test 5: restoreState skips stopped/error workers even with alive PIDs', ()
 test('Test 6: cleanupStaleSessions removes dead-PID sessions and keeps live ones', () => {
   const basePath = makeTempDir();
   try {
-    mkdirSync(join(basePath, ".gsd", "parallel"), { recursive: true });
+    mkdirSync(join(basePath, ".gwd", "parallel"), { recursive: true });
 
     // Dead PID
     writeSessionStatus(basePath, {

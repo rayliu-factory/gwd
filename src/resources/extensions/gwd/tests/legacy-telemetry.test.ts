@@ -127,8 +127,8 @@ test("deriveState increments markdown fallback telemetry on explicit legacy fall
     resetLegacyTelemetry();
     invalidateStateCache();
     process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK = "1";
-    mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
-    writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md"), "# M001: Legacy\n");
+    mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
+    writeFileSync(join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md"), "# M001: Legacy\n");
 
     const state = await deriveState(base);
 

@@ -18,7 +18,7 @@ import {
 
 function makeBase(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-research-ms-composer-"));
-  mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   return base;
 }
 
@@ -29,7 +29,7 @@ function cleanup(base: string): void {
 }
 
 function seed(base: string, mid: string): void {
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: mid, title: "Research Test", status: "active", depends_on: [] });
   upsertMilestonePlanning(mid, {
     title: "Research Test",
@@ -56,7 +56,7 @@ test("#4782 phase 3: buildResearchMilestonePrompt emits milestone-context then r
   seed(base, "M001");
 
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md"),
+    join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md"),
     "# M001 Context\n\nA research test milestone.\n",
   );
 
@@ -85,7 +85,7 @@ test("#4782 phase 3: buildResearchMilestonePrompt preserves manifest order acros
   invalidateAllCaches();
 
   seed(base, "M001");
-  writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md"), "# M001 Context\n");
+  writeFileSync(join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md"), "# M001 Context\n");
   // Seed PROJECT.md into the artifacts table so inlineProjectFromDb resolves
   // to a non-null body. Lets us verify the project block sits between
   // milestone-context and the templates block per manifest order.

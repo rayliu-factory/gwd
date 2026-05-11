@@ -180,13 +180,13 @@ If needed, fold final scope reflection into the depth summary or roadmap preview
 
 ## Focused Research
 
-For a new project or any project that does not yet have `.gsd/REQUIREMENTS.md`, do a focused research pass before roadmap creation.
+For a new project or any project that does not yet have `.gwd/REQUIREMENTS.md`, do a focused research pass before roadmap creation.
 
 Research is advisory, not auto-binding. Use discussion output to identify table stakes, domain-standard behaviors, likely omissions, scope traps, and differentiators. Present unrequested requirements as candidates to confirm, defer, or reject. For multi-milestone visions, cover the full landscape because findings may affect milestone sequencing.
 
 ## Capability Contract
 
-Before writing a roadmap, produce or update `.gsd/REQUIREMENTS.md`.
+Before writing a roadmap, produce or update `.gwd/REQUIREMENTS.md`.
 
 Use it as the project's explicit capability contract.
 
@@ -220,14 +220,14 @@ If the user objects, adjust. Otherwise ask: "Ready to write, or want to adjust?"
 
 ### Naming Convention
 
-Directories use bare IDs. Files use ID-SUFFIX format. Titles live inside file content. Milestone dir: `.gsd/milestones/{{milestoneId}}/`; files: `{{milestoneId}}-CONTEXT.md`, `{{milestoneId}}-ROADMAP.md`; slice dirs: `S01/`, `S02/`, etc.
+Directories use bare IDs. Files use ID-SUFFIX format. Titles live inside file content. Milestone dir: `.gwd/milestones/{{milestoneId}}/`; files: `{{milestoneId}}-CONTEXT.md`, `{{milestoneId}}-ROADMAP.md`; slice dirs: `S01/`, `S02/`, etc.
 
 ### Single Milestone
 
 Once the user is satisfied, in a single pass:
-1. `mkdir -p .gsd/milestones/{{milestoneId}}/slices`
-2. Write or update `.gsd/PROJECT.md` — use the **Project** output template below. Describe what the project is, its current state, and list the milestone sequence.
-3. Write or update `.gsd/REQUIREMENTS.md` — use the **Requirements** output template below. Confirm requirement states, ownership, and traceability before roadmap creation.
+1. `mkdir -p .gwd/milestones/{{milestoneId}}/slices`
+2. Write or update `.gwd/PROJECT.md` — use the **Project** output template below. Describe what the project is, its current state, and list the milestone sequence.
+3. Write or update `.gwd/REQUIREMENTS.md` — use the **Requirements** output template below. Confirm requirement states, ownership, and traceability before roadmap creation.
 **Depth-Preservation Guidance for context.md:**
 When writing context.md, preserve the user's exact terminology, emphasis, and framing. Do not flatten nuance into generic summaries. If the user said "craft feel," write "craft feel," not "high-quality user experience." CONTEXT.md is downstream agents' only window into this conversation.
 
@@ -236,15 +236,15 @@ When writing CONTEXT.md, include discussion-layer sections: **Scope**, **Archite
 
 4. Write `{{contextPath}}` — use the **Context** output template below. Preserve key risks, unknowns, existing codebase constraints, integration points, and relevant requirements surfaced during discussion.
 5. Call `gsd_plan_milestone` to create the roadmap. Decompose into demoable vertical slices with risk, depends, demo sentences, proof strategy, verification classes, definition of done, requirement coverage, and a boundary map. If crossing runtime boundaries, include a final integration slice proving end-to-end behavior in a real environment. Use the **Roadmap** template below for tool parameters.
-6. For each architectural or pattern decision made during discussion, call `gsd_decision_save` — the tool auto-assigns IDs and regenerates `.gsd/DECISIONS.md` automatically.
+6. For each architectural or pattern decision made during discussion, call `gsd_decision_save` — the tool auto-assigns IDs and regenerates `.gwd/DECISIONS.md` automatically.
 7. {{commitInstruction}}
 
 ### Ready-phrase pre-condition (NON-BYPASSABLE)
 
 Before emitting the ready phrase, verify in the CURRENT turn that you have:
 
-- [ ] Written `.gsd/PROJECT.md` (step 2)
-- [ ] Written `.gsd/REQUIREMENTS.md` (step 3)
+- [ ] Written `.gwd/PROJECT.md` (step 2)
+- [ ] Written `.gwd/REQUIREMENTS.md` (step 3)
 - [ ] Written `{{contextPath}}` (step 4)
 - [ ] Called `gsd_plan_milestone` (step 5)
 
@@ -260,10 +260,10 @@ Once the user confirms the milestone split:
 
 #### Phase 1: Shared artifacts
 
-1. For each milestone, call `gsd_milestone_generate_id`; never invent IDs. Then `mkdir -p .gsd/milestones/<ID>/slices`.
-2. Write `.gsd/PROJECT.md` — use the **Project** output template below.
-3. Write `.gsd/REQUIREMENTS.md` — use the **Requirements** output template below. Capture Active, Deferred, Out of Scope, and any already Validated requirements. Later milestones may have provisional ownership where slice plans do not exist yet.
-4. For any architectural or pattern decisions made during discussion, call `gsd_decision_save` — the tool auto-assigns IDs and regenerates `.gsd/DECISIONS.md` automatically.
+1. For each milestone, call `gsd_milestone_generate_id`; never invent IDs. Then `mkdir -p .gwd/milestones/<ID>/slices`.
+2. Write `.gwd/PROJECT.md` — use the **Project** output template below.
+3. Write `.gwd/REQUIREMENTS.md` — use the **Requirements** output template below. Capture Active, Deferred, Out of Scope, and any already Validated requirements. Later milestones may have provisional ownership where slice plans do not exist yet.
+4. For any architectural or pattern decisions made during discussion, call `gsd_decision_save` — the tool auto-assigns IDs and regenerates `.gwd/DECISIONS.md` automatically.
 
 #### Phase 2: Primary milestone
 
@@ -308,7 +308,7 @@ Each full/draft context must let a future agent understand intent, constraints, 
 
 #### Milestone Gate Tracking (MANDATORY for multi-milestone)
 
-After EVERY Phase 3 gate decision, immediately write/update `.gsd/DISCUSSION-MANIFEST.json` with cumulative state. The system validates it before auto-mode; incomplete gates block start.
+After EVERY Phase 3 gate decision, immediately write/update `.gwd/DISCUSSION-MANIFEST.json` with cumulative state. The system validates it before auto-mode; incomplete gates block start.
 
 ```json
 {
@@ -335,11 +335,11 @@ For single-milestone projects, do NOT write this file.
 
 Before emitting the ready phrase, verify in the CURRENT turn that you have:
 
-- [ ] Written `.gsd/PROJECT.md` (Phase 1)
-- [ ] Written `.gsd/REQUIREMENTS.md` (Phase 1)
+- [ ] Written `.gwd/PROJECT.md` (Phase 1)
+- [ ] Written `.gwd/REQUIREMENTS.md` (Phase 1)
 - [ ] Written primary-milestone `CONTEXT.md` (Phase 2)
 - [ ] Called `gsd_plan_milestone` for the primary milestone (Phase 2)
-- [ ] Written `.gsd/DISCUSSION-MANIFEST.json` with `gates_completed === total` (Phase 3)
+- [ ] Written `.gwd/DISCUSSION-MANIFEST.json` with `gates_completed === total` (Phase 3)
 
 If ANY box is unchecked, **STOP**. Do NOT emit the ready phrase. Emit the missing tool calls in this same turn. The system detects missing artifacts and will reject premature ready signals — you will be asked again and retries are capped.
 

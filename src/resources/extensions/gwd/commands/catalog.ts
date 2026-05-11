@@ -52,10 +52,10 @@ export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "logs", desc: "Browse activity logs, debug logs, and metrics" },
   { cmd: "debug", desc: "Create and inspect persistent /gwd debug sessions" },
   { cmd: "forensics", desc: "Examine execution logs" },
-  { cmd: "init", desc: "Project init wizard — detect, configure, bootstrap .gsd/" },
+  { cmd: "init", desc: "Project init wizard — detect, configure, bootstrap .gwd/" },
   { cmd: "setup", desc: "Configuration hub: status + sub-routes (llm, model, search, remote, keys, prefs, onboarding)" },
   { cmd: "onboarding", desc: "Re-run the setup wizard  [--resume|--reset|--step <name>]" },
-  { cmd: "migrate", desc: "Migrate a v1 .planning directory to .gsd format" },
+  { cmd: "migrate", desc: "Migrate a v1 .planning directory to .gwd format" },
   { cmd: "remote", desc: "Control remote auto-mode" },
   { cmd: "steer", desc: "Hard-steer plan documents during execution" },
   { cmd: "inspect", desc: "Show SQLite DB diagnostics" },
@@ -74,12 +74,12 @@ export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "mcp", desc: "MCP server status, connectivity, and local config bootstrap (status, check, init)" },
   { cmd: "rethink", desc: "Conversational project reorganization — reorder, park, discard, add milestones" },
   { cmd: "workflow", desc: "Custom workflow lifecycle (new, run, list, info, install, uninstall, validate, pause, resume) or run <name> directly" },
-  { cmd: "codebase", desc: "Generate, refresh, and inspect the codebase map cache (.gsd/CODEBASE.md)" },
+  { cmd: "codebase", desc: "Generate, refresh, and inspect the codebase map cache (.gwd/CODEBASE.md)" },
   { cmd: "ship", desc: "Create PR from milestone artifacts and open for review" },
   { cmd: "do", desc: "Route freeform text to the right GWD command" },
   { cmd: "session-report", desc: "Session cost, tokens, and work summary" },
   { cmd: "backlog", desc: "Manage backlog items (add, promote, remove, list)" },
-  { cmd: "pr-branch", desc: "Create clean PR branch filtering .gsd/ commits" },
+  { cmd: "pr-branch", desc: "Create clean PR branch filtering .gwd/ commits" },
   { cmd: "add-tests", desc: "Generate tests for completed slices" },
   { cmd: "scan", desc: "Rapid codebase assessment — lightweight alternative to full map (--focus tech|arch|quality|concerns|tech+arch)" },
   { cmd: "language", desc: "Set or clear the global response language (e.g. /gwd language Chinese)" },
@@ -279,7 +279,7 @@ const NESTED_COMPLETIONS: CompletionMap = {
   ],
   "session-report": [
     { cmd: "--json", desc: "Machine-readable JSON output" },
-    { cmd: "--save", desc: "Save report to .gsd/reports/" },
+    { cmd: "--save", desc: "Save report to .gwd/reports/" },
   ],
   backlog: [
     { cmd: "add", desc: "Add item to backlog" },
@@ -357,16 +357,16 @@ function normalizePathForCompare(path: string): string {
   return path.replaceAll("\\", "/").replace(/\/+$/, "");
 }
 
-function findWorktreeSegment(normalizedPath: string): { gsdIdx: number; afterWorktrees: number } | null {
-  const directMarker = "/.gsd/worktrees/";
+function findWorktreeSegment(normalizedPath: string): { gwdIdx: number; afterWorktrees: number } | null {
+  const directMarker = "/.gwd/worktrees/";
   const directIdx = normalizedPath.indexOf(directMarker);
   if (directIdx !== -1) {
-    return { gsdIdx: directIdx, afterWorktrees: directIdx + directMarker.length };
+    return { gwdIdx: directIdx, afterWorktrees: directIdx + directMarker.length };
   }
 
-  const symlinkMatch = normalizedPath.match(/\/\.gsd\/projects\/[a-f0-9]+\/worktrees\//);
+  const symlinkMatch = normalizedPath.match(/\/\.gwd\/projects\/[a-f0-9]+\/worktrees\//);
   if (symlinkMatch?.index !== undefined) {
-    return { gsdIdx: symlinkMatch.index, afterWorktrees: symlinkMatch.index + symlinkMatch[0].length };
+    return { gwdIdx: symlinkMatch.index, afterWorktrees: symlinkMatch.index + symlinkMatch[0].length };
   }
 
   return null;
@@ -411,12 +411,12 @@ function resolveProjectRootForCompletion(basePath: string): string {
   if (!segment) return basePath;
 
   const separator = basePath.includes("\\") ? "\\" : "/";
-  const gsdMarker = `${separator}.gsd${separator}`;
+  const gsdMarker = `${separator}.gwd${separator}`;
   const gsdIdx = basePath.indexOf(gsdMarker);
-  const candidate = gsdIdx !== -1 ? basePath.slice(0, gsdIdx) : basePath.slice(0, segment.gsdIdx);
+  const candidate = gsdIdx !== -1 ? basePath.slice(0, gsdIdx) : basePath.slice(0, segment.gwdIdx);
 
   const normalizedGsdHome = normalizePathForCompare(gsdHome());
-  const candidateGsdPath = normalizePathForCompare(join(candidate, ".gsd"));
+  const candidateGsdPath = normalizePathForCompare(join(candidate, ".gwd"));
   if (candidateGsdPath === normalizedGsdHome || candidateGsdPath.startsWith(`${normalizedGsdHome}/`)) {
     return resolveProjectRootFromGitFile(basePath) ?? basePath;
   }
@@ -484,7 +484,7 @@ export function getGsdArgumentCompletions(prefix: string) {
   // Workflow definition-name completion for `workflow run <name>` and `workflow validate <name>`
   if (command === "workflow" && (subcommand === "run" || subcommand === "validate") && parts.length <= 3) {
     try {
-      const defsDir = join(resolveProjectRootForCompletion(process.cwd()), ".gsd", "workflow-defs");
+      const defsDir = join(resolveProjectRootForCompletion(process.cwd()), ".gwd", "workflow-defs");
       if (existsSync(defsDir)) {
         return readdirSync(defsDir)
           .filter((f) => f.endsWith(".yaml") && f.startsWith(third))
@@ -522,8 +522,8 @@ export function getGsdArgumentCompletions(prefix: string) {
     };
     try {
       const base = resolveProjectRootForCompletion(process.cwd());
-      scanDir(join(base, ".gsd", "workflows"), "project");
-      scanDir(join(base, ".gsd", "workflow-defs"), "project-legacy");
+      scanDir(join(base, ".gwd", "workflows"), "project");
+      scanDir(join(base, ".gwd", "workflow-defs"), "project-legacy");
       scanDir(join(gsdHome(), "workflows"), "global");
     } catch { /* ignore */ }
     // Also include bundled template names.

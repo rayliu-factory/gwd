@@ -21,7 +21,7 @@ import { openDatabase, closeDatabase } from "../gwd-db.ts";
 
 function makeProjectDir(): string {
   const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-dbwriter-scope-")));
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".gwd"), { recursive: true });
   return dir;
 }
 
@@ -54,42 +54,42 @@ describe("saveArtifactToDbByScope: path parity with legacy saveArtifactToDb", ()
       task_id: "T01",
     };
 
-    // Legacy path: basePath + '.gsd' join
-    const legacyExpectedPath = resolve(tmp1, ".gsd", relPath);
+    // Legacy path: basePath + '.gwd' join
+    const legacyExpectedPath = resolve(tmp1, ".gwd", relPath);
 
-    // Scope path: contract.projectGsd
+    // Scope path: contract.projectGwd
     const ws = createWorkspace(tmp2);
     const scope = scopeMilestone(ws, "M001");
-    const scopeExpectedPath = resolve(ws.contract.projectGsd, relPath);
+    const scopeExpectedPath = resolve(ws.contract.projectGwd, relPath);
 
     // Both should resolve to the same relative structure
     // (though under different temp dirs — so we compare structure, not absolute path)
     assert.equal(
       scopeExpectedPath,
-      resolve(ws.contract.projectGsd, relPath),
-      "scope path must be contract.projectGsd + relPath",
+      resolve(ws.contract.projectGwd, relPath),
+      "scope path must be contract.projectGwd + relPath",
     );
     assert.equal(
       legacyExpectedPath,
-      resolve(tmp1, ".gsd", relPath),
-      "legacy path must be basePath/.gsd + relPath",
+      resolve(tmp1, ".gwd", relPath),
+      "legacy path must be basePath/.gwd + relPath",
     );
 
     // Open DB for tmp1 and write via legacy
-    const dbPath1 = join(tmp1, ".gsd", "gsd.db");
+    const dbPath1 = join(tmp1, ".gwd", "gwd.db");
     openDatabase(dbPath1);
     await saveArtifactToDb(opts, tmp1);
     closeDatabase();
 
     // Open DB for tmp2 and write via scope variant
-    const dbPath2 = join(tmp2, ".gsd", "gsd.db");
+    const dbPath2 = join(tmp2, ".gwd", "gwd.db");
     openDatabase(dbPath2);
     await saveArtifactToDbByScope(scope, opts);
     closeDatabase();
 
-    // Both should have written to the correct location under their respective .gsd dirs
-    assert.ok(existsSync(legacyExpectedPath), "legacy: artifact written at basePath/.gsd/relPath");
-    assert.ok(existsSync(scopeExpectedPath), "scope: artifact written at contract.projectGsd/relPath");
+    // Both should have written to the correct location under their respective .gwd dirs
+    assert.ok(existsSync(legacyExpectedPath), "legacy: artifact written at basePath/.gwd/relPath");
+    assert.ok(existsSync(scopeExpectedPath), "scope: artifact written at contract.projectGwd/relPath");
 
     // Content must match
     assert.equal(readFileSync(legacyExpectedPath, "utf-8"), content, "legacy: content matches");
@@ -97,9 +97,9 @@ describe("saveArtifactToDbByScope: path parity with legacy saveArtifactToDb", ()
   });
 });
 
-// ─── Suite 2: scope variant uses contract.projectGsd, not a basePath join ────
+// ─── Suite 2: scope variant uses contract.projectGwd, not a basePath join ────
 
-describe("saveArtifactToDbByScope: uses contract.projectGsd, not hand-rolled basePath join", () => {
+describe("saveArtifactToDbByScope: uses contract.projectGwd, not hand-rolled basePath join", () => {
   let tmp: string;
 
   beforeEach(() => {
@@ -111,22 +111,22 @@ describe("saveArtifactToDbByScope: uses contract.projectGsd, not hand-rolled bas
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  test("scope.workspace.contract.projectGsd is used as the .gsd root, not basePath/.gsd", async () => {
+  test("scope.workspace.contract.projectGwd is used as the .gwd root, not basePath/.gwd", async () => {
     const ws = createWorkspace(tmp);
     const scope = scopeMilestone(ws, "M001");
 
-    // The contract.projectGsd must equal the canonical join(projectRoot, '.gsd')
+    // The contract.projectGwd must equal the canonical join(projectRoot, '.gwd')
     assert.equal(
-      ws.contract.projectGsd,
-      join(ws.projectRoot, ".gsd"),
-      "contract.projectGsd must equal join(projectRoot, '.gsd')",
+      ws.contract.projectGwd,
+      join(ws.projectRoot, ".gwd"),
+      "contract.projectGwd must equal join(projectRoot, '.gwd')",
     );
 
     // It must NOT be a hand-rolled resolution from an arbitrary basePath string
-    // (i.e., contract.projectGsd routes through the workspace contract)
+    // (i.e., contract.projectGwd routes through the workspace contract)
     assert.ok(
-      ws.contract.projectGsd.startsWith(ws.projectRoot),
-      "contract.projectGsd must be rooted at projectRoot",
+      ws.contract.projectGwd.startsWith(ws.projectRoot),
+      "contract.projectGwd must be rooted at projectRoot",
     );
 
     const relPath = "milestones/M001/M001-CONTEXT.md";
@@ -138,34 +138,34 @@ describe("saveArtifactToDbByScope: uses contract.projectGsd, not hand-rolled bas
       milestone_id: "M001",
     };
 
-    openDatabase(join(tmp, ".gsd", "gsd.db"));
+    openDatabase(join(tmp, ".gwd", "gwd.db"));
     await saveArtifactToDbByScope(scope, opts);
 
-    // File must be at contract.projectGsd/relPath
-    const expectedPath = resolve(ws.contract.projectGsd, relPath);
-    assert.ok(existsSync(expectedPath), "artifact written at contract.projectGsd/relPath");
+    // File must be at contract.projectGwd/relPath
+    const expectedPath = resolve(ws.contract.projectGwd, relPath);
+    assert.ok(existsSync(expectedPath), "artifact written at contract.projectGwd/relPath");
     assert.equal(readFileSync(expectedPath, "utf-8"), content, "content matches");
 
     // And must NOT be at some other location
-    const handRolledPath = resolve(tmp, ".gsd", relPath);
+    const handRolledPath = resolve(tmp, ".gwd", relPath);
     // Both should be the same path in project mode (they should agree)
     assert.equal(
       expectedPath,
       handRolledPath,
-      "in project mode, contract.projectGsd resolves same as basePath/.gsd",
+      "in project mode, contract.projectGwd resolves same as basePath/.gwd",
     );
   });
 });
 
-// ─── Suite 3: worktree-mode scope routes to project root's .gsd/ ─────────────
+// ─── Suite 3: worktree-mode scope routes to project root's .gwd/ ─────────────
 
-describe("saveArtifactToDbByScope: worktree scope writes to project root .gsd/", () => {
+describe("saveArtifactToDbByScope: worktree scope writes to project root .gwd/", () => {
   let tmp: string;
 
   beforeEach(() => {
     tmp = realpathSync(mkdtempSync(join(tmpdir(), "gsd-dbwriter-wt-scope-")));
-    // Create project .gsd directory
-    mkdirSync(join(tmp, ".gsd"), { recursive: true });
+    // Create project .gwd directory
+    mkdirSync(join(tmp, ".gwd"), { recursive: true });
   });
 
   afterEach(() => {
@@ -173,10 +173,10 @@ describe("saveArtifactToDbByScope: worktree scope writes to project root .gsd/",
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  test("worktree-mode scope: contract.projectGsd resolves to project root's .gsd/, not worktree .gsd/", async () => {
-    // Construct a worktree path inside the project's .gsd/worktrees/<MID>
-    const worktreePath = join(tmp, ".gsd", "worktrees", "M001");
-    mkdirSync(join(worktreePath, ".gsd"), { recursive: true });
+  test("worktree-mode scope: contract.projectGwd resolves to project root's .gwd/, not worktree .gwd/", async () => {
+    // Construct a worktree path inside the project's .gwd/worktrees/<MID>
+    const worktreePath = join(tmp, ".gwd", "worktrees", "M001");
+    mkdirSync(join(worktreePath, ".gwd"), { recursive: true });
 
     const projectWs = createWorkspace(tmp);
     const worktreeWs = createWorkspace(worktreePath);
@@ -188,18 +188,18 @@ describe("saveArtifactToDbByScope: worktree scope writes to project root .gsd/",
       "worktree workspace must have same projectRoot as project workspace",
     );
 
-    // contract.projectGsd for the worktree workspace must point to the PROJECT root's .gsd/
+    // contract.projectGwd for the worktree workspace must point to the PROJECT root's .gwd/
     assert.equal(
-      worktreeWs.contract.projectGsd,
-      join(projectWs.projectRoot, ".gsd"),
-      "worktree contract.projectGsd must equal project root's .gsd/",
+      worktreeWs.contract.projectGwd,
+      join(projectWs.projectRoot, ".gwd"),
+      "worktree contract.projectGwd must equal project root's .gwd/",
     );
 
-    // Must NOT be the worktree-local .gsd/
+    // Must NOT be the worktree-local .gwd/
     assert.notEqual(
-      worktreeWs.contract.projectGsd,
-      join(worktreePath, ".gsd"),
-      "worktree contract.projectGsd must NOT be the worktree-local .gsd/",
+      worktreeWs.contract.projectGwd,
+      join(worktreePath, ".gwd"),
+      "worktree contract.projectGwd must NOT be the worktree-local .gwd/",
     );
 
     // Write via the worktree-mode scope
@@ -213,17 +213,17 @@ describe("saveArtifactToDbByScope: worktree scope writes to project root .gsd/",
       milestone_id: "M001",
     };
 
-    openDatabase(join(tmp, ".gsd", "gsd.db"));
+    openDatabase(join(tmp, ".gwd", "gwd.db"));
     await saveArtifactToDbByScope(scope, opts);
 
-    // File must land in the PROJECT root's .gsd/, not in the worktree's .gsd/
-    const projectPath = resolve(projectWs.contract.projectGsd, relPath);
-    const worktreeLocalPath = resolve(worktreePath, ".gsd", relPath);
+    // File must land in the PROJECT root's .gwd/, not in the worktree's .gwd/
+    const projectPath = resolve(projectWs.contract.projectGwd, relPath);
+    const worktreeLocalPath = resolve(worktreePath, ".gwd", relPath);
 
-    assert.ok(existsSync(projectPath), "artifact written to project root's .gsd/");
+    assert.ok(existsSync(projectPath), "artifact written to project root's .gwd/");
     assert.ok(
       !existsSync(worktreeLocalPath),
-      "artifact must NOT be written to worktree-local .gsd/",
+      "artifact must NOT be written to worktree-local .gwd/",
     );
     assert.equal(readFileSync(projectPath, "utf-8"), content, "content at project root matches");
   });

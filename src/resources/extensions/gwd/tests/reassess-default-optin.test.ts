@@ -26,7 +26,7 @@ const REASSESS_RULE_NAME = "reassess-roadmap (post-completion)";
 
 function makeIsolatedBase(): string {
   const base = join(tmpdir(), `gsd-reassess-default-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;
 }
 
@@ -122,7 +122,7 @@ test("ADR-003 §4: plan-slice prompt and MCP tool agree on reassess sliceChanges
   const tools: Record<string, any> = {};
   registerDbTools({ registerTool(tool: any) { tools[tool.name] = tool; } } as any);
 
-  const reassessTool = tools.gsd_reassess_roadmap;
+  const reassessTool = tools.gwd_reassess_roadmap;
   assert.ok(reassessTool, "gsd_reassess_roadmap should be registered");
   const sliceChanges = reassessTool.parameters.properties.sliceChanges.properties;
   assert.ok(sliceChanges.modified, "tool schema exposes sliceChanges.modified");
@@ -133,7 +133,7 @@ test("ADR-003 §4: plan-slice prompt and MCP tool agree on reassess sliceChanges
 test("ADR-003 §4: rendered plan-slice prompt documents reassess sliceChanges shape", async () => {
   const base = makeIsolatedBase();
   try {
-    const msDir = join(base, ".gsd", "milestones", "M001");
+    const msDir = join(base, ".gwd", "milestones", "M001");
     writeFileSync(join(msDir, "M001-ROADMAP.md"), "# Roadmap\n\n## Slices\n\n- [ ] **S01: First** `risk:low` `depends:[]`\n");
     const prompt = await buildPlanSlicePrompt("M001", "Test", "S01", "First", base, "minimal");
     assert.match(prompt, /gsd_reassess_roadmap/);

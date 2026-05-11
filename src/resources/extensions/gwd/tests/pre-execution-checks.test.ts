@@ -1357,14 +1357,14 @@ describe("checkFilePathConsistency additional edge cases", () => {
 
   test("backticked path cited mid-sentence resolves to the path", () => {
     const tempDir = join(tmpdir(), `pre-exec-test-4421-case4-${Date.now()}`);
-    mkdirSync(join(tempDir, ".gsd"), { recursive: true });
-    writeFileSync(join(tempDir, ".gsd/REQUIREMENTS.md"), "# Requirements");
+    mkdirSync(join(tempDir, ".gwd"), { recursive: true });
+    writeFileSync(join(tempDir, ".gwd/REQUIREMENTS.md"), "# Requirements");
 
     try {
       const tasks = [
         createTask({
           id: "T01",
-          inputs: ["R014 verbatim text from `.gsd/REQUIREMENTS.md` (the owned requirement statement)"],
+          inputs: ["R014 verbatim text from `.gwd/REQUIREMENTS.md` (the owned requirement statement)"],
         }),
       ];
 

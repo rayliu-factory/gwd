@@ -11,7 +11,7 @@ import { parsePlan } from "../../parsers-legacy.js";
 
 function makeBase(): { base: string; gsd: string; mDir: string } {
   const base = mkdtempSync(join(tmpdir(), "gsd-doctor-fp-"));
-  const gsd = join(base, ".gsd");
+  const gsd = join(base, ".gwd");
   const mDir = join(gsd, "milestones", "M001");
   mkdirSync(join(mDir, "slices"), { recursive: true });
   return { base, gsd, mDir };
@@ -35,17 +35,17 @@ describe('doctor false-positives (#3105)', async () => {
   // Bug 1: Orphaned worktree directory recreated by appendDoctorHistory
   // ═══════════════════════════════════════════════════════════════════════════
 
-  test('Bug 1: orphaned worktree check ignores dirs containing only .gsd/doctor-history.jsonl', async () => {
-    // Simulate: a worktree dir that only contains .gsd/doctor-history.jsonl
+  test('Bug 1: orphaned worktree check ignores dirs containing only .gwd/doctor-history.jsonl', async () => {
+    // Simulate: a worktree dir that only contains .gwd/doctor-history.jsonl
     // (created by appendDoctorHistory writing to the worktree-scoped path).
     // The orphan check should NOT warn about this directory.
     const { base, gsd } = makeBase();
     writeRoadmap(join(gsd, "milestones", "M001"), `# M001: Test\n\n## Slices\n- [ ] **S01: Slice** \`risk:low\` \`depends:[]\`\n  > After this: done\n`);
     writeSlice(join(gsd, "milestones", "M001"), "S01", "# S01: Slice\n\n**Goal:** G\n**Demo:** D\n\n## Tasks\n- [ ] **T01: Task** `est:10m`\n  Pending.\n");
 
-    // Create a worktree directory that only has .gsd/doctor-history.jsonl
+    // Create a worktree directory that only has .gwd/doctor-history.jsonl
     const wtDir = join(gsd, "worktrees", "M042");
-    const wtGsdDir = join(wtDir, ".gsd");
+    const wtGsdDir = join(wtDir, ".gwd");
     mkdirSync(wtGsdDir, { recursive: true });
     writeFileSync(join(wtGsdDir, "doctor-history.jsonl"), '{"ts":"2026-01-01","ok":true}\n');
 
@@ -56,7 +56,7 @@ describe('doctor false-positives (#3105)', async () => {
       i => i.code === "worktree_directory_orphaned" && i.unitId === "M042"
     );
     assert.equal(orphanIssues.length, 0,
-      "should not warn about worktree dir that only contains .gsd/doctor-history.jsonl");
+      "should not warn about worktree dir that only contains .gwd/doctor-history.jsonl");
 
     rmSync(base, { recursive: true, force: true });
   });
