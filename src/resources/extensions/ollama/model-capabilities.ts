@@ -27,6 +27,19 @@ export interface ModelCapability {
 // Note: ollamaOptions.num_ctx is set for known model families where the context
 // window is authoritative. For unknown/estimated models, num_ctx is NOT sent
 // to avoid OOM risk — Ollama uses its own safe default instead.
+const EXACT_MODEL_CAPABILITIES: Record<string, ModelCapability> = {
+	"qwen3.6:27b-coding-nvfp4": {
+		contextWindow: 65536,
+		maxTokens: 16384,
+		ollamaOptions: { num_ctx: 65536, keep_alive: "0" },
+	},
+	"qwen3.6:35b-a3b-coding-nvfp4": {
+		contextWindow: 65536,
+		maxTokens: 16384,
+		ollamaOptions: { num_ctx: 65536, keep_alive: "0" },
+	},
+};
+
 const KNOWN_MODELS: Array<[pattern: string, caps: ModelCapability]> = [
 	// ─── Reasoning models ───────────────────────────────────────────────
 	["deepseek-r1", { contextWindow: 131072, reasoning: true, ollamaOptions: { num_ctx: 131072 } }],
@@ -120,7 +133,10 @@ const KNOWN_MODELS: Array<[pattern: string, caps: ModelCapability]> = [
  * Matches the longest prefix from the known models table.
  */
 export function getModelCapabilities(modelName: string): ModelCapability {
-	// Strip tag (everything after the colon) for matching
+	const exact = EXACT_MODEL_CAPABILITIES[modelName.toLowerCase()];
+	if (exact) return exact;
+
+	// Strip tag (everything after the colon) for family matching
 	const baseName = modelName.split(":")[0].toLowerCase();
 
 	for (const [pattern, caps] of KNOWN_MODELS) {
