@@ -5,13 +5,8 @@
     </style>
   </defs>
 
-  <!-- GSD ASCII Logo - centered -->
+  <!-- GWD logo glyph - centered -->
   <g transform="translate(1000, 1000)">
-    <text class="logo" font-size="108" text-anchor="middle" y="-225" xml:space="preserve">  ██████╗ ███████╗██████╗ </text>
-    <text class="logo" font-size="108" text-anchor="middle" y="-105" xml:space="preserve"> ██╔════╝ ██╔════╝██╔══██╗</text>
-    <text class="logo" font-size="108" text-anchor="middle" y="15" xml:space="preserve"> ██║  ███╗███████╗██║  ██║</text>
-    <text class="logo" font-size="108" text-anchor="middle" y="135" xml:space="preserve"> ██║   ██║╚════██║██║  ██║</text>
-    <text class="logo" font-size="108" text-anchor="middle" y="255" xml:space="preserve"> ╚██████╔╝███████║██████╔╝</text>
-    <text class="logo" font-size="108" text-anchor="middle" y="375" xml:space="preserve">  ╚═════╝ ╚══════╝╚═════╝ </text>
+    <text class="logo" font-size="420" text-anchor="middle" y="130" xml:space="preserve">GWD</text>
   </g>
 </svg>
