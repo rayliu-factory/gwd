@@ -24,7 +24,7 @@ import { execFileSync } from "node:child_process";
 
 import { mergeMilestoneToMain } from "../auto-worktree.ts";
 import { _resetServiceCache } from "../worktree.ts";
-import { _clearGsdRootCache } from "../paths.ts";
+import { _clearGwdRootCache } from "../paths.ts";
 
 function git(args: string[], cwd: string): string {
   return execFileSync("git", args, { cwd, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" }).trim();
@@ -51,7 +51,7 @@ function assertSelfMergeRefIsRejected(recordedIntegrationBranch: string): void {
   const originalHome = process.env.HOME;
   const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-fake-home-")));
   process.env.HOME = fakeHome;
-  _clearGsdRootCache();
+  _clearGwdRootCache();
   _resetServiceCache();
 
   try {
@@ -106,7 +106,7 @@ function assertSelfMergeRefIsRejected(recordedIntegrationBranch: string): void {
   } finally {
     process.chdir(savedCwd);
     process.env.HOME = originalHome;
-    _clearGsdRootCache();
+    _clearGwdRootCache();
     _resetServiceCache();
     if (tempDir && existsSync(tempDir)) {
       rmSync(tempDir, { recursive: true, force: true });

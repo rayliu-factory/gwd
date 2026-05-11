@@ -21,14 +21,14 @@ import { mkdtempSync, realpathSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 
-import { gsdRoot, resolveGwdPathContract, _clearGsdRootCache } from "../paths.ts";
+import { gsdRoot, resolveGwdPathContract, _clearGwdRootCache } from "../paths.ts";
 
 describe("gsdRoot() worktree detection (#2594)", () => {
   let projectRoot: string;
   let projectGwd: string;
 
   beforeEach(() => {
-    _clearGsdRootCache();
+    _clearGwdRootCache();
     // Create a temporary project with a git repo to simulate real conditions.
     // realpathSync handles macOS /tmp -> /private/tmp.
     projectRoot = realpathSync(mkdtempSync(join(tmpdir(), "gsdroot-wt-")));
@@ -58,7 +58,7 @@ describe("gsdRoot() worktree detection (#2594)", () => {
   });
 
   afterEach(() => {
-    _clearGsdRootCache();
+    _clearGwdRootCache();
     rmSync(projectRoot, { recursive: true, force: true });
   });
 

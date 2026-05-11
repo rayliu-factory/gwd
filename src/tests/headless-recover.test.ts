@@ -39,7 +39,7 @@ import { migrateHierarchyToDb } from "../resources/extensions/gwd/md-importer.ts
 import { invalidateStateCache } from "../resources/extensions/gwd/state.ts";
 
 function makeMarkdownFixture(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-headless-recover-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-headless-recover-"));
   const mDir = join(base, ".gwd", "milestones", "M001");
   const sDir = join(mDir, "slices", "S01");
   mkdirSync(join(sDir, "tasks"), { recursive: true });

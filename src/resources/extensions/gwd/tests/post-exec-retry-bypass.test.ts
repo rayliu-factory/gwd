@@ -16,7 +16,7 @@ import { runPostUnitVerification, type VerificationContext } from "../auto-verif
 import { AutoSession } from "../auto/session.ts";
 import { openDatabase, closeDatabase, insertMilestone, insertSlice, insertTask, _getAdapter } from "../gwd-db.ts";
 import { invalidateAllCaches } from "../cache.ts";
-import { _clearGsdRootCache } from "../paths.ts";
+import { _clearGwdRootCache } from "../paths.ts";
 
 // ─── Test Fixtures ───────────────────────────────────────────────────────────
 
@@ -71,7 +71,7 @@ function setupTestEnvironment(): void {
   mkdirSync(milestonesDir, { recursive: true });
 
   process.chdir(tempDir);
-  _clearGsdRootCache();
+  _clearGwdRootCache();
 
   dbPath = join(gsdDir, "gwd.db");
   openDatabase(dbPath);
@@ -105,7 +105,7 @@ ${yamlLines.join("\n")}
 `;
   writeFileSync(join(tempDir, ".gwd", "PREFERENCES.md"), prefsContent);
   invalidateAllCaches();
-  _clearGsdRootCache();
+  _clearGwdRootCache();
 }
 
 /**

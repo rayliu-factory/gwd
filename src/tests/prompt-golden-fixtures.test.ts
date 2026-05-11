@@ -88,14 +88,14 @@ async function loadPromptBuilders(base: string): Promise<{
   buildPlanSlicePrompt: typeof import("../resources/extensions/gwd/auto-prompts.ts").buildPlanSlicePrompt;
   invalidateAllCaches: typeof import("../resources/extensions/gwd/cache.ts").invalidateAllCaches;
 }> {
-  process.env.GWD_HOME = join(base, ".test-gsd-home");
+  process.env.GWD_HOME = join(base, ".test-gwd-home");
   const prompts = await import("../resources/extensions/gwd/auto-prompts.ts");
   const cache = await import("../resources/extensions/gwd/cache.ts");
   return { ...prompts, invalidateAllCaches: cache.invalidateAllCaches };
 }
 
 function makePromptFixtureRoot(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-prompt-golden-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-prompt-golden-"));
   const sliceDir = join(base, ".gwd", "milestones", "M001", "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
   mkdirSync(tasksDir, { recursive: true });

@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 
-import { gsdRoot, _clearGsdRootCache } from "../../paths.ts";
+import { gsdRoot, _clearGwdRootCache } from "../../paths.ts";
 /** Create a tmp dir and resolve symlinks + 8.3 short names (macOS /var→/private/var, Windows RUNNER~1→runneradmin). */
 function tmp(): string {
   const p = mkdtempSync(join(tmpdir(), "gsd-paths-test-"));
@@ -26,7 +26,7 @@ describe('paths', () => {
     const root = tmp();
     try {
       mkdirSync(join(root, ".gwd"));
-      _clearGsdRootCache();
+      _clearGwdRootCache();
       const result = gsdRoot(root);
       assert.deepStrictEqual(result, join(root, ".gwd"), "fast path: returns basePath/.gwd");
     } finally { cleanup(root); }
@@ -39,7 +39,7 @@ describe('paths', () => {
       mkdirSync(join(root, ".gwd"));
       const sub = join(root, "src", "deep");
       mkdirSync(sub, { recursive: true });
-      _clearGsdRootCache();
+      _clearGwdRootCache();
       const result = gsdRoot(sub);
       assert.deepStrictEqual(result, join(root, ".gwd"), "git-root probe: finds .gwd at git root from subdirectory");
     } finally { cleanup(root); }
@@ -53,7 +53,7 @@ describe('paths', () => {
       mkdirSync(join(project, ".gwd"), { recursive: true });
       const deep = join(project, "src", "deep");
       mkdirSync(deep, { recursive: true });
-      _clearGsdRootCache();
+      _clearGwdRootCache();
       const result = gsdRoot(deep);
       assert.deepStrictEqual(result, join(project, ".gwd"), "walk-up: finds .gwd in ancestor when git root has none");
     } finally { cleanup(root); }
@@ -65,7 +65,7 @@ describe('paths', () => {
       initGit(root);
       const sub = join(root, "src");
       mkdirSync(sub, { recursive: true });
-      _clearGsdRootCache();
+      _clearGwdRootCache();
       const result = gsdRoot(sub);
       assert.deepStrictEqual(result, join(sub, ".gwd"), "fallback: returns basePath/.gwd when .gwd not found anywhere");
     } finally { cleanup(root); }
@@ -75,7 +75,7 @@ describe('paths', () => {
     const root = tmp();
     try {
       mkdirSync(join(root, ".gwd"));
-      _clearGsdRootCache();
+      _clearGwdRootCache();
       const first = gsdRoot(root);
       const second = gsdRoot(root);
       assert.deepStrictEqual(first, second, "cache: same result returned on second call");
@@ -90,7 +90,7 @@ describe('paths', () => {
       mkdirSync(join(outer, ".gwd"));
       const inner = join(outer, "nested");
       mkdirSync(join(inner, ".gwd"), { recursive: true });
-      _clearGsdRootCache();
+      _clearGwdRootCache();
       const result = gsdRoot(inner);
       assert.deepStrictEqual(result, join(inner, ".gwd"), "precedence: nearest .gwd wins over ancestor");
     } finally { cleanup(outer); }

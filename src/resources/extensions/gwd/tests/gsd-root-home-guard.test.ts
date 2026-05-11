@@ -17,7 +17,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
-import { gsdRoot, _clearGsdRootCache } from '../paths.ts';
+import { gsdRoot, _clearGwdRootCache } from '../paths.ts';
 
 describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#5187)', () => {
   let fakeHome: string;
@@ -37,7 +37,7 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
     process.env.USERPROFILE = fakeHome;
     delete process.env.GWD_HOME;
 
-    _clearGsdRootCache();
+    _clearGwdRootCache();
   });
 
   afterEach(() => {
@@ -48,7 +48,7 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
     if (savedGsdHome === undefined) delete process.env.GWD_HOME;
     else process.env.GWD_HOME = savedGsdHome;
 
-    _clearGsdRootCache();
+    _clearGwdRootCache();
     rmSync(fakeHome, { recursive: true, force: true });
   });
 
@@ -59,7 +59,7 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
   test('does NOT throw for paths under ~/.gwd/projects/<hash>/', () => {
     const projectStateDir = join(fakeHome, '.gwd', 'projects', 'abcdef123456');
     mkdirSync(join(projectStateDir, '.gwd'), { recursive: true });
-    _clearGsdRootCache();
+    _clearGwdRootCache();
 
     const resolved = gsdRoot(projectStateDir);
     assert.equal(resolved, join(projectStateDir, '.gwd'));
@@ -68,7 +68,7 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
   test('does NOT throw for an unrelated project directory that has its own .gwd', () => {
     const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-home-guard-proj-')));
     mkdirSync(join(projectDir, '.gwd'), { recursive: true });
-    _clearGsdRootCache();
+    _clearGwdRootCache();
     try {
       const resolved = gsdRoot(projectDir);
       assert.equal(resolved, join(projectDir, '.gwd'));
@@ -104,7 +104,7 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gwd', ()
     process.env.USERPROFILE = fakeHome;
     delete process.env.GWD_HOME;
 
-    _clearGsdRootCache();
+    _clearGwdRootCache();
   });
 
   afterEach(() => {
@@ -115,7 +115,7 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gwd', ()
     if (savedGsdHome === undefined) delete process.env.GWD_HOME;
     else process.env.GWD_HOME = savedGsdHome;
 
-    _clearGsdRootCache();
+    _clearGwdRootCache();
     rmSync(fakeHome, { recursive: true, force: true });
   });
 

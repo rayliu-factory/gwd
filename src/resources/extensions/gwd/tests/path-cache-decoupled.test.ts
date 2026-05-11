@@ -6,7 +6,7 @@ import { mkdtempSync, mkdirSync, rmSync, renameSync, realpathSync } from 'node:f
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { gsdRoot, clearPathCache, _clearGsdRootCache } from '../paths.ts';
+import { gsdRoot, clearPathCache, _clearGwdRootCache } from '../paths.ts';
 
 // ---------------------------------------------------------------------------
 // Shared test setup helpers
@@ -35,7 +35,7 @@ function makeFixture(): Fixture {
   process.env.USERPROFILE = fakeHome;
   process.env.GWD_HOME = join(fakeHome, '.gwd');
 
-  _clearGsdRootCache();
+  _clearGwdRootCache();
 
   return { projectDir, fakeHome, savedHome, savedUserProfile, savedGsdHome };
 }
@@ -48,7 +48,7 @@ function teardownFixture(f: Fixture): void {
   if (f.savedGsdHome === undefined) delete process.env.GWD_HOME;
   else process.env.GWD_HOME = f.savedGsdHome;
 
-  _clearGsdRootCache();
+  _clearGwdRootCache();
   clearPathCache();
   rmSync(f.projectDir, { recursive: true, force: true });
   rmSync(f.fakeHome, { recursive: true, force: true });
@@ -130,15 +130,15 @@ describe('clearPathCache() does not evict gsdRootCache', () => {
 });
 
 // ---------------------------------------------------------------------------
-// 3. _clearGsdRootCache() DOES invalidate gsdRootCache
+// 3. _clearGwdRootCache() DOES invalidate gsdRootCache
 // ---------------------------------------------------------------------------
 
-describe('_clearGsdRootCache() evicts gsdRootCache', () => {
+describe('_clearGwdRootCache() evicts gsdRootCache', () => {
   let f: Fixture;
   beforeEach(() => { f = makeFixture(); });
   afterEach(() => teardownFixture(f));
 
-  test('gsdRoot re-probes after _clearGsdRootCache()', (t) => {
+  test('gsdRoot re-probes after _clearGwdRootCache()', (t) => {
     // Prime the cache.
     const primed = gsdRoot(f.projectDir);
     assert.equal(primed, join(f.projectDir, '.gwd'));
@@ -149,15 +149,15 @@ describe('_clearGsdRootCache() evicts gsdRootCache', () => {
       try { renameSync(join(f.projectDir, '.gwd-hidden'), join(f.projectDir, '.gwd')); } catch { /* ignore */ }
     });
 
-    // _clearGsdRootCache() must evict, triggering a fresh probe.
-    _clearGsdRootCache();
+    // _clearGwdRootCache() must evict, triggering a fresh probe.
+    _clearGwdRootCache();
     const afterRootClear = gsdRoot(f.projectDir);
 
     // Probe with .gwd absent falls through to creation fallback (same path value,
     // but the probe definitely ran). Restore and re-prime to confirm it returns
     // the live value rather than a stale cached one.
     renameSync(join(f.projectDir, '.gwd-hidden'), join(f.projectDir, '.gwd'));
-    _clearGsdRootCache();
+    _clearGwdRootCache();
     const reprobe = gsdRoot(f.projectDir);
     assert.equal(reprobe, join(f.projectDir, '.gwd'), 're-probe with .gwd restored must find it');
 
@@ -194,16 +194,16 @@ describe('realpath normalization: trailing slash shares cache entry', () => {
     }
   });
 
-  test('_clearGsdRootCache() + gsdRoot with trailing slash re-probes correctly', () => {
+  test('_clearGwdRootCache() + gsdRoot with trailing slash re-probes correctly', () => {
     const first = gsdRoot(f.projectDir);
 
-    _clearGsdRootCache();
+    _clearGwdRootCache();
     const second = gsdRoot(f.projectDir + '/');
 
     assert.equal(
       first,
       second,
-      '_clearGsdRootCache then call with trailing slash must return same resolved path',
+      '_clearGwdRootCache then call with trailing slash must return same resolved path',
     );
   });
 });

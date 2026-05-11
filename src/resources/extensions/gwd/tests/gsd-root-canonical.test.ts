@@ -13,7 +13,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 
-import { gsdRoot, _clearGsdRootCache } from "../paths.ts";
+import { gsdRoot, _clearGwdRootCache } from "../paths.ts";
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
@@ -23,11 +23,11 @@ describe("gsdRoot: returns realpath-canonicalized result", () => {
   beforeEach(() => {
     projectDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-root-canon-")));
     mkdirSync(join(projectDir, ".gwd"), { recursive: true });
-    _clearGsdRootCache();
+    _clearGwdRootCache();
   });
 
   afterEach(() => {
-    _clearGsdRootCache();
+    _clearGwdRootCache();
     rmSync(projectDir, { recursive: true, force: true });
   });
 
@@ -45,7 +45,7 @@ describe("gsdRoot: returns realpath-canonicalized result", () => {
       try { rmSync(linkPath); } catch { /* ignore */ }
     });
 
-    _clearGsdRootCache();
+    _clearGwdRootCache();
 
     const result = gsdRoot(linkPath);
     // The canonical .gwd is under the realpath of projectDir, not the symlink

@@ -20,7 +20,7 @@ function run(command: string, cwd: string): string {
 }
 
 function makeRepo(): string {
-  const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-worktree-cli-root-")));
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-worktree-cli-root-")));
   cleanupPaths.push(base);
   run("git init -b main", base);
   run('git config user.name "GSD Test"', base);

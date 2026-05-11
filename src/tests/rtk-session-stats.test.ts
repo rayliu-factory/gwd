@@ -45,7 +45,7 @@ function summary(totalCommands: number, totalInput: number, totalOutput: number,
 }
 
 test("RTK session savings diff from a persisted baseline", () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-rtk-session-stats-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-rtk-session-stats-"));
   mkdirSync(join(basePath, ".gwd", "runtime"), { recursive: true });
 
   const first = createFakeRtk({
@@ -78,7 +78,7 @@ test("RTK session savings diff from a persisted baseline", () => {
 });
 
 test("RTK session savings baseline resets cleanly when tracking totals go backwards", () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-rtk-session-reset-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-rtk-session-reset-"));
   mkdirSync(join(basePath, ".gwd", "runtime"), { recursive: true });
 
   const first = createFakeRtk({
@@ -108,7 +108,7 @@ test("RTK session savings baseline resets cleanly when tracking totals go backwa
 });
 
 test("RTK session stats fall back to the managed RTK path when GWD_RTK_PATH is unset", () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-rtk-session-managed-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-rtk-session-managed-"));
   mkdirSync(join(basePath, ".gwd", "runtime"), { recursive: true });
 
   const fake = createFakeRtk({
@@ -184,7 +184,7 @@ test("formatRtkSavingsLabel produces a compact footer string", () => {
 });
 
 test("clearRtkSessionBaseline removes a stored session entry", () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-rtk-session-clear-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-rtk-session-clear-"));
   mkdirSync(join(basePath, ".gwd", "runtime"), { recursive: true });
   const fake = createFakeRtk({
     "gain --all --format json": { stdout: summary(3, 300, 200, 100) },

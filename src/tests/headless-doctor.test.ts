@@ -41,7 +41,7 @@ import { recordDispatchClaim } from "../resources/extensions/gwd/db/unit-dispatc
 import { normalizeRealPath } from "../resources/extensions/gwd/paths.ts";
 
 function makeStaleLockFixture(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-headless-doctor-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-headless-doctor-"));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "Test Milestone", status: "active" });

@@ -18,7 +18,7 @@ import { tmpdir } from "node:os";
 import { randomUUID } from "node:crypto";
 
 import { checkSliceEvalReview } from "../commands-ship.js";
-import { _clearGsdRootCache, resolveSliceFile } from "../paths.js";
+import { _clearGwdRootCache, resolveSliceFile } from "../paths.js";
 
 describe("checkSliceEvalReview", () => {
   let basePath: string;
@@ -31,7 +31,7 @@ describe("checkSliceEvalReview", () => {
   });
 
   afterEach(() => {
-    _clearGsdRootCache();
+    _clearGwdRootCache();
     rmSync(basePath, { recursive: true, force: true });
   });
 

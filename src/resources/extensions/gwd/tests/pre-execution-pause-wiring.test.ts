@@ -21,7 +21,7 @@ import { postUnitPostVerification, type PostUnitContext } from "../auto-post-uni
 import { AutoSession } from "../auto/session.ts";
 import { openDatabase, closeDatabase, insertMilestone, insertSlice, insertTask, _getAdapter } from "../gwd-db.ts";
 import { invalidateAllCaches } from "../cache.ts";
-import { _clearGsdRootCache } from "../paths.ts";
+import { _clearGwdRootCache } from "../paths.ts";
 
 // ─── Test Fixtures ───────────────────────────────────────────────────────────
 
@@ -31,7 +31,7 @@ let originalCwd: string;
 
 function resetAllCaches(): void {
   invalidateAllCaches();
-  _clearGsdRootCache();
+  _clearGwdRootCache();
 }
 
 /**

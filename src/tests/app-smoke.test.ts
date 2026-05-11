@@ -411,7 +411,7 @@ test("loadStoredEnvKeys does not overwrite existing env vars", async (t) => {
 
 test("deriveState returns pre-planning phase for empty .gwd/ directory", async (t) => {
   const { deriveState } = await import("../resources/extensions/gwd/state.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-state-smoke-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-state-smoke-"));
 
   // Create minimal .gwd/ structure with no milestones
   mkdirSync(join(tmp, ".gwd"), { recursive: true });
@@ -434,7 +434,7 @@ test("deriveState returns pre-planning phase for empty .gwd/ directory", async (
 test("deriveState returns pre-planning phase when no .gwd/ directory exists", async (t) => {
   const { deriveState } = await import("../resources/extensions/gwd/state.ts");
   // Use a temp dir with no .gwd/ subdirectory at all
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-state-nogsd-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-state-nogsd-"));
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
   // Should not throw — missing .gwd/ is a valid "no project" state
@@ -447,7 +447,7 @@ test("deriveState returns pre-planning phase when no .gwd/ directory exists", as
 
 test("deriveState shape is structurally complete", async (t) => {
   const { deriveState } = await import("../resources/extensions/gwd/state.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-state-shape-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-state-shape-"));
   mkdirSync(join(tmp, ".gwd"), { recursive: true });
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
@@ -478,7 +478,7 @@ test("deriveState shape is structurally complete", async (t) => {
 
 test("runGSDDoctor completes without throwing on empty .gwd/ directory", async (t) => {
   const { runGSDDoctor } = await import("../resources/extensions/gwd/doctor.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-doctor-smoke-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-doctor-smoke-"));
   mkdirSync(join(tmp, ".gwd"), { recursive: true });
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
@@ -499,7 +499,7 @@ test("runGSDDoctor completes without throwing on empty .gwd/ directory", async (
 
 test("runGSDDoctor issue objects have required fields", async (t) => {
   const { runGSDDoctor } = await import("../resources/extensions/gwd/doctor.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-doctor-fields-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-doctor-fields-"));
   mkdirSync(join(tmp, ".gwd"), { recursive: true });
 
   // Create a milestone dir with no ROADMAP.md to force a missing_roadmap issue
@@ -527,7 +527,7 @@ test("runGSDDoctor issue objects have required fields", async (t) => {
 
 test("runGSDDoctor with fix:false never modifies the filesystem", async (t) => {
   const { runGSDDoctor } = await import("../resources/extensions/gwd/doctor.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-doctor-readonly-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-doctor-readonly-"));
   const gsdDir = join(tmp, ".gwd");
   mkdirSync(gsdDir, { recursive: true });
 

@@ -30,7 +30,7 @@ import {
 } from "../worktree.ts";
 
 import { deriveState } from "../state.ts";
-import { _clearGsdRootCache } from "../paths.ts";
+import { _clearGwdRootCache } from "../paths.ts";
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 
@@ -81,7 +81,7 @@ describe('worktree-integration', async () => {
   const originalHome = process.env.HOME;
   const fakeHome = mkdtempSync(join(tmpdir(), "gsd-fake-home-"));
   process.env.HOME = fakeHome;
-  _clearGsdRootCache();
+  _clearGwdRootCache();
   _resetServiceCache();
 
   // ── Verify main tree baseline ──────────────────────────────────────────────
@@ -210,7 +210,7 @@ describe('worktree-integration', async () => {
 
   // Restore HOME and reset caches
   process.env.HOME = originalHome;
-  _clearGsdRootCache();
+  _clearGwdRootCache();
   _resetServiceCache();
   rmSync(fakeHome, { recursive: true, force: true });
 });

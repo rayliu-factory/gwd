@@ -136,7 +136,7 @@ function cachedReaddir(dirPath: string): string[] {
  * NOTE: This does NOT clear gsdRootCache. The project root is stable for
  * the lifetime of a process; clearing it on every agent turn-end caused a
  * 250–2500 ms regression per session (git rev-parse + dir walk per turn).
- * Use _clearGsdRootCache() at session-reset boundaries (workspace switch,
+ * Use _clearGwdRootCache() at session-reset boundaries (workspace switch,
  * process exit) when the project root may genuinely change.
  */
 export function clearPathCache(): void {
@@ -303,7 +303,7 @@ const LEGACY_GWD_ROOT_FILES: Record<GSDRootFileKey, string> = {
 // normalization is the safety net that prevents cache poisoning from the
 // ~/.gwd walk-up bug (fixed in c46cf4786 + b35e070eb), making it safe to
 // hold this cache for the entire process lifetime.
-// Use _clearGsdRootCache() only at session-reset boundaries (workspace switch,
+// Use _clearGwdRootCache() only at session-reset boundaries (workspace switch,
 // process exit) — NOT inside clearPathCache(), which runs on every agent turn.
 const gsdRootCache = new Map<string, string>();
 
@@ -364,7 +364,7 @@ export function resolveGwdPathContract(
  * Do NOT call this on every agent turn — use clearPathCache() for volatile
  * directory listing invalidation instead.
  */
-export function _clearGsdRootCache(): void {
+export function _clearGwdRootCache(): void {
   gsdRootCache.clear();
 }
 

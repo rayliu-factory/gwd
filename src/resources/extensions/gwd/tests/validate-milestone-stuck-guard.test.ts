@@ -15,7 +15,7 @@ import {
   insertSlice,
 } from "../gwd-db.ts";
 import { invalidateAllCaches } from "../cache.ts";
-import { _clearGsdRootCache } from "../paths.ts";
+import { _clearGwdRootCache } from "../paths.ts";
 
 let tempDir: string;
 let dbPath: string;
@@ -58,7 +58,7 @@ function setupTestEnvironment(): void {
   mkdirSync(milestoneDir, { recursive: true });
 
   process.chdir(tempDir);
-  _clearGsdRootCache();
+  _clearGwdRootCache();
 
   dbPath = join(tempDir, ".gwd", "gwd.db");
   openDatabase(dbPath);

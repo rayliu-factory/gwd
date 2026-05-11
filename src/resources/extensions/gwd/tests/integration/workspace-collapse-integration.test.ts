@@ -18,7 +18,7 @@ import { createWorkspace, scopeMilestone } from "../../workspace.ts";
 import {
   gsdRoot,
   clearPathCache,
-  _clearGsdRootCache,
+  _clearGwdRootCache,
 } from "../../paths.ts";
 import {
   loadWriteGateSnapshot,
@@ -69,14 +69,14 @@ describe("workspace-collapse integration: Test 1 — cwd-drift path agreement", 
   beforeEach(() => {
     projectDir = makeProjectDir();
     otherDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-cwd-drift-other-")));
-    _clearGsdRootCache();
+    _clearGwdRootCache();
   });
 
   afterEach(() => {
     process.chdir(savedCwd);
     rmSync(projectDir, { recursive: true, force: true });
     rmSync(otherDir, { recursive: true, force: true });
-    _clearGsdRootCache();
+    _clearGwdRootCache();
   });
 
   test("contextFile() returns same absolute path before and after cwd change", () => {
