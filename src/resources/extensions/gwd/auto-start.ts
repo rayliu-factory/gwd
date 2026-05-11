@@ -1029,8 +1029,8 @@ export async function bootstrapAutoSession(
 
     // ── Initialize session state ──
     // Notify shared phase state so subagent conflict checks can fire
-    const { activateGSD: activateGSDPhaseState } = await import("../shared/gsd-phase-state.js");
-    activateGSDPhaseState();
+    const { activateGWD: activateGWDPhaseState } = await import("../shared/gwd-phase-state.js");
+    activateGWDPhaseState();
     s.active = true;
     s.stepMode = requestedStepMode;
     s.verbose = verboseMode;

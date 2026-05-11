@@ -32,7 +32,7 @@ function strip(s: string): string {
   return s.replace(/\x1b\[[0-9;]*m/g, '')
 }
 
-test('renders GSD logo', () => {
+test('renders GWD logo', () => {
   const out = strip(capture({ version: '1.0.0' }))
   assert.ok(out.includes('██'), 'logo block characters missing')
 })
@@ -45,11 +45,11 @@ test('renders version', () => {
 
 test('renders GWD project state or fallback hint', (t) => {
   // Model/provider intentionally removed from the welcome screen — they live
-  // in the persistent footer. Without .gsd/STATE.md present the welcome
+  // in the persistent footer. Without .gwd/STATE.md present the welcome
   // should surface the "No active GWD project" fallback instead.
   // chdir into an empty tmp dir so the fallback path is actually exercised
-  // regardless of what the repo we're running from has in .gsd/.
-  const tmp = mkdtempSync(join(tmpdir(), 'gsd-welcome-fallback-'))
+  // regardless of what the repo we're running from has in .gwd/.
+  const tmp = mkdtempSync(join(tmpdir(), 'gwd-welcome-fallback-'))
   const origCwd = process.cwd()
   process.chdir(tmp)
   t.after(() => {
@@ -60,7 +60,7 @@ test('renders GWD project state or fallback hint', (t) => {
   const out = strip(capture({ version: '1.0.0', modelName: 'claude-opus-4-6', provider: 'Anthropic' }))
   assert.ok(
     out.includes('No active GWD project') || /Active\s+M\d+/.test(out),
-    'welcome should show GSD state lines or the no-project fallback',
+    'welcome should show GWD state lines or the no-project fallback',
   )
 })
 
@@ -103,10 +103,10 @@ test('omits remote channel when not provided', () => {
 })
 
 test('Active row truncates with ellipsis when milestone text overflows panel width', (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), 'gsd-welcome-test-'))
-  mkdirSync(join(tmp, '.gsd'))
+  const tmp = mkdtempSync(join(tmpdir(), 'gwd-welcome-test-'))
+  mkdirSync(join(tmp, '.gwd'))
   writeFileSync(
-    join(tmp, '.gsd', 'STATE.md'),
+    join(tmp, '.gwd', 'STATE.md'),
     [
       '**Active Milestone:** M001: Todo App – Core add/complete/delete with localStorage persistence and offline sync support',
       '**Phase:** evaluating-gates',
@@ -133,9 +133,9 @@ test('Active row truncates with ellipsis when milestone text overflows panel wid
 })
 
 test('Active row does not truncate short milestone text', (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), 'gsd-welcome-test-'))
-  mkdirSync(join(tmp, '.gsd'))
-  writeFileSync(join(tmp, '.gsd', 'STATE.md'), '**Active Milestone:** M001: Short title\n')
+  const tmp = mkdtempSync(join(tmpdir(), 'gwd-welcome-test-'))
+  mkdirSync(join(tmp, '.gwd'))
+  writeFileSync(join(tmp, '.gwd', 'STATE.md'), '**Active Milestone:** M001: Short title\n')
   const origCwd = process.cwd()
   process.chdir(tmp)
   const origColumns = (process.stderr as any).columns

@@ -12,12 +12,12 @@ test("derivePendingWorkflowCommandLabel prefers the latest input line while a co
     commandInFlight: "prompt",
     terminalLines: [
       { id: "1", timestamp: "12:00", type: "system", content: "Bridge ready" },
-      { id: "2", timestamp: "12:01", type: "input", content: "/gsd" },
+      { id: "2", timestamp: "12:01", type: "input", content: "/gwd" },
       { id: "3", timestamp: "12:02", type: "system", content: "Working…" },
     ],
   })
 
-  assert.equal(label, "/gsd")
+  assert.equal(label, "/gwd")
 })
 
 test("derivePendingWorkflowCommandLabel falls back to the command type when no input line exists", () => {

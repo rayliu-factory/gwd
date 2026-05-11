@@ -1,4 +1,4 @@
-// GSD2 Shared Phase State Coordination Tests
+// GWD Shared Phase State Coordination Tests
 
 import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert/strict";
@@ -6,30 +6,30 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
-	activateGSD,
-	configureGSDPhaseAudit,
-	deactivateGSD,
+	activateGWD,
+	configureGWDPhaseAudit,
+	deactivateGWD,
 	setCurrentPhase,
 	clearCurrentPhase,
-	isGSDActive,
+	isGWDActive,
 	getCurrentPhase,
-} from "../gsd-phase-state.js";
+} from "../gwd-phase-state.js";
 
-describe("gsd-phase-state", () => {
+describe("gwd-phase-state", () => {
 	beforeEach(() => {
-		deactivateGSD();
+		deactivateGWD();
 	});
 
 	it("tracks active/inactive state", () => {
-		assert.equal(isGSDActive(), false);
-		activateGSD();
-		assert.equal(isGSDActive(), true);
-		deactivateGSD();
-		assert.equal(isGSDActive(), false);
+		assert.equal(isGWDActive(), false);
+		activateGWD();
+		assert.equal(isGWDActive(), true);
+		deactivateGWD();
+		assert.equal(isGWDActive(), false);
 	});
 
 	it("tracks the current phase when active", () => {
-		activateGSD();
+		activateGWD();
 		assert.equal(getCurrentPhase(), null);
 		assert.equal(setCurrentPhase("plan-milestone"), true);
 		assert.equal(getCurrentPhase(), "plan-milestone");
@@ -39,36 +39,36 @@ describe("gsd-phase-state", () => {
 
 	it("rejects phase changes while inactive", () => {
 		assert.equal(setCurrentPhase("plan-milestone"), false);
-		activateGSD();
+		activateGWD();
 		assert.equal(getCurrentPhase(), null);
 	});
 
 	it("returns null phase when inactive even if phase was set", () => {
-		activateGSD();
+		activateGWD();
 		setCurrentPhase("plan-milestone");
-		deactivateGSD();
+		deactivateGWD();
 		assert.equal(getCurrentPhase(), null);
 	});
 
 	it("deactivation clears the current phase", () => {
-		activateGSD();
+		activateGWD();
 		setCurrentPhase("execute-task");
-		deactivateGSD();
-		activateGSD();
+		deactivateGWD();
+		activateGWD();
 		assert.equal(getCurrentPhase(), null);
 	});
 
 	it("deactivation clears the audit context so later events do not carry stale trace data", () => {
-		const basePath = mkdtempSync(join(tmpdir(), "gsd-phase-state-audit-"));
+		const basePath = mkdtempSync(join(tmpdir(), "gwd-phase-state-audit-"));
 		try {
-			activateGSD({ basePath, traceId: "stale-trace", causedBy: "test" });
+			activateGWD({ basePath, traceId: "stale-trace", causedBy: "test" });
 			setCurrentPhase("plan-milestone");
-			deactivateGSD();
+			deactivateGWD();
 
 			// Re-activate WITHOUT a context. If deactivate did not clear the
 			// stored context, this setCurrentPhase would emit an audit event
 			// using "stale-trace".
-			activateGSD();
+			activateGWD();
 			setCurrentPhase("execute-task");
 
 			const eventsPath = join(basePath, ".gsd", "audit", "events.jsonl");
@@ -82,8 +82,8 @@ describe("gsd-phase-state", () => {
 				);
 			}
 		} finally {
-			configureGSDPhaseAudit(null);
-			deactivateGSD();
+			configureGWDPhaseAudit(null);
+			deactivateGWD();
 			rmSync(basePath, { recursive: true, force: true });
 		}
 	});

@@ -24,7 +24,7 @@ import { type ExtensionAPI, getMarkdownTheme } from "@gwd/pi-coding-agent";
 import { Container, Markdown, Spacer, Text } from "@gwd/pi-tui";
 import { Type } from "@sinclair/typebox";
 import { formatTokenCount } from "../shared/mod.js";
-import { getCurrentPhase } from "../shared/gsd-phase-state.js";
+import { getCurrentPhase } from "../shared/gwd-phase-state.js";
 import { type AgentConfig, type AgentScope, discoverAgents } from "./agents.js";
 import {
 	type IsolationEnvironment,

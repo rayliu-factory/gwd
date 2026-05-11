@@ -127,7 +127,7 @@ import {
   resetSkillTelemetry,
 } from "./skill-telemetry.js";
 import { getRtkSessionSavings } from "../shared/rtk-session-stats.js";
-import { deactivateGSD } from "../shared/gsd-phase-state.js";
+import { deactivateGWD } from "../shared/gwd-phase-state.js";
 import {
   initMetrics,
   resetMetrics,
@@ -938,7 +938,7 @@ function handleLostSessionLock(
   });
   s.active = false;
   s.paused = false;
-  deactivateGSD();
+  deactivateGWD();
   clearUnitTimeout();
   stopAutoCommandPolling();
   restoreProjectRootEnv();
@@ -992,7 +992,7 @@ export async function rerootCommandSession(
 export async function cleanupAfterLoopExit(ctx: ExtensionContext): Promise<void> {
   s.currentUnit = null;
   s.active = false;
-  deactivateGSD();
+  deactivateGWD();
   clearUnitTimeout();
   stopAutoCommandPolling();
   restoreProjectRootEnv();
@@ -1669,7 +1669,7 @@ export async function pauseAuto(
 
   s.active = false;
   s.paused = true;
-  deactivateGSD();
+  deactivateGWD();
   restoreProjectRootEnv();
   restoreMilestoneLockEnv();
   s.pendingVerificationRetry = null;

@@ -1,5 +1,5 @@
-// GSD2 — Ecosystem extension loader for ./.gwd/extensions/
-// Discovers and registers single-file extensions that consume GSDExtensionAPI.
+// GWD — Ecosystem extension loader for ./.gwd/extensions/
+// Discovers and registers single-file extensions that consume GWDExtensionAPI.
 // Trust-gated (mirrors pi's `.pi/extensions/` model) and isolated from pi's
 // own loader chain — handlers run in GWD's own dispatch step, not pi's.
 
@@ -12,10 +12,10 @@ import { getAgentDir } from "@gwd/pi-coding-agent";
 
 import { logWarning } from "../workflow-logger.js";
 import {
-  createGSDExtensionAPI,
-  type GSDEcosystemBeforeAgentStartHandler,
-  type GSDExtensionAPI,
-} from "./gsd-extension-api.js";
+  createGWDExtensionAPI,
+  type GWDEcosystemBeforeAgentStartHandler,
+  type GWDExtensionAPI,
+} from "./gwd-extension-api.js";
 
 // ─── Trust check (inlined; pi does not export isProjectTrusted from its
 // package root, and constraint forbids modifying packages/pi-coding-agent/) ─
@@ -49,7 +49,7 @@ let _untrustedWarned = false;
  */
 export function loadEcosystemExtensions(
   pi: ExtensionAPI,
-  sharedHandlers: GSDEcosystemBeforeAgentStartHandler[],
+  sharedHandlers: GWDEcosystemBeforeAgentStartHandler[],
   cwd: string = process.cwd(),
 ): Promise<void> {
   if (_readyPromise) return _readyPromise;
@@ -76,7 +76,7 @@ export function _resetEcosystemLoader(): void {
 
 async function _loadEcosystemExtensionsImpl(
   pi: ExtensionAPI,
-  sharedHandlers: GSDEcosystemBeforeAgentStartHandler[],
+  sharedHandlers: GWDEcosystemBeforeAgentStartHandler[],
   cwd: string,
 ): Promise<void> {
   const extDir = path.join(cwd, ".gwd", "extensions");
@@ -122,7 +122,7 @@ async function _loadEcosystemExtensionsImpl(
 
   // The wrapper api is built once per loader run and shared by all extensions
   // so they all read from the same module-level snapshot.
-  const api: GSDExtensionAPI = createGSDExtensionAPI(pi, sharedHandlers);
+  const api: GWDExtensionAPI = createGWDExtensionAPI(pi, sharedHandlers);
 
   for (const entry of entries) {
     await _loadOne(extDir, realExtDir, entry, api);
@@ -133,7 +133,7 @@ async function _loadOne(
   extDir: string,
   realExtDir: string,
   entry: string,
-  api: GSDExtensionAPI,
+  api: GWDExtensionAPI,
 ): Promise<void> {
   const fullPath = path.join(extDir, entry);
 

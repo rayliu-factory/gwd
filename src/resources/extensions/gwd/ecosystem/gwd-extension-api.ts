@@ -1,4 +1,4 @@
-// GSD2 — Ecosystem Extension API wrapper
+// GWD — Ecosystem Extension API wrapper
 // Wraps pi's ExtensionAPI to expose typed GWD context (phase + active unit)
 // to extensions loaded from `./.gwd/extensions/`. The wrapper intercepts only
 // `on("before_agent_start", ...)` so GWD can dispatch ecosystem handlers AFTER
@@ -32,19 +32,19 @@ export interface BeforeAgentStartEventResult {
 }
 
 import type { GSDActiveUnit, GSDState, Phase } from "../types.js";
-import { isGSDActive, getCurrentPhase } from "../../shared/gsd-phase-state.js";
+import { isGWDActive, getCurrentPhase } from "../../shared/gwd-phase-state.js";
 import { logWarning } from "../workflow-logger.js";
 
 // ─── Public Interface ───────────────────────────────────────────────────
 
-export interface GSDExtensionAPI extends ExtensionAPI {
+export interface GWDExtensionAPI extends ExtensionAPI {
   /** Current GWD workflow phase, or null if no project state. */
   getPhase(): Phase | null;
   /** Currently active milestone/slice/task triple, or null if none. */
   getActiveUnit(): GSDActiveUnit | null;
 }
 
-export type GSDEcosystemBeforeAgentStartHandler = ExtensionHandler<
+export type GWDEcosystemBeforeAgentStartHandler = ExtensionHandler<
   BeforeAgentStartEvent,
   BeforeAgentStartEventResult
 >;
@@ -73,7 +73,7 @@ export function mapAutoLoopPhase(raw: string): Phase | null {
 
 function resolvePhase(state: GSDState | null): Phase | null {
   if (!state) return null;
-  if (isGSDActive()) {
+  if (isGWDActive()) {
     const raw = getCurrentPhase();
     if (raw != null) {
       const mapped = AUTO_LOOP_PHASE_MAP[raw];
@@ -134,22 +134,22 @@ export function _resetSnapshot(): void {
 // ─── Wrapper factory ────────────────────────────────────────────────────
 
 /**
- * Build a GSDExtensionAPI by manually delegating every ExtensionAPI method
+ * Build a GWDExtensionAPI by manually delegating every ExtensionAPI method
  * to the underlying pi instance, except `on("before_agent_start", ...)`
  * which is captured into `sharedHandlers` for GWD-owned dispatch.
  *
- * Uses `satisfies GSDExtensionAPI` (NOT `as`) so TypeScript catches drift
+ * Uses `satisfies GWDExtensionAPI` (NOT `as`) so TypeScript catches drift
  * when pi adds new ExtensionAPI methods.
  */
-export function createGSDExtensionAPI(
+export function createGWDExtensionAPI(
   pi: ExtensionAPI,
-  sharedHandlers: GSDEcosystemBeforeAgentStartHandler[],
-): GSDExtensionAPI {
+  sharedHandlers: GWDEcosystemBeforeAgentStartHandler[],
+): GWDExtensionAPI {
   const wrapper = {
     // ── Event subscription (single intercept point) ────────────────────
     on(event: any, handler: any): void {
       if (event === "before_agent_start") {
-        sharedHandlers.push(handler as GSDEcosystemBeforeAgentStartHandler);
+        sharedHandlers.push(handler as GWDEcosystemBeforeAgentStartHandler);
         return;
       }
       (pi.on as (e: any, h: any) => void)(event, handler);
@@ -227,7 +227,7 @@ export function createGSDExtensionAPI(
     // ── GWD-specific additions ─────────────────────────────────────────
     getPhase: (): Phase | null => _snapshot.phase,
     getActiveUnit: (): GSDActiveUnit | null => _snapshot.activeUnit,
-  } satisfies GSDExtensionAPI;
+  } satisfies GWDExtensionAPI;
 
   return wrapper;
 }

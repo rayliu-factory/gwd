@@ -36,7 +36,7 @@ import { debugLog } from "../debug-logger.js";
 import { resolveWorktreeProjectRoot, normalizeWorktreePathForCompare } from "../worktree-root.js";
 import { classifyProject } from "../detection.js";
 import { MergeConflictError } from "../git-service.js";
-import { setCurrentPhase, clearCurrentPhase } from "../../shared/gsd-phase-state.js";
+import { setCurrentPhase, clearCurrentPhase } from "../../shared/gwd-phase-state.js";
 import { pauseAutoForProviderError } from "../provider-error-pause.js";
 import { resumeAutoAfterProviderDelay } from "../bootstrap/provider-error-resume.js";
 import { join, basename } from "node:path";

@@ -113,18 +113,18 @@ describe("extension bootstrap isolation (#4168, #4172)", () => {
   });
 });
 
-// Behavioural contract for registerGsdExtension itself: each non-core
+// Behavioural contract for registerGwdExtension itself: each non-core
 // registration is wrapped in its own try/catch so one failure does not
 // prevent siblings from loading.
 
-import { registerGsdExtension } from "../bootstrap/register-extension.ts";
+import { registerGwdExtension } from "../bootstrap/register-extension.ts";
 
-describe("registerGsdExtension defensive registration", () => {
+describe("registerGwdExtension defensive registration", () => {
   test("a failing shortcut registration does not prevent kill command registration", async () => {
     // `shortcuts` is registered via a non-critical slot that is wrapped in
     // its own try/catch. `kill` is registered before the non-critical loop
     // as a critical command. Simulate: registerShortcut throws. Expect:
-    // 'kill' is still registered, registerGsdExtension does not throw.
+    // 'kill' is still registered, registerGwdExtension does not throw.
     const registered: string[] = [];
     const pi = {
       registerCommand: (name: string) => {
@@ -137,7 +137,7 @@ describe("registerGsdExtension defensive registration", () => {
       },
       events: { on: () => {}, off: () => {}, emit: () => {} },
     };
-    assert.doesNotThrow(() => registerGsdExtension(pi as any));
+    assert.doesNotThrow(() => registerGwdExtension(pi as any));
     assert.ok(
       registered.includes("kill"),
       `expected 'kill' to be registered despite shortcut failure, got ${JSON.stringify(registered)}`,
@@ -155,10 +155,10 @@ describe("registerGsdExtension defensive registration", () => {
       registerShortcut: () => {},
       events: { on: () => {}, off: () => {}, emit: () => {} },
     };
-    registerGsdExtension(pi as any);
+    registerGwdExtension(pi as any);
     assert.ok(
-      !registered.includes("gsd"),
-      `registerGsdExtension must NOT register 'gsd' (it is registered separately by index.ts), got ${JSON.stringify(registered)}`,
+      !registered.includes("gwd"),
+      `registerGwdExtension must NOT register 'gwd' (it is registered separately by index.ts), got ${JSON.stringify(registered)}`,
     );
   });
 });

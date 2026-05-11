@@ -377,7 +377,7 @@ test("workspace store keeps extension status, widgets, title overrides, and edit
     statusTexts: { health: "All systems ready" },
     widgetContents: { health: { lines: ["ok"], placement: "belowEditor" } },
     titleOverride: "Release hardening",
-    editorTextBuffer: "/gsd status",
+    editorTextBuffer: "/gwd status",
     activeToolExecution: {
       id: "tool-1",
       name: "Bash",
@@ -386,7 +386,7 @@ test("workspace store keeps extension status, widgets, title overrides, and edit
     },
   });
 
-  assert.equal(store.consumeEditorTextBuffer(), "/gsd status");
+  assert.equal(store.consumeEditorTextBuffer(), "/gwd status");
   assert.equal(store.consumeEditorTextBuffer(), null);
 
   const snapshot = store.getSnapshot();

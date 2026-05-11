@@ -1,10 +1,10 @@
-// GSD2 — Extension registration: wires all GWD tools, commands, and hooks into pi
+// GWD — Extension registration: wires all GWD tools, commands, and hooks into pi
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
 import { registerExitCommand } from "../exit-command.js";
 import { registerLazyWorktreeCommands } from "../worktree-command-bootstrap.js";
-import type { GSDEcosystemBeforeAgentStartHandler } from "../ecosystem/gsd-extension-api.js";
+import type { GWDEcosystemBeforeAgentStartHandler } from "../ecosystem/gwd-extension-api.js";
 import { registerDbTools } from "./db-tools.js";
 import { registerDynamicTools } from "./dynamic-tools.js";
 import { registerExecTools } from "./exec-tools.js";
@@ -67,7 +67,7 @@ export function installEpipeGuard(): void {
   }
 }
 
-export function registerGsdExtension(pi: ExtensionAPI): void {
+export function registerGwdExtension(pi: ExtensionAPI): void {
   // Note: registerGWDCommand is called by index.ts before this function,
   // so we intentionally skip it here to avoid double-registration.
   registerLazyWorktreeCommands(pi);
@@ -88,9 +88,9 @@ export function registerGsdExtension(pi: ExtensionAPI): void {
 
   installEpipeGuard();
 
-  // Ecosystem handlers captured by the GSDExtensionAPI wrapper for the
+  // Ecosystem handlers captured by the GWDExtensionAPI wrapper for the
   // GWD-owned `before_agent_start` dispatch step (#3338).
-  const ecosystemHandlers: GSDEcosystemBeforeAgentStartHandler[] = [];
+  const ecosystemHandlers: GWDEcosystemBeforeAgentStartHandler[] = [];
 
   pi.registerCommand("kill", {
     description: "Exit GWD immediately (no cleanup)",

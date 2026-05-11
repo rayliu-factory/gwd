@@ -8,8 +8,8 @@ import { pathToFileURL } from "node:url";
 import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
 import { isToolCallEventType } from "@gwd/pi-coding-agent";
 
-import type { GSDEcosystemBeforeAgentStartHandler } from "../ecosystem/gsd-extension-api.js";
-import { updateSnapshot } from "../ecosystem/gsd-extension-api.js";
+import type { GWDEcosystemBeforeAgentStartHandler } from "../ecosystem/gwd-extension-api.js";
+import { updateSnapshot } from "../ecosystem/gwd-extension-api.js";
 
 import { buildMilestoneFileName, resolveMilestonePath, resolveSliceFile, resolveSlicePath } from "../paths.js";
 import { canonicalToolName, clearDiscussionFlowState, isDepthConfirmationAnswer, isQueuePhaseActive, markApprovalGateVerified, markDepthVerified, resetWriteGateState, shouldBlockContextWrite, shouldBlockPlanningUnit, shouldBlockQueueExecution, shouldBlockWorktreeWrite, isGateQuestionId, setPendingGate, clearPendingGate, getPendingGate, shouldBlockPendingGate, shouldBlockPendingGateBash, extractDepthVerificationMilestoneId } from "./write-gate.js";
@@ -421,7 +421,7 @@ async function writeContextModeCompactionSnapshot(basePath: string): Promise<voi
 
 export function registerHooks(
   pi: ExtensionAPI,
-  ecosystemHandlers: GSDEcosystemBeforeAgentStartHandler[],
+  ecosystemHandlers: GWDEcosystemBeforeAgentStartHandler[],
 ): void {
   pi.on("session_start", async (_event, ctx) => {
     const basePath = contextBasePath(ctx);
@@ -521,7 +521,7 @@ export function registerHooks(
     // each handler sees the systemPrompt mutated by prior handlers.
     let currentSystemPrompt = gsdResult?.systemPrompt ?? event.systemPrompt;
     // `any` because pi's BeforeAgentStartEventResult.message uses an internal
-    // CustomMessage type that's not re-exported (see ecosystem/gsd-extension-api.ts).
+    // CustomMessage type that's not re-exported (see ecosystem/gwd-extension-api.ts).
     let lastMessage: any = gsdResult?.message;
 
     for (const handler of ecosystemHandlers) {

@@ -256,8 +256,8 @@ export interface GSDState {
 }
 
 // ─── GWD Ecosystem Extension API Types ────────────────────────────────────
-// Pure data type — no runtime deps. The GSDExtensionAPI interface itself
-// lives in ecosystem/gsd-extension-api.ts (it imports from pi).
+// Pure data type — no runtime deps. The GWDExtensionAPI interface itself
+// lives in ecosystem/gwd-extension-api.ts (it imports from pi).
 
 export interface GSDActiveUnit {
   milestoneId: string;

@@ -12,14 +12,14 @@ import { buildAuditEnvelope, emitUokAuditEvent } from "../gwd/uok/audit.js";
 let _active = false;
 let _currentPhase: string | null = null;
 
-export interface GSDPhaseAuditContext {
+export interface GWDPhaseAuditContext {
 	basePath: string;
 	traceId: string;
 	turnId?: string;
 	causedBy?: string;
 }
 
-let _auditContext: GSDPhaseAuditContext | null = null;
+let _auditContext: GWDPhaseAuditContext | null = null;
 
 function emitPhaseChange(action: string, previousPhase: string | null, nextPhase: string | null): void {
 	if (!_auditContext) return;
@@ -41,12 +41,12 @@ function emitPhaseChange(action: string, previousPhase: string | null, nextPhase
 	);
 }
 
-export function configureGSDPhaseAudit(context: GSDPhaseAuditContext | null): void {
+export function configureGWDPhaseAudit(context: GWDPhaseAuditContext | null): void {
 	_auditContext = context;
 }
 
 /** Mark GWD auto-mode as active. */
-export function activateGSD(context?: GSDPhaseAuditContext): void {
+export function activateGWD(context?: GWDPhaseAuditContext): void {
 	if (context) _auditContext = context;
 	const previousPhase = _currentPhase;
 	_active = true;
@@ -54,7 +54,7 @@ export function activateGSD(context?: GSDPhaseAuditContext): void {
 }
 
 /** Mark GWD auto-mode as inactive and clear the current phase. */
-export function deactivateGSD(): void {
+export function deactivateGWD(): void {
 	const previousPhase = _currentPhase;
 	_active = false;
 	_currentPhase = null;
@@ -63,7 +63,7 @@ export function deactivateGSD(): void {
 }
 
 /** Set the currently dispatched GWD phase (e.g. "plan-milestone"). */
-export function setCurrentPhase(phase: string, context?: GSDPhaseAuditContext): boolean {
+export function setCurrentPhase(phase: string, context?: GWDPhaseAuditContext): boolean {
 	if (context) _auditContext = context;
 	if (!_active) {
 		process.emitWarning(`Ignoring GWD phase "${phase}" while GWD auto-mode is inactive`, {
@@ -85,7 +85,7 @@ export function clearCurrentPhase(): void {
 }
 
 /** Returns true if GWD auto-mode is currently active. */
-export function isGSDActive(): boolean {
+export function isGWDActive(): boolean {
 	return _active;
 }
 

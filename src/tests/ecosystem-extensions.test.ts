@@ -1,4 +1,4 @@
-// GSD2 — Tests for the ecosystem extension wrapper (#3338)
+// GWD — Tests for the ecosystem extension wrapper (#3338)
 // Covers: AUTO_LOOP_PHASE_MAP behavior, before_agent_start interception,
 // snapshot reads, and a key-drift guard against pi's ExtensionAPI surface.
 
@@ -7,13 +7,13 @@ import { test } from "node:test";
 
 import {
   _resetSnapshot,
-  createGSDExtensionAPI,
-  type GSDEcosystemBeforeAgentStartHandler,
+  createGWDExtensionAPI,
+  type GWDEcosystemBeforeAgentStartHandler,
   getSnapshotActiveUnit,
   getSnapshotPhase,
   mapAutoLoopPhase,
   updateSnapshot,
-} from "../resources/extensions/gwd/ecosystem/gsd-extension-api.js";
+} from "../resources/extensions/gwd/ecosystem/gwd-extension-api.js";
 import type { GSDState } from "../resources/extensions/gwd/types.js";
 
 // ─── Test fixtures ──────────────────────────────────────────────────────
@@ -101,12 +101,12 @@ test("mapAutoLoopPhase returns null for unknown keys (does not default)", () => 
   assert.notEqual(mapAutoLoopPhase("not-a-real-phase"), "executing");
 });
 
-test("createGSDExtensionAPI intercepts before_agent_start", () => {
+test("createGWDExtensionAPI intercepts before_agent_start", () => {
   const { pi, onCalls } = buildPiStub();
-  const shared: GSDEcosystemBeforeAgentStartHandler[] = [];
-  const api = createGSDExtensionAPI(pi, shared);
+  const shared: GWDEcosystemBeforeAgentStartHandler[] = [];
+  const api = createGWDExtensionAPI(pi, shared);
 
-  const handler: GSDEcosystemBeforeAgentStartHandler = async () => undefined;
+  const handler: GWDEcosystemBeforeAgentStartHandler = async () => undefined;
   api.on("before_agent_start", handler);
 
   assert.equal(shared.length, 1);
@@ -114,10 +114,10 @@ test("createGSDExtensionAPI intercepts before_agent_start", () => {
   assert.equal(onCalls.length, 0, "pi.on should NOT be invoked for before_agent_start");
 });
 
-test("createGSDExtensionAPI delegates non-intercepted events to pi.on", () => {
+test("createGWDExtensionAPI delegates non-intercepted events to pi.on", () => {
   const { pi, onCalls } = buildPiStub();
-  const shared: GSDEcosystemBeforeAgentStartHandler[] = [];
-  const api = createGSDExtensionAPI(pi, shared);
+  const shared: GWDEcosystemBeforeAgentStartHandler[] = [];
+  const api = createGWDExtensionAPI(pi, shared);
 
   const handler = (): void => {};
   api.on("session_start", handler);
@@ -131,7 +131,7 @@ test("createGSDExtensionAPI delegates non-intercepted events to pi.on", () => {
 test("getPhase / getActiveUnit read from module snapshot", () => {
   _resetSnapshot();
   const { pi } = buildPiStub();
-  const api = createGSDExtensionAPI(pi, []);
+  const api = createGWDExtensionAPI(pi, []);
 
   // Initial state: nothing loaded
   assert.equal(api.getPhase(), null);
@@ -156,7 +156,7 @@ test("getPhase / getActiveUnit read from module snapshot", () => {
 test("getActiveUnit returns null when state has no active triple", () => {
   _resetSnapshot();
   const { pi } = buildPiStub();
-  const api = createGSDExtensionAPI(pi, []);
+  const api = createGWDExtensionAPI(pi, []);
 
   updateSnapshot(buildState({ activeTask: null }));
   assert.equal(api.getActiveUnit(), null);
@@ -176,11 +176,11 @@ test("updateSnapshot(null) resets both snapshot fields", () => {
 
 test("wrapper key-drift guard: every ExtensionAPI method is delegated", () => {
   // If pi adds a new method to ExtensionAPI and the wrapper isn't updated,
-  // the `satisfies GSDExtensionAPI` check will fail at compile time. This
+  // the `satisfies GWDExtensionAPI` check will fail at compile time. This
   // runtime test catches a different failure: a method becoming a no-op
   // on the wrapper because the wrapper key doesn't exist.
   const { pi } = buildPiStub();
-  const api = createGSDExtensionAPI(pi, []);
+  const api = createGWDExtensionAPI(pi, []);
 
   const expectedKeys = [
     "on",
