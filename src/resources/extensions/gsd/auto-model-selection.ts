@@ -22,6 +22,9 @@ import { isModelBlocked } from "./blocked-models.js";
 import { getRequiredWorkflowToolsForAutoUnit } from "./workflow-mcp.js";
 import {
   adjustOllamaAppleSiliconFallbacks,
+  OLLAMA_PROVIDER,
+  OLLAMA_QWEN36_27B_NVFP4,
+  OLLAMA_QWEN36_35B_A3B_NVFP4,
   resolveOllamaAppleSiliconPreset,
 } from "./ollama-apple-silicon-profile.js";
 
@@ -120,6 +123,28 @@ function reapplyThinkingLevel(
 ): void {
   if (!level) return;
   pi.setThinkingLevel(level);
+}
+
+function isOllamaAppleSiliconQwen(model: Pick<Model<Api>, "provider" | "id">): boolean {
+  return model.provider === OLLAMA_PROVIDER &&
+    (model.id === OLLAMA_QWEN36_27B_NVFP4 || model.id === OLLAMA_QWEN36_35B_A3B_NVFP4);
+}
+
+function applyOllamaAppleContextOverride(model: Model<Api>, prefs: GSDPreferences | undefined): Model<Api> {
+  const contextWindow = prefs?.context_window_override;
+  if (contextWindow === undefined || contextWindow <= 0 || !Number.isFinite(contextWindow)) {
+    return model;
+  }
+  if (!isOllamaAppleSiliconQwen(model)) return model;
+
+  return {
+    ...model,
+    contextWindow,
+    providerOptions: {
+      ...(model.providerOptions ?? {}),
+      num_ctx: contextWindow,
+    },
+  };
 }
 
 export function resolvePreferredModelConfig(
@@ -547,23 +572,24 @@ export async function selectAndApplyModel(
         }
       }
 
-      const ok = await pi.setModel(model, { persist: false });
+      const modelToApply = applyOllamaAppleContextOverride(model, prefs);
+      const ok = await pi.setModel(modelToApply, { persist: false });
       if (ok) {
-        appliedModel = model;
+        appliedModel = modelToApply;
         reapplyThinkingLevel(pi, autoModeStartThinkingLevel);
 
         // ADR-005: Adjust active tool set for the selected model's provider capabilities.
         // Hard-filter incompatible tools, then let extensions override via adjust_tool_set hook.
         const activeToolNames = pi.getActiveTools();
-        const { toolNames: compatibleTools, removedTools } = adjustToolSet(activeToolNames, model.api, model.provider);
+        const { toolNames: compatibleTools, removedTools } = adjustToolSet(activeToolNames, modelToApply.api, modelToApply.provider);
         let finalToolNames = compatibleTools;
 
         // Fire adjust_tool_set hook — extensions can override the filtered tool set
         if (routingConfig.hooks !== false) {
           const hookResult = await pi.emitAdjustToolSet({
-            selectedModelApi: model.api,
-            selectedModelProvider: model.provider,
-            selectedModelId: model.id,
+            selectedModelApi: modelToApply.api,
+            selectedModelProvider: modelToApply.provider,
+            selectedModelId: modelToApply.id,
             activeToolNames,
             filteredTools: removedTools,
           });
@@ -582,7 +608,7 @@ export async function selectAndApplyModel(
             ? ""
             : ` (fallback from ${effectiveModelConfig.primary})`;
           const phase = unitPhaseLabel(unitType);
-          ctx.ui.notify(`Model [${phase}]${routingTierLabel}: ${model.provider}/${model.id}${fallbackNote}`, "info");
+          ctx.ui.notify(`Model [${phase}]${routingTierLabel}: ${modelToApply.provider}/${modelToApply.id}${fallbackNote}`, "info");
           // ADR-005: Report tools filtered due to provider incompatibility
           if (removedTools.length > 0) {
             ctx.ui.notify(

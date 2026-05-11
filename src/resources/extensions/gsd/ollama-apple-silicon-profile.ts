@@ -41,21 +41,23 @@ function isOllamaSession(input: OllamaAppleSiliconPresetInput): boolean {
   return input.currentProvider === OLLAMA_PROVIDER || input.autoModeStartModel?.provider === OLLAMA_PROVIDER;
 }
 
-function hasExplicitModelRouting(input: OllamaAppleSiliconPresetInput): boolean {
-  if (input.prefs?.models !== undefined || input.prefs?.dynamic_routing !== undefined) {
-    return true;
-  }
+function hasRoutingOverride(prefs: GSDPreferences | undefined): boolean {
+  return prefs?.models !== undefined || prefs?.dynamic_routing !== undefined;
+}
 
+function hasExplicitModelRouting(input: OllamaAppleSiliconPresetInput): boolean {
   if (input.basePath !== undefined) {
     const globalPrefs = loadGlobalGSDPreferences()?.preferences;
     const projectPrefs = loadProjectGSDPreferences(input.basePath)?.preferences;
-    return globalPrefs?.models !== undefined ||
-      globalPrefs?.dynamic_routing !== undefined ||
-      projectPrefs?.models !== undefined ||
-      projectPrefs?.dynamic_routing !== undefined;
+    if (hasRoutingOverride(globalPrefs) || hasRoutingOverride(projectPrefs)) {
+      return true;
+    }
+    if (globalPrefs || projectPrefs) {
+      return false;
+    }
   }
 
-  return false;
+  return hasRoutingOverride(input.prefs);
 }
 
 function isSuppressed(provider: string, id: string): boolean {
