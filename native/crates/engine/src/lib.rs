@@ -1,4 +1,4 @@
-//! N-API addon for GSD.
+//! N-API addon for GWD.
 //!
 //! Exposes high-performance Rust modules to Node.js via napi-rs.
 //! ```text
@@ -22,7 +22,7 @@ mod ps;
 mod task;
 mod text;
 mod ttsr;
-mod gsd_parser;
+mod gwd_parser;
 mod image;
 mod truncate;
 mod json_parse;

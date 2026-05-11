@@ -81,7 +81,7 @@ describe("@gwd/native module compatibility (#2861)", () => {
         return;
       }
 
-      const parentDir = mkdtempSync(path.join(os.tmpdir(), "gsd-native-modcompat-"));
+      const parentDir = mkdtempSync(path.join(os.tmpdir(), "gwd-native-modcompat-"));
       // Parent declares "type": "module", reproducing the #2861 layout.
       writeFileSync(
         path.join(parentDir, "package.json"),

@@ -1,7 +1,7 @@
 /**
- * GSD file parser type definitions.
+ * GWD file parser type definitions.
  *
- * Types for the native Rust parser that handles `.gsd/` directory files
+ * Types for the native Rust parser that handles `.gwd/` directory files
  * containing YAML-like frontmatter and markdown sections.
  */
 
@@ -19,7 +19,7 @@ export interface SectionResult {
   found: boolean;
 }
 
-export interface ParsedGsdFile {
+export interface ParsedGwdFile {
   /** Relative path from the base directory. */
   path: string;
   /** Parsed frontmatter as JSON string. */
@@ -32,7 +32,7 @@ export interface ParsedGsdFile {
 
 export interface BatchParseResult {
   /** All parsed files. */
-  files: ParsedGsdFile[];
+  files: ParsedGwdFile[];
   /** Number of files processed. */
   count: number;
 }

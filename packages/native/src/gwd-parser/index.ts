@@ -1,7 +1,7 @@
 /**
- * GSD file parser — native Rust implementation.
+ * GWD file parser — native Rust implementation.
  *
- * Parses `.gsd/` directory markdown files containing YAML-like frontmatter
+ * Parses `.gwd/` directory markdown files containing YAML-like frontmatter
  * and structured sections. Replaces the JS regex-based parser for
  * performance-critical batch operations.
  */
@@ -20,7 +20,7 @@ export type {
   NativeBoundaryMapEntry,
   NativeRoadmap,
   NativeRoadmapSlice,
-  ParsedGsdFile,
+  ParsedGwdFile,
   SectionResult,
 } from "./types.js";
 
@@ -72,15 +72,15 @@ export function extractAllSections(
 }
 
 /**
- * Batch-parse all `.md` files in a `.gsd/` directory tree.
+ * Batch-parse all `.md` files in a `.gwd/` directory tree.
  *
  * Reads and parses all markdown files under the given directory.
  * Each file gets frontmatter parsing and section extraction.
  */
-export function batchParseGsdFiles(
+export function batchParseGwdFiles(
   directory: string,
 ): BatchParseResult {
-  return (native as Record<string, Function>).batchParseGsdFiles(
+  return (native as Record<string, Function>).batchParseGwdFiles(
     directory,
   ) as BatchParseResult;
 }

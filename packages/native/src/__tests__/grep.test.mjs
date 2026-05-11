@@ -13,8 +13,8 @@ const require = createRequire(import.meta.url);
 const addonDir = path.resolve(__dirname, "..", "..", "..", "..", "native", "addon");
 const platformTag = `${process.platform}-${process.arch}`;
 const candidates = [
-  path.join(addonDir, `gsd_engine.${platformTag}.node`),
-  path.join(addonDir, "gsd_engine.dev.node"),
+  path.join(addonDir, `gwd_engine.${platformTag}.node`),
+  path.join(addonDir, "gwd_engine.dev.node"),
 ];
 
 let native;
@@ -94,7 +94,7 @@ describe("native grep: grep()", () => {
   let tmpDir;
 
   test("returns a promise", async (t) => {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "gsd-grep-test-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "gwd-grep-test-"));
     t.after(() => fs.rmSync(tmpDir, { recursive: true, force: true }));
 
     fs.writeFileSync(path.join(tmpDir, "file1.txt"), "hello world\n");
@@ -111,7 +111,7 @@ describe("native grep: grep()", () => {
   });
 
   test("searches files on disk", async (t) => {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "gsd-grep-test-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "gwd-grep-test-"));
     t.after(() => fs.rmSync(tmpDir, { recursive: true, force: true }));
 
     fs.writeFileSync(path.join(tmpDir, "file1.txt"), "hello world\nfoo bar\n");
@@ -133,7 +133,7 @@ describe("native grep: grep()", () => {
   });
 
   test("respects glob filter", async (t) => {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "gsd-grep-test-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "gwd-grep-test-"));
     t.after(() => fs.rmSync(tmpDir, { recursive: true, force: true }));
 
     fs.writeFileSync(path.join(tmpDir, "code.ts"), "hello typescript\n");
@@ -151,7 +151,7 @@ describe("native grep: grep()", () => {
   });
 
   test("respects maxCount", async (t) => {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "gsd-grep-test-"));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "gwd-grep-test-"));
     t.after(() => fs.rmSync(tmpDir, { recursive: true, force: true }));
 
     for (let i = 0; i < 10; i++) {

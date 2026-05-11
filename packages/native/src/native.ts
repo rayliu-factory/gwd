@@ -4,8 +4,8 @@
  * Locates and loads the compiled Rust N-API addon (`.node` file).
  * Resolution order:
  *   1. @gwd-build/engine-{platform} npm optional dependency (production install)
- *   2. native/addon/gsd_engine.{platform}.node (local release build)
- *   3. native/addon/gsd_engine.dev.node (local debug build)
+ *   2. native/addon/gwd_engine.{platform}.node (local release build)
+ *   3. native/addon/gwd_engine.dev.node (local debug build)
  */
 
 import * as path from "node:path";
@@ -44,8 +44,8 @@ function loadNative(): Record<string, unknown> {
     }
   }
 
-  // 2. Try local release build (native/addon/gsd_engine.{platform}.node)
-  const releasePath = path.join(addonDir, `gsd_engine.${platformTag}.node`);
+  // 2. Try local release build (native/addon/gwd_engine.{platform}.node)
+  const releasePath = path.join(addonDir, `gwd_engine.${platformTag}.node`);
   try {
     _loadedSuccessfully = true; return _require(releasePath) as Record<string, unknown>;
   } catch (err) {
@@ -53,8 +53,8 @@ function loadNative(): Record<string, unknown> {
     errors.push(`${releasePath}: ${message}`);
   }
 
-  // 3. Try local dev build (native/addon/gsd_engine.dev.node)
-  const devPath = path.join(addonDir, "gsd_engine.dev.node");
+  // 3. Try local dev build (native/addon/gwd_engine.dev.node)
+  const devPath = path.join(addonDir, "gwd_engine.dev.node");
   try {
     _loadedSuccessfully = true; return _require(devPath) as Record<string, unknown>;
   } catch (err) {
@@ -142,7 +142,7 @@ export const native = loadNative() as {
   parseFrontmatter: (content: string) => unknown;
   extractSection: (content: string, heading: string, level?: number) => unknown;
   extractAllSections: (content: string, level?: number) => string;
-  batchParseGsdFiles: (directory: string) => unknown;
+  batchParseGwdFiles: (directory: string) => unknown;
   parseRoadmapFile: (content: string) => unknown;
   truncateTail: (text: string, maxBytes: number) => unknown;
   truncateHead: (text: string, maxBytes: number) => unknown;

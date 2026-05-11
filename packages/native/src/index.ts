@@ -111,18 +111,18 @@ export {
   parseFrontmatter,
   extractSection as nativeExtractSection,
   extractAllSections,
-  batchParseGsdFiles,
+  batchParseGwdFiles,
   parseRoadmapFile,
-} from "./gsd-parser/index.js";
+} from "./gwd-parser/index.js";
 export type {
   BatchParseResult,
   FrontmatterResult,
   NativeBoundaryMapEntry,
   NativeRoadmap,
   NativeRoadmapSlice,
-  ParsedGsdFile,
+  ParsedGwdFile,
   SectionResult,
-} from "./gsd-parser/index.js";
+} from "./gwd-parser/index.js";
 
 export { truncateTail, truncateHead, truncateOutput } from "./truncate/index.js";
 export type { TruncateResult, TruncateOutputResult } from "./truncate/index.js";
