@@ -19,6 +19,24 @@ import { getNextFallbackModel } from "../preferences.ts";
 import { RETRYABLE_ERROR_RE } from "../../../../../packages/pi-coding-agent/src/core/retryable-error-regex.ts";
 import { streamOpenAICodexResponses } from "../../../../../packages/pi-ai/src/providers/openai-codex-responses.ts";
 
+test("agent-end recovery handles Ollama Apple Silicon 35B resource failures before generic transient return", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { dirname, join } = await import("node:path");
+  const { fileURLToPath } = await import("node:url");
+  const testDir = dirname(fileURLToPath(import.meta.url));
+  const source = readFileSync(join(testDir, "../bootstrap/agent-end-recovery.ts"), "utf-8");
+
+  const localFailureIndex = source.indexOf("isOllamaAppleSiliconResourceFailure(");
+  const transientReturnIndex = source.indexOf("if (isTransient(cls) && cls.kind !== \"rate-limit\")");
+
+  assert.ok(localFailureIndex > 0, "agent-end recovery must check Ollama Apple Silicon resource failures");
+  assert.ok(transientReturnIndex > 0, "generic transient early return must remain present");
+  assert.ok(
+    localFailureIndex < transientReturnIndex,
+    "Ollama local resource fallback must run before generic transient handling returns",
+  );
+});
+
 // ── classifyError ────────────────────────────────────────────────────────────
 
 test("classifyError detects rate limit from 429", () => {

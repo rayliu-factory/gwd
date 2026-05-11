@@ -210,6 +210,22 @@ test("35B runtime suppression routes heavy tier to 27B for the current run", () 
   assert.equal(preset.routingConfig.tier_models?.heavy, OLLAMA_QWEN36_27B_MODEL);
 });
 
+test("clearOllamaAppleSiliconRuntimeSuppressions restores 35B routing after a prior suppression", () => {
+  suppressOllamaAppleSiliconModelForRun("ollama", OLLAMA_QWEN36_35B_A3B_NVFP4);
+  clearOllamaAppleSiliconRuntimeSuppressions();
+
+  const preset = resolveOllamaAppleSiliconPreset({
+    isAutoMode: true,
+    prefs: undefined,
+    availableModels: models,
+    autoModeStartModel: { provider: "ollama", id: OLLAMA_QWEN36_27B_NVFP4 },
+    currentProvider: "ollama",
+  });
+
+  assert.ok(preset);
+  assert.equal(preset.routingConfig.tier_models?.heavy, OLLAMA_QWEN36_35B_MODEL);
+});
+
 test("adjustOllamaAppleSiliconFallbacks keeps 35B heavy fallback to 27B only", () => {
   const heavy = adjustOllamaAppleSiliconFallbacks({
     modelId: OLLAMA_QWEN36_35B_MODEL,

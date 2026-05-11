@@ -23,6 +23,11 @@ import {
 } from "../auto/resolve.js";
 import { shouldIgnoreAgentEndForActiveUnit } from "../auto/unit-runner-events.js";
 import { resolveModelId } from "../auto-model-selection.js";
+import {
+  OLLAMA_QWEN36_27B_MODEL,
+  isOllamaAppleSiliconResourceFailure,
+  suppressOllamaAppleSiliconModelForRun,
+} from "../ollama-apple-silicon-profile.js";
 import { resolveProjectRoot } from "../worktree.js";
 import { clearDiscussionFlowState } from "./write-gate.js";
 import { resumeAutoAfterProviderDelay } from "./provider-error-resume.js";
@@ -345,6 +350,38 @@ export async function handleAgentEnd(
 
     // ── 1. Classify using rawErrorMsg to avoid prose false-positives ────
     const cls = classifyError(rawErrorMsg, explicitRetryAfterMs);
+
+    if (isOllamaAppleSiliconResourceFailure(ctx.model?.provider, ctx.model?.id, rawErrorMsg)) {
+      const currentProvider = ctx.model?.provider;
+      const currentId = ctx.model?.id;
+      suppressOllamaAppleSiliconModelForRun(currentProvider, currentId);
+
+      const fallback = resolveModelId(
+        OLLAMA_QWEN36_27B_MODEL,
+        ctx.modelRegistry.getAvailable(),
+        "ollama",
+      );
+      if (fallback) {
+        const ok = await pi.setModel(fallback, { persist: false });
+        if (ok) {
+          setCurrentDispatchedModelId({ provider: fallback.provider, id: fallback.id });
+          ctx.ui.notify(
+            "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 hit local resource limits; retrying on qwen3.6:27b-coding-nvfp4 and suppressing 35B for this run.",
+            "warning",
+          );
+          pi.sendMessage(
+            { customType: "gsd-auto-timeout-recovery", content: "Continue execution on the 27B Ollama fallback.", display: false },
+            { triggerTurn: true },
+          );
+          return;
+        }
+      }
+
+      ctx.ui.notify(
+        "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 hit local resource limits, but qwen3.6:27b-coding-nvfp4 is not available for fallback.",
+        "warning",
+      );
+    }
 
     // ── 1a. Unsupported-model: provider rejected this model for the current
     //        account/plan at request time (#4513).  Persist a block so the
