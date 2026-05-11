@@ -39,6 +39,7 @@ Design documents, ADRs, and internal references. Located in [`dev/`](./dev/).
 | Guide | Description |
 |-------|-------------|
 | [Architecture Overview](./dev/architecture.md) | System design, extension model, state-on-disk, and dispatch pipeline |
+| [Contributor Architecture and Data Flow](./dev/architecture-data-flow.md) | Contributor-oriented repo map, runtime data flow, and agent change paths |
 | [Native Engine](../native/README.md) | Rust N-API modules for performance-critical operations |
 | [ADR-001: Branchless Worktree Architecture](./dev/ADR-001-branchless-worktree-architecture.md) | Decision record for the v2.14 git architecture |
 | [ADR-003: Pipeline Simplification](./dev/ADR-003-pipeline-simplification.md) | Research merged into planning, mechanical completion (v2.30) |
