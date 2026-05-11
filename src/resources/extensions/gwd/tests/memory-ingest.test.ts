@@ -114,7 +114,7 @@ test('memory-ingest: ingestNote marks duplicates on replay', async () => {
 test('memory-ingest: ingestFile persists a file source', async () => {
   openDatabase(':memory:');
 
-  const dir = mkdtempSync(join(tmpdir(), 'gsd-memory-ingest-'));
+  const dir = mkdtempSync(join(tmpdir(), 'gwd-memory-ingest-'));
   const file = join(dir, 'sample.md');
   writeFileSync(file, '# Architecture\n\nWe use SQLite with WAL journaling.', 'utf-8');
 

@@ -92,7 +92,7 @@ export function dispatchDoctorHeal(pi: ExtensionAPI, scope: string | undefined, 
 
   try {
     pi.sendMessage(
-      { customType: "gsd-doctor-heal", content, display: false },
+      { customType: "gwd-doctor-heal", content, display: false },
       { triggerTurn: true },
     );
   } finally {
@@ -277,7 +277,7 @@ export async function handleTriage(ctx: ExtensionCommandContext, pi: ExtensionAP
   try {
     pi.sendMessage(
       {
-        customType: "gsd-triage",
+        customType: "gwd-triage",
         content: buildWorkflowDispatchContent({ workflow, workflowPath, task: prompt }),
         display: false,
       },

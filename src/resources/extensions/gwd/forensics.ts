@@ -260,7 +260,7 @@ export async function handleForensics(
   ctx.ui.notify(`Forensic report saved: ${relative(basePath, savedPath)}`, "info");
 
   pi.sendMessage(
-    { customType: "gsd-forensics", content, display: false },
+    { customType: "gwd-forensics", content, display: false },
     { triggerTurn: true },
   );
 
@@ -753,7 +753,7 @@ function detectTimeouts(traces: UnitTrace[], anomalies: ForensicAnomaly[]): void
     // Check for timeout-recovery custom messages in tool calls
     const hasTimeout = ut.trace.toolCalls.some(tc =>
       tc.name === "sendmessage" &&
-      JSON.stringify(tc.input).includes("gsd-auto-timeout-recovery"),
+      JSON.stringify(tc.input).includes("gwd-auto-timeout-recovery"),
     );
     // Check for timeout keywords in last reasoning
     const reasoningTimeout = ut.trace.lastReasoning &&

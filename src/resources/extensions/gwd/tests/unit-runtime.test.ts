@@ -296,7 +296,7 @@ console.log("\n=== per-record lock: stale .lock is reclaimed, list ignores .lock
   const { listUnitRuntimeRecords } = await import("../unit-runtime.ts");
 
   // (1) Stale .lock should not block a new writer.
-  const lockBase = mkdtempSync(join(tmpdir(), "gsd-runtime-lock-test-"));
+  const lockBase = mkdtempSync(join(tmpdir(), "gwd-runtime-lock-test-"));
   try {
     const unitsDir = join(lockBase, ".gwd", "runtime", "units");
     mkdirSync(unitsDir, { recursive: true });
@@ -317,7 +317,7 @@ console.log("\n=== per-record lock: stale .lock is reclaimed, list ignores .lock
   }
 
   // (2) Orphaned .lock files must not be returned by listUnitRuntimeRecords.
-  const listBase = mkdtempSync(join(tmpdir(), "gsd-runtime-list-test-"));
+  const listBase = mkdtempSync(join(tmpdir(), "gwd-runtime-list-test-"));
   try {
     writeUnitRuntimeRecord(listBase, "execute-task", "M002/S01/T01", 1000, { phase: "dispatched" });
     const unitsDir = join(listBase, ".gwd", "runtime", "units");

@@ -27,59 +27,59 @@ describe("buildContextMessage (#5019 — memory routing)", () => {
     assert.equal(result, null);
   });
 
-  test("memory-only path emits gsd-memory message with trimmed content", () => {
+  test("memory-only path emits gwd-memory message with trimmed content", () => {
     const result = buildContextMessage({
       memoryBlock: "\n\n[MEMORY]\nrule one\nrule two\n\n",
       injection: null,
       forensicsInjection: null,
     });
     assert.ok(result, "expected a context message");
-    assert.equal(result.customType, "gsd-memory");
+    assert.equal(result.customType, "gwd-memory");
     assert.equal(result.content, "[GWD Context Metadata]\n- Memory supplied: yes\n\n[MEMORY]\nrule one\nrule two");
     assert.equal(result.display, false);
   });
 
-  test("guided-execute injection alone emits gsd-guided-context", () => {
+  test("guided-execute injection alone emits gwd-guided-context", () => {
     const result = buildContextMessage({
       memoryBlock: "",
       injection: "[GUIDED]\nexecute T01",
       forensicsInjection: null,
     });
     assert.ok(result);
-    assert.equal(result.customType, "gsd-guided-context");
+    assert.equal(result.customType, "gwd-guided-context");
     assert.equal(result.content, "[GUIDED]\nexecute T01");
   });
 
-  test("forensics injection alone emits gsd-forensics", () => {
+  test("forensics injection alone emits gwd-forensics", () => {
     const result = buildContextMessage({
       memoryBlock: "",
       injection: null,
       forensicsInjection: "[FORENSICS]\ninvestigation context",
     });
     assert.ok(result);
-    assert.equal(result.customType, "gsd-forensics");
+    assert.equal(result.customType, "gwd-forensics");
     assert.equal(result.content, "[FORENSICS]\ninvestigation context");
   });
 
-  test("memory + guided injection: memory prepended, customType is gsd-guided-context", () => {
+  test("memory + guided injection: memory prepended, customType is gwd-guided-context", () => {
     const result = buildContextMessage({
       memoryBlock: "[MEMORY]\nrule one",
       injection: "[GUIDED]\nexecute T01",
       forensicsInjection: null,
     });
     assert.ok(result);
-    assert.equal(result.customType, "gsd-guided-context");
+    assert.equal(result.customType, "gwd-guided-context");
     assert.equal(result.content, `${markedMemory}\n\n[GUIDED]\nexecute T01`);
   });
 
-  test("memory + forensics: memory prepended, customType is gsd-forensics", () => {
+  test("memory + forensics: memory prepended, customType is gwd-forensics", () => {
     const result = buildContextMessage({
       memoryBlock: "[MEMORY]\nrule one",
       injection: null,
       forensicsInjection: "[FORENSICS]\ninvestigation context",
     });
     assert.ok(result);
-    assert.equal(result.customType, "gsd-forensics");
+    assert.equal(result.customType, "gwd-forensics");
     assert.equal(result.content, `${markedMemory}\n\n[FORENSICS]\ninvestigation context`);
   });
 
@@ -93,7 +93,7 @@ describe("buildContextMessage (#5019 — memory routing)", () => {
       forensicsInjection: "[FORENSICS]",
     });
     assert.ok(result);
-    assert.equal(result.customType, "gsd-guided-context");
+    assert.equal(result.customType, "gwd-guided-context");
     assert.equal(result.content, "[GUIDED]");
   });
 });

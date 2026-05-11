@@ -10,7 +10,7 @@ import { join } from "node:path";
 test("discuss-headless prompt renders compact investigation and audit guidance", async (t) => {
   const previousGsdHome = process.env.GWD_HOME;
   const providedGsdHome = process.env.GWD_TEST_HOME;
-  const isolatedHome = providedGsdHome ?? mkdtempSync(join(tmpdir(), "gsd-discuss-headless-render-"));
+  const isolatedHome = providedGsdHome ?? mkdtempSync(join(tmpdir(), "gwd-discuss-headless-render-"));
   process.env.GWD_HOME = isolatedHome;
   t.after(() => {
     if (previousGsdHome === undefined) delete process.env.GWD_HOME;

@@ -11,7 +11,7 @@ import { tmpdir } from "node:os";
 import { _dispatchWorkflowForTest } from "../guided-flow.ts";
 
 test("discuss workflow scopes tools for the queued turn and restores the full tool set", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-discuss-tools-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-discuss-tools-"));
   const workflowPath = join(dir, "GWD-WORKFLOW.md");
   const originalWorkflowPath = process.env.GWD_WORKFLOW_PATH;
   const originalTools = [
@@ -42,7 +42,7 @@ test("discuss workflow scopes tools for the queued turn and restores the full to
     await _dispatchWorkflowForTest(
       pi as any,
       "Interview the user.",
-      "gsd-discuss",
+      "gwd-discuss",
       undefined,
       "discuss-milestone",
     );

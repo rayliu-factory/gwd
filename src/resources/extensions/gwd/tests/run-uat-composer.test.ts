@@ -20,7 +20,7 @@ import {
 } from "../gwd-db.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-runuat-composer-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-runuat-composer-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;
 }

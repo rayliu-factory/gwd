@@ -209,7 +209,7 @@ test("buildRequestScopedGwdToolSet scopes queued workflow custom-message request
     "gwd_graph",
     "memory_query",
     "capture_thought",
-  ], [{ customType: "gsd-run" }, { customType: "gsd-memory" }]);
+  ], [{ customType: "gwd-run" }, { customType: "gwd-memory" }]);
 
   assert.ok(result);
   assert.ok(result.includes("ask_user_questions"));

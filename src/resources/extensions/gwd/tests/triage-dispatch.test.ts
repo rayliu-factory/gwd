@@ -26,7 +26,7 @@ import {
 } from "../triage-resolution.ts";
 
 function makeProject(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-triage-dispatch-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-triage-dispatch-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
   writeFileSync(
     join(base, ".gwd", "milestones", "M001", "M001-ROADMAP.md"),

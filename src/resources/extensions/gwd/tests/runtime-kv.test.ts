@@ -15,7 +15,7 @@ import {
 } from "../db/runtime-kv.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-runtime-kv-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-runtime-kv-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

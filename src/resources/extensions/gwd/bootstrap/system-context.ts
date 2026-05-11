@@ -266,18 +266,18 @@ export function buildContextMessage(opts: {
       memoryContent ? `${memoryContent}\n\n${opts.injection}` : opts.injection,
       contextCharLimit,
     );
-    return { customType: "gsd-guided-context", content, display: false as const };
+    return { customType: "gwd-guided-context", content, display: false as const };
   }
   if (opts.forensicsInjection) {
     const content = limitContextMessageContent(
       memoryContent ? `${memoryContent}\n\n${opts.forensicsInjection}` : opts.forensicsInjection,
       contextCharLimit,
     );
-    return { customType: "gsd-forensics", content, display: false as const };
+    return { customType: "gwd-forensics", content, display: false as const };
   }
   if (memoryContent) {
     return {
-      customType: "gsd-memory",
+      customType: "gwd-memory",
       content: limitContextMessageContent(memoryContent, contextCharLimit),
       display: false as const,
     };

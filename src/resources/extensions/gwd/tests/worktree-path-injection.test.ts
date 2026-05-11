@@ -83,8 +83,8 @@ test("runUnit passes basePath as workspaceRoot without changing process cwd", as
   _resetPendingResolve();
 
   const originalCwd = process.cwd();
-  const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rununit-base-")));
-  const drifted = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rununit-drift-")));
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rununit-base-")));
+  const drifted = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rununit-drift-")));
   t.after(() => {
     process.chdir(originalCwd);
     rmSync(base, { recursive: true, force: true });
@@ -130,8 +130,8 @@ test("runUnit does not chdir or cancel when basePath is not a live directory", a
   _resetPendingResolve();
 
   const originalCwd = process.cwd();
-  const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rununit-missing-base-")));
-  const drifted = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rununit-missing-drift-")));
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rununit-missing-base-")));
+  const drifted = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rununit-missing-drift-")));
   rmSync(base, { recursive: true, force: true });
   t.after(() => {
     process.chdir(originalCwd);

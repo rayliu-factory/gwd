@@ -36,7 +36,7 @@ function makeContext(
 }
 
 test("auto-dispatch passes structuredQuestionsAvailable=true into discuss-milestone prompt", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-discuss-milestone-structured-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-discuss-milestone-structured-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   const result = await resolveDispatch(makeContext(tmp, "needs-discussion", "true"));
@@ -50,7 +50,7 @@ test("auto-dispatch passes structuredQuestionsAvailable=true into discuss-milest
 });
 
 test("auto-dispatch preserves structuredQuestionsAvailable=false for discuss-milestone prompt", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-discuss-milestone-plain-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-discuss-milestone-plain-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   const result = await resolveDispatch(makeContext(tmp, "pre-planning", "false"));

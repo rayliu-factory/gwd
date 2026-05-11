@@ -201,10 +201,10 @@ export function buildRequestScopedGwdToolSet(
   for (let index = (requestCustomMessages?.length ?? 0) - 1; index >= 0; index--) {
     const currentCustomType = requestCustomMessages?.[index]?.customType;
     if (
-      currentCustomType === "gsd-run" ||
-      currentCustomType === "gsd-discuss" ||
-      currentCustomType === "gsd-doctor-heal" ||
-      currentCustomType === "gsd-triage"
+      currentCustomType === "gwd-run" ||
+      currentCustomType === "gwd-discuss" ||
+      currentCustomType === "gwd-doctor-heal" ||
+      currentCustomType === "gwd-triage"
     ) {
       return buildMinimalGwdWorkflowToolSet(activeToolNames);
     }

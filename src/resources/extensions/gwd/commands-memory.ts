@@ -510,7 +510,7 @@ function handleExtractSource(
   const prompt = buildExtractPrompt(source);
   ctx.ui.notify(`Dispatching extraction turn for ${id}...`, "info");
   pi.sendMessage(
-    { customType: "gsd-memory-extract", content: prompt, display: false },
+    { customType: "gwd-memory-extract", content: prompt, display: false },
     { triggerTurn: true },
   );
 }

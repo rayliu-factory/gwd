@@ -81,7 +81,7 @@ import { invalidateAllCaches } from "../../cache.ts";
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTempDir(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-runtime-fail-"));
+  return mkdtempSync(join(tmpdir(), "gwd-runtime-fail-"));
 }
 
 function createMinimalFixture(): string {

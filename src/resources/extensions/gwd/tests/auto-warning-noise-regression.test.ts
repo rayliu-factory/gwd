@@ -81,7 +81,7 @@ test("isSamePath returns false for missing paths without throwing", () => {
 // ─── Bug 3: guided-flow manifest unlink source check ────────────────────
 
 test("checkAutoStartAfterDiscuss completes when discussion manifest is absent", () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-discuss-manifest-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-discuss-manifest-"));
   const notifications: Array<{ message: string; level: string }> = [];
   let scheduled = false;
   try {

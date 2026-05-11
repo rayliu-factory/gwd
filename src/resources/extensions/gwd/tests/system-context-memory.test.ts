@@ -16,7 +16,7 @@ test("buildContextMessage marks hidden guided context when memory is supplied", 
   });
 
   assert.ok(message, "expected hidden context message");
-  assert.equal(message.customType, "gsd-guided-context");
+  assert.equal(message.customType, "gwd-guided-context");
   assert.equal(message.display, false);
   assert.match(message.content, /\[GWD Context Metadata\]\n- Memory supplied: yes/);
   assert.ok(
@@ -36,7 +36,7 @@ test("buildContextMessage caps hidden context by default", () => {
     });
 
     assert.ok(message, "expected hidden context message");
-    assert.equal(message.customType, "gsd-guided-context");
+    assert.equal(message.customType, "gwd-guided-context");
     assert.ok(message.content.length <= 4000);
     assert.match(message.content, /\[GWD Context Truncated\]/);
   } finally {
@@ -56,7 +56,7 @@ test("buildContextMessage supports explicit context cap override", () => {
     });
 
     assert.ok(message, "expected hidden context message");
-    assert.equal(message.customType, "gsd-guided-context");
+    assert.equal(message.customType, "gwd-guided-context");
     assert.ok(message.content.length <= 1200);
     assert.match(message.content, /\[GWD Context Truncated\]/);
   } finally {
@@ -73,7 +73,7 @@ test("buildContextMessage does not add memory marker when only guided context is
   });
 
   assert.ok(message, "expected guided context message");
-  assert.equal(message.customType, "gsd-guided-context");
+  assert.equal(message.customType, "gwd-guided-context");
   assert.doesNotMatch(message.content, /Memory supplied: yes/);
 });
 

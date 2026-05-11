@@ -27,7 +27,7 @@ import { resolveMilestoneFile } from "../paths.ts";
 // ─── Fixture Helpers ──────────────────────────────────────────────────────────
 
 function createBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-discuss-queued-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-discuss-queued-"));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }
