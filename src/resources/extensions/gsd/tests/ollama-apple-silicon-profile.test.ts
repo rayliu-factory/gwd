@@ -1,5 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import {
   OLLAMA_QWEN36_27B_NVFP4,
@@ -17,6 +20,17 @@ const models = [
   { provider: "ollama", id: OLLAMA_QWEN36_27B_NVFP4 },
   { provider: "ollama", id: OLLAMA_QWEN36_35B_A3B_NVFP4 },
 ];
+
+function preferenceOptOutPreset(basePath: string) {
+  return resolveOllamaAppleSiliconPreset({
+    isAutoMode: true,
+    prefs: undefined,
+    basePath,
+    availableModels: models,
+    autoModeStartModel: { provider: "ollama", id: OLLAMA_QWEN36_27B_NVFP4 },
+    currentProvider: "ollama",
+  });
+}
 
 test("resolveOllamaAppleSiliconPreset builds 27B/35B tier map when both tags are present", () => {
   clearOllamaAppleSiliconRuntimeSuppressions();
@@ -97,6 +111,47 @@ test("resolveOllamaAppleSiliconPreset respects explicit models and dynamic_routi
     autoModeStartModel: { provider: "ollama", id: OLLAMA_QWEN36_27B_NVFP4 },
     currentProvider: "ollama",
   }), undefined);
+});
+
+test("resolveOllamaAppleSiliconPreset reads basePath preference files for opt outs", () => {
+  const previousGwdHome = process.env.GWD_HOME;
+  const previousCwd = process.cwd();
+  const tempRoot = mkdtempSync(join(tmpdir(), "ollama-profile-prefs-"));
+
+  try {
+    const globalHome = join(tempRoot, "home");
+    const projectRoot = join(tempRoot, "project");
+    mkdirSync(globalHome, { recursive: true });
+    mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
+    process.env.GWD_HOME = globalHome;
+    process.chdir(projectRoot);
+
+    const globalPrefsPath = join(globalHome, "PREFERENCES.md");
+    const projectPrefsPath = join(projectRoot, ".gsd", "PREFERENCES.md");
+
+    writeFileSync(globalPrefsPath, "---\nmodels:\n  execution: ollama/custom\n---\n", "utf-8");
+    assert.equal(preferenceOptOutPreset(projectRoot), undefined, "global models");
+    rmSync(globalPrefsPath, { force: true });
+
+    writeFileSync(globalPrefsPath, "---\ndynamic_routing:\n  enabled: true\n---\n", "utf-8");
+    assert.equal(preferenceOptOutPreset(projectRoot), undefined, "global dynamic_routing");
+    rmSync(globalPrefsPath, { force: true });
+
+    writeFileSync(projectPrefsPath, "---\nmodels:\n  execution: ollama/custom\n---\n", "utf-8");
+    assert.equal(preferenceOptOutPreset(projectRoot), undefined, "project models");
+    rmSync(projectPrefsPath, { force: true });
+
+    writeFileSync(projectPrefsPath, "---\ndynamic_routing:\n  enabled: true\n---\n", "utf-8");
+    assert.equal(preferenceOptOutPreset(projectRoot), undefined, "project dynamic_routing");
+  } finally {
+    process.chdir(previousCwd);
+    if (previousGwdHome === undefined) {
+      delete process.env.GWD_HOME;
+    } else {
+      process.env.GWD_HOME = previousGwdHome;
+    }
+    rmSync(tempRoot, { recursive: true, force: true });
+  }
 });
 
 test("resolveOllamaAppleSiliconPreset only activates for Ollama in auto-mode", () => {
