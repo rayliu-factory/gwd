@@ -209,6 +209,10 @@ export const MODEL_CAPABILITY_PROFILES: Record<string, ModelCapabilities> = {
 
   // ── DeepSeek ───────────────────────────────────────────────────────────────
   "deepseek-chat":                { coding: 75, debugging: 65, research: 55, reasoning: 70, speed: 70, longContext: 55, instruction: 65 },
+
+  // ── Ollama / Qwen ─────────────────────────────────────────────────────────
+  "qwen3.6:27b-coding-nvfp4":     { coding: 80, debugging: 76, research: 60, reasoning: 78, speed: 45, longContext: 68, instruction: 78 },
+  "qwen3.6:35b-a3b-coding-nvfp4": { coding: 88, debugging: 84, research: 65, reasoning: 86, speed: 30, longContext: 70, instruction: 84 },
 };
 
 // ─── Base Task Requirements Data Table ───────────────────────────────────────
