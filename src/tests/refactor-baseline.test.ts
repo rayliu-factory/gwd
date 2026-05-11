@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Tests for the long-running refactor baseline metrics harness.
 
 import assert from "node:assert/strict";
@@ -356,7 +356,7 @@ test("renderSummary includes key sections for human inspection", async () => {
   const report = await collectBaseline(root);
   const summary = renderSummary(report);
 
-  assert.match(summary, /GWD-2 Refactor Baseline/);
+  assert.match(summary, /GWD Refactor Baseline/);
   assert.match(summary, /Schema version: 1/);
   assert.match(summary, /Prompt metrics/);
   assert.match(summary, /dist-test metrics/);

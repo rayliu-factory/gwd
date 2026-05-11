@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Tests the Phase 8 legacy cleanup telemetry gate.
 
 import assert from "node:assert/strict";

@@ -1,4 +1,4 @@
-// GWD-2 — Unit tests for /gwd worktree formatter and dispatcher
+// GWD — Unit tests for /gwd worktree formatter and dispatcher
 import test from "node:test";
 import assert from "node:assert/strict";
 

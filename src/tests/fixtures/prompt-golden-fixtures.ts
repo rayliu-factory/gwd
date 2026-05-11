@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Shared prompt fixture definitions for Phase 0 characterization and Phase 2 reduction targets.
 
 export const promptGoldenUnits = [

@@ -1,5 +1,5 @@
 /**
- * GWD-2 e2e harness: process spawning.
+ * GWD e2e harness: process spawning.
  *
  * Wraps child_process.spawn with the conventions every e2e test needs:
  * - canonical TMPDIR (resolves macOS /var vs /private/var symlink mismatch)

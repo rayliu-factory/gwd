@@ -952,11 +952,6 @@
 | scripts/check-skill-references.mjs | Build System, Skills | Skill reference validator |
 | scripts/preview-dashboard.ts | Web Mode | Dashboard preview server |
 | scripts/ci_monitor.cjs | Build System | CI monitoring dashboard |
-| scripts/recover-gwd-1364.sh | Build System, Migration | Recovery script for issue #1364 |
-| scripts/recover-gwd-1364.ps1 | Build System, Migration | Recovery script for issue #1364 (PowerShell) |
-| scripts/recover-gwd-1668.sh | Build System, Migration | Recovery script for issue #1668 |
-| scripts/recover-gwd-1668.ps1 | Build System, Migration | Recovery script for issue #1668 (PowerShell) |
-
 ---
 
 ## System → File Reverse Index

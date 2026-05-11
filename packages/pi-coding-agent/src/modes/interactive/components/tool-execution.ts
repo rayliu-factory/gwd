@@ -1,4 +1,4 @@
-// GWD-2 Interactive Tool Execution Rendering
+// GWD Interactive Tool Execution Rendering
 import {
 	Box,
 	Container,

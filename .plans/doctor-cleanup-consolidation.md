@@ -2,24 +2,24 @@
 
 ## Problem
 
-GSD has 7+ commands that check, diagnose, or clean up project state. Several overlap or duplicate each other, and worktree lifecycle management is missing entirely. Users can't answer "what's safe to delete?" without manual git investigation.
+GWD has 7+ commands that check, diagnose, or clean up project state. Several overlap or duplicate each other, and worktree lifecycle management is missing entirely. Users can't answer "what's safe to delete?" without manual git investigation.
 
 ### Current surface area
 
 | Command | Purpose | Overlap |
 |---|---|---|
-| `/gsd doctor` | State integrity, git health, worktrees, runtime, env, prefs | **Primary health system** |
-| `/gsd doctor fix` | Auto-fix detected issues | |
-| `/gsd doctor heal` | Dispatch unfixable issues to LLM | |
-| `/gsd doctor audit` | Expanded output, no fix | |
-| `/gsd cleanup` | Runs branches + snapshots cleanup | **Redundant** — doctor already handles branches |
-| `/gsd cleanup branches` | Delete merged `gsd/*` branches | **Redundant** — doctor detects but won't fix legacy branches |
-| `/gsd cleanup snapshots` | Prune old snapshot refs | **Gap** — doctor has no snapshot check |
-| `/gsd cleanup projects` | Audit orphaned `~/.gsd/projects/` dirs | **Fully redundant** — doctor's `orphaned_project_state` does the same |
-| `/gsd keys doctor` | Per-key health check | **Complementary** — deeper than doctor's surface provider check |
-| `/gsd skill-health` | Skill usage stats | No overlap — analytics, not health |
-| `/gsd inspect` | SQLite DB diagnostics | No overlap — introspection tool |
-| `/gsd forensics` | Post-failure investigation | No overlap — different lifecycle |
+| `/gwd doctor` | State integrity, git health, worktrees, runtime, env, prefs | **Primary health system** |
+| `/gwd doctor fix` | Auto-fix detected issues | |
+| `/gwd doctor heal` | Dispatch unfixable issues to LLM | |
+| `/gwd doctor audit` | Expanded output, no fix | |
+| `/gwd cleanup` | Runs branches + snapshots cleanup | **Redundant** — doctor already handles branches |
+| `/gwd cleanup branches` | Delete merged `gwd/*` branches | **Redundant** — doctor detects but won't fix legacy branches |
+| `/gwd cleanup snapshots` | Prune old snapshot refs | **Gap** — doctor has no snapshot check |
+| `/gwd cleanup projects` | Audit orphaned `~/.gwd/projects/` dirs | **Fully redundant** — doctor's `orphaned_project_state` does the same |
+| `/gwd keys doctor` | Per-key health check | **Complementary** — deeper than doctor's surface provider check |
+| `/gwd skill-health` | Skill usage stats | No overlap — analytics, not health |
+| `/gwd inspect` | SQLite DB diagnostics | No overlap — introspection tool |
+| `/gwd forensics` | Post-failure investigation | No overlap — different lifecycle |
 
 ### Missing
 
@@ -44,7 +44,7 @@ Add to `doctor-checks.ts` → `checkGitHealth()`:
 | `worktree_dirty` | warning | no | Stale worktree has uncommitted changes | Report only — data loss risk |
 | `worktree_unpushed` | warning | no | Worktree branch has commits not on any remote | Report only — push first |
 
-**Scope:** Only GSD-managed worktrees under `.gsd/worktrees/`. Not `.claude/worktrees/`, not sibling repos, not `/tmp/` worktrees. GSD owns what GSD creates.
+**Scope:** Only GWD-managed worktrees under `.gwd/worktrees/`. Not `.claude/worktrees/`, not sibling repos, not `/tmp/` worktrees. GWD owns what GWD creates.
 
 **Safety rules:**
 - Never auto-remove a worktree matching `process.cwd()` (existing pattern)
@@ -52,7 +52,7 @@ Add to `doctor-checks.ts` → `checkGitHealth()`:
 - Never auto-remove a worktree with unpushed commits
 - `worktree_branch_merged` is the only auto-fixable worktree check — it's the safest (work is already in main)
 
-### Phase 2: Fold `/gsd cleanup` into doctor
+### Phase 2: Fold `/gwd cleanup` into doctor
 
 **2a. Make `legacy_slice_branches` fixable in doctor.**
 
@@ -61,28 +61,28 @@ Currently detected as `info` severity, not fixable. Change to:
 - Fixable: `true`
 - `--fix` action: `nativeBranchDelete(basePath, branch, true)` for each merged legacy branch
 
-This makes `cleanup branches` redundant — doctor handles both `milestone/*` and `gsd/*` branches.
+This makes `cleanup branches` redundant — doctor handles both `milestone/*` and `gwd/*` branches.
 
 **2b. Add `snapshot_ref_bloat` doctor check.**
 
 New check in `checkRuntimeHealth()`:
-- Count `refs/gsd/snapshots/` refs
+- Count `refs/gwd/snapshots/` refs
 - If > 50 refs per label, report `snapshot_ref_bloat` (warning, fixable)
 - `--fix` action: prune to newest 5 per label (same logic as existing `handleCleanupSnapshots`)
 
 This makes `cleanup snapshots` redundant.
 
-**2c. `/gsd cleanup projects` is already redundant.**
+**2c. `/gwd cleanup projects` is already redundant.**
 
 Doctor's `orphaned_project_state` check (in `checkGlobalHealth`) does the same thing. No code change needed — just deprecation.
 
-**2d. `/gsd cleanup` becomes a permanent alias.**
+**2d. `/gwd cleanup` becomes a permanent alias.**
 
-- `/gsd cleanup` → runs `doctor fix` scoped to cleanup-class issues (branches, snapshots, projects, worktrees)
-- `/gsd cleanup branches` → doctor fix for branch issues
-- `/gsd cleanup snapshots` → doctor fix for snapshot issues
-- `/gsd cleanup projects` → doctor fix for project state issues
-- `/gsd cleanup worktrees` → doctor fix for worktree issues
+- `/gwd cleanup` → runs `doctor fix` scoped to cleanup-class issues (branches, snapshots, projects, worktrees)
+- `/gwd cleanup branches` → doctor fix for branch issues
+- `/gwd cleanup snapshots` → doctor fix for snapshot issues
+- `/gwd cleanup projects` → doctor fix for project state issues
+- `/gwd cleanup worktrees` → doctor fix for worktree issues
 
 No deprecation warnings. Same commands, doctor under the hood. Existing muscle memory keeps working.
 
@@ -91,21 +91,21 @@ No deprecation warnings. Same commands, doctor under the hood. Existing muscle m
 Enhance `handleList()` in `worktree-command.ts` to show safety information inline:
 
 ```
-GSD Worktrees
+GWD Worktrees
 
   feature-x  ● active
     branch  worktree/feature-x
-    path    .gsd/worktrees/feature-x
+    path    .gwd/worktrees/feature-x
     status  3 uncommitted files · 2 unpushed commits · last commit 4h ago
 
   old-bugfix  
     branch  worktree/old-bugfix
-    path    .gsd/worktrees/old-bugfix
+    path    .gwd/worktrees/old-bugfix
     status  ✓ merged into main · safe to remove
 
   stale-experiment  
     branch  worktree/stale-experiment
-    path    .gsd/worktrees/stale-experiment
+    path    .gwd/worktrees/stale-experiment
     status  ⚠ no commits in 18 days · no open PR
 ```
 
@@ -116,12 +116,12 @@ Data to show per worktree:
 - Last commit age
 - Whether branch has been pushed to remote
 
-### Phase 4: Add `/gsd cleanup worktrees` convenience entry point
+### Phase 4: Add `/gwd cleanup worktrees` convenience entry point
 
 For discoverability, add to the cleanup catalog:
 ```
-/gsd cleanup worktrees        — Remove merged/safe-to-delete worktrees
-/gsd cleanup worktrees --dry  — Preview what would be removed
+/gwd cleanup worktrees        — Remove merged/safe-to-delete worktrees
+/gwd cleanup worktrees --dry  — Preview what would be removed
 ```
 
 This is a thin wrapper that runs doctor fix scoped to `worktree_branch_merged` issues only.
@@ -132,11 +132,11 @@ This is a thin wrapper that runs doctor fix scoped to `worktree_branch_merged` i
 
 | Command | Why |
 |---|---|
-| `/gsd keys doctor` | Deeper per-key analysis; general doctor's provider check is a sufficient surface check |
-| `/gsd inspect` | DB introspection — not a health check |
-| `/gsd skill-health` | Usage analytics — not a health check |
-| `/gsd forensics` | Post-mortem investigation — different purpose and lifecycle |
-| `/gsd logs` | Read-only log viewer |
+| `/gwd keys doctor` | Deeper per-key analysis; general doctor's provider check is a sufficient surface check |
+| `/gwd inspect` | DB introspection — not a health check |
+| `/gwd skill-health` | Usage analytics — not a health check |
+| `/gwd forensics` | Post-mortem investigation — different purpose and lifecycle |
+| `/gwd logs` | Read-only log viewer |
 
 ---
 
@@ -161,7 +161,7 @@ Phase 1 and 3 share git inspection code (merge status, uncommitted changes, unpu
 | `worktree-command.ts` | Enhanced `handleList()` with safety status |
 | `commands-maintenance.ts` | Deprecation wrappers for cleanup subcommands |
 | `commands/catalog.ts` | Add `worktrees` to cleanup subcommands, update doctor subcommand descriptions |
-| `commands/handlers/ops.ts` | Wire up `/gsd cleanup worktrees` |
+| `commands/handlers/ops.ts` | Wire up `/gwd cleanup worktrees` |
 
 ---
 
@@ -169,4 +169,4 @@ Phase 1 and 3 share git inspection code (merge status, uncommitted changes, unpu
 
 1. **Stale threshold** — 14 days default, configurable via preferences.
 2. **Remote PR check** — Commit age is the primary signal. PR check is a bonus when `gh` is available. Degrade gracefully if `gh` is missing.
-3. **Cleanup as permanent alias** — `/gsd cleanup` stays as a permanent alias that silently calls doctor fix under the hood. No deprecation noise. Users who learned cleanup keep using it, new users learn doctor.
+3. **Cleanup as permanent alias** — `/gwd cleanup` stays as a permanent alias that silently calls doctor fix under the hood. No deprecation noise. Users who learned cleanup keep using it, new users learn doctor.

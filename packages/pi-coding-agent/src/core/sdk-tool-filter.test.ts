@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Tests final provider request-time tool compatibility filtering.
 
 import assert from "node:assert/strict";

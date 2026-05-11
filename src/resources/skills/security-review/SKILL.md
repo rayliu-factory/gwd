@@ -8,7 +8,7 @@ Produce a security review that names specific exploit paths through the actual c
 </objective>
 
 <context>
-GWD-2's general `review` skill covers security as one of several categories. This skill is the deeper pass — triggered deliberately when security is the primary concern. It complements v1's `/gwd-secure-phase` concept, adapted to the gwd-2 artifact model.
+GWD's general `review` skill covers security as one of several categories. This skill is the deeper pass — triggered deliberately when security is the primary concern. It complements v1's `/gwd-secure-phase` concept, adapted to the gwd artifact model.
 
 Invocation points:
 - Any change touching authentication, authorization, session handling

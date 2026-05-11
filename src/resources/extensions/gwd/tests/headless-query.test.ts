@@ -94,13 +94,29 @@ function createExecutingFixture(base: string): void {
 
 describe('headless query', () => {
   let base: string
+  let savedGwdAgentDir: string | undefined
+  let savedGwdHome: string | undefined
+  let savedMarkdownFallback: string | undefined
 
   beforeEach(() => {
     base = createFixture()
+    savedGwdAgentDir = process.env.GWD_AGENT_DIR
+    savedGwdHome = process.env.GWD_HOME
+    savedMarkdownFallback = process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK
+    process.env.GWD_AGENT_DIR = join(base, '.test-agent')
+    process.env.GWD_HOME = join(base, '.test-home')
+    process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK = '1'
     invalidateStateCache()
   })
 
   afterEach(() => {
+    if (savedGwdAgentDir === undefined) delete process.env.GWD_AGENT_DIR
+    else process.env.GWD_AGENT_DIR = savedGwdAgentDir
+    if (savedGwdHome === undefined) delete process.env.GWD_HOME
+    else process.env.GWD_HOME = savedGwdHome
+    if (savedMarkdownFallback === undefined) delete process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK
+    else process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK = savedMarkdownFallback
+    invalidateStateCache()
     rmSync(base, { recursive: true, force: true })
   })
 

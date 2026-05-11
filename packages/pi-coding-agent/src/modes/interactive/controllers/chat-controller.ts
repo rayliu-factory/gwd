@@ -1,4 +1,4 @@
-// GWD-2 Interactive Chat Controller
+// GWD Interactive Chat Controller
 import { Loader, Markdown, Spacer, Text } from "@gwd/pi-tui";
 
 import type { InteractiveModeEvent, InteractiveModeStateHost } from "../interactive-mode-state.js";

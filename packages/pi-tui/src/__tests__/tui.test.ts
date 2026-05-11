@@ -1,4 +1,4 @@
-// GWD-2 + packages/pi-tui/src/__tests__/tui.test.ts - Regression coverage for the TUI renderer and container lifecycle.
+// GWD + packages/pi-tui/src/__tests__/tui.test.ts - Regression coverage for the TUI renderer and container lifecycle.
 
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";

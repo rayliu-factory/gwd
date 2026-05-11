@@ -1,4 +1,4 @@
-// GWD-2 — Extension Discovery Tests
+// GWD — Extension Discovery Tests
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import test, { describe } from 'node:test'

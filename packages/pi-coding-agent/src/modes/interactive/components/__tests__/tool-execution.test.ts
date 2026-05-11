@@ -1,4 +1,4 @@
-// GWD-2 Interactive Tool Execution Rendering Tests
+// GWD Interactive Tool Execution Rendering Tests
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import stripAnsi from "strip-ansi";

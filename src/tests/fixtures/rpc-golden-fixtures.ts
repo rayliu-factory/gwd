@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Shared RPC protocol fixture records for Phase 0 characterization and Phase 1 contracts work.
 
 export const rpcGoldenCommands = [

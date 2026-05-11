@@ -1,5 +1,5 @@
 /**
- * GWD-2 e2e harness barrel.
+ * GWD e2e harness barrel.
  *
  * Tests in tests/e2e/ should import from this single entry point so the
  * harness surface stays small and stable. New helpers go in their own file

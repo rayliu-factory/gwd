@@ -2,14 +2,14 @@
 
 ## Goal
 
-Make the **left pane in Power User Mode** render the **real native GSD/pi TUI** while staying attached to the **same authoritative main session** already used by:
+Make the **left pane in Power User Mode** render the **real native GWD/pi TUI** while staying attached to the **same authoritative main session** already used by:
 
 - the web chat view
 - dashboard / progress / status surfaces
 - command surfaces
 - session browser / recovery surfaces
 
-At the same time, keep the **right pane unchanged** as a **separate PTY-backed GSD session**.
+At the same time, keep the **right pane unchanged** as a **separate PTY-backed GWD session**.
 
 ## Required outcome
 
@@ -56,7 +56,7 @@ The right pane is `web/components/gwd/shell-terminal.tsx`, backed by:
 - `/api/terminal/sessions`
 - `web/lib/pty-manager.ts`
 
-It launches a separate interactive `gsd` process.
+It launches a separate interactive `gwd` process.
 
 ### Main bridge today
 
@@ -105,7 +105,7 @@ Today `InteractiveMode` constructs `ProcessTerminal` directly. To render the nat
 
 ### Required refactor
 
-Refactor interactive-mode construction so it can accept a `Terminal` implementation from `@gsd/pi-tui` rather than always using `ProcessTerminal`.
+Refactor interactive-mode construction so it can accept a `Terminal` implementation from `@gwd/pi-tui` rather than always using `ProcessTerminal`.
 
 ### Constraints
 
@@ -115,7 +115,7 @@ Refactor interactive-mode construction so it can accept a `Terminal` implementat
 
 ## 2. Build a browser-backed terminal adapter for the main session
 
-Add a new terminal host for the left pane that implements the `@gsd/pi-tui` `Terminal` contract using browser transport instead of process stdin/stdout.
+Add a new terminal host for the left pane that implements the `@gwd/pi-tui` `Terminal` contract using browser transport instead of process stdin/stdout.
 
 ### Browser-backed terminal responsibilities
 
@@ -151,7 +151,7 @@ In `web/components/gwd/dual-terminal.tsx`, replace the current left browser summ
 ### Desired component behavior
 
 - connect to the browser-backed main-session terminal transport
-- render the actual native GSD/pi TUI
+- render the actual native GWD/pi TUI
 - send keyboard input and resize events
 - never spawn a second main session
 - reconnect cleanly after panel toggles / page reloads
@@ -268,7 +268,7 @@ Swap Power User Mode left pane from browser summary terminal to the native TUI t
 
 ### Deliverable
 
-Left pane visually and behaviorally matches native GSD/pi TUI while remaining attached to the main session.
+Left pane visually and behaviorally matches native GWD/pi TUI while remaining attached to the main session.
 
 ## Phase 5 — state synchronization hardening
 

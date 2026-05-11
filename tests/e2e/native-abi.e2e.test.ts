@@ -1,5 +1,5 @@
 /**
- * GWD-2 native TS↔Rust ABI smoke.
+ * GWD native TS↔Rust ABI smoke.
  *
  * Loads `@gwd/native` from a fresh node:test worker and exercises a few
  * core entrypoints — grep (ripgrep), xxHash32, fuzzyFind, glob. Catches:

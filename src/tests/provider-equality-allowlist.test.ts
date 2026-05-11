@@ -1,6 +1,6 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Provider equality guardrail tests for ADR-012.
-// gwd-2: provider-equality guardrail test (ADR-012)
+// gwd: provider-equality guardrail test (ADR-012)
 //
 // Purpose: prevent regressions of bug class #4478 — gating API-shape-dependent
 // behavior on `model.provider === "<transport>"` instead of `model.api`.

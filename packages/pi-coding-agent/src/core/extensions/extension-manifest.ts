@@ -1,4 +1,4 @@
-// GWD-2 — Extension Manifest: Types and reading for extension-manifest.json
+// GWD — Extension Manifest: Types and reading for extension-manifest.json
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { existsSync, readFileSync } from "node:fs";

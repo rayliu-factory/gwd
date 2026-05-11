@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Runtime tests for TUI tool cards, success notifications, and blocking errors.
 // GWD2 TUI Tests - Runtime coverage for tool-card cleanup and success notification rendering.
 // Runtime regression tests for the post-compaction tool-card cleanup and the

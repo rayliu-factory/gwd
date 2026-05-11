@@ -1,4 +1,4 @@
-// GWD-2 Web — Shutdown gate regression tests
+// GWD Web — Shutdown gate regression tests
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 

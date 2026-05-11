@@ -1,4 +1,4 @@
-// GWD-2 — Unit tests for parseCliArgs (canonical CLI flag parser)
+// GWD — Unit tests for parseCliArgs (canonical CLI flag parser)
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import test, { describe } from 'node:test'

@@ -53,7 +53,10 @@ describe('gwdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
   });
 
   test('does not use the global GWD home when basePath is the home directory', () => {
-    assert.equal(gwdRoot(fakeHome), join(fakeHome, '.gwd'));
+    assert.throws(
+      () => gwdRoot(fakeHome),
+      /Refusing to use .* as a project \.gwd directory.*global GWD home/s,
+    );
   });
 
   test('does NOT throw for paths under ~/.gwd/projects/<hash>/', () => {

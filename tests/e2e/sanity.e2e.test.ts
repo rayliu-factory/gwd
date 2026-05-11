@@ -1,5 +1,5 @@
 /**
- * GWD-2 e2e sanity tests.
+ * GWD e2e sanity tests.
  *
  * Smallest possible vertical slice that exercises the e2e harness through
  * a real spawn of the built `gwd` binary. If this suite passes, the harness

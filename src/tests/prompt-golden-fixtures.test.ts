@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Characterization tests for representative GWD prompt fixture metrics.
 
 import assert from "node:assert/strict";

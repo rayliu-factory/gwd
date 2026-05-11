@@ -43,6 +43,18 @@ export function resolveGwdAgentExtensionsDir(env: NodeJS.ProcessEnv = process.en
  * sync directory (#3471) or fall back to bundled source. Returns the
  * agent dir alongside the decision so a caller can use it directly.
  */
+const headlessQueryExtensionModules = [
+  'state',
+  'auto-dispatch',
+  'session-status-io',
+  'preferences',
+  'auto-start',
+]
+
+function hasExtensionModule(agentDir: string, moduleName: string, fileExists: (path: string) => boolean): boolean {
+  return fileExists(join(agentDir, `${moduleName}.ts`)) || fileExists(join(agentDir, `${moduleName}.js`))
+}
+
 export function shouldUseAgentExtensionsDir(opts: {
   env?: NodeJS.ProcessEnv
   fileExists?: (path: string) => boolean
@@ -52,16 +64,18 @@ export function shouldUseAgentExtensionsDir(opts: {
   const agentDir = resolveGwdAgentExtensionsDir(env)
   return {
     agentDir,
-    useAgentDir: fileExists(join(agentDir, 'state.ts')) || fileExists(join(agentDir, 'state.js')),
+    useAgentDir: headlessQueryExtensionModules.every((moduleName) =>
+      hasExtensionModule(agentDir, moduleName, fileExists),
+    ),
   }
 }
 
-const agentExtensionsDir = resolveGwdAgentExtensionsDir()
-const { useAgentDir } = shouldUseAgentExtensionsDir({ env: process.env })
-const gwdExtensionPath = (...segments: string[]) =>
-  useAgentDir
-    ? resolveAgentExtensionModule(agentExtensionsDir, segments)
+const gwdExtensionPath = (...segments: string[]) => {
+  const { agentDir, useAgentDir } = shouldUseAgentExtensionsDir({ env: process.env })
+  return useAgentDir
+    ? resolveAgentExtensionModule(agentDir, segments)
     : resolveBundledGwdExtensionModule(import.meta.url, segments.join('/'))
+}
 
 function resolveAgentExtensionModule(agentDir: string, segments: string[]): string {
   const requested = join(agentDir, ...segments)

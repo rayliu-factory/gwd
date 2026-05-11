@@ -1,5 +1,5 @@
 /**
- * GWD-2 e2e fake-LLM helpers.
+ * GWD e2e fake-LLM helpers.
  *
  * Compose a JSONL transcript and run `gwd --print` against it. The fake
  * provider replays the transcript turn-by-turn (see

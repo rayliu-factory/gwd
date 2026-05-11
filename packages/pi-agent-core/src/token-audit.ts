@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Provider-boundary token payload audit helpers.
 
 import type { Context, ImageContent, Message, TextContent, Tool } from "@gwd/pi-ai";

@@ -1,5 +1,5 @@
 /**
- * GWD-2 agent-loop e2e tests.
+ * GWD agent-loop e2e tests.
  *
  * Drives the real `gwd` binary through scripted prompt → tool → response
  * cycles using the fake LLM provider (packages/pi-ai/src/providers/fake.ts).

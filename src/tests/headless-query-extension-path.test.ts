@@ -33,24 +33,36 @@ test('GWD_AGENT_DIR overrides homedir-based agent dir resolution', () => {
   assert.equal(root, join('/some/agent', 'extensions', 'gwd'))
 })
 
-test('agent dir is selected when state.ts exists under it (#3471)', (t) => {
+function writeHeadlessQueryModules(extDir: string, extension: 'ts' | 'js'): void {
+  for (const name of [
+    'state',
+    'auto-dispatch',
+    'session-status-io',
+    'preferences',
+    'auto-start',
+  ]) {
+    writeFileSync(join(extDir, `${name}.${extension}`), '// fixture')
+  }
+}
+
+test('agent dir is selected when required TS modules exist under it (#3471)', (t) => {
   const root = makeTempDir()
   t.after(() => rmSync(root, { recursive: true, force: true }))
   const extDir = join(root, 'extensions', 'gwd')
   mkdirSync(extDir, { recursive: true })
-  writeFileSync(join(extDir, 'state.ts'), '// fixture')
+  writeHeadlessQueryModules(extDir, 'ts')
 
   const result = shouldUseAgentExtensionsDir({ env: { GWD_AGENT_DIR: root } })
   assert.equal(result.agentDir, extDir)
   assert.equal(result.useAgentDir, true)
 })
 
-test('agent dir is selected when synced JS state exists under it', (t) => {
+test('agent dir is selected when required synced JS modules exist under it', (t) => {
   const root = makeTempDir()
   t.after(() => rmSync(root, { recursive: true, force: true }))
   const extDir = join(root, 'extensions', 'gwd')
   mkdirSync(extDir, { recursive: true })
-  writeFileSync(join(extDir, 'state.js'), '// fixture')
+  writeHeadlessQueryModules(extDir, 'js')
 
   const result = shouldUseAgentExtensionsDir({ env: { GWD_AGENT_DIR: root } })
   assert.equal(result.agentDir, extDir)
@@ -77,12 +89,20 @@ test('fileExists callback drives the decision (no real fs required)', () => {
     env: { GWD_AGENT_DIR: '/agent' },
     fileExists: (p) => {
       calls.push(p)
-      return p.endsWith('state.js')
+      return p.endsWith('.js')
     },
   })
   assert.equal(result.useAgentDir, true)
   assert.deepEqual(calls, [
     join('/agent', 'extensions', 'gwd', 'state.ts'),
     join('/agent', 'extensions', 'gwd', 'state.js'),
+    join('/agent', 'extensions', 'gwd', 'auto-dispatch.ts'),
+    join('/agent', 'extensions', 'gwd', 'auto-dispatch.js'),
+    join('/agent', 'extensions', 'gwd', 'session-status-io.ts'),
+    join('/agent', 'extensions', 'gwd', 'session-status-io.js'),
+    join('/agent', 'extensions', 'gwd', 'preferences.ts'),
+    join('/agent', 'extensions', 'gwd', 'preferences.js'),
+    join('/agent', 'extensions', 'gwd', 'auto-start.ts'),
+    join('/agent', 'extensions', 'gwd', 'auto-start.js'),
   ])
 })

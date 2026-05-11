@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Tests for canonical RPC contract constants exported by the contracts package.
 
 import assert from "node:assert/strict";

@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Interactive TUI mode and session UI rendering.
 // GWD2 - Interactive TUI mode for coding-agent sessions.
 /**

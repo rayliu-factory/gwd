@@ -1,4 +1,4 @@
-// GWD-2 — ProviderSwitchReport Tests (ADR-005 Phase 3)
+// GWD — ProviderSwitchReport Tests (ADR-005 Phase 3)
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 

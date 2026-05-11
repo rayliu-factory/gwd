@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Canonical workflow MCP tool metadata shared across package boundaries.
 
 export type WorkflowToolWritePolicy = "read" | "write";

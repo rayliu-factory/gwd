@@ -102,9 +102,10 @@ describe("GWD runtime tool names", () => {
     registerMemoryTools(pi);
     registerQueryTools(pi);
 
-    const workflowNames = names.filter((name) => name.startsWith("gwd_") || name.startsWith("gwd_"));
+    const oldPrefix = ["g", "sd_"].join("");
+    const workflowNames = names.filter((name) => name.startsWith("gwd_") || name.startsWith(oldPrefix));
     assert.ok(workflowNames.length > 0, "expected workflow tools to be registered");
-    assert.ok(!workflowNames.some((name) => name.startsWith("gwd_")), workflowNames.join(", "));
+    assert.ok(!workflowNames.some((name) => name.startsWith(oldPrefix)), workflowNames.join(", "));
     assert.ok(workflowNames.every((name) => name.startsWith("gwd_")), workflowNames.join(", "));
   });
 });

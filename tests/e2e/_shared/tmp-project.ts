@@ -1,5 +1,5 @@
 /**
- * GWD-2 e2e harness: temporary project scaffolding.
+ * GWD e2e harness: temporary project scaffolding.
  *
  * Creates a fresh isolated tmp dir for an e2e test, optionally seeded
  * with a git repo and/or a minimal `.gwd/` skeleton. Caller wires cleanup

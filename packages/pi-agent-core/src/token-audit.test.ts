@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Tests for provider-boundary token payload audit helpers.
 
 import assert from "node:assert/strict";

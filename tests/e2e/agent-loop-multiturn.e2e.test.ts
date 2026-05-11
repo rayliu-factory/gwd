@@ -1,5 +1,5 @@
 /**
- * GWD-2 multi-iteration agent-loop e2e.
+ * GWD multi-iteration agent-loop e2e.
  *
  * Drives a 3-LLM-turn loop through the fake provider to prove the agent
  * sustains repeated tool_use → tool_result → next-turn cycles. Phase 1b

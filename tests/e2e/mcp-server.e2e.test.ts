@@ -1,5 +1,5 @@
 /**
- * GWD-2 MCP server real-process e2e (3-tool starter).
+ * GWD MCP server real-process e2e (3-tool starter).
  *
  * Spawns the @gwd-build/mcp-server CLI (`packages/mcp-server/dist/cli.js`)
  * as a subprocess via the MCP SDK's StdioClientTransport, connects a real

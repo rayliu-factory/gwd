@@ -1,5 +1,5 @@
 /**
- * GWD-2 schema migration smoke (forward only).
+ * GWD schema migration smoke (forward only).
  *
  * Seeds a `.gwd/gwd.db` SQLite file at an older `schema_version` and runs
  * the **real built `gwd` binary** (`gwd headless query`, no LLM required)

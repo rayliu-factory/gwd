@@ -1,4 +1,4 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Tests representative telemetry evidence collection before Phase 8 legacy cleanup deletions.
 
 import assert from "node:assert/strict";

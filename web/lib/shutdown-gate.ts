@@ -1,4 +1,4 @@
-// GWD-2 Web — Shutdown gate: defers process.exit() and drains active SSE streams
+// GWD Web — Shutdown gate: defers process.exit() and drains active SSE streams
 /**
  * Shutdown gate — defers process.exit() so that page refreshes (which fire
  * `pagehide` then immediately re-boot) don't kill the server.
