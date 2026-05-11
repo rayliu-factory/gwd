@@ -203,6 +203,13 @@ export function loadEffectiveGSDPreferences(
   return result;
 }
 
+export function loadEffectiveGWDPreferences(
+  basePath?: string,
+  opts?: { availableModelIds?: string[] },
+): LoadedGSDPreferences | null {
+  return loadEffectiveGSDPreferences(basePath, opts);
+}
+
 function stripInheritedPlanningDepth(
   loaded: LoadedGSDPreferences,
   projectHasPlanningDepth: boolean,

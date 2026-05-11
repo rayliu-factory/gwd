@@ -579,11 +579,11 @@ async function importLocalModule<T>(relativePath: string): Promise<T> {
 }
 
 async function loadProjectPreferences(projectDir: string): Promise<unknown | null> {
-  const { loadEffectiveGSDPreferences } = await importLocalModule<any>(
+  const { loadEffectiveGWDPreferences } = await importLocalModule<any>(
     "../../../src/resources/extensions/gwd/preferences.js",
   );
   try {
-    return loadEffectiveGSDPreferences(projectDir).preferences;
+    return loadEffectiveGWDPreferences(projectDir).preferences;
   } catch {
     return null;
   }
@@ -981,7 +981,7 @@ async function generateOrReuseMilestoneId(projectDir: string): Promise<string> {
   // throws here — matches the pre-fix behavior for missing prefs.
   let uniqueEnabled = false;
   try {
-    uniqueEnabled = !!prefsMod?.loadEffectiveGSDPreferences?.(projectDir)?.preferences?.unique_milestone_ids;
+    uniqueEnabled = !!prefsMod?.loadEffectiveGWDPreferences?.(projectDir)?.preferences?.unique_milestone_ids;
   } catch {
     uniqueEnabled = false;
   }

@@ -11,7 +11,7 @@ import { _getAdapter, closeDatabase } from "../../../src/resources/extensions/gw
 import { _buildImportCandidates, registerWorkflowTools, WORKFLOW_TOOL_NAMES, validateProjectDir } from "./workflow-tools.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-mcp-workflow-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-mcp-workflow-${randomUUID()}`);
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
