@@ -703,6 +703,66 @@ test("selectAndApplyModel applies context_window_override to Ollama Qwen request
   assert.equal(setModelCalls[0]?.model.contextWindow, 131_072);
 });
 
+test("selectAndApplyModel applies context_window_override to pinned Ollama Qwen start model", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
+  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const setModelCalls: Array<{ model: any; options: unknown }> = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  const startModel = {
+    id: "qwen3.6:27b-coding-nvfp4",
+    provider: "ollama",
+    api: "ollama-chat",
+    contextWindow: 65_536,
+    providerOptions: { num_ctx: 65_536, keep_alive: "0" },
+  };
+
+  await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => [startModel] },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: startModel,
+    } as any,
+    {
+      setModel: async (model: any, options: unknown) => {
+        setModelCalls.push({ model, options });
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "execute-task",
+    "M001/S01/T01",
+    tempProject,
+    { context_window_override: 131_072 } as any,
+    false,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+    undefined,
+    true,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+  );
+
+  assert.equal(setModelCalls[0]?.model.providerOptions?.num_ctx, 131_072);
+  assert.equal(setModelCalls[0]?.model.providerOptions?.keep_alive, "0");
+  assert.equal(setModelCalls[0]?.model.contextWindow, 131_072);
+});
+
 test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for heavy work", async (t) => {
   const originalCwd = process.cwd();
   const originalGsdHome = process.env.GWD_HOME;

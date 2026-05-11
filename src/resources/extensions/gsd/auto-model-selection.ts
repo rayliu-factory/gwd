@@ -645,20 +645,22 @@ export async function selectAndApplyModel(
         m => m.provider === autoModeStartModel.provider && m.id === autoModeStartModel.id,
       );
       if (startModel) {
-        const ok = await pi.setModel(startModel, { persist: false });
+        const startModelToApply = applyOllamaAppleContextOverride(startModel, prefs);
+        const ok = await pi.setModel(startModelToApply, { persist: false });
         if (!ok) {
           const byId = availableModels.find(
             m => m.id === autoModeStartModel.id && !isModelBlocked(basePath, m.provider, m.id),
           );
           if (byId) {
-            const fallbackOk = await pi.setModel(byId, { persist: false });
+            const fallbackModelToApply = applyOllamaAppleContextOverride(byId, prefs);
+            const fallbackOk = await pi.setModel(fallbackModelToApply, { persist: false });
             if (fallbackOk) {
-              appliedModel = byId;
+              appliedModel = fallbackModelToApply;
               reapplyThinkingLevel(pi, autoModeStartThinkingLevel);
             }
           }
         } else {
-          appliedModel = startModel;
+          appliedModel = startModelToApply;
           reapplyThinkingLevel(pi, autoModeStartThinkingLevel);
         }
       }
