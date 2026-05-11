@@ -354,7 +354,6 @@ export async function handleAgentEnd(
     if (isOllamaAppleSiliconResourceFailure(ctx.model?.provider, ctx.model?.id, rawErrorMsg)) {
       const currentProvider = ctx.model?.provider;
       const currentId = ctx.model?.id;
-      suppressOllamaAppleSiliconModelForRun(currentProvider, currentId);
 
       const fallback = resolveModelId(
         OLLAMA_QWEN36_27B_MODEL,
@@ -364,6 +363,7 @@ export async function handleAgentEnd(
       if (fallback) {
         const ok = await pi.setModel(fallback, { persist: false });
         if (ok) {
+          suppressOllamaAppleSiliconModelForRun(currentProvider, currentId);
           setCurrentDispatchedModelId({ provider: fallback.provider, id: fallback.id });
           ctx.ui.notify(
             "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 hit local resource limits; retrying on qwen3.6:27b-coding-nvfp4 and suppressing 35B for this run.",
@@ -375,12 +375,16 @@ export async function handleAgentEnd(
           );
           return;
         }
+        ctx.ui.notify(
+          "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 hit local resource limits, but GSD failed to switch to qwen3.6:27b-coding-nvfp4 fallback.",
+          "warning",
+        );
+      } else {
+        ctx.ui.notify(
+          "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 hit local resource limits, but qwen3.6:27b-coding-nvfp4 is not available for fallback.",
+          "warning",
+        );
       }
-
-      ctx.ui.notify(
-        "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 hit local resource limits, but qwen3.6:27b-coding-nvfp4 is not available for fallback.",
-        "warning",
-      );
     }
 
     // ── 1a. Unsupported-model: provider rejected this model for the current
