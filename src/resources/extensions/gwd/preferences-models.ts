@@ -9,23 +9,23 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 import type { DynamicRoutingConfig } from "./model-router.js";
 import { canonicalModelForTier, defaultRoutingConfig, resolveModelForTier } from "./model-router.js";
 import type { ComplexityTier } from "./complexity-classifier.js";
 import type { TokenProfile, InlineLevel } from "./types.js";
 
 import type {
-  GSDPreferences,
-  GSDModelConfigV2,
-  GSDPhaseModelConfig,
+  GWDPreferences,
+  GWDModelConfigV2,
+  GWDPhaseModelConfig,
   ResolvedModelConfig,
   AutoSupervisorConfig,
 } from "./preferences-types.js";
-import { loadEffectiveGSDPreferences, getGlobalGSDPreferencesPath } from "./preferences.js";
+import { loadEffectiveGWDPreferences, getGlobalGWDPreferencesPath } from "./preferences.js";
 
 // Re-export types so existing consumers of ./preferences-models.js keep working
-export type { GSDPhaseModelConfig, GSDModelConfig, GSDModelConfigV2, ResolvedModelConfig } from "./preferences-types.js";
+export type { GWDPhaseModelConfig, GWDModelConfig, GWDModelConfigV2, ResolvedModelConfig } from "./preferences-types.js";
 
 /**
  * Resolve which model ID to use for a given auto-mode unit type.
@@ -45,11 +45,11 @@ export function resolveModelForUnit(unitType: string): string | undefined {
  * - Extended: `planning: { model: claude-opus-4-6, fallbacks: [glm-5, minimax-m2.5] }`
  */
 export function resolveModelWithFallbacksForUnit(unitType: string): ResolvedModelConfig | undefined {
-  const prefs = loadEffectiveGSDPreferences(undefined, { availableModelIds: [] });
+  const prefs = loadEffectiveGWDPreferences(undefined, { availableModelIds: [] });
   if (!prefs?.preferences.models) return undefined;
-  const m = prefs.preferences.models as GSDModelConfigV2;
+  const m = prefs.preferences.models as GWDModelConfigV2;
 
-  let phaseConfig: string | GSDPhaseModelConfig | undefined;
+  let phaseConfig: string | GWDPhaseModelConfig | undefined;
   switch (unitType) {
     case "research-milestone":
     case "research-slice":
@@ -150,13 +150,13 @@ export function resolveModelWithFallbacksForUnit(unitType: string): ResolvedMode
 export function resolveDefaultSessionModel(
   sessionProvider?: string,
 ): { provider: string; id: string } | undefined {
-  const prefs = loadEffectiveGSDPreferences(undefined, { availableModelIds: [] });
+  const prefs = loadEffectiveGWDPreferences(undefined, { availableModelIds: [] });
   if (!prefs?.preferences.models) return undefined;
 
-  const m = prefs.preferences.models as GSDModelConfigV2;
+  const m = prefs.preferences.models as GWDModelConfigV2;
 
   // Priority: execution → planning → first configured value
-  const candidates: Array<string | GSDPhaseModelConfig | undefined> = [
+  const candidates: Array<string | GWDPhaseModelConfig | undefined> = [
     m.execution,
     m.planning,
     m.research,
@@ -227,7 +227,7 @@ export function resolveDefaultSessionModel(
 export function isCustomProvider(provider: string | undefined): boolean {
   if (!provider) return false;
   const candidates = [
-    join(gsdHome(), "agent", "models.json"),
+    join(gwdHome(), "agent", "models.json"),
     join(homedir(), ".pi", "agent", "models.json"),
   ];
   for (const path of candidates) {
@@ -305,8 +305,8 @@ export function validateModelId(modelId: string): boolean {
  * Performs a safe read-modify-write: reads current content, updates the models
  * YAML block, and writes back. Creates the file if it doesn't exist.
  */
-export function updatePreferencesModels(models: GSDModelConfigV2): void {
-  const prefsPath = getGlobalGSDPreferencesPath();
+export function updatePreferencesModels(models: GWDModelConfigV2): void {
+  const prefsPath = getGlobalGWDPreferencesPath();
 
   let content = "";
   if (existsSync(prefsPath)) {
@@ -319,7 +319,7 @@ export function updatePreferencesModels(models: GSDModelConfigV2): void {
     if (typeof value === "string") {
       lines.push(`  ${phase}: ${value}`);
     } else if (value && typeof value === "object") {
-      const config = value as GSDPhaseModelConfig;
+      const config = value as GWDPhaseModelConfig;
       lines.push(`  ${phase}:`);
       lines.push(`    model: ${config.model}`);
       if (config.provider) {
@@ -351,7 +351,7 @@ export function updatePreferencesModels(models: GSDModelConfigV2): void {
  * Returns the merged config with defaults applied.
  */
 export function resolveDynamicRoutingConfig(): DynamicRoutingConfig {
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   const configured = prefs?.preferences.dynamic_routing;
   if (!configured) return defaultRoutingConfig();
   return {
@@ -361,7 +361,7 @@ export function resolveDynamicRoutingConfig(): DynamicRoutingConfig {
 }
 
 export function resolveAutoSupervisorConfig(): AutoSupervisorConfig {
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   const configured = prefs?.preferences.auto_supervisor ?? {};
 
   return {
@@ -415,7 +415,7 @@ const PROFILE_TIER_MAP: Record<TokenProfile, Record<string, ComplexityTier>> = {
 
 /**
  * Resolve profile defaults for a given token profile tier.
- * Returns a partial GSDPreferences that is used as the base layer --
+ * Returns a partial GWDPreferences that is used as the base layer --
  * explicit user preferences always override these defaults.
  *
  * Model IDs are resolved from capability tiers, not hardcoded to any
@@ -432,7 +432,7 @@ export function resolveProfileDefaults(
   profile: TokenProfile,
   availableModelIds?: string[],
   routingConfig: DynamicRoutingConfig = defaultRoutingConfig(),
-): Partial<GSDPreferences> {
+): Partial<GWDPreferences> {
   // burn-max never writes model defaults — preserve user-selected models.
   // For the other three profiles, derive concrete model IDs from the tier map
   // against the available-model list when the registry is provided. If callers
@@ -441,7 +441,7 @@ export function resolveProfileDefaults(
   const resolveTierModel = (tier: ComplexityTier): string => Array.isArray(availableModelIds)
     ? resolveModelForTier(tier, availableModelIds, routingConfig)
     : canonicalModelForTier(tier);
-  const models: GSDModelConfigV2 | undefined = profile === "burn-max"
+  const models: GWDModelConfigV2 | undefined = profile === "burn-max"
     ? undefined
     : {
         planning: resolveTierModel(tierMap.planning),
@@ -513,7 +513,7 @@ export function getProfileTierMap(profile: TokenProfile): Record<string, Complex
  * Returns "balanced" when no profile is set (D046).
  */
 export function resolveEffectiveProfile(): TokenProfile {
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   const profile = prefs?.preferences.token_profile;
   if (profile && VALID_TOKEN_PROFILES.has(profile)) return profile;
   return "balanced";
@@ -539,7 +539,7 @@ export function resolveInlineLevel(): InlineLevel {
  * Explicit preference always wins.
  */
 export function resolveContextSelection(): import("./types.js").ContextSelectionMode {
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   if (prefs?.preferences.context_selection) return prefs.preferences.context_selection;
   const profile = resolveEffectiveProfile();
   return profile === "budget" ? "smart" : "full";
@@ -549,8 +549,8 @@ export function resolveContextSelection(): import("./types.js").ContextSelection
  * Resolve the search provider preference from preferences.md.
  * Returns undefined if not configured (caller falls back to existing behavior).
  */
-export function resolveSearchProviderFromPreferences(): GSDPreferences["search_provider"] | undefined {
-  const prefs = loadEffectiveGSDPreferences();
+export function resolveSearchProviderFromPreferences(): GWDPreferences["search_provider"] | undefined {
+  const prefs = loadEffectiveGWDPreferences();
   return prefs?.preferences.search_provider;
 }
 
@@ -559,7 +559,7 @@ export function resolveSearchProviderFromPreferences(): GSDPreferences["search_p
  * Returns a normalized, de-duplicated list.
  */
 export function resolveDisabledModelProvidersFromPreferences(): string[] {
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   const raw = prefs?.preferences.disabled_model_providers;
   if (!Array.isArray(raw)) return [];
   return Array.from(new Set(

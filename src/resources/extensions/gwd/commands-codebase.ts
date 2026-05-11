@@ -14,7 +14,7 @@ import {
   getCodebaseMapStats,
   readCodebaseMap,
 } from "./codebase-generator.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import type { CodebaseMapOptions } from "./codebase-generator.js";
 import { currentDirectoryRoot } from "./commands/context.js";
 
@@ -156,7 +156,7 @@ function showStats(basePath: string, ctx: ExtensionCommandContext): void {
  */
 function resolveCodebaseOptions(args: string, ctx: ExtensionCommandContext): CodebaseMapOptions | false {
   // Load preferences defaults
-  const prefs = loadEffectiveGSDPreferences()?.preferences?.codebase;
+  const prefs = loadEffectiveGWDPreferences()?.preferences?.codebase;
 
   // Parse CLI flags
   const maxFilesStr = extractFlag(args, "--max-files");

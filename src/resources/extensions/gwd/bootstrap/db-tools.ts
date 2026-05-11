@@ -4,7 +4,7 @@ import { Type } from "@sinclair/typebox";
 import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 import { Text } from "@gwd/pi-tui";
 
-import { loadEffectiveGSDPreferences } from "../preferences.js";
+import { loadEffectiveGWDPreferences } from "../preferences.js";
 import { ensureDbOpen, resolveCtxCwd } from "./dynamic-tools.js";
 import { loadWriteGateSnapshot, shouldBlockRootArtifactSaveInSnapshot } from "./write-gate.js";
 import { StringEnum } from "@gwd/pi-ai";
@@ -376,7 +376,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
       }
 
       const existingIds = findMilestoneIds(basePath);
-      const uniqueEnabled = !!loadEffectiveGSDPreferences(basePath)?.preferences?.unique_milestone_ids;
+      const uniqueEnabled = !!loadEffectiveGWDPreferences(basePath)?.preferences?.unique_milestone_ids;
       const allIds = [...new Set([...existingIds, ...getReservedMilestoneIds()])];
       const newId = nextMilestoneId(allIds, uniqueEnabled);
       await ensureMilestoneDbRow(newId, basePath);

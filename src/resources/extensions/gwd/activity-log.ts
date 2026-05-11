@@ -11,11 +11,11 @@
 import { writeFileSync, writeSync, mkdirSync, readdirSync, unlinkSync, statSync, openSync, closeSync, constants } from "node:fs";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
-import { GSDError, GWD_IO_ERROR } from "./errors.js";
+import { GWDError, GWD_IO_ERROR } from "./errors.js";
 
 const SEQ_PREFIX_RE = /^(\d+)-/;
 import type { ExtensionContext } from "@gwd/pi-coding-agent";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { buildAuditEnvelope, emitUokAuditEvent } from "./uok/audit.js";
 import { isUnifiedAuditEnabled } from "./uok/audit-toggle.js";
 
@@ -98,7 +98,7 @@ function nextActivityFilePath(
     }
   }
   // Fallback: should never reach here in practice
-  throw new GSDError(GWD_IO_ERROR, `Failed to find available activity log sequence in ${activityDir}`);
+  throw new GWDError(GWD_IO_ERROR, `Failed to find available activity log sequence in ${activityDir}`);
 }
 
 export function saveActivityLog(
@@ -111,7 +111,7 @@ export function saveActivityLog(
     const entries = ctx.sessionManager.getEntries();
     if (!entries || entries.length === 0) return null;
 
-    const activityDir = join(gsdRoot(basePath), "activity");
+    const activityDir = join(gwdRoot(basePath), "activity");
     mkdirSync(activityDir, { recursive: true });
 
     const safeUnitId = unitId.replace(/\//g, "-");

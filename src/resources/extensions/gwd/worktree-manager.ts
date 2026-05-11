@@ -18,7 +18,7 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { join, resolve, sep } from "node:path";
-import { GSDError, GWD_PARSE_ERROR, GWD_STALE_STATE, GWD_LOCK_HELD, GWD_GIT_ERROR, GWD_MERGE_CONFLICT } from "./errors.js";
+import { GWDError, GWD_PARSE_ERROR, GWD_STALE_STATE, GWD_LOCK_HELD, GWD_GIT_ERROR, GWD_MERGE_CONFLICT } from "./errors.js";
 import { logWarning } from "./workflow-logger.js";
 import {
   nativeBranchDelete,
@@ -40,7 +40,7 @@ import {
 } from "./native-git-bridge.js";
 import { emitCanonicalRootRedirect } from "./worktree-telemetry.js";
 import {
-  isGsdWorktreePath,
+  isGwdWorktreePath,
   normalizeWorktreePathForCompare,
   resolveWorktreeProjectRoot,
 } from "./worktree-root.js";
@@ -92,10 +92,10 @@ function normalizePathForComparison(path: string): string {
 function normalizeBasePathForWorktreeOps(basePath: string): string {
   const resolved = resolveWorktreeProjectRoot(basePath);
   if (
-    isGsdWorktreePath(basePath) &&
+    isGwdWorktreePath(basePath) &&
     normalizeWorktreePathForCompare(resolved) === normalizeWorktreePathForCompare(basePath)
   ) {
-    throw new GSDError(
+    throw new GWDError(
       GWD_GIT_ERROR,
       `Cannot resolve project root from worktree path: ${basePath}. Run the command from the project root or set GWD_PROJECT_ROOT.`,
     );
@@ -227,7 +227,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
 
   // Validate name: alphanumeric, hyphens, underscores only
   if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
-    throw new GSDError(GWD_PARSE_ERROR, `Invalid worktree name "${name}". Use only letters, numbers, hyphens, and underscores.`);
+    throw new GWDError(GWD_PARSE_ERROR, `Invalid worktree name "${name}". Use only letters, numbers, hyphens, and underscores.`);
   }
 
   const wtPath = worktreePath(basePath, name);
@@ -243,7 +243,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
       logWarning("reconcile", `Removing stale worktree directory (no .git file): ${wtPath}`, { worktree: name });
       rmSync(wtPath, { recursive: true, force: true });
     } else {
-      throw new GSDError(GWD_STALE_STATE, `Worktree "${name}" already exists at ${wtPath}`);
+      throw new GWDError(GWD_STALE_STATE, `Worktree "${name}" already exists at ${wtPath}`);
     }
   }
 
@@ -263,7 +263,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
   // which would flow into `git worktree add ... ""` and crash with
   // `fatal: not a valid object name`. (Issue #4980 HIGH-9)
   if (!startPoint || startPoint.length === 0) {
-    throw new GSDError(
+    throw new GWDError(
       GWD_GIT_ERROR,
       "Repository has no commits yet (unborn branch). Make an initial commit before creating worktrees.",
     );
@@ -278,7 +278,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
     const branchInUse = worktreeEntries.some(entry => entry.branch === branch);
 
     if (branchInUse) {
-      throw new GSDError(
+      throw new GWDError(
         GWD_LOCK_HELD,
         `Branch "${branch}" is already in use by another worktree. ` +
         `Remove the existing worktree first with /worktree remove ${name}.`,
@@ -298,7 +298,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
       // deleted at teardown). (Issue #4980 HIGH-3)
       const branchIsAncestor = nativeIsAncestor(basePath, branch, startPoint);
       if (!branchIsAncestor) {
-        throw new GSDError(
+        throw new GWDError(
           GWD_GIT_ERROR,
           `Branch "${branch}" already exists with commits not reachable from "${startPoint}". ` +
           `Refusing to force-reset — would orphan prior work. ` +
@@ -581,7 +581,7 @@ export function removeWorktree(
             { cwd: resolvedWtPath, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" },
           );
           execFileSync(
-            "git", ["commit", "-m", `gsd: rescue submodule changes from worktree ${name}`, "--allow-empty"],
+            "git", ["commit", "-m", `gwd: rescue submodule changes from worktree ${name}`, "--allow-empty"],
             { cwd: resolvedWtPath, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" },
           );
           execFileSync(
@@ -749,7 +749,7 @@ function parseDiffNameStatus(entries: { status: string; path: string }[]): Workt
  * Diff the .gwd/ directory between the worktree branch and main branch.
  * Returns a summary of added, modified, and removed GWD artifacts.
  */
-export function diffWorktreeGSD(basePath: string, name: string): WorktreeDiffSummary {
+export function diffWorktreeGWD(basePath: string, name: string): WorktreeDiffSummary {
   basePath = normalizeBasePathForWorktreeOps(basePath);
 
   const branch = worktreeBranchName(name);
@@ -801,7 +801,7 @@ export function diffWorktreeNumstat(basePath: string, name: string, branchOverri
  * Get the full diff content for .gwd/ between the worktree branch and main.
  * Returns the raw unified diff for LLM consumption.
  */
-export function getWorktreeGSDDiff(basePath: string, name: string): string {
+export function getWorktreeGWDDiff(basePath: string, name: string): string {
   basePath = normalizeBasePathForWorktreeOps(basePath);
 
   const branch = worktreeBranchName(name);
@@ -850,12 +850,12 @@ export function mergeWorktreeToMain(basePath: string, name: string, commitMessag
   const current = nativeGetCurrentBranch(basePath);
 
   if (current !== mainBranch) {
-    throw new GSDError(GWD_GIT_ERROR, `Must be on ${mainBranch} to merge. Currently on ${current}.`);
+    throw new GWDError(GWD_GIT_ERROR, `Must be on ${mainBranch} to merge. Currently on ${current}.`);
   }
 
   const result = nativeMergeSquash(basePath, branch);
   if (!result.success) {
-    throw new GSDError(GWD_MERGE_CONFLICT, `Merge conflicts detected in: ${result.conflicts.join(", ")}`);
+    throw new GWDError(GWD_MERGE_CONFLICT, `Merge conflicts detected in: ${result.conflicts.join(", ")}`);
   }
 
   nativeCommit(basePath, commitMessage);

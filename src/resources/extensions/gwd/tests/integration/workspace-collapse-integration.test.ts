@@ -16,7 +16,7 @@ import { execFileSync } from "node:child_process";
 
 import { createWorkspace, scopeMilestone } from "../../workspace.ts";
 import {
-  gsdRoot,
+  gwdRoot,
   clearPathCache,
   _clearGwdRootCache,
 } from "../../paths.ts";
@@ -144,11 +144,11 @@ describe("workspace-collapse integration: Test 2 — abort teardown clears stale
   test("STATE.md and M001-META.json are removed by teardownAutoWorktree", () => {
     // Phase C pt 2: auto.lock no longer exists as a file — it migrated
     // to the workers + unit_dispatches tables.
-    const gsdDir = join(repoDir, ".gwd");
-    const milestonesDir = join(gsdDir, "milestones", "M001");
+    const gwdDir = join(repoDir, ".gwd");
+    const milestonesDir = join(gwdDir, "milestones", "M001");
     mkdirSync(milestonesDir, { recursive: true });
 
-    const stateMd = join(gsdDir, "STATE.md");
+    const stateMd = join(gwdDir, "STATE.md");
     const metaJson = join(milestonesDir, "M001-META.json");
 
     writeFileSync(stateMd, "# State\nactive\n");
@@ -295,9 +295,9 @@ describe("workspace-collapse integration: Test 4 — sibling worktrees share DB 
   });
 });
 
-// ─── Test 5: gsdRootCache normalization survives trailing-slash inputs ────────
+// ─── Test 5: gwdRootCache normalization survives trailing-slash inputs ────────
 
-describe("workspace-collapse integration: Test 5 — gsdRootCache normalization deduplicates trailing-slash inputs", () => {
+describe("workspace-collapse integration: Test 5 — gwdRootCache normalization deduplicates trailing-slash inputs", () => {
   let projectDir: string;
   let fakeHome: string;
   let savedHome: string | undefined;
@@ -335,14 +335,14 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
     rmSync(fakeHome, { recursive: true, force: true });
   });
 
-  test("gsdRoot('/path/to/project') and gsdRoot('/path/to/project/') return identical paths", () => {
-    const withoutSlash = gsdRoot(projectDir);
-    const withSlash = gsdRoot(projectDir + "/");
+  test("gwdRoot('/path/to/project') and gwdRoot('/path/to/project/') return identical paths", () => {
+    const withoutSlash = gwdRoot(projectDir);
+    const withSlash = gwdRoot(projectDir + "/");
 
     assert.equal(
       withoutSlash,
       withSlash,
-      "gsdRoot must return identical paths for inputs with and without trailing slash",
+      "gwdRoot must return identical paths for inputs with and without trailing slash",
     );
     assert.equal(
       withoutSlash,
@@ -355,15 +355,15 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
     // Start clean
     clearPathCache();
 
-    const r1 = gsdRoot(projectDir);
-    const r2 = gsdRoot(projectDir + "/");
+    const r1 = gwdRoot(projectDir);
+    const r2 = gwdRoot(projectDir + "/");
 
     assert.equal(r1, r2, "r1 and r2 must be the same string after normalization");
     // The cache normalizes both inputs to the same key — no duplicate entries.
     // We can't inspect the cache size directly, but the behavioral proof is
     // that a second call after clearPathCache re-probes and still matches.
     clearPathCache();
-    const r3 = gsdRoot(projectDir + "/");
+    const r3 = gwdRoot(projectDir + "/");
     assert.equal(r3, r1, "re-probe after clearPathCache must produce the same result");
   });
 });

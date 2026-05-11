@@ -55,8 +55,8 @@ const EXECUTION_TOOL_NAMES = new Set([
   "Bash",
   "gwd_exec",
   "gwd_exec_search",
-  "mcp__gsd-workflow__gwd_exec",
-  "mcp__gsd-workflow__gwd_exec_search",
+  "mcp__gwd-workflow__gwd_exec",
+  "mcp__gwd-workflow__gwd_exec_search",
 ]);
 
 // ─── Module State ───────────────────────────────────────────────────────────

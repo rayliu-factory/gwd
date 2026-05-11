@@ -9,7 +9,7 @@
  *
  * Templates are snapshotted shortly after module init via warmCache().
  * This keeps import/extension-registration fast while still preventing a
- * running session from being invalidated when another `gsd` launch overwrites
+ * running session from being invalidated when another `gwd` launch overwrites
  * the user-local agent tree with newer templates via initResources(). Without caching, the
  * in-memory extension code (which knows variable set A) can read a newer
  * template from disk (which expects variable set B), causing a
@@ -17,11 +17,11 @@
  */
 
 import { readFileSync, readdirSync, existsSync } from "node:fs";
-import { GSDError, GWD_PARSE_ERROR } from "./errors.js";
+import { GWDError, GWD_PARSE_ERROR } from "./errors.js";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { logWarning } from "./workflow-logger.js";
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 
 type ExistsFn = (path: string) => boolean;
 
@@ -34,21 +34,21 @@ function hasRequiredExtensionAssets(rootDir: string, exists: ExistsFn = existsSy
 
 export function resolveExtensionDirFromCandidates(
   moduleDir: string,
-  agentGsdDir: string,
+  agentGwdDir: string,
   exists: ExistsFn = existsSync,
 ): string {
   const moduleUsable = hasRequiredExtensionAssets(moduleDir, exists);
-  const agentUsable = hasRequiredExtensionAssets(agentGsdDir, exists);
+  const agentUsable = hasRequiredExtensionAssets(agentGwdDir, exists);
 
   // Prefer the user-local extension tree when both are valid. This avoids
   // leaking npm/global-install paths into prompts on Windows.
-  if (agentUsable) return agentGsdDir;
+  if (agentUsable) return agentGwdDir;
   if (moduleUsable) return moduleDir;
 
   // Degraded fallback: if required template is missing in both locations,
   // keep previous behavior and prefer whichever still has prompts/.
   if (exists(join(moduleDir, "prompts"))) return moduleDir;
-  if (exists(join(agentGsdDir, "prompts"))) return agentGsdDir;
+  if (exists(join(agentGwdDir, "prompts"))) return agentGwdDir;
   return moduleDir;
 }
 
@@ -64,8 +64,8 @@ export function resolveExtensionDirFromCandidates(
  */
 function resolveExtensionDir(): string {
   const moduleDir = dirname(fileURLToPath(import.meta.url));
-  const agentGsdDir = join(gsdHome(), "agent", "extensions", "gwd");
-  return resolveExtensionDirFromCandidates(moduleDir, agentGsdDir);
+  const agentGwdDir = join(gwdHome(), "agent", "extensions", "gwd");
+  return resolveExtensionDirFromCandidates(moduleDir, agentGwdDir);
 }
 
 const __extensionDir = resolveExtensionDir();
@@ -198,7 +198,7 @@ export function loadPrompt(name: string, vars: Record<string, string> = {}): str
       .map(m => m.slice(2, -2))
       .filter(key => !(key in effectiveVars));
     if (missing.length > 0) {
-      throw new GSDError(
+      throw new GWDError(
         GWD_PARSE_ERROR,
         `loadPrompt("${name}"): template declares {{${missing.join("}}, {{")}}}} but no value was provided. ` +
         `This usually means the extension code in memory is older than the template on disk. ` +
@@ -215,7 +215,7 @@ export function loadPrompt(name: string, vars: Record<string, string> = {}): str
 
     // Use split/join instead of replaceAll to avoid JavaScript's special
     // replacement patterns ($', $`, $&) being interpreted in the value.
-    // See: https://github.com/gwd-build/gwd-2/issues/2968
+    // See: https://github.com/rayliu-factory/gwd/issues/2968
     content = content.split(`{{${key}}}`).join(safeValue);
   }
 

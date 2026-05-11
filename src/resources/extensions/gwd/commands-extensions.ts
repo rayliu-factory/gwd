@@ -12,7 +12,7 @@ import { dirname, join, resolve } from "node:path";
 import { homedir, tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 import { lockSync, unlockSync } from "proper-lockfile";
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 
 /**
  * Strict numeric comparison of two npm-style version strings.
@@ -96,11 +96,11 @@ interface ExtensionRegistry {
 // ─── Registry I/O ───────────────────────────────────────────────────────────
 
 function getRegistryPath(): string {
-  return join(gsdHome(), "extensions", "registry.json");
+  return join(gwdHome(), "extensions", "registry.json");
 }
 
 function getAgentExtensionsDir(): string {
-  return join(gsdHome(), "agent", "extensions");
+  return join(gwdHome(), "agent", "extensions");
 }
 
 function loadRegistry(): ExtensionRegistry {
@@ -130,7 +130,7 @@ function saveRegistry(registry: ExtensionRegistry): void {
 
 /**
  * Run a registry load → mutate → save transaction under a cross-process lock.
- * Prevents two concurrent `gsd extensions install/uninstall/update` invocations
+ * Prevents two concurrent `gwd extensions install/uninstall/update` invocations
  * from trampling each other's registry mutations.
  *
  * Uses proper-lockfile.lockSync against the registry path. Directory is created
@@ -251,7 +251,7 @@ function discoverManifests(): Map<string, ExtensionManifest> {
 }
 
 function getInstalledExtDir(): string {
-  return join(gsdHome(), "extensions");
+  return join(gwdHome(), "extensions");
 }
 
 // Source: derived from npm/git URL conventions (from RESEARCH.md)
@@ -542,7 +542,7 @@ async function updateSingleExtension(
   // Git and local installs: "reinstall to update" hint (D-10, D-12)
   if (entry.installType !== "npm") {
     const source = entry.installType ?? "unknown";
-    const hint = entry.installedFrom ? `gsd extensions install ${entry.installedFrom}` : `gsd extensions install <specifier>`;
+    const hint = entry.installedFrom ? `gwd extensions install ${entry.installedFrom}` : `gwd extensions install <specifier>`;
     ctx.ui.notify(
       `"${id}" was installed from ${source}. Reinstall to update: ${hint}`,
       "warning",
@@ -566,7 +566,7 @@ async function updateSingleExtension(
   // silently upgrade past the pin — tell them to re-install with a new pin.
   if (pin) {
     ctx.ui.notify(
-      `"${id}" was installed with a pinned version (${pin}). To update, run: gsd extensions install ${packageName}@<new-version>`,
+      `"${id}" was installed with a pinned version (${pin}). To update, run: gwd extensions install ${packageName}@<new-version>`,
       "info",
     );
     return;
@@ -606,7 +606,7 @@ async function updateAllExtensions(
   const userEntries = Object.values(registry.entries).filter(e => e.source === "user");
 
   if (userEntries.length === 0) {
-    ctx.ui.notify("No user-installed extensions found. Use: gsd extensions install <package> to add one.", "warning");
+    ctx.ui.notify("No user-installed extensions found. Use: gwd extensions install <package> to add one.", "warning");
     return;
   }
 
@@ -678,7 +678,7 @@ function installFromNpm(specifier: string, installedExtDir: string, ctx: Extensi
   // packDir holds the tarball in tmpdir(). The *extractDir* is staged inside
   // installedExtDir so the final renameSync to destPath stays on a single
   // filesystem (avoids EXDEV when tmpdir() and ~/.gwd live on different mounts).
-  const packDir = mkdtempSync(join(tmpdir(), "gsd-install-"));
+  const packDir = mkdtempSync(join(tmpdir(), "gwd-install-"));
   let extractDir: string | null = null;
   try {
     // Step 1: npm pack to tmpdir (D-01, D-05)
@@ -893,7 +893,7 @@ function handleList(ctx: ExtensionCommandContext): void {
     }
 
     if (!enabled) {
-      lines.push(`  ↳ gsd extensions enable ${m.id}`);
+      lines.push(`  ↳ gwd extensions enable ${m.id}`);
     }
   }
 

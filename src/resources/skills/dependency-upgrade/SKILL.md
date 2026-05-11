@@ -131,7 +131,7 @@ After all batches, produce a rollup:
 - <CVE> still open — not exploitable in our usage (see comment in package.json)
 ```
 
-Append to `.gsd/KNOWLEDGE.md` any non-obvious gotcha from the upgrade (API changes that tripped you up, migration rituals for this codebase).
+Append to `.gwd/KNOWLEDGE.md` any non-obvious gotcha from the upgrade (API changes that tripped you up, migration rituals for this codebase).
 
 </process>
 

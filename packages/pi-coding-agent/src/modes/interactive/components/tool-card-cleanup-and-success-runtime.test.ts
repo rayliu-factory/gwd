@@ -1,6 +1,6 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Runtime tests for TUI tool cards, success notifications, and blocking errors.
-// GSD2 TUI Tests - Runtime coverage for tool-card cleanup and success notification rendering.
+// GWD2 TUI Tests - Runtime coverage for tool-card cleanup and success notification rendering.
 // Runtime regression tests for the post-compaction tool-card cleanup and the
 // green-bordered success-notification rendering. Replaces the source-grep
 // `src/tests/tui-running-and-success-box.test.ts` that was deleted in #4875
@@ -66,7 +66,7 @@ describe("Blocking error banner", () => {
 		const message = [
 			"Pre-execution checks failed: 3 blocking issues found",
 			"  - [file] lib/types.ts: Task T01 references 'lib/types.ts'",
-			"See .gsd/milestones/M001/slices/S02/S02-PRE-EXEC-VERIFY.json for full details.",
+			"See .gwd/milestones/M001/slices/S02/S02-PRE-EXEC-VERIFY.json for full details.",
 		].join("\n");
 
 		renderBlockingErrorBanner(banner, message);

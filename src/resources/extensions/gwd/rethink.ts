@@ -12,14 +12,14 @@ import { existsSync } from "node:fs";
 
 import { isAutoActive } from "./auto.js";
 import { deriveState } from "./state.js";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { findMilestoneIds } from "./milestone-ids.js";
 import { loadQueueOrder, validateQueueOrder } from "./queue-order.js";
 import { isParked, getParkedReason } from "./milestone-actions.js";
 import { getMilestoneSlices, isDbAvailable } from "./gwd-db.js";
 import { buildExistingMilestonesContext } from "./guided-flow-queue.js";
 import { loadPrompt } from "./prompt-loader.js";
-import { isGsdGitignored } from "./gitignore.js";
+import { isGwdGitignored } from "./gitignore.js";
 import { currentDirectoryRoot } from "./commands/context.js";
 
 // ─── Entry Point ──────────────────────────────────────────────────────────────
@@ -35,7 +35,7 @@ export async function handleRethink(
   }
 
   const basePath = currentDirectoryRoot();
-  const root = gsdRoot(basePath);
+  const root = gwdRoot(basePath);
   if (!existsSync(root)) {
     ctx.ui.notify("No GWD project found. Run /gwd init first.", "warning");
     return;
@@ -55,9 +55,9 @@ export async function handleRethink(
   const rethinkData = buildRethinkData(basePath, milestoneIds, state, queueOrder);
   const existingMilestonesContext = await buildExistingMilestonesContext(basePath, milestoneIds, state);
 
-  const commitInstruction = isGsdGitignored(basePath)
+  const commitInstruction = isGwdGitignored(basePath)
     ? "Do not commit planning artifacts — .gwd/ is gitignored in this project."
-    : 'After changes, run `git add .gwd/ && git commit -m "docs(gsd): rethink milestone plan"` to persist (rethink runs interactively outside auto-mode, so no system auto-commit)';
+    : 'After changes, run `git add .gwd/ && git commit -m "docs(gwd): rethink milestone plan"` to persist (rethink runs interactively outside auto-mode, so no system auto-commit)';
 
   const content = loadPrompt("rethink", {
     rethinkData,

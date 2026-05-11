@@ -9,10 +9,10 @@ import { logWarning } from "../workflow-logger.js";
 import { debugTime } from "../debug-logger.js";
 import { loadPrompt, getTemplatesDir } from "../prompt-loader.js";
 import { readForensicsMarker } from "../forensics.js";
-import { resolveAllSkillReferences, renderPreferencesForSystemPrompt, loadEffectiveGSDPreferences } from "../preferences.js";
+import { resolveAllSkillReferences, renderPreferencesForSystemPrompt, loadEffectiveGWDPreferences } from "../preferences.js";
 import { resolveModelWithFallbacksForUnit } from "../preferences-models.js";
 import { resolveSkillReference } from "../preferences-skills.js";
-import { resolveGsdRootFile, resolveSliceFile, resolveSlicePath, resolveTaskFile, resolveTaskFiles, resolveTasksDir, relSliceFile, relSlicePath, relTaskFile } from "../paths.js";
+import { resolveGwdRootFile, resolveSliceFile, resolveSlicePath, resolveTaskFile, resolveTaskFiles, resolveTasksDir, relSliceFile, relSlicePath, relTaskFile } from "../paths.js";
 import { ensureCodebaseMapFresh, readCodebaseMap } from "../codebase-generator.js";
 import { hasSkillSnapshot, detectNewSkills, formatSkillsXml } from "../skill-discovery.js";
 import { getActiveAutoWorktreeContext } from "../auto-worktree.js";
@@ -21,7 +21,7 @@ import { deriveState } from "../state.js";
 import { formatOverridesSection, formatShortcut, loadActiveOverrides, loadFile, parseContinue, parseSummary } from "../files.js";
 import { toPosixPath } from "../../shared/mod.js";
 import { autoEnableCmuxPreferences } from "../commands-cmux.js";
-import { gsdHome } from "../gwd-home.js";
+import { gwdHome } from "../gwd-home.js";
 
 const DEFAULT_CONTEXT_MESSAGE_MAX_CHARS = 4_000;
 const DEFAULT_KNOWLEDGE_MAX_CHARS = 12_000;
@@ -66,7 +66,7 @@ export const BUNDLED_SKILL_TRIGGERS: Array<{ trigger: string; skill: string }> =
   { trigger: "Review UI code for Web Interface Guidelines compliance — UX, design, and accessibility patterns", skill: "web-design-guidelines" },
   { trigger: "UI/UX patterns reference — animations, CSS, typography, prefetching, icons (file:line findings)", skill: "userinterface-wiki" },
   { trigger: "Author or refine a GWD skill — SKILL.md structure, frontmatter, and best practices", skill: "create-skill" },
-  { trigger: "Create or debug a GWD extension — tools, commands, event hooks, custom TUI, providers", skill: "create-gsd-extension" },
+  { trigger: "Create or debug a GWD extension — tools, commands, event hooks, custom TUI, providers", skill: "create-gwd-extension" },
   { trigger: "Author a YAML workflow definition — steps, triggers, and templates", skill: "create-workflow" },
   { trigger: "Deep code optimization audit — perf anti-patterns, memory leaks, algorithmic complexity, bundle size, I/O, caching, dead code (parallel pattern-based hunt)", skill: "code-optimizer" },
 ];
@@ -87,7 +87,7 @@ function buildBundledSkillsTable(): string {
 
 function warnDeprecatedAgentInstructions(): void {
   const paths = [
-    join(gsdHome(), "agent-instructions.md"),
+    join(gwdHome(), "agent-instructions.md"),
     join(process.cwd(), ".gwd", "agent-instructions.md"),
   ];
   for (const path of paths) {
@@ -95,7 +95,7 @@ function warnDeprecatedAgentInstructions(): void {
       console.warn(
         `[GWD] DEPRECATED: ${path} is no longer loaded. ` +
         `Migrate your instructions to AGENTS.md (or CLAUDE.md) in the same directory. ` +
-        `See https://github.com/gwd-build/gwd-2/issues/1492`,
+        `See https://github.com/rayliu-factory/gwd/issues/1492`,
       );
     }
   }
@@ -114,13 +114,13 @@ export async function buildBeforeAgentStartResult(
     shortcutDashboard: formatShortcut("Ctrl+Alt+G"),
     shortcutShell: formatShortcut("Ctrl+Alt+B"),
   });
-  let loadedPreferences = loadEffectiveGSDPreferences();
+  let loadedPreferences = loadEffectiveGWDPreferences();
   try {
     const { markCmuxPromptShown, shouldPromptToEnableCmux } = await import("../../cmux/index.js");
     if (shouldPromptToEnableCmux(loadedPreferences?.preferences)) {
       markCmuxPromptShown();
       if (autoEnableCmuxPreferences()) {
-        loadedPreferences = loadEffectiveGSDPreferences();
+        loadedPreferences = loadEffectiveGWDPreferences();
         ctx.ui.notify(
           "cmux detected — auto-enabled. Run /gwd cmux off to disable.",
           "info",
@@ -144,7 +144,7 @@ export async function buildBeforeAgentStartResult(
     }
   }
 
-  const { block: knowledgeBlock, globalSizeKb } = loadKnowledgeBlock(gsdHome(), process.cwd());
+  const { block: knowledgeBlock, globalSizeKb } = loadKnowledgeBlock(gwdHome(), process.cwd());
   if (globalSizeKb > 4) {
     ctx.ui.notify(
       `GWD: ~/.gwd/agent/KNOWLEDGE.md is ${globalSizeKb.toFixed(1)}KB — consider trimming to keep system prompt lean.`,
@@ -187,7 +187,7 @@ export async function buildBeforeAgentStartResult(
     logWarning("bootstrap", `CODEBASE refresh failed: ${(e as Error).message}`);
   }
 
-  const codebasePath = resolveGsdRootFile(process.cwd(), "CODEBASE");
+  const codebasePath = resolveGwdRootFile(process.cwd(), "CODEBASE");
   const rawCodebase = readCodebaseMap(process.cwd());
   if (existsSync(codebasePath) && rawCodebase) {
     try {
@@ -369,11 +369,11 @@ export async function loadMemoryBlock(
   }
 }
 
-export function loadKnowledgeBlock(gsdHomeDir: string, cwd: string): { block: string; globalSizeKb: number } {
+export function loadKnowledgeBlock(gwdHomeDir: string, cwd: string): { block: string; globalSizeKb: number } {
   // 1. Global knowledge (~/.gwd/agent/KNOWLEDGE.md) — cross-project, user-maintained
   let globalKnowledge = "";
   let globalSizeKb = 0;
-  const globalKnowledgePath = join(gsdHomeDir, "agent", "KNOWLEDGE.md");
+  const globalKnowledgePath = join(gwdHomeDir, "agent", "KNOWLEDGE.md");
   if (existsSync(globalKnowledgePath)) {
     try {
       const content = readFileSync(globalKnowledgePath, "utf-8").trim();
@@ -388,7 +388,7 @@ export function loadKnowledgeBlock(gsdHomeDir: string, cwd: string): { block: st
 
   // 2. Project knowledge (.gwd/KNOWLEDGE.md) — project-specific
   let projectKnowledge = "";
-  const knowledgePath = resolveGsdRootFile(cwd, "KNOWLEDGE");
+  const knowledgePath = resolveGwdRootFile(cwd, "KNOWLEDGE");
   if (existsSync(knowledgePath)) {
     try {
       const content = readFileSync(knowledgePath, "utf-8").trim();

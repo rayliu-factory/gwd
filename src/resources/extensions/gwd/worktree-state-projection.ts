@@ -157,13 +157,13 @@ export function _projectRootToWorktreeImpl(
   if (!milestoneId) return;
 
   const contract = resolveGwdPathContract(worktreePath_, projectRoot);
-  const prGsd = contract.projectGwd;
-  const wtGsd = contract.worktreeGwd ?? join(worktreePath_, ".gwd");
+  const prGwd = contract.projectGwd;
+  const wtGwd = contract.worktreeGwd ?? join(worktreePath_, ".gwd");
 
   // When .gwd is a symlink to the same external directory in both locations,
   // cpSync rejects the copy because source === destination (ERR_FS_CP_EINVAL).
   // Compare realpaths and skip when they resolve to the same physical path (#2184).
-  if (isSamePath(prGsd, wtGsd)) return;
+  if (isSamePath(prGwd, wtGwd)) return;
 
   // Copy milestone directory from project root to worktree — additive only.
   // force:false prevents cpSync from overwriting existing worktree files.
@@ -171,8 +171,8 @@ export function _projectRootToWorktreeImpl(
   // by validate-milestone) get clobbered by stale project root copies,
   // causing an infinite re-validation loop (#1886).
   safeCopyRecursive(
-    join(prGsd, "milestones", milestoneId),
-    join(wtGsd, "milestones", milestoneId),
+    join(prGwd, "milestones", milestoneId),
+    join(wtGwd, "milestones", milestoneId),
     { force: false },
   );
 
@@ -185,16 +185,16 @@ export function _projectRootToWorktreeImpl(
   // persists, checkNeedsRunUat finds no passing verdict → re-dispatches
   // run-uat indefinitely (stuck-loop ×9).
   forceOverwriteAssessmentsWithVerdict(
-    join(prGsd, "milestones", milestoneId),
-    join(wtGsd, "milestones", milestoneId),
+    join(prGwd, "milestones", milestoneId),
+    join(wtGwd, "milestones", milestoneId),
   );
 
   // Forward-sync completed-units.json from project root to worktree.
   // Project root is authoritative for completion state after crash recovery;
   // without this, the worktree re-dispatches already-completed units (#1886).
   safeCopy(
-    join(prGsd, "completed-units.json"),
-    join(wtGsd, "completed-units.json"),
+    join(prGwd, "completed-units.json"),
+    join(wtGwd, "completed-units.json"),
     { force: true },
   );
 
@@ -202,7 +202,7 @@ export function _projectRootToWorktreeImpl(
   // Runtime opens contract.projectDb; this cleanup only removes corrupt
   // pre-upgrade local DB projections.
   try {
-    const wtDb = join(wtGsd, "gwd.db");
+    const wtDb = join(wtGwd, "gwd.db");
     let deleteSidecars = false;
     if (existsSync(wtDb)) {
       const size = statSync(wtDb).size;
@@ -251,24 +251,24 @@ export function _projectWorktreeToRootImpl(
   if (!milestoneId) return;
 
   const contract = resolveGwdPathContract(worktreePath_, projectRoot);
-  const wtGsd = contract.worktreeGwd ?? join(worktreePath_, ".gwd");
-  const prGsd = contract.projectGwd;
+  const wtGwd = contract.worktreeGwd ?? join(worktreePath_, ".gwd");
+  const prGwd = contract.projectGwd;
 
   // When .gwd is a symlink to the same external directory in both locations,
   // cpSync rejects the copy because source === destination (ERR_FS_CP_EINVAL).
   // Compare realpaths and skip when they resolve to the same physical path (#2184).
-  if (isSamePath(wtGsd, prGsd)) return;
+  if (isSamePath(wtGwd, prGwd)) return;
 
   // metrics.json — session cost/token tracking (#2313).
   // Without this, metrics accumulated in the worktree are invisible from the
   // project root and never appear in the dashboard or skill-health reports.
-  safeCopy(join(wtGsd, "metrics.json"), join(prGsd, "metrics.json"), { force: true });
+  safeCopy(join(wtGwd, "metrics.json"), join(prGwd, "metrics.json"), { force: true });
 
   // completed-units.json — runtime completion diagnostics used to avoid
   // re-dispatching work already completed in an isolated worktree.
   safeCopy(
-    join(wtGsd, "completed-units.json"),
-    join(prGsd, "completed-units.json"),
+    join(wtGwd, "completed-units.json"),
+    join(prGwd, "completed-units.json"),
     { force: true },
   );
 
@@ -277,8 +277,8 @@ export function _projectWorktreeToRootImpl(
   // worktree. If the next session resolves basePath before worktree re-entry,
   // selfHeal can't find or clear the stale record (#769).
   safeCopyRecursive(
-    join(wtGsd, "runtime", "units"),
-    join(prGsd, "runtime", "units"),
+    join(wtGwd, "runtime", "units"),
+    join(prGwd, "runtime", "units"),
     { force: true },
   );
 }
@@ -297,21 +297,21 @@ export function _finalizeProjectionForMergeImpl(
   milestoneId: string,
 ): { synced: string[] } {
   const contract = resolveGwdPathContract(worktreePath, mainBasePath);
-  const mainGsd = contract.projectGwd;
-  const wtGsd = contract.worktreeGwd ?? join(worktreePath, ".gwd");
+  const mainGwd = contract.projectGwd;
+  const wtGwd = contract.worktreeGwd ?? join(worktreePath, ".gwd");
   const synced: string[] = [];
 
   // If both resolve to the same directory (symlink), no sync needed
-  if (isSamePath(mainGsd, wtGsd)) return { synced };
+  if (isSamePath(mainGwd, wtGwd)) return { synced };
 
-  if (!existsSync(wtGsd) || !existsSync(mainGsd)) return { synced };
+  if (!existsSync(wtGwd) || !existsSync(mainGwd)) return { synced };
 
   // ── 0. Pre-upgrade worktree DB reconciliation ────────────────────────
   // If the worktree has its own gwd.db (copied before the WAL transition),
   // reconcile its hierarchy data into the project root DB before syncing
   // files. This handles in-flight worktrees that were created before the
   // upgrade to shared WAL mode.
-  const wtLocalDb = join(wtGsd, "gwd.db");
+  const wtLocalDb = join(wtGwd, "gwd.db");
   const mainDb = contract.projectDb;
   if (existsSync(wtLocalDb) && existsSync(mainDb)) {
     try {
@@ -330,8 +330,8 @@ export function _finalizeProjectionForMergeImpl(
   // Markdown/JSON state projections remain project-root/DB authoritative.
   // These diagnostic files are copied for observability only.
   for (const f of ROOT_DIAGNOSTIC_FILES) {
-    const src = join(wtGsd, f);
-    const dst = join(mainGsd, f);
+    const src = join(wtGwd, f);
+    const dst = join(mainGwd, f);
     if (existsSync(src)) {
       try {
         cpSync(src, dst, { force: true });

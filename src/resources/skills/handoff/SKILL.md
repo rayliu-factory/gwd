@@ -42,14 +42,14 @@ Answer briefly:
 Before writing `continue.md`:
 
 - **Any task that's actually done?** Use `gwd_task_complete` (or the equivalent tool) to toggle state. Do NOT edit checkboxes by hand. This triggers `STATE.md` rebuild and `T##-SUMMARY.md` generation.
-- **Any slice-level decisions worth preserving?** Append to `S##-CONTEXT.md` if the slice has one, or `.gsd/DECISIONS.md` if the decision was project-wide.
-- **Any patterns or traps future agents should know about?** Append a single line to `.gsd/KNOWLEDGE.md`.
+- **Any slice-level decisions worth preserving?** Append to `S##-CONTEXT.md` if the slice has one, or `.gwd/DECISIONS.md` if the decision was project-wide.
+- **Any patterns or traps future agents should know about?** Append a single line to `.gwd/KNOWLEDGE.md`.
 
 This shrinks what `continue.md` has to carry.
 
 ## Step 3: Write continue.md
 
-Create `.gsd/milestones/<MID>/slices/<SID>/continue.md` with the following shape. Keep it tight — one screenful max.
+Create `.gwd/milestones/<MID>/slices/<SID>/continue.md` with the following shape. Keep it tight — one screenful max.
 
 ```markdown
 # Continue — S02 / T03

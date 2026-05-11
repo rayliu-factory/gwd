@@ -3,7 +3,7 @@
  *
  * Verifies that the ask_user_questions MCP handler delegates to
  * tryRemoteQuestions when a remote channel is configured, instead of going
- * straight to elicitInput (which is unreachable in Claude Code-under-gsd
+ * straight to elicitInput (which is unreachable in Claude Code-under-gwd
  * sessions).
  *
  * Strategy: we cannot mock ES modules without --experimental-test-module-mocks,
@@ -156,17 +156,17 @@ describe('toRoundResultResponse', () => {
 
 describe('isRemoteConfigured', () => {
   let tmpDir: string;
-  const origGsdHome = process.env['GWD_HOME'];
+  const origGwdHome = process.env['GWD_HOME'];
   const origToken = process.env['DISCORD_BOT_TOKEN'];
 
   before(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'gsd-rq-test-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'gwd-rq-test-'));
   });
 
   after(() => {
     rmSync(tmpDir, { recursive: true, force: true });
-    if (origGsdHome !== undefined) {
-      process.env['GWD_HOME'] = origGsdHome;
+    if (origGwdHome !== undefined) {
+      process.env['GWD_HOME'] = origGwdHome;
     } else {
       delete process.env['GWD_HOME'];
     }
@@ -242,10 +242,10 @@ describe('isRemoteConfigured', () => {
 
 describe('tryRemoteQuestions returns null when remote is not configured', () => {
   let tmpDir: string;
-  const origGsdHome = process.env['GWD_HOME'];
+  const origGwdHome = process.env['GWD_HOME'];
 
   before(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'gsd-rq-null-test-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'gwd-rq-null-test-'));
     process.env['GWD_HOME'] = tmpDir;
     // No PREFERENCES.md, no tokens
     delete process.env['DISCORD_BOT_TOKEN'];
@@ -255,8 +255,8 @@ describe('tryRemoteQuestions returns null when remote is not configured', () => 
 
   after(() => {
     rmSync(tmpDir, { recursive: true, force: true });
-    if (origGsdHome !== undefined) {
-      process.env['GWD_HOME'] = origGsdHome;
+    if (origGwdHome !== undefined) {
+      process.env['GWD_HOME'] = origGwdHome;
     } else {
       delete process.env['GWD_HOME'];
     }
@@ -274,11 +274,11 @@ describe('tryRemoteQuestions returns null when remote is not configured', () => 
 
 describe('tryRemoteQuestions returns error result on auth failure', () => {
   let tmpDir: string;
-  const origGsdHome = process.env['GWD_HOME'];
+  const origGwdHome = process.env['GWD_HOME'];
   const origToken = process.env['DISCORD_BOT_TOKEN'];
 
   before(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'gsd-rq-auth-test-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'gwd-rq-auth-test-'));
     // Set up a valid discord config pointing at an unreachable/fake endpoint
     makePrefsFile(tmpDir, '---\nremote_questions:\n  channel: discord\n  channel_id: "123456789012345678"\n---\n');
     process.env['GWD_HOME'] = tmpDir;
@@ -291,8 +291,8 @@ describe('tryRemoteQuestions returns error result on auth failure', () => {
 
   after(() => {
     rmSync(tmpDir, { recursive: true, force: true });
-    if (origGsdHome !== undefined) {
-      process.env['GWD_HOME'] = origGsdHome;
+    if (origGwdHome !== undefined) {
+      process.env['GWD_HOME'] = origGwdHome;
     } else {
       delete process.env['GWD_HOME'];
     }
@@ -328,16 +328,16 @@ describe('tryRemoteQuestions returns error result on auth failure', () => {
 
 describe('remote-questions YAML frontmatter parsing (via isRemoteConfigured)', () => {
   let tmpDir: string;
-  const origGsdHome = process.env['GWD_HOME'];
+  const origGwdHome = process.env['GWD_HOME'];
 
   before(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'gsd-rq-yaml-test-'));
+    tmpDir = mkdtempSync(join(tmpdir(), 'gwd-rq-yaml-test-'));
   });
 
   after(() => {
     rmSync(tmpDir, { recursive: true, force: true });
-    if (origGsdHome !== undefined) {
-      process.env['GWD_HOME'] = origGsdHome;
+    if (origGwdHome !== undefined) {
+      process.env['GWD_HOME'] = origGwdHome;
     } else {
       delete process.env['GWD_HOME'];
     }

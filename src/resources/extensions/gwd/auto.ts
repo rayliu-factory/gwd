@@ -21,7 +21,7 @@ import type {
 
 import { deriveState } from "./state.js";
 import { parseUnitId } from "./unit-id.js";
-import type { GSDState } from "./types.js";
+import type { GWDState } from "./types.js";
 import {
   assessInterruptedSession,
   readPausedSessionMetadata,
@@ -37,7 +37,7 @@ import { extractSection, getManifestStatus, splitFrontmatter, parseFrontmatterMa
 export { inlinePriorMilestoneSummary } from "./files.js";
 import { collectSecretsFromManifest } from "../get-secrets-from-user.js";
 import {
-  gsdRoot,
+  gwdRoot,
   resolveMilestoneFile,
   resolveSliceFile,
   resolveSlicePath,
@@ -73,11 +73,11 @@ import {
 import type { SessionLockStatus } from "./session-lock.js";
 import {
   resolveAutoSupervisorConfig,
-  loadEffectiveGSDPreferences,
+  loadEffectiveGWDPreferences,
   getIsolationMode,
 } from "./preferences.js";
 import { sendDesktopNotification } from "./notifications.js";
-import type { GSDPreferences } from "./preferences.js";
+import type { GWDPreferences } from "./preferences.js";
 import {
   type BudgetAlertLevel,
   getBudgetAlertLevel,
@@ -213,11 +213,11 @@ import { ensureDbOpen } from "./bootstrap/dynamic-tools.js";
 
 function makeCmuxEmitters(pi: ExtensionAPI) {
   return {
-    syncCmuxSidebar: (preferences: GSDPreferences | undefined, state: GSDState) =>
+    syncCmuxSidebar: (preferences: GWDPreferences | undefined, state: GWDState) =>
       pi.events.emit(CMUX_CHANNELS.SIDEBAR, { action: "sync" as const, preferences, state }),
-    logCmuxEvent: (preferences: GSDPreferences | undefined, message: string, level?: CmuxLogLevel) =>
+    logCmuxEvent: (preferences: GWDPreferences | undefined, message: string, level?: CmuxLogLevel) =>
       pi.events.emit(CMUX_CHANNELS.LOG, { preferences, message, level: level ?? "info" }),
-    clearCmuxSidebar: (preferences: GSDPreferences | undefined) =>
+    clearCmuxSidebar: (preferences: GWDPreferences | undefined) =>
       pi.events.emit(CMUX_CHANNELS.SIDEBAR, { action: "clear" as const, preferences }),
   };
 }
@@ -292,7 +292,7 @@ export type {
   StartModel,
 } from "./auto/session.js";
 import { autoSession as s } from "./auto-runtime-state.js";
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 import { createWorkspace, scopeMilestone } from "./workspace.js";
 import { registerAutoWorker, markWorkerStopping } from "./db/auto-workers.js";
 import { releaseMilestoneLease } from "./db/milestone-leases.js";
@@ -446,7 +446,7 @@ function synthesizePausedSessionRecovery(
   unitId: string,
   sessionFile: string,
 ): ReturnType<typeof synthesizeCrashRecovery> {
-  const activityDir = join(gsdRoot(basePath), "activity");
+  const activityDir = join(gwdRoot(basePath), "activity");
   return synthesizeCrashRecovery(basePath, unitType, unitId, sessionFile, activityDir);
 }
 
@@ -631,7 +631,7 @@ export function getAutoDashboardData(): AutoDashboardData {
   const rtkSavings = sessionId && s.basePath
     ? getRtkSessionSavings(s.basePath, sessionId)
     : null;
-  const rtkEnabled = loadEffectiveGSDPreferences(s.basePath || undefined)?.preferences.experimental?.rtk === true;
+  const rtkEnabled = loadEffectiveGWDPreferences(s.basePath || undefined)?.preferences.experimental?.rtk === true;
   // Pending capture count — lazy check, non-fatal
   let pendingCaptureCount = 0;
   try {
@@ -707,7 +707,7 @@ export async function refreshResumeResourcesAndDb(
 ): Promise<void> {
   const env = deps.env ?? process.env;
   const importModule = deps.importModule ?? ((specifier: string) => import(specifier));
-  const agentDir = env.GWD_CODING_AGENT_DIR || join(gsdHome(), "agent");
+  const agentDir = env.GWD_CODING_AGENT_DIR || join(gwdHome(), "agent");
   const pkgRoot = env.GWD_PKG_ROOT;
   const resourceLoaderPath = pkgRoot
     ? pathToFileURL(join(pkgRoot, "dist", "resource-loader.js")).href
@@ -906,7 +906,7 @@ function buildSnapshotOpts(
   gitStatus?: "ok" | "failed";
   gitError?: string;
 } & Record<string, unknown> {
-  const prefs = loadEffectiveGSDPreferences(s.basePath || undefined)?.preferences;
+  const prefs = loadEffectiveGWDPreferences(s.basePath || undefined)?.preferences;
   const uokFlags = resolveUokFlags(prefs);
   return {
     ...(s.autoStartTime > 0 ? { autoSessionKey: String(s.autoStartTime) } : {}),
@@ -945,8 +945,8 @@ function handleLostSessionLock(
   restoreMilestoneLockEnv();
   deregisterSigtermHandler();
   const base = lockBase();
-  const lockFilePath = base ? join(gsdRoot(base), "auto.lock") : "unknown";
-  const recoverySuggestion = "\nTo recover, run: gsd doctor --fix";
+  const lockFilePath = base ? join(gwdRoot(base), "auto.lock") : "unknown";
+  const recoverySuggestion = "\nTo recover, run: gwd doctor --fix";
   const message =
     lockStatus?.failureReason === "pid-mismatch"
       ? lockStatus.existingPid
@@ -961,8 +961,8 @@ function handleLostSessionLock(
     message,
     "error",
   );
-  ctx?.ui.setStatus("gsd-auto", undefined);
-  ctx?.ui.setWidget("gsd-progress", undefined);
+  ctx?.ui.setStatus("gwd-auto", undefined);
+  ctx?.ui.setWidget("gwd-progress", undefined);
   if (ctx) initHealthWidget(ctx);
 }
 
@@ -1012,8 +1012,8 @@ export async function cleanupAfterLoopExit(ctx: ExtensionContext): Promise<void>
   // A transient provider-error pause intentionally leaves the paused badge
   // visible so the user still has a resumable auto-mode signal on screen.
   if (!s.paused) {
-    ctx.ui.setStatus("gsd-auto", undefined);
-    ctx.ui.setWidget("gsd-progress", undefined);
+    ctx.ui.setStatus("gwd-auto", undefined);
+    ctx.ui.setWidget("gwd-progress", undefined);
     initHealthWidget(ctx);
   }
 
@@ -1121,7 +1121,7 @@ export async function stopAuto(
   options: StopAutoOptions = {},
 ): Promise<void> {
   if (!s.active && !s.paused) return;
-  const loadedPreferences = loadEffectiveGSDPreferences(s.basePath || undefined)?.preferences;
+  const loadedPreferences = loadEffectiveGWDPreferences(s.basePath || undefined)?.preferences;
   const reasonSuffix = reason ? ` — ${reason}` : "";
   const preserveCompletionSurface = Boolean(options.completionWidget);
 
@@ -1193,7 +1193,7 @@ export async function stopAuto(
     }
 
     // ── Step 1b: Flush queued follow-up messages (#3512) ──
-    // Late async notifications (async_job_result, gsd-auto-wrapup) can trigger
+    // Late async notifications (async_job_result, gwd-auto-wrapup) can trigger
     // extra LLM turns after stop. Flush them the same way run-unit.ts does.
     try {
       const cmdCtxAny = s.cmdCtx as Record<string, unknown> | null;
@@ -1530,9 +1530,9 @@ export async function stopAuto(
     resetProactiveHealing();
 
     // UI cleanup
-    ctx?.ui.setStatus("gsd-auto", undefined);
+    ctx?.ui.setStatus("gwd-auto", undefined);
     if (!preserveCompletionSurface) {
-      ctx?.ui.setWidget("gsd-progress", undefined);
+      ctx?.ui.setWidget("gwd-progress", undefined);
       if (ctx) initHealthWidget(ctx);
     }
     restoreProjectRootEnv();
@@ -1582,7 +1582,7 @@ export async function pauseAuto(
   stopAutoCommandPolling();
 
   // Flush queued follow-up messages (#3512).
-  // Late async notifications (async_job_result, gsd-auto-wrapup) can trigger
+  // Late async notifications (async_job_result, gwd-auto-wrapup) can trigger
   // extra LLM turns after pause. Flush them the same way run-unit.ts does.
   try {
     const cmdCtxAny = s.cmdCtx as Record<string, unknown> | null;
@@ -1674,8 +1674,8 @@ export async function pauseAuto(
   restoreMilestoneLockEnv();
   s.pendingVerificationRetry = null;
   s.verificationRetryCount.clear();
-  ctx?.ui.setStatus("gsd-auto", "paused");
-  ctx?.ui.setWidget("gsd-progress", undefined);
+  ctx?.ui.setStatus("gwd-auto", "paused");
+  ctx?.ui.setWidget("gwd-progress", undefined);
   if (ctx) initHealthWidget(ctx);
   const resumeCmd = s.stepMode ? "/gwd next" : "/gwd auto";
   ctx?.ui.notify(
@@ -1712,7 +1712,7 @@ export function buildWorktreeLifecycleDeps(): WorktreeLifecycleDeps {
     getIsolationMode,
     invalidateAllCaches,
     GitServiceImpl,
-    loadEffectiveGSDPreferences,
+    loadEffectiveGWDPreferences,
     worktreeProjection: new WorktreeStateProjection(),
     isInAutoWorktree,
     autoWorktreeBranch,
@@ -1766,7 +1766,7 @@ export function createWiredAutoOrchestrationModule(
         const active = state.activeMilestone;
         if (!active) return null;
 
-        const prefs = loadEffectiveGSDPreferences(dispatchBasePath)?.preferences;
+        const prefs = loadEffectiveGWDPreferences(dispatchBasePath)?.preferences;
         const action = await resolveDispatch({
           basePath: dispatchBasePath,
           mid: active.id,
@@ -1936,7 +1936,7 @@ function buildLoopDeps(pi: ExtensionAPI): LoopDeps {
     updateProgressWidget,
     ...cmux,
     handleLostSessionLock: (ctx: ExtensionContext | undefined, lockStatus: SessionLockStatus | undefined) => {
-      cmux.clearCmuxSidebar(loadEffectiveGSDPreferences(s.basePath || undefined)?.preferences);
+      cmux.clearCmuxSidebar(loadEffectiveGWDPreferences(s.basePath || undefined)?.preferences);
       handleLostSessionLock(ctx, lockStatus);
     },
 
@@ -1944,7 +1944,7 @@ function buildLoopDeps(pi: ExtensionAPI): LoopDeps {
     invalidateAllCaches,
     deriveState,
     rebuildState,
-    loadEffectiveGSDPreferences,
+    loadEffectiveGWDPreferences,
 
     // Pre-dispatch health gate
     preDispatchHealthGate,
@@ -2355,7 +2355,7 @@ export async function startAuto(
     ensureOrchestrationModule(ctx, pi, s.basePath || base);
     registerSigtermHandler(lockBase());
 
-    ctx.ui.setStatus("gsd-auto", s.stepMode ? "next" : "auto");
+    ctx.ui.setStatus("gwd-auto", s.stepMode ? "next" : "auto");
     ctx.ui.setWidget("gwd-health", undefined);
     ctx.ui.notify(
       s.stepMode ? "Step-mode resumed." : "Auto-mode resumed.",
@@ -2372,7 +2372,7 @@ export async function startAuto(
     await refreshResumeResourcesAndDb(s.basePath);
     try {
       await rebuildState(s.basePath);
-      pi.events.emit(CMUX_CHANNELS.SIDEBAR, { action: "sync" as const, preferences: loadEffectiveGSDPreferences(s.basePath || undefined)?.preferences, state: await deriveState(s.basePath) });
+      pi.events.emit(CMUX_CHANNELS.SIDEBAR, { action: "sync" as const, preferences: loadEffectiveGWDPreferences(s.basePath || undefined)?.preferences, state: await deriveState(s.basePath) });
     } catch (e) {
       debugLog("resume-rebuild-state-failed", {
         error: e instanceof Error ? e.message : String(e),
@@ -2425,7 +2425,7 @@ export async function startAuto(
       );
       clearPausedSession("paused-session DB cleanup failed (resume activation)");
     }
-    pi.events.emit(CMUX_CHANNELS.LOG, { preferences: loadEffectiveGSDPreferences(s.basePath || undefined)?.preferences, message: s.stepMode ? "Step-mode resumed." : "Auto-mode resumed.", level: "progress" });
+    pi.events.emit(CMUX_CHANNELS.LOG, { preferences: loadEffectiveGWDPreferences(s.basePath || undefined)?.preferences, message: s.stepMode ? "Step-mode resumed." : "Auto-mode resumed.", level: "progress" });
 
     try {
       await s.orchestration?.resume();
@@ -2477,12 +2477,12 @@ export async function startAuto(
   captureProjectRootEnv(s.originalBasePath || s.basePath);
   registerAutoWorkerForSession(s);
   try {
-    pi.events.emit(CMUX_CHANNELS.SIDEBAR, { action: "sync" as const, preferences: loadEffectiveGSDPreferences(s.basePath || undefined)?.preferences, state: await deriveState(s.basePath) });
+    pi.events.emit(CMUX_CHANNELS.SIDEBAR, { action: "sync" as const, preferences: loadEffectiveGWDPreferences(s.basePath || undefined)?.preferences, state: await deriveState(s.basePath) });
   } catch (err) {
     // Best-effort only — sidebar sync must never block auto-mode startup
     logWarning("engine", `cmux sync failed: ${err instanceof Error ? err.message : String(err)}`, { file: "auto.ts" });
   }
-  pi.events.emit(CMUX_CHANNELS.LOG, { preferences: loadEffectiveGSDPreferences(s.basePath || undefined)?.preferences, message: requestedStepMode ? "Step-mode started." : "Auto-mode started.", level: "progress" });
+  pi.events.emit(CMUX_CHANNELS.LOG, { preferences: loadEffectiveGWDPreferences(s.basePath || undefined)?.preferences, message: requestedStepMode ? "Step-mode started." : "Auto-mode started.", level: "progress" });
 
   try {
     await s.orchestration?.start({ basePath: s.basePath, trigger: "auto-loop" });
@@ -2512,7 +2512,7 @@ function updateProgressWidget(
   ctx: ExtensionContext,
   unitType: string,
   unitId: string,
-  state: GSDState,
+  state: GWDState,
 ): void {
   const badge = s.currentUnitRouting?.tier
     ? ({ light: "L", standard: "S", heavy: "H" }[s.currentUnitRouting.tier] ??
@@ -2549,7 +2549,7 @@ export function ensurePreconditions(
   unitType: string,
   unitId: string,
   base: string,
-  state: GSDState,
+  state: GWDState,
 ): void {
   const { milestone: mid, slice: sid } = parseUnitId(unitId);
 
@@ -2683,7 +2683,7 @@ export async function dispatchHookUnit(
     await pauseAuto(ctx, pi);
   }, hookHardTimeoutMs);
 
-  ctx.ui.setStatus("gsd-auto", s.stepMode ? "next" : "auto");
+  ctx.ui.setStatus("gwd-auto", s.stepMode ? "next" : "auto");
   ctx.ui.notify(`Running post-unit hook: ${hookName}`, "info");
 
   debugLog("dispatchHookUnit", {

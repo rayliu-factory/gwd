@@ -1,10 +1,10 @@
-// GSD2 UOK Timeline Reconstruction from Authoritative DB Records
+// GWD2 UOK Timeline Reconstruction from Authoritative DB Records
 
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { _getAdapter, isDbAvailable } from "../gwd-db.js";
-import { gsdRoot } from "../paths.js";
+import { gwdRoot } from "../paths.js";
 
 export interface TurnTimelineFilter {
   traceId?: string;
@@ -120,7 +120,7 @@ function readDbTimeline(filter: TurnTimelineFilter): TurnTimelineEntry[] {
 }
 
 function readJsonlTimeline(basePath: string, filter: TurnTimelineFilter): TurnTimelineEntry[] {
-  const path = join(gsdRoot(basePath), "audit", "events.jsonl");
+  const path = join(gwdRoot(basePath), "audit", "events.jsonl");
   if (!existsSync(path)) return [];
   return readFileSync(path, "utf-8")
     .split("\n")

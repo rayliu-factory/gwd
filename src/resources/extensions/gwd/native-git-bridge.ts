@@ -8,7 +8,7 @@
 import { execSync, execFileSync } from "node:child_process";
 import { existsSync, readFileSync, unlinkSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { GSDError, GWD_GIT_ERROR } from "./errors.js";
+import { GWDError, GWD_GIT_ERROR } from "./errors.js";
 import { GIT_NO_PROMPT_ENV } from "./git-constants.js";
 import { getErrorMessage } from "./error-utils.js";
 import { isInfrastructureError } from "./auto/infra-errors.js";
@@ -146,7 +146,7 @@ function gitExec(basePath: string, args: string[], allowFailure = false): string
     }).trim();
   } catch {
     if (allowFailure) return "";
-    throw new GSDError(GWD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
+    throw new GWDError(GWD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
   }
 }
 
@@ -161,7 +161,7 @@ function gitFileExec(basePath: string, args: string[], allowFailure = false): st
     }).trim();
   } catch {
     if (allowFailure) return "";
-    throw new GSDError(GWD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
+    throw new GWDError(GWD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
   }
 }
 
@@ -705,7 +705,7 @@ export function nativeAddTracked(basePath: string): void {
   gitFileExec(basePath, ["add", "-u"]);
 }
 
-function isDotGsdIgnored(basePath: string): boolean {
+function isDotGwdIgnored(basePath: string): boolean {
   for (const path of [".gwd", ".gwd/"]) {
     try {
       execFileSync("git", ["check-ignore", "-q", path], {
@@ -753,7 +753,7 @@ function isGitignoreManagementDisabled(basePath: string): boolean {
  * (either pre-existing or newly appended). Returns false when the opt-out
  * is set or the write fails.
  */
-function trySelfHealGsdGitignore(basePath: string): boolean {
+function trySelfHealGwdGitignore(basePath: string): boolean {
   if (isGitignoreManagementDisabled(basePath)) return false;
 
   const gitignorePath = join(basePath, ".gitignore");
@@ -779,7 +779,7 @@ function trySelfHealGsdGitignore(basePath: string): boolean {
  * `git.manage_gitignore: false` forbids the self-heal path. Protects user
  * work by never silently dropping new real files.
  */
-function stageUntrackedExcludingDotGsd(basePath: string): void {
+function stageUntrackedExcludingDotGwd(basePath: string): void {
   // Stage tracked modifications first. `git add -u` never fails on pathspec
   // issues because it doesn't walk untracked trees.
   gitFileExec(basePath, ["add", "-u"]);
@@ -820,17 +820,17 @@ function stageUntrackedExcludingDotGsd(basePath: string): void {
  * when `.gwd` is a symlink. Self-heals by adding `.gwd` to `.gitignore`, or
  * falls back to explicit per-file staging so user work is never dropped.
  */
-function fallbackStageWithSymlinkedDotGsd(basePath: string): void {
-  if (isDotGsdIgnored(basePath)) {
+function fallbackStageWithSymlinkedDotGwd(basePath: string): void {
+  if (isDotGwdIgnored(basePath)) {
     gitFileExec(basePath, ["add", "-A"]);
     return;
   }
-  if (trySelfHealGsdGitignore(basePath)) {
+  if (trySelfHealGwdGitignore(basePath)) {
     gitFileExec(basePath, ["add", "-A"]);
     return;
   }
   // `manage_gitignore: false` — protect work by staging files explicitly.
-  stageUntrackedExcludingDotGsd(basePath);
+  stageUntrackedExcludingDotGwd(basePath);
 }
 
 /**
@@ -876,11 +876,11 @@ export function nativeAddAllWithExclusions(basePath: string, exclusions: readonl
     // real files explicitly when `git.manage_gitignore: false` forbids the
     // self-heal path. Either way, user work is protected from silent drops.
     if (stderr.includes("beyond a symbolic link")) {
-      fallbackStageWithSymlinkedDotGsd(basePath);
+      fallbackStageWithSymlinkedDotGwd(basePath);
       return;
     }
     const stderrDetail = stderr.trim() ? `; stderr: ${stderr.trim()}` : "";
-    throw new GSDError(GWD_GIT_ERROR, `git add -A with exclusions failed in ${basePath}: ${getErrorMessage(err)}${stderrDetail}`);
+    throw new GWDError(GWD_GIT_ERROR, `git add -A with exclusions failed in ${basePath}: ${getErrorMessage(err)}${stderrDetail}`);
   }
 }
 
@@ -1204,7 +1204,7 @@ function runGitWorktreeAdd(
 
 export function assertWorktreeMaterialized(wtPath: string): void {
   if (existsSync(join(wtPath, ".git"))) return;
-  throw new GSDError(
+  throw new GWDError(
     GWD_GIT_ERROR,
     `git worktree add did not materialize a valid worktree at ${wtPath}: missing .git file`,
   );

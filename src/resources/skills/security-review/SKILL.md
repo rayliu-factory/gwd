@@ -147,14 +147,14 @@ Severity × Exploitability = priority. Sort findings by priority.
 <what wasn't reviewed>
 ```
 
-Offer to file as a GitHub issue — requires explicit confirmation per the outward-action rule. Sensitive findings should stay in `.gsd/security-reviews/` and not be pushed to a public tracker; check the repository's security policy first.
+Offer to file as a GitHub issue — requires explicit confirmation per the outward-action rule. Sensitive findings should stay in `.gwd/security-reviews/` and not be pushed to a public tracker; check the repository's security policy first.
 
 ## Step 7: Follow-ups
 
 If the review found CRITICAL or HIGH issues:
 - Recommend filing a private security advisory (not a public issue) if the repo is public.
 - Flag the finding for `/gwd start hotfix` if it's in the scope of active work.
-- Append one line to `.gsd/DECISIONS.md` if the remediation involves an architectural change.
+- Append one line to `.gwd/DECISIONS.md` if the remediation involves an architectural change.
 
 </process>
 

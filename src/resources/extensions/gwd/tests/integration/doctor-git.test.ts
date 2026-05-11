@@ -119,9 +119,9 @@ _None_
 
 /** Write a .gwd/PREFERENCES.md with the given git isolation mode. */
 function writePreferencesFile(dir: string, isolation: "none" | "worktree" | "branch"): void {
-  const gsdDir = join(dir, ".gwd");
-  mkdirSync(gsdDir, { recursive: true });
-  writeFileSync(join(gsdDir, "PREFERENCES.md"), `---\ngit:\n  isolation: "${isolation}"\n---\n`);
+  const gwdDir = join(dir, ".gwd");
+  mkdirSync(gwdDir, { recursive: true });
+  writeFileSync(join(gwdDir, "PREFERENCES.md"), `---\ngit:\n  isolation: "${isolation}"\n---\n`);
 }
 
 /** Create a repo with an in-progress milestone. */

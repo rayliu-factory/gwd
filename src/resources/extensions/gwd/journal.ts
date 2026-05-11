@@ -24,7 +24,7 @@ import {
 import { join } from "node:path";
 import { isStaleWrite } from "./auto/turn-epoch.js";
 import { withFileLockSync } from "./file-lock.js";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { buildAuditEnvelope, emitUokAuditEvent } from "./uok/audit.js";
 import { isUnifiedAuditEnabled } from "./uok/audit-toggle.js";
 
@@ -101,7 +101,7 @@ export interface JournalQueryFilters {
 /**
  * Append a journal event to the daily JSONL file.
  *
- * File path: `<gsdRoot>/journal/<YYYY-MM-DD>.jsonl`
+ * File path: `<gwdRoot>/journal/<YYYY-MM-DD>.jsonl`
  * where the date is extracted from `entry.ts.slice(0, 10)`.
  *
  * Never throws — all errors are silently caught.
@@ -111,7 +111,7 @@ export function emitJournalEvent(basePath: string, entry: JournalEntry): void {
   // See auto/turn-epoch.ts for the full rationale.
   if (isStaleWrite("journal")) return;
   try {
-    const journalDir = join(gsdRoot(basePath), "journal");
+    const journalDir = join(gwdRoot(basePath), "journal");
     mkdirSync(journalDir, { recursive: true });
     const dateStr = entry.ts.slice(0, 10);
     const filePath = join(journalDir, `${dateStr}.jsonl`);
@@ -173,7 +173,7 @@ export function queryJournal(
   filters?: JournalQueryFilters,
 ): JournalEntry[] {
   try {
-    const journalDir = join(gsdRoot(basePath), "journal");
+    const journalDir = join(gwdRoot(basePath), "journal");
     const files = readdirSync(journalDir).filter(f => f.endsWith(".jsonl")).sort();
 
     const entries: JournalEntry[] = [];

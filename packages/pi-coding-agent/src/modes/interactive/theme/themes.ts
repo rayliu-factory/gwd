@@ -1,4 +1,4 @@
-// GSD2 TUI - Built-in terminal theme definitions.
+// GWD2 TUI - Built-in terminal theme definitions.
 /**
  * Built-in theme definitions.
  *

@@ -240,7 +240,7 @@ export class SessionManager {
   }
 
   private async stopDetachedAutoProcess(projectDir: string): Promise<boolean> {
-    const lockPath = join(projectDir, '.gsd', 'auto.lock');
+    const lockPath = join(projectDir, '.gwd', 'auto.lock');
     if (!existsSync(lockPath)) return false;
     try {
       const lockData = JSON.parse(readFileSync(lockPath, 'utf-8')) as { pid?: number };

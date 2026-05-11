@@ -12,7 +12,7 @@ import { abortAndReset } from "./git-self-heal.js";
 import { RUNTIME_EXCLUSION_PATHS, resolveMilestoneIntegrationBranch, writeIntegrationBranch } from "./git-service.js";
 import { nativeIsRepo, nativeWorktreeList, nativeWorktreeRemove, nativeBranchList, nativeBranchDelete, nativeLsFiles, nativeRmCached, nativeHasChanges, nativeLastCommitEpoch, nativeGetCurrentBranch, nativeAddTracked, nativeCommit } from "./native-git-bridge.js";
 import { getAllWorktreeHealth } from "./worktree-health.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 
 /**
  * Returns true if the directory contains only doctor artifacts
@@ -27,8 +27,8 @@ function isDoctorArtifactOnly(dirPath: string): boolean {
     if (entries.length === 0) return false;
     // Only a .gwd subdirectory
     if (entries.length === 1 && entries[0] === ".gwd") {
-      const gsdEntries = readdirSync(join(dirPath, ".gwd"));
-      return gsdEntries.length <= 1 && gsdEntries.every(e => e === "doctor-history.jsonl");
+      const gwdEntries = readdirSync(join(dirPath, ".gwd"));
+      return gwdEntries.length <= 1 && gwdEntries.every(e => e === "doctor-history.jsonl");
     }
     return false;
   } catch {
@@ -258,8 +258,8 @@ export async function checkGitHealth(
 
   // ── Legacy slice branches ──────────────────────────────────────────────
   try {
-    const branchList = nativeBranchList(basePath, "gsd/*/*")
-      .filter((branch) => !branch.startsWith("gsd/quick/"));
+    const branchList = nativeBranchList(basePath, "gwd/*/*")
+      .filter((branch) => !branch.startsWith("gwd/quick/"));
     if (branchList.length > 0) {
       issues.push({
         severity: "info",
@@ -293,7 +293,7 @@ export async function checkGitHealth(
   // and causes the next merge operation to fail silently.
   try {
     const state = await deriveState(basePath);
-    const gitPrefs = loadEffectiveGSDPreferences()?.preferences?.git ?? {};
+    const gitPrefs = loadEffectiveGWDPreferences()?.preferences?.git ?? {};
     for (const milestone of state.registry) {
       if (milestone.status === "complete") continue;
       const resolution = resolveMilestoneIntegrationBranch(basePath, milestone.id, gitPrefs);
@@ -385,7 +385,7 @@ export async function checkGitHealth(
   // longer ago than the configured threshold, flag it and optionally
   // auto-commit a safety snapshot so work isn't lost.
   try {
-    const prefs = loadEffectiveGSDPreferences()?.preferences ?? {};
+    const prefs = loadEffectiveGWDPreferences()?.preferences ?? {};
     // `git.snapshots: false` is the canonical toggle that disables WIP
     // snapshot commits — honour it here as well so both the proactive gate
     // and the doctor-run path stay consistent (#4420).
@@ -414,15 +414,15 @@ export async function checkGitHealth(
           if (shouldFix("stale_uncommitted_changes")) {
             try {
               nativeAddTracked(basePath);
-              const commitMsg = `gsd snapshot: uncommitted changes after ${mins}m inactivity`;
+              const commitMsg = `gwd snapshot: uncommitted changes after ${mins}m inactivity`;
               const result = nativeCommit(basePath, commitMsg);
               if (result) {
-                fixesApplied.push(`created gsd snapshot after ${mins}m of uncommitted changes`);
+                fixesApplied.push(`created gwd snapshot after ${mins}m of uncommitted changes`);
               } else {
-                fixesApplied.push("gsd snapshot skipped — nothing to commit after staging tracked files");
+                fixesApplied.push("gwd snapshot skipped — nothing to commit after staging tracked files");
               }
             } catch {
-              fixesApplied.push("failed to create gsd snapshot commit");
+              fixesApplied.push("failed to create gwd snapshot commit");
             }
           }
         }

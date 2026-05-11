@@ -4,7 +4,7 @@ A `/gwd migrate` command just wrote a `.gwd/` directory from an old `.planning` 
 
 ### Source
 - Old `.planning` directory: `{{sourcePath}}`
-- Written `.gwd` directory: `{{gsdPath}}`
+- Written `.gwd` directory: `{{gwdPath}}`
 
 ### Migration Stats
 {{previewStats}}

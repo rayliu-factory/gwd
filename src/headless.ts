@@ -324,8 +324,8 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
     }
 
     // Bootstrap .gwd/ if needed
-    const gsdDir = join(process.cwd(), '.gwd')
-    if (!existsSync(gsdDir)) {
+    const gwdDir = join(process.cwd(), '.gwd')
+    if (!existsSync(gwdDir)) {
       if (!options.json) {
         process.stderr.write('[headless] Bootstrapping .gwd/ project structure...\n')
       }
@@ -333,14 +333,14 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
     }
 
     // Write context to temp file for the RPC child to read
-    const runtimeDir = join(gsdDir, 'runtime')
+    const runtimeDir = join(gwdDir, 'runtime')
     mkdirSync(runtimeDir, { recursive: true })
     writeFileSync(join(runtimeDir, 'headless-context.md'), contextContent, 'utf-8')
   }
 
   // Validate .gwd/ directory (skip for new-milestone since we just bootstrapped it)
-  const gsdDir = join(process.cwd(), '.gwd')
-  if (!isNewMilestone && !existsSync(gsdDir)) {
+  const gwdDir = join(process.cwd(), '.gwd')
+  if (!isNewMilestone && !existsSync(gwdDir)) {
     process.stderr.write('[headless] Error: No .gwd/ directory found in current directory.\n')
     process.stderr.write(`[headless] Run '${CLI_COMMAND}' interactively first to initialize a project.\n`)
     process.exit(1)

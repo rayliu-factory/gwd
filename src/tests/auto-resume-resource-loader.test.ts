@@ -20,7 +20,7 @@ test("source dev CLI remains the child-process GWD_BIN_PATH", (t) => {
   writeFileSync(devCliPath, "#!/usr/bin/env node\n");
 
   assert.equal(
-    resolveLoaderCliEntrypoint({ gsdRoot: root, invokedBinPath: invokedLoader, existsSync }),
+    resolveLoaderCliEntrypoint({ gwdRoot: root, invokedBinPath: invokedLoader, existsSync }),
     resolve(devCliPath),
   );
 });
@@ -28,7 +28,7 @@ test("source dev CLI remains the child-process GWD_BIN_PATH", (t) => {
 test("explicit CLI path overrides the invoked source loader path", () => {
   const env = { GWD_CLI_PATH: "/custom/gwd" } as NodeJS.ProcessEnv;
   const resolved = applyLoaderCliEntrypointEnv(env, {
-    gsdRoot: "/repo",
+    gwdRoot: "/repo",
     invokedBinPath: "/repo/src/loader.ts",
     existsSync: () => true,
   });

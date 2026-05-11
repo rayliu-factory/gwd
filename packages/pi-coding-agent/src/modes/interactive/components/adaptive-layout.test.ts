@@ -1,4 +1,4 @@
-// GSD2 - Runtime tests for adaptive terminal layout rendering
+// GWD2 - Runtime tests for adaptive terminal layout rendering
 
 import assert from "node:assert/strict";
 import { describe, it, before } from "node:test";
@@ -19,7 +19,7 @@ describe("AdaptiveLayoutComponent", () => {
 		const component = new AdaptiveLayoutComponent(() => ({
 			override: "workflow",
 			activeToolCount: 2,
-			gsdPhase: "executing milestone M001",
+			gwdPhase: "executing milestone M001",
 			sessionName: "demo",
 			cwd: "/tmp/demo",
 		}));
@@ -34,12 +34,12 @@ describe("AdaptiveLayoutComponent", () => {
 		const component = new AdaptiveLayoutComponent(() => ({
 			override: "workflow",
 			activeToolCount: 1,
-			gsdPhase: "executing milestone M001",
+			gwdPhase: "executing milestone M001",
 			cwd: "/tmp/demo",
 		}));
 
 		const output = render(component, 68);
-		assert.match(output, /GSD compact/);
+		assert.match(output, /GWD compact/);
 		assert.doesNotMatch(output, /signals/);
 	});
 

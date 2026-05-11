@@ -1,6 +1,6 @@
 // Project/App: GWD-2
 // File Purpose: Registers read-only DB query tools.
-// GSD2 — Read-only query tools exposing DB state to the LLM via the WAL connection
+// GWD2 — Read-only query tools exposing DB state to the LLM via the WAL connection
 
 import { Type } from "@sinclair/typebox";
 import type { ExtensionAPI } from "@gwd/pi-coding-agent";

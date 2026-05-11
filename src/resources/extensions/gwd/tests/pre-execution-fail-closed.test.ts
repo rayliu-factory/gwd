@@ -79,16 +79,16 @@ function setupTestEnvironment(): void {
   tempDir = join(tmpdir(), `pre-exec-fail-closed-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(tempDir, { recursive: true });
 
-  const gsdDir = join(tempDir, ".gwd");
-  mkdirSync(gsdDir, { recursive: true });
+  const gwdDir = join(tempDir, ".gwd");
+  mkdirSync(gwdDir, { recursive: true });
 
-  const milestonesDir = join(gsdDir, "milestones", "M001", "slices", "S01", "tasks");
+  const milestonesDir = join(gwdDir, "milestones", "M001", "slices", "S01", "tasks");
   mkdirSync(milestonesDir, { recursive: true });
 
   process.chdir(tempDir);
   _clearGwdRootCache();
 
-  dbPath = join(gsdDir, "gwd.db");
+  dbPath = join(gwdDir, "gwd.db");
   openDatabase(dbPath);
 }
 

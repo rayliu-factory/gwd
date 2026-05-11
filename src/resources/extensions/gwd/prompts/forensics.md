@@ -10,7 +10,7 @@ Debug GWD itself. Trace the symptom to root cause in current source and produce 
 
 ## GWD Source Location
 
-GWD extension source: `{{gsdSourceDir}}`
+GWD extension source: `{{gwdSourceDir}}`
 
 ### Source Map by Domain
 
@@ -79,7 +79,7 @@ A unit dispatched more than once (`type/id` repeated) indicates a stuck loop: un
 3. Cross-reference activity logs (LLM actions) with journal events (auto-mode decisions).
 4. Form hypotheses about the responsible module/code path using the source map.
 
-5. Read actual source at `{{gsdSourceDir}}` to confirm or deny each hypothesis. Do not guess.
+5. Read actual source at `{{gwdSourceDir}}` to confirm or deny each hypothesis. Do not guess.
 
    **DB inspection:** Use `gwd_milestone_status`; never run `sqlite3 .gwd/gwd.db` or `node -e require('better-sqlite3')`. The engine owns the WAL connection; direct access can fail or return stale data.
 

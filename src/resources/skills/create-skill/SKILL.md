@@ -139,7 +139,7 @@ All in `references/`:
 **Patterns:** common-patterns.md, workflows-and-validation.md
 **Assets:** using-templates.md, using-scripts.md
 **Advanced:** executable-code.md, api-security.md, iteration-and-testing.md
-**GWD-specific:** gsd-skill-ecosystem.md
+**GWD-specific:** gwd-skill-ecosystem.md
 </reference_index>
 
 <workflows_index>

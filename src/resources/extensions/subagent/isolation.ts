@@ -13,7 +13,7 @@ import * as path from "node:path";
 import { promisify } from "node:util";
 
 const execFile = promisify(execFileCb);
-import { gsdHome } from "../gwd/gwd-home.js";
+import { gwdHome } from "../gwd/gwd-home.js";
 
 // ============================================================================
 // Types
@@ -62,7 +62,7 @@ export function encodeCwd(cwd: string): string {
 
 
 function getIsolationBaseDir(cwd: string, taskId: string): string {
-	return path.join(gsdHome(), "wt", encodeCwd(cwd), taskId);
+	return path.join(gwdHome(), "wt", encodeCwd(cwd), taskId);
 }
 
 // Track active isolation dirs for cleanup on exit
@@ -162,7 +162,7 @@ async function applyBaseline(
 ): Promise<void> {
 	// Apply staged diff
 	if (baseline.stagedDiff.trim()) {
-		const patchPath = path.join(worktreeDir, ".gsd-staged.patch");
+		const patchPath = path.join(worktreeDir, ".gwd-staged.patch");
 		fs.writeFileSync(patchPath, baseline.stagedDiff);
 		try {
 			await git(["apply", "--binary", patchPath], worktreeDir);
@@ -176,7 +176,7 @@ async function applyBaseline(
 
 	// Apply unstaged diff on top
 	if (baseline.unstagedDiff.trim()) {
-		const patchPath = path.join(worktreeDir, ".gsd-unstaged.patch");
+		const patchPath = path.join(worktreeDir, ".gwd-unstaged.patch");
 		fs.writeFileSync(patchPath, baseline.unstagedDiff);
 		try {
 			await git(["apply", "--binary", patchPath], worktreeDir);
@@ -199,7 +199,7 @@ async function applyBaseline(
 	// without accidentally including the parent's dirty state in the delta.
 	await gitSilent(["add", "-A"], worktreeDir);
 	await gitSilent(
-		["commit", "--allow-empty", "-m", "gsd: baseline snapshot"],
+		["commit", "--allow-empty", "-m", "gwd: baseline snapshot"],
 		worktreeDir,
 	);
 }
@@ -445,7 +445,7 @@ export async function mergeDeltaPatches(
 	const combined = patches.map((p) => p.content).join("\n");
 	const patchFile = path.join(
 		os.tmpdir(),
-		`gsd-merge-${Date.now()}.patch`,
+		`gwd-merge-${Date.now()}.patch`,
 	);
 
 	const appliedPatches: string[] = [];

@@ -7,7 +7,7 @@
 import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { logWarning } from "./workflow-logger.js";
 import { getErrorMessage } from "./error-utils.js";
 
@@ -51,9 +51,9 @@ export async function handleInspect(ctx: ExtensionCommandContext): Promise<void>
     const { isDbAvailable, _getAdapter, openDatabase } = await import("./gwd-db.js");
 
     if (!isDbAvailable()) {
-      const gsdDir = gsdRoot(process.cwd());
-      const dbPath = join(gsdDir, "gwd.db");
-      if (!existsSync(gsdDir) || !existsSync(dbPath) || !openDatabase(dbPath)) {
+      const gwdDir = gwdRoot(process.cwd());
+      const dbPath = join(gwdDir, "gwd.db");
+      if (!existsSync(gwdDir) || !existsSync(dbPath) || !openDatabase(dbPath)) {
         ctx.ui.notify("No GWD database available. Run /gwd auto to create one.", "info");
         return;
       }

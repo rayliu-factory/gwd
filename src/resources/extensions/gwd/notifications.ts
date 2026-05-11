@@ -3,7 +3,7 @@
 
 import { execFileSync } from "node:child_process";
 import type { NotificationPreferences } from "./types.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import { sendRemoteNotification } from "../remote-questions/notify.js";
 
 export type NotifyLevel = "info" | "success" | "warning" | "error";
@@ -30,7 +30,7 @@ export function sendDesktopNotification(
   if (projectName && title === "GWD") {
     title = formatNotificationTitle(projectName);
   }
-  const loaded = loadEffectiveGSDPreferences()?.preferences;
+  const loaded = loadEffectiveGWDPreferences()?.preferences;
 
   // Remote notifications fire independently of desktop preferences.
   // sendRemoteNotification handles "not configured" gracefully (early return).
@@ -69,7 +69,7 @@ export function sendDesktopNotification(
 
 export function shouldSendDesktopNotification(
   kind: NotificationKind,
-  preferences: NotificationPreferences | undefined = loadEffectiveGSDPreferences()?.preferences.notifications,
+  preferences: NotificationPreferences | undefined = loadEffectiveGWDPreferences()?.preferences.notifications,
 ): boolean {
   if (preferences?.enabled === false) return false;
 
@@ -112,7 +112,7 @@ export function buildDesktopNotificationCommand(
     // so it gets a proper permission entry in System Settings → Notifications.
     // osascript notifications are silently swallowed when the calling terminal
     // (Ghostty, iTerm2, etc.) lacks notification permissions — exits 0, no error.
-    // See: https://github.com/gwd-build/gwd-2/issues/2632
+    // See: https://github.com/rayliu-factory/gwd/issues/2632
     const tnPath = findExecutable("terminal-notifier");
     if (tnPath) {
       const sound = level === "error" ? "Basso" : "Glass";

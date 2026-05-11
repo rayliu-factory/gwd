@@ -92,8 +92,8 @@ async function runStep(ctx: ExtensionCommandContext, stepId: OnboardingStepId): 
     }
     case "prefs": {
       const { ensurePreferencesFile, handlePrefsWizard } = await import("../../commands-prefs-wizard.js")
-      const { getGlobalGSDPreferencesPath } = await import("../../preferences.js")
-      await ensurePreferencesFile(getGlobalGSDPreferencesPath(), ctx, "global")
+      const { getGlobalGWDPreferencesPath } = await import("../../preferences.js")
+      await ensurePreferencesFile(getGlobalGWDPreferencesPath(), ctx, "global")
       await handlePrefsWizard(ctx, "global")
       return
     }

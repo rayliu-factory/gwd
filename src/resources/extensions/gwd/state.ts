@@ -5,7 +5,7 @@
 // Pure TypeScript, zero Pi dependencies.
 
 import type {
-  GSDState,
+  GWDState,
   ActiveRef,
   Roadmap,
   RoadmapSliceEntry,
@@ -32,8 +32,8 @@ import {
   resolveSliceFile,
   resolveTaskFile,
   resolveTasksDir,
-  resolveGsdRootFile,
-  gsdRoot,
+  resolveGwdRootFile,
+  gwdRoot,
 } from './paths.js';
 
 import { findMilestoneIds } from './milestone-ids.js';
@@ -99,7 +99,7 @@ export function isGhostMilestone(basePath: string, mid: string): boolean {
   }
 
   // If a worktree exists for this milestone, it was legitimately created.
-  const root = gsdRoot(basePath);
+  const root = gwdRoot(basePath);
   const wtPath = join(root, 'worktrees', mid);
   if (existsSync(wtPath)) return false;
 
@@ -121,7 +121,7 @@ export function isGhostMilestone(basePath: string, mid: string): boolean {
  *      means the milestone was intentionally registered by
  *      `gwd_milestone_generate_id` and may have an in-flight discuss flow.
  *      Reusing it would collide with that flow. (#4996 race window)
- *   2. No worktree directory exists at `gsdRoot/worktrees/{mid}` — a worktree
+ *   2. No worktree directory exists at `gwdRoot/worktrees/{mid}` — a worktree
  *      means the milestone is legitimately in-flight.
  *   3. No content files exist (CONTEXT, CONTEXT-DRAFT, ROADMAP, SUMMARY) —
  *      any content means the discuss flow already ran.
@@ -141,7 +141,7 @@ export function isReusableGhostMilestone(basePath: string, mid: string): boolean
   if (dbRow != null) return false;
 
   // Condition 2: no worktree.
-  const root = gsdRoot(basePath);
+  const root = gwdRoot(basePath);
   const wtPath = join(root, 'worktrees', mid);
   if (existsSync(wtPath)) return false;
 
@@ -196,7 +196,7 @@ async function isTerminalMilestoneSummaryFile(
 
 interface StateCache {
   basePath: string;
-  result: GSDState;
+  result: GWDState;
   timestamp: number;
 }
 
@@ -298,7 +298,7 @@ export interface DeriveStateOptions {
 export async function deriveState(
   basePath: string,
   opts?: DeriveStateOptions,
-): Promise<GSDState> {
+): Promise<GWDState> {
   // Use the canonical project root (when provided) as the cache key so that
   // two calls with different basePath strings (e.g. worktree path vs project
   // root) but the same canonical .gwd/ share a single cache entry. The same
@@ -317,7 +317,7 @@ export async function deriveState(
   }
 
   const stopTimer = debugTime("derive-state-impl");
-  let result: GSDState;
+  let result: GWDState;
 
   // DB-backed derivation is authoritative whenever the DB is open.
   // Markdown fallback is explicit-only; runtime degrade must not infer state
@@ -498,7 +498,7 @@ function handleNoActiveMilestone(
   registry: MilestoneRegistryEntry[],
   requirements: any,
   milestoneProgress: { done: number, total: number }
-): GSDState {
+): GWDState {
   const pendingEntries = registry.filter(e => e.status === 'pending');
   const parkedEntries = registry.filter(e => e.status === 'parked');
 
@@ -565,7 +565,7 @@ async function handleAllSlicesDone(
   requirements: any,
   milestoneProgress: { done: number, total: number },
   sliceProgress: { done: number, total: number }
-): Promise<GSDState> {
+): Promise<GWDState> {
   const validation = getLatestAssessmentByScope(activeMilestone.id, "milestone-validation");
   const verdict = typeof validation?.status === "string" ? validation.status : undefined;
   const validationTerminal = verdict != null && verdict !== "";
@@ -651,7 +651,7 @@ function checkReplanTrigger(basePath: string, milestoneId: string, sliceId: stri
   return !!sliceRow?.replan_triggered_at;
 }
 
-export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
+export async function deriveStateFromDb(basePath: string): Promise<GWDState> {
   const requirements = getRequirementCounts();
 
   const allMilestones = getAllMilestones();
@@ -870,7 +870,7 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
 export async function _deriveStateImpl(
   basePath: string,
   opts?: DeriveStateOptions,
-): Promise<GSDState> {
+): Promise<GWDState> {
   // When the caller supplies a canonical project root for reads (e.g.
   // s.canonicalProjectRoot from auto-mode), route all artifact reads through
   // it. This prevents the worktree-local empty `.gwd/` from being consulted
@@ -901,15 +901,15 @@ export async function _deriveStateImpl(
   // in one call and build an in-memory content map keyed by absolute path.
   // This eliminates O(N) individual fs.readFile calls during traversal.
   const fileContentCache = new Map<string, string>();
-  const gsdDir = gsdRoot(basePath);
+  const gwdDir = gwdRoot(basePath);
 
   // Filesystem fallback: used when deriveStateFromDb() is not available
   // (pre-migration projects). The DB-backed path is preferred when available
   // — see deriveStateFromDb() above.
-  const batchFiles = nativeBatchParseGwdFiles(gsdDir);
+  const batchFiles = nativeBatchParseGwdFiles(gwdDir);
   if (batchFiles) {
     for (const f of batchFiles) {
-      const absPath = resolve(gsdDir, f.path);
+      const absPath = resolve(gwdDir, f.path);
       fileContentCache.set(absPath, f.rawContent);
     }
   }
@@ -925,7 +925,7 @@ export async function _deriveStateImpl(
     return loadFile(path);
   }
 
-  const requirements = parseRequirementCounts(await cachedLoadFile(resolveGsdRootFile(basePath, "REQUIREMENTS")));
+  const requirements = parseRequirementCounts(await cachedLoadFile(resolveGwdRootFile(basePath, "REQUIREMENTS")));
 
   if (milestoneIds.length === 0) {
     return {

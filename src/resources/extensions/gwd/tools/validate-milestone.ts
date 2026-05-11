@@ -24,7 +24,7 @@ import { VALIDATION_VERDICTS, isValidMilestoneVerdict } from "../verdict-parser.
 import { insertMilestoneValidationGates } from "../milestone-validation-gates.js";
 import { logWarning } from "../workflow-logger.js";
 import { UokGateRunner } from "../uok/gate-runner.js";
-import { loadEffectiveGSDPreferences } from "../preferences.js";
+import { loadEffectiveGWDPreferences } from "../preferences.js";
 import { resolveUokFlags } from "../uok/flags.js";
 
 export interface ValidateMilestoneParams {
@@ -113,8 +113,8 @@ export async function handleValidateMilestone(
   if (milestoneDir) {
     validationPath = join(milestoneDir, `${params.milestoneId}-VALIDATION.md`);
   } else {
-    const gsdDir = join(canonicalBase, ".gwd");
-    const manualDir = join(gsdDir, "milestones", params.milestoneId);
+    const gwdDir = join(canonicalBase, ".gwd");
+    const manualDir = join(gwdDir, "milestones", params.milestoneId);
     validationPath = join(manualDir, `${params.milestoneId}-VALIDATION.md`);
   }
 
@@ -164,7 +164,7 @@ export async function handleValidateMilestone(
   clearPathCache();
   clearParseCache();
 
-  const prefs = loadEffectiveGSDPreferences()?.preferences;
+  const prefs = loadEffectiveGWDPreferences()?.preferences;
   const gatesEnabled = opts?.uokGatesEnabled ?? resolveUokFlags(prefs).gates;
   if (gatesEnabled) {
     try {

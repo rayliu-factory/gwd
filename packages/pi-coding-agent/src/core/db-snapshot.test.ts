@@ -16,7 +16,7 @@ describe("atomicWriteDbSnapshotSync", () => {
 	});
 
 	it("writes the full snapshot and leaves no temp file after success", () => {
-		dir = mkdtempSync(join(tmpdir(), "gsd-db-snapshot-test-"));
+		dir = mkdtempSync(join(tmpdir(), "gwd-db-snapshot-test-"));
 		const dbPath = join(dir, "agent.db");
 		const snapshot = new Uint8Array([0x53, 0x51, 0x4c, 0x69, 0x74, 0x65]);
 

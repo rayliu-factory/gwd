@@ -14,13 +14,13 @@ import { loadPrompt, inlineTemplate } from "./prompt-loader.js";
 import { deriveState } from "./state.js";
 import { invalidateAllCaches } from "./cache.js";
 import {
-  gsdRoot, resolveMilestoneFile, resolveSliceFile,
-  resolveGsdRootFile, relGsdRootFile, relSliceFile,
+  gwdRoot, resolveMilestoneFile, resolveSliceFile,
+  resolveGwdRootFile, relGwdRootFile, relSliceFile,
 } from "./paths.js";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { atomicWriteSync } from "./atomic-write.js";
 import { nativeAddPaths, nativeCommit } from "./native-git-bridge.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import { loadQueueOrder, sortByQueueOrder, saveQueueOrder } from "./queue-order.js";
 import { findMilestoneIds, nextMilestoneId } from "./milestone-ids.js";
 
@@ -47,8 +47,8 @@ export async function showQueue(
   basePath: string,
 ): Promise<void> {
   // ── Ensure .gwd/ exists ─────────────────────────────────────────────
-  const gsd = gsdRoot(basePath);
-  if (!existsSync(gsd)) {
+  const gwd = gwdRoot(basePath);
+  if (!existsSync(gwd)) {
     ctx.ui.notify("No GWD project found. Run /gwd to start one first.", "warning");
     return;
   }
@@ -174,7 +174,7 @@ export async function showQueueAdd(
   // Note: the LLM will use the gwd_milestone_generate_id tool to get IDs
   // at creation time, but we still mention the next ID in the preamble
   // for context about where the sequence is.
-  const uniqueEnabled = !!loadEffectiveGSDPreferences()?.preferences?.unique_milestone_ids;
+  const uniqueEnabled = !!loadEffectiveGWDPreferences()?.preferences?.unique_milestone_ids;
   const nextId = nextMilestoneId(milestoneIds, uniqueEnabled);
 
   // ── Build preamble ──────────────────────────────────────────────────
@@ -223,25 +223,25 @@ export async function showQueueAdd(
 export async function buildExistingMilestonesContext(
   basePath: string,
   milestoneIds: string[],
-  state: import("./types.js").GSDState,
+  state: import("./types.js").GWDState,
 ): Promise<string> {
   const sections: string[] = [];
 
   // Include PROJECT.md if it exists — it has the milestone sequence and project description
-  const projectPath = resolveGsdRootFile(basePath, "PROJECT");
+  const projectPath = resolveGwdRootFile(basePath, "PROJECT");
   if (existsSync(projectPath)) {
     const projectContent = await loadFile(projectPath);
     if (projectContent) {
-      sections.push(`### Project Overview\nSource: \`${relGsdRootFile("PROJECT")}\`\n\n${projectContent.trim()}`);
+      sections.push(`### Project Overview\nSource: \`${relGwdRootFile("PROJECT")}\`\n\n${projectContent.trim()}`);
     }
   }
 
   // Include DECISIONS.md if it exists — architectural decisions inform new milestone scoping
-  const decisionsPath = resolveGsdRootFile(basePath, "DECISIONS");
+  const decisionsPath = resolveGwdRootFile(basePath, "DECISIONS");
   if (existsSync(decisionsPath)) {
     const decisionsContent = await loadFile(decisionsPath);
     if (decisionsContent) {
-      sections.push(`### Decisions Register\nSource: \`${relGsdRootFile("DECISIONS")}\`\n\n${decisionsContent.trim()}`);
+      sections.push(`### Decisions Register\nSource: \`${relGwdRootFile("DECISIONS")}\`\n\n${decisionsContent.trim()}`);
     }
   }
 
@@ -298,11 +298,11 @@ export async function buildExistingMilestonesContext(
   }
 
   // Include queue log if it exists — shows what's been queued before
-  const queuePath = resolveGsdRootFile(basePath, "QUEUE");
+  const queuePath = resolveGwdRootFile(basePath, "QUEUE");
   if (existsSync(queuePath)) {
     const queueContent = await loadFile(queuePath);
     if (queueContent) {
-      sections.push(`### Previous Queue Entries\nSource: \`${relGsdRootFile("QUEUE")}\`\n\n${queueContent.trim()}`);
+      sections.push(`### Previous Queue Entries\nSource: \`${relGwdRootFile("QUEUE")}\`\n\n${queueContent.trim()}`);
     }
   }
 
@@ -397,7 +397,7 @@ function syncProjectMdSequence(
   registry: Array<{ id: string; title: string; status: string }>,
   newOrder: string[],
 ): void {
-  const projectPath = resolveGsdRootFile(basePath, "PROJECT");
+  const projectPath = resolveGwdRootFile(basePath, "PROJECT");
   if (!projectPath || !existsSync(projectPath)) return;
 
   const content = readFileSync(projectPath, "utf-8");

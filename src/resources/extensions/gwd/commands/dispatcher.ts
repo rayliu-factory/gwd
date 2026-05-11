@@ -1,6 +1,6 @@
 import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 
-import { GSDNoProjectError, withCommandCwd } from "./context.js";
+import { GWDNoProjectError, withCommandCwd } from "./context.js";
 import { handleAutoCommand } from "./handlers/auto.js";
 import { handleCoreCommand } from "./handlers/core.js";
 import { handleOpsCommand } from "./handlers/ops.js";
@@ -33,7 +33,7 @@ export async function handleGWDCommand(
       return false;
     });
   } catch (err) {
-    if (err instanceof GSDNoProjectError) {
+    if (err instanceof GWDNoProjectError) {
       ctx.ui.notify(
         `${err.message} \`cd\` into a project directory first.`,
         "warning",

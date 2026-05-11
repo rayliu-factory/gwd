@@ -11,7 +11,7 @@ import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 
 interface BacklogItem {
   id: string;
@@ -21,7 +21,7 @@ interface BacklogItem {
 }
 
 function backlogPath(basePath: string): string {
-  return join(gsdRoot(basePath), "BACKLOG.md");
+  return join(gwdRoot(basePath), "BACKLOG.md");
 }
 
 function parseBacklog(basePath: string): BacklogItem[] {

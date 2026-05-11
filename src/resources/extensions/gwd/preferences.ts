@@ -14,7 +14,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { parse as parseYaml } from "yaml";
 import type { PostUnitHookConfig, PreDispatchHookConfig, TokenProfile } from "./types.js";
 import type { DynamicRoutingConfig } from "./model-router.js";
@@ -27,14 +27,14 @@ import {
   KNOWN_PREFERENCE_KEYS,
   MODE_DEFAULTS,
   type WorkflowMode,
-  type GSDPreferences,
-  type LoadedGSDPreferences,
+  type GWDPreferences,
+  type LoadedGWDPreferences,
   type SkillResolution,
   type SkillDiscoveryMode,
   formatSkillRef,
 } from "./preferences-types.js";
 import { validatePreferences } from "./preferences-validation.js";
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 
 // ─── Re-exports: types ──────────────────────────────────────────────────────
 // Every type/interface that was previously exported from this file is
@@ -43,10 +43,10 @@ import { gsdHome } from "./gwd-home.js";
 
 export type {
   WorkflowMode,
-  GSDSkillRule,
-  GSDPhaseModelConfig,
-  GSDModelConfig,
-  GSDModelConfigV2,
+  GWDSkillRule,
+  GWDPhaseModelConfig,
+  GWDModelConfig,
+  GWDModelConfigV2,
   ResolvedModelConfig,
   SkillDiscoveryMode,
   AutoSupervisorConfig,
@@ -55,8 +55,8 @@ export type {
   UokTurnActionMode,
   UokPreferences,
   CodebaseMapPreferences,
-  GSDPreferences,
-  LoadedGSDPreferences,
+  GWDPreferences,
+  LoadedGWDPreferences,
   SkillResolution,
   SkillResolutionReport,
 } from "./preferences-types.js";
@@ -67,16 +67,16 @@ export { validatePreferences } from "./preferences-validation.js";
 // ─── Re-exports: skills ─────────────────────────────────────────────────────
 export { resolveAllSkillReferences } from "./preferences-skills.js";
 
-// These lived in preferences-skills.ts but imported loadEffectiveGSDPreferences
+// These lived in preferences-skills.ts but imported loadEffectiveGWDPreferences
 // back from this file, creating a circular dependency. Moved here since they
-// are trivial wrappers over loadEffectiveGSDPreferences.
+// are trivial wrappers over loadEffectiveGWDPreferences.
 export function resolveSkillDiscoveryMode(basePath?: string): SkillDiscoveryMode {
-  const prefs = loadEffectiveGSDPreferences(basePath);
+  const prefs = loadEffectiveGWDPreferences(basePath);
   return prefs?.preferences.skill_discovery ?? "suggest";
 }
 
 export function resolveSkillStalenessDays(basePath?: string): number {
-  const prefs = loadEffectiveGSDPreferences(basePath);
+  const prefs = loadEffectiveGWDPreferences(basePath);
   return prefs?.preferences.skill_staleness_days ?? 60;
 }
 
@@ -102,61 +102,61 @@ export {
 // ─── Path Constants & Getters ───────────────────────────────────────────────
 
 function globalPreferencesPath(): string {
-  return join(gsdHome(), "PREFERENCES.md");
+  return join(gwdHome(), "PREFERENCES.md");
 }
 
 function legacyGlobalPreferencesPath(): string {
-  return join(homedir(), ".pi", "agent", "gsd-preferences.md");
+  return join(homedir(), ".pi", "agent", "gwd-preferences.md");
 }
 
 function projectPreferencesPath(basePath: string = process.cwd()): string {
-  return join(gsdRoot(basePath), "PREFERENCES.md");
+  return join(gwdRoot(basePath), "PREFERENCES.md");
 }
 // Legacy lowercase files can still exist in older projects. Keep them as a
 // compatibility-only fallback, but route new reads/writes through PREFERENCES.md.
 function legacyGlobalPreferencesPathLowercase(): string {
-  return join(gsdHome(), "preferences.md");
+  return join(gwdHome(), "preferences.md");
 }
 function legacyProjectPreferencesPathLowercase(basePath: string = process.cwd()): string {
-  return join(gsdRoot(basePath), "preferences.md");
+  return join(gwdRoot(basePath), "preferences.md");
 }
 
-export function getGlobalGSDPreferencesPath(): string {
+export function getGlobalGWDPreferencesPath(): string {
   return globalPreferencesPath();
 }
 
-export function getLegacyGlobalGSDPreferencesPath(): string {
+export function getLegacyGlobalGWDPreferencesPath(): string {
   return legacyGlobalPreferencesPath();
 }
 
-export function getProjectGSDPreferencesPath(basePath?: string): string {
+export function getProjectGWDPreferencesPath(basePath?: string): string {
   return projectPreferencesPath(basePath);
 }
 
 // ─── Loading ────────────────────────────────────────────────────────────────
 
-export function loadGlobalGSDPreferences(): LoadedGSDPreferences | null {
+export function loadGlobalGWDPreferences(): LoadedGWDPreferences | null {
   return loadPreferencesFile(globalPreferencesPath(), "global")
     ?? loadPreferencesFile(legacyGlobalPreferencesPathLowercase(), "global")
     ?? loadPreferencesFile(legacyGlobalPreferencesPath(), "global");
 }
 
-export function loadProjectGSDPreferences(basePath?: string): LoadedGSDPreferences | null {
+export function loadProjectGWDPreferences(basePath?: string): LoadedGWDPreferences | null {
   return loadPreferencesFile(projectPreferencesPath(basePath), "project")
     ?? loadPreferencesFile(legacyProjectPreferencesPathLowercase(basePath), "project");
 }
 
-export function loadEffectiveGSDPreferences(
+export function loadEffectiveGWDPreferences(
   basePath?: string,
   opts?: { availableModelIds?: string[] },
-): LoadedGSDPreferences | null {
-  const globalPreferences = loadGlobalGSDPreferences();
-  const projectPreferences = loadProjectGSDPreferences(basePath);
+): LoadedGWDPreferences | null {
+  const globalPreferences = loadGlobalGWDPreferences();
+  const projectPreferences = loadProjectGWDPreferences(basePath);
   const projectHasPlanningDepth = projectPreferences?.preferences.planning_depth !== undefined;
 
   if (!globalPreferences && !projectPreferences) return null;
 
-  let result: LoadedGSDPreferences;
+  let result: LoadedGWDPreferences;
   if (!globalPreferences) {
     result = projectPreferences!;
   } else if (!projectPreferences) {
@@ -186,7 +186,7 @@ export function loadEffectiveGSDPreferences(
     );
     result = {
       ...result,
-      preferences: mergePreferences(profileDefaults as GSDPreferences, result.preferences),
+      preferences: mergePreferences(profileDefaults as GWDPreferences, result.preferences),
     };
   }
 
@@ -203,17 +203,10 @@ export function loadEffectiveGSDPreferences(
   return result;
 }
 
-export function loadEffectiveGWDPreferences(
-  basePath?: string,
-  opts?: { availableModelIds?: string[] },
-): LoadedGSDPreferences | null {
-  return loadEffectiveGSDPreferences(basePath, opts);
-}
-
 function stripInheritedPlanningDepth(
-  loaded: LoadedGSDPreferences,
+  loaded: LoadedGWDPreferences,
   projectHasPlanningDepth: boolean,
-): LoadedGSDPreferences {
+): LoadedGWDPreferences {
   if (projectHasPlanningDepth || loaded.preferences.planning_depth === undefined) {
     return loaded;
   }
@@ -221,12 +214,12 @@ function stripInheritedPlanningDepth(
   // planning_depth is a project bootstrap routing flag, not a user-global
   // preference. A global ~/.gwd/PREFERENCES.md value should not make every
   // fresh repo behave like `/gwd new-project --deep`.
-  const preferences: GSDPreferences = { ...loaded.preferences };
+  const preferences: GWDPreferences = { ...loaded.preferences };
   delete preferences.planning_depth;
   return { ...loaded, preferences };
 }
 
-function loadPreferencesFile(path: string, scope: "global" | "project"): LoadedGSDPreferences | null {
+function loadPreferencesFile(path: string, scope: "global" | "project"): LoadedGWDPreferences | null {
   if (!existsSync(path)) return null;
 
   const raw = readFileSync(path, "utf-8");
@@ -255,7 +248,7 @@ export function _resetParseWarningFlag(): void {
 }
 
 /** @internal Exported for testing only */
-export function parsePreferencesMarkdown(content: string): GSDPreferences | null {
+export function parsePreferencesMarkdown(content: string): GWDPreferences | null {
   // Use indexOf instead of [\s\S]*? regex to avoid backtracking (#468)
   const startMarker = content.startsWith('---\r\n') ? '---\r\n' : '---\n';
   if (content.startsWith(startMarker)) {
@@ -277,32 +270,32 @@ export function parsePreferencesMarkdown(content: string): GSDPreferences | null
     _warnedUnrecognizedFormat = true;
     console.warn(
       "[GWD] Warning: preferences file has unrecognized format — content does not use YAML frontmatter delimiters (---). " +
-      "Wrap your preferences in --- fences. See https://github.com/gwd-build/gwd-2/issues/2036",
+      "Wrap your preferences in --- fences. See https://github.com/rayliu-factory/gwd/issues/2036",
     );
   }
   return null;
 }
 
 let _warnedFrontmatterParse = false;
-function parseFrontmatterBlock(frontmatter: string): GSDPreferences {
+function parseFrontmatterBlock(frontmatter: string): GWDPreferences {
   try {
     const parsed = parseYaml(frontmatter);
     if (typeof parsed !== 'object' || parsed === null) {
-      return {} as GSDPreferences;
+      return {} as GWDPreferences;
     }
-    return parsed as GSDPreferences;
+    return parsed as GWDPreferences;
   } catch (e) {
     // Warn at most once per session to avoid flooding TUI (#3376)
     if (!_warnedFrontmatterParse) {
       _warnedFrontmatterParse = true;
       logWarning("guided", `YAML parse error in preferences frontmatter (suppressing further): ${(e as Error).message}`);
     }
-    return {} as GSDPreferences;
+    return {} as GWDPreferences;
   }
 }
 
 /**
- * Parse heading+list format into a nested object, then cast to GSDPreferences.
+ * Parse heading+list format into a nested object, then cast to GWDPreferences.
  * Handles markdown like:
  *   ## Git
  *   - isolation: none
@@ -310,7 +303,7 @@ function parseFrontmatterBlock(frontmatter: string): GSDPreferences {
  *   ## Models
  *   - planner: sonnet
  */
-function parseHeadingListFormat(content: string): GSDPreferences {
+function parseHeadingListFormat(content: string): GWDPreferences {
   const result: Record<string, string[]> = {};
   let currentSection: string | null = null;
 
@@ -363,7 +356,7 @@ function parseHeadingListFormat(content: string): GSDPreferences {
     }
   }
 
-  return typed as GSDPreferences;
+  return typed as GWDPreferences;
 }
 
 // ─── Merging ────────────────────────────────────────────────────────────────
@@ -372,13 +365,13 @@ function parseHeadingListFormat(content: string): GSDPreferences {
  * Apply mode defaults as the lowest-priority layer.
  * Mode defaults fill in undefined fields; any explicit user value wins.
  */
-export function applyModeDefaults(mode: WorkflowMode, prefs: GSDPreferences): GSDPreferences {
+export function applyModeDefaults(mode: WorkflowMode, prefs: GWDPreferences): GWDPreferences {
   const defaults = MODE_DEFAULTS[mode];
   if (!defaults) return prefs;
   return mergePreferences(defaults, prefs);
 }
 
-function mergePreferences(base: GSDPreferences, override: GSDPreferences): GSDPreferences {
+function mergePreferences(base: GWDPreferences, override: GWDPreferences): GWDPreferences {
   return {
     version: override.version ?? base.version,
     mode: override.mode ?? base.mode,
@@ -538,7 +531,7 @@ function mergePreDispatchHooks(
 
 // ─── System Prompt Rendering ──────────────────────────────────────────────────
 
-export function renderPreferencesForSystemPrompt(preferences: GSDPreferences, resolutions?: Map<string, SkillResolution>): string {
+export function renderPreferencesForSystemPrompt(preferences: GWDPreferences, resolutions?: Map<string, SkillResolution>): string {
   const validated = validatePreferences(preferences);
   const lines: string[] = ["## GWD Skill Preferences"];
 
@@ -618,7 +611,7 @@ export function renderPreferencesForSystemPrompt(preferences: GSDPreferences, re
  * Returns an empty array when no hooks are configured.
  */
 export function resolvePostUnitHooks(): PostUnitHookConfig[] {
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   return (prefs?.preferences.post_unit_hooks ?? [])
     .filter(h => h.enabled !== false);
 }
@@ -628,7 +621,7 @@ export function resolvePostUnitHooks(): PostUnitHookConfig[] {
  * Returns an empty array when no hooks are configured.
  */
 export function resolvePreDispatchHooks(): PreDispatchHookConfig[] {
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   return (prefs?.preferences.pre_dispatch_hooks ?? [])
     .filter(h => h.enabled !== false);
 }
@@ -644,7 +637,7 @@ export function resolvePreDispatchHooks(): PreDispatchHookConfig[] {
  * branch infrastructure that must be set up before use.
  */
 export function getIsolationMode(basePath?: string): "none" | "worktree" | "branch" {
-  const prefs = loadEffectiveGSDPreferences(basePath)?.preferences?.git;
+  const prefs = loadEffectiveGWDPreferences(basePath)?.preferences?.git;
   if (prefs?.isolation === "worktree") {
     if (basePath && nativeIsRepo(basePath) && !nativeHasCommittedHead(basePath)) return "none";
     return "worktree";
@@ -653,7 +646,7 @@ export function getIsolationMode(basePath?: string): "none" | "worktree" | "bran
   return "none"; // default — no isolation, work on current branch
 }
 
-export function resolveParallelConfig(prefs: GSDPreferences | undefined): import("./types.js").ParallelConfig {
+export function resolveParallelConfig(prefs: GWDPreferences | undefined): import("./types.js").ParallelConfig {
   return {
     enabled: prefs?.parallel?.enabled ?? false,
     max_workers: Math.max(1, Math.min(4, prefs?.parallel?.max_workers ?? 2)),

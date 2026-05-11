@@ -22,7 +22,7 @@ import {
   type TemplateMatch,
 } from "./workflow-templates.js";
 import { loadPrompt } from "./prompt-loader.js";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { createGitService, runGit } from "./git-service.js";
 import { isAutoActive, isAutoPaused } from "./auto.js";
 import { getErrorMessage } from "./error-utils.js";
@@ -134,7 +134,7 @@ function writeWorkflowState(
  * Returns workflows that were started but not completed.
  */
 function findInProgressWorkflows(basePath: string): WorkflowState[] {
-  const workflowsRoot = join(gsdRoot(basePath), "workflows");
+  const workflowsRoot = join(gwdRoot(basePath), "workflows");
   if (!existsSync(workflowsRoot)) return [];
 
   const results: WorkflowState[] = [];
@@ -397,7 +397,7 @@ export async function handleStart(
     } else {
       lines.push("Artifact dir: (none — hotfix mode)");
     }
-    lines.push(`Branch:       gsd/${templateId}/${slug}`);
+    lines.push(`Branch:       gwd/${templateId}/${slug}`);
     if (issueRef) lines.push(`Issue:        ${issueRef}`);
     lines.push("", "No changes made. Remove --dry-run to execute.");
     ctx.ui.notify(lines.join("\n"), "info");
@@ -407,7 +407,7 @@ export async function handleStart(
   // ─── Route full-project to standard GWD workflow ────────────────────────
 
   if (templateId === "full-project") {
-    const root = gsdRoot(basePath);
+    const root = gwdRoot(basePath);
     if (!existsSync(root)) {
       ctx.ui.notify(
         "Routing to /gwd init for full project setup...",
@@ -447,7 +447,7 @@ export async function handleStart(
   const git = createGitService(basePath);
   const skipBranch = git.prefs.isolation === "none";
   const slug = slugify(description || templateId);
-  const branchName = `gsd/${templateId}/${slug}`;
+  const branchName = `gwd/${templateId}/${slug}`;
   let branchCreated = false;
 
   if (!skipBranch) {
@@ -621,7 +621,7 @@ export function dispatchMarkdownPhasePlugin(
   const git = createGitService(basePath);
   const skipBranch = git.prefs.isolation === "none";
   const slug = slugify(description || templateId);
-  const branchName = `gsd/${templateId}/${slug}`;
+  const branchName = `gwd/${templateId}/${slug}`;
   let branchCreated = false;
 
   if (!skipBranch) {

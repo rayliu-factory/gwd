@@ -1,4 +1,4 @@
-// GSD2 complete-milestone tool handler
+// GWD2 complete-milestone tool handler
 /**
  * complete-milestone handler — the core operation behind gwd_complete_milestone.
  *
@@ -199,8 +199,8 @@ export async function handleCompleteMilestone(
   if (milestoneDir) {
     summaryPath = join(milestoneDir, `${params.milestoneId}-SUMMARY.md`);
   } else {
-    const gsdDir = join(basePath, ".gwd");
-    const manualDir = join(gsdDir, "milestones", params.milestoneId);
+    const gwdDir = join(basePath, ".gwd");
+    const manualDir = join(gwdDir, "milestones", params.milestoneId);
     mkdirSync(manualDir, { recursive: true });
     summaryPath = join(manualDir, `${params.milestoneId}-SUMMARY.md`);
   }

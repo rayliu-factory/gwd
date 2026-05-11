@@ -359,8 +359,8 @@ export async function handleCompleteSlice(
     summaryPath = join(sliceDir, `${params.sliceId}-SUMMARY.md`);
   } else {
     // Slice dir doesn't exist on disk yet — build path manually and ensure dirs
-    const gsdDir = join(basePath, ".gwd");
-    const manualSliceDir = join(gsdDir, "milestones", params.milestoneId, "slices", params.sliceId);
+    const gwdDir = join(basePath, ".gwd");
+    const manualSliceDir = join(gwdDir, "milestones", params.milestoneId, "slices", params.sliceId);
     mkdirSync(manualSliceDir, { recursive: true });
     summaryPath = join(manualSliceDir, `${params.sliceId}-SUMMARY.md`);
   }
@@ -462,18 +462,18 @@ export async function handleCompleteSlice(
     try {
       const graphMod = await import("@gwd-build/mcp-server") as unknown as Partial<{
         buildGraph: (dir: string) => Promise<{ nodes: unknown[]; edges: unknown[]; builtAt: string }>;
-        writeGraph: (gsdRoot: string, graph: unknown) => Promise<void>;
-        resolveGsdRoot: (basePath: string) => string;
+        writeGraph: (gwdRoot: string, graph: unknown) => Promise<void>;
+        resolveGwdRoot: (basePath: string) => string;
       }>;
       if (
         typeof graphMod.buildGraph !== "function"
         || typeof graphMod.writeGraph !== "function"
-        || typeof graphMod.resolveGsdRoot !== "function"
+        || typeof graphMod.resolveGwdRoot !== "function"
       ) {
         throw new Error("graph helpers unavailable from @gwd-build/mcp-server");
       }
       const g = await graphMod.buildGraph(basePath);
-      await graphMod.writeGraph(graphMod.resolveGsdRoot(basePath), g);
+      await graphMod.writeGraph(graphMod.resolveGwdRoot(basePath), g);
     } catch (graphErr) {
       // Graph rebuild is best-effort — log at warning level but never propagate
       logWarning("tool", `complete-slice graph rebuild failed (non-fatal): ${(graphErr as Error).message ?? String(graphErr)}`);

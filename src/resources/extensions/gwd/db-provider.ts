@@ -84,7 +84,7 @@ export class SqliteProviderLoader {
       ? ` GWD requires Node >= 22.0.0 (current: v${this.deps.nodeVersion}). Upgrade Node to fix this.`
       : "";
     this.deps.writeStderr(
-      `gsd-db: No SQLite provider available (tried node:sqlite, better-sqlite3).${versionHint}\n`,
+      `gwd-db: No SQLite provider available (tried node:sqlite, better-sqlite3).${versionHint}\n`,
     );
   }
 

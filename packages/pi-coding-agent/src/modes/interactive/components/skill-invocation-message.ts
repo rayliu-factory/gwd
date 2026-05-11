@@ -1,4 +1,4 @@
-// GSD / pi-coding-agent — Skill invocation message component
+// GWD / pi-coding-agent — Skill invocation message component
 import { Container, Markdown, type MarkdownTheme, Text } from "@gwd/pi-tui";
 import type { ParsedSkillBlock } from "../../../core/agent-session.js";
 import { getMarkdownTheme, theme } from "../theme/theme.js";

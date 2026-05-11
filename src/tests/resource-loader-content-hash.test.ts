@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 
 /**
- * Regression test for gwd-build/gwd-2 #4787.
+ * Regression test for rayliu-factory/gwd #4787.
  *
  * Background: `computeResourceFingerprint` previously hashed the relative
  * file path + file size only. Same-byte-length edits to bundled prompt

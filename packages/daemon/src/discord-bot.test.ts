@@ -230,52 +230,52 @@ describe('Daemon + DiscordBot wiring', () => {
 // ---------- sanitizeChannelName ----------
 
 describe('sanitizeChannelName', () => {
-  it('converts basic path to gsd-prefixed name', () => {
-    assert.equal(sanitizeChannelName('/home/user/my-project'), 'gsd-my-project');
+  it('converts basic path to gwd-prefixed name', () => {
+    assert.equal(sanitizeChannelName('/home/user/my-project'), 'gwd-my-project');
   });
 
   it('converts path with special characters to hyphens', () => {
-    assert.equal(sanitizeChannelName('/home/user/My_Cool.Project!v2'), 'gsd-my-cool-project-v2');
+    assert.equal(sanitizeChannelName('/home/user/My_Cool.Project!v2'), 'gwd-my-cool-project-v2');
   });
 
   it('truncates very long names to 100 chars', () => {
     const longName = 'a'.repeat(200);
     const result = sanitizeChannelName(`/home/${longName}`);
     assert.ok(result.length <= 100, `Expected <= 100 chars, got ${result.length}`);
-    assert.ok(result.startsWith('gsd-'));
+    assert.ok(result.startsWith('gwd-'));
   });
 
   it('cleans leading/trailing dots and underscores', () => {
-    assert.equal(sanitizeChannelName('/home/...___project___...'), 'gsd-project');
+    assert.equal(sanitizeChannelName('/home/...___project___...'), 'gwd-project');
   });
 
-  it('returns gsd-unnamed for empty basename', () => {
-    assert.equal(sanitizeChannelName(''), 'gsd-unnamed');
-    assert.equal(sanitizeChannelName('/'), 'gsd-unnamed');
+  it('returns gwd-unnamed for empty basename', () => {
+    assert.equal(sanitizeChannelName(''), 'gwd-unnamed');
+    assert.equal(sanitizeChannelName('/'), 'gwd-unnamed');
   });
 
-  it('returns gsd-unnamed for basename with only special chars', () => {
-    assert.equal(sanitizeChannelName('/home/!!!'), 'gsd-unnamed');
+  it('returns gwd-unnamed for basename with only special chars', () => {
+    assert.equal(sanitizeChannelName('/home/!!!'), 'gwd-unnamed');
   });
 
   it('collapses consecutive hyphens', () => {
-    assert.equal(sanitizeChannelName('/home/a---b---c'), 'gsd-a-b-c');
+    assert.equal(sanitizeChannelName('/home/a---b---c'), 'gwd-a-b-c');
   });
 
   it('handles Windows-style backslash paths', () => {
-    assert.equal(sanitizeChannelName('C:\\Users\\lex\\my-project'), 'gsd-my-project');
+    assert.equal(sanitizeChannelName('C:\\Users\\lex\\my-project'), 'gwd-my-project');
   });
 
   it('handles name at exact prefix + 96 chars = 100 char limit', () => {
-    // gsd- is 4 chars, so a 96-char basename should produce exactly 100
+    // gwd- is 4 chars, so a 96-char basename should produce exactly 100
     const name96 = 'a'.repeat(96);
     const result = sanitizeChannelName(`/home/${name96}`);
     assert.equal(result.length, 100);
-    assert.equal(result, `gsd-${'a'.repeat(96)}`);
+    assert.equal(result, `gwd-${'a'.repeat(96)}`);
   });
 
   it('handles whitespace-only basename', () => {
-    assert.equal(sanitizeChannelName('/home/   '), 'gsd-unnamed');
+    assert.equal(sanitizeChannelName('/home/   '), 'gwd-unnamed');
   });
 });
 
@@ -383,7 +383,7 @@ describe('ChannelManager', () => {
     const mgr = new ChannelManager({ guild: guild as any, logger: logger as any });
 
     const channel = await mgr.createProjectChannel('/home/user/my-project');
-    assert.equal(channel.name, 'gsd-my-project');
+    assert.equal(channel.name, 'gwd-my-project');
     assert.equal(channel.type, ChannelType.GuildText);
     // Category was created first (chan-1), then channel (chan-2)
     assert.equal(channel.parentId, 'chan-1');
@@ -443,10 +443,10 @@ describe('buildCommands', () => {
     const commands = buildCommands();
     assert.equal(commands.length, 4);
     const names = commands.map((c) => c.name);
-    assert.ok(names.includes('gsd-status'), 'should include gsd-status');
-    assert.ok(names.includes('gsd-start'), 'should include gsd-start');
-    assert.ok(names.includes('gsd-stop'), 'should include gsd-stop');
-    assert.ok(names.includes('gsd-verbose'), 'should include gsd-verbose');
+    assert.ok(names.includes('gwd-status'), 'should include gwd-status');
+    assert.ok(names.includes('gwd-start'), 'should include gwd-start');
+    assert.ok(names.includes('gwd-stop'), 'should include gwd-stop');
+    assert.ok(names.includes('gwd-verbose'), 'should include gwd-verbose');
   });
 
   it('each command has a description', () => {
@@ -551,7 +551,7 @@ describe('command dispatch', () => {
   // The command routing logic is tested indirectly through integration of the
   // pure helpers (buildCommands, formatSessionStatus, isAuthorized).
 
-  it('gsd-status with no sessions produces empty message', () => {
+  it('gwd-status with no sessions produces empty message', () => {
     // Tests the formatSessionStatus path that /gwd-status calls
     const result = formatSessionStatus([]);
     assert.equal(result, 'No active sessions.');
@@ -560,7 +560,7 @@ describe('command dispatch', () => {
   it('unknown command name is not in buildCommands list', () => {
     const commands = buildCommands();
     const names = commands.map((c) => c.name);
-    assert.ok(!names.includes('gsd-unknown'), 'unknown should not be in command list');
+    assert.ok(!names.includes('gwd-unknown'), 'unknown should not be in command list');
   });
 
   it('auth guard rejects non-owner on interaction', () => {
@@ -737,7 +737,7 @@ describe('Daemon orchestrator wiring', () => {
 
 describe('/gwd-start and /gwd-stop logic', () => {
   // These test the observable logic paths exercised by the handlers.
-  // Since handleGsdStart/handleGsdStop are private, we test the data layer
+  // Since handleGwdStart/handleGwdStop are private, we test the data layer
   // they depend on — project scanning, session listing, and edge cases.
 
   it('/gwd-start: scanForProjects returning 0 projects', async () => {
@@ -761,7 +761,7 @@ describe('/gwd-start and /gwd-stop logic', () => {
   });
 
   it('/gwd-stop: filters to active sessions only', () => {
-    // Simulate the filter logic used in handleGsdStop
+    // Simulate the filter logic used in handleGwdStop
     const allSessions: Partial<ManagedSession>[] = [
       { sessionId: 's1', status: 'running', projectName: 'alpha' },
       { sessionId: 's2', status: 'completed', projectName: 'beta' },

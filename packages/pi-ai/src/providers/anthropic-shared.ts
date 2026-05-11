@@ -115,7 +115,7 @@ export function getCacheControl(
 	};
 }
 
-/** Convert GSD content blocks to the Anthropic SDK's user-message content format. */
+/** Convert GWD content blocks to the Anthropic SDK's user-message content format. */
 export function convertContentBlocks(content: (TextContent | ImageContent)[]):
 	| string
 	| Array<
@@ -178,7 +178,7 @@ export function supportsAdaptiveThinking(modelId: string): boolean {
 	);
 }
 
-/** Map a GSD thinking level to the corresponding Anthropic effort value; model-specific for xhigh. */
+/** Map a GWD thinking level to the corresponding Anthropic effort value; model-specific for xhigh. */
 export function mapThinkingLevelToEffort(level: string | undefined, modelId: string): AnthropicEffort {
 	switch (level) {
 		case "minimal":
@@ -254,7 +254,7 @@ export function normalizeToolCallId(id: string): string {
 	return id.replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 64);
 }
 
-/** Convert GSD messages to Anthropic SDK `MessageParam` format, applying cache control to the last user turn. */
+/** Convert GWD messages to Anthropic SDK `MessageParam` format, applying cache control to the last user turn. */
 export function convertMessages(
 	messages: Message[],
 	model: Model<AnthropicApi>,
@@ -454,7 +454,7 @@ function applyCacheControlToParam(
 	}
 }
 
-/** Convert GSD tools to Anthropic SDK tool definitions, applying cache control to the last entry. */
+/** Convert GWD tools to Anthropic SDK tool definitions, applying cache control to the last entry. */
 export function convertTools(
 	tools: Tool[],
 	isOAuthToken: boolean,
@@ -573,7 +573,7 @@ export function buildParams(
 	return params;
 }
 
-/** Map an Anthropic API stop reason string to GSD's internal `StopReason`. */
+/** Map an Anthropic API stop reason string to GWD's internal `StopReason`. */
 export function mapStopReason(reason: string): StopReason {
 	switch (reason) {
 		case "end_turn":

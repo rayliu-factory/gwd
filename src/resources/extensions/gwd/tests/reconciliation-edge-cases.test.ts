@@ -142,8 +142,8 @@ describe("reconciliation-edge-cases", () => {
   test("appendEvent creates event log if directory does not exist", () => {
     const base = tempDir();
     // Remove the .gwd directory if it somehow exists — appendEvent should create it.
-    const gsdDir = path.join(base, ".gwd");
-    if (fs.existsSync(gsdDir)) fs.rmSync(gsdDir, { recursive: true, force: true });
+    const gwdDir = path.join(base, ".gwd");
+    if (fs.existsSync(gwdDir)) fs.rmSync(gwdDir, { recursive: true, force: true });
 
     appendEvent(base, {
       cmd: "complete_task",

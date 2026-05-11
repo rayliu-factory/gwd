@@ -11,11 +11,11 @@ import type { Theme } from "@gwd/pi-coding-agent";
 import { matchesKey, Key, truncateToWidth } from "@gwd/pi-tui";
 
 import {
-  loadEffectiveGSDPreferences,
-  loadGlobalGSDPreferences,
-  loadProjectGSDPreferences,
-  getGlobalGSDPreferencesPath,
-  getProjectGSDPreferencesPath,
+  loadEffectiveGWDPreferences,
+  loadGlobalGWDPreferences,
+  loadProjectGWDPreferences,
+  getGlobalGWDPreferencesPath,
+  getProjectGWDPreferencesPath,
   resolveDynamicRoutingConfig,
   resolveEffectiveProfile,
   resolveModelWithFallbacksForUnit,
@@ -32,17 +32,17 @@ interface ConfigSection {
 function collectConfigSections(): ConfigSection[] {
   const sections: ConfigSection[] = [];
 
-  const globalPrefs = loadGlobalGSDPreferences();
-  const projectPrefs = loadProjectGSDPreferences();
-  const effective = loadEffectiveGSDPreferences();
+  const globalPrefs = loadGlobalGWDPreferences();
+  const projectPrefs = loadProjectGWDPreferences();
+  const effective = loadEffectiveGWDPreferences();
   const prefs = effective?.preferences;
 
   // ─── Sources ─────────────────────────────────────────────────────────
   sections.push({
     title: "Sources",
     rows: [
-      { label: "Global", value: globalPrefs ? globalPrefs.path : `(none) ${getGlobalGSDPreferencesPath()}` },
-      { label: "Project", value: projectPrefs ? projectPrefs.path : `(none) ${getProjectGSDPreferencesPath()}` },
+      { label: "Global", value: globalPrefs ? globalPrefs.path : `(none) ${getGlobalGWDPreferencesPath()}` },
+      { label: "Project", value: projectPrefs ? projectPrefs.path : `(none) ${getProjectGWDPreferencesPath()}` },
     ],
   });
 
@@ -225,7 +225,7 @@ export function formatConfigText(): string {
 
 // ─── Overlay Class ────────────────────────────────────────────────────────
 
-export class GSDConfigOverlay {
+export class GWDConfigOverlay {
   private tui: { requestRender: () => void };
   private theme: Theme;
   private onClose: () => void;

@@ -26,7 +26,7 @@ import {
 } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { createWorktree, worktreePath, removeWorktree } from "./worktree-manager.js";
 import { autoWorktreeBranch, runWorktreePostCreateHook } from "./auto-worktree.js";
 import {
@@ -129,7 +129,7 @@ interface PersistedSliceState {
 }
 
 function sliceStateFilePath(basePath: string): string {
-  return join(gsdRoot(basePath), SLICE_ORCHESTRATOR_STATE_FILE);
+  return join(gwdRoot(basePath), SLICE_ORCHESTRATOR_STATE_FILE);
 }
 
 function isPidAlive(pid: number): boolean {
@@ -218,7 +218,7 @@ function isRecoveredSliceWorkerAlive(worker: {
 function persistSliceState(): void {
   if (!sliceState) return;
   try {
-    const dir = gsdRoot(sliceState.basePath);
+    const dir = gwdRoot(sliceState.basePath);
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 
     const persisted: PersistedSliceState = {
@@ -594,9 +594,9 @@ function filterConflictingSlices(
 
 /**
  * Resolve the GWD CLI binary path.
- * Same logic as parallel-orchestrator.ts resolveGsdBin().
+ * Same logic as parallel-orchestrator.ts resolveGwdBin().
  */
-function resolveGsdBin(): string | null {
+function resolveGwdBin(): string | null {
   if (process.env.GWD_BIN_PATH && existsSync(process.env.GWD_BIN_PATH)) {
     return process.env.GWD_BIN_PATH;
   }
@@ -638,7 +638,7 @@ function spawnSliceWorker(
   if (!worker) return false;
   if (worker.process) return true;
 
-  const binPath = resolveGsdBin();
+  const binPath = resolveGwdBin();
   if (!binPath) return false;
 
   let child: ChildProcess;
@@ -802,7 +802,7 @@ function processSliceWorkerLine(
 // ─── Logging ────────────────────────────────────────────────────────────────
 
 function sliceLogDir(basePath: string): string {
-  return join(gsdRoot(basePath), "parallel", "slice-logs");
+  return join(gwdRoot(basePath), "parallel", "slice-logs");
 }
 
 function appendSliceWorkerLog(

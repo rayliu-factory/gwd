@@ -11,12 +11,12 @@ import { existsSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  getGlobalGSDPreferencesPath,
-  getLegacyGlobalGSDPreferencesPath,
-  getProjectGSDPreferencesPath,
-  loadGlobalGSDPreferences,
-  loadProjectGSDPreferences,
-  loadEffectiveGSDPreferences,
+  getGlobalGWDPreferencesPath,
+  getLegacyGlobalGWDPreferencesPath,
+  getProjectGWDPreferencesPath,
+  loadGlobalGWDPreferences,
+  loadProjectGWDPreferences,
+  loadEffectiveGWDPreferences,
   resolveAllSkillReferences,
 } from "./preferences.js";
 import { loadFile, saveFile, splitFrontmatter, parseFrontmatterMap } from "./files.js";
@@ -218,13 +218,13 @@ export async function handlePrefs(args: string, ctx: ExtensionCommandContext): P
 
   if (trimmed === "" || trimmed === "global" || trimmed === "wizard" || trimmed === "setup"
     || trimmed === "wizard global" || trimmed === "setup global") {
-    await ensurePreferencesFile(getGlobalGSDPreferencesPath(), ctx, "global");
+    await ensurePreferencesFile(getGlobalGWDPreferencesPath(), ctx, "global");
     await handlePrefsWizard(ctx, "global");
     return;
   }
 
   if (trimmed === "project" || trimmed === "wizard project" || trimmed === "setup project") {
-    await ensurePreferencesFile(getProjectGSDPreferencesPath(), ctx, "project");
+    await ensurePreferencesFile(getProjectGWDPreferencesPath(), ctx, "project");
     await handlePrefsWizard(ctx, "project");
     return;
   }
@@ -239,18 +239,18 @@ export async function handlePrefs(args: string, ctx: ExtensionCommandContext): P
     return;
   }
   if (trimmed === "status") {
-    const globalPrefs = loadGlobalGSDPreferences();
-    const projectPrefs = loadProjectGSDPreferences();
-    const canonicalGlobal = getGlobalGSDPreferencesPath();
-    const legacyGlobal = getLegacyGlobalGSDPreferencesPath();
+    const globalPrefs = loadGlobalGWDPreferences();
+    const projectPrefs = loadProjectGWDPreferences();
+    const canonicalGlobal = getGlobalGWDPreferencesPath();
+    const legacyGlobal = getLegacyGlobalGWDPreferencesPath();
     const globalStatus = globalPrefs
       ? `present: ${globalPrefs.path}${globalPrefs.path === legacyGlobal ? " (legacy fallback)" : ""}`
       : `missing: ${canonicalGlobal}`;
-    const projectStatus = projectPrefs ? `present: ${projectPrefs.path}` : `missing: ${getProjectGSDPreferencesPath()}`;
+    const projectStatus = projectPrefs ? `present: ${projectPrefs.path}` : `missing: ${getProjectGWDPreferencesPath()}`;
 
     const lines = [`GWD skill prefs — global ${globalStatus}; project ${projectStatus}`];
 
-    const effective = loadEffectiveGSDPreferences();
+    const effective = loadEffectiveGWDPreferences();
     let hasUnresolved = false;
     if (effective) {
       const report = resolveAllSkillReferences(effective.preferences, process.cwd());
@@ -272,7 +272,7 @@ export async function handlePrefs(args: string, ctx: ExtensionCommandContext): P
 }
 
 export async function handleImportClaude(ctx: ExtensionCommandContext, scope: "global" | "project"): Promise<void> {
-  const path = scope === "project" ? getProjectGSDPreferencesPath() : getGlobalGSDPreferencesPath();
+  const path = scope === "project" ? getProjectGWDPreferencesPath() : getGlobalGWDPreferencesPath();
   if (!existsSync(path)) {
     await ensurePreferencesFile(path, ctx, scope);
   }
@@ -299,8 +299,8 @@ export async function handleImportClaude(ctx: ExtensionCommandContext, scope: "g
 }
 
 export async function handlePrefsMode(ctx: ExtensionCommandContext, scope: "global" | "project"): Promise<void> {
-  const path = scope === "project" ? getProjectGSDPreferencesPath() : getGlobalGSDPreferencesPath();
-  const existing = scope === "project" ? loadProjectGSDPreferences() : loadGlobalGSDPreferences();
+  const path = scope === "project" ? getProjectGWDPreferencesPath() : getGlobalGWDPreferencesPath();
+  const existing = scope === "project" ? loadProjectGWDPreferences() : loadGlobalGWDPreferences();
   const prefs: Record<string, unknown> = existing?.preferences ? { ...existing.preferences } : {};
 
   await configureMode(ctx, prefs);
@@ -1555,11 +1555,11 @@ export async function handlePrefsWizard(
   opts?: { pathOverride?: string },
 ): Promise<void> {
   // pathOverride lets callers like /gwd init pass a basePath-derived target
-  // path so the wizard doesn't fall back to cwd-based getProjectGSDPreferencesPath
+  // path so the wizard doesn't fall back to cwd-based getProjectGWDPreferencesPath
   // when the init target diverges from the current working directory.
   const path = opts?.pathOverride
-    ?? (scope === "project" ? getProjectGSDPreferencesPath() : getGlobalGSDPreferencesPath());
-  const existing = scope === "project" ? loadProjectGSDPreferences() : loadGlobalGSDPreferences();
+    ?? (scope === "project" ? getProjectGWDPreferencesPath() : getGlobalGWDPreferencesPath());
+  const existing = scope === "project" ? loadProjectGWDPreferences() : loadGlobalGWDPreferences();
   // Order: existing-on-disk values, overlaid with prefill (caller's seeded answers).
   // Callers like /gwd init pass freshly-collected init answers as prefill so the
   // wizard menu shows them populated and writeable in one place.
@@ -1787,12 +1787,12 @@ export async function ensurePreferencesFile(
  * (project language overrides global when both are set).
  */
 export async function handleLanguage(args: string, ctx: ExtensionCommandContext): Promise<void> {
-  const path = getGlobalGSDPreferencesPath();
+  const path = getGlobalGWDPreferencesPath();
   const lang = args.trim();
 
   // Show current setting when called without argument
   if (!lang) {
-    const loaded = loadGlobalGSDPreferences();
+    const loaded = loadGlobalGWDPreferences();
     const current = loaded?.preferences.language;
     if (current) {
       ctx.ui.notify(`Current language preference: ${current}\nUse /gwd language <name> to change, or /gwd language off to clear.`, "info");
@@ -1806,7 +1806,7 @@ export async function handleLanguage(args: string, ctx: ExtensionCommandContext)
   await ensurePreferencesFile(path, ctx, "global");
 
   // Read via the same validated path as other handlers
-  const existing = loadGlobalGSDPreferences();
+  const existing = loadGlobalGWDPreferences();
   const prefs: Record<string, unknown> = existing?.preferences ? { ...existing.preferences } : { version: 1 };
 
   if (lang === "off" || lang === "none" || lang === "clear") {

@@ -823,7 +823,7 @@ export class DefaultResourceLoader implements ResourceLoader {
 	/**
 	 * Extract the extension name from its path.
 	 * For root-level files: basename without extension (e.g. "search-the-web.ts" → "search-the-web")
-	 * For subdirectory extensions: the directory name (e.g. "/path/to/gsd/index.ts" → "gsd")
+	 * For subdirectory extensions: the directory name (e.g. "/path/to/gwd/index.ts" → "gwd")
 	 */
 	private getExtensionNameFromPath(extPath: string): string {
 		const base = basename(extPath);
@@ -840,8 +840,8 @@ export class DefaultResourceLoader implements ResourceLoader {
 
 /**
  * Extract the extension directory name (key) from a full extension path.
- * Given extensionsDir `/home/user/.gsd/agent/extensions` and
- * ownerPath `/home/user/.gsd/agent/extensions/mcp-client/index.js`,
+ * Given extensionsDir `/home/user/.gwd/agent/extensions` and
+ * ownerPath `/home/user/.gwd/agent/extensions/mcp-client/index.js`,
  * returns `"mcp-client"`.  Returns `undefined` when the path is not
  * under extensionsDir.
  */

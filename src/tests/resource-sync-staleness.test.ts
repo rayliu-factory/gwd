@@ -17,7 +17,7 @@ test("resource manifest includes contentHash", async (t) => {
   // module-level resolved paths. Instead, verify the manifest schema
   // by simulating what writeManagedResourceManifest produces.
   const manifest = {
-    gsdVersion: "2.28.0",
+    gwdVersion: "2.28.0",
     syncedAt: Date.now(),
     contentHash: "abc123def456",
   };
@@ -38,7 +38,7 @@ test("missing contentHash in manifest triggers re-sync (upgrade path)", () => {
   // Old manifests won't have contentHash. The new logic should treat
   // a missing contentHash as "stale" and re-sync.
   const oldManifest = {
-    gsdVersion: "2.28.0",
+    gwdVersion: "2.28.0",
     syncedAt: Date.now(),
   };
 
@@ -54,7 +54,7 @@ test("missing contentHash in manifest triggers re-sync (upgrade path)", () => {
 
 test("matching contentHash skips re-sync", () => {
   const manifest = {
-    gsdVersion: "2.28.0",
+    gwdVersion: "2.28.0",
     syncedAt: Date.now(),
     contentHash: "abc123",
   };
@@ -69,7 +69,7 @@ test("matching contentHash skips re-sync", () => {
 
 test("different contentHash triggers re-sync", () => {
   const manifest = {
-    gsdVersion: "2.28.0",
+    gwdVersion: "2.28.0",
     syncedAt: Date.now(),
     contentHash: "old_hash",
   };

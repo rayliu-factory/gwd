@@ -39,7 +39,7 @@ import {
   buildSliceFileName,
   resolveMilestoneFile,
   clearPathCache,
-  resolveGsdRootFile,
+  resolveGwdRootFile,
 } from "./paths.js";
 import {
   existsSync,
@@ -331,7 +331,7 @@ function getChangedFilesFromMilestoneTaggedCommits(
 ): { ok: boolean; matched: boolean; files: string[] } {
   // Primary: path-scoped log against .gwd/milestones/<id>. Fast and unbounded
   // by depth when .gwd/ is tracked in git.
-  const scoped = scanGsdTaggedCommits(basePath, milestoneId, [
+  const scoped = scanGwdTaggedCommits(basePath, milestoneId, [
     "log", "--format=%H%x1f%B%x1e", "HEAD", "--", `.gwd/milestones/${milestoneId}`,
   ]);
   if (!scoped.ok) return scoped;
@@ -346,7 +346,7 @@ function getChangedFilesFromMilestoneTaggedCommits(
   // Intentionally unbounded — symmetric with the primary scan, and avoids
   // reintroducing the rolling-depth failure class removed in #4699 where
   // milestone evidence aged out behind unrelated activity.
-  const unscoped = scanGsdTaggedCommits(basePath, milestoneId, [
+  const unscoped = scanGwdTaggedCommits(basePath, milestoneId, [
     "log", "--format=%H%x1f%B%x1e", "HEAD",
   ]);
   if (!unscoped.ok) return scoped.matched ? scoped : unscoped;
@@ -431,7 +431,7 @@ function backfillChangedFilesFromUntaggedMilestoneCommits(
       if (!isFullCommitSha(record.hash)) continue;
       if (Date.parse(record.committedAt) < milestoneStartedAt) continue;
       if (record.parents.trim().split(/\s+/).filter(Boolean).length > 1) continue;
-      if (commitMessageHasGsdTrailer(record.message)) continue;
+      if (commitMessageHasGwdTrailer(record.message)) continue;
 
       const commitFiles = getChangedFilesForCommit(basePath, record.hash);
       const implementationFiles = commitFiles.map(normalizeRepoPath).filter(isImplementationPath);
@@ -479,7 +479,7 @@ function isFullCommitSha(value: string): boolean {
   return /^[0-9a-f]{40}$/i.test(value);
 }
 
-function scanGsdTaggedCommits(
+function scanGwdTaggedCommits(
   basePath: string,
   milestoneId: string,
   gitArgs: readonly string[],
@@ -505,7 +505,7 @@ function scanGsdTaggedCommits(
     const files = new Set<string>();
     let matched = false;
     for (const { hash, message } of records) {
-      if (!commitMessageHasGsdTrailer(message)) continue;
+      if (!commitMessageHasGwdTrailer(message)) continue;
 
       const commitFiles = getChangedFilesForCommit(basePath, hash);
       if (!commitMatchesMilestone(basePath, message, milestoneId, commitFiles)) continue;
@@ -532,7 +532,7 @@ function getChangedFilesForCommit(basePath: string, hash: string): string[] {
   return fileOutput.split("\n").map((f) => f.trim()).filter(Boolean);
 }
 
-function commitMessageHasGsdTrailer(message: string): boolean {
+function commitMessageHasGwdTrailer(message: string): boolean {
   return /^GWD-(?:Task|Unit):\s*\S+/m.test(message);
 }
 
@@ -614,7 +614,7 @@ export function verifyExpectedArtifact(
   clearParseCache();
 
   if (unitType === "rewrite-docs") {
-    const overridesPath = resolveGsdRootFile(base, "OVERRIDES");
+    const overridesPath = resolveGwdRootFile(base, "OVERRIDES");
     if (!existsSync(overridesPath)) return true;
     const content = readFileSync(overridesPath, "utf-8");
     return !content.includes("**Scope:** active");
@@ -1139,7 +1139,7 @@ export function reconcileMergeState(
   if (conflictedFiles.length === 0) {
     // All conflicts resolved — finalize the merge/squash commit
     try {
-      const commitSha = nativeCommit(basePath, "chore(gsd): reconcile merge state");
+      const commitSha = nativeCommit(basePath, "chore(gwd): reconcile merge state");
       if (commitSha) {
         const mode = hasMergeHead ? "merge" : "squash commit";
         ctx.ui.notify(`Finalized leftover ${mode} from prior session.`, "info");
@@ -1153,15 +1153,15 @@ export function reconcileMergeState(
     }
   } else {
     // Still conflicted — try auto-resolving .gwd/ state file conflicts (#530)
-    const gsdConflicts = conflictedFiles.filter((f) => f.startsWith(".gwd/"));
+    const gwdConflicts = conflictedFiles.filter((f) => f.startsWith(".gwd/"));
     const codeConflicts = conflictedFiles.filter((f) => !f.startsWith(".gwd/"));
 
-    if (gsdConflicts.length > 0 && codeConflicts.length === 0) {
+    if (gwdConflicts.length > 0 && codeConflicts.length === 0) {
       // All conflicts are in .gwd/ state files — auto-resolve by accepting theirs
       let resolved = true;
       try {
-        nativeCheckoutTheirs(basePath, gsdConflicts);
-        nativeAddPaths(basePath, gsdConflicts);
+        nativeCheckoutTheirs(basePath, gwdConflicts);
+        nativeAddPaths(basePath, gwdConflicts);
       } catch (e) {
         logError("recovery", `auto-resolve .gwd/ conflicts failed: ${(e as Error).message}`);
         resolved = false;
@@ -1173,7 +1173,7 @@ export function reconcileMergeState(
             "chore: auto-resolve .gwd/ state file conflicts",
           );
           ctx.ui.notify(
-            `Auto-resolved ${gsdConflicts.length} .gwd/ state file conflict(s) from prior merge.`,
+            `Auto-resolved ${gwdConflicts.length} .gwd/ state file conflict(s) from prior merge.`,
             "info",
           );
         } catch (e) {
@@ -1217,9 +1217,9 @@ export function buildLoopRemediationSteps(
     case "execute-task": {
       if (!mid || !sid || !tid) break;
       return [
-        `   1. Run \`gsd undo-task ${tid}\` to reset the task state`,
+        `   1. Run \`gwd undo-task ${tid}\` to reset the task state`,
         `   2. Resume auto-mode — it will re-execute the task`,
-        `   3. If the task keeps failing, run \`gsd recover\` to rebuild DB state from disk`,
+        `   3. If the task keeps failing, run \`gwd recover\` to rebuild DB state from disk`,
       ].join("\n");
     }
     case "plan-slice":
@@ -1231,16 +1231,16 @@ export function buildLoopRemediationSteps(
           : relSliceFile(base, mid, sid, "RESEARCH");
       return [
         `   1. Write ${artifactRel} manually (or with the LLM in interactive mode)`,
-        `   2. Run \`gsd recover\` to rebuild DB state from disk`,
+        `   2. Run \`gwd recover\` to rebuild DB state from disk`,
         `   3. Resume auto-mode`,
       ].join("\n");
     }
     case "complete-slice": {
       if (!mid || !sid) break;
       return [
-        `   1. Run \`gsd reset-slice ${sid}\` to reset the slice and all its tasks`,
+        `   1. Run \`gwd reset-slice ${sid}\` to reset the slice and all its tasks`,
         `   2. Resume auto-mode — it will re-execute incomplete tasks and re-complete the slice`,
-        `   3. If the slice keeps failing, run \`gsd recover\` to rebuild DB state from disk`,
+        `   3. If the slice keeps failing, run \`gwd recover\` to rebuild DB state from disk`,
       ].join("\n");
     }
     case "validate-milestone": {
@@ -1248,7 +1248,7 @@ export function buildLoopRemediationSteps(
       const artifactRel = relMilestoneFile(base, mid, "VALIDATION");
       return [
         `   1. Write ${artifactRel} with verdict: pass`,
-        `   2. Run \`gsd recover\` to rebuild DB state from disk`,
+        `   2. Run \`gwd recover\` to rebuild DB state from disk`,
         `   3. Resume auto-mode`,
       ].join("\n");
     }

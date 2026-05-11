@@ -13,9 +13,9 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { isAbsolute, join, normalize, relative, resolve, sep } from "node:path";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { GIT_NO_PROMPT_ENV } from "./git-constants.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import { logWarning } from "./workflow-logger.js";
 
 
@@ -39,7 +39,7 @@ import {
   nativeCommitSubject,
   _resetHasChangesCache,
 } from "./native-git-bridge.js";
-import { GSDError, GWD_MERGE_CONFLICT, GWD_GIT_ERROR } from "./errors.js";
+import { GWDError, GWD_MERGE_CONFLICT, GWD_GIT_ERROR } from "./errors.js";
 import { getErrorMessage } from "./error-utils.js";
 import { isInfrastructureError } from "./auto/infra-errors.js";
 
@@ -84,7 +84,7 @@ export interface GitPreferences {
    *  Default: the main branch (from `main_branch` or auto-detected).
    */
   pr_target_branch?: string;
-  /** Whether to squash `gsd snapshot:` commits into the next real autoCommit.
+  /** Whether to squash `gwd snapshot:` commits into the next real autoCommit.
    *  Enabled by default. Set to false to keep snapshot commits in history
    *  for forensic inspection.
    */
@@ -274,7 +274,7 @@ function isExcludedScopedPath(path: string, exclusions: readonly string[]): bool
  * The working tree is left in a conflicted state (no reset) so the
  * caller can dispatch a fix-merge session to resolve it.
  */
-export class MergeConflictError extends GSDError {
+export class MergeConflictError extends GWDError {
   readonly conflictedFiles: string[];
   readonly strategy: "squash" | "merge";
   readonly branch: string;
@@ -341,7 +341,7 @@ export const RUNTIME_EXCLUSION_PATHS: readonly string[] = [
  * Format: .gwd/milestones/<MID>/<MID>-META.json
  */
 function milestoneMetaPath(basePath: string, milestoneId: string): string {
-  return join(gsdRoot(basePath), "milestones", milestoneId, `${milestoneId}-META.json`);
+  return join(gwdRoot(basePath), "milestones", milestoneId, `${milestoneId}-META.json`);
 }
 
 /**
@@ -389,7 +389,7 @@ export function writeIntegrationBranch(
   if (QUICK_BRANCH_RE.test(branch)) return;
   // Don't record workflow-template branches (hotfix, bugfix, spike, etc.) —
   // same root cause as quick-task branches (#2498). All templates create
-  // gsd/<templateId>/<slug> branches that are ephemeral.
+  // gwd/<templateId>/<slug> branches that are ephemeral.
   if (WORKFLOW_BRANCH_RE.test(branch)) return;
   // Validate
   if (!VALID_BRANCH_NAME.test(branch)) return;
@@ -400,7 +400,7 @@ export function writeIntegrationBranch(
   if (existingBranch === branch) return;
 
   const metaFile = milestoneMetaPath(basePath, milestoneId);
-  mkdirSync(join(gsdRoot(basePath), "milestones", milestoneId), { recursive: true });
+  mkdirSync(join(gwdRoot(basePath), "milestones", milestoneId), { recursive: true });
 
   // Merge with existing metadata if present
   let existing: Record<string, unknown> = {};
@@ -638,7 +638,7 @@ export function runGit(basePath: string, args: string[], options: { allowFailure
   } catch (error) {
     if (options.allowFailure) return "";
     const message = getErrorMessage(error);
-    throw new GSDError(GWD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}: ${filterGitSvnNoise(message)}`);
+    throw new GWDError(GWD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}: ${filterGitSvnNoise(message)}`);
   }
 }
 
@@ -731,7 +731,7 @@ export class GitServiceImpl {
     // (e.g., an M033 worker fabricating M032 artifacts in the same commit).
     const milestoneLock = process.env.GWD_MILESTONE_LOCK;
     if (milestoneLock) {
-      const msDir = join(gsdRoot(this.basePath), "milestones");
+      const msDir = join(gwdRoot(this.basePath), "milestones");
       if (existsSync(msDir)) {
         try {
           const entries = readdirSync(msDir, { withFileTypes: true });
@@ -859,7 +859,7 @@ export class GitServiceImpl {
       : `chore: auto-commit after ${unitType}\n\nGWD-Unit: ${unitId}`;
     nativeCommit(this.basePath, message, { allowEmpty: false });
 
-    // Absorb any preceding gsd snapshot commits into this real commit.
+    // Absorb any preceding gwd snapshot commits into this real commit.
     // Walk backwards from HEAD~1 counting consecutive snapshot subjects,
     // then soft-reset to before them and re-commit with the same message.
     this.absorbSnapshotCommits(message);
@@ -868,7 +868,7 @@ export class GitServiceImpl {
   }
 
   /**
-   * Squash consecutive `gsd snapshot:` commits that sit immediately below
+   * Squash consecutive `gwd snapshot:` commits that sit immediately below
    * HEAD into the current HEAD commit. This keeps the git history clean
    * after automated snapshot commits are superseded by real work.
    *
@@ -885,7 +885,7 @@ export class GitServiceImpl {
       // Opt-in guard — users can disable to keep snapshot commits for forensics
       if (this.prefs.absorb_snapshot_commits === false) return;
 
-      const GWD_SNAPSHOT_PREFIX = "gsd snapshot:";
+      const GWD_SNAPSHOT_PREFIX = "gwd snapshot:";
       let count = 0;
 
       // Walk back from HEAD~1 counting consecutive snapshot commits (cap at 10)
@@ -1133,7 +1133,7 @@ export function createDraftPR(
 
 /** Create a GitServiceImpl with the current effective git preferences. */
 export function createGitService(basePath: string): GitServiceImpl {
-  const gitPrefs = loadEffectiveGSDPreferences()?.preferences?.git ?? {};
+  const gitPrefs = loadEffectiveGWDPreferences()?.preferences?.git ?? {};
   return new GitServiceImpl(basePath, gitPrefs);
 }
 

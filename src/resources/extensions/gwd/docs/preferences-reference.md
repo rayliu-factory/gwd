@@ -1,6 +1,6 @@
 # GWD Preferences Reference
 
-Full documentation for `~/.gwd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md` (project).
+Full documentation for `~/.gwd/PREFERENCES.md` (global) and `.gwd/PREFERENCES.md` (project).
 
 ---
 
@@ -52,7 +52,7 @@ skill_rules: []
 Preferences are loaded from two locations and merged:
 
 1. **Global:** `~/.gwd/PREFERENCES.md` — applies to all projects
-2. **Project:** `.gsd/PREFERENCES.md` — applies to the current project only
+2. **Project:** `.gwd/PREFERENCES.md` — applies to the current project only
 
 **Merge behavior** (see `mergePreferences()` in `preferences.ts`):
 
@@ -100,7 +100,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 
 - `skill_rules`: situational rules with a human-readable `when` trigger and one or more of `use`, `prefer`, or `avoid`.
 
-- `custom_instructions`: extra durable instructions related to skill use. For operational project knowledge (recurring rules, gotchas, patterns), use `.gsd/KNOWLEDGE.md` instead — it's injected into every agent prompt automatically and agents can append to it during execution.
+- `custom_instructions`: extra durable instructions related to skill use. For operational project knowledge (recurring rules, gotchas, patterns), use `.gwd/KNOWLEDGE.md` instead — it's injected into every agent prompt automatically and agents can append to it during execution.
 
 - `language`: preferred response language for all GWD interactions. Accepts any language name or code — `"Chinese"`, `"zh"`, `"German"`, `"de"`, `"日本語"`, etc. When set, GWD injects "Always respond in \<language\>" into every agent's system prompt, including after `/clear`. Quickest way to set it: `/gwd language <name>`. To clear: `/gwd language off`.
 
@@ -132,7 +132,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `auto_push`: boolean — automatically push commits to the remote after committing. Default: `false`.
   - `push_branches`: boolean — push the milestone branch to the remote after commits. Default: `false`.
   - `remote`: string — git remote name to push to. Default: `"origin"`.
-  - `snapshots`: boolean — create WIP snapshot commits (e.g. pre-dispatch and stale-uncommitted-changes safety commits emitted by the doctor). Set to `false` to suppress all doctor-initiated `gsd snapshot:` commits. Default: `true`.
+  - `snapshots`: boolean — create WIP snapshot commits (e.g. pre-dispatch and stale-uncommitted-changes safety commits emitted by the doctor). Set to `false` to suppress all doctor-initiated `gwd snapshot:` commits. Default: `true`.
   - `pre_merge_check`: boolean or `"auto"` — run pre-merge checks before merging a worktree back to the integration branch. `true` always runs, `false` never runs, `"auto"` runs when CI is detected. Default: `"auto"`.
   - `commit_type`: string — override the conventional commit type prefix. Must be one of: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`, `build`, `style`. Default: inferred from diff content.
   - `main_branch`: string — the primary branch name for new git repos (e.g., `"main"`, `"master"`, `"trunk"`). Also used by `getMainBranch()` as the preferred branch when auto-detection is ambiguous. Default: `"main"`.
@@ -142,7 +142,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `worktree_post_create`: string — script to run after a worktree is created (both auto-mode and manual `/worktree`). Receives `SOURCE_DIR` and `WORKTREE_DIR` as environment variables. Can be absolute or relative to project root. Runs with 30-second timeout. Failure is non-fatal (logged as warning). Default: none.
   - `auto_pr`: boolean — automatically create a GitHub pull request after a milestone branch is merged. Requires `gh` CLI to be installed. Default: `false`.
   - `pr_target_branch`: string — branch to target when `auto_pr` is enabled. Defaults to `main_branch` when omitted.
-  - **Deprecated:** `commit_docs` — no longer valid; `.gsd/` is always gitignored. Remove this setting.
+  - **Deprecated:** `commit_docs` — no longer valid; `.gwd/` is always gitignored. Remove this setting.
   - **Deprecated:** `merge_to_main` — no longer valid; milestone-level merge is always used. Remove this setting.
 
 - `unique_milestone_ids`: boolean — when `true`, generates milestone IDs in `M{seq}-{rand6}` format (e.g. `M001-eh88as`) instead of plain sequential `M001`. Prevents ID collisions in team workflows where multiple contributors create milestones concurrently. Both formats coexist — existing `M001`-style milestones remain valid. Default: `false`.
@@ -159,7 +159,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 
 - `token_profile`: `"budget"`, `"balanced"`, `"quality"`, or `"burn-max"` — coordinates model selection, phase skipping, and context compression. `budget` skips research/reassessment and uses cheaper models; `balanced` (default) skips research/reassessment to reduce token burn; `quality` prefers higher-quality models; `burn-max` keeps full-context defaults, disables downgrade routing, and keeps phase skips off.
 
-- `planning_depth`: `"light"` or `"deep"` — controls project-level discovery before milestone planning. `"light"` is the default milestone discussion flow. `"deep"` runs workflow preferences, project discussion, requirements discussion, a research-decision gate, and optional project research before milestone planning. Enable it with `/gwd new-project --deep`, `/gwd new-milestone --deep`, or by setting `planning_depth: deep` in project-local `.gsd/PREFERENCES.md`. Global `~/.gwd/PREFERENCES.md` does not opt every fresh repo into deep mode. Deep mode writes `.gsd/PROJECT.md`, `.gsd/REQUIREMENTS.md`, `.gsd/runtime/research-decision.json`, and, when research is approved, `.gsd/research/STACK.md`, `FEATURES.md`, `ARCHITECTURE.md`, and `PITFALLS.md`.
+- `planning_depth`: `"light"` or `"deep"` — controls project-level discovery before milestone planning. `"light"` is the default milestone discussion flow. `"deep"` runs workflow preferences, project discussion, requirements discussion, a research-decision gate, and optional project research before milestone planning. Enable it with `/gwd new-project --deep`, `/gwd new-milestone --deep`, or by setting `planning_depth: deep` in project-local `.gwd/PREFERENCES.md`. Global `~/.gwd/PREFERENCES.md` does not opt every fresh repo into deep mode. Deep mode writes `.gwd/PROJECT.md`, `.gwd/REQUIREMENTS.md`, `.gwd/runtime/research-decision.json`, and, when research is approved, `.gwd/research/STACK.md`, `FEATURES.md`, `ARCHITECTURE.md`, and `PITFALLS.md`.
 
 - `phases`: fine-grained control over which phases run. Usually set by `token_profile`, but can be overridden. Keys:
   - `skip_research`: boolean — skip milestone-level research. Default: `false`.

@@ -1,6 +1,6 @@
-// GSD2 - Claude Code CLI provider stream adapter
+// GWD2 - Claude Code CLI provider stream adapter
 /**
- * Stream adapter: bridges the Claude Agent SDK into GSD's streamSimple contract.
+ * Stream adapter: bridges the Claude Agent SDK into GWD's streamSimple contract.
  *
  * The SDK runs the full agentic loop (multi-turn, tool execution, compaction)
  * in one call. This adapter translates the SDK's streaming output into
@@ -292,7 +292,7 @@ function extractMessageText(msg: { role: string; content: unknown }): string {
 }
 
 /**
- * Build a full conversational prompt from GSD's context messages.
+ * Build a full conversational prompt from GWD's context messages.
  *
  * Previous behaviour sent only the last user message, making every SDK
  * call effectively stateless. This version serialises the complete
@@ -1198,7 +1198,7 @@ export function createClaudeCodeElicitationHandler(
 }
 
 /**
- * Aborted by the caller's AbortSignal — distinct from exhaustion. GSD's
+ * Aborted by the caller's AbortSignal — distinct from exhaustion. GWD's
  * agent loop keys off `stopReason === "aborted"` to treat this as a clean
  * user cancel instead of a retry-eligible provider failure.
  */
@@ -1277,7 +1277,7 @@ function modelSupportsAdaptiveThinking(modelId: string): boolean {
 	);
 }
 
-/** Map a GSD thinking level to the Anthropic effort value, clamping xhigh to max for models that lack native xhigh support. */
+/** Map a GWD thinking level to the Anthropic effort value, clamping xhigh to max for models that lack native xhigh support. */
 function mapThinkingLevelToAnthropicEffort(level: ThinkingLevel | undefined, modelId: string): "low" | "medium" | "high" | "xhigh" | "max" {
 	switch (level) {
 		case "minimal":
@@ -1317,10 +1317,10 @@ export function buildSdkOptions(
 	const sdkCwd = typeof cwd === "string" && cwd.trim().length > 0 ? cwd : process.cwd();
 	const mcpServers = buildWorkflowMcpServers(sdkCwd);
 	const permissionMode = overrides?.permissionMode ?? "bypassPermissions";
-	// Globally unblock the tools GSD expects Claude Code to run. When the
+	// Globally unblock the tools GWD expects Claude Code to run. When the
 	// workflow MCP server is available, prefer its `ask_user_questions` tool over
 	// Claude Code's native `AskUserQuestion`; the MCP path carries stable IDs and
-	// routes responses through the GSD elicitation bridge.
+	// routes responses through the GWD elicitation bridge.
 	// Opt back into gated mode with GWD_CLAUDE_CODE_PERMISSION_MODE=acceptEdits.
 	const workflowMcpTools = mcpServers ? Object.keys(mcpServers).map((serverName) => `mcp__${serverName}__*`) : [];
 	const disallowedTools: string[] = workflowMcpTools.length > 0 ? ["AskUserQuestion"] : [];
@@ -1612,7 +1612,7 @@ export function mergePendingToolCalls(
 // ---------------------------------------------------------------------------
 
 /**
- * GSD streamSimple function that delegates to the Claude Agent SDK.
+ * GWD streamSimple function that delegates to the Claude Agent SDK.
  *
  * Emits AssistantMessageEvent deltas for real-time TUI rendering
  * (thinking, text, tool calls). The final AssistantMessage preserves
@@ -1658,7 +1658,7 @@ async function pumpSdkMessages(
 			}) => AsyncIterable<SDKMessage>;
 		};
 
-		// Bridge GSD's AbortSignal to SDK's AbortController
+		// Bridge GWD's AbortSignal to SDK's AbortController
 		const controller = new AbortController();
 		if (options?.signal) {
 			options.signal.addEventListener("abort", () => controller.abort(), { once: true });
@@ -1864,7 +1864,7 @@ async function pumpSdkMessages(
 		}
 
 		// Generator exhaustion without a terminal result is a stream interruption,
-		// not a successful completion. Emitting an error lets GSD classify it as a
+		// not a successful completion. Emitting an error lets GWD classify it as a
 		// transient provider failure instead of advancing auto-mode state.
 		const fallback = makeStreamExhaustedErrorMessage(modelId, lastTextContent);
 		stream.push({ type: "error", reason: "error", error: fallback });

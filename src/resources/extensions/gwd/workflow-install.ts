@@ -27,7 +27,7 @@ import { createHash } from "node:crypto";
 import { parse as parseYaml } from "yaml";
 
 import { validateDefinition } from "./definition-loader.js";
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 
 // ─── Constants ───────────────────────────────────────────────────────────
 
@@ -73,7 +73,7 @@ export interface InstallTarget {
 }
 
 export function globalInstallDir(): string {
-  return join(gsdHome(), "workflows");
+  return join(gwdHome(), "workflows");
 }
 
 export function projectInstallDir(basePath: string): string {
@@ -184,7 +184,7 @@ export async function fetchWorkflowSource(url: string): Promise<FetchedContent> 
   try {
     const res = await fetch(url, {
       signal: controller.signal,
-      headers: { "User-Agent": "gsd-workflow-install" },
+      headers: { "User-Agent": "gwd-workflow-install" },
     });
 
     if (!res.ok) {

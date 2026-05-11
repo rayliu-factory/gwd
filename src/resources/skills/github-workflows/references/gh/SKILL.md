@@ -61,7 +61,7 @@ repository point to a known GitHub host.
 **RULE: Pass `-R` (or `--repo`) on EVERY `gh` command:**
 
 ```bash
-gh <command> -R gwd-build/gwd-2
+gh <command> -R rayliu-factory/gwd
 ```
 
 This applies to ALL `gh` subcommands: `pr`, `issue`, `run`, `api`, `release`, `project`, etc.
@@ -78,47 +78,47 @@ This applies to ALL `gh` subcommands: `pr`, `issue`, `run`, `api`, `release`, `p
 
 ```bash
 # List open PRs
-gh pr list -R gwd-build/gwd-2
+gh pr list -R rayliu-factory/gwd
 
 # View PR details
-gh pr view <number> -R gwd-build/gwd-2
+gh pr view <number> -R rayliu-factory/gwd
 
 # Check PR CI status
-gh pr checks <number> -R gwd-build/gwd-2
+gh pr checks <number> -R rayliu-factory/gwd
 
 # Create PR
-gh pr create -R gwd-build/gwd-2 --title "title" --body "body"
+gh pr create -R rayliu-factory/gwd --title "title" --body "body"
 
 # View PR comments
-gh api repos/gwd-build/gwd-2/pulls/<number>/comments
+gh api repos/rayliu-factory/gwd/pulls/<number>/comments
 ```
 
 ### Issues
 
 ```bash
 # List issues
-gh issue list -R gwd-build/gwd-2
+gh issue list -R rayliu-factory/gwd
 
 # List by label
-gh issue list -R gwd-build/gwd-2 --label "priority:p1" --state open
+gh issue list -R rayliu-factory/gwd --label "priority:p1" --state open
 
 # Create issue with labels and milestone
 # NOTE: Do NOT use labels for issue classification (bug, feature, etc.)
 # Use labels for metadata (priority, status, auto-generated) only.
 # Issue classification uses GitHub Issue Types, set via GraphQL after creation.
-gh issue create -R gwd-build/gwd-2 \
+gh issue create -R rayliu-factory/gwd \
   --title "feat: add feature X" \
   --label "priority:p1" \
   --milestone "v1.0"
 
 # View issue
-gh issue view <number> -R gwd-build/gwd-2
+gh issue view <number> -R rayliu-factory/gwd
 
 # Close issue with comment
-gh issue close <number> -R gwd-build/gwd-2 --comment "Implemented in PR #N"
+gh issue close <number> -R rayliu-factory/gwd --comment "Implemented in PR #N"
 
 # Edit labels on issue
-gh issue edit <number> -R gwd-build/gwd-2 \
+gh issue edit <number> -R rayliu-factory/gwd \
   --add-label "status:in-progress" \
   --remove-label "status:needs-grooming"
 ```
@@ -129,13 +129,13 @@ gh issue edit <number> -R gwd-build/gwd-2 \
 
 ```bash
 # Step 1: Create the issue (returns URL)
-ISSUE_URL=$(gh issue create -R gwd-build/gwd-2 \
+ISSUE_URL=$(gh issue create -R rayliu-factory/gwd \
   --title "..." --body "...")
 
 # Step 2: Set the issue type via GraphQL
 ISSUE_NUM=$(echo "$ISSUE_URL" | grep -oE '[0-9]+$')
-ISSUE_ID=$(gh api graphql -f query='{ repository(owner:"gsd-build",name:"gwd-2") { issue(number:'"$ISSUE_NUM"') { id } } }' --jq '.data.repository.issue.id')
-TYPE_ID=$(gh api graphql -f query='{ repository(owner:"gsd-build",name:"gwd-2") { issueTypes(first:20) { nodes { id name } } } }' --jq '.data.repository.issueTypes.nodes[] | select(.name=="Bug") | .id')
+ISSUE_ID=$(gh api graphql -f query='{ repository(owner:"gwd-build",name:"gwd-2") { issue(number:'"$ISSUE_NUM"') { id } } }' --jq '.data.repository.issue.id')
+TYPE_ID=$(gh api graphql -f query='{ repository(owner:"gwd-build",name:"gwd-2") { issueTypes(first:20) { nodes { id name } } } }' --jq '.data.repository.issueTypes.nodes[] | select(.name=="Bug") | .id')
 gh api graphql -f query='mutation { updateIssue(input:{id:"'"$ISSUE_ID"'",issueTypeId:"'"$TYPE_ID"'"}) { issue { number } } }'
 ```
 
@@ -145,11 +145,11 @@ Replace `"Bug"` with the appropriate type name (`"Feature Request"`, `"Task"`, e
 
 ```bash
 # List all labels
-gh label list -R gwd-build/gwd-2
+gh label list -R rayliu-factory/gwd
 
 # Create label
 gh label create "priority:p1" --color "E99695" \
-  --description "High priority" -R gwd-build/gwd-2
+  --description "High priority" -R rayliu-factory/gwd
 ```
 
 See [labels.md](./references/labels.md) for the full taxonomy and color codes.
@@ -158,14 +158,14 @@ See [labels.md](./references/labels.md) for the full taxonomy and color codes.
 
 ```bash
 # List projects
-gh project list --owner gsd-build
+gh project list --owner gwd-build
 
 # Create project
-gh project create --owner gsd-build --title "gwd-2 Backlog"
+gh project create --owner gwd-build --title "gwd-2 Backlog"
 
 # Add issue to project
-gh project item-add 1 --owner gsd-build \
-  --url https://github.com/gwd-build/gwd-2/issues/42
+gh project item-add 1 --owner gwd-build \
+  --url https://github.com/rayliu-factory/gwd/issues/42
 ```
 
 See [projects-v2.md](./references/projects-v2.md) for field creation and item editing commands.
@@ -176,14 +176,14 @@ See [projects-v2.md](./references/projects-v2.md) for field creation and item ed
 
 ```bash
 # List milestones
-gh api repos/gwd-build/gwd-2/milestones
+gh api repos/rayliu-factory/gwd/milestones
 
 # Create milestone
-gh api repos/gwd-build/gwd-2/milestones \
+gh api repos/rayliu-factory/gwd/milestones \
   -X POST -f title="v1.0" -f due_on="2026-03-31T00:00:00Z"
 
 # Assign milestone to issue
-gh api repos/gwd-build/gwd-2/issues/42 \
+gh api repos/rayliu-factory/gwd/issues/42 \
   -X PATCH -F milestone=1
 ```
 
@@ -193,49 +193,49 @@ See [milestones.md](./references/milestones.md) for full CRUD reference.
 
 ```bash
 # List recent runs
-gh run list -R gwd-build/gwd-2 --limit 5
+gh run list -R rayliu-factory/gwd --limit 5
 
 # View specific run
-gh run view <run-id> -R gwd-build/gwd-2
+gh run view <run-id> -R rayliu-factory/gwd
 
 # View failed job logs
-gh run view <run-id> -R gwd-build/gwd-2 --log-failed
+gh run view <run-id> -R rayliu-factory/gwd --log-failed
 ```
 
 ### Releases
 
 ```bash
 # List releases
-gh release list -R gwd-build/gwd-2
+gh release list -R rayliu-factory/gwd
 
 # View latest release
-gh release view --repo gwd-build/gwd-2
+gh release view --repo rayliu-factory/gwd
 ```
 
 ### API (Direct)
 
 ```bash
 # GET request
-gh api repos/gwd-build/gwd-2
+gh api repos/rayliu-factory/gwd
 
 # POST with fields
-gh api repos/gwd-build/gwd-2/issues -f title="Bug" -f body="Details"
+gh api repos/rayliu-factory/gwd/issues -f title="Bug" -f body="Details"
 
 # GraphQL
 gh api graphql -f query='{ viewer { login } }'
 
 # Paginated results
-gh api repos/gwd-build/gwd-2/contributors --paginate
+gh api repos/rayliu-factory/gwd/contributors --paginate
 ```
 
 ### Repository
 
 ```bash
 # Clone
-gh repo clone gwd-build/gwd-2
+gh repo clone rayliu-factory/gwd
 
 # View repo info
-gh repo view -R gwd-build/gwd-2
+gh repo view -R rayliu-factory/gwd
 ```
 
 </gh_commands>
@@ -246,13 +246,13 @@ gh repo view -R gwd-build/gwd-2
 
 ```bash
 # JSON output
-gh pr list -R gwd-build/gwd-2 --json number,title,state
+gh pr list -R rayliu-factory/gwd --json number,title,state
 
 # JQ filtering
-gh pr list -R gwd-build/gwd-2 --json number,title --jq '.[].title'
+gh pr list -R rayliu-factory/gwd --json number,title --jq '.[].title'
 
 # Template formatting
-gh pr list -R gwd-build/gwd-2 --json number,title \
+gh pr list -R rayliu-factory/gwd --json number,title \
   --template '{{range .}}#{{.number}} {{.title}}{{"\n"}}{{end}}'
 ```
 

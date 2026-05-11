@@ -16,8 +16,8 @@ import { homedir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { nativeScanGwdTree, type GwdTreeEntry } from "./native-parser-bridge.js";
 import { DIR_CACHE_MAX } from "./constants.js";
-import { gsdHome } from "./gwd-home.js";
-import { isGsdWorktreePath, resolveWorktreeProjectRoot } from "./worktree-root.js";
+import { gwdHome } from "./gwd-home.js";
+import { isGwdWorktreePath, resolveWorktreeProjectRoot } from "./worktree-root.js";
 
 // ─── Directory Listing Cache ──────────────────────────────────────────────────
 
@@ -31,10 +31,10 @@ const dirListCache = new Map<string, string[]>();
 let nativeTreeCache: Map<string, GwdTreeEntry[]> | null = null;
 let nativeTreeBase: string | null = null;
 
-function getNativeTree(gsdDir: string): Map<string, GwdTreeEntry[]> | null {
-  if (nativeTreeCache && nativeTreeBase === gsdDir) return nativeTreeCache;
+function getNativeTree(gwdDir: string): Map<string, GwdTreeEntry[]> | null {
+  if (nativeTreeCache && nativeTreeBase === gwdDir) return nativeTreeCache;
 
-  const entries = nativeScanGwdTree(gsdDir);
+  const entries = nativeScanGwdTree(gwdDir);
   if (!entries) return null;
 
   // Build a map of parent directory -> entries
@@ -48,17 +48,17 @@ function getNativeTree(gsdDir: string): Map<string, GwdTreeEntry[]> | null {
   }
 
   nativeTreeCache = tree;
-  nativeTreeBase = gsdDir;
+  nativeTreeBase = gwdDir;
   return tree;
 }
 
 /**
  * Convert a native tree lookup into a relative key for the tree map.
- * Returns the relative path from the gsdDir, or null if the path isn't under gsdDir.
+ * Returns the relative path from the gwdDir, or null if the path isn't under gwdDir.
  */
-function nativeTreeKey(dirPath: string, gsdDir: string): string | null {
-  if (!dirPath.startsWith(gsdDir)) return null;
-  const rel = dirPath.slice(gsdDir.length).replace(/^\//, '');
+function nativeTreeKey(dirPath: string, gwdDir: string): string | null {
+  if (!dirPath.startsWith(gwdDir)) return null;
+  const rel = dirPath.slice(gwdDir.length).replace(/^\//, '');
   return rel || '.';
 }
 
@@ -133,7 +133,7 @@ function cachedReaddir(dirPath: string): string[] {
  * Call after milestone transitions, file creation in planning directories,
  * or at the start/end of a dispatch cycle.
  *
- * NOTE: This does NOT clear gsdRootCache. The project root is stable for
+ * NOTE: This does NOT clear gwdRootCache. The project root is stable for
  * the lifetime of a process; clearing it on every agent turn-end caused a
  * 250–2500 ms regression per session (git rev-parse + dir walk per turn).
  * Use _clearGwdRootCache() at session-reset boundaries (workspace switch,
@@ -282,9 +282,9 @@ export const GWD_ROOT_FILES = {
   CODEBASE: "CODEBASE.md",
 } as const;
 
-export type GSDRootFileKey = keyof typeof GWD_ROOT_FILES;
+export type GWDRootFileKey = keyof typeof GWD_ROOT_FILES;
 
-const LEGACY_GWD_ROOT_FILES: Record<GSDRootFileKey, string> = {
+const LEGACY_GWD_ROOT_FILES: Record<GWDRootFileKey, string> = {
   PROJECT: "project.md",
   DECISIONS: "decisions.md",
   QUEUE: "queue.md",
@@ -297,7 +297,7 @@ const LEGACY_GWD_ROOT_FILES: Record<GSDRootFileKey, string> = {
 
 // ─── GWD Root Discovery ───────────────────────────────────────────────────────
 
-// Process-lifetime cache for gsdRoot() results.
+// Process-lifetime cache for gwdRoot() results.
 // Keys are realpath-normalized (via normCacheKey) so /foo and /foo/ share the
 // same entry and so do case-variant paths on case-insensitive volumes. This
 // normalization is the safety net that prevents cache poisoning from the
@@ -305,7 +305,7 @@ const LEGACY_GWD_ROOT_FILES: Record<GSDRootFileKey, string> = {
 // hold this cache for the entire process lifetime.
 // Use _clearGwdRootCache() only at session-reset boundaries (workspace switch,
 // process exit) — NOT inside clearPathCache(), which runs on every agent turn.
-const gsdRootCache = new Map<string, string>();
+const gwdRootCache = new Map<string, string>();
 
 export interface GwdPathContract {
   /** Canonical repo/project root where authoritative state lives. */
@@ -327,7 +327,7 @@ export function resolveGwdPathContract(
   originalProjectRoot?: string | null,
 ): GwdPathContract {
   const resolvedWorkRoot = resolve(workRoot || process.cwd());
-  const isWorktree = isGsdWorktreePath(resolvedWorkRoot);
+  const isWorktree = isGwdWorktreePath(resolvedWorkRoot);
   if (isWorktree && !originalProjectRoot?.trim()) {
     const externalMatch = /[/\\]\.gwd[/\\]projects[/\\][^/\\]+[/\\]worktrees(?:[/\\]|$)/.exec(resolvedWorkRoot);
     if (externalMatch) {
@@ -358,14 +358,14 @@ export function resolveGwdPathContract(
 }
 
 /**
- * Invalidate the gsdRoot cache.
+ * Invalidate the gwdRoot cache.
  * Use ONLY at session-reset boundaries: workspace switch, process exit, or
  * any context where the project root itself may genuinely change.
  * Do NOT call this on every agent turn — use clearPathCache() for volatile
  * directory listing invalidation instead.
  */
 export function _clearGwdRootCache(): void {
-  gsdRootCache.clear();
+  gwdRootCache.clear();
 }
 
 /**
@@ -381,7 +381,7 @@ export function normalizeRealPath(p: string): string {
   try { return realpathSync.native(p); } catch { return resolve(p); }
 }
 
-/** Normalize a path for use as a gsdRootCache key (realpath + trailing-slash strip). */
+/** Normalize a path for use as a gwdRootCache key (realpath + trailing-slash strip). */
 function normCacheKey(p: string): string {
   const r = normalizeRealPath(p);
   const s = r.replaceAll("\\", "/").replace(/\/+$/, "");
@@ -400,28 +400,28 @@ function normCacheKey(p: string): string {
  * Result is cached per normalized basePath for the process lifetime.
  * Keys are realpath-normalized so /foo and /foo/ share the same cache entry.
  */
-export function gsdRoot(basePath: string): string {
+export function gwdRoot(basePath: string): string {
   const cacheKey = normCacheKey(basePath);
-  const cached = gsdRootCache.get(cacheKey);
+  const cached = gwdRootCache.get(cacheKey);
   if (cached) return cached;
 
   // Canonicalize result via realpath before asserting and caching so that
-  // callers always receive a canonical path regardless of whether probeGsdRoot
+  // callers always receive a canonical path regardless of whether probeGwdRoot
   // returned a path through a symlink. Without this, the cached value can
   // diverge from other realpath-normalized paths (e.g. workspace.identityKey).
-  const result = normalizeRealPath(probeGsdRoot(basePath));
+  const result = normalizeRealPath(probeGwdRoot(basePath));
 
   // Defense-in-depth: if basePath resolves to the user's home directory and
-  // the result equals gsdHome(), refuse — project-scoped writes must never
+  // the result equals gwdHome(), refuse — project-scoped writes must never
   // land in the global ~/.gwd. Paths under ~/.gwd/projects/<hash>/ are still
   // valid (their basePath does not equal homedir).
-  assertNotGlobalGsdHome(basePath, result);
+  assertNotGlobalGwdHome(basePath, result);
 
-  gsdRootCache.set(cacheKey, result);
+  gwdRootCache.set(cacheKey, result);
   return result;
 }
 
-function assertNotGlobalGsdHome(basePath: string, result: string): void {
+function assertNotGlobalGwdHome(basePath: string, result: string): void {
   const norm = (p: string): string => {
     let r: string;
     try { r = realpathSync.native(p); } catch { r = p; }
@@ -431,16 +431,16 @@ function assertNotGlobalGsdHome(basePath: string, result: string): void {
   let baseNorm: string;
   let homeNorm: string;
   let resultNorm: string;
-  let gsdHomeNorm: string;
+  let gwdHomeNorm: string;
   try {
     baseNorm = norm(basePath);
     homeNorm = norm(homedir());
     resultNorm = norm(result);
-    gsdHomeNorm = norm(gsdHome());
+    gwdHomeNorm = norm(gwdHome());
   } catch {
     return;
   }
-  if (baseNorm === homeNorm && resultNorm === gsdHomeNorm) {
+  if (baseNorm === homeNorm && resultNorm === gwdHomeNorm) {
     throw new Error(
       `Refusing to use ${result} as a project .gwd directory — that is the global GWD home. ` +
       `Run GWD from inside a project directory.`,
@@ -452,13 +452,13 @@ function assertNotGlobalGsdHome(basePath: string, result: string): void {
  * Detect if a path is inside a .gwd/worktrees/<name>/ structure.
  *
  * GWD auto-worktrees live at <project>/.gwd/worktrees/<milestoneId>/.
- * When gsdRoot() is called with such a path, we must NOT walk up to the
+ * When gwdRoot() is called with such a path, we must NOT walk up to the
  * project root's .gwd — each worktree manages its own .gwd state (#2594).
  *
  * Matches both forward-slash and platform-native separators to handle
  * Windows paths (path.sep = '\\') and normalized Unix paths.
  */
-function isInsideGsdWorktree(p: string): boolean {
+function isInsideGwdWorktree(p: string): boolean {
   // Match /.gwd/worktrees/<name> where <name> is the final segment or
   // followed by a separator. The <name> segment must be non-empty.
   const sepFwd = "/";
@@ -480,7 +480,7 @@ function isInsideGsdWorktree(p: string): boolean {
   return false;
 }
 
-function probeGsdRoot(rawBasePath: string): string {
+function probeGwdRoot(rawBasePath: string): string {
   const contract = resolveGwdPathContract(rawBasePath);
   if (contract.isWorktree) return contract.projectGwd;
 
@@ -493,7 +493,7 @@ function probeGsdRoot(rawBasePath: string): string {
   //     the git-root probe (step 2) or walk-up (step 3) escapes to the project
   //     root's .gwd, causing ensurePreconditions() and deriveState() to read/write
   //     state in the wrong location.
-  if (isInsideGsdWorktree(rawBasePath)) return local;
+  if (isInsideGwdWorktree(rawBasePath)) return local;
 
   // Resolve symlinks so path comparisons work correctly across platforms
   // (e.g. macOS /var → /private/var). Use rawBasePath as fallback if not resolvable.
@@ -501,7 +501,7 @@ function probeGsdRoot(rawBasePath: string): string {
   try { basePath = realpathSync.native(rawBasePath); } catch { basePath = rawBasePath; }
 
   // Also check the resolved path for the worktree pattern (macOS /tmp → /private/tmp)
-  if (basePath !== rawBasePath && isInsideGsdWorktree(basePath)) return local;
+  if (basePath !== rawBasePath && isInsideGwdWorktree(basePath)) return local;
 
   // 2. Git root anchor — used as both probe target and walk-up boundary
   //    Only walk if we're inside a git project — prevents escaping into
@@ -518,21 +518,21 @@ function probeGsdRoot(rawBasePath: string): string {
     }
   } catch { /* git not available */ }
 
-  // Compute gsdHome once for the skip-check used in steps 2 and 3.
+  // Compute gwdHome once for the skip-check used in steps 2 and 3.
   const normPath = (p: string): string => {
     let r: string;
     try { r = realpathSync.native(p); } catch { r = p; }
     const s = r.replaceAll("\\", "/").replace(/\/+$/, "");
     return process.platform === "win32" ? s.toLowerCase() : s;
   };
-  let gsdHomeNorm: string;
-  try { gsdHomeNorm = normPath(gsdHome()); } catch { gsdHomeNorm = ""; }
+  let gwdHomeNorm: string;
+  try { gwdHomeNorm = normPath(gwdHome()); } catch { gwdHomeNorm = ""; }
 
   if (gitRoot) {
     const candidate = join(gitRoot, ".gwd");
     // Skip if the candidate resolves to the global GWD home — a subdir basePath
     // must not be anchored to ~/.gwd just because $HOME is a git repo.
-    if (existsSync(candidate) && normPath(candidate) !== gsdHomeNorm) return candidate;
+    if (existsSync(candidate) && normPath(candidate) !== gwdHomeNorm) return candidate;
   }
 
   // 3. Walk up from basePath to the git root (only if we are in a subdirectory)
@@ -540,7 +540,7 @@ function probeGsdRoot(rawBasePath: string): string {
     let cur = dirname(basePath);
     while (cur !== basePath) {
       const candidate = join(cur, ".gwd");
-      if (existsSync(candidate) && normPath(candidate) !== gsdHomeNorm) return candidate;
+      if (existsSync(candidate) && normPath(candidate) !== gwdHomeNorm) return candidate;
       if (cur === gitRoot) break;
       basePath = cur;
       cur = dirname(cur);
@@ -551,15 +551,15 @@ function probeGsdRoot(rawBasePath: string): string {
   return local;
 }
 export function milestonesDir(basePath: string): string {
-  return join(gsdRoot(basePath), "milestones");
+  return join(gwdRoot(basePath), "milestones");
 }
 
 export function resolveRuntimeFile(basePath: string): string {
-  return join(gsdRoot(basePath), "RUNTIME.md");
+  return join(gwdRoot(basePath), "RUNTIME.md");
 }
 
-export function resolveGsdRootFile(basePath: string, key: GSDRootFileKey): string {
-  const root = gsdRoot(basePath);
+export function resolveGwdRootFile(basePath: string, key: GWDRootFileKey): string {
+  const root = gwdRoot(basePath);
   const canonical = join(root, GWD_ROOT_FILES[key]);
   if (existsSync(canonical)) return canonical;
   const legacy = join(root, LEGACY_GWD_ROOT_FILES[key]);
@@ -567,7 +567,7 @@ export function resolveGsdRootFile(basePath: string, key: GSDRootFileKey): strin
   return canonical;
 }
 
-export function relGsdRootFile(key: GSDRootFileKey): string {
+export function relGwdRootFile(key: GWDRootFileKey): string {
   return `.gwd/${GWD_ROOT_FILES[key]}`;
 }
 

@@ -12,15 +12,15 @@
 import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve, join, dirname } from "node:path";
-import { gsdRoot } from "../paths.js";
+import { gwdRoot } from "../paths.js";
 import { fileURLToPath } from "node:url";
 import { showNextAction } from "../../shared/tui.js";
 import {
   validatePlanningDirectory,
   parsePlanningDirectory,
-  transformToGSD,
+  transformToGWD,
   generatePreview,
-  writeGSDDirectory,
+  writeGWDDirectory,
 } from "./index.js";
 
 import type { MigrationPreview } from "./writer.js";
@@ -88,7 +88,7 @@ function formatPreviewStats(preview: MigrationPreview): string {
 /** Load and interpolate the review-migration prompt template. */
 function buildReviewPrompt(
   sourcePath: string,
-  gsdPath: string,
+  gwdPath: string,
   preview: MigrationPreview,
 ): string {
   const promptsDir = join(dirname(fileURLToPath(import.meta.url)), "..", "prompts");
@@ -96,7 +96,7 @@ function buildReviewPrompt(
   let content = readFileSync(templatePath, "utf-8");
 
   content = content.replaceAll("{{sourcePath}}", sourcePath);
-  content = content.replaceAll("{{gsdPath}}", gsdPath);
+  content = content.replaceAll("{{gwdPath}}", gwdPath);
   content = content.replaceAll("{{previewStats}}", formatPreviewStats(preview));
 
   return content.trim();
@@ -106,10 +106,10 @@ function buildReviewPrompt(
 function dispatchReview(
   pi: ExtensionAPI,
   sourcePath: string,
-  gsdPath: string,
+  gwdPath: string,
   preview: MigrationPreview,
 ): void {
-  const prompt = buildReviewPrompt(sourcePath, gsdPath, preview);
+  const prompt = buildReviewPrompt(sourcePath, gwdPath, preview);
 
   pi.sendMessage(
     {
@@ -174,7 +174,7 @@ export async function handleMigrate(
 
   // ── Parse → Transform → Preview ───────────────────────────────────────────
   const parsed = await parsePlanningDirectory(sourcePath);
-  const project = transformToGSD(parsed);
+  const project = transformToGWD(parsed);
   const preview = generatePreview(project);
 
   // ── Build preview text ─────────────────────────────────────────────────────
@@ -190,8 +190,8 @@ export async function handleMigrate(
     );
   }
 
-  const targetGsdExists = existsSync(gsdRoot(process.cwd()));
-  if (targetGsdExists) {
+  const targetGwdExists = existsSync(gwdRoot(process.cwd()));
+  if (targetGwdExists) {
     lines.push("");
     lines.push("⚠ A .gwd directory already exists in the current working directory — it will be overwritten.");
   }
@@ -224,8 +224,8 @@ export async function handleMigrate(
   // ── Write ──────────────────────────────────────────────────────────────────
   ctx.ui.notify("Writing .gwd directory…", "info");
 
-  const result = await writeGSDDirectory(project, process.cwd());
-  const gsdPath = gsdRoot(process.cwd());
+  const result = await writeGWDDirectory(project, process.cwd());
+  const gwdPath = gwdRoot(process.cwd());
   const imported = await importWrittenMigrationToDb(process.cwd(), preview);
 
   ctx.ui.notify(
@@ -261,6 +261,6 @@ export async function handleMigrate(
   });
 
   if (reviewChoice === "review") {
-    dispatchReview(pi, sourcePath, gsdPath, preview);
+    dispatchReview(pi, sourcePath, gwdPath, preview);
   }
 }

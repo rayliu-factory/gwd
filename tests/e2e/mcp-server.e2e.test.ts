@@ -88,7 +88,7 @@ describe("mcp server e2e (real-process stdio)", () => {
 		}
 
 		// Fresh project so gwd_doctor / gwd_progress have something deterministic to read.
-		const project = createTmpProject({ git: true, gsdSkeleton: true });
+		const project = createTmpProject({ git: true, gwdSkeleton: true });
 		t.after(project.cleanup);
 		mkdirSync(join(project.dir, ".gwd", "milestones"), { recursive: true });
 

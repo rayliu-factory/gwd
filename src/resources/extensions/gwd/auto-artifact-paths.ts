@@ -5,7 +5,7 @@
 // function was removed entirely — callers now query WorkflowEngine directly.
 
 import {
-  gsdRoot,
+  gwdRoot,
   resolveMilestoneFile,
   resolveMilestonePath,
   resolveSliceFile,
@@ -53,15 +53,15 @@ export function resolveExpectedArtifactPath(
   const { milestone: mid, slice: sid, task: tid } = parseUnitId(unitId);
   switch (unitType) {
     case "workflow-preferences":
-      return join(gsdRoot(base), "PREFERENCES.md");
+      return join(gwdRoot(base), "PREFERENCES.md");
     case "discuss-project":
-      return join(gsdRoot(base), "PROJECT.md");
+      return join(gwdRoot(base), "PROJECT.md");
     case "discuss-requirements":
-      return join(gsdRoot(base), "REQUIREMENTS.md");
+      return join(gwdRoot(base), "REQUIREMENTS.md");
     case "research-decision":
-      return join(gsdRoot(base), "runtime", "research-decision.json");
+      return join(gwdRoot(base), "runtime", "research-decision.json");
     case "research-project":
-      return join(gsdRoot(base), "research", "PROJECT-RESEARCH-BLOCKER.md");
+      return join(gwdRoot(base), "research", "PROJECT-RESEARCH-BLOCKER.md");
     case "discuss-milestone": {
       return resolveMilestoneArtifactPath(base, mid, "CONTEXT");
     }

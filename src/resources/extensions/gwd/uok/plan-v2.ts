@@ -4,8 +4,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-import type { GSDState, Phase } from "../types.js";
-import { gsdRoot, resolveMilestoneFile, resolveSliceFile } from "../paths.js";
+import type { GWDState, Phase } from "../types.js";
+import { gwdRoot, resolveMilestoneFile, resolveSliceFile } from "../paths.js";
 import { isDbAvailable, getMilestoneSlices, getSliceTasks } from "../gwd-db.js";
 import type { SliceRow } from "../db-task-slice-rows.js";
 import type { UokGraphNode } from "./contracts.js";
@@ -36,7 +36,7 @@ export interface PlanV2CompileResult {
 }
 
 function graphOutputPath(basePath: string): string {
-  return join(gsdRoot(basePath), "runtime", "uok-plan-v2-graph.json");
+  return join(gwdRoot(basePath), "runtime", "uok-plan-v2-graph.json");
 }
 
 function hasFileContent(path: string | null): boolean {
@@ -93,7 +93,7 @@ function countSliceResearchArtifacts(basePath: string, milestoneId: string, slic
   return count;
 }
 
-export function compileUnitGraphFromState(basePath: string, state: GSDState): PlanV2CompileResult {
+export function compileUnitGraphFromState(basePath: string, state: GWDState): PlanV2CompileResult {
   const mid = state.activeMilestone?.id;
   if (!mid) return { ok: false, reason: "no active milestone" };
   if (!isDbAvailable()) return { ok: false, reason: "database not available" };
@@ -173,7 +173,7 @@ export function compileUnitGraphFromState(basePath: string, state: GSDState): Pl
   };
 
   const outPath = graphOutputPath(basePath);
-  mkdirSync(join(gsdRoot(basePath), "runtime"), { recursive: true });
+  mkdirSync(join(gwdRoot(basePath), "runtime"), { recursive: true });
   writeFileSync(outPath, JSON.stringify(output, null, 2) + "\n", "utf-8");
 
   return {
@@ -188,7 +188,7 @@ export function compileUnitGraphFromState(basePath: string, state: GSDState): Pl
   };
 }
 
-export function ensurePlanV2Graph(basePath: string, state: GSDState): PlanV2CompileResult {
+export function ensurePlanV2Graph(basePath: string, state: GWDState): PlanV2CompileResult {
   const compiled = compileUnitGraphFromState(basePath, state);
   if (!compiled.ok) return compiled;
   if ((compiled.nodeCount ?? 0) <= 0) {

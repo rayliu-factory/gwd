@@ -21,7 +21,7 @@ export function registerShortcuts(pi: ExtensionAPI): void {
   } as const;
 
   const openDashboardOverlay = async (ctx: ExtensionContext) => {
-    const [{ GSDDashboardOverlay }, basePath] = await Promise.all([
+    const [{ GWDDashboardOverlay }, basePath] = await Promise.all([
       import("../dashboard-overlay.js"),
       getProjectRoot(),
     ]);
@@ -30,7 +30,7 @@ export function registerShortcuts(pi: ExtensionAPI): void {
       return;
     }
     await ctx.ui.custom<boolean>(
-      (tui, theme, _kb, done) => new GSDDashboardOverlay(tui, theme, () => done(true)),
+      (tui, theme, _kb, done) => new GWDDashboardOverlay(tui, theme, () => done(true)),
       {
         overlay: true,
         overlayOptions,
@@ -39,9 +39,9 @@ export function registerShortcuts(pi: ExtensionAPI): void {
   };
 
   const openNotificationsOverlay = async (ctx: ExtensionContext) => {
-    const { GSDNotificationOverlay } = await import("../notification-overlay.js");
+    const { GWDNotificationOverlay } = await import("../notification-overlay.js");
     await ctx.ui.custom<boolean>(
-      (tui, theme, _kb, done) => new GSDNotificationOverlay(tui, theme, () => done(true)),
+      (tui, theme, _kb, done) => new GWDNotificationOverlay(tui, theme, () => done(true)),
       {
         overlay: true,
         overlayOptions: {

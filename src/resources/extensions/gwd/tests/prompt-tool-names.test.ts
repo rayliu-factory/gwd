@@ -3,7 +3,7 @@
 // The registered GWD tool is `search-the-web`, not `web_search`.
 // `web_search` is an Anthropic API implementation detail that should
 // never appear in GWD prompts or agent frontmatter.
-// See: https://github.com/gwd-build/gwd-2/issues/2920
+// See: https://github.com/rayliu-factory/gwd/issues/2920
 
 import test from "node:test";
 import assert from "node:assert/strict";

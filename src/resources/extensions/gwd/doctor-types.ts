@@ -117,7 +117,7 @@ export interface DoctorReport {
   issues: DoctorIssue[];
   fixesApplied: string[];
   /** Per-domain check durations in milliseconds. Present on explicit /gwd doctor runs. */
-  timing?: { git: number; runtime: number; environment: number; gsdState: number };
+  timing?: { git: number; runtime: number; environment: number; gwdState: number };
 }
 
 export interface DoctorSummary {

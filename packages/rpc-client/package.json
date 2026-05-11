@@ -1,7 +1,7 @@
 {
   "name": "@gwd-build/rpc-client",
   "version": "0.0.1",
-  "description": "Standalone RPC client SDK for GSD — zero internal dependencies",
+  "description": "Standalone RPC client SDK for GWD — zero internal dependencies",
   "license": "MIT",
   "gwd": {
     "linkable": true,

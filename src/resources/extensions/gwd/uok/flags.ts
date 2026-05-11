@@ -1,5 +1,5 @@
-import type { GSDPreferences } from "../preferences.js";
-import { loadEffectiveGSDPreferences } from "../preferences.js";
+import type { GWDPreferences } from "../preferences.js";
+import { loadEffectiveGWDPreferences } from "../preferences.js";
 
 export interface UokFlags {
   enabled: boolean;
@@ -21,7 +21,7 @@ function envForcesLegacyFallback(): boolean {
   return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "on";
 }
 
-export function resolveUokFlags(prefs: GSDPreferences | undefined): UokFlags {
+export function resolveUokFlags(prefs: GWDPreferences | undefined): UokFlags {
   const uok = prefs?.uok;
   const legacyFallback = uok?.legacy_fallback?.enabled === true || envForcesLegacyFallback();
   const enabledByPreference = uok?.enabled ?? true;
@@ -40,6 +40,6 @@ export function resolveUokFlags(prefs: GSDPreferences | undefined): UokFlags {
 }
 
 export function loadUokFlags(): UokFlags {
-  const prefs = loadEffectiveGSDPreferences()?.preferences;
+  const prefs = loadEffectiveGWDPreferences()?.preferences;
   return resolveUokFlags(prefs);
 }

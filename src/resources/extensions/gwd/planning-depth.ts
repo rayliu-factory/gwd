@@ -8,7 +8,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 import { atomicWriteSync } from "./atomic-write.js";
-import { getProjectGSDPreferencesPath } from "./preferences.js";
+import { getProjectGWDPreferencesPath } from "./preferences.js";
 import { logWarning } from "./workflow-logger.js";
 import {
   researchDecisionPath,
@@ -27,7 +27,7 @@ export function setPlanningDepth(
   basePath: string,
   depth: "light" | "deep",
 ): void {
-  const path = getProjectGSDPreferencesPath(basePath);
+  const path = getProjectGWDPreferencesPath(basePath);
   const { frontmatter, body } = readProjectPreferencesParts(path);
 
   frontmatter.planning_depth = depth;
@@ -42,7 +42,7 @@ export function setPlanningDepth(
 }
 
 export function ensureWorkflowPreferencesCaptured(basePath: string): void {
-  const path = getProjectGSDPreferencesPath(basePath);
+  const path = getProjectGWDPreferencesPath(basePath);
   const { frontmatter, body } = readProjectPreferencesParts(path);
 
   frontmatter.planning_depth = "deep";

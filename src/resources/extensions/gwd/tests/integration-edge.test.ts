@@ -49,10 +49,10 @@ function generateDecisionsMarkdown(count: number): string {
 
 test('integration-edge: empty project', () => {
   const base = mkdtempSync(join(tmpdir(), 'gwd-int-edge-empty-'));
-  const gsdDir = join(base, '.gwd');
-  mkdirSync(gsdDir, { recursive: true });
+  const gwdDir = join(base, '.gwd');
+  mkdirSync(gwdDir, { recursive: true });
 
-  const dbPath = join(gsdDir, 'test-edge-empty.db');
+  const dbPath = join(gwdDir, 'test-edge-empty.db');
 
   try {
     // Open DB first so migrateFromMarkdown doesn't auto-create at default path
@@ -106,14 +106,14 @@ test('integration-edge: empty project', () => {
 
 test('integration-edge: partial migration', () => {
   const base = mkdtempSync(join(tmpdir(), 'gwd-int-edge-partial-'));
-  const gsdDir = join(base, '.gwd');
-  mkdirSync(gsdDir, { recursive: true });
+  const gwdDir = join(base, '.gwd');
+  mkdirSync(gwdDir, { recursive: true });
 
   // Write DECISIONS.md but NOT REQUIREMENTS.md
   const decisionsMarkdown = generateDecisionsMarkdown(6);
-  writeFileSync(join(gsdDir, 'DECISIONS.md'), decisionsMarkdown);
+  writeFileSync(join(gwdDir, 'DECISIONS.md'), decisionsMarkdown);
 
-  const dbPath = join(gsdDir, 'test-edge-partial.db');
+  const dbPath = join(gwdDir, 'test-edge-partial.db');
 
   try {
     openDatabase(dbPath);
@@ -160,13 +160,13 @@ test('integration-edge: partial migration', () => {
 
 test('integration-edge: fallback mode', () => {
   const base = mkdtempSync(join(tmpdir(), 'gwd-int-edge-fallback-'));
-  const gsdDir = join(base, '.gwd');
-  mkdirSync(gsdDir, { recursive: true });
+  const gwdDir = join(base, '.gwd');
+  mkdirSync(gwdDir, { recursive: true });
 
   const decisionsMarkdown = generateDecisionsMarkdown(4);
-  writeFileSync(join(gsdDir, 'DECISIONS.md'), decisionsMarkdown);
+  writeFileSync(join(gwdDir, 'DECISIONS.md'), decisionsMarkdown);
 
-  const dbPath = join(gsdDir, 'test-edge-fallback.db');
+  const dbPath = join(gwdDir, 'test-edge-fallback.db');
 
   try {
     // Step 1: Open DB normally and verify it works

@@ -1,5 +1,5 @@
 ---
-name: create-gsd-extension
+name: create-gwd-extension
 description: Create, debug, and iterate on GWD extensions (TypeScript modules that add tools, commands, event hooks, custom UI, and providers to GWD). Use when asked to build an extension, add a tool the LLM can call, register a slash command, hook into GWD events, create custom TUI components, or modify GWD behavior. Triggers on "create extension", "build extension", "add a tool", "register command", "hook into gwd", "custom tool", "gwd plugin", "gwd extension".
 ---
 
@@ -9,7 +9,7 @@ description: Create, debug, and iterate on GWD extensions (TypeScript modules th
 
 **GWD extension paths (community/user-installed extensions):**
 - Global: `~/.pi/agent/extensions/*.ts` or `~/.pi/agent/extensions/*/index.ts`
-- Project-local: `.gsd/extensions/*.ts` or `.gsd/extensions/*/index.ts`
+- Project-local: `.gwd/extensions/*.ts` or `.gwd/extensions/*/index.ts`
 
 Note: `~/.gwd/agent/extensions/` is reserved for bundled extensions synced from the gwd-pi package. Community extensions placed there are silently ignored by the loader.
 

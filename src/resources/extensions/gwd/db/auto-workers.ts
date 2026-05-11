@@ -2,7 +2,7 @@
 //
 // IMPORTANT — naming clarification (codex review LOW N1):
 // This module is the AUTO-MODE PROCESS REGISTRY. It tracks long-running
-// `gsd auto` worker processes for cross-process coordination via the shared
+// `gwd auto` worker processes for cross-process coordination via the shared
 // SQLite WAL. It is NOT the in-process subagent registry, which lives at
 // `src/resources/extensions/subagent/worker-registry.ts` and tracks dispatched
 // subagent threads within a single process.

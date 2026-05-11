@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Tests for provider-boundary token payload audit helpers.
 
 import assert from "node:assert/strict";
@@ -45,7 +45,7 @@ test("buildTokenAuditSummary reports payload section sizes without content field
 		...context.messages,
 		{
 			role: "custom",
-			customType: "gsd-memory",
+			customType: "gwd-memory",
 			content: "memory block",
 			display: false,
 			timestamp: 4,
@@ -72,7 +72,7 @@ test("buildTokenAuditSummary reports payload section sizes without content field
 		summary.largestTools.map(() => ["chars", "name"]),
 	);
 	assert.deepEqual(summary.largestCustomMessages, [
-		{ index: 3, role: "custom", customType: "gsd-memory", chars: summary.largestCustomMessages[0].chars },
+		{ index: 3, role: "custom", customType: "gwd-memory", chars: summary.largestCustomMessages[0].chars },
 	]);
 	assert.ok(!JSON.stringify(summary).includes("tool output"));
 	assert.ok(!JSON.stringify(summary).includes("memory block"));
@@ -137,7 +137,7 @@ test("provider payload audit recognizes Gemini and Bedrock payload shapes", () =
 		config: {
 			tools: [{
 				functionDeclarations: [
-					{ name: "gsd_exec", description: "hidden declaration", parameters: { type: "object" } },
+					{ name: "gwd_exec", description: "hidden declaration", parameters: { type: "object" } },
 				],
 			}],
 		},
@@ -146,19 +146,19 @@ test("provider payload audit recognizes Gemini and Bedrock payload shapes", () =
 		messages: [{ role: "user", content: [{ text: "hidden bedrock prompt" }] }],
 		toolConfig: {
 			tools: [
-				{ toolSpec: { name: "gsd_resume", description: "hidden tool", inputSchema: { json: {} } } },
+				{ toolSpec: { name: "gwd_resume", description: "hidden tool", inputSchema: { json: {} } } },
 			],
 		},
 	});
 
 	assert.equal(gemini.messageCount, 1);
 	assert.equal(gemini.toolCount, 1);
-	assert.deepEqual(gemini.largestTools.map((tool) => tool.name), ["gsd_exec"]);
+	assert.deepEqual(gemini.largestTools.map((tool) => tool.name), ["gwd_exec"]);
 	assert.equal(JSON.stringify(gemini).includes("hidden"), false);
 
 	assert.equal(bedrock.messageCount, 1);
 	assert.equal(bedrock.toolCount, 1);
-	assert.deepEqual(bedrock.largestTools.map((tool) => tool.name), ["gsd_resume"]);
+	assert.deepEqual(bedrock.largestTools.map((tool) => tool.name), ["gwd_resume"]);
 	assert.equal(JSON.stringify(bedrock).includes("hidden"), false);
 });
 

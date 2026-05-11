@@ -13,7 +13,7 @@
 import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, readdirSync, readFileSync, statSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { loadJsonFileOrNull } from "./json-persistence.js";
 import { currentDirectoryRoot } from "./commands/context.js";
 
@@ -37,11 +37,11 @@ interface DebugLogEntry {
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function activityDir(basePath: string): string {
-  return join(gsdRoot(basePath), "activity");
+  return join(gwdRoot(basePath), "activity");
 }
 
 function debugDir(basePath: string): string {
-  return join(gsdRoot(basePath), "debug");
+  return join(gwdRoot(basePath), "debug");
 }
 
 function listActivityLogs(basePath: string): LogEntry[] {
@@ -332,7 +332,7 @@ async function handleLogsList(basePath: string, ctx: ExtensionCommandContext): P
   }
 
   // Metrics summary
-  const metricsPath = join(gsdRoot(basePath), "metrics.json");
+  const metricsPath = join(gwdRoot(basePath), "metrics.json");
   const isMetrics = (d: unknown): d is { units: Array<Record<string, unknown>> } =>
     d !== null && typeof d === "object" && "units" in d! && Array.isArray((d as Record<string, unknown>).units);
   const metrics = loadJsonFileOrNull(metricsPath, isMetrics);
@@ -417,7 +417,7 @@ async function handleLogsDebug(basePath: string, ctx: ExtensionCommandContext, i
 
   if (debugLogs.length === 0) {
     ctx.ui.notify(
-      "No debug logs found.\n\nEnable debug logging: GWD_DEBUG=1 gsd auto",
+      "No debug logs found.\n\nEnable debug logging: GWD_DEBUG=1 gwd auto",
       "info",
     );
     return;

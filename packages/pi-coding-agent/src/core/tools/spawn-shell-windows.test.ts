@@ -10,7 +10,7 @@
  *
  * This test structurally scans all spawn sites and verifies the guard is present.
  *
- * Fixes: gwd-build/gwd-2#2854
+ * Fixes: rayliu-factory/gwd#2854
  */
 
 import test from "node:test";

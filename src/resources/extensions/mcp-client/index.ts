@@ -28,7 +28,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { buildHttpTransportOpts } from "./auth.js";
 import type { McpHttpAuthConfig } from "./auth.js";
-import { gsdHome } from "../gwd/gwd-home.js";
+import { gwdHome } from "../gwd/gwd-home.js";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -104,7 +104,7 @@ function readConfigs(): McpServerConfig[] {
 	const configPaths = [
 		join(process.cwd(), ".mcp.json"),
 		join(process.cwd(), ".gwd", "mcp.json"),
-		join(gsdHome(), "mcp.json"),
+		join(gwdHome(), "mcp.json"),
 	];
 
 	for (const configPath of configPaths) {
@@ -254,7 +254,7 @@ async function getOrConnect(name: string, signal?: AbortSignal, ctx?: ExtensionC
 }
 
 async function connectServer(config: McpServerConfig, signal?: AbortSignal, ctx?: ExtensionContext): Promise<Client> {
-	const client = new Client({ name: "gsd", version: "1.0.0" });
+	const client = new Client({ name: "gwd", version: "1.0.0" });
 	let transport: StdioClientTransport | StreamableHTTPClientTransport;
 	let approvedTrustKey: string | undefined;
 

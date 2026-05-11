@@ -100,8 +100,8 @@ function makeTempDir(): string {
  */
 function createFullFixture(): string {
   const base = makeTempDir();
-  const gsdDir = join(base, ".gwd");
-  const m001Dir = join(gsdDir, "milestones", "M001");
+  const gwdDir = join(base, ".gwd");
+  const m001Dir = join(gwdDir, "milestones", "M001");
   const s01Dir = join(m001Dir, "slices", "S01");
   const s01Tasks = join(s01Dir, "tasks");
   const s02Dir = join(m001Dir, "slices", "S02");
@@ -195,10 +195,10 @@ function createFullFixture(): string {
  */
 function createMultiMilestoneFixture(): string {
   const base = makeTempDir();
-  const gsdDir = join(base, ".gwd");
+  const gwdDir = join(base, ".gwd");
 
   for (const mid of ["M001", "M002", "M003"]) {
-    const mDir = join(gsdDir, "milestones", mid);
+    const mDir = join(gwdDir, "milestones", mid);
     const sDir = join(mDir, "slices", "S01", "tasks");
     mkdirSync(sDir, { recursive: true });
 
@@ -1244,14 +1244,14 @@ describe("ghost milestone edge cases", () => {
 
   test("ghost milestones are skipped in state derivation", async () => {
     base = makeTempDir();
-    const gsdDir = join(base, ".gwd", "milestones");
+    const gwdDir = join(base, ".gwd", "milestones");
 
     // M001 is ghost — empty dir
-    mkdirSync(join(gsdDir, "M001"), { recursive: true });
+    mkdirSync(join(gwdDir, "M001"), { recursive: true });
 
     // M002 is real — has CONTEXT-DRAFT
-    mkdirSync(join(gsdDir, "M002"), { recursive: true });
-    writeFileSync(join(gsdDir, "M002", "M002-CONTEXT-DRAFT.md"), "# Draft\nContent.\n");
+    mkdirSync(join(gwdDir, "M002"), { recursive: true });
+    writeFileSync(join(gwdDir, "M002", "M002-CONTEXT-DRAFT.md"), "# Draft\nContent.\n");
 
     invalidateAllCaches();
     const state = await deriveState(base);

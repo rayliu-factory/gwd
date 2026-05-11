@@ -1,7 +1,7 @@
 // Project/App: GWD-2
 // File Purpose: Sidecar iteration-data adapter for auto-mode loop.
 
-import type { GSDState } from "../types.js";
+import type { GWDState } from "../types.js";
 import type { SidecarItem } from "./session.js";
 import type { IterationData } from "./types.js";
 
@@ -9,12 +9,12 @@ export interface BuildSidecarIterationDataInput {
   sidecarItem: SidecarItem;
   basePath: string;
   canonicalProjectRoot: string;
-  deriveState: (basePath: string) => Promise<GSDState>;
+  deriveState: (basePath: string) => Promise<GWDState>;
   logPostDerive: (details: {
     site: "sidecar";
     basePath: string;
     canonicalProjectRoot: string;
-    derivedPhase: GSDState["phase"];
+    derivedPhase: GWDState["phase"];
     activeUnit: string | undefined;
   }) => void;
 }

@@ -110,9 +110,9 @@ function seedStaleCrashLock(
   unitType: string,
   unitId: string,
 ): void {
-  const gsdDir = join(projectDir, ".gwd");
-  mkdirSync(gsdDir, { recursive: true });
-  const db = new DatabaseSync(join(gsdDir, "gwd.db"));
+  const gwdDir = join(projectDir, ".gwd");
+  mkdirSync(gwdDir, { recursive: true });
+  const db = new DatabaseSync(join(gwdDir, "gwd.db"));
   db.exec(`
     CREATE TABLE IF NOT EXISTS workers (
       worker_id TEXT PRIMARY KEY,
@@ -223,8 +223,8 @@ function recover(dir: string): void {
 run("headless query returns valid JSON on initialized project", () => {
   const dir = createTempProject("query");
   try {
-    const gsdDir = join(dir, ".gwd");
-    mkdirSync(join(gsdDir, "milestones"), { recursive: true });
+    const gwdDir = join(dir, ".gwd");
+    mkdirSync(join(gwdDir, "milestones"), { recursive: true });
 
     const result = gwd(["headless", "query"], dir);
     assert(
@@ -503,7 +503,7 @@ run("version skew is detected and named in stderr", () => {
     mkdirSync(join(fakeHome, ".gwd", "agent"), { recursive: true });
     writeFileSync(
       join(fakeHome, ".gwd", "agent", "managed-resources.json"),
-      JSON.stringify({ gsdVersion: "999.0.0" }),
+      JSON.stringify({ gwdVersion: "999.0.0" }),
     );
 
     const result = gwd([], dir, { HOME: fakeHome });

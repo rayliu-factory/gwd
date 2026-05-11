@@ -4,10 +4,10 @@ import { join } from "node:path";
 import { loadFile, parseSummary, saveFile, parseTaskPlanMustHaves, countMustHavesMentionedInSummary } from "./files.js";
 import { parseRoadmap as parseLegacyRoadmap, parsePlan as parseLegacyPlan } from "./parsers-legacy.js";
 import { isDbAvailable, openDatabase, getMilestoneSlices, getSliceTasks } from "./gwd-db.js";
-import { resolveMilestoneFile, resolveMilestonePath, resolveSliceFile, resolveSlicePath, resolveTaskFile, resolveTasksDir, milestonesDir, gsdRoot, relMilestoneFile, relSliceFile, relTaskFile, relSlicePath, relGsdRootFile, resolveGsdRootFile, relMilestonePath, resolveGwdPathContract } from "./paths.js";
+import { resolveMilestoneFile, resolveMilestonePath, resolveSliceFile, resolveSlicePath, resolveTaskFile, resolveTasksDir, milestonesDir, gwdRoot, relMilestoneFile, relSliceFile, relTaskFile, relSlicePath, relGwdRootFile, resolveGwdRootFile, relMilestonePath, resolveGwdPathContract } from "./paths.js";
 import { deriveState, isMilestoneComplete } from "./state.js";
 import { invalidateAllCaches } from "./cache.js";
-import { loadEffectiveGSDPreferences, type GSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences, type GWDPreferences } from "./preferences.js";
 import { isClosedStatus } from "./status-guards.js";
 
 import type { DoctorIssue, DoctorIssueCode, DoctorReport } from "./doctor-types.js";
@@ -53,7 +53,7 @@ export function validateTitle(title: string): string | null {
   return null;
 }
 
-function validatePreferenceShape(preferences: GSDPreferences): string[] {
+function validatePreferenceShape(preferences: GWDPreferences): string[] {
   const issues: string[] = [];
   const listFields = ["always_use_skills", "prefer_skills", "avoid_skills", "custom_instructions"] as const;
   for (const field of listFields) {
@@ -140,7 +140,7 @@ export function buildStateMarkdown(state: Awaited<ReturnType<typeof deriveState>
 
 async function updateStateFile(basePath: string, fixesApplied: string[]): Promise<void> {
   const state = await deriveState(basePath);
-  const path = resolveGsdRootFile(basePath, "STATE");
+  const path = resolveGwdRootFile(basePath, "STATE");
   await saveFile(path, buildStateMarkdown(state));
   fixesApplied.push(`updated ${path}`);
 }
@@ -149,7 +149,7 @@ async function updateStateFile(basePath: string, fixesApplied: string[]): Promis
 export async function rebuildState(basePath: string): Promise<void> {
   invalidateAllCaches();
   const state = await deriveState(basePath);
-  const path = resolveGsdRootFile(basePath, "STATE");
+  const path = resolveGwdRootFile(basePath, "STATE");
   await saveFile(path, buildStateMarkdown(state));
 }
 
@@ -184,7 +184,7 @@ function auditRequirements(content: string | null): DoctorIssue[] {
         scope: "project",
         unitId: requirementId,
         message: `${requirementId} is Active but has no primary owning slice`,
-        file: relGsdRootFile("REQUIREMENTS"),
+        file: relGwdRootFile("REQUIREMENTS"),
         fixable: false,
       });
     }
@@ -196,7 +196,7 @@ function auditRequirements(content: string | null): DoctorIssue[] {
         scope: "project",
         unitId: requirementId,
         message: `${requirementId} is Blocked but has no reason in Notes`,
-        file: relGsdRootFile("REQUIREMENTS"),
+        file: relGwdRootFile("REQUIREMENTS"),
         fixable: false,
       });
     }
@@ -276,7 +276,7 @@ export interface DoctorHistoryEntry {
 
 async function appendDoctorHistory(basePath: string, report: DoctorReport): Promise<void> {
   try {
-    const historyPath = join(gsdRoot(basePath), "doctor-history.jsonl");
+    const historyPath = join(gwdRoot(basePath), "doctor-history.jsonl");
     const errorCount = report.issues.filter(i => i.severity === "error").length;
     const warningCount = report.issues.filter(i => i.severity === "warning").length;
     const issueDetails = report.issues
@@ -322,7 +322,7 @@ async function appendDoctorHistory(basePath: string, report: DoctorReport): Prom
 /** Read the last N doctor history entries. Returns most-recent-first. */
 export async function readDoctorHistory(basePath: string, lastN = 50): Promise<DoctorHistoryEntry[]> {
   try {
-    const historyPath = join(gsdRoot(basePath), "doctor-history.jsonl");
+    const historyPath = join(gwdRoot(basePath), "doctor-history.jsonl");
     if (!existsSync(historyPath)) return [];
     const lines = readFileSync(historyPath, "utf-8").split("\n").filter(l => l.trim());
     return lines.slice(-lastN).reverse().map(l => JSON.parse(l) as DoctorHistoryEntry);
@@ -357,7 +357,7 @@ export async function runGWDDoctor(basePath: string, options?: { fix?: boolean; 
     return true;
   };
 
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   if (prefs) {
     const prefIssues = validatePreferenceShape(prefs.preferences);
     for (const issue of prefIssues) {
@@ -403,12 +403,12 @@ export async function runGWDDoctor(basePath: string, options?: { fix?: boolean; 
 
   const milestonesPath = milestonesDir(basePath);
   if (!existsSync(milestonesPath)) {
-    const report: DoctorReport = { ok: issues.every(i => i.severity !== "error"), basePath, issues, fixesApplied, timing: { git: gitMs, runtime: runtimeMs, environment: envMs, gsdState: 0 } };
+    const report: DoctorReport = { ok: issues.every(i => i.severity !== "error"), basePath, issues, fixesApplied, timing: { git: gitMs, runtime: runtimeMs, environment: envMs, gwdState: 0 } };
     await appendDoctorHistory(basePath, report);
     return report;
   }
 
-  const requirementsPath = resolveGsdRootFile(basePath, "REQUIREMENTS");
+  const requirementsPath = resolveGwdRootFile(basePath, "REQUIREMENTS");
   const requirementsContent = await loadFile(requirementsPath);
   issues.push(...auditRequirements(requirementsContent));
 
@@ -820,7 +820,7 @@ export async function runGWDDoctor(basePath: string, options?: { fix?: boolean; 
     basePath,
     issues,
     fixesApplied,
-    timing: { git: gitMs, runtime: runtimeMs, environment: envMs, gsdState: Math.max(0, Date.now() - t0env - envMs) },
+    timing: { git: gitMs, runtime: runtimeMs, environment: envMs, gwdState: Math.max(0, Date.now() - t0env - envMs) },
   };
   await appendDoctorHistory(basePath, report);
   return report;

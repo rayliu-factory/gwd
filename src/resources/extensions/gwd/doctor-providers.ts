@@ -15,7 +15,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { delimiter, join } from "node:path";
 import { AuthStorage } from "@gwd/pi-coding-agent";
 import { getEnvApiKey } from "@gwd/pi-ai";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import { getAuthPath, PROVIDER_REGISTRY, type ProviderCategory } from "./key-manager.js";
 import { homedir } from "node:os";
 
@@ -107,7 +107,7 @@ function collectConfiguredModelProviders(): Set<string> {
   const providers = new Set<string>();
 
   try {
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     const models = loaded?.preferences?.models;
     if (!models) {
       // Default: Anthropic
@@ -365,7 +365,7 @@ function checkLlmProviders(): ProviderCheckResult[] {
 
 function checkRemoteQuestionsProvider(): ProviderCheckResult | null {
   try {
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     const rq = loaded?.preferences?.remote_questions;
     if (!rq) return null;
 

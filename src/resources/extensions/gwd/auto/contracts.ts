@@ -1,7 +1,7 @@
 // Project/App: GWD-2
 // File Purpose: Auto Orchestration module interfaces and ADR-015 invariant adapter contracts.
 
-import type { GSDState } from "../types.js";
+import type { GWDState } from "../types.js";
 
 export interface AutoSessionContext {
   basePath: string;
@@ -21,7 +21,7 @@ export interface AutoStatus {
 export interface AutoAdvanceResult {
   kind: "advanced" | "blocked" | "paused" | "stopped" | "error";
   reason?: string;
-  stateSnapshot?: GSDState;
+  stateSnapshot?: GWDState;
 }
 
 export interface AutoOrchestrationModule {
@@ -33,7 +33,7 @@ export interface AutoOrchestrationModule {
 }
 
 export interface DispatchAdapter {
-  decideNextUnit(input: { stateSnapshot: GSDState }): Promise<{
+  decideNextUnit(input: { stateSnapshot: GWDState }): Promise<{
     unitType: string;
     unitId: string;
     reason: string;
@@ -53,11 +53,11 @@ export interface RecoveryAdapter {
 }
 
 export type InvariantAdapterResult =
-  | { ok: true; reason?: string; stateSnapshot?: GSDState }
-  | { ok: false; reason: string; stateSnapshot?: GSDState };
+  | { ok: true; reason?: string; stateSnapshot?: GWDState }
+  | { ok: false; reason: string; stateSnapshot?: GWDState };
 
 export interface StateReconciliationAdapter {
-  reconcileBeforeDispatch(): Promise<InvariantAdapterResult & { stateSnapshot?: GSDState }>;
+  reconcileBeforeDispatch(): Promise<InvariantAdapterResult & { stateSnapshot?: GWDState }>;
 }
 
 export interface ToolContractAdapter {

@@ -564,13 +564,13 @@ describe('SessionManager', () => {
 // ---------------------------------------------------------------------------
 
 describe('SessionManager.resolveCLIPath', () => {
-  const originalGsdPath = process.env['GWD_CLI_PATH'];
+  const originalGwdPath = process.env['GWD_CLI_PATH'];
   const originalPath = process.env['PATH'];
   const originalPathTitle = process.env['Path'];
 
   afterEach(() => {
-    if (originalGsdPath !== undefined) {
-      process.env['GWD_CLI_PATH'] = originalGsdPath;
+    if (originalGwdPath !== undefined) {
+      process.env['GWD_CLI_PATH'] = originalGwdPath;
     } else {
       delete process.env['GWD_CLI_PATH'];
     }

@@ -1,5 +1,5 @@
 // @gwd-build/mcp-server + alias-telemetry — usage telemetry on the 11 alias
-// `gsd_*` tools. Step 1 of a two-step deprecation (#5031). Always-on so we
+// `gwd_*` tools. Step 1 of a two-step deprecation (#5031). Always-on so we
 // actually capture data during the window. Single JSON line per invocation
 // to stderr — negligible overhead vs. the MCP request handler itself.
 //

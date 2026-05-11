@@ -7,7 +7,7 @@
  */
 
 import type { ExtensionAPI, ExtensionContext, ExtensionCommandContext } from "@gwd/pi-coding-agent";
-import type { GSDState } from "./types.js";
+import type { GWDState } from "./types.js";
 import { showNextAction } from "../shared/tui.js";
 import { loadFile, saveFile } from "./files.js";
 import { isDbAvailable, getMilestone, getMilestoneSlices } from "./gwd-db.js";
@@ -32,10 +32,10 @@ import {
 } from "./interrupted-session.js";
 import { listUnitRuntimeRecords, clearUnitRuntimeRecord, isInFlightRuntimePhase } from "./unit-runtime.js";
 import { resolveExpectedArtifactPath } from "./auto.js";
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 import {
-  gsdRoot, milestonesDir, resolveMilestoneFile, resolveMilestonePath,
-  resolveSliceFile, resolveSlicePath, resolveGsdRootFile, relGsdRootFile,
+  gwdRoot, milestonesDir, resolveMilestoneFile, resolveMilestonePath,
+  resolveSliceFile, resolveSlicePath, resolveGwdRootFile, relGwdRootFile,
   relMilestoneFile, relSliceFile, clearPathCache,
 } from "./paths.js";
 import { join } from "node:path";
@@ -44,10 +44,10 @@ import { readSessionLockData, isSessionLockProcessAlive } from "./session-lock.j
 import { nativeAddAll, nativeCommit, nativeHasCommittedHead, nativeIsRepo, nativeInit } from "./native-git-bridge.js";
 import { isInheritedRepo } from "./repo-identity.js";
 import { ensureGitignore, ensurePreferences, untrackRuntimeFiles } from "./gitignore.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import { resolveUokFlags } from "./uok/flags.js";
 import { ensurePlanV2Graph, isMissingFinalizedContextResult } from "./uok/plan-v2.js";
-import { detectProjectState, hasGsdBootstrapArtifacts } from "./detection.js";
+import { detectProjectState, hasGwdBootstrapArtifacts } from "./detection.js";
 import { showProjectInit, offerMigration } from "./init-wizard.js";
 import { validateDirectory } from "./validate-directory.js";
 import { showConfirm } from "../shared/tui.js";
@@ -177,7 +177,7 @@ export function isGhostMilestoneByScope(scope: MilestoneScope): boolean {
   return isGhostMilestone(scope.workspace.projectRoot, scope.milestoneId);
 }
 
-function needsPlanV2Gate(state: GSDState): boolean {
+function needsPlanV2Gate(state: GWDState): boolean {
   return state.phase === "executing"
     || state.phase === "summarizing"
     || state.phase === "validating-milestone"
@@ -189,9 +189,9 @@ type PlanV2GateDecision = "pass" | "recover-missing-context" | "block";
 function runPlanV2Gate(
   ctx: ExtensionContext,
   basePath: string,
-  state: GSDState,
+  state: GWDState,
 ): PlanV2GateDecision {
-  const prefs = loadEffectiveGSDPreferences(basePath)?.preferences;
+  const prefs = loadEffectiveGWDPreferences(basePath)?.preferences;
   const uokFlags = resolveUokFlags(prefs);
   if (!uokFlags.planV2 || !needsPlanV2Gate(state)) return "pass";
   const compiled = ensurePlanV2Graph(basePath, state);
@@ -485,7 +485,7 @@ export async function checkDeepProjectSetupAfterTurn(
 
 async function dispatchNextDeepProjectSetupStage(entry: PendingDeepProjectSetupEntry): Promise<boolean> {
   invalidateAllCaches();
-  const prefs = loadEffectiveGSDPreferences(entry.basePath)?.preferences;
+  const prefs = loadEffectiveGWDPreferences(entry.basePath)?.preferences;
   const { DISPATCH_RULES, hasPendingDeepStage } = await import("./auto-dispatch.js");
 
   if (!hasPendingDeepStage(prefs, entry.basePath)) {
@@ -651,7 +651,7 @@ export function checkAutoStartAfterDiscuss(): boolean {
   // Gate 3: Multi-milestone completeness warning
   // Parse PROJECT.md for milestone sequence, warn if any are missing context.
   // Don't block — milestones can be intentionally queued without context.
-  const projectFile = resolveGsdRootFile(basePath, "PROJECT");
+  const projectFile = resolveGwdRootFile(basePath, "PROJECT");
   let projectIds: string[] = [];
   if (projectFile) {
     try {
@@ -661,7 +661,7 @@ export function checkAutoStartAfterDiscuss(): boolean {
         const missing = projectIds.filter(id => {
           const hasContext = !!resolveMilestoneFile(basePath, id, "CONTEXT");
           const hasDraft = !!resolveMilestoneFile(basePath, id, "CONTEXT-DRAFT");
-          const hasDir = existsSync(join(gsdRoot(basePath), "milestones", id));
+          const hasDir = existsSync(join(gwdRoot(basePath), "milestones", id));
           return !hasContext && !hasDraft && !hasDir;
         });
         if (missing.length > 0) {
@@ -1043,7 +1043,7 @@ async function dispatchWorkflow(
   // Route through the dynamic routing pipeline (complexity classification,
   // tier downgrade, fallback chains) — same path as auto-mode dispatches (#2958).
   if (ctx && unitType) {
-    const prefs = loadEffectiveGSDPreferences()?.preferences;
+    const prefs = loadEffectiveGWDPreferences()?.preferences;
     const result = await selectAndApplyModel(
       ctx, pi, unitType, /* unitId */ "", /* basePath */ process.cwd(),
       prefs, /* verbose */ false, /* autoModeStartModel */ null,
@@ -1116,7 +1116,7 @@ async function dispatchWorkflow(
       savedTools = scopeGwdWorkflowToolsForDispatch(pi, unitType) ?? savedTools;
     }
 
-    const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GWD-WORKFLOW.md");
+    const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gwdHome(), "agent", "GWD-WORKFLOW.md");
     const workflow = readFileSync(workflowPath, "utf-8");
 
     pi.sendMessage(
@@ -1262,7 +1262,7 @@ async function prepareAndBuildDiscussPrompt(
   preamble: string,
   basePath: string,
 ): Promise<string> {
-  const prefs = loadEffectiveGSDPreferences()?.preferences ?? {};
+  const prefs = loadEffectiveGWDPreferences()?.preferences ?? {};
 
   // Run preparation if enabled (default: true) — results are injected as
   // supplementary context into the standard discuss prompt, NOT as a
@@ -1299,13 +1299,13 @@ async function prepareAndBuildDiscussPrompt(
  * Bootstrap a .gwd/ project from scratch for headless use.
  * Ensures git repo, .gwd/ structure, gitignore, and preferences all exist.
  */
-function bootstrapGsdProject(basePath: string): void {
+function bootstrapGwdProject(basePath: string): void {
   if (!nativeIsRepo(basePath) || isInheritedRepo(basePath)) {
-    const mainBranch = loadEffectiveGSDPreferences()?.preferences?.git?.main_branch || "main";
+    const mainBranch = loadEffectiveGWDPreferences()?.preferences?.git?.main_branch || "main";
     nativeInit(basePath, mainBranch);
   }
 
-  const root = gsdRoot(basePath);
+  const root = gwdRoot(basePath);
   mkdirSync(join(root, "milestones"), { recursive: true });
   mkdirSync(join(root, "runtime"), { recursive: true });
 
@@ -1329,14 +1329,14 @@ export async function showHeadlessMilestoneCreation(
   clearReservedMilestoneIds();
 
   // Ensure .gwd/ is bootstrapped
-  bootstrapGsdProject(basePath);
+  bootstrapGwdProject(basePath);
 
   const { ensureDbOpen } = await import("./bootstrap/dynamic-tools.js");
   await ensureDbOpen(basePath);
 
   // Generate next milestone ID
   const existingIds = findMilestoneIds(basePath);
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   const nextId = nextMilestoneIdReserved(existingIds, prefs?.preferences?.unique_milestone_ids ?? false, basePath);
 
   // Fix #4996: Do NOT pre-create the milestone directory here.
@@ -1403,11 +1403,11 @@ async function buildDiscussSlicePrompt(
   }
 
   // Decisions — architectural context that constrains this slice
-  const decisionsPath = resolveGsdRootFile(base, "DECISIONS");
+  const decisionsPath = resolveGwdRootFile(base, "DECISIONS");
   if (existsSync(decisionsPath)) {
     const decisionsContent = await loadFile(decisionsPath);
     if (decisionsContent) {
-      inlined.push(`### Decisions Register\nSource: \`${relGsdRootFile("DECISIONS")}\`\n\n${decisionsContent.trim()}`);
+      inlined.push(`### Decisions Register\nSource: \`${relGwdRootFile("DECISIONS")}\`\n\n${decisionsContent.trim()}`);
     }
   }
 
@@ -1470,7 +1470,7 @@ export async function showDiscuss(
   basePath: string,
 ): Promise<void> {
   // Guard: no .gwd/ project
-  if (!existsSync(gsdRoot(basePath))) {
+  if (!existsSync(gwdRoot(basePath))) {
     ctx.ui.notify("No GWD project found. Run /gwd to start one first.", "warning");
     return;
   }
@@ -1485,7 +1485,7 @@ export async function showDiscuss(
   // agent bootstraps from the wrong milestone.
   try {
     const { buildStateMarkdown } = await import("./doctor.js");
-    await saveFile(resolveGsdRootFile(basePath, "STATE"), buildStateMarkdown(state));
+    await saveFile(resolveGwdRootFile(basePath, "STATE"), buildStateMarkdown(state));
   } catch (err) {
     logWarning("guided", `STATE.md rebuild failed: ${(err as Error).message}`);
   }
@@ -1561,7 +1561,7 @@ export async function showDiscuss(
       const { ensureDbOpen } = await import("./bootstrap/dynamic-tools.js");
       await ensureDbOpen(basePath);
       const milestoneIds = findMilestoneIds(basePath);
-      const uniqueMilestoneIds = !!loadEffectiveGSDPreferences()?.preferences?.unique_milestone_ids;
+      const uniqueMilestoneIds = !!loadEffectiveGWDPreferences()?.preferences?.unique_milestone_ids;
       const nextId = nextMilestoneIdReserved(milestoneIds, uniqueMilestoneIds, basePath);
       setPendingAutoStart(basePath, { ctx, pi, basePath, milestoneId: nextId, step: false });
       await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId, `New milestone ${nextId}.`, basePath), "gwd-run", ctx, "discuss-milestone");
@@ -1969,7 +1969,7 @@ async function handleMilestoneActions(
 
   if (choice === "skip") {
     const milestoneIds = findMilestoneIds(basePath);
-    const uniqueMilestoneIds = !!loadEffectiveGSDPreferences()?.preferences?.unique_milestone_ids;
+    const uniqueMilestoneIds = !!loadEffectiveGWDPreferences()?.preferences?.unique_milestone_ids;
     const nextId = nextMilestoneIdReserved(milestoneIds, uniqueMilestoneIds, basePath);
     setPendingAutoStart(basePath, { ctx, pi, basePath, milestoneId: nextId, step: stepMode });
     await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
@@ -2016,8 +2016,8 @@ export async function showSmartEntry(
   // Check bootstrap completeness, not just .gwd/ directory existence.
   // A zombie .gwd/ state (symlink exists but missing PREFERENCES.md and
   // milestones/) must trigger the init wizard, not skip it (#2942).
-  const gsdPath = gsdRoot(basePath);
-  const hasBootstrapArtifacts = hasGsdBootstrapArtifacts(gsdPath);
+  const gwdPath = gwdRoot(basePath);
+  const hasBootstrapArtifacts = hasGwdBootstrapArtifacts(gwdPath);
   let skipGitBootstrap = false;
 
   if (!hasBootstrapArtifacts) {
@@ -2049,7 +2049,7 @@ export async function showSmartEntry(
   // git repo that has no .gwd, create a fresh repo to prevent cross-project
   // state leaks (#1639).
   if (!skipGitBootstrap && (!nativeIsRepo(basePath) || isInheritedRepo(basePath))) {
-    const mainBranch = loadEffectiveGSDPreferences()?.preferences?.git?.main_branch || "main";
+    const mainBranch = loadEffectiveGWDPreferences()?.preferences?.git?.main_branch || "main";
     nativeInit(basePath, mainBranch);
   }
 
@@ -2143,7 +2143,7 @@ export async function showSmartEntry(
   // Rebuild STATE.md from derived state before any dispatch (#3475).
   try {
     const { buildStateMarkdown } = await import("./doctor.js");
-    await saveFile(resolveGsdRootFile(basePath, "STATE"), buildStateMarkdown(state));
+    await saveFile(resolveGwdRootFile(basePath, "STATE"), buildStateMarkdown(state));
   } catch (err) {
     logWarning("guided", `STATE.md rebuild failed: ${(err as Error).message}`);
   }
@@ -2157,7 +2157,7 @@ export async function showSmartEntry(
   // Light mode and fully-completed deep projects fall through to the
   // standard wizard below.
   {
-    const prefs = loadEffectiveGSDPreferences(basePath)?.preferences;
+    const prefs = loadEffectiveGWDPreferences(basePath)?.preferences;
     const { shouldRunDeepProjectSetup } = await import("./auto-dispatch.js");
     if (shouldRunDeepProjectSetup(state, prefs, basePath)) {
       await startDeepProjectSetupForeground(ctx, pi, basePath, stepMode);
@@ -2179,7 +2179,7 @@ export async function showSmartEntry(
       // 30s (avoids race between .set() and LLM writing first artifact).
       const entry = pendingAutoStartMap.get(basePath)!;
       const ageMs = Date.now() - (entry.createdAt || 0);
-      const manifestExists = existsSync(join(gsdRoot(basePath), "DISCUSSION-MANIFEST.json"));
+      const manifestExists = existsSync(join(gwdRoot(basePath), "DISCUSSION-MANIFEST.json"));
       const milestoneHasContext = !!resolveMilestoneFile(basePath, entry.milestoneId, "CONTEXT");
       if (!manifestExists && !milestoneHasContext && ageMs > 30_000) {
         // Stale entry from an interrupted discussion — clear and continue
@@ -2212,13 +2212,13 @@ export async function showSmartEntry(
       }
     }
 
-    const uniqueMilestoneIds = !!loadEffectiveGSDPreferences()?.preferences?.unique_milestone_ids;
+    const uniqueMilestoneIds = !!loadEffectiveGWDPreferences()?.preferences?.unique_milestone_ids;
     const nextId = nextMilestoneIdReserved(milestoneIds, uniqueMilestoneIds, basePath);
     const isFirst = milestoneIds.length === 0;
 
     if (isFirst) {
       // First ever — skip wizard, just ask directly
-      ctx.ui.setStatus("gsd-step", "New Milestone · answer the questions above to plan");
+      ctx.ui.setStatus("gwd-step", "New Milestone · answer the questions above to plan");
       setPendingAutoStart(basePath, { ctx, pi, basePath, milestoneId: nextId, step: stepMode });
       await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
         `New project, milestone ${nextId}. Do NOT read or explore .gwd/ — it's empty scaffolding.`,
@@ -2247,7 +2247,7 @@ export async function showSmartEntry(
       if (choice === "quick_task") {
         await runQuickTaskChoice(ctx, pi);
       } else if (choice === "new_milestone") {
-        ctx.ui.setStatus("gsd-step", "New Milestone · answer the questions above to plan");
+        ctx.ui.setStatus("gwd-step", "New Milestone · answer the questions above to plan");
         setPendingAutoStart(basePath, { ctx, pi, basePath, milestoneId: nextId, step: stepMode });
         await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
           `New milestone ${nextId}.`,
@@ -2308,7 +2308,7 @@ export async function showSmartEntry(
       await runQuickTaskChoice(ctx, pi);
     } else if (choice === "new_milestone") {
       const milestoneIds = findMilestoneIds(basePath);
-      const uniqueMilestoneIds = !!loadEffectiveGSDPreferences()?.preferences?.unique_milestone_ids;
+      const uniqueMilestoneIds = !!loadEffectiveGWDPreferences()?.preferences?.unique_milestone_ids;
       const nextId = nextMilestoneIdReserved(milestoneIds, uniqueMilestoneIds, basePath);
 
       setPendingAutoStart(basePath, { ctx, pi, basePath, milestoneId: nextId, step: stepMode });
@@ -2376,7 +2376,7 @@ export async function showSmartEntry(
       }), "gwd-discuss", ctx, "discuss-milestone");
     } else if (choice === "skip_milestone") {
       const milestoneIds = findMilestoneIds(basePath);
-      const uniqueMilestoneIds = !!loadEffectiveGSDPreferences()?.preferences?.unique_milestone_ids;
+      const uniqueMilestoneIds = !!loadEffectiveGWDPreferences()?.preferences?.unique_milestone_ids;
       const nextId = nextMilestoneIdReserved(milestoneIds, uniqueMilestoneIds, basePath);
       setPendingAutoStart(basePath, { ctx, pi, basePath, milestoneId: nextId, step: stepMode });
       await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
@@ -2449,7 +2449,7 @@ export async function showSmartEntry(
       if (choice === "quick_task") {
         await runQuickTaskChoice(ctx, pi);
       } else if (choice === "plan") {
-        ctx.ui.setStatus("gsd-step", "Planning Milestone · decomposing into slices");
+        ctx.ui.setStatus("gwd-step", "Planning Milestone · decomposing into slices");
         setPendingAutoStart(basePath, { ctx, pi, basePath, milestoneId, step: stepMode });
         await dispatchWorkflow(
           pi,
@@ -2468,7 +2468,7 @@ export async function showSmartEntry(
         }), "gwd-run", ctx, "discuss-milestone");
       } else if (choice === "skip_milestone") {
         const milestoneIds = findMilestoneIds(basePath);
-        const uniqueMilestoneIds = !!loadEffectiveGSDPreferences()?.preferences?.unique_milestone_ids;
+        const uniqueMilestoneIds = !!loadEffectiveGWDPreferences()?.preferences?.unique_milestone_ids;
         const nextId = nextMilestoneIdReserved(milestoneIds, uniqueMilestoneIds, basePath);
         setPendingAutoStart(basePath, { ctx, pi, basePath, milestoneId: nextId, step: stepMode });
         await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
@@ -2582,7 +2582,7 @@ export async function showSmartEntry(
     });
 
     if (choice === "plan") {
-      ctx.ui.setStatus("gsd-step", "Slice Planning · answer the questions above");
+      ctx.ui.setStatus("gwd-step", "Slice Planning · answer the questions above");
       await dispatchWorkflow(
         pi,
         await buildPlanSlicePrompt(milestoneId, milestoneTitle, sliceId, sliceTitle, basePath),
@@ -2645,7 +2645,7 @@ export async function showSmartEntry(
     });
 
     if (choice === "complete") {
-      ctx.ui.setStatus("gsd-step", "Completing Slice · review changes above");
+      ctx.ui.setStatus("gwd-step", "Completing Slice · review changes above");
       await dispatchWorkflow(
         pi,
         await buildCompleteSlicePrompt(milestoneId, milestoneTitle, sliceId, sliceTitle, basePath),
@@ -2714,7 +2714,7 @@ export async function showSmartEntry(
     }
 
     if (choice === "execute") {
-      ctx.ui.setStatus("gsd-step", "Executing Task · follow progress above");
+      ctx.ui.setStatus("gwd-step", "Executing Task · follow progress above");
       if (hasInterrupted) {
         await dispatchWorkflow(pi, loadPrompt("guided-resume-task", {
           milestoneId,

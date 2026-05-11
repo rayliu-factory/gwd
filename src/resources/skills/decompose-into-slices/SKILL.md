@@ -80,7 +80,7 @@ Once approved, write or update `M###-ROADMAP.md` matching the template exactly. 
 
 Fill the rest of the template: Vision, Success Criteria, Key Risks, Proof Strategy, Verification Classes, Definition of Done, Requirement Coverage, Horizontal Checklist (omit entirely for trivial milestones), and the Boundary Map (`S01 → S02` produces/consumes blocks — be specific, name real APIs/types/invariants).
 
-Use `write` to the path `.gsd/milestones/<MID>/<MID>-ROADMAP.md`. Do not edit checkboxes by hand during normal execution — the `gwd_*` tools own state.
+Use `write` to the path `.gwd/milestones/<MID>/<MID>-ROADMAP.md`. Do not edit checkboxes by hand during normal execution — the `gwd_*` tools own state.
 
 ## Step 6: Optionally file as GitHub issues
 
@@ -108,7 +108,7 @@ If the user explicitly asks (and only if — outward actions need confirmation),
 <or "None - can start immediately">
 
 ---
-From milestone brief at `.gsd/milestones/<MID>/<MID>-CONTEXT.md`.
+From milestone brief at `.gwd/milestones/<MID>/<MID>-CONTEXT.md`.
 ```
 
 Do NOT close or modify any parent issue.

@@ -1,8 +1,8 @@
-// GSD2 — Shared interview round UI widget
+// GWD2 — Shared interview round UI widget
 /**
  * Shared interview round UI widget.
  *
- * Used by /interview-me and /gsd-new-project.
+ * Used by /interview-me and /gwd-new-project.
  *
  * Renders a paged, keyboard-driven question UI with:
  * - Single-select (radio) questions

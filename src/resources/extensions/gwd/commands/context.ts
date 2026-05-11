@@ -7,7 +7,7 @@ import { showNextAction } from "../../shared/tui.js";
 import { handleStatus } from "./handlers/core.js";
 import { homedir } from "node:os";
 
-export interface GsdDispatchContext {
+export interface GwdDispatchContext {
   ctx: ExtensionCommandContext;
   pi: ExtensionAPI;
   trimmed: string;
@@ -17,10 +17,10 @@ export interface GsdDispatchContext {
  * Typed error for when GWD is run outside a valid project directory.
  * Command handlers catch this to show a friendly message instead of a raw exception.
  */
-export class GSDNoProjectError extends Error {
+export class GWDNoProjectError extends Error {
   constructor(reason: string) {
     super(reason);
-    this.name = "GSDNoProjectError";
+    this.name = "GWDNoProjectError";
   }
 }
 
@@ -52,7 +52,7 @@ export function projectRoot(): string {
   const pathToCheck = root !== cwd ? cwd : root;
   const result = validateDirectory(pathToCheck);
   if (result.severity === "blocked") {
-    throw new GSDNoProjectError(result.reason ?? "GWD must be run inside a project directory.");
+    throw new GWDNoProjectError(result.reason ?? "GWD must be run inside a project directory.");
   }
   return root;
 }
@@ -70,7 +70,7 @@ export function currentDirectoryRoot(): string {
   }
   const result = validateDirectory(cwd);
   if (result.severity === "blocked") {
-    throw new GSDNoProjectError(result.reason ?? "GWD must be run inside a project directory.");
+    throw new GWDNoProjectError(result.reason ?? "GWD must be run inside a project directory.");
   }
   return cwd;
 }

@@ -67,7 +67,7 @@ import { validateFileChanges } from "./safety/file-change-validator.js";
 import { validateContent } from "./safety/content-validator.js";
 import { resolveSafetyHarnessConfig } from "./safety/safety-harness.js";
 import { resolveExpectedArtifactPath as resolveArtifactForContent } from "./auto-artifact-paths.js";
-import { getIsolationMode, loadEffectiveGSDPreferences } from "./preferences.js";
+import { getIsolationMode, loadEffectiveGWDPreferences } from "./preferences.js";
 import { getSliceTasks } from "./gwd-db.js";
 import { runPreExecutionChecks, type PreExecutionResult } from "./pre-execution-checks.js";
 import { writePreExecutionEvidence, type PreExecutionCheckJSON } from "./verification-evidence.js";
@@ -368,7 +368,7 @@ export const MAX_ARTIFACT_VERIFICATION_RETRIES = 3;
 export const STEP_COMPLETE_FALLBACK_MESSAGE =
   "Step complete. Run /clear, then /gwd to continue (or /gwd auto to run continuously).";
 
-export function buildStepCompleteMessage(nextState: import("./types.js").GSDState): string {
+export function buildStepCompleteMessage(nextState: import("./types.js").GWDState): string {
   if (nextState.phase === "complete") {
     return "Step complete — milestone finished. Run /gwd status to review, or start the next milestone.";
   }
@@ -391,7 +391,7 @@ export interface PostUnitContext {
   lockBase: () => string;
   stopAuto: (ctx?: ExtensionContext, pi?: ExtensionAPI, reason?: string) => Promise<void>;
   pauseAuto: (ctx?: ExtensionContext, pi?: ExtensionAPI) => Promise<void>;
-  updateProgressWidget: (ctx: ExtensionContext, unitType: string, unitId: string, state: import("./types.js").GSDState) => void;
+  updateProgressWidget: (ctx: ExtensionContext, unitType: string, unitId: string, state: import("./types.js").GWDState) => void;
 }
 
 export const USER_DRIVEN_DEEP_UNITS = new Set([
@@ -501,7 +501,7 @@ export async function postUnitPreVerification(pctx: PostUnitContext, opts?: PreV
     await new Promise(r => setTimeout(r, 100));
   }
 
-  const prefs = loadEffectiveGSDPreferences()?.preferences;
+  const prefs = loadEffectiveGWDPreferences()?.preferences;
   const uokFlags = resolveUokFlags(prefs);
 
   // Turn-level git action (commit | snapshot | status-only)
@@ -729,7 +729,7 @@ export async function postUnitPreVerification(pctx: PostUnitContext, opts?: PreV
       // a milestone branch to squash from.
       let sliceMergeStopped = false;
       await runSafely("postUnit", "slice-cadence-merge", async () => {
-        const prefsResult = loadEffectiveGSDPreferences(s.basePath);
+        const prefsResult = loadEffectiveGWDPreferences(s.basePath);
         const prefs = prefsResult?.preferences;
         const { getCollapseCadence, mergeSliceToMain } = await import("./slice-cadence.js");
         if (getCollapseCadence(prefs) !== "slice") return;
@@ -856,8 +856,8 @@ export async function postUnitPreVerification(pctx: PostUnitContext, opts?: PreV
 
     // ── Safety harness: post-unit validation ──
     try {
-      const { loadEffectiveGSDPreferences } = await import("./preferences.js");
-      const prefs = loadEffectiveGSDPreferences()?.preferences;
+      const { loadEffectiveGWDPreferences } = await import("./preferences.js");
+      const prefs = loadEffectiveGWDPreferences()?.preferences;
       const safetyConfig = resolveSafetyHarnessConfig(
         prefs?.safety_harness as Record<string, unknown> | undefined,
       );
@@ -1164,7 +1164,7 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
 
   if (s.currentUnit) {
     try {
-      const codebasePrefs = loadEffectiveGSDPreferences()?.preferences?.codebase;
+      const codebasePrefs = loadEffectiveGWDPreferences()?.preferences?.codebase;
       const refresh = ensureCodebaseMapFresh(
         s.basePath,
         codebasePrefs
@@ -1227,8 +1227,8 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
               await renderPlanCheckboxes(s.canonicalProjectRoot, mid, sid);
             } catch (dbErr) {
               // DB unavailable — fail explicitly rather than silently reverting to markdown mutation.
-              // Use 'gsd recover' to rebuild DB state from disk if needed.
-              logError("engine", `retry state-reset failed (DB unavailable): ${(dbErr as Error).message}. Run 'gsd recover' to reconcile.`);
+              // Use 'gwd recover' to rebuild DB state from disk if needed.
+              logError("engine", `retry state-reset failed (DB unavailable): ${(dbErr as Error).message}. Run 'gwd recover' to reconcile.`);
             }
           }
 
@@ -1320,7 +1320,7 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
     const currentUnit = s.currentUnit;
     let preExecPauseNeeded = false;
     await runSafely("postUnitPostVerification", "pre-execution-checks", async () => {
-      const prefs = loadEffectiveGSDPreferences()?.preferences;
+      const prefs = loadEffectiveGWDPreferences()?.preferences;
       const uokFlags = resolveUokFlags(prefs);
       try {
         // Check preferences — respect enhanced_verification and enhanced_verification_pre
@@ -1370,14 +1370,14 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
         // Log summary to stderr in existing verification output format
         const emoji = result.status === "pass" ? "✅" : result.status === "warn" ? "⚠️" : "❌";
         process.stderr.write(
-          `gsd-pre-exec: ${emoji} Pre-execution checks ${result.status} for ${mid}/${sid} (${result.durationMs}ms)\n`,
+          `gwd-pre-exec: ${emoji} Pre-execution checks ${result.status} for ${mid}/${sid} (${result.durationMs}ms)\n`,
         );
 
         // Log individual check results
         for (const check of result.checks) {
           const checkEmoji = check.passed ? "✓" : check.blocking ? "✗" : "⚠";
           process.stderr.write(
-            `gsd-pre-exec:   ${checkEmoji} [${check.category}] ${check.target}: ${check.message}\n`,
+            `gwd-pre-exec:   ${checkEmoji} [${check.category}] ${check.target}: ${check.message}\n`,
           );
         }
 
@@ -1487,7 +1487,7 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
           error: errorMessage,
           failClosed: true,
         });
-        logError("engine", `gsd-pre-exec: Pre-execution checks threw an error: ${errorMessage}`);
+        logError("engine", `gwd-pre-exec: Pre-execution checks threw an error: ${errorMessage}`);
         ctx.ui.notify(
           `Pre-execution checks error: ${errorMessage} — pausing for human review`,
           "error",

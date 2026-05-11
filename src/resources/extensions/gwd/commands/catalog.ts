@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 import { loadRegistry } from "../workflow-templates.js";
-import { gsdHome } from "../gwd-home.js";
+import { gwdHome } from "../gwd-home.js";
 
 
 export interface GwdCommandDefinition {
@@ -326,7 +326,7 @@ function filterOptions(
 
 function getExtensionCompletions(prefix: string, action: string) {
   try {
-    const extDir = join(gsdHome(), "agent", "extensions");
+    const extDir = join(gwdHome(), "agent", "extensions");
     const ids: Array<{ id: string; name: string }> = [];
     for (const entry of readdirSync(extDir, { withFileTypes: true })) {
       if (!entry.isDirectory()) continue;
@@ -411,13 +411,13 @@ function resolveProjectRootForCompletion(basePath: string): string {
   if (!segment) return basePath;
 
   const separator = basePath.includes("\\") ? "\\" : "/";
-  const gsdMarker = `${separator}.gwd${separator}`;
-  const gsdIdx = basePath.indexOf(gsdMarker);
-  const candidate = gsdIdx !== -1 ? basePath.slice(0, gsdIdx) : basePath.slice(0, segment.gwdIdx);
+  const gwdMarker = `${separator}.gwd${separator}`;
+  const gwdIdx = basePath.indexOf(gwdMarker);
+  const candidate = gwdIdx !== -1 ? basePath.slice(0, gwdIdx) : basePath.slice(0, segment.gwdIdx);
 
-  const normalizedGsdHome = normalizePathForCompare(gsdHome());
-  const candidateGsdPath = normalizePathForCompare(join(candidate, ".gwd"));
-  if (candidateGsdPath === normalizedGsdHome || candidateGsdPath.startsWith(`${normalizedGsdHome}/`)) {
+  const normalizedGwdHome = normalizePathForCompare(gwdHome());
+  const candidateGwdPath = normalizePathForCompare(join(candidate, ".gwd"));
+  if (candidateGwdPath === normalizedGwdHome || candidateGwdPath.startsWith(`${normalizedGwdHome}/`)) {
     return resolveProjectRootFromGitFile(basePath) ?? basePath;
   }
 
@@ -524,7 +524,7 @@ export function getGwdArgumentCompletions(prefix: string) {
       const base = resolveProjectRootForCompletion(process.cwd());
       scanDir(join(base, ".gwd", "workflows"), "project");
       scanDir(join(base, ".gwd", "workflow-defs"), "project-legacy");
-      scanDir(join(gsdHome(), "workflows"), "global");
+      scanDir(join(gwdHome(), "workflows"), "global");
     } catch { /* ignore */ }
     // Also include bundled template names.
     try {

@@ -40,7 +40,7 @@ import {
   getMilestoneResquash,
   resquashMilestoneOnMain,
 } from "./slice-cadence.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import type { WorktreeStateProjection } from "./worktree-state-projection.js";
 import { createWorkspace, scopeMilestone } from "./workspace.js";
 // ADR-016 phase 2 / C1 (#5624): file-system + git-CLI leaf primitives
@@ -86,7 +86,7 @@ export interface WorktreeLifecycleDeps {
   // ── Cache + git service rebuild ──────────────────────────────────────
   invalidateAllCaches: () => void;
   GitServiceImpl: new (basePath: string, gitConfig: unknown) => unknown;
-  loadEffectiveGSDPreferences: () =>
+  loadEffectiveGWDPreferences: () =>
     | { preferences?: { git?: Record<string, unknown> } }
     | undefined;
 
@@ -653,7 +653,7 @@ function rebuildGitService(
   deps: WorktreeLifecycleDeps,
 ): void {
   const gitConfig =
-    deps.loadEffectiveGSDPreferences()?.preferences?.git ?? {};
+    deps.loadEffectiveGWDPreferences()?.preferences?.git ?? {};
   s.gitService = new deps.GitServiceImpl(
     s.basePath,
     gitConfig,
@@ -1406,7 +1406,7 @@ export class WorktreeLifecycle {
     try {
       const startSha = this.s.milestoneStartShas.get(milestoneId);
       if (startSha) {
-        const prefs = loadEffectiveGSDPreferences(
+        const prefs = loadEffectiveGWDPreferences(
           this.s.originalBasePath || this.s.basePath,
         )?.preferences;
         if (

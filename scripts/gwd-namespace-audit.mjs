@@ -61,7 +61,10 @@ const activeOldNamespacePatterns = [
 ];
 
 const historicalAllowlist = [
+  /^\.plans\//,
   /^CHANGELOG\.md$/,
+  /^docs\/dev\/superpowers\/plans\//,
+  /^docs\/dev\/superpowers\/specs\//,
   /^docs\/dev\/superpowers\/specs\/2026-05-10-gwd-namespace-hard-cutover-design\.md$/,
   /^docs\/dev\/superpowers\/plans\/2026-05-10-gwd-namespace-hard-cutover\.md$/,
   /^docs\/dev\/superpowers\/specs\/2026-05-12-gwd-independent-initial-release-cutover-design\.md$/,

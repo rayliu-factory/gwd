@@ -19,7 +19,7 @@
 import { createRequire } from "node:module";
 import { existsSync, readFileSync, readdirSync, mkdirSync, unlinkSync, rmSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { atomicWriteSync } from "./atomic-write.js";
 
 const _require = createRequire(import.meta.url);
@@ -81,12 +81,12 @@ let _lockCompromised: boolean = false;
 /** Whether we've already registered a process.on('exit') handler. */
 let _exitHandlerRegistered: boolean = false;
 
-/** Registry of all gsdDir paths where locks were created during this session.
- *  The exit handler cleans ALL of these, not just the current gsdRoot(). (#1578) */
+/** Registry of all gwdDir paths where locks were created during this session.
+ *  The exit handler cleans ALL of these, not just the current gwdRoot(). (#1578) */
 const _lockDirRegistry: Set<string> = new Set();
 
 /** Snapshotted lock file path — captured at acquireSessionLock time to avoid
- *  gsdRoot() resolving differently in worktree vs project root contexts (#1363). */
+ *  gwdRoot() resolving differently in worktree vs project root contexts (#1363). */
 let _snapshotLockPath: string | null = null;
 
 /** Timestamp when the session lock was acquired — used to detect false-positive
@@ -111,15 +111,15 @@ export function effectiveLockFile(): string {
  * In parallel worker mode, uses `.gwd/parallel/<milestoneId>/` instead of
  * `.gwd/` so workers don't contend on the same proper-lockfile directory (#2184).
  */
-export function effectiveLockTarget(gsdDir: string): string {
+export function effectiveLockTarget(gwdDir: string): string {
   const mid = process.env.GWD_PARALLEL_WORKER ? process.env.GWD_MILESTONE_LOCK : null;
-  return mid ? join(gsdDir, "parallel", mid) : gsdDir;
+  return mid ? join(gwdDir, "parallel", mid) : gwdDir;
 }
 
 function lockPath(basePath: string): string {
   // If we have a snapshotted path from acquisition, use it for consistency
   if (_snapshotLockPath) return _snapshotLockPath;
-  return join(gsdRoot(basePath), effectiveLockFile());
+  return join(gwdRoot(basePath), effectiveLockFile());
 }
 
 // ─── Stray Lock Cleanup ─────────────────────────────────────────────────────
@@ -132,15 +132,15 @@ function lockPath(basePath: string): string {
  * Also removes stray proper-lockfile directories beyond the canonical `.gwd.lock/`.
  */
 export function cleanupStrayLockFiles(basePath: string): void {
-  const gsdDir = gsdRoot(basePath);
+  const gwdDir = gwdRoot(basePath);
 
   // Clean numbered auto lock files inside .gwd/
   try {
-    if (existsSync(gsdDir)) {
-      for (const entry of readdirSync(gsdDir)) {
+    if (existsSync(gwdDir)) {
+      for (const entry of readdirSync(gwdDir)) {
         // Match "auto <N>.lock" or "auto (<N>).lock" variants but NOT the canonical "auto.lock"
         if (entry !== LOCK_FILE && /^auto\s.+\.lock$/i.test(entry)) {
-          try { unlinkSync(join(gsdDir, entry)); } catch { /* best-effort */ }
+          try { unlinkSync(join(gwdDir, entry)); } catch { /* best-effort */ }
         }
       }
     }
@@ -149,12 +149,12 @@ export function cleanupStrayLockFiles(basePath: string): void {
   // Clean stray proper-lockfile directories (e.g. ".gwd 2.lock/")
   // The canonical one is ".gwd.lock/" — anything else is stray.
   try {
-    const parentDir = dirname(gsdDir);
-    const gsdDirName = gsdDir.split("/").pop() || ".gwd";
+    const parentDir = dirname(gwdDir);
+    const gwdDirName = gwdDir.split("/").pop() || ".gwd";
     if (existsSync(parentDir)) {
       for (const entry of readdirSync(parentDir)) {
         // Match ".gwd <N>.lock" or ".gwd (<N>).lock" directories but NOT ".gwd.lock"
-        if (entry !== `${gsdDirName}.lock` && entry.startsWith(gsdDirName) && entry.endsWith(".lock")) {
+        if (entry !== `${gwdDirName}.lock` && entry.startsWith(gwdDirName) && entry.endsWith(".lock")) {
           const fullPath = join(parentDir, entry);
           try {
             const stat = statSync(fullPath);
@@ -173,9 +173,9 @@ export function cleanupStrayLockFiles(basePath: string): void {
  * Uses module-level references so it always operates on current state.
  * Only registers once — subsequent calls are no-ops.
  */
-function ensureExitHandler(_gsdDir: string): void {
-  // Register the gsdDir so exit cleanup covers it
-  _lockDirRegistry.add(_gsdDir);
+function ensureExitHandler(_gwdDir: string): void {
+  // Register the gwdDir so exit cleanup covers it
+  _lockDirRegistry.add(_gwdDir);
 
   if (_exitHandlerRegistered) return;
   _exitHandlerRegistered = true;
@@ -298,8 +298,8 @@ export function acquireSessionLock(basePath: string): SessionLockResult {
     return acquireFallbackLock(basePath, lp, lockData);
   }
 
-  const gsdDir = gsdRoot(basePath);
-  const lockTarget = effectiveLockTarget(gsdDir);
+  const gwdDir = gwdRoot(basePath);
+  const lockTarget = effectiveLockTarget(gwdDir);
 
   // #3218: Pre-flight stale lock cleanup — if the .lock/ directory exists but
   // no auto.lock metadata is present (or the PID is dead), remove the lock
@@ -540,8 +540,8 @@ export function releaseSessionLock(basePath: string): void {
 
   // Remove the proper-lockfile directory for the current lock target.
   // In parallel worker mode, this is .gwd/parallel/<MID>.lock/ (#2184).
-  const gsdDir = gsdRoot(basePath);
-  const lockTarget = effectiveLockTarget(gsdDir);
+  const gwdDir = gwdRoot(basePath);
+  const lockTarget = effectiveLockTarget(gwdDir);
   try {
     const lockDir = join(lockTarget + ".lock");
     if (ownsPrimaryLock && existsSync(lockDir)) rmSync(lockDir, { recursive: true, force: true });
@@ -549,7 +549,7 @@ export function releaseSessionLock(basePath: string): void {
     // Non-fatal
   }
   // Also clean the per-milestone parallel directory itself if it exists
-  if (ownsPrimaryLock && lockTarget !== gsdDir) {
+  if (ownsPrimaryLock && lockTarget !== gwdDir) {
     try {
       if (existsSync(lockTarget)) rmSync(lockTarget, { recursive: true, force: true });
     } catch {

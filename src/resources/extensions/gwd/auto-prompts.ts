@@ -14,13 +14,13 @@ import {
   resolveMilestoneFile, resolveSliceFile, resolveSlicePath,
   resolveTasksDir, resolveTaskFiles, resolveTaskFile,
   relMilestoneFile, relSliceFile, relSlicePath, relMilestonePath,
-  resolveGsdRootFile, relGsdRootFile, resolveRuntimeFile,
+  resolveGwdRootFile, relGwdRootFile, resolveRuntimeFile,
 } from "./paths.js";
-import { resolveSkillDiscoveryMode, resolveInlineLevel, loadEffectiveGSDPreferences, resolveAllSkillReferences } from "./preferences.js";
+import { resolveSkillDiscoveryMode, resolveInlineLevel, loadEffectiveGWDPreferences, resolveAllSkillReferences } from "./preferences.js";
 import { isContextModeEnabled } from "./preferences-types.js";
 import { parseRoadmap } from "./parsers-legacy.js";
-import type { GSDState, InlineLevel } from "./types.js";
-import type { GSDPreferences } from "./preferences.js";
+import type { GWDState, InlineLevel } from "./types.js";
+import type { GWDPreferences } from "./preferences.js";
 import { getLoadedSkills, type Skill } from "@gwd/pi-coding-agent";
 import { join, basename } from "node:path";
 import { existsSync } from "node:fs";
@@ -64,7 +64,7 @@ const MAX_PREAMBLE_CHARS = 20_000;
  */
 function resolvePromptBudgets(): ReturnType<typeof computeBudgets> {
   try {
-    const prefs = loadEffectiveGSDPreferences();
+    const prefs = loadEffectiveGWDPreferences();
     const sessionWindow = prefs?.preferences.context_window_override;
     const windowTokens = resolveExecutorContextWindow(undefined, prefs?.preferences, sessionWindow);
     return computeBudgets(windowTokens);
@@ -199,7 +199,7 @@ function renderContextModeForPrompt(
   base: string,
   renderMode: ContextModeRenderMode = "standalone",
 ): string {
-  const effectivePrefs = loadEffectiveGSDPreferences(base)?.preferences;
+  const effectivePrefs = loadEffectiveGWDPreferences(base)?.preferences;
   return composeContextModeInstructions(unitType, {
     enabled: isContextModeEnabled(effectivePrefs),
     renderMode,
@@ -247,7 +247,7 @@ function formatExecutorConstraints(
 ): string {
   let windowTokens: number;
   try {
-    const prefs = loadEffectiveGSDPreferences();
+    const prefs = loadEffectiveGWDPreferences();
     windowTokens = resolveExecutorContextWindow(modelRegistry, prefs?.preferences, sessionContextWindow, sessionProvider);
   } catch (e) {
     logWarning("prompt", `resolveExecutorContextWindow failed: ${(e as Error).message}`);
@@ -287,24 +287,24 @@ export function buildSourceFilePaths(
 ): string {
   const paths: string[] = [];
 
-  const projectPath = resolveGsdRootFile(base, "PROJECT");
+  const projectPath = resolveGwdRootFile(base, "PROJECT");
   if (existsSync(projectPath)) {
-    paths.push(`- **Project**: \`${relGsdRootFile("PROJECT")}\``);
+    paths.push(`- **Project**: \`${relGwdRootFile("PROJECT")}\``);
   }
 
-  const requirementsPath = resolveGsdRootFile(base, "REQUIREMENTS");
+  const requirementsPath = resolveGwdRootFile(base, "REQUIREMENTS");
   if (existsSync(requirementsPath)) {
-    paths.push(`- **Requirements**: \`${relGsdRootFile("REQUIREMENTS")}\``);
+    paths.push(`- **Requirements**: \`${relGwdRootFile("REQUIREMENTS")}\``);
   }
 
-  const decisionsPath = resolveGsdRootFile(base, "DECISIONS");
+  const decisionsPath = resolveGwdRootFile(base, "DECISIONS");
   if (existsSync(decisionsPath)) {
-    paths.push(`- **Decisions**: \`${relGsdRootFile("DECISIONS")}\``);
+    paths.push(`- **Decisions**: \`${relGwdRootFile("DECISIONS")}\``);
   }
 
-  const queuePath = resolveGsdRootFile(base, "QUEUE");
+  const queuePath = resolveGwdRootFile(base, "QUEUE");
   if (existsSync(queuePath)) {
-    paths.push(`- **Queue**: \`${relGsdRootFile("QUEUE")}\``);
+    paths.push(`- **Queue**: \`${relGwdRootFile("QUEUE")}\``);
   }
 
   const contextPath = resolveMilestoneFile(base, mid, "CONTEXT");
@@ -779,20 +779,20 @@ export async function inlineDependencySummaries(
  * Load a well-known .gwd/ root file for optional inlining.
  * Handles the existsSync check internally.
  */
-export async function inlineGsdRootFile(
+export async function inlineGwdRootFile(
   base: string, filename: string, label: string,
 ): Promise<string | null> {
   const key = filename.replace(/\.md$/i, "").toUpperCase() as "PROJECT" | "DECISIONS" | "QUEUE" | "STATE" | "REQUIREMENTS" | "KNOWLEDGE";
-  const absPath = resolveGsdRootFile(base, key);
+  const absPath = resolveGwdRootFile(base, key);
   if (!existsSync(absPath)) return null;
-  return inlineFileOptional(absPath, relGsdRootFile(key), label);
+  return inlineFileOptional(absPath, relGwdRootFile(key), label);
 }
 
 // ─── DB-Aware Inline Helpers ──────────────────────────────────────────────
 
 /**
  * Inline decisions with optional milestone scoping from the DB.
- * Falls back to filesystem via inlineGsdRootFile only when DB is unavailable.
+ * Falls back to filesystem via inlineGwdRootFile only when DB is unavailable.
  *
  * Cascade logic (R005):
  * 1. Query with { milestoneId, scope } if scope provided
@@ -830,12 +830,12 @@ export async function inlineDecisionsFromDb(
     logWarning("prompt", `inlineDecisionsFromDb failed: ${err instanceof Error ? err.message : String(err)}`);
   }
   // DB unavailable — fall back to filesystem
-  return inlineGsdRootFile(base, "decisions.md", "Decisions");
+  return inlineGwdRootFile(base, "decisions.md", "Decisions");
 }
 
 /**
  * Inline requirements with optional milestone and slice scoping from the DB.
- * Falls back to filesystem via inlineGsdRootFile when DB unavailable or empty.
+ * Falls back to filesystem via inlineGwdRootFile when DB unavailable or empty.
  */
 export async function inlineRequirementsFromDb(
   base: string, milestoneId?: string, sliceId?: string, level?: InlineLevel,
@@ -857,12 +857,12 @@ export async function inlineRequirementsFromDb(
   } catch (err) {
     logWarning("prompt", `inlineRequirementsFromDb failed: ${err instanceof Error ? err.message : String(err)}`);
   }
-  return inlineGsdRootFile(base, "requirements.md", "Requirements");
+  return inlineGwdRootFile(base, "requirements.md", "Requirements");
 }
 
 /**
  * Inline project context from the DB.
- * Falls back to filesystem via inlineGsdRootFile when DB unavailable or empty.
+ * Falls back to filesystem via inlineGwdRootFile when DB unavailable or empty.
  */
 export async function inlineProjectFromDb(
   base: string,
@@ -879,7 +879,7 @@ export async function inlineProjectFromDb(
   } catch (err) {
     logWarning("prompt", `inlineProjectFromDb failed: ${err instanceof Error ? err.message : String(err)}`);
   }
-  return inlineGsdRootFile(base, "project.md", "Project");
+  return inlineGwdRootFile(base, "project.md", "Project");
 }
 
 // ─── Stopwords for keyword extraction ─────────────────────────────────────
@@ -964,7 +964,7 @@ export async function inlineKnowledgeScoped(
   base: string,
   keywords: string[],
 ): Promise<string | null> {
-  const knowledgePath = resolveGsdRootFile(base, "KNOWLEDGE");
+  const knowledgePath = resolveGwdRootFile(base, "KNOWLEDGE");
   if (!existsSync(knowledgePath)) return null;
 
   const content = await loadFile(knowledgePath);
@@ -977,7 +977,7 @@ export async function inlineKnowledgeScoped(
   // Return null if no sections matched (empty string from queryKnowledge)
   if (!scoped) return null;
 
-  return `### Project Knowledge (scoped)\nSource: \`${relGsdRootFile("KNOWLEDGE")}\`\n\n${scoped.trim()}`;
+  return `### Project Knowledge (scoped)\nSource: \`${relGwdRootFile("KNOWLEDGE")}\`\n\n${scoped.trim()}`;
 }
 
 /**
@@ -1003,7 +1003,7 @@ export async function inlineKnowledgeBudgeted(
     ? Math.max(0, Math.min(Math.floor(raw), HARD_MAX_CHARS))
     : DEFAULT_MAX_CHARS;
 
-  const knowledgePath = resolveGsdRootFile(base, "KNOWLEDGE");
+  const knowledgePath = resolveGwdRootFile(base, "KNOWLEDGE");
   if (!existsSync(knowledgePath)) return null;
 
   const content = await loadFile(knowledgePath);
@@ -1019,7 +1019,7 @@ export async function inlineKnowledgeBudgeted(
       ? `${trimmed.slice(0, maxChars)}\n\n[...truncated ${trimmed.length - maxChars} chars; rerun with narrower scope if needed]`
       : trimmed;
 
-  return `### Project Knowledge (scoped)\nSource: \`${relGsdRootFile("KNOWLEDGE")}\`\n\n${truncated}`;
+  return `### Project Knowledge (scoped)\nSource: \`${relGwdRootFile("KNOWLEDGE")}\`\n\n${truncated}`;
 }
 
 /**
@@ -1100,7 +1100,7 @@ function skillMatchesContext(skill: Skill, contextTokens: Set<string>): boolean 
 
 function resolvePreferenceSkillNames(refs: string[], base: string): string[] {
   if (refs.length === 0) return [];
-  const prefs: GSDPreferences = { always_use_skills: refs };
+  const prefs: GWDPreferences = { always_use_skills: refs };
   const report = resolveAllSkillReferences(prefs, base);
   return refs.map(ref => {
     const resolution = report.resolutions.get(ref);
@@ -1116,7 +1116,7 @@ function ruleMatchesContext(when: string, contextTokens: Set<string>): boolean {
 }
 
 function resolveSkillRuleMatches(
-  prefs: GSDPreferences | undefined,
+  prefs: GWDPreferences | undefined,
   contextTokens: Set<string>,
   base: string,
 ): { include: string[]; avoid: string[] } {
@@ -1133,7 +1133,7 @@ function resolveSkillRuleMatches(
 }
 
 function resolvePreferredSkillNames(
-  prefs: GSDPreferences | undefined,
+  prefs: GWDPreferences | undefined,
   visibleSkills: Skill[],
   contextTokens: Set<string>,
   base: string,
@@ -1188,7 +1188,7 @@ export function buildSkillActivationBlock(params: {
   taskTitle?: string;
   extraContext?: string[];
   taskPlanContent?: string | null;
-  preferences?: GSDPreferences;
+  preferences?: GWDPreferences;
   /**
    * Unit type dispatching this prompt. When provided, skills are filtered
    * through the per-unit-type manifest (see `skill-manifest.ts`). Unknown
@@ -1196,7 +1196,7 @@ export function buildSkillActivationBlock(params: {
    */
   unitType?: string;
 }): string {
-  const prefs = params.preferences ?? loadEffectiveGSDPreferences(params.base)?.preferences;
+  const prefs = params.preferences ?? loadEffectiveGWDPreferences(params.base)?.preferences;
   const contextTokens = tokenizeSkillContext(
     params.milestoneId,
     params.milestoneTitle,
@@ -1511,7 +1511,7 @@ export async function getDependencyTaskSummaryPaths(
  * - All slices are complete (milestone done — no point reassessing)
  */
 export async function checkNeedsReassessment(
-  base: string, mid: string, state: GSDState,
+  base: string, mid: string, state: GWDState,
 ): Promise<{ sliceId: string } | null> {
   // DB primary path — fall through to file-based when DB has no data for this milestone
   try {
@@ -1567,7 +1567,7 @@ export async function checkNeedsReassessment(
  * - UAT result file already exists (idempotent — already ran)
  */
 export async function checkNeedsRunUat(
-  base: string, mid: string, state: GSDState, prefs: GSDPreferences | undefined,
+  base: string, mid: string, state: GWDState, prefs: GWDPreferences | undefined,
 ): Promise<{ sliceId: string; uatType: UatType } | null> {
   // DB primary path — fall through to file-based when DB has no data for this milestone
   try {
@@ -1866,11 +1866,11 @@ export async function buildPlanMilestonePrompt(mid: string, midTitle: string, ba
     const decisionsInline = await inlineDecisionsFromDb(base, mid, undefined, inlineLevel);
     if (decisionsInline) inlined.push(decisionsInline);
   }
-  const queuePath = resolveGsdRootFile(base, "QUEUE");
+  const queuePath = resolveGwdRootFile(base, "QUEUE");
   if (existsSync(queuePath)) {
     const queueInline = await inlineFileSmart(
       queuePath,
-      relGsdRootFile("QUEUE"),
+      relGwdRootFile("QUEUE"),
       "Project Queue",
       `${mid} ${midTitle}`,
     );
@@ -2297,11 +2297,11 @@ export async function buildExecuteTaskPrompt(
   const carryForwardSection = await buildCarryForwardSection(effectivePriorSummaries, base);
 
   // Inline project knowledge if available (smart-chunked for relevance)
-  const knowledgeAbsPath = resolveGsdRootFile(base, "KNOWLEDGE");
+  const knowledgeAbsPath = resolveGwdRootFile(base, "KNOWLEDGE");
   const knowledgeInlineET = existsSync(knowledgeAbsPath)
     ? await inlineFileSmart(
         knowledgeAbsPath,
-        relGsdRootFile("KNOWLEDGE"),
+        relGwdRootFile("KNOWLEDGE"),
         "Project Knowledge",
         `${tTitle} ${sTitle}`,  // use task + slice title as relevance query
       )
@@ -2327,7 +2327,7 @@ export async function buildExecuteTaskPrompt(
   const overridesSection = formatOverridesSection(activeOverrides);
 
   // Compute verification budget for the executor's context window (issue #707)
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   const contextWindow = resolveExecutorContextWindow(opts.modelRegistry, prefs?.preferences, opts.sessionContextWindow, opts.sessionProvider);
   const budgets = computeBudgets(contextWindow);
   const verificationBudget = `~${Math.round(budgets.verificationBudgetChars / 1000)}K chars`;
@@ -3189,7 +3189,7 @@ export async function buildParallelResearchSlicesPrompt(
     subagentSections.push([
       `### ${slice.id}: ${slice.title}`,
       "",
-      `Use this as the prompt for a \`subagent\` call${modelSuffix} (agent: \`gsd-executor\` or the default agent):`,
+      `Use this as the prompt for a \`subagent\` call${modelSuffix} (agent: \`gwd-executor\` or the default agent):`,
       "",
       "```",
       slicePrompt,
@@ -3340,12 +3340,12 @@ export async function buildRewriteDocsPrompt(
     }
   }
 
-  const decisionsPath = resolveGsdRootFile(base, "DECISIONS");
-  if (existsSync(decisionsPath)) docList.push(`- Decisions: \`${relGsdRootFile("DECISIONS")}\``);
-  const requirementsPath = resolveGsdRootFile(base, "REQUIREMENTS");
-  if (existsSync(requirementsPath)) docList.push(`- Requirements: \`${relGsdRootFile("REQUIREMENTS")}\``);
-  const projectPath = resolveGsdRootFile(base, "PROJECT");
-  if (existsSync(projectPath)) docList.push(`- Project: \`${relGsdRootFile("PROJECT")}\``);
+  const decisionsPath = resolveGwdRootFile(base, "DECISIONS");
+  if (existsSync(decisionsPath)) docList.push(`- Decisions: \`${relGwdRootFile("DECISIONS")}\``);
+  const requirementsPath = resolveGwdRootFile(base, "REQUIREMENTS");
+  if (existsSync(requirementsPath)) docList.push(`- Requirements: \`${relGwdRootFile("REQUIREMENTS")}\``);
+  const projectPath = resolveGwdRootFile(base, "PROJECT");
+  if (existsSync(projectPath)) docList.push(`- Project: \`${relGwdRootFile("PROJECT")}\``);
   const contextPath = resolveMilestoneFile(base, mid, "CONTEXT");
   const contextRel = relMilestoneFile(base, mid, "CONTEXT");
   if (contextPath) docList.push(`- Milestone context (reference only): \`${contextRel}\``);
@@ -3370,6 +3370,6 @@ export async function buildRewriteDocsPrompt(
     sliceTitle: sTitle,
     overrideContent,
     documentList,
-    overridesPath: relGsdRootFile("OVERRIDES"),
+    overridesPath: relGwdRootFile("OVERRIDES"),
   }));
 }

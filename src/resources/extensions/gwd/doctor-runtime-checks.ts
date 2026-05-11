@@ -2,15 +2,15 @@ import { existsSync, lstatSync, readdirSync, readFileSync, realpathSync, rmSync,
 import { basename, dirname, join } from "node:path";
 
 import type { DoctorIssue, DoctorIssueCode } from "./doctor-types.js";
-import { cleanNumberedGsdVariants } from "./repo-identity.js";
-import { milestonesDir, gsdRoot, resolveGsdRootFile } from "./paths.js";
+import { cleanNumberedGwdVariants } from "./repo-identity.js";
+import { milestonesDir, gwdRoot, resolveGwdRootFile } from "./paths.js";
 import { deriveState, isGhostMilestone, isReusableGhostMilestone } from "./state.js";
 import { saveFile } from "./files.js";
 import { nativeIsRepo, nativeForEachRef, nativeUpdateRef } from "./native-git-bridge.js";
 import { readCrashLock, isLockProcessAlive, clearLock } from "./crash-recovery.js";
 import { getActiveAutoWorkers } from "./db/auto-workers.js";
 import { normalizeRealPath } from "./paths.js";
-import { ensureGitignore, isGsdGitignored } from "./gitignore.js";
+import { ensureGitignore, isGwdGitignored } from "./gitignore.js";
 import { readAllSessionStatuses, isSessionStale, removeSessionStatus } from "./session-status-io.js";
 import { recoverFailedMigration } from "./migrate-external.js";
 import { splitCompletedKey } from "./forensics.js";
@@ -19,7 +19,7 @@ import { findMilestoneIds } from "./milestone-ids.js";
 const MAX_UAT_ATTEMPTS = 3;
 
 function hasAssessmentVerdict(basePath: string, mid: string, sid: string): boolean {
-  const assessmentPath = join(gsdRoot(basePath), "milestones", mid, "slices", sid, `${sid}-ASSESSMENT.md`);
+  const assessmentPath = join(gwdRoot(basePath), "milestones", mid, "slices", sid, `${sid}-ASSESSMENT.md`);
   if (!existsSync(assessmentPath)) return false;
   try {
     return /^\s*verdict\s*:\s*(PASS|FAIL|PARTIAL)\b/im.test(readFileSync(assessmentPath, "utf-8"));
@@ -34,7 +34,7 @@ export async function checkRuntimeHealth(
   fixesApplied: string[],
   shouldFix: (code: DoctorIssueCode) => boolean,
 ): Promise<void> {
-  const root = gsdRoot(basePath);
+  const root = gwdRoot(basePath);
 
   // ── Stale crash lock ──────────────────────────────────────────────────
   // Phase C pt 2: the lock state lives in the workers + unit_dispatches
@@ -304,7 +304,7 @@ export async function checkRuntimeHealth(
 
   // ── STATE.md health ───────────────────────────────────────────────────
   try {
-    const stateFilePath = resolveGsdRootFile(basePath, "STATE");
+    const stateFilePath = resolveGwdRootFile(basePath, "STATE");
     const milestonesPath = milestonesDir(basePath);
 
     if (existsSync(milestonesPath)) {
@@ -414,9 +414,9 @@ export async function checkRuntimeHealth(
 
   // ── External state symlink health ──────────────────────────────────────
   try {
-    const localGsd = join(basePath, ".gwd");
-    if (existsSync(localGsd)) {
-      const stat = lstatSync(localGsd);
+    const localGwd = join(basePath, ".gwd");
+    if (existsSync(localGwd)) {
+      const stat = lstatSync(localGwd);
 
       // Check for .gwd.migrating (failed migration)
       const migratingPath = join(basePath, ".gwd.migrating");
@@ -441,7 +441,7 @@ export async function checkRuntimeHealth(
       // Check symlink target exists
       if (stat.isSymbolicLink()) {
         try {
-          realpathSync(localGsd);
+          realpathSync(localGwd);
         } catch {
           issues.push({
             severity: "error",
@@ -458,7 +458,7 @@ export async function checkRuntimeHealth(
         // When `.gwd` is a symlink AND not gitignored, `git add -A -- :!.gwd/...`
         // pathspecs fail with "beyond a symbolic link". Without self-heal this
         // silently drops new user files during auto-commit.
-        if (nativeIsRepo(basePath) && !isGsdGitignored(basePath)) {
+        if (nativeIsRepo(basePath) && !isGwdGitignored(basePath)) {
           issues.push({
             severity: "warning",
             code: "symlinked_gwd_unignored",
@@ -501,7 +501,7 @@ export async function checkRuntimeHealth(
       }
 
       if (shouldFix("numbered_gwd_variant")) {
-        const removed = cleanNumberedGsdVariants(basePath);
+        const removed = cleanNumberedGwdVariants(basePath);
         for (const name of removed) {
           fixesApplied.push(`removed numbered .gwd variant: ${name}`);
         }

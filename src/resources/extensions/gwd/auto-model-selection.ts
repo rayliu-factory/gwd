@@ -7,7 +7,7 @@
 import type { Api, Model } from "@gwd/pi-ai";
 import { getProviderCapabilities } from "@gwd/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
-import type { GSDPreferences } from "./preferences.js";
+import type { GWDPreferences } from "./preferences.js";
 import { resolveModelWithFallbacksForUnit, resolveDynamicRoutingConfig } from "./preferences.js";
 import type { ComplexityTier } from "./complexity-classifier.js";
 import { classifyUnitComplexity, extractTaskMetadata, tierLabel } from "./complexity-classifier.js";
@@ -178,7 +178,7 @@ export async function selectAndApplyModel(
   unitType: string,
   unitId: string,
   basePath: string,
-  prefs: GSDPreferences | undefined,
+  prefs: GWDPreferences | undefined,
   verbose: boolean,
   autoModeStartModel: { provider: string; id: string; flatRateCtx?: FlatRateContext } | null,
   retryContext?: { isRetry: boolean; previousTier?: string },

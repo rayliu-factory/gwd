@@ -109,11 +109,11 @@ function setupTestEnvironment(): void {
   mkdirSync(tempDir, { recursive: true });
   
   // Create .gwd directory structure
-  const gsdDir = join(tempDir, ".gwd");
-  mkdirSync(gsdDir, { recursive: true });
+  const gwdDir = join(tempDir, ".gwd");
+  mkdirSync(gwdDir, { recursive: true });
   
   // Create milestones directory structure
-  const milestonesDir = join(gsdDir, "milestones", "M001", "slices", "S01", "tasks");
+  const milestonesDir = join(gwdDir, "milestones", "M001", "slices", "S01", "tasks");
   mkdirSync(milestonesDir, { recursive: true });
   
   // Change cwd so loadEffectiveGWDPreferences finds our PREFERENCES.md
@@ -123,7 +123,7 @@ function setupTestEnvironment(): void {
   resetAllCaches();
   
   // Initialize DB
-  dbPath = join(gsdDir, "gwd.db");
+  dbPath = join(gwdDir, "gwd.db");
   openDatabase(dbPath);
 }
 

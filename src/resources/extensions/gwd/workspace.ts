@@ -2,21 +2,21 @@
 
 import { join, resolve } from "node:path";
 import { type GwdPathContract, resolveGwdPathContract, normalizeRealPath } from "./paths.js";
-import { isGsdWorktreePath, resolveWorktreeProjectRoot } from "./worktree-root.js";
+import { isGwdWorktreePath, resolveWorktreeProjectRoot } from "./worktree-root.js";
 
-export type GsdWorkspaceMode = "project" | "worktree";
+export type GwdWorkspaceMode = "project" | "worktree";
 
-export interface GsdWorkspace {
+export interface GwdWorkspace {
   readonly projectRoot: string;          // realpath-normalized absolute
   readonly worktreeRoot: string | null;  // realpath-normalized absolute, null when no worktree
-  readonly mode: GsdWorkspaceMode;
+  readonly mode: GwdWorkspaceMode;
   readonly contract: GwdPathContract;    // pre-resolved, frozen
   readonly identityKey: string;          // canonical key (realpath of projectRoot) for dedup/cache
   readonly lockRoot: string;             // where auto.lock and {MID}-META.json live (always projectRoot)
 }
 
 export interface MilestoneScope {
-  readonly workspace: GsdWorkspace;
+  readonly workspace: GwdWorkspace;
   readonly milestoneId: string;
   // path methods:
   readonly contextFile: () => string;
@@ -32,13 +32,13 @@ function tryRealpath(p: string): string {
 }
 
 /**
- * Create an immutable GsdWorkspace handle from a raw base path.
+ * Create an immutable GwdWorkspace handle from a raw base path.
  * Resolves both the project root and (when applicable) the worktree root,
  * normalizes them via realpath, and freezes the result.
  */
-export function createWorkspace(rawBasePath: string): GsdWorkspace {
+export function createWorkspace(rawBasePath: string): GwdWorkspace {
   const resolvedBase = resolve(rawBasePath);
-  const isWorktree = isGsdWorktreePath(resolvedBase);
+  const isWorktree = isGwdWorktreePath(resolvedBase);
 
   const projectRootRaw = resolveWorktreeProjectRoot(resolvedBase);
   const projectRoot = tryRealpath(resolve(projectRootRaw));
@@ -55,9 +55,9 @@ export function createWorkspace(rawBasePath: string): GsdWorkspace {
 
   const identityKey = tryRealpath(projectRoot);
 
-  const mode: GsdWorkspaceMode = isWorktree ? "worktree" : "project";
+  const mode: GwdWorkspaceMode = isWorktree ? "worktree" : "project";
 
-  const workspace: GsdWorkspace = Object.freeze({
+  const workspace: GwdWorkspace = Object.freeze({
     projectRoot,
     worktreeRoot,
     mode,
@@ -76,19 +76,19 @@ export function createWorkspace(rawBasePath: string): GsdWorkspace {
  * All milestone-content paths route to contract.projectGwd (canonical),
  * since that is the authoritative source of truth regardless of worktree mode.
  */
-export function scopeMilestone(workspace: GsdWorkspace, milestoneId: string): MilestoneScope {
+export function scopeMilestone(workspace: GwdWorkspace, milestoneId: string): MilestoneScope {
   const { contract } = workspace;
-  const gsd = contract.projectGwd;
+  const gwd = contract.projectGwd;
 
   const scope: MilestoneScope = Object.freeze({
     workspace,
     milestoneId,
-    contextFile: () => join(gsd, "milestones", milestoneId, `${milestoneId}-CONTEXT.md`),
-    roadmapFile: () => join(gsd, "milestones", milestoneId, `${milestoneId}-ROADMAP.md`),
-    stateFile: () => join(gsd, "STATE.md"),
+    contextFile: () => join(gwd, "milestones", milestoneId, `${milestoneId}-CONTEXT.md`),
+    roadmapFile: () => join(gwd, "milestones", milestoneId, `${milestoneId}-ROADMAP.md`),
+    stateFile: () => join(gwd, "STATE.md"),
     dbPath: () => contract.projectDb,
-    milestoneDir: () => join(gsd, "milestones", milestoneId),
-    metaJson: () => join(gsd, `${milestoneId}-META.json`),
+    milestoneDir: () => join(gwd, "milestones", milestoneId),
+    metaJson: () => join(gwd, `${milestoneId}-META.json`),
   });
 
   return scope;

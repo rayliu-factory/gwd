@@ -1,4 +1,4 @@
-// GSD2 - Slash command tests for interactive TUI settings commands
+// GWD2 - Slash command tests for interactive TUI settings commands
 
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";

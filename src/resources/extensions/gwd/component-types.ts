@@ -18,7 +18,7 @@
 export type ComponentKind = 'skill' | 'agent';
 
 /** API version for component.yaml spec */
-export type ComponentApiVersion = 'gsd/v1';
+export type ComponentApiVersion = 'gwd/v1';
 
 // ============================================================================
 // Component Metadata
@@ -161,7 +161,7 @@ export interface ComponentDependencies {
 
 export interface ComponentCompatibility {
 	/** Minimum GWD version (semver range). */
-	gsd?: string;
+	gwd?: string;
 
 	/** Minimum Node.js version (semver range). */
 	node?: string;

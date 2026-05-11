@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import { existsSync, lstatSync, readFileSync, writeFileSync } from "node:fs";
 import { nativeRmCached, nativeLsFiles } from "./native-git-bridge.js";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { GIT_NO_PROMPT_ENV } from "./git-constants.js";
 
 /**
@@ -106,7 +106,7 @@ const BASELINE_PATTERNS = [
  *   - `.gwd` is not listed in any active ignore rule
  *   - Not a git repo or git is unavailable
  */
-export function isGsdGitignored(basePath: string): boolean {
+export function isGwdGitignored(basePath: string): boolean {
   // Check both `.gwd` and `.gwd/` because `.gwd/` in .gitignore (trailing
   // slash = directory-only pattern) only matches the directory form. Using
   // both paths covers all gitignore pattern variants.
@@ -138,13 +138,13 @@ export function isGsdGitignored(basePath: string): boolean {
  *   - `.gwd/` doesn't exist
  *   - No tracked files found under `.gwd/`
  */
-export function hasGitTrackedGsdFiles(basePath: string): boolean {
-  const localGsd = join(basePath, ".gwd");
+export function hasGitTrackedGwdFiles(basePath: string): boolean {
+  const localGwd = join(basePath, ".gwd");
 
   // If .gwd doesn't exist or is already a symlink, no tracked files concern
-  if (!existsSync(localGsd)) return false;
+  if (!existsSync(localGwd)) return false;
   try {
-    if (lstatSync(localGsd).isSymbolicLink()) return false;
+    if (lstatSync(localGwd).isSymbolicLink()) return false;
   } catch {
     return false;
   }
@@ -205,8 +205,8 @@ export function ensureGitignore(
 
   // Determine which patterns to apply. If .gwd/ has tracked files,
   // exclude the ".gwd" pattern to prevent deleting tracked state.
-  const gsdIsTracked = hasGitTrackedGsdFiles(basePath);
-  const patternsToApply = gsdIsTracked
+  const gwdIsTracked = hasGitTrackedGwdFiles(basePath);
+  const patternsToApply = gwdIsTracked
     ? BASELINE_PATTERNS.filter((p) => p !== ".gwd")
     : BASELINE_PATTERNS;
 
@@ -266,8 +266,8 @@ export function untrackRuntimeFiles(basePath: string): void {
  * creating a duplicate when a lowercase file already exists.
  */
 export function ensurePreferences(basePath: string): boolean {
-  const preferencesPath = join(gsdRoot(basePath), "PREFERENCES.md");
-  const legacyPath = join(gsdRoot(basePath), "preferences.md");
+  const preferencesPath = join(gwdRoot(basePath), "PREFERENCES.md");
+  const legacyPath = join(gwdRoot(basePath), "preferences.md");
 
   if (existsSync(preferencesPath) || existsSync(legacyPath)) {
     return false;

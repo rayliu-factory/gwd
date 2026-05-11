@@ -44,7 +44,7 @@ export async function ensureDbOpen(basePath: string = safeWorkspaceCwd()): Promi
     const db = await import("../gwd-db.js");
     const contract = resolveGwdPathContract(basePath);
     const dbPath = contract.projectDb;
-    const gsdDir = contract.projectGwd;
+    const gwdDir = contract.projectGwd;
     const projectRoot = dirname(dirname(dbPath));
 
     // Open existing DB file (may be at project root for worktrees)
@@ -56,7 +56,7 @@ export async function ensureDbOpen(basePath: string = safeWorkspaceCwd()): Promi
 
     // No DB file — create an empty authoritative DB. Markdown migration is
     // explicit-only; runtime startup must not import projections into state.
-    if (existsSync(gsdDir)) {
+    if (existsSync(gwdDir)) {
       const opened = db.openDatabase(dbPath);
       if (opened) setLogBasePath(projectRoot);
       return opened;

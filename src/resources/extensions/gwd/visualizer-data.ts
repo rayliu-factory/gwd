@@ -7,7 +7,7 @@ import { parseSummary, loadFile } from './files.js';
 import { isDbAvailable, getMilestoneSlices, getSliceTasks } from './gwd-db.js';
 import { parseRoadmap, parsePlan } from './parsers-legacy.js';
 import { findMilestoneIds } from './milestone-ids.js';
-import { resolveMilestoneFile, resolveSliceFile, resolveGsdRootFile, gsdRoot } from './paths.js';
+import { resolveMilestoneFile, resolveSliceFile, resolveGwdRootFile, gwdRoot } from './paths.js';
 import {
   getLedger,
   getProjectTotals,
@@ -20,7 +20,7 @@ import {
   classifyUnitPhase,
 } from './metrics.js';
 import { loadAllCaptures, countPendingCaptures } from './captures.js';
-import { loadEffectiveGSDPreferences } from './preferences.js';
+import { loadEffectiveGWDPreferences } from './preferences.js';
 import { runProviderChecks, type ProviderCheckResult } from './doctor-providers.js';
 import { generateSkillHealthReport } from './skill-health.js';
 import { runEnvironmentChecks, type EnvironmentCheckResult } from './doctor-environment.js';
@@ -547,7 +547,7 @@ async function loadChangelogAndVerifications(basePath: string, milestones: Visua
 // ─── Knowledge Loader ─────────────────────────────────────────────────────────
 
 function loadKnowledge(basePath: string): KnowledgeInfo {
-  const knowledgePath = resolveGsdRootFile(basePath, 'KNOWLEDGE');
+  const knowledgePath = resolveGwdRootFile(basePath, 'KNOWLEDGE');
   if (!existsSync(knowledgePath)) {
     return { rules: [], patterns: [], lessons: [], exists: false };
   }
@@ -591,7 +591,7 @@ function loadKnowledge(basePath: string): KnowledgeInfo {
 // ─── Health Loader ────────────────────────────────────────────────────────────
 
 function loadHealth(units: UnitMetrics[], totals: ProjectTotals | null, basePath: string): HealthInfo {
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   const budgetCeiling = prefs?.preferences?.budget_ceiling;
   const tokenProfile = prefs?.preferences?.token_profile ?? 'standard';
 
@@ -641,7 +641,7 @@ function loadHealth(units: UnitMetrics[], totals: ProjectTotals | null, basePath
   // Doctor run history — persisted across sessions (sync read to keep loadHealth sync)
   let doctorHistory: VisualizerDoctorEntry[] = [];
   try {
-    const historyPath = join(gsdRoot(basePath), "doctor-history.jsonl");
+    const historyPath = join(gwdRoot(basePath), "doctor-history.jsonl");
     if (existsSync(historyPath)) {
       const lines = readFileSync(historyPath, "utf-8").split("\n").filter(l => l.trim());
       doctorHistory = lines.slice(-20).reverse().map(l => JSON.parse(l) as VisualizerDoctorEntry);

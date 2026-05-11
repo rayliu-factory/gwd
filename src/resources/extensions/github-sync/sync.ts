@@ -1,8 +1,8 @@
 /**
  * Core GitHub sync engine.
  *
- * Entry point: `runGitHubSync()` — called from the GSD post-unit pipeline.
- * Routes to per-event sync functions based on the unit type, reads GSD
+ * Entry point: `runGitHubSync()` — called from the GWD post-unit pipeline.
+ * Routes to per-event sync functions based on the unit type, reads GWD
  * files to build GitHub entities, and persists the sync mapping.
  *
  * All errors are caught internally — sync failures never block execution.
@@ -18,7 +18,7 @@ import {
   resolveTaskFile,
 } from "../gwd/paths.js";
 import { debugLog } from "../gwd/debug-logger.js";
-import { loadEffectiveGSDPreferences } from "../gwd/preferences.js";
+import { loadEffectiveGWDPreferences } from "../gwd/preferences.js";
 
 import type { GitHubSyncConfig, SyncMapping } from "./types.js";
 import {
@@ -58,7 +58,7 @@ import {
 // ─── Entry Point ────────────────────────────────────────────────────────────
 
 /**
- * Main sync entry point — called from GSD post-unit pipeline.
+ * Main sync entry point — called from GWD post-unit pipeline.
  * Routes to the appropriate sync function based on unit type.
  */
 export async function runGitHubSync(
@@ -478,7 +478,7 @@ async function syncMilestoneComplete(
 // ─── Bootstrap ──────────────────────────────────────────────────────────────
 
 /**
- * Walk the `.gsd/milestones/` tree and create GitHub entities for any
+ * Walk the `.gwd/milestones/` tree and create GitHub entities for any
  * that are missing from the sync mapping. Safe to run multiple times.
  */
 export async function bootstrapSync(basePath: string): Promise<{
@@ -498,7 +498,7 @@ export async function bootstrapSync(basePath: string): Promise<{
 
   const taskCountBefore = Object.keys(mapping.tasks).length;
   const counts = { milestones: 0, slices: 0, tasks: 0 };
-  const milestonesDir = join(basePath, ".gsd", "milestones");
+  const milestonesDir = join(basePath, ".gwd", "milestones");
   if (!existsSync(milestonesDir)) return counts;
 
   const milestoneIds = readdirSync(milestonesDir, { withFileTypes: true })
@@ -541,7 +541,7 @@ const _cachedConfigByBasePath = new Map<string, GitHubSyncConfig | null>();
 function loadGitHubSyncConfig(basePath: string): GitHubSyncConfig | null {
   if (_cachedConfigByBasePath.has(basePath)) return _cachedConfigByBasePath.get(basePath)!;
   try {
-    const prefs = loadEffectiveGSDPreferences(basePath);
+    const prefs = loadEffectiveGWDPreferences(basePath);
     const github = (prefs?.preferences as Record<string, unknown>)?.github;
     if (!github || typeof github !== "object") {
       _cachedConfigByBasePath.set(basePath, null);

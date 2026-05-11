@@ -13,7 +13,7 @@ import {
   listAllEscalations,
 } from "../../escalation.js";
 import { saveDecisionToDb } from "../../db-writer.js";
-import { loadEffectiveGSDPreferences } from "../../preferences.js";
+import { loadEffectiveGWDPreferences } from "../../preferences.js";
 import { invalidateStateCache } from "../../state.js";
 import { emitUokAuditEvent, buildAuditEnvelope } from "../../uok/audit.js";
 
@@ -62,7 +62,7 @@ export async function handleEscalateCommand(
   }
 
   const basePath = projectRoot();
-  const prefs = loadEffectiveGSDPreferences()?.preferences;
+  const prefs = loadEffectiveGWDPreferences()?.preferences;
   if (prefs?.phases?.mid_execution_escalation !== true) {
     ctx.ui.notify(
       "Escalation is off. Enable with `phases: { mid_execution_escalation: true }` in your PREFERENCES.md.",

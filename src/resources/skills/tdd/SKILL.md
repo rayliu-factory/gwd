@@ -85,7 +85,7 @@ Rules:
 When the behavior the task plan specified is fully under test and the code is clean:
 
 1. Run the full test suite — not just the tests you wrote. Verify no regressions.
-2. Append a one-line summary of what is now pinned to `.gsd/KNOWLEDGE.md` if the behavior is non-obvious or the test surfaced a trap future agents should know about.
+2. Append a one-line summary of what is now pinned to `.gwd/KNOWLEDGE.md` if the behavior is non-obvious or the test surfaced a trap future agents should know about.
 3. Use `gwd_*` tools to mark the task complete — do not edit checkboxes by hand.
 
 </process>

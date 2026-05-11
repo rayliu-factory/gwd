@@ -20,7 +20,7 @@ import {
   aggregateByModel, aggregateCacheHitRate, formatCost, formatTokenCount, formatCostProjection,
   type UnitMetrics,
 } from "./metrics.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import { getActiveWorktreeName } from "./worktree-session-state.js";
 import { getWorkerBatches, hasActiveWorkers, type WorkerEntry } from "../subagent/worker-registry.js";
 import { formatDuration, padRight, joinColumns, centerLine, fitColumns, STATUS_GLYPH, STATUS_COLOR } from "../shared/mod.js";
@@ -49,7 +49,7 @@ export function unitLabel(type: string): string {
 }
 
 
-export class GSDDashboardOverlay {
+export class GWDDashboardOverlay {
   private tui: { requestRender: () => void };
   private theme: Theme;
   private onClose: () => void;
@@ -529,7 +529,7 @@ export class GSDDashboardOverlay {
         const msTotalSlices = mv.slices.length;
         const msDoneSlices = mv.slices.filter(s => s.done).length;
         const remainingCount = msTotalSlices - msDoneSlices;
-        const overlayPrefs = loadEffectiveGSDPreferences()?.preferences;
+        const overlayPrefs = loadEffectiveGWDPreferences()?.preferences;
         const projLines = formatCostProjection(slices, remainingCount, overlayPrefs?.budget_ceiling);
         if (projLines.length > 0) {
           lines.push(blank());

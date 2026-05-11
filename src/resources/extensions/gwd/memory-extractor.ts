@@ -93,7 +93,7 @@ export function buildMemoryLLMCall(ctx: ExtensionContext): LLMCallFn | null {
     // Resolve API key via modelRegistry so OAuth tokens (auth.json) are used.
     // Without this, streamSimpleAnthropic only checks env vars via getEnvApiKey,
     // which returns undefined for OAuth users (Claude Max / Claude Pro).
-    // See: https://github.com/gwd-build/gwd-2/issues/2959
+    // See: https://github.com/rayliu-factory/gwd/issues/2959
     const resolvedKeyPromise = ctx.modelRegistry.getApiKey(selectedModel).catch(() => undefined);
     // Expose on the returned fn so tests can await resolution deterministically
     // (avoids arbitrary setTimeout polling for an internal microtask).

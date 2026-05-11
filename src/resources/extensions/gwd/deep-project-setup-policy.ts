@@ -1,10 +1,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import type { GSDPreferences } from "./preferences.js";
+import type { GWDPreferences } from "./preferences.js";
 import { atomicWriteSync } from "./atomic-write.js";
 import { clearParseCache } from "./files.js";
-import { gsdRoot, clearPathCache } from "./paths.js";
+import { gwdRoot, clearPathCache } from "./paths.js";
 import { validateArtifact } from "./schemas/validate.js";
 import { getProjectResearchStatus } from "./project-research-policy.js";
 // NB: planning-depth.ts also imports from this module. The ESM cycle is safe
@@ -38,7 +38,7 @@ function clearCaches(): void {
 }
 
 function runtimeDir(basePath: string): string {
-  return join(gsdRoot(basePath), "runtime");
+  return join(gwdRoot(basePath), "runtime");
 }
 
 export function researchDecisionPath(basePath: string): string {
@@ -46,7 +46,7 @@ export function researchDecisionPath(basePath: string): string {
 }
 
 export function isWorkflowPrefsCaptured(basePath: string): boolean {
-  const prefsPath = join(gsdRoot(basePath), "PREFERENCES.md");
+  const prefsPath = join(gwdRoot(basePath), "PREFERENCES.md");
   if (!existsSync(prefsPath)) return false;
   let content: string;
   try {
@@ -126,7 +126,7 @@ function downstreamSetupArtifactsValid(root: string, basePath: string): boolean 
 }
 
 export function resolveDeepProjectSetupState(
-  prefs: GSDPreferences | undefined,
+  prefs: GWDPreferences | undefined,
   basePath: string,
 ): DeepProjectSetupState {
   if (prefs?.planning_depth !== "deep") {
@@ -137,7 +137,7 @@ export function resolveDeepProjectSetupState(
     };
   }
 
-  const root = gsdRoot(basePath);
+  const root = gwdRoot(basePath);
   if (!isWorkflowPrefsCaptured(basePath)) {
     // Self-heal: if all downstream setup artifacts already exist and validate,
     // the missing `workflow_prefs_captured: true` flag is drift (manual edit,

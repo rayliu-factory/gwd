@@ -75,7 +75,7 @@ export interface ReconcileResult {
 
 /**
  * Replay a list of WorkflowEvents by dispatching each to the appropriate
- * gsd-db function.  This replaces the old engine.replayAll() pattern with
+ * gwd-db function.  This replaces the old engine.replayAll() pattern with
  * direct DB calls.
  */
 function replayEvents(events: WorkflowEvent[]): void {
@@ -151,7 +151,7 @@ function replayEvents(events: WorkflowEvent[]): void {
         break;
       }
       case "plan_milestone": {
-        // Replay milestone creation — uses INSERT OR IGNORE (gsd-db's insertMilestone is safe)
+        // Replay milestone creation — uses INSERT OR IGNORE (gwd-db's insertMilestone is safe)
         const mId = p["milestoneId"] as string;
         if (mId) {
           insertMilestone({ id: mId, title: (p["title"] as string) ?? mId });
@@ -375,7 +375,7 @@ export function writeConflictsFile(
     `# Merge Conflicts — ${timestamp}`,
     "",
     `Conflicts detected merging worktree \`${worktreePath}\` into \`${basePath}\`.`,
-    `Run \`gsd resolve-conflict\` to resolve each conflict.`,
+    `Run \`gwd resolve-conflict\` to resolve each conflict.`,
     "",
   ];
 
@@ -394,7 +394,7 @@ export function writeConflictsFile(
       lines.push(`  params: ${JSON.stringify(event.params)}`);
     }
     lines.push("");
-    lines.push(`**Resolve with:** \`gsd resolve-conflict --entity ${conflict.entityType}:${conflict.entityId} --pick [main|worktree]\``);
+    lines.push(`**Resolve with:** \`gwd resolve-conflict --entity ${conflict.entityType}:${conflict.entityId} --pick [main|worktree]\``);
     lines.push("");
   });
 

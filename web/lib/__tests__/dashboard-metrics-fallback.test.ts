@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
  *
  * Fallback chain: projectTotals?.X ?? auto?.X ?? 0
  *
- * See: https://github.com/gwd-build/gwd-2/issues/2709
+ * See: https://github.com/rayliu-factory/gwd/issues/2709
  */
 
 interface ProjectTotals {

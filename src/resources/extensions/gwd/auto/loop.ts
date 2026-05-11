@@ -415,7 +415,7 @@ export async function autoLoop(
 
     try {
       // ── Blanket try/catch: one bad iteration must not kill the session
-      const prefs = deps.loadEffectiveGSDPreferences()?.preferences;
+      const prefs = deps.loadEffectiveGWDPreferences()?.preferences;
       const uokFlags = resolveUokFlags(prefs);
 
       // ── Check sidecar queue before deriveState ──

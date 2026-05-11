@@ -2,9 +2,9 @@
 
 import { formatShortcut } from "./files.js";
 
-export type GSDShortcutId = "dashboard" | "notifications" | "parallel";
+export type GWDShortcutId = "dashboard" | "notifications" | "parallel";
 
-type GSDShortcutDef = {
+type GWDShortcutDef = {
   key: "g" | "n" | "p";
   action: string;
   command: string;
@@ -12,7 +12,7 @@ type GSDShortcutDef = {
   hasFallback: boolean;
 };
 
-export const GWD_SHORTCUTS: Record<GSDShortcutId, GSDShortcutDef> = {
+export const GWD_SHORTCUTS: Record<GWDShortcutId, GWDShortcutDef> = {
   dashboard: {
     key: "g",
     action: "Open GWD dashboard",
@@ -37,20 +37,20 @@ function combo(prefix: "Ctrl+Alt+" | "Ctrl+Shift+", key: string): string {
   return `${prefix}${key.toUpperCase()}`;
 }
 
-export function primaryShortcutCombo(id: GSDShortcutId): string {
+export function primaryShortcutCombo(id: GWDShortcutId): string {
   return combo("Ctrl+Alt+", GWD_SHORTCUTS[id].key);
 }
 
-export function fallbackShortcutCombo(id: GSDShortcutId): string {
+export function fallbackShortcutCombo(id: GWDShortcutId): string {
   return combo("Ctrl+Shift+", GWD_SHORTCUTS[id].key);
 }
 
-export function shortcutPair(id: GSDShortcutId, formatter: (combo: string) => string = (combo) => combo): string {
+export function shortcutPair(id: GWDShortcutId, formatter: (combo: string) => string = (combo) => combo): string {
   const primary = formatter(primaryShortcutCombo(id));
   if (!GWD_SHORTCUTS[id].hasFallback) return primary;
   return `${primary} / ${formatter(fallbackShortcutCombo(id))}`;
 }
 
-export function formattedShortcutPair(id: GSDShortcutId): string {
+export function formattedShortcutPair(id: GWDShortcutId): string {
   return shortcutPair(id, formatShortcut);
 }

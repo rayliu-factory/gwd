@@ -25,7 +25,7 @@ import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent
 import { existsSync, readFileSync } from "node:fs";
 import { join, basename, relative } from "node:path";
 
-import { gsdRoot, resolveMilestonePath } from "./paths.js";
+import { gwdRoot, resolveMilestonePath } from "./paths.js";
 import { projectRoot } from "./commands/context.js";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -393,7 +393,7 @@ missing_artifacts:${missingValue}
  * string.
  */
 export function extractProjectName(basePath: string): string {
-  const projectMdPath = join(gsdRoot(basePath), "PROJECT.md");
+  const projectMdPath = join(gwdRoot(basePath), "PROJECT.md");
 
   if (existsSync(projectMdPath)) {
     try {
@@ -431,7 +431,7 @@ export async function handleExtractLearnings(
     return;
   }
 
-  // projectRoot() throws GSDNoProjectError if no project found — intentional, handled by dispatcher
+  // projectRoot() throws GWDNoProjectError if no project found — intentional, handled by dispatcher
   const basePath = projectRoot();
   const milestoneDir = resolveMilestonePath(basePath, milestoneId);
 

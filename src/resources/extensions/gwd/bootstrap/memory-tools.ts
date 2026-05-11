@@ -1,6 +1,6 @@
 // Project/App: GWD-2
 // File Purpose: Registers memory-layer tools.
-// GSD2 — Memory tool registration
+// GWD2 — Memory tool registration
 //
 // Exposes the memory-layer tools (capture_thought, memory_query, gwd_graph)
 // to the LLM over MCP. All three degrade gracefully when the GWD database

@@ -22,7 +22,7 @@ describe("rewrite-docs circuit breaker persistence (#2203)", () => {
 
   beforeEach(() => {
     tempBase = mkdtempSync(join(tmpdir(), "gwd-rewrite-test-"));
-    // Create .gwd/ directory so gsdRoot resolves to it
+    // Create .gwd/ directory so gwdRoot resolves to it
     mkdirSync(join(tempBase, ".gwd", "runtime"), { recursive: true });
   });
 

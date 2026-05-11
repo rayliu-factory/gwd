@@ -14,10 +14,10 @@ function _require(name: string): any {
     return localRequire(name);
   } catch {
     try {
-      const gsdPiRequire = createRequire(
+      const gwdPiRequire = createRequire(
         join(process.cwd(), "node_modules", "gwd-pi", "index.js"),
       );
-      return gsdPiRequire(name);
+      return gwdPiRequire(name);
     } catch {
       return null;
     }

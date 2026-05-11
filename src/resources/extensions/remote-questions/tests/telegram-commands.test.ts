@@ -15,7 +15,7 @@
  * Covers:
  *   - Command detection: messages starting with / are commands
  *   - /help returns a list of all commands
- *   - /status returns current GSD state
+ *   - /status returns current GWD state
  *   - /pause writes a stop directive
  *   - Unknown commands return a helpful error + /help hint
  *   - Non-commands are NOT treated as commands (regression guard)
@@ -32,10 +32,10 @@ import { isCommand, handleCommand, type CommandSender } from "../commands.ts";
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeBasePath(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-cmd-test-"));
-  // Create minimal .gsd directory structure
-  mkdirSync(join(dir, ".gsd", "activity"), { recursive: true });
-  mkdirSync(join(dir, ".gsd", "runtime"), { recursive: true });
+  const dir = mkdtempSync(join(tmpdir(), "gwd-cmd-test-"));
+  // Create minimal .gwd directory structure
+  mkdirSync(join(dir, ".gwd", "activity"), { recursive: true });
+  mkdirSync(join(dir, ".gwd", "runtime"), { recursive: true });
   return dir;
 }
 
@@ -95,7 +95,7 @@ test("/help returns a reply listing all expected commands", async (t) => {
 
 // ─── /status ─────────────────────────────────────────────────────────────────
 
-test("/status returns GSD state text (idle when no active session)", async (t) => {
+test("/status returns GWD state text (idle when no active session)", async (t) => {
   const dir = makeBasePath();
   const { sender, messages } = makeCapturingSender();
   t.after(() => rmSync(dir, { recursive: true, force: true }));
@@ -109,8 +109,8 @@ test("/status returns GSD state text (idle when no active session)", async (t) =
   assert.ok(reply.startsWith("📁"), `Expected project prefix, got: ${reply}`);
   // Should contain some state indication
   assert.ok(
-    reply.toLowerCase().includes("state") || reply.toLowerCase().includes("gsd"),
-    `Expected status reply to mention state or GSD, got: ${reply}`,
+    reply.toLowerCase().includes("state") || reply.toLowerCase().includes("gwd"),
+    `Expected status reply to mention state or GWD, got: ${reply}`,
   );
 });
 
@@ -127,7 +127,7 @@ test("/status reads paused-session.json when present", async (t) => {
     pausedAt: "2026-01-01T12:00:00.000Z",
   };
   writeFileSync(
-    join(dir, ".gsd", "runtime", "paused-session.json"),
+    join(dir, ".gwd", "runtime", "paused-session.json"),
     JSON.stringify(pausedMeta),
     "utf-8",
   );
@@ -162,7 +162,7 @@ test("/pause writes a stop capture to CAPTURES.md", async (t) => {
   );
 
   // CAPTURES.md should exist
-  const capturesPath = join(dir, ".gsd", "CAPTURES.md");
+  const capturesPath = join(dir, ".gwd", "CAPTURES.md");
   assert.ok(existsSync(capturesPath), "Expected CAPTURES.md to be created by /pause");
 
   // The file should contain a stop classification
@@ -246,7 +246,7 @@ test("/log 3 limits output to last 3 entries", async (t) => {
   t.after(() => rmSync(dir, { recursive: true, force: true }));
 
   // Write 5 fake activity log files
-  const activityDir = join(dir, ".gsd", "activity");
+  const activityDir = join(dir, ".gwd", "activity");
   for (let i = 1; i <= 5; i++) {
     writeFileSync(
       join(activityDir, `00${i}-execute-task-M001-S01-T0${i}.jsonl`),

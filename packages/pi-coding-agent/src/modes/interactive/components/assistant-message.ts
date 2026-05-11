@@ -1,4 +1,4 @@
-// GSD2 TUI - Assistant message card renderer for interactive terminal sessions.
+// GWD2 TUI - Assistant message card renderer for interactive terminal sessions.
 import type { AssistantMessage } from "@gwd/pi-ai";
 import { Container, Markdown, type MarkdownTheme, Spacer, Text } from "@gwd/pi-tui";
 import { getMarkdownTheme, theme } from "../theme/theme.js";
@@ -165,7 +165,7 @@ export class AssistantMessageComponent extends Container {
 		const frameWidth = Math.max(20, width);
 		const contentWidth = Math.max(1, frameWidth - 4);
 		const lines = super.render(contentWidth);
-		const headerLabel = this.lastMessage?.model ? `GSD - ${this.lastMessage.model}` : "GSD";
+		const headerLabel = this.lastMessage?.model ? `GWD - ${this.lastMessage.model}` : "GWD";
 		const framed = renderChatFrame(lines, frameWidth, {
 			label: headerLabel,
 			tone: "assistant",

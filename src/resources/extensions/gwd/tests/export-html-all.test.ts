@@ -12,8 +12,8 @@ test("handleExport --html --all generates reports for milestones missing from th
   const { loadReportsIndex } = await import("../reports.js");
 
   const tmp = join(tmpdir(), `gwd-export-all-test-${Date.now()}`);
-  const gsdDir = join(tmp, ".gwd");
-  const reportsDir = join(gsdDir, "reports");
+  const gwdDir = join(tmp, ".gwd");
+  const reportsDir = join(gwdDir, "reports");
   mkdirSync(reportsDir, { recursive: true });
 
   // No existing reports — loadReportsIndex returns null
@@ -25,7 +25,7 @@ test("handleExport --html --all generates reports for milestones missing from th
     version: 1,
     projectName: "test-project",
     projectPath: tmp,
-    gsdVersion: "2.27.0",
+    gwdVersion: "2.27.0",
     entries: [
       {
         filename: "M001-2026-01-01T00-00-00.html",

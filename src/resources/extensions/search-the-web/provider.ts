@@ -12,13 +12,13 @@
 import { AuthStorage } from '@gwd/pi-coding-agent'
 import { join } from 'path'
 import { resolveSearchProviderFromPreferences } from '../gwd/preferences.js'
-import { gsdHome } from "../gwd/gwd-home.js";
+import { gwdHome } from "../gwd/gwd-home.js";
 
 // Compute authFilePath lazily so GWD_HOME overrides (e.g. in tests) take effect.
 // Imported locally instead of from app-paths.ts because extensions are copied to
 // ~/.gwd/agent/extensions/ at runtime where '../../../app-paths.ts' doesn't resolve.
 function authFilePath(): string {
-  return join(gsdHome(), 'agent', 'auth.json');
+  return join(gwdHome(), 'agent', 'auth.json');
 }
 
 export type SearchProvider = 'tavily' | 'brave' | 'ollama'

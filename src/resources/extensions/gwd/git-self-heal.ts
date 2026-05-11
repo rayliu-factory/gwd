@@ -92,7 +92,7 @@ export function abortAndReset(cwd: string): AbortAndResetResult {
     try {
       execFileSync(
         "git",
-        ["stash", "push", "--include-untracked", "-m", `gsd: pre-self-heal-reset ${new Date().toISOString()}`],
+        ["stash", "push", "--include-untracked", "-m", `gwd: pre-self-heal-reset ${new Date().toISOString()}`],
         { cwd, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" },
       );
       cleaned.push("stashed working tree before reset");

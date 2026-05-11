@@ -1,4 +1,4 @@
-// GSD-2 Interactive Tool Execution Rendering Tests
+// GWD-2 Interactive Tool Execution Rendering Tests
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import stripAnsi from "strip-ansi";
@@ -89,7 +89,7 @@ describe("ToolExecutionComponent", () => {
 
 	test("exposes phase metadata for successful low-signal tool rows", () => {
 		const component = new ToolExecutionComponent(
-			"gsd_requirement_update",
+			"gwd_requirement_update",
 			{ id: "R001" },
 			{},
 			{ label: "Update Requirement" } as any,
@@ -249,7 +249,7 @@ describe("ToolExecutionComponent", () => {
 
 	test("passes failed result status to custom result renderers", () => {
 		const rendered = renderTool(
-			"gsd_requirement_save",
+			"gwd_requirement_save",
 			{ id: "R001" },
 			{ content: [{ type: "text", text: "saved" }], isError: true },
 			{
@@ -272,11 +272,11 @@ describe("ToolExecutionComponent", () => {
 		const rendered = renderTool(
 			"Bash",
 			{ command: "pwd" },
-			{ content: [{ type: "text", text: "/tmp/gsd-pr-fix" }], isError: false },
+			{ content: [{ type: "text", text: "/tmp/gwd-pr-fix" }], isError: false },
 		);
 
 		assert.match(rendered, /\$ pwd/);
-		assert.match(rendered, /\/tmp\/gsd-pr-fix/);
+		assert.match(rendered, /\/tmp\/gwd-pr-fix/);
 		assert.doesNotMatch(rendered, /^\{\s*\}$/m);
 	});
 
@@ -320,7 +320,7 @@ describe("ToolExecutionComponent", () => {
 
 	test("frame header prefers toolDefinition.label over raw tool name", () => {
 		const rendered = renderToolCollapsed(
-			"gsd_slice_complete",
+			"gwd_slice_complete",
 			{ sliceId: "S03" },
 			undefined,
 			{ label: "Complete Slice" },
@@ -328,20 +328,20 @@ describe("ToolExecutionComponent", () => {
 
 		assert.match(rendered, /Complete Slice/);
 		assert.doesNotMatch(rendered, /Tool Complete Slice/);
-		assert.doesNotMatch(rendered, /gsd_slice_complete/);
+		assert.doesNotMatch(rendered, /gwd_slice_complete/);
 	});
 
-	test("frame header strips gsd_ prefix and title-cases when no label is registered", () => {
-		const rendered = renderToolCollapsed("gsd_requirement_update", { id: "R005" });
+	test("frame header strips gwd_ prefix and title-cases when no label is registered", () => {
+		const rendered = renderToolCollapsed("gwd_requirement_update", { id: "R005" });
 
 		assert.match(rendered, /Requirement Update/);
 		assert.doesNotMatch(rendered, /Tool Requirement Update/);
-		assert.doesNotMatch(rendered, /gsd_requirement_update/);
+		assert.doesNotMatch(rendered, /gwd_requirement_update/);
 	});
 
 	test("formatCompactArgs truncates long string values inline instead of dumping JSON", () => {
-		const longPath = "/Users/alice/.gsd/projects/4dce7b775013/worktrees/slice-S03-some-long-path-that-exceeds-limit";
-		const rendered = renderToolCollapsed("gsd_slice_complete", {
+		const longPath = "/Users/alice/.gwd/projects/4dce7b775013/worktrees/slice-S03-some-long-path-that-exceeds-limit";
+		const rendered = renderToolCollapsed("gwd_slice_complete", {
 			sliceId: "S03",
 			milestoneId: "M001",
 			worktree: longPath,
@@ -354,8 +354,8 @@ describe("ToolExecutionComponent", () => {
 	});
 
 	test("formatCompactArgs shows full string values when expanded", () => {
-		const longPath = "/Users/alice/.gsd/projects/4dce7b775013/worktrees/slice-S03-some-long-path-that-exceeds-limit";
-		const rendered = renderTool("gsd_slice_complete", {
+		const longPath = "/Users/alice/.gwd/projects/4dce7b775013/worktrees/slice-S03-some-long-path-that-exceeds-limit";
+		const rendered = renderTool("gwd_slice_complete", {
 			sliceId: "S03",
 			worktree: longPath,
 		});

@@ -3,7 +3,7 @@
  * community extension install path (~/.pi/agent/extensions/) instead of the
  * bundled-only path (~/.gwd/agent/extensions/).
  *
- * Bug: https://github.com/gwd-build/gwd-2/issues/3131
+ * Bug: https://github.com/rayliu-factory/gwd/issues/3131
  *
  * ~/.gwd/agent/extensions/ is reserved for bundled extensions synced from
  * the gwd-pi package. Community/user extensions must use ~/.pi/agent/extensions/.

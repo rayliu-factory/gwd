@@ -11,7 +11,7 @@ import { atomicWriteSync } from "./atomic-write.js";
 import { parseUnitId } from "./unit-id.js";
 import { deriveState } from "./state.js";
 import { invalidateAllCaches } from "./cache.js";
-import { gsdRoot, resolveTasksDir, resolveSlicePath, resolveTaskFile, buildTaskFileName, buildSliceFileName } from "./paths.js";
+import { gwdRoot, resolveTasksDir, resolveSlicePath, resolveTaskFile, buildTaskFileName, buildSliceFileName } from "./paths.js";
 import { sendDesktopNotification } from "./notifications.js";
 import { getTask, getSlice, getSliceTasks, updateTaskStatus, updateSliceStatus } from "./gwd-db.js";
 import { renderPlanCheckboxes, renderRoadmapCheckboxes } from "./markdown-renderer.js";
@@ -25,7 +25,7 @@ export async function handleUndo(args: string, ctx: ExtensionCommandContext, _pi
   const force = args.includes("--force");
 
   // Find the last GWD-related commit from git activity logs
-  const activityDir = join(gsdRoot(basePath), "activity");
+  const activityDir = join(gwdRoot(basePath), "activity");
   if (!existsSync(activityDir)) {
     ctx.ui.notify("Nothing to undo — no activity logs found.", "info");
     return;

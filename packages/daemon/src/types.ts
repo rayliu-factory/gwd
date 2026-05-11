@@ -122,7 +122,7 @@ export interface CostAccumulator {
 // ---------------------------------------------------------------------------
 
 /** Marker types detectable by the project scanner */
-export type ProjectMarker = 'git' | 'node' | 'gsd' | 'rust' | 'python' | 'go';
+export type ProjectMarker = 'git' | 'node' | 'gwd' | 'rust' | 'python' | 'go';
 
 export interface ProjectInfo {
   /** Directory name (basename) */

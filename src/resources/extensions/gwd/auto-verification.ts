@@ -19,7 +19,7 @@ import { resolveSliceFile, resolveSlicePath, resolveMilestoneFile } from "./path
 import { parseUnitId } from "./unit-id.js";
 import { isDbAvailable, getTask, getSliceTasks, getMilestoneSlices } from "./gwd-db.js";
 import type { TaskRow } from "./db-task-slice-rows.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import { extractVerdict } from "./verdict-parser.js";
 import { isClosedStatus } from "./status-guards.js";
 import { loadFile } from "./files.js";
@@ -73,7 +73,7 @@ async function runValidateMilestonePostCheck(
   pauseAuto: (ctx?: ExtensionContext, pi?: ExtensionAPI) => Promise<void>,
 ): Promise<VerificationResult> {
   const { s, ctx, pi } = vctx;
-  const prefs = loadEffectiveGSDPreferences()?.preferences;
+  const prefs = loadEffectiveGWDPreferences()?.preferences;
   const uokFlags = resolveUokFlags(prefs);
   const persistMilestoneValidationGate = async (
     outcome: "pass" | "fail" | "retry" | "manual-attention",
@@ -218,7 +218,7 @@ export async function runPostUnitVerification(
   }
 
   try {
-    const effectivePrefs = loadEffectiveGSDPreferences();
+    const effectivePrefs = loadEffectiveGWDPreferences();
     const prefs = effectivePrefs?.preferences;
     const uokFlags = resolveUokFlags(prefs);
 
@@ -409,7 +409,7 @@ export async function runPostUnitVerification(
             // Store checks for evidence JSON
             postExecChecks = postExecResult.checks;
 
-            // Log summary to stderr with gsd-post-exec: prefix
+            // Log summary to stderr with gwd-post-exec: prefix
             const emoji =
               postExecResult.status === "pass"
                 ? "✅"
@@ -417,7 +417,7 @@ export async function runPostUnitVerification(
                   ? "⚠️"
                   : "❌";
             process.stderr.write(
-              `gsd-post-exec: ${emoji} Post-execution checks ${postExecResult.status} for ${mid}/${sid}/${tid} (${postExecResult.durationMs}ms)\n`
+              `gwd-post-exec: ${emoji} Post-execution checks ${postExecResult.status} for ${mid}/${sid}/${tid} (${postExecResult.durationMs}ms)\n`
             );
 
             // Log individual check results
@@ -428,7 +428,7 @@ export async function runPostUnitVerification(
                   ? "✗"
                   : "⚠";
               process.stderr.write(
-                `gsd-post-exec:   ${checkEmoji} [${check.category}] ${check.target}: ${check.message}\n`
+                `gwd-post-exec:   ${checkEmoji} [${check.category}] ${check.target}: ${check.message}\n`
               );
             }
 
@@ -492,7 +492,7 @@ export async function runPostUnitVerification(
           }
         } catch (postExecErr) {
           // Post-execution check errors are non-fatal — log and continue
-          logWarning("engine", `gsd-post-exec: error — ${(postExecErr as Error).message}`);
+          logWarning("engine", `gwd-post-exec: error — ${(postExecErr as Error).message}`);
         }
       }
     }

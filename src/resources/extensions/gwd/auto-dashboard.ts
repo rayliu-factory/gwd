@@ -15,7 +15,7 @@ import type {
   ReadonlyFooterDataProvider,
   Theme,
 } from "@gwd/pi-coding-agent";
-import type { GSDState } from "./types.js";
+import type { GWDState } from "./types.js";
 import { getCurrentBranch } from "./worktree.js";
 import { getActiveHook } from "./post-unit-hooks.js";
 import { getLedger, getProjectTotals } from "./metrics.js";
@@ -34,8 +34,8 @@ import { GLYPH, INDENT } from "../shared/mod.js";
 import { computeProgressScore } from "./progress-score.js";
 import { getActiveWorktreeName } from "./worktree-command.js";
 import {
-  getGlobalGSDPreferencesPath,
-  getProjectGSDPreferencesPath,
+  getGlobalGWDPreferencesPath,
+  getProjectGWDPreferencesPath,
   parsePreferencesMarkdown,
 } from "./preferences.js";
 import { resolveServiceTierIcon, getEffectiveServiceTier } from "./service-tier.js";
@@ -160,7 +160,7 @@ export function unitPhaseLabel(unitType: string): string {
   }
 }
 
-function peekNext(unitType: string, state: GSDState): string {
+function peekNext(unitType: string, state: GWDState): string {
   // Show active hook info in progress display
   const activeHookState = getActiveHook();
   if (activeHookState) {
@@ -190,7 +190,7 @@ function peekNext(unitType: string, state: GSDState): string {
 /**
  * Describe what the next unit will be, based on current state.
  */
-export function describeNextUnit(state: GSDState): { label: string; description: string } {
+export function describeNextUnit(state: GWDState): { label: string; description: string } {
   const sid = state.activeSlice?.id;
   const sTitle = state.activeSlice?.title;
   const tid = state.activeTask?.id;
@@ -512,8 +512,8 @@ function readWidgetModeFromFile(path: string): WidgetMode | undefined {
 }
 
 function resolveWidgetModePreferencePath(
-  projectPath = getProjectGSDPreferencesPath(),
-  globalPath = getGlobalGSDPreferencesPath(),
+  projectPath = getProjectGWDPreferencesPath(),
+  globalPath = getGlobalGWDPreferencesPath(),
 ): string {
   if (readWidgetModeFromFile(projectPath)) {
     return projectPath;
@@ -525,7 +525,7 @@ function resolveWidgetModePreferencePath(
 
   if (safeReadTextFile(projectPath) !== null) return projectPath;
   if (safeReadTextFile(globalPath) !== null) return globalPath;
-  return getGlobalGSDPreferencesPath();
+  return getGlobalGWDPreferencesPath();
 }
 
 /** Load widget mode from preferences (once). */
@@ -533,8 +533,8 @@ function ensureWidgetModeLoaded(projectPath?: string, globalPath?: string): void
   if (widgetModeInitialized) return;
   widgetModeInitialized = true;
   try {
-    const resolvedProjectPath = projectPath ?? getProjectGSDPreferencesPath();
-    const resolvedGlobalPath = globalPath ?? getGlobalGSDPreferencesPath();
+    const resolvedProjectPath = projectPath ?? getProjectGWDPreferencesPath();
+    const resolvedGlobalPath = globalPath ?? getGlobalGWDPreferencesPath();
     const saved = readWidgetModeFromFile(resolvedProjectPath) ?? readWidgetModeFromFile(resolvedGlobalPath);
     if (saved && WIDGET_MODES.includes(saved as WidgetMode)) {
       widgetMode = saved as WidgetMode;
@@ -542,7 +542,7 @@ function ensureWidgetModeLoaded(projectPath?: string, globalPath?: string): void
     widgetModePreferencePath = resolveWidgetModePreferencePath(resolvedProjectPath, resolvedGlobalPath);
   } catch (err) { /* non-fatal — use default */
     logWarning("dashboard", `operation failed: ${getErrorMessage(err)}`);
-    widgetModePreferencePath = getGlobalGSDPreferencesPath();
+    widgetModePreferencePath = getGlobalGWDPreferencesPath();
   }
 }
 
@@ -622,7 +622,7 @@ export function updateProgressWidget(
   ctx: ExtensionContext,
   unitType: string,
   unitId: string,
-  state: GSDState,
+  state: GWDState,
   accessors: WidgetStateAccessors,
   tierBadge?: string,
 ): void {
@@ -640,7 +640,7 @@ export function updateProgressWidget(
   }
   // Clear wizard step badge — auto-mode owns the UI from this point
   if (typeof ctx.ui?.setStatus === "function") {
-    ctx.ui.setStatus("gsd-step", undefined);
+    ctx.ui.setStatus("gwd-step", undefined);
   }
 
   const verb = unitVerb(unitType);
@@ -691,7 +691,7 @@ export function updateProgressWidget(
   // Cache the effective service tier at widget creation time (reads preferences)
   const effectiveServiceTier = getEffectiveServiceTier();
 
-  ctx.ui.setWidget("gsd-progress", (tui, theme) => {
+  ctx.ui.setWidget("gwd-progress", (tui, theme) => {
     let pulseBright = true;
     let cachedLines: string[] | undefined;
     let cachedWidth: number | undefined;
@@ -1121,10 +1121,10 @@ export function setCompletionProgressWidget(
     }));
   }
   if (typeof ctx.ui?.setStatus === "function") {
-    ctx.ui.setStatus("gsd-step", undefined);
+    ctx.ui.setStatus("gwd-step", undefined);
   }
 
-  ctx.ui.setWidget("gsd-progress", (_tui, theme) => ({
+  ctx.ui.setWidget("gwd-progress", (_tui, theme) => ({
     render(width: number): string[] {
       const ui = makeUI(theme, width);
       const pad = INDENT.base;

@@ -44,8 +44,8 @@ export function handleRecoverableExtensionProcessError(err: Error): boolean {
 }
 
 export function installEpipeGuard(): void {
-  if (!process.listeners("uncaughtException").some((listener) => listener.name === "_gsdEpipeGuard")) {
-    const _gsdEpipeGuard = (err: Error): void => {
+  if (!process.listeners("uncaughtException").some((listener) => listener.name === "_gwdEpipeGuard")) {
+    const _gwdEpipeGuard = (err: Error): void => {
       if (handleRecoverableExtensionProcessError(err)) return;
       // Write crash log and exit cleanly for unrecoverable errors.
       // Logging and continuing was the original double-fault fix (#3163), but
@@ -53,17 +53,17 @@ export function installEpipeGuard(): void {
       writeCrashLog(err, "uncaughtException");
       process.exit(1);
     };
-    process.on("uncaughtException", _gsdEpipeGuard);
+    process.on("uncaughtException", _gwdEpipeGuard);
   }
 
-  if (!process.listeners("unhandledRejection").some((listener) => listener.name === "_gsdRejectionGuard")) {
-    const _gsdRejectionGuard = (reason: unknown, _promise: Promise<unknown>): void => {
+  if (!process.listeners("unhandledRejection").some((listener) => listener.name === "_gwdRejectionGuard")) {
+    const _gwdRejectionGuard = (reason: unknown, _promise: Promise<unknown>): void => {
       const err = reason instanceof Error ? reason : new Error(String(reason));
       if (handleRecoverableExtensionProcessError(err)) return;
       writeCrashLog(err, "unhandledRejection");
       process.exit(1);
     };
-    process.on("unhandledRejection", _gsdRejectionGuard);
+    process.on("unhandledRejection", _gwdRejectionGuard);
   }
 }
 
@@ -109,7 +109,7 @@ export function registerGwdExtension(pi: ExtensionAPI): void {
     ["memory-tools", () => registerMemoryTools(pi)],
     ["exec-tools", () => registerExecTools(pi)],
     ["shortcuts", () => registerShortcuts(pi)],
-    // cmux is a library (no pi), so gsd sets up the event listeners on its
+    // cmux is a library (no pi), so gwd sets up the event listeners on its
     // behalf using the shared event channel contract. Registration is
     // synchronous — see the import comment above for the rationale.
     ["cmux-events", () => initCmuxEventListeners(pi.events)],

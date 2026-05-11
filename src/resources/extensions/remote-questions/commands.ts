@@ -175,7 +175,7 @@ async function buildStatus(basePath: string): Promise<string> {
 async function buildProgress(basePath: string): Promise<string> {
   const milestones = await readMilestonesFromDb();
   if (milestones.length === 0) {
-    return "No milestones found in .gsd database.\n\nRun /gwd to start GWD first.";
+    return "No milestones found in .gwd database.\n\nRun /gwd to start GWD first.";
   }
 
   const done = milestones.filter(m => m.status === "complete");
@@ -338,7 +338,7 @@ function buildLog(basePath: string, args: string): string {
 
 // ─── Helpers: lazy dynamic imports ────────────────────────────────────────────
 
-// Dynamic import() is used for optional runtime modules (auto, metrics, gsd-db)
+// Dynamic import() is used for optional runtime modules (auto, metrics, gwd-db)
 // that have side effects and may not be present in every execution context.
 // The ESM module hook (dist-redirect.mjs) rewrites .js → .ts for test runs.
 
@@ -413,15 +413,15 @@ interface PausedSessionMeta {
   pausedAt?: string;
 }
 
-function gsdRootPath(basePath: string): string {
-  // Inline resolution: .gsd lives directly under basePath.
+function gwdRootPath(basePath: string): string {
+  // Inline resolution: .gwd lives directly under basePath.
   // Avoids importing paths.ts to keep this module's dependency surface small.
-  return join(basePath, ".gsd");
+  return join(basePath, ".gwd");
 }
 
 function readPausedSession(basePath: string): PausedSessionMeta | null {
   try {
-    const p = join(gsdRootPath(basePath), "runtime", "paused-session.json");
+    const p = join(gwdRootPath(basePath), "runtime", "paused-session.json");
     if (!existsSync(p)) return null;
     return JSON.parse(readFileSync(p, "utf-8")) as PausedSessionMeta;
   } catch {
@@ -431,7 +431,7 @@ function readPausedSession(basePath: string): PausedSessionMeta | null {
 
 function readMetricsFromDisk(basePath: string): ProjectTotalsSnapshot | null {
   try {
-    const p = join(gsdRootPath(basePath), "metrics.json");
+    const p = join(gwdRootPath(basePath), "metrics.json");
     if (!existsSync(p)) return null;
     const raw = JSON.parse(readFileSync(p, "utf-8")) as {
       units?: Array<{ cost?: number; tokens?: TokenCountsSnapshot }>;
@@ -462,7 +462,7 @@ function readMetricsFromDisk(basePath: string): ProjectTotalsSnapshot | null {
 }
 
 function resolveActivityDir(basePath: string): string {
-  return join(gsdRootPath(basePath), "activity");
+  return join(gwdRootPath(basePath), "activity");
 }
 
 // ─── Formatting helpers ───────────────────────────────────────────────────────

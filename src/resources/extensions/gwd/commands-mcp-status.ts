@@ -16,7 +16,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 import { ensureProjectWorkflowMcpConfig } from "./mcp-project-config.js";
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -70,7 +70,7 @@ function readMcpConfigs(): McpServerRawConfig[] {
   const configPaths = [
     join(process.cwd(), ".mcp.json"),
     join(process.cwd(), ".gwd", "mcp.json"),
-    join(gsdHome(), "mcp.json"),
+    join(gwdHome(), "mcp.json"),
   ];
 
   for (const configPath of configPaths) {

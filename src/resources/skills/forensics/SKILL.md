@@ -1,6 +1,6 @@
 ---
 name: forensics
-description: Post-mortem a failed GWD auto-mode run. Traces from symptom to root cause using `.gsd/activity/*.jsonl`, `.gsd/journal/YYYY-MM-DD.jsonl`, `.gsd/metrics.json`, and `.gsd/auto.lock`. Produces a filing-ready bug report with file:line references and a concrete fix suggestion. Use when asked to "forensics", "post-mortem", "why did auto-mode fail", "trace the stuck loop", "debug the crash", after `/gwd forensics` is invoked, or when a session ended in an unexpected terminal state. Reads existing artifacts — does NOT re-run anything.
+description: Post-mortem a failed GWD auto-mode run. Traces from symptom to root cause using `.gwd/activity/*.jsonl`, `.gwd/journal/YYYY-MM-DD.jsonl`, `.gwd/metrics.json`, and `.gwd/auto.lock`. Produces a filing-ready bug report with file:line references and a concrete fix suggestion. Use when asked to "forensics", "post-mortem", "why did auto-mode fail", "trace the stuck loop", "debug the crash", after `/gwd forensics` is invoked, or when a session ended in an unexpected terminal state. Reads existing artifacts — does NOT re-run anything.
 ---
 
 <objective>
@@ -8,7 +8,7 @@ Turn scattered GWD runtime artifacts into one coherent cause chain. The delivera
 </objective>
 
 <context>
-GWD persists a lot of runtime evidence under `.gsd/`:
+GWD persists a lot of runtime evidence under `.gwd/`:
 
 - `activity/{seq}-{unitType}-{unitId}.jsonl` — full tool-call and message stream per unit
 - `journal/YYYY-MM-DD.jsonl` — iteration-level events (dispatch-match, stuck-detected, guard-block, unit-start/end, terminal)
@@ -32,7 +32,7 @@ Invocation points:
 <core_principle>
 **READ-ONLY.** Forensics touches no live state. Non-mutating inspection commands (e.g., `ps`, `top -b`, `cat /proc/*`) are allowed for checking process status or reading system files. Strictly prohibited: `gwd_*` writes, commands that modify state, executing binaries that produce side effects, writing to files (outside the final report), or re-running the failed unit. The evidence must stay pristine for future investigations.
 
-**SYMPTOM → ROOT CAUSE, WITH CITATIONS.** Every claim in the report is backed by an artifact path and either a line number or a JSONL field. "The loop got stuck because of a race" is not useful; "`.gsd/journal/2026-04-19.jsonl:142` shows `stuck-detected` with flowId X, caused by `dispatch-guard.ts:87` returning the same unit after `unit-end`" is.
+**SYMPTOM → ROOT CAUSE, WITH CITATIONS.** Every claim in the report is backed by an artifact path and either a line number or a JSONL field. "The loop got stuck because of a race" is not useful; "`.gwd/journal/2026-04-19.jsonl:142` shows `stuck-detected` with flowId X, caused by `dispatch-guard.ts:87` returning the same unit after `unit-end`" is.
 
 **PRE-PARSED LEADS, NOT CONCLUSIONS.** If `/gwd forensics` has surfaced anomalies, treat them as hypotheses to verify, not answers.
 </core_principle>
@@ -41,13 +41,13 @@ Invocation points:
 
 ## Step 1: Locate the evidence
 
-Read what's in `.gsd/`:
+Read what's in `.gwd/`:
 
 1. `auto.lock` — is it stale? Check PID against `ps` (read-only inspection, allowed). Stale = crash.
-2. Most recent `.gsd/activity/*.jsonl` — sort by mtime, newest first. That's the last unit that ran.
-3. Today's `.gsd/journal/YYYY-MM-DD.jsonl` — the iteration-level view.
-4. `.gsd/metrics.json` — does any `type/id` appear more than once? (stuck loop signal)
-5. `.gsd/runtime/paused-session.json` — if present, what was the pause reason?
+2. Most recent `.gwd/activity/*.jsonl` — sort by mtime, newest first. That's the last unit that ran.
+3. Today's `.gwd/journal/YYYY-MM-DD.jsonl` — the iteration-level view.
+4. `.gwd/metrics.json` — does any `type/id` appear more than once? (stuck loop signal)
+5. `.gwd/runtime/paused-session.json` — if present, what was the pause reason?
 
 ## Step 2: Reconstruct the failure from the activity log
 
@@ -102,10 +102,10 @@ Format the output as a GitHub-issue-ready report:
 
 ## Evidence Trail
 
-1. `.gsd/auto.lock` — <state: stale / fresh>
-2. `.gsd/activity/042-slice-S02.jsonl:128` — <isError: true from `gwd_task_complete`>
-3. `.gsd/journal/2026-04-19.jsonl:87` — <stuck-detected flowId 7a3c…>
-4. `.gsd/metrics.json` — <unit type/id "slice/S02" appears 3 times>
+1. `.gwd/auto.lock` — <state: stale / fresh>
+2. `.gwd/activity/042-slice-S02.jsonl:128` — <isError: true from `gwd_task_complete`>
+3. `.gwd/journal/2026-04-19.jsonl:87` — <stuck-detected flowId 7a3c…>
+4. `.gwd/metrics.json` — <unit type/id "slice/S02" appears 3 times>
 
 ## Root Cause
 
@@ -126,7 +126,7 @@ Format the output as a GitHub-issue-ready report:
 <high / medium / low> — <what would change this confidence>
 ```
 
-Offer to file this as a GitHub issue via `mcp__github__issue_write` — explicit confirmation required per the outward-action rule. Also save a copy to `.gsd/forensics/<slug>.md` for future reference.
+Offer to file this as a GitHub issue via `mcp__github__issue_write` — explicit confirmation required per the outward-action rule. Also save a copy to `.gwd/forensics/<slug>.md` for future reference.
 
 </process>
 
@@ -148,6 +148,6 @@ Offer to file this as a GitHub issue via `mcp__github__issue_write` — explicit
 - [ ] The root cause names a specific file, function, or state transition.
 - [ ] The proposed fix is minimal and falsifiable.
 - [ ] Confidence is stated honestly.
-- [ ] Report is saved under `.gsd/forensics/` even if not filed as an issue.
+- [ ] Report is saved under `.gwd/forensics/` even if not filed as an issue.
 
 </success_criteria>

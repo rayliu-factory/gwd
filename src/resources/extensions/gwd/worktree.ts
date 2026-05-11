@@ -16,7 +16,7 @@ import { existsSync, readFileSync, utimesSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 import { GitServiceImpl, writeIntegrationBranch, type TaskCommitContext } from "./git-service.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import {
   findWorktreeSegment,
   resolveWorktreeProjectRoot,
@@ -38,7 +38,7 @@ let cachedBasePath: string | null = null;
  */
 function getService(basePath: string): GitServiceImpl {
   if (cachedService === null || cachedBasePath !== basePath) {
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     const gitPrefs = loaded?.preferences?.git ?? {};
     cachedService = new GitServiceImpl(basePath, gitPrefs);
     cachedBasePath = basePath;
@@ -120,8 +120,8 @@ export function resolveProjectRoot(basePath: string): string {
 /**
  * Get the slice branch name, namespaced by worktree when inside one.
  *
- * In the main tree:     gsd/<milestoneId>/<sliceId>
- * In a worktree:        gsd/<worktreeName>/<milestoneId>/<sliceId>
+ * In the main tree:     gwd/<milestoneId>/<sliceId>
+ * In a worktree:        gwd/<worktreeName>/<milestoneId>/<sliceId>
  *
  * This prevents branch conflicts when multiple worktrees work on the
  * same milestone/slice IDs — git doesn't allow a branch to be checked
@@ -129,9 +129,9 @@ export function resolveProjectRoot(basePath: string): string {
  */
 export function getSliceBranchName(milestoneId: string, sliceId: string, worktreeName?: string | null): string {
   if (worktreeName) {
-    return `gsd/${worktreeName}/${milestoneId}/${sliceId}`;
+    return `gwd/${worktreeName}/${milestoneId}/${sliceId}`;
   }
-  return `gsd/${milestoneId}/${sliceId}`;
+  return `gwd/${milestoneId}/${sliceId}`;
 }
 
 /** Re-export for backward compatibility — canonical definition in branch-patterns.ts */
@@ -140,7 +140,7 @@ import { SLICE_BRANCH_RE } from "./branch-patterns.js";
 
 /**
  * Parse a slice branch name into its components.
- * Handles both `gsd/M001/S01` and `gsd/myworktree/M001/S01`.
+ * Handles both `gwd/M001/S01` and `gwd/myworktree/M001/S01`.
  */
 export function parseSliceBranch(branchName: string): {
   worktreeName: string | null;

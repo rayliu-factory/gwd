@@ -24,7 +24,7 @@
 
 ```bash
 # Test in isolation
-gsd -e ./path/to/extension.ts
+gwd -e ./path/to/extension.ts
 
 # Check GWD startup output for errors
 # Extension errors are logged but don't crash GWD
@@ -35,8 +35,8 @@ gsd -e ./path/to/extension.ts
 Community extensions must be in auto-discovery paths:
 - `~/.pi/agent/extensions/*.ts`
 - `~/.pi/agent/extensions/*/index.ts`
-- `.gsd/extensions/*.ts`
-- `.gsd/extensions/*/index.ts`
+- `.gwd/extensions/*.ts`
+- `.gwd/extensions/*/index.ts`
 
 Note: `~/.gwd/agent/extensions/` is reserved for bundled extensions synced from the gwd-pi package.
 

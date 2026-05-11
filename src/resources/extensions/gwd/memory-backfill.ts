@@ -1,4 +1,4 @@
-// GSD2 — Decisions -> memories backfill (ADR-013 step 5)
+// GWD2 — Decisions -> memories backfill (ADR-013 step 5)
 //
 // Idempotent one-shot migration that copies every active decisions row into
 // the memories table with category="architecture" and a structured_fields

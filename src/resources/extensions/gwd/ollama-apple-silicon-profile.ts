@@ -1,6 +1,6 @@
 import type { DynamicRoutingConfig, RoutingDecision } from "./model-router.js";
-import type { GSDPreferences } from "./preferences.js";
-import { loadGlobalGSDPreferences, loadProjectGSDPreferences } from "./preferences.js";
+import type { GWDPreferences } from "./preferences.js";
+import { loadGlobalGWDPreferences, loadProjectGWDPreferences } from "./preferences.js";
 import type { PreferredModelConfig } from "./auto-model-selection.js";
 
 export const OLLAMA_PROVIDER = "ollama";
@@ -24,7 +24,7 @@ export interface OllamaAppleSiliconPreset {
 
 export interface OllamaAppleSiliconPresetInput {
   isAutoMode: boolean;
-  prefs?: GSDPreferences;
+  prefs?: GWDPreferences;
   basePath?: string;
   availableModels: ModelLike[];
   autoModeStartModel: ModelLike | null;
@@ -52,7 +52,7 @@ function isOllamaAppleSiliconQwen(model: ModelLike): boolean {
 
 export function applyOllamaAppleSiliconContextOverride<T extends OllamaAppleSiliconModelLike>(
   model: T,
-  prefs: GSDPreferences | undefined,
+  prefs: GWDPreferences | undefined,
 ): T {
   const contextWindow = prefs?.context_window_override;
   if (contextWindow === undefined || contextWindow <= 0 || !Number.isFinite(contextWindow)) {
@@ -70,14 +70,14 @@ export function applyOllamaAppleSiliconContextOverride<T extends OllamaAppleSili
   };
 }
 
-function hasRoutingOverride(prefs: GSDPreferences | undefined): boolean {
+function hasRoutingOverride(prefs: GWDPreferences | undefined): boolean {
   return prefs?.models !== undefined || prefs?.dynamic_routing !== undefined;
 }
 
 function hasExplicitModelRouting(input: OllamaAppleSiliconPresetInput): boolean {
   if (input.basePath !== undefined) {
-    const globalPrefs = loadGlobalGSDPreferences()?.preferences;
-    const projectPrefs = loadProjectGSDPreferences(input.basePath)?.preferences;
+    const globalPrefs = loadGlobalGWDPreferences()?.preferences;
+    const projectPrefs = loadProjectGWDPreferences(input.basePath)?.preferences;
     if (hasRoutingOverride(globalPrefs) || hasRoutingOverride(projectPrefs)) {
       return true;
     }

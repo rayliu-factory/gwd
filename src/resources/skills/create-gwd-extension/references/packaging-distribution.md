@@ -7,7 +7,7 @@ Add a `pi` manifest to `package.json`:
 
 ```json
 {
-  "name": "my-gsd-package",
+  "name": "my-gwd-package",
   "keywords": ["pi-package"],
   "pi": {
     "extensions": ["./extensions"],
@@ -21,12 +21,12 @@ Add a `pi` manifest to `package.json`:
 
 <installing>
 ```bash
-gsd install npm:@foo/bar@1.0.0
-gsd install git:github.com/user/repo@v1
-gsd install ./local/path
+gwd install npm:@foo/bar@1.0.0
+gwd install git:github.com/user/repo@v1
+gwd install ./local/path
 
 # Try without installing:
-gsd -e npm:@foo/bar
+gwd -e npm:@foo/bar
 ```
 </installing>
 

@@ -1,4 +1,4 @@
-// GSD-2 Interactive Tool Execution Rendering
+// GWD-2 Interactive Tool Execution Rendering
 import {
 	Box,
 	Container,
@@ -70,12 +70,12 @@ function parseMcpToolName(name: string): { server: string; tool: string } | null
 
 /**
  * Prettify a raw tool name for display. Prefers the registered `label`
- * ("Complete Slice") when available; otherwise strips a leading `gsd_`
+ * ("Complete Slice") when available; otherwise strips a leading `gwd_`
  * prefix and converts snake_case to Title Case.
  */
 function prettifyToolName(name: string, label?: string): string {
 	if (label && label.trim().length > 0) return label;
-	const stripped = name.replace(/^gsd_/, "");
+	const stripped = name.replace(/^gwd_/, "");
 	if (stripped.length === 0) return name;
 	return stripped
 		.split("_")
@@ -740,7 +740,7 @@ export class ToolExecutionComponent extends Container {
 		if (name === "read" || name === "ls" || name === "find" || name === "grep") return "Context reads";
 		if (name === "write" || name === "edit") return "File changes";
 		if (name === "web_search" || displayName === "ToolSearch") return "Discovery";
-		if (displayName === "Memory Query" || displayName === "Memory Capture" || displayName === "Gsd Graph") {
+		if (displayName === "Memory Query" || displayName === "Memory Capture" || displayName === "Gwd Graph") {
 			return "Memory lookups";
 		}
 		if (displayName === "Update Requirement" || displayName === "Save Requirement") return "Requirement writes";
@@ -1412,7 +1412,7 @@ export class ToolExecutionComponent extends Container {
 			// Generic tool / MCP tool without a registered renderer.
 			// MCP tool names from Claude Code arrive as `mcp__<server>__<tool>`;
 			// render the server prefix in muted style so the tool name reads
-			// cleanly. GSD-registered MCP tools have already had their prefix
+			// cleanly. GWD-registered MCP tools have already had their prefix
 			// stripped upstream in partial-builder.ts and won't reach this branch.
 			const parsed = parseMcpToolName(this.toolName);
 			const displayName = parsed

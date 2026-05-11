@@ -8,11 +8,11 @@
 import { existsSync, readdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { isAbsolute, join } from "node:path";
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 import { statSync } from "node:fs";
 
 import type {
-  GSDPreferences,
+  GWDPreferences,
   SkillDiscoveryMode,
   SkillResolution,
   SkillResolutionReport,
@@ -20,7 +20,7 @@ import type {
 import { validatePreferences } from "./preferences-validation.js";
 
 // Re-export types so existing consumers of ./preferences-skills.js keep working
-export type { GSDSkillRule, SkillDiscoveryMode, SkillResolution, SkillResolutionReport } from "./preferences-types.js";
+export type { GWDSkillRule, SkillDiscoveryMode, SkillResolution, SkillResolutionReport } from "./preferences-types.js";
 
 /**
  * Known skill directories, in priority order.
@@ -38,7 +38,7 @@ export function getSkillSearchDirs(cwd: string): Array<{ dir: string; method: Sk
     { dir: join(cwd, ".claude", "skills"), method: "project-skill" },
   ];
   // Legacy fallback — read skills from old GWD directory only if migration hasn't completed
-  const legacyDir = join(gsdHome(), "agent", "skills");
+  const legacyDir = join(gwdHome(), "agent", "skills");
   if (existsSync(legacyDir) && !existsSync(join(legacyDir, ".migrated-to-agents"))) {
     dirs.push({ dir: legacyDir, method: "user-skill" });
   }
@@ -110,7 +110,7 @@ export function resolveSkillReference(ref: string, cwd: string): SkillResolution
  * Resolve all skill references in a preferences object.
  * Caches resolution per reference string to avoid redundant filesystem scans.
  */
-export function resolveAllSkillReferences(preferences: GSDPreferences, cwd: string): SkillResolutionReport {
+export function resolveAllSkillReferences(preferences: GWDPreferences, cwd: string): SkillResolutionReport {
   const validated = validatePreferences(preferences).preferences;
   preferences = validated;
 
@@ -144,4 +144,4 @@ export function resolveAllSkillReferences(preferences: GSDPreferences, cwd: stri
 }
 
 // resolveSkillDiscoveryMode and resolveSkillStalenessDays moved to
-// preferences.ts to break circular dependency (they need loadEffectiveGSDPreferences).
+// preferences.ts to break circular dependency (they need loadEffectiveGWDPreferences).

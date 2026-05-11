@@ -12,7 +12,7 @@ import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 
 import { extractTrace, type ExecutionTrace } from "./session-forensics.js";
 import { nativeParseJsonlTail } from "./native-parser-bridge.js";
@@ -27,12 +27,12 @@ import { verifyExpectedArtifact } from "./auto-recovery.js";
 import { deriveState } from "./state.js";
 import { isAutoActive } from "./auto.js";
 import { loadPrompt } from "./prompt-loader.js";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { isDbAvailable, getAllMilestones, getMilestoneSlices, getSliceTasks } from "./gwd-db.js";
 import { isClosedStatus } from "./status-guards.js";
 import { formatDuration } from "../shared/format-utils.js";
 import { getAutoWorktreePath } from "./auto-worktree.js";
-import { loadEffectiveGSDPreferences, loadGlobalGSDPreferences, getGlobalGSDPreferencesPath } from "./preferences.js";
+import { loadEffectiveGWDPreferences, loadGlobalGWDPreferences, getGlobalGWDPreferencesPath } from "./preferences.js";
 import { showNextAction } from "../shared/tui.js";
 import { ensurePreferencesFile, serializePreferencesToFrontmatter } from "./commands-prefs-wizard.js";
 import { summarizeWorktreeTelemetry, percentile, type WorktreeTelemetrySummary } from "./worktree-telemetry.js";
@@ -132,17 +132,17 @@ Use keywords from the user's problem description and the anomaly summaries in th
 
 1. **Search closed issues** for similar keywords:
    \`\`\`
-   gh issue list --repo gwd-build/gwd-2 --state closed --search "<keywords from root cause>" --limit 20
+   gh issue list --repo rayliu-factory/gwd --state closed --search "<keywords from root cause>" --limit 20
    \`\`\`
 
 2. **Search open PRs** that might contain the fix:
    \`\`\`
-   gh pr list --repo gwd-build/gwd-2 --state open --search "<keywords>" --limit 10
+   gh pr list --repo rayliu-factory/gwd --state open --search "<keywords>" --limit 10
    \`\`\`
 
 3. **Search merged PRs** that may have already fixed this:
    \`\`\`
-   gh pr list --repo gwd-build/gwd-2 --state merged --search "<keywords>" --limit 10
+   gh pr list --repo rayliu-factory/gwd --state merged --search "<keywords>" --limit 10
    \`\`\`
 
 ### Analysis
@@ -160,9 +160,9 @@ For each result, compare it against the user's reported symptoms and the forensi
 `;
 
 async function writeForensicsDedupPref(ctx: ExtensionCommandContext, enabled: boolean): Promise<void> {
-  const prefsPath = getGlobalGSDPreferencesPath();
+  const prefsPath = getGlobalGWDPreferencesPath();
   await ensurePreferencesFile(prefsPath, ctx, "global");
-  const existing = loadGlobalGSDPreferences();
+  const existing = loadGlobalGWDPreferences();
   const prefs: Record<string, unknown> = existing?.preferences ? { ...existing.preferences } : {};
   prefs.version = prefs.version || 1;
   prefs.forensics_dedup = enabled;
@@ -195,7 +195,7 @@ export async function handleForensics(
   }
 
   const basePath = process.cwd();
-  const root = gsdRoot(basePath);
+  const root = gwdRoot(basePath);
   if (!existsSync(root)) {
     ctx.ui.notify("No GWD state found. Run /gwd auto first.", "warning");
     return;
@@ -214,7 +214,7 @@ export async function handleForensics(
   }
 
   // ─── Duplicate detection opt-in ─────────────────────────────────────────────
-  const effectivePrefs = loadEffectiveGSDPreferences()?.preferences;
+  const effectivePrefs = loadEffectiveGWDPreferences()?.preferences;
   let dedupEnabled = effectivePrefs?.forensics_dedup === true;
 
   if (effectivePrefs?.forensics_dedup === undefined) {
@@ -243,17 +243,17 @@ export async function handleForensics(
 
   // Derive GWD source dir for prompt — fall back to ~/.gwd/agent/extensions/gwd/
   // when import.meta.url resolves to the npm-global install path (Windows).
-  let gsdSourceDir = dirname(fileURLToPath(import.meta.url));
-  if (!existsSync(join(gsdSourceDir, "prompts"))) {
-    const fallback = join(gsdHome(), "agent", "extensions", "gwd");
-    if (existsSync(join(fallback, "prompts"))) gsdSourceDir = fallback;
+  let gwdSourceDir = dirname(fileURLToPath(import.meta.url));
+  if (!existsSync(join(gwdSourceDir, "prompts"))) {
+    const fallback = join(gwdHome(), "agent", "extensions", "gwd");
+    if (existsSync(join(fallback, "prompts"))) gwdSourceDir = fallback;
   }
 
   const forensicData = formatReportForPrompt(report);
   const content = loadPrompt("forensics", {
     problemDescription,
     forensicData,
-    gsdSourceDir,
+    gwdSourceDir,
     dedupSection,
   });
 
@@ -440,7 +440,7 @@ function resolveActivityDirs(basePath: string, activeMilestone?: string | null):
   if (activeMilestone) {
     const wtPath = getAutoWorktreePath(basePath, activeMilestone);
     if (wtPath) {
-      const wtActivityDir = join(gsdRoot(wtPath), "activity");
+      const wtActivityDir = join(gwdRoot(wtPath), "activity");
       if (existsSync(wtActivityDir)) {
         dirs.push(wtActivityDir);
       }
@@ -448,7 +448,7 @@ function resolveActivityDirs(basePath: string, activeMilestone?: string | null):
   }
 
   // Always include root activity logs
-  const rootActivityDir = join(gsdRoot(basePath), "activity");
+  const rootActivityDir = join(gwdRoot(basePath), "activity");
   dirs.push(rootActivityDir);
 
   return dirs;
@@ -476,7 +476,7 @@ const MAX_JOURNAL_RECENT_EVENTS = 20;
  */
 function scanJournalForForensics(basePath: string): JournalSummary | null {
   try {
-    const journalDir = join(gsdRoot(basePath), "journal");
+    const journalDir = join(gwdRoot(basePath), "journal");
     if (!existsSync(journalDir)) return null;
 
     const files = readdirSync(journalDir).filter(f => f.endsWith(".jsonl")).sort();
@@ -629,7 +629,7 @@ export function splitCompletedKey(key: string): { unitType: string; unitId: stri
 }
 
 function loadCompletedKeys(basePath: string): string[] {
-  const file = join(gsdRoot(basePath), "completed-units.json");
+  const file = join(gwdRoot(basePath), "completed-units.json");
   try {
     if (existsSync(file)) {
       return JSON.parse(readFileSync(file, "utf-8"));
@@ -947,7 +947,7 @@ function detectJournalAnomalies(journal: JournalSummary | null, anomalies: Foren
 // ─── Report Persistence ───────────────────────────────────────────────────────
 
 function saveForensicReport(basePath: string, report: ForensicReport, problemDescription: string): string {
-  const dir = join(gsdRoot(basePath), "forensics");
+  const dir = join(gwdRoot(basePath), "forensics");
   mkdirSync(dir, { recursive: true });
 
   const ts = new Date().toISOString().replace(/[:.]/g, "-").replace("T", "-").slice(0, 19);
@@ -1110,7 +1110,7 @@ export interface ForensicsMarker {
  * the forensics prompt on follow-up turns.  (#2941)
  */
 export function writeForensicsMarker(basePath: string, reportPath: string, promptContent: string): void {
-  const dir = join(gsdRoot(basePath), "runtime");
+  const dir = join(gwdRoot(basePath), "runtime");
   mkdirSync(dir, { recursive: true });
   const marker: ForensicsMarker = {
     reportPath,
@@ -1124,7 +1124,7 @@ export function writeForensicsMarker(basePath: string, reportPath: string, promp
  * Read the active forensics marker, or null if none exists.
  */
 export function readForensicsMarker(basePath: string): ForensicsMarker | null {
-  const markerPath = join(gsdRoot(basePath), "runtime", "active-forensics.json");
+  const markerPath = join(gwdRoot(basePath), "runtime", "active-forensics.json");
   if (!existsSync(markerPath)) return null;
   try {
     return JSON.parse(readFileSync(markerPath, "utf-8")) as ForensicsMarker;
@@ -1309,9 +1309,9 @@ function redactForGitHub(text: string, basePath: string): string {
   result = result.replace(pathRe(basePath), ".");
   // Redact GWD_HOME first (when it's outside ~), then OS home.
   // Order matters: longer path must be replaced before the shorter prefix.
-  const gsdHomePath = gsdHome();
-  if (!gsdHomePath.startsWith(homedir())) {
-    result = result.replace(pathRe(gsdHomePath), "~/.gwd");
+  const gwdHomePath = gwdHome();
+  if (!gwdHomePath.startsWith(homedir())) {
+    result = result.replace(pathRe(gwdHomePath), "~/.gwd");
   }
   result = result.replace(pathRe(homedir()), "~");
 

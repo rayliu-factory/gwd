@@ -1,7 +1,7 @@
 /**
  * Extension loading performance test
  *
- * Regression test for https://github.com/gwd-build/gwd-2/issues/2108
+ * Regression test for https://github.com/rayliu-factory/gwd/issues/2108
  *
  * Verifies that loading multiple extensions sharing common dependencies
  * does NOT re-compile those dependencies for each extension. The jiti

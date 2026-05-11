@@ -1,9 +1,9 @@
 import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@gwd/pi-coding-agent";
 import type { Model } from "@gwd/pi-ai";
-import type { GSDState } from "../../types.js";
+import type { GWDState } from "../../types.js";
 
 import { computeProgressScore, formatProgressLine } from "../../progress-score.js";
-import { loadEffectiveGSDPreferences, getGlobalGSDPreferencesPath, getProjectGSDPreferencesPath } from "../../preferences.js";
+import { loadEffectiveGWDPreferences, getGlobalGWDPreferencesPath, getProjectGWDPreferencesPath } from "../../preferences.js";
 import { ensurePreferencesFile, handlePrefs, handlePrefsMode, handlePrefsWizard, handleLanguage } from "../../commands-prefs-wizard.js";
 import { runEnvironmentChecks } from "../../doctor-environment.js";
 import { deriveState } from "../../state.js";
@@ -155,9 +155,9 @@ export async function handleStatus(ctx: ExtensionCommandContext): Promise<void> 
     return;
   }
 
-  const { GSDDashboardOverlay } = await import("../../dashboard-overlay.js");
+  const { GWDDashboardOverlay } = await import("../../dashboard-overlay.js");
   const result = await ctx.ui.custom<boolean>(
-    (tui, theme, _kb, done) => new GSDDashboardOverlay(tui, theme, () => done(true)),
+    (tui, theme, _kb, done) => new GWDDashboardOverlay(tui, theme, () => done(true)),
     {
       overlay: true,
       overlayOptions: {
@@ -184,9 +184,9 @@ export async function handleVisualize(ctx: ExtensionCommandContext): Promise<voi
     return;
   }
 
-  const { GSDVisualizerOverlay } = await import("../../visualizer-overlay.js");
+  const { GWDVisualizerOverlay } = await import("../../visualizer-overlay.js");
   const result = await ctx.ui.custom<boolean>(
-    (tui, theme, _kb, done) => new GSDVisualizerOverlay(tui, theme, () => done(true)),
+    (tui, theme, _kb, done) => new GWDVisualizerOverlay(tui, theme, () => done(true)),
     {
       overlay: true,
       overlayOptions: {
@@ -241,7 +241,7 @@ export async function handleSetup(args: string, ctx: ExtensionCommandContext, pi
     return;
   }
   if (args === "prefs") {
-    await ensurePreferencesFile(getGlobalGSDPreferencesPath(), ctx, "global");
+    await ensurePreferencesFile(getGlobalGWDPreferencesPath(), ctx, "global");
     await handlePrefsWizard(ctx, "global");
     return;
   }
@@ -447,7 +447,7 @@ export async function handleCoreCommand(
   if (trimmed === "mode" || trimmed.startsWith("mode ")) {
     const modeArgs = trimmed.replace(/^mode\s*/, "").trim();
     const scope = modeArgs === "project" ? "project" : "global";
-    const path = scope === "project" ? getProjectGSDPreferencesPath() : getGlobalGSDPreferencesPath();
+    const path = scope === "project" ? getProjectGWDPreferencesPath() : getGlobalGWDPreferencesPath();
     await ensurePreferencesFile(path, ctx, scope);
     await handlePrefsMode(ctx, scope);
     return true;
@@ -465,9 +465,9 @@ export async function handleCoreCommand(
     return true;
   }
   if (trimmed === "show-config") {
-    const { GSDConfigOverlay, formatConfigText } = await import("../../config-overlay.js");
+    const { GWDConfigOverlay, formatConfigText } = await import("../../config-overlay.js");
     const result = await ctx.ui.custom<boolean>(
-      (tui, theme, _kb, done) => new GSDConfigOverlay(tui, theme, () => done(true)),
+      (tui, theme, _kb, done) => new GWDConfigOverlay(tui, theme, () => done(true)),
       {
         overlay: true,
         overlayOptions: {
@@ -495,7 +495,7 @@ export async function handleCoreCommand(
   return false;
 }
 
-export function formatTextStatus(state: GSDState): string {
+export function formatTextStatus(state: GWDState): string {
   const lines: string[] = ["GWD Status\n"];
   lines.push(formatProgressLine(computeProgressScore()));
   lines.push("");

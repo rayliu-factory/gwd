@@ -12,7 +12,7 @@ import { join } from "node:path";
 import { showNextAction } from "../shared/tui.js";
 import { nativeIsRepo, nativeInit, nativeAddAll, nativeCommit, nativeDetectMainBranch } from "./native-git-bridge.js";
 import { ensureGitignore, untrackRuntimeFiles } from "./gitignore.js";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { assertSafeDirectory } from "./validate-directory.js";
 import type { ProjectDetection, ProjectSignals } from "./detection.js";
 import { runSkillInstallStep } from "./skill-catalog.js";
@@ -271,12 +271,12 @@ export async function showProjectInit(
   }
 
   // ── Step 10: Bootstrap .gwd/ + write preferences ───────────────────────────
-  bootstrapGsdDirectoryStructure(basePath, signals);
+  bootstrapGwdDirectoryStructure(basePath, signals);
   const prefillPrefs = mapInitPrefsToWizardShape(prefs);
   // Always derive the preferences path from basePath so init writing the
   // structure to one location and preferences to another (cwd-derived) is
   // impossible — see #4457 codex review.
-  const projectPrefsPath = join(gsdRoot(basePath), "PREFERENCES.md");
+  const projectPrefsPath = join(gwdRoot(basePath), "PREFERENCES.md");
 
   if (reviewChoice === "review") {
     // Wizard writes via writePreferencesFile internally; pass pathOverride so it
@@ -338,9 +338,9 @@ export async function showProjectInit(
     const { deriveState } = await import("./state.js");
     const { buildStateMarkdown } = await import("./doctor.js");
     const { saveFile } = await import("./files.js");
-    const { resolveGsdRootFile } = await import("./paths.js");
+    const { resolveGwdRootFile } = await import("./paths.js");
     const state = await deriveState(basePath);
-    await saveFile(resolveGsdRootFile(basePath, "STATE"), buildStateMarkdown(state));
+    await saveFile(resolveGwdRootFile(basePath, "STATE"), buildStateMarkdown(state));
   } catch {
     // Non-fatal — STATE.md will be regenerated on next /gwd invocation
   }
@@ -530,18 +530,18 @@ async function customizeAdvancedPrefs(
  * Preferences are written separately by the caller via the unified
  * writePreferencesFile helper so init and the prefs wizard share one path.
  */
-function bootstrapGsdDirectoryStructure(basePath: string, signals: ProjectSignals): void {
+function bootstrapGwdDirectoryStructure(basePath: string, signals: ProjectSignals): void {
   // Final safety check before writing any files
   assertSafeDirectory(basePath);
 
-  const gsd = gsdRoot(basePath);
-  mkdirSync(join(gsd, "milestones"), { recursive: true });
-  mkdirSync(join(gsd, "runtime"), { recursive: true });
+  const gwd = gwdRoot(basePath);
+  mkdirSync(join(gwd, "milestones"), { recursive: true });
+  mkdirSync(join(gwd, "runtime"), { recursive: true });
 
   // Seed CONTEXT.md with detected project signals
   const contextContent = buildContextSeed(signals);
   if (contextContent) {
-    writeFileSync(join(gsd, "CONTEXT.md"), contextContent, "utf-8");
+    writeFileSync(join(gwd, "CONTEXT.md"), contextContent, "utf-8");
   }
 }
 

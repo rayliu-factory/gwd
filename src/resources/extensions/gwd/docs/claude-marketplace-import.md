@@ -188,11 +188,11 @@ This feature has been verified in three ways:
 
 1. **Contract/unit tests** for parsing, namespacing, resolution, diagnostics, and import behavior
 2. **Portable integration-style tests** using local or cloned marketplace fixtures
-3. **Real host validation** against the installed `gsd` binary and actual Claude-managed directories on the host machine
+3. **Real host validation** against the installed `gwd` binary and actual Claude-managed directories on the host machine
 
 Real host validation included:
 
-- clean startup of the installed `gsd` binary after fixing stale bad settings
+- clean startup of the installed `gwd` binary after fixing stale bad settings
 - successful invocation of an imported skill (`/stinkysnake`)
 - successful execution of `/gwd prefs import-claude global`
 - verification that imported marketplace agent directories were **not** reintroduced into `settings.packages`

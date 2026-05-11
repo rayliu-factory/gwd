@@ -3,7 +3,7 @@
 // classification accuracy over time.
 
 import { join } from "node:path";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import type { ComplexityTier } from "./types.js";
 import { loadJsonFile, saveJsonFile } from "./json-persistence.js";
 
@@ -264,7 +264,7 @@ function createEmptyHistory(): RoutingHistoryData {
 }
 
 function historyPath(base: string): string {
-  return join(gsdRoot(base), HISTORY_FILE);
+  return join(gwdRoot(base), HISTORY_FILE);
 }
 
 function isRoutingHistoryData(data: unknown): data is RoutingHistoryData {

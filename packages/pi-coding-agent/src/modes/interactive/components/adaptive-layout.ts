@@ -1,4 +1,4 @@
-// GSD2 - Adaptive terminal mode dashboard for the interactive TUI
+// GWD2 - Adaptive terminal mode dashboard for the interactive TUI
 
 import { style, truncateToWidth, visibleWidth, type Component } from "@gwd/pi-tui";
 import type { TuiAdaptiveMode, TuiMode } from "../tui-mode.js";
@@ -8,7 +8,7 @@ import { theme, type ThemeColor } from "../theme/theme.js";
 export interface AdaptiveLayoutState {
 	override: TuiAdaptiveMode;
 	activeToolCount: number;
-	gsdPhase?: string;
+	gwdPhase?: string;
 	lastError?: string;
 	sessionName?: string;
 	cwd: string;
@@ -25,11 +25,11 @@ export class AdaptiveLayoutComponent implements Component {
 			terminalWidth: width,
 			override: state.override,
 			activeToolCount: state.activeToolCount,
-			gsdPhase: state.gsdPhase,
+			gwdPhase: state.gwdPhase,
 			hasBlockingError: !!state.lastError,
 		});
 
-		if (state.override === "auto" && mode === "chat" && !state.gsdPhase && !state.lastError && state.activeToolCount === 0) {
+		if (state.override === "auto" && mode === "chat" && !state.gwdPhase && !state.lastError && state.activeToolCount === 0) {
 			return [];
 		}
 
@@ -45,7 +45,7 @@ export class AdaptiveLayoutComponent implements Component {
 
 		const leftWidth = Math.max(44, Math.floor(width * 0.56));
 		const rightWidth = Math.max(32, width - leftWidth - 2);
-		const phase = state.gsdPhase ?? "Ready";
+		const phase = state.gwdPhase ?? "Ready";
 		const left = this.frame(
 			[
 				this.metric("Active", phase, "modeWorkflow"),
@@ -72,7 +72,7 @@ export class AdaptiveLayoutComponent implements Component {
 	}
 
 	private renderValidation(width: number, state: AdaptiveLayoutState): string[] {
-		const phase = state.gsdPhase ?? "Validation pending";
+		const phase = state.gwdPhase ?? "Validation pending";
 		return this.frame(
 			[
 				this.metric("Focus", phase, "modeValidation"),
@@ -115,8 +115,8 @@ export class AdaptiveLayoutComponent implements Component {
 	}
 
 	private renderCompact(width: number, mode: TuiMode, state: AdaptiveLayoutState): string[] {
-		const phase = state.lastError ?? state.gsdPhase ?? (state.activeToolCount > 0 ? `${state.activeToolCount} tools` : "ready");
-		const line = `${theme.fg("modeCompact", "GSD compact")} ${theme.fg("surfaceMuted", `${mode} · ${phase}`)}`;
+		const phase = state.lastError ?? state.gwdPhase ?? (state.activeToolCount > 0 ? `${state.activeToolCount} tools` : "ready");
+		const line = `${theme.fg("modeCompact", "GWD compact")} ${theme.fg("surfaceMuted", `${mode} · ${phase}`)}`;
 		return style()
 			.border("minimal")
 			.borderColor((text) => theme.fg("surfaceBorder", text))

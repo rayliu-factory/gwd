@@ -41,14 +41,14 @@ Docker-relevant changes (Dockerfile, scripts/, package*.json, src/, etc.).
 ```ts
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { createTmpProject, gsdSync, gsdAsync } from "./_shared/index.ts";
+import { createTmpProject, gwdSync, gwdAsync } from "./_shared/index.ts";
 
 describe("my feature", () => {
   test("does the thing", (t) => {
     const project = createTmpProject({ git: true });
     t.after(project.cleanup);
 
-    const result = gsdSync(["some-command"], { cwd: project.dir });
+    const result = gwdSync(["some-command"], { cwd: project.dir });
 
     assert.equal(result.code, 0);
     assert.match(result.stdoutClean, /expected output/);
@@ -58,7 +58,7 @@ describe("my feature", () => {
 
 ## Harness contracts (`_shared/`)
 
-- **`spawn.ts`** — `gsdSync` / `gsdAsync` wrappers. Both:
+- **`spawn.ts`** — `gwdSync` / `gwdAsync` wrappers. Both:
   - Resolve `GWD_SMOKE_BINARY` → `node <path>` vs PATH `gwd` automatically.
   - Strip every `GWD_*` env var inherited from the host (prevents local
     config leaking into CI).
@@ -66,7 +66,7 @@ describe("my feature", () => {
     `/var` vs `/private/var` symlink mismatch.
   - Force `GWD_NON_INTERACTIVE=1`.
   - Provide ANSI-stripped output via `result.stdoutClean` / `stderrClean`.
-- **`tmp-project.ts`** — `createTmpProject({ git, gsdSkeleton, files })`
+- **`tmp-project.ts`** — `createTmpProject({ git, gwdSkeleton, files })`
   returns `{ dir, cleanup, writeFile }`. Always wire `t.after(cleanup)`.
   `git: true` initializes with `--initial-branch=main` for cross-platform
   determinism.
@@ -80,7 +80,7 @@ describe("my feature", () => {
   tests" in [CONTRIBUTING.md](../../CONTRIBUTING.md). E2e is the wrong layer
   for that anyway.
 - ❌ Spawning `gwd` directly with `child_process.spawn` — bypasses the
-  env-stripping and TMPDIR fix. Always go through `gsdSync` / `gsdAsync`.
+  env-stripping and TMPDIR fix. Always go through `gwdSync` / `gwdAsync`.
 - ❌ Asserting on raw ANSI-coded output. Use `result.stdoutClean`.
 - ❌ Calling real LLM/network APIs. Future phases land a fake-LLM provider
   that replays scripted transcripts; until then, e2e tests must avoid any

@@ -1,4 +1,4 @@
-// GSD-2 + packages/pi-tui/src/__tests__/tui.test.ts - Regression coverage for the TUI renderer and container lifecycle.
+// GWD-2 + packages/pi-tui/src/__tests__/tui.test.ts - Regression coverage for the TUI renderer and container lifecycle.
 
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -55,7 +55,7 @@ describe("TUI", () => {
 		let value = "input";
 		const tui = new TUI(terminal);
 		tui.addChild({
-			render: () => ["top", `${value}${CURSOR_MARKER}`, "  GSD  No project loaded - run /gsd to start"],
+			render: () => ["top", `${value}${CURSOR_MARKER}`, "  GWD  No project loaded - run /gwd to start"],
 			invalidate() {},
 		});
 		const anyTui = tui as any;

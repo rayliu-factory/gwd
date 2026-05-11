@@ -235,7 +235,7 @@ export interface RequirementCounts {
   total: number;
 }
 
-export interface GSDState {
+export interface GWDState {
   activeMilestone: ActiveRef | null;
   activeSlice: ActiveRef | null;
   activeTask: ActiveRef | null;
@@ -259,7 +259,7 @@ export interface GSDState {
 // Pure data type — no runtime deps. The GWDExtensionAPI interface itself
 // lives in ecosystem/gwd-extension-api.ts (it imports from pi).
 
-export interface GSDActiveUnit {
+export interface GWDActiveUnit {
   milestoneId: string;
   milestoneTitle: string;
   sliceId: string;

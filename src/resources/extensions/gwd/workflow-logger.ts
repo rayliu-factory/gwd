@@ -45,7 +45,7 @@ export type LogComponent =
   | "tool"          // Tool handler errors
   | "compaction"    // Event compaction
   | "reconcile"     // Worktree reconciliation
-  | "db"            // Database operations (gsd-db)
+  | "db"            // Database operations (gwd-db)
   | "dispatch"      // Auto-dispatch rule evaluation
   | "recovery"      // Auto-recovery and timeout recovery
   | "session"       // Session lock and session state I/O
@@ -273,7 +273,7 @@ function _push(
 
   if (severity === "error") {
     const ctxStr = context ? ` ${JSON.stringify(context)}` : "";
-    _writeStderr(`[gsd:${component}] ERROR: ${message}${ctxStr}\n`);
+    _writeStderr(`[gwd:${component}] ERROR: ${message}${ctxStr}\n`);
   }
 
   // Persist to notification store (both warnings and errors)
@@ -284,7 +284,7 @@ function _push(
       "workflow-logger",
     );
   } catch (notifErr) {
-    _writeStderr(`[gsd:workflow-logger] notification-store append failed: ${(notifErr as Error).message}\n`);
+    _writeStderr(`[gwd:workflow-logger] notification-store append failed: ${(notifErr as Error).message}\n`);
   }
 
   // Buffer for auto-loop to drain
@@ -312,7 +312,7 @@ function _push(
       );
     } catch (auditEmitErr) {
       // Best-effort: unified audit projection must never block workflow logger.
-      _writeStderr(`[gsd:workflow-logger] unified-audit emit failed: ${(auditEmitErr as Error).message}\n`);
+      _writeStderr(`[gwd:workflow-logger] unified-audit emit failed: ${(auditEmitErr as Error).message}\n`);
     }
   }
 
@@ -337,7 +337,7 @@ function _push(
       );
     } catch (auditErr) {
       // Best-effort — never let audit write failures bubble up
-      _writeStderr(`[gsd:audit] failed to persist log entry: ${(auditErr as Error).message}\n`);
+      _writeStderr(`[gwd:audit] failed to persist log entry: ${(auditErr as Error).message}\n`);
     }
   }
 }

@@ -1,4 +1,4 @@
-// GSD2 UOK Turn Observer and DB-Backed Lifecycle Emission
+// GWD2 UOK Turn Observer and DB-Backed Lifecycle Emission
 
 import type {
   TurnCloseoutRecord,

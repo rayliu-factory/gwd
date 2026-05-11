@@ -1,4 +1,4 @@
-// GSD2 UOK Audit Events and DB-First Projection Writes
+// GWD2 UOK Audit Events and DB-First Projection Writes
 
 import { appendFileSync, closeSync, existsSync, mkdirSync, openSync } from "node:fs";
 import { join } from "node:path";
@@ -6,16 +6,16 @@ import { randomUUID } from "node:crypto";
 
 import { isStaleWrite } from "../auto/turn-epoch.js";
 import { withFileLockSync } from "../file-lock.js";
-import { gsdRoot } from "../paths.js";
+import { gwdRoot } from "../paths.js";
 import { isDbAvailable, insertAuditEvent } from "../gwd-db.js";
 import { CURRENT_UOK_CONTRACT_VERSION, validateAuditEvent, type AuditEventEnvelope } from "./contracts.js";
 
 function auditLogPath(basePath: string): string {
-  return join(gsdRoot(basePath), "audit", "events.jsonl");
+  return join(gwdRoot(basePath), "audit", "events.jsonl");
 }
 
 function ensureAuditDir(basePath: string): void {
-  mkdirSync(join(gsdRoot(basePath), "audit"), { recursive: true });
+  mkdirSync(join(gwdRoot(basePath), "audit"), { recursive: true });
 }
 
 export function buildAuditEnvelope(args: {

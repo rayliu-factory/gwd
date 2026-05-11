@@ -174,7 +174,7 @@ export async function tryRemoteQuestions(
   };
 }
 
-/** Normalize a RemoteAnswer to the RoundResult shape consumed by the gsd write-gate hook. */
+/** Normalize a RemoteAnswer to the RoundResult shape consumed by the gwd write-gate hook. */
 export function toRoundResultResponse(answer: RemoteAnswer): RoundResult {
   const normalized: RoundResult["answers"] = {};
   for (const [id, data] of Object.entries(answer.answers)) {

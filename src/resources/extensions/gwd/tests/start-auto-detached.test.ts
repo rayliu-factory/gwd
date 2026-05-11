@@ -6,10 +6,10 @@ import { resolve } from "node:path";
 import { _withDetachedAutoKeepaliveForTest } from "../auto.ts";
 import { _scheduleAutoStartAfterIdleForTest } from "../guided-flow.ts";
 
-const gsdDir = resolve(import.meta.dirname, "..");
+const gwdDir = resolve(import.meta.dirname, "..");
 
 function readGwdFile(relativePath: string): string {
-  return readFileSync(resolve(gsdDir, relativePath), "utf-8");
+  return readFileSync(resolve(gwdDir, relativePath), "utf-8");
 }
 
 test("command entrypoints use startAutoDetached instead of awaiting startAuto (#3733)", () => {

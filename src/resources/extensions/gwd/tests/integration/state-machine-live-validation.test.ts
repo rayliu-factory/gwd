@@ -85,8 +85,8 @@ function makeTempDir(): string {
  */
 function createFullFixture(): string {
   const base = makeTempDir();
-  const gsdDir = join(base, ".gwd");
-  const m001Dir = join(gsdDir, "milestones", "M001");
+  const gwdDir = join(base, ".gwd");
+  const m001Dir = join(gwdDir, "milestones", "M001");
   const s01Dir = join(m001Dir, "slices", "S01");
   const s01Tasks = join(s01Dir, "tasks");
   const s02Dir = join(m001Dir, "slices", "S02");
@@ -180,7 +180,7 @@ function createFullFixture(): string {
 
   // REQUIREMENTS.md
   writeFileSync(
-    join(gsdDir, "REQUIREMENTS.md"),
+    join(gwdDir, "REQUIREMENTS.md"),
     [
       "# Requirements",
       "",
@@ -194,7 +194,7 @@ function createFullFixture(): string {
 
   // DECISIONS.md
   writeFileSync(
-    join(gsdDir, "DECISIONS.md"),
+    join(gwdDir, "DECISIONS.md"),
     [
       "# Decisions",
       "",
@@ -812,12 +812,12 @@ describe("state-machine-live-validation", () => {
 
     test("ghost milestone is skipped by deriveState", async () => {
       base = makeTempDir();
-      const gsdDir = join(base, ".gwd", "milestones");
+      const gwdDir = join(base, ".gwd", "milestones");
       // M001 is ghost — empty dir
-      mkdirSync(join(gsdDir, "M001"), { recursive: true });
+      mkdirSync(join(gwdDir, "M001"), { recursive: true });
       // M002 has content
-      mkdirSync(join(gsdDir, "M002"), { recursive: true });
-      writeFileSync(join(gsdDir, "M002", "M002-CONTEXT-DRAFT.md"), "# Draft\nContent.\n");
+      mkdirSync(join(gwdDir, "M002"), { recursive: true });
+      writeFileSync(join(gwdDir, "M002", "M002-CONTEXT-DRAFT.md"), "# Draft\nContent.\n");
 
       assert.ok(isGhostMilestone(base, "M001"), "M001 should be ghost");
       assert.ok(!isGhostMilestone(base, "M002"), "M002 should not be ghost");

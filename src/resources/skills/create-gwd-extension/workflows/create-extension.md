@@ -13,7 +13,7 @@
 
 Ask the user:
 - **Global** (`~/.pi/agent/extensions/`) — Available in all GWD sessions
-- **Project-local** (`.gsd/extensions/`) — Available only in this project
+- **Project-local** (`.gwd/extensions/`) — Available only in this project
 
 ## Step 2: Determine Extension Capabilities
 
@@ -143,7 +143,7 @@ pi.on("tool_call", async (event, ctx) => {
 
 ```bash
 # Quick test without installing
-gsd -e ./path/to/my-extension.ts
+gwd -e ./path/to/my-extension.ts
 
 # Or place in extensions dir and reload
 /reload

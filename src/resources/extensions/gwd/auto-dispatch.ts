@@ -9,8 +9,8 @@
  * without modifying orchestration code.
  */
 
-import type { GSDState } from "./types.js";
-import type { GSDPreferences } from "./preferences.js";
+import type { GWDState } from "./types.js";
+import type { GWDPreferences } from "./preferences.js";
 import type { UatType } from "./files.js";
 import type { MinimalModelRegistry } from "./context-budget.js";
 import { loadFile, extractUatType, loadActiveOverrides } from "./files.js";
@@ -19,7 +19,7 @@ import { isClosedStatus } from "./status-guards.js";
 import { extractVerdict, isAcceptableUatVerdict } from "./verdict-parser.js";
 
 import {
-  gsdRoot,
+  gwdRoot,
   resolveMilestoneFile,
   resolveMilestonePath,
   resolveSliceFile,
@@ -106,8 +106,8 @@ export interface DispatchContext {
   basePath: string;
   mid: string;
   midTitle: string;
-  state: GSDState;
-  prefs: GSDPreferences | undefined;
+  state: GWDState;
+  prefs: GWDPreferences | undefined;
   session?: import("./auto/session.js").AutoSession;
   structuredQuestionsAvailable?: "true" | "false";
   /** Session model context window in tokens, forwarded to the budget engine's prompt builders. */
@@ -124,7 +124,7 @@ type ResearchProjectPromptBuilder = typeof buildResearchProjectPrompt;
 let reassessmentChecker: ReassessmentChecker = checkNeedsReassessment;
 let researchProjectPromptBuilder: ResearchProjectPromptBuilder = buildResearchProjectPrompt;
 
-function shouldBypassMilestoneDepthGateInAuto(prefs: GSDPreferences | undefined): boolean {
+function shouldBypassMilestoneDepthGateInAuto(prefs: GWDPreferences | undefined): boolean {
   return isAutoActive() && prefs?.planning_depth !== "deep";
 }
 
@@ -202,18 +202,18 @@ async function readUatGateVerdict(
  * Returns false in light mode (or when prefs absent) so the milestone
  * rules behave exactly as before.
  */
-export function getDeepStageGate(prefs: GSDPreferences | undefined, basePath: string): DeepStageGate {
+export function getDeepStageGate(prefs: GWDPreferences | undefined, basePath: string): DeepStageGate {
   return resolveDeepProjectSetupState(prefs, basePath);
 }
 
-export function hasPendingDeepStage(prefs: GSDPreferences | undefined, basePath: string): boolean {
+export function hasPendingDeepStage(prefs: GWDPreferences | undefined, basePath: string): boolean {
   const gate = getDeepStageGate(prefs, basePath);
   return gate.status === "pending" || gate.status === "blocked";
 }
 
 export function shouldRunDeepProjectSetup(
-  state: Pick<GSDState, "phase">,
-  prefs: GSDPreferences | undefined,
+  state: Pick<GWDState, "phase">,
+  prefs: GWDPreferences | undefined,
   basePath: string,
   options: { hasSurvivorBranch?: boolean } = {},
 ): boolean {
@@ -264,9 +264,9 @@ const MAX_REWRITE_ATTEMPTS = 3;
 // ─── Disk-persisted rewrite attempt counter ──────────────────────────────────
 // The counter must survive session restarts (crash recovery, pause/resume,
 // step-mode). Storing it on the in-memory session object caused the circuit
-// breaker to never trip — see https://github.com/gwd-build/gwd-2/issues/2203
+// breaker to never trip — see https://github.com/rayliu-factory/gwd/issues/2203
 function rewriteCountPath(basePath: string): string {
-  return join(gsdRoot(basePath), "runtime", "rewrite-count.json");
+  return join(gwdRoot(basePath), "runtime", "rewrite-count.json");
 }
 
 export function getRewriteCount(basePath: string): number {
@@ -280,7 +280,7 @@ export function getRewriteCount(basePath: string): number {
 
 export function setRewriteCount(basePath: string, count: number): void {
   const filePath = rewriteCountPath(basePath);
-  mkdirSync(join(gsdRoot(basePath), "runtime"), { recursive: true });
+  mkdirSync(join(gwdRoot(basePath), "runtime"), { recursive: true });
   writeFileSync(filePath, JSON.stringify({ count, updatedAt: new Date().toISOString() }) + "\n");
 }
 
@@ -290,7 +290,7 @@ export function setRewriteCount(basePath: string, count: number): void {
 const MAX_UAT_ATTEMPTS = 3;
 
 function uatCountPath(basePath: string, mid: string, sid: string): string {
-  return join(gsdRoot(basePath), "runtime", `uat-count-${mid}-${sid}.json`);
+  return join(gwdRoot(basePath), "runtime", `uat-count-${mid}-${sid}.json`);
 }
 
 export function getUatCount(basePath: string, mid: string, sid: string): number {
@@ -305,7 +305,7 @@ export function getUatCount(basePath: string, mid: string, sid: string): number 
 export function incrementUatCount(basePath: string, mid: string, sid: string): number {
   const count = getUatCount(basePath, mid, sid) + 1;
   const filePath = uatCountPath(basePath, mid, sid);
-  mkdirSync(join(gsdRoot(basePath), "runtime"), { recursive: true });
+  mkdirSync(join(gwdRoot(basePath), "runtime"), { recursive: true });
   writeFileSync(filePath, JSON.stringify({ count, updatedAt: new Date().toISOString() }) + "\n");
   return count;
 }
@@ -317,7 +317,7 @@ export function incrementUatCount(basePath: string, mid: string, sid: string): n
  * operational verification is needed.  Covers common phrasings the planning
  * agent may use: "None", "None required", "N/A", "Not applicable", etc.
  *
- * @see https://github.com/gwd-build/gwd-2/issues/2931
+ * @see https://github.com/rayliu-factory/gwd/issues/2931
  */
 export function isVerificationNotApplicable(value: string): boolean {
   const v = (value ?? "").toLowerCase().trim().replace(/[.\s]+$/, "");
@@ -585,7 +585,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
     match: async ({ state, basePath, prefs, structuredQuestionsAvailable }) => {
       if (prefs?.planning_depth !== "deep") return null;
       if (state.phase !== "pre-planning" && state.phase !== "needs-discussion") return null;
-      const projectPath = join(gsdRoot(basePath), "PROJECT.md");
+      const projectPath = join(gwdRoot(basePath), "PROJECT.md");
       if (existsSync(projectPath) && validateArtifact(projectPath, "project").ok) return null; // PROJECT.md valid — fall through
       return {
         action: "dispatch",
@@ -604,9 +604,9 @@ export const DISPATCH_RULES: DispatchRule[] = [
     match: async ({ state, basePath, prefs, structuredQuestionsAvailable }) => {
       if (prefs?.planning_depth !== "deep") return null;
       if (state.phase !== "pre-planning" && state.phase !== "needs-discussion") return null;
-      const projectPath = join(gsdRoot(basePath), "PROJECT.md");
+      const projectPath = join(gwdRoot(basePath), "PROJECT.md");
       if (!existsSync(projectPath) || !validateArtifact(projectPath, "project").ok) return null; // PROJECT.md missing/invalid — earlier rule handles
-      const requirementsPath = join(gsdRoot(basePath), "REQUIREMENTS.md");
+      const requirementsPath = join(gwdRoot(basePath), "REQUIREMENTS.md");
       if (existsSync(requirementsPath) && validateArtifact(requirementsPath, "requirements").ok) return null; // REQUIREMENTS.md valid — fall through
       return {
         action: "dispatch",
@@ -659,7 +659,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
       if (gate.status !== "pending" || gate.stage !== "project-research") return null;
       // Idempotency guard: one orchestrator owns the project research fan-out
       // until guided-research-project.md deletes this marker during closeout.
-      const runtimeDir = join(gsdRoot(basePath), "runtime");
+      const runtimeDir = join(gwdRoot(basePath), "runtime");
       const inflightMarkerPath = join(runtimeDir, PROJECT_RESEARCH_INFLIGHT_MARKER);
       const researchInFlightStop = {
         action: "stop" as const,
@@ -1104,7 +1104,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
         // Log graph metrics for observability
         const metrics = graphMetrics(graph);
         process.stderr.write(
-          `gsd-reactive: ${mid}/${sid} graph — tasks:${metrics.taskCount} edges:${metrics.edgeCount} ` +
+          `gwd-reactive: ${mid}/${sid} graph — tasks:${metrics.taskCount} edges:${metrics.edgeCount} ` +
           `ready:${metrics.readySetSize} dispatching:${selected.length} ambiguous:${metrics.ambiguous}\n`,
         );
 

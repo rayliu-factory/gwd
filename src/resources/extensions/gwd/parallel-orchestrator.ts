@@ -19,13 +19,13 @@ import {
 } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { createWorktree, worktreePath } from "./worktree-manager.js";
-import { autoWorktreeBranch, fastForwardReusedMilestoneBranchIfSafe, runWorktreePostCreateHook, syncGsdStateToWorktree } from "./auto-worktree.js";
+import { autoWorktreeBranch, fastForwardReusedMilestoneBranchIfSafe, runWorktreePostCreateHook, syncGwdStateToWorktree } from "./auto-worktree.js";
 import { nativeBranchExists } from "./native-git-bridge.js";
 import { readIntegrationBranch } from "./git-service.js";
 import { resolveParallelConfig } from "./preferences.js";
-import type { GSDPreferences } from "./preferences.js";
+import type { GWDPreferences } from "./preferences.js";
 import type { ParallelConfig } from "./types.js";
 import {
   writeSessionStatus,
@@ -97,7 +97,7 @@ export interface PersistedState {
 }
 
 function stateFilePath(basePath: string): string {
-  return join(gsdRoot(basePath), ORCHESTRATOR_STATE_FILE);
+  return join(gwdRoot(basePath), ORCHESTRATOR_STATE_FILE);
 }
 
 /**
@@ -107,7 +107,7 @@ function stateFilePath(basePath: string): string {
 export function persistState(basePath: string): void {
   if (!state) return;
   try {
-    const dir = gsdRoot(basePath);
+    const dir = gwdRoot(basePath);
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 
     const persisted: PersistedState = {
@@ -191,12 +191,12 @@ export function restoreState(basePath: string): PersistedState | null {
 }
 
 function workerLogPath(basePath: string, milestoneId: string): string {
-  return join(gsdRoot(basePath), "parallel", `${milestoneId}.stderr.log`);
+  return join(gwdRoot(basePath), "parallel", `${milestoneId}.stderr.log`);
 }
 
 function appendWorkerLog(basePath: string, milestoneId: string, chunk: string): void {
   try {
-    const dir = join(gsdRoot(basePath), "parallel");
+    const dir = join(gwdRoot(basePath), "parallel");
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
     appendFileSync(workerLogPath(basePath, milestoneId), chunk, "utf-8");
   } catch (e) {
@@ -336,7 +336,7 @@ export function getWorkerStatuses(basePath?: string): WorkerInfo[] {
  */
 export async function prepareParallelStart(
   basePath: string,
-  _prefs: GSDPreferences | undefined,
+  _prefs: GWDPreferences | undefined,
 ): Promise<ParallelCandidates & { orphans?: Array<{ milestoneId: string; pid: number; alive: boolean }> }> {
   // Detect orphaned sessions before eligibility analysis
   const sessions = readAllSessionStatuses(basePath);
@@ -363,7 +363,7 @@ export async function prepareParallelStart(
 export async function startParallel(
   basePath: string,
   milestoneIds: string[],
-  prefs: GSDPreferences | undefined,
+  prefs: GWDPreferences | undefined,
 ): Promise<{ started: string[]; errors: Array<{ mid: string; error: string }> }> {
   // Prevent workers from spawning nested parallel sessions
   if (process.env.GWD_PARALLEL_WORKER) {
@@ -561,7 +561,7 @@ export function _createMilestoneWorktree(basePath: string, milestoneId: string):
   // Copy .gwd/ planning artifacts (milestones, CONTEXT, ROADMAP, etc.) from the
   // project root into the worktree. Without this, workers for newly-planned
   // milestones can't find their roadmap and exit immediately (#2184 Bug 4).
-  syncGsdStateToWorktree(basePath, info.path);
+  syncGwdStateToWorktree(basePath, info.path);
 
   return info.path;
 }
@@ -594,7 +594,7 @@ export function spawnWorker(
   if (worker.process) return true; // already spawned
 
   // Resolve the GWD CLI binary path
-  const binPath = resolveGsdBin();
+  const binPath = resolveGwdBin();
   if (!binPath) return false;
 
   let child: ChildProcess;
@@ -742,7 +742,7 @@ export function spawnWorker(
  * Uses GWD_BIN_PATH env var (set by loader.ts) or falls back to
  * finding the binary relative to the current module.
  */
-function resolveGsdBin(): string | null {
+function resolveGwdBin(): string | null {
   // GWD_BIN_PATH is set by loader.ts to the absolute path of dist/loader.js
   if (process.env.GWD_BIN_PATH && existsSync(process.env.GWD_BIN_PATH)) {
     return process.env.GWD_BIN_PATH;

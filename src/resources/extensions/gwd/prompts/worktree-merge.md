@@ -38,7 +38,7 @@ The worktree may contain code, milestones, roadmaps, plans, research, decisions,
 ### GWD Artifact Diff
 
 ```diff
-{{gsdDiff}}
+{{gwdDiff}}
 ```
 
 ## Your Task

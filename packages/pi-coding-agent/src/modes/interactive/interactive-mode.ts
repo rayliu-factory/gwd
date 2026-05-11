@@ -1,6 +1,6 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Interactive TUI mode and session UI rendering.
-// GSD2 - Interactive TUI mode for coding-agent sessions.
+// GWD2 - Interactive TUI mode for coding-agent sessions.
 /**
  * Interactive mode for the coding agent.
  * Handles TUI rendering and user interaction, delegating business logic to AgentSession.
@@ -385,7 +385,7 @@ export class InteractiveMode {
 		this.adaptiveLayout = new AdaptiveLayoutComponent(() => ({
 			override: this.settingsManager.getAdaptiveMode(),
 			activeToolCount: this.pendingTools.size,
-			gsdPhase: this.pendingWorkingMessage,
+			gwdPhase: this.pendingWorkingMessage,
 			lastError: this.lastBlockingError,
 			sessionName: this.sessionManager.getSessionName(),
 			cwd: process.cwd(),
@@ -2856,7 +2856,7 @@ export class InteractiveMode {
 			let msg = "No editor configured. Set $VISUAL or $EDITOR environment variable.";
 			if (process.env.TERM_PROGRAM === "iTerm.app") {
 				msg +=
-					"\n\nTip: If you meant to open the GSD dashboard (Ctrl+Alt+G), set Left Option Key to" +
+					"\n\nTip: If you meant to open the GWD dashboard (Ctrl+Alt+G), set Left Option Key to" +
 					" \"Esc+\" in iTerm2 → Profiles → Keys. With the default \"Normal\" setting," +
 					" Ctrl+Alt+G sends Ctrl+G instead.";
 			}

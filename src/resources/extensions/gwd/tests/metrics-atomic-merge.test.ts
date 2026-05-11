@@ -141,14 +141,14 @@ function spawnWorker(metricsPath: string, milestoneId: string): void {
 
 describe("metrics atomic merge — parallel workers", () => {
   let tmpDir: string;
-  let gsdDir: string;
+  let gwdDir: string;
   let metricsPath: string;
 
   beforeEach(() => {
     tmpDir = mkdtempSync(join(tmpdir(), "gwd-metrics-atomic-"));
-    gsdDir = join(tmpDir, ".gwd");
-    mkdirSync(gsdDir, { recursive: true });
-    metricsPath = join(gsdDir, "metrics.json");
+    gwdDir = join(tmpDir, ".gwd");
+    mkdirSync(gwdDir, { recursive: true });
+    metricsPath = join(gwdDir, "metrics.json");
   });
 
   afterEach(() => {

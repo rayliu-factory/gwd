@@ -9,10 +9,10 @@
  */
 
 import type { ExtensionContext } from "@gwd/pi-coding-agent";
-import type { GSDState } from "./types.js";
+import type { GWDState } from "./types.js";
 import { runProviderChecks, summariseProviderIssues } from "./doctor-providers.js";
 import { runEnvironmentChecks } from "./doctor-environment.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import { nativeIsRepo, nativeLastCommitEpoch, nativeGetCurrentBranch, nativeCommitSubject } from "./native-git-bridge.js";
 import { loadLedgerFromDisk, getProjectTotals } from "./metrics.js";
 import { describeNextUnit, estimateTimeRemaining, updateSliceProgressCache } from "./auto-dashboard.js";
@@ -38,7 +38,7 @@ function loadHealthWidgetData(basePath: string): HealthWidgetData {
   const projectState = detectHealthWidgetProjectState(basePath);
 
   try {
-    const prefs = loadEffectiveGSDPreferences();
+    const prefs = loadEffectiveGWDPreferences();
     budgetCeiling = prefs?.preferences?.budget_ceiling;
 
     const ledger = loadLedgerFromDisk(basePath);

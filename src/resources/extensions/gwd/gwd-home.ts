@@ -1,14 +1,14 @@
 /**
  * GWD home directory resolution.
  *
- * Exports gsdHome() which returns the GWD configuration directory,
+ * Exports gwdHome() which returns the GWD configuration directory,
  * defaulting to ~/.gwd with a GWD_HOME env var override.
  *
  * For the user's home directory, use os.homedir() directly — it handles
  * platform-specific env lookup (USERPROFILE on Windows, HOME on POSIX)
  * with appropriate fallbacks.
  *
- * @see https://github.com/gwd-build/gwd-2/issues/5015
+ * @see https://github.com/rayliu-factory/gwd/issues/5015
  */
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
@@ -23,7 +23,7 @@ import { join, resolve } from "node:path";
  * any relative or non-canonical `GWD_HOME` value so downstream comparison
  * and redaction sites don't have to.
  */
-export function gsdHome(): string {
+export function gwdHome(): string {
   return process.env.GWD_HOME
     ? resolve(process.env.GWD_HOME)
     : join(homedir(), ".gwd");

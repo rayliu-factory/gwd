@@ -15,7 +15,7 @@ import { loadPrompt } from "./prompt-loader.js";
 import { autoCommitCurrentBranch, getMainBranch, resolveGitHeadPath, nudgeGitBranchCache } from "./worktree.js";
 import { runWorktreePostCreateHook } from "./auto-worktree.js";
 import { showConfirm } from "../shared/tui.js";
-import { gsdRoot, milestonesDir, resolveGwdPathContract } from "./paths.js";
+import { gwdRoot, milestonesDir, resolveGwdPathContract } from "./paths.js";
 import {
   createWorktree,
   listWorktrees,
@@ -23,7 +23,7 @@ import {
   mergeWorktreeToMain,
   diffWorktreeAll,
   diffWorktreeNumstat,
-  getWorktreeGSDDiff,
+  getWorktreeGWDDiff,
   getWorktreeCodeDiff,
   getWorktreeLog,
   worktreeBranchName,
@@ -276,7 +276,7 @@ function hasExistingMilestones(wtPath: string): boolean {
  * Clear GWD planning artifacts so auto-mode starts fresh with the discuss flow.
  * Keeps the .gwd/ directory structure intact but removes milestones and root planning files.
  */
-function clearGSDPlans(wtPath: string): void {
+function clearGWDPlans(wtPath: string): void {
   const mDir = milestonesDir(wtPath);
   if (existsSync(mDir)) {
     rmSync(mDir, { recursive: true, force: true });
@@ -284,7 +284,7 @@ function clearGSDPlans(wtPath: string): void {
 
   // Remove root planning files — PROJECT.md, DECISIONS.md, QUEUE.md, REQUIREMENTS.md
   // Keep STATE.md (gitignored, will be rebuilt) and other runtime files
-  const root = gsdRoot(wtPath);
+  const root = gwdRoot(wtPath);
   const planningFiles = ["PROJECT.md", "DECISIONS.md", "QUEUE.md", "REQUIREMENTS.md"];
   for (const file of planningFiles) {
     const filePath = join(root, file);
@@ -338,7 +338,7 @@ async function handleCreate(
         declineLabel: "Start fresh",
       });
       if (!keepExisting) {
-        clearGSDPlans(info.path);
+        clearGWDPlans(info.path);
         clearedPlans = true;
       }
     }
@@ -572,7 +572,7 @@ async function handleMerge(
     // Gather merge context — full repo diff, not just .gwd/
     const diffSummary = diffWorktreeAll(basePath, name);
     const numstat = diffWorktreeNumstat(basePath, name);
-    const gsdDiff = getWorktreeGSDDiff(basePath, name);
+    const gwdDiff = getWorktreeGWDDiff(basePath, name);
     const codeDiff = getWorktreeCodeDiff(basePath, name);
     const commitLog = getWorktreeLog(basePath, name);
 
@@ -592,13 +592,13 @@ async function handleMerge(
     for (const s of numstat) { totalAdded += s.added; totalRemoved += s.removed; }
 
     // Split files into code vs GWD for the preview
-    const isGSD = (f: string) => f.startsWith(".gwd/");
-    const codeChanges = diffSummary.added.filter(f => !isGSD(f)).length
-      + diffSummary.modified.filter(f => !isGSD(f)).length
-      + diffSummary.removed.filter(f => !isGSD(f)).length;
-    const gsdChanges = diffSummary.added.filter(isGSD).length
-      + diffSummary.modified.filter(isGSD).length
-      + diffSummary.removed.filter(isGSD).length;
+    const isGWD = (f: string) => f.startsWith(".gwd/");
+    const codeChanges = diffSummary.added.filter(f => !isGWD(f)).length
+      + diffSummary.modified.filter(f => !isGWD(f)).length
+      + diffSummary.removed.filter(f => !isGWD(f)).length;
+    const gwdChanges = diffSummary.added.filter(isGWD).length
+      + diffSummary.modified.filter(isGWD).length
+      + diffSummary.removed.filter(isGWD).length;
 
     // Format a file line with +/- stats
     const formatFileLine = (prefix: string, file: string): string => {
@@ -611,7 +611,7 @@ async function handleMerge(
     const previewLines = [
       `Merge ${CLR.name(name)} → ${CLR.branch(mainBranch)}`,
       "",
-      `  ${totalChanges} file${totalChanges === 1 ? "" : "s"} changed, ${CLR.ok(`+${totalAdded}`)} ${RED}-${totalRemoved}${RESET} lines ${CLR.muted(`(${codeChanges} code, ${gsdChanges} GWD)`)}`,
+      `  ${totalChanges} file${totalChanges === 1 ? "" : "s"} changed, ${CLR.ok(`+${totalAdded}`)} ${RED}-${totalRemoved}${RESET} lines ${CLR.muted(`(${codeChanges} code, ${gwdChanges} GWD)`)}`,
     ];
 
     const appendFileList = (label: string, files: string[], prefix: string, limit = 10) => {
@@ -712,7 +712,7 @@ async function handleMerge(
       addedFiles: formatFiles(diffSummary.added),
       modifiedFiles: formatFiles(diffSummary.modified),
       removedFiles: formatFiles(diffSummary.removed),
-      gsdDiff: gsdDiff || "(no GWD artifact changes)",
+      gwdDiff: gwdDiff || "(no GWD artifact changes)",
       codeDiff: codeDiff || "(no code changes)",
     });
 
@@ -727,7 +727,7 @@ async function handleMerge(
     );
 
     ctx.ui.notify(
-      `${CLR.ok("✓")} Merge helper started for ${CLR.name(name)} ${CLR.muted(`(${codeChanges} code + ${gsdChanges} GWD artifact change${totalChanges === 1 ? "" : "s"})`)}`,
+      `${CLR.ok("✓")} Merge helper started for ${CLR.name(name)} ${CLR.muted(`(${codeChanges} code + ${gwdChanges} GWD artifact change${totalChanges === 1 ? "" : "s"})`)}`,
       "info",
     );
   } catch (error) {

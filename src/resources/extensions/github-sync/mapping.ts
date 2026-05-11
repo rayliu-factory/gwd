@@ -1,7 +1,7 @@
 /**
  * Persistence layer for the GitHub sync mapping.
  *
- * The mapping lives at `.gsd/github-sync.json` and tracks which GSD
+ * The mapping lives at `.gwd/github-sync.json` and tracks which GWD
  * entities have been synced to which GitHub entities (issues, PRs,
  * milestones) along with their numbers and sync timestamps.
  */
@@ -14,7 +14,7 @@ import type { SyncMapping, MilestoneSyncRecord, SliceSyncRecord, SyncEntityRecor
 const MAPPING_FILENAME = "github-sync.json";
 
 function mappingPath(basePath: string): string {
-  return join(basePath, ".gsd", MAPPING_FILENAME);
+  return join(basePath, ".gwd", MAPPING_FILENAME);
 }
 
 // ─── Load / Save ────────────────────────────────────────────────────────────

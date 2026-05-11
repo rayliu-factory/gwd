@@ -14,7 +14,7 @@ import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 
-import { createTmpProject, gsdSync } from "./_shared/index.ts";
+import { createTmpProject, gwdSync } from "./_shared/index.ts";
 
 function binaryAvailable(): { ok: boolean; reason?: string } {
 	const bin = process.env.GWD_SMOKE_BINARY;
@@ -31,7 +31,7 @@ describe("e2e sanity (real-process)", () => {
 		const project = createTmpProject();
 		t.after(project.cleanup);
 
-		const result = gsdSync(["--version"], { cwd: project.dir, timeoutMs: 15_000 });
+		const result = gwdSync(["--version"], { cwd: project.dir, timeoutMs: 15_000 });
 
 		assert.equal(result.code, 0, `expected exit 0, got ${result.code}. stderr=${result.stderrClean}`);
 		assert.ok(!result.timedOut, "spawn timed out");
@@ -46,7 +46,7 @@ describe("e2e sanity (real-process)", () => {
 		const project = createTmpProject();
 		t.after(project.cleanup);
 
-		const result = gsdSync(["--help"], { cwd: project.dir, timeoutMs: 15_000 });
+		const result = gwdSync(["--help"], { cwd: project.dir, timeoutMs: 15_000 });
 
 		assert.equal(result.code, 0, `expected exit 0, got ${result.code}. stderr=${result.stderrClean}`);
 		const out = result.stdoutClean.toLowerCase();
@@ -71,7 +71,7 @@ describe("e2e sanity (real-process)", () => {
 			else process.env.GWD_FORCE_BAD_CONFIG = previous;
 		});
 
-		const result = gsdSync(["--version"], { cwd: project.dir, timeoutMs: 15_000 });
+		const result = gwdSync(["--version"], { cwd: project.dir, timeoutMs: 15_000 });
 		assert.equal(result.code, 0, `expected child to ignore parent GWD_*; got code=${result.code} stderr=${result.stderrClean}`);
 	});
 });

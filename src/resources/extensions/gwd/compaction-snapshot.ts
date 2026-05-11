@@ -125,9 +125,9 @@ export function writeCompactionSnapshot(
     },
     opts,
   );
-  const gsdDir = resolve(baseDir, ".gwd");
-  if (!existsSync(gsdDir)) mkdirSync(gsdDir, { recursive: true });
-  const path = resolve(gsdDir, SNAPSHOT_FILENAME);
+  const gwdDir = resolve(baseDir, ".gwd");
+  if (!existsSync(gwdDir)) mkdirSync(gwdDir, { recursive: true });
+  const path = resolve(gwdDir, SNAPSHOT_FILENAME);
   const finalContent = `${content}\n`;
   writeFileSync(path, finalContent, "utf-8");
   return {

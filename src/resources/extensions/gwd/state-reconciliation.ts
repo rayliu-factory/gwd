@@ -2,26 +2,26 @@
 // File Purpose: ADR-015 State Reconciliation module for pre-dispatch runtime invariants.
 
 import { deriveState, invalidateStateCache, type DeriveStateOptions } from "./state.js";
-import type { GSDState } from "./types.js";
+import type { GWDState } from "./types.js";
 
 export type StateReconciliationResult =
   | {
       ok: true;
-      stateSnapshot: GSDState;
+      stateSnapshot: GWDState;
       repaired: readonly string[];
       blockers: readonly string[];
     }
   | {
       ok: false;
       reason: string;
-      stateSnapshot?: GSDState;
+      stateSnapshot?: GWDState;
       repaired: readonly string[];
       blockers: readonly string[];
     };
 
 export interface StateReconciliationDeps {
   invalidateStateCache: () => void;
-  deriveState: (basePath: string, opts?: DeriveStateOptions) => Promise<GSDState>;
+  deriveState: (basePath: string, opts?: DeriveStateOptions) => Promise<GWDState>;
 }
 
 const defaultDeps: StateReconciliationDeps = {

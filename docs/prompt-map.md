@@ -10,7 +10,7 @@
 User / gwd auto
       │
       ▼
- auto.ts  ──── reads STATE.md ──► GSDState
+ auto.ts  ──── reads STATE.md ──► GWDState
       │
       ▼
  auto-dispatch.ts

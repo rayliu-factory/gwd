@@ -2,8 +2,8 @@
  * Regression tests for #3348 secondary issues — crash handler gaps surfaced after #3696
  *
  * 1. register-extension.ts: writeCrashLog writes to ~/.gwd/crash/ directory
- * 2. register-extension.ts: _gsdRejectionGuard registered for unhandledRejection
- * 3. register-extension.ts: _gsdEpipeGuard exits with code 1 for unrecoverable errors (no log-and-continue)
+ * 2. register-extension.ts: _gwdRejectionGuard registered for unhandledRejection
+ * 3. register-extension.ts: _gwdEpipeGuard exits with code 1 for unrecoverable errors (no log-and-continue)
  * 4. crash-recovery.ts: emitCrashRecoveredUnitEnd closes open unit-start journal entries
  */
 
@@ -49,20 +49,20 @@ describe('register-extension crash handler secondary fixes (#3348)', () => {
     }
   });
 
-  test('_gsdRejectionGuard is registered for unhandledRejection', () => {
+  test('_gwdRejectionGuard is registered for unhandledRejection', () => {
     installEpipeGuard();
     const listener = process.listeners("unhandledRejection").find((candidate) =>
-      candidate.name === "_gsdRejectionGuard"
+      candidate.name === "_gwdRejectionGuard"
     );
     assert.ok(listener, 'installEpipeGuard should register an unhandledRejection handler');
   });
 
-  test('_gsdEpipeGuard writes a crash log and exits for unrecoverable errors', () => {
+  test('_gwdEpipeGuard writes a crash log and exits for unrecoverable errors', () => {
     installEpipeGuard();
     const listener = process.listeners("uncaughtException").find((candidate) =>
-      candidate.name === "_gsdEpipeGuard"
+      candidate.name === "_gwdEpipeGuard"
     );
-    assert.ok(listener, '_gsdEpipeGuard should be registered');
+    assert.ok(listener, '_gwdEpipeGuard should be registered');
 
     const tmpHome = join(tmpdir(), `gwd-crash-exit-test-${randomUUID()}`);
     const origHome = process.env.GWD_HOME;

@@ -71,7 +71,7 @@ export interface WorkspaceIndex {
   validationIssues: WorkspaceValidationIssue[];
 }
 
-export type GSDWorkspaceIndex = WorkspaceIndex;
+export type GWDWorkspaceIndex = WorkspaceIndex;
 
 // Extract milestone title from roadmap header without using parsers.
 // Falls back to the milestone ID if no title line found.
@@ -145,7 +145,7 @@ export interface IndexWorkspaceOptions {
   validate?: boolean;
 }
 
-export async function indexWorkspace(basePath: string, opts: IndexWorkspaceOptions = {}): Promise<GSDWorkspaceIndex> {
+export async function indexWorkspace(basePath: string, opts: IndexWorkspaceOptions = {}): Promise<GWDWorkspaceIndex> {
   const milestoneIds = findMilestoneIds(basePath);
   const milestones: WorkspaceMilestoneTarget[] = [];
 

@@ -960,7 +960,7 @@ export function isPackInstalled(pack: SkillPack): boolean {
  *   Installs essential packs only (find-skills, skill-creator, etc.).
  *   Stack-specific skills are deferred — once the LLM establishes a design
  *   and creates project files (package.json, firebase.json, etc.), brownfield
- *   detection will pick them up on the next `gsd init` or via auto-mode
+ *   detection will pick them up on the next `gwd init` or via auto-mode
  *   skill discovery.
  *
  * Returns the list of installed pack labels.

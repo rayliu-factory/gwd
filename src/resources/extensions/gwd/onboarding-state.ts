@@ -7,7 +7,7 @@
 import { existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { logWarning } from "./workflow-logger.js"
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 
 /**
  * Bump `FLOW_VERSION` whenever a new required step is added to ONBOARDING_STEPS.
@@ -22,7 +22,7 @@ const RECORD_VERSION = 1
 // outside src/resources and breaks the build.
 const AGENT_DIR =
   process.env.GWD_CODING_AGENT_DIR ||
-  join(gsdHome(), "agent")
+  join(gwdHome(), "agent")
 const FILE = join(AGENT_DIR, "onboarding.json")
 
 export interface OnboardingRecord {

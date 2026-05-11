@@ -13,7 +13,7 @@ import {
 } from "../../parallel-orchestrator.js";
 import { formatEligibilityReport } from "../../parallel-eligibility.js";
 import { formatMergeResults, mergeAllCompleted, mergeCompletedMilestone } from "../../parallel-merge.js";
-import { loadEffectiveGSDPreferences, resolveParallelConfig } from "../../preferences.js";
+import { loadEffectiveGWDPreferences, resolveParallelConfig } from "../../preferences.js";
 import { projectRoot } from "../context.js";
 function emitParallelMessage(pi: ExtensionAPI, content: string): void {
   pi.sendMessage({ customType: "gwd-parallel", content, display: true });
@@ -28,7 +28,7 @@ export async function handleParallelCommand(trimmed: string, _ctx: ExtensionComm
 
   if (subcommand === "start" || subcommand === "") {
     const root = projectRoot();
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     const config = resolveParallelConfig(loaded?.preferences);
     if (!config.enabled) {
       emitParallelMessage(pi, "Parallel mode is not enabled. Set `parallel.enabled: true` in your preferences.");

@@ -14,12 +14,12 @@ import type {
   ReconcileResult,
   DisplayMetadata,
 } from "./engine-types.js";
-import type { GSDState } from "./types.js";
+import type { GWDState } from "./types.js";
 import type { DispatchAction, DispatchContext } from "./auto-dispatch.js";
 
 import { deriveState } from "./state.js";
 import { resolveDispatch } from "./auto-dispatch.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 
 // ─── Bridge: DispatchAction → EngineDispatchAction ────────────────────────
 
@@ -57,14 +57,14 @@ export class DevWorkflowEngine implements WorkflowEngine {
   readonly engineId = "dev" as const;
 
   async deriveState(basePath: string): Promise<EngineState> {
-    const gsd: GSDState = await deriveState(basePath);
+    const gwd: GWDState = await deriveState(basePath);
     return {
-      phase: gsd.phase,
-      currentMilestoneId: gsd.activeMilestone?.id ?? null,
-      activeSliceId: gsd.activeSlice?.id ?? null,
-      activeTaskId: gsd.activeTask?.id ?? null,
-      isComplete: gsd.phase === "complete",
-      raw: gsd,
+      phase: gwd.phase,
+      currentMilestoneId: gwd.activeMilestone?.id ?? null,
+      activeSliceId: gwd.activeSlice?.id ?? null,
+      activeTaskId: gwd.activeTask?.id ?? null,
+      isComplete: gwd.phase === "complete",
+      raw: gwd,
     };
   }
 
@@ -72,17 +72,17 @@ export class DevWorkflowEngine implements WorkflowEngine {
     state: EngineState,
     context: { basePath: string },
   ): Promise<EngineDispatchAction> {
-    const gsd = state.raw as GSDState;
-    const mid = gsd.activeMilestone?.id ?? "";
-    const midTitle = gsd.activeMilestone?.title ?? "";
-    const loaded = loadEffectiveGSDPreferences();
+    const gwd = state.raw as GWDState;
+    const mid = gwd.activeMilestone?.id ?? "";
+    const midTitle = gwd.activeMilestone?.title ?? "";
+    const loaded = loadEffectiveGWDPreferences();
     const prefs = loaded?.preferences ?? undefined;
 
     const dispatchCtx: DispatchContext = {
       basePath: context.basePath,
       mid,
       midTitle,
-      state: gsd,
+      state: gwd,
       prefs,
     };
 

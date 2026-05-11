@@ -27,7 +27,7 @@ import assert from "node:assert/strict";
 import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
-import { createTmpProject, gsdSync } from "./_shared/index.ts";
+import { createTmpProject, gwdSync } from "./_shared/index.ts";
 
 interface SqliteDb {
 	// Method names match node:sqlite's API surface.
@@ -108,11 +108,11 @@ describe("schema migration smoke (forward only)", () => {
 		const project = createTmpProject({ git: true });
 		t.after(project.cleanup);
 
-		const gsdDir = join(project.dir, ".gwd");
-		mkdirSync(gsdDir, { recursive: true });
-		mkdirSync(join(gsdDir, "milestones"), { recursive: true });
+		const gwdDir = join(project.dir, ".gwd");
+		mkdirSync(gwdDir, { recursive: true });
+		mkdirSync(join(gwdDir, "milestones"), { recursive: true });
 
-		const dbPath = join(gsdDir, "gwd.db");
+		const dbPath = join(gwdDir, "gwd.db");
 		seedV20Db(sqliteLoaded.mod, dbPath);
 
 		// Sanity: the seeded DB really is v20 before we hand it to gwd.
@@ -121,7 +121,7 @@ describe("schema migration smoke (forward only)", () => {
 
 		// Run a no-LLM probe that opens the DB. The mere act of running it
 		// triggers initSchema/migrateSchema in the binary's compiled code.
-		const result = gsdSync(["headless", "query"], {
+		const result = gwdSync(["headless", "query"], {
 			cwd: project.dir,
 			timeoutMs: 30_000,
 		});

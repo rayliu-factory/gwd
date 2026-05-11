@@ -20,7 +20,7 @@
 
 import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
 import { basename, join } from "node:path";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { truncateWithEllipsis } from "../shared/format-utils.js";
 import { nativeParseJsonlTail } from "./native-parser-bridge.js";
 import { MAX_JSONL_BYTES, parseJSONL } from "./jsonl-utils.js";
@@ -299,14 +299,14 @@ export function getDeepDiagnostic(basePath: string, worktreePath?: string): stri
   let trace: ExecutionTrace | null = null;
   try {
     if (worktreePath) {
-      const wtActivityDir = join(gsdRoot(worktreePath), "activity");
+      const wtActivityDir = join(gwdRoot(worktreePath), "activity");
       trace = readLastActivityLog(wtActivityDir);
     }
   } catch { /* non-fatal — fall through to root */ }
 
   // Fall back to root activity logs
   if (!trace || trace.toolCallCount === 0) {
-    const activityDir = join(gsdRoot(basePath), "activity");
+    const activityDir = join(gwdRoot(basePath), "activity");
     trace = readLastActivityLog(activityDir);
   }
 
@@ -320,7 +320,7 @@ export function getDeepDiagnostic(basePath: string, worktreePath?: string): stri
  */
 export function readActiveMilestoneId(basePath: string): string | null {
   try {
-    const statePath = join(gsdRoot(basePath), "STATE.md");
+    const statePath = join(gwdRoot(basePath), "STATE.md");
     if (!existsSync(statePath)) return null;
     const content = readFileSync(statePath, "utf-8");
     const match = /\*\*Active Milestone:\*\*\s*(\S+)/i.exec(content);
@@ -478,7 +478,7 @@ function formatTraceSummary(trace: ExecutionTrace): string {
   // when the previous turn was truncated or malformed. Crash recovery has its
   // own path (formatCrashRecoveryBriefing) that handles lastReasoning safely
   // with explicit "Last Agent Reasoning Before Interruption" framing.
-  // See: https://github.com/gwd-build/gwd-2/issues/2195
+  // See: https://github.com/rayliu-factory/gwd/issues/2195
   return parts.join("\n");
 }
 

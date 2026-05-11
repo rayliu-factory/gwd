@@ -6,8 +6,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { visibleWidth, truncateToWidth } from "@gwd/pi-tui";
-import { loadEffectiveGSDPreferences } from "../preferences.js";
-import { gsdHome } from "../gwd-home.js";
+import { loadEffectiveGWDPreferences } from "../preferences.js";
+import { gwdHome } from "../gwd-home.js";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -42,7 +42,7 @@ const LABEL_COL_WIDTH = 10;
  */
 export function readModelFromPreferences(): string {
   try {
-    const prefs = loadEffectiveGSDPreferences();
+    const prefs = loadEffectiveGWDPreferences();
     if (!prefs?.preferences.models) return "default";
     const m = prefs.preferences.models as Record<string, unknown>;
     // Try common phases in priority order
@@ -107,7 +107,7 @@ export function readMcpServerNames(projectRoot: string): string[] {
   const configPaths = [
     join(projectRoot, ".mcp.json"),
     join(projectRoot, ".gwd", "mcp.json"),
-    join(gsdHome(), "mcp.json"),
+    join(gwdHome(), "mcp.json"),
   ];
   const names: string[] = [];
   const seen = new Set<string>();

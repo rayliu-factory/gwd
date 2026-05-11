@@ -13,7 +13,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname, extname } from "node:path";
 
 import { execSync } from "node:child_process";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -108,7 +108,7 @@ const DEFAULT_MAX_FILES = 500;
 const DEFAULT_COLLAPSE_THRESHOLD = 20;
 const DEFAULT_REFRESH_TTL_MS = 30_000;
 const DEFAULT_MAX_AGE_MS = 15 * 60_000;
-const CODEBASE_METADATA_PREFIX = "<!-- gsd:codebase-meta ";
+const CODEBASE_METADATA_PREFIX = "<!-- gwd:codebase-meta ";
 
 const freshnessCache = new Map<string, { checkedAt: number; result: EnsureCodebaseMapResult }>();
 
@@ -116,7 +116,7 @@ const freshnessCache = new Map<string, { checkedAt: number; result: EnsureCodeba
 
 /**
  * Parse an existing CODEBASE.md to extract file → description mappings.
- * Also scans <!-- gsd:collapsed-descriptions --> comment blocks to preserve
+ * Also scans <!-- gwd:collapsed-descriptions --> comment blocks to preserve
  * descriptions for files in collapsed directories across incremental updates.
  */
 export function parseCodebaseMap(content: string): Map<string, string> {
@@ -125,7 +125,7 @@ export function parseCodebaseMap(content: string): Map<string, string> {
 
   for (const line of content.split("\n")) {
     // Track collapsed-description comment blocks
-    if (line.trimStart().startsWith("<!-- gsd:collapsed-descriptions")) {
+    if (line.trimStart().startsWith("<!-- gwd:collapsed-descriptions")) {
       inCollapsedBlock = true;
       continue;
     }
@@ -328,7 +328,7 @@ function renderCodebaseMap(
         .filter((f) => f.description)
         .map((f) => `- \`${f.path}\` — ${f.description}`);
       if (descLines.length > 0) {
-        lines.push("<!-- gsd:collapsed-descriptions");
+        lines.push("<!-- gwd:collapsed-descriptions");
         lines.push(...descLines);
         lines.push("-->");
       }
@@ -414,7 +414,7 @@ export function updateCodebaseMap(
   fingerprint: string;
   generatedAt: string;
 } {
-  const codebasePath = join(gsdRoot(basePath), "CODEBASE.md");
+  const codebasePath = join(gwdRoot(basePath), "CODEBASE.md");
   const resolved = resolveGeneratorOptions(options);
 
   // Load existing descriptions
@@ -561,7 +561,7 @@ export function ensureCodebaseMapFresh(
  * Write CODEBASE.md to .gwd/ directory.
  */
 export function writeCodebaseMap(basePath: string, content: string): string {
-  const root = gsdRoot(basePath);
+  const root = gwdRoot(basePath);
   mkdirSync(root, { recursive: true });
   const outPath = join(root, "CODEBASE.md");
   writeFileSync(outPath, content, "utf-8");
@@ -573,7 +573,7 @@ export function writeCodebaseMap(basePath: string, content: string): string {
  * Read existing CODEBASE.md, or return null if it doesn't exist.
  */
 export function readCodebaseMap(basePath: string): string | null {
-  const codebasePath = join(gsdRoot(basePath), "CODEBASE.md");
+  const codebasePath = join(gwdRoot(basePath), "CODEBASE.md");
   if (!existsSync(codebasePath)) return null;
   try {
     return readFileSync(codebasePath, "utf-8");

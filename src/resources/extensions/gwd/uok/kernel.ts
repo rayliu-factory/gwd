@@ -6,7 +6,7 @@ import { join } from "node:path";
 
 import type { AutoSession } from "../auto/session.js";
 import type { LoopDeps } from "../auto/loop-deps.js";
-import { gsdRoot } from "../paths.js";
+import { gwdRoot } from "../paths.js";
 import { buildAuditEnvelope, emitUokAuditEvent } from "./audit.js";
 import { setUnifiedAuditEnabled } from "./audit-toggle.js";
 import { resolveUokFlags } from "./flags.js";
@@ -33,12 +33,12 @@ interface RunAutoLoopWithUokArgs {
 }
 
 function parityLogPath(basePath: string): string {
-  return join(gsdRoot(basePath), "runtime", "uok-parity.jsonl");
+  return join(gwdRoot(basePath), "runtime", "uok-parity.jsonl");
 }
 
 function writeParityEvent(basePath: string, event: Record<string, unknown>): void {
   try {
-    mkdirSync(join(gsdRoot(basePath), "runtime"), { recursive: true });
+    mkdirSync(join(gwdRoot(basePath), "runtime"), { recursive: true });
     appendFileSync(parityLogPath(basePath), `${JSON.stringify(event)}\n`, "utf-8");
   } catch {
     // parity telemetry must never block orchestration
@@ -54,7 +54,7 @@ function resolveKernelPathLabel(
 
 export async function runAutoLoopWithUok(args: RunAutoLoopWithUokArgs): Promise<void> {
   const { ctx, pi, s, deps, runKernelLoop, runLegacyLoop } = args;
-  const prefs = deps.loadEffectiveGSDPreferences()?.preferences;
+  const prefs = deps.loadEffectiveGWDPreferences()?.preferences;
   const flags = resolveUokFlags(prefs);
   setUnifiedAuditEnabled(flags.auditUnified);
   const pathLabel = resolveKernelPathLabel(flags);

@@ -21,19 +21,19 @@
 
 import { createJiti } from '@mariozechner/jiti'
 import { fileURLToPath } from 'node:url'
-import { resolveGsdAgentExtensionsDir, shouldUseAgentExtensionsDir } from './headless-query.js'
-import { resolveBundledGsdExtensionModule } from './bundled-resource-path.js'
+import { resolveGwdAgentExtensionsDir, shouldUseAgentExtensionsDir } from './headless-query.js'
+import { resolveBundledGwdExtensionModule } from './bundled-resource-path.js'
 import { join } from 'node:path'
 import { existsSync } from 'node:fs'
 
 const jiti = createJiti(fileURLToPath(import.meta.url), { interopDefault: true, debug: false })
 
-const agentExtensionsDir = resolveGsdAgentExtensionsDir()
+const agentExtensionsDir = resolveGwdAgentExtensionsDir()
 const { useAgentDir } = shouldUseAgentExtensionsDir({ env: process.env })
-const gsdExtensionPath = (...segments: string[]) =>
+const gwdExtensionPath = (...segments: string[]) =>
   useAgentDir
     ? resolveAgentExtensionModule(agentExtensionsDir, segments)
-    : resolveBundledGsdExtensionModule(import.meta.url, segments.join('/'))
+    : resolveBundledGwdExtensionModule(import.meta.url, segments.join('/'))
 
 function resolveAgentExtensionModule(agentDir: string, segments: string[]): string {
   const requested = join(agentDir, ...segments)
@@ -46,10 +46,10 @@ function resolveAgentExtensionModule(agentDir: string, segments: string[]): stri
 }
 
 async function loadExtensionModules() {
-  const stateModule = await jiti.import(gsdExtensionPath('state.ts'), {}) as any
-  const dbModule = await jiti.import(gsdExtensionPath('gwd-db.ts'), {}) as any
-  const importerModule = await jiti.import(gsdExtensionPath('md-importer.ts'), {}) as any
-  const dynamicToolsModule = await jiti.import(gsdExtensionPath('bootstrap/dynamic-tools.ts'), {}) as any
+  const stateModule = await jiti.import(gwdExtensionPath('state.ts'), {}) as any
+  const dbModule = await jiti.import(gwdExtensionPath('gwd-db.ts'), {}) as any
+  const importerModule = await jiti.import(gwdExtensionPath('md-importer.ts'), {}) as any
+  const dynamicToolsModule = await jiti.import(gwdExtensionPath('bootstrap/dynamic-tools.ts'), {}) as any
   return {
     ensureDbOpen: dynamicToolsModule.ensureDbOpen as (basePath: string) => Promise<boolean>,
     isDbAvailable: dbModule.isDbAvailable as () => boolean,

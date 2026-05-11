@@ -118,7 +118,7 @@ export function resolveGwdInvocation(args: string[], binaryOverride?: string): {
 }
 
 /** Synchronous spawn. Use for short, deterministic CLI calls (`--version`, etc). */
-export function gsdSync(args: string[], env: E2eEnv): SpawnSyncResult {
+export function gwdSync(args: string[], env: E2eEnv): SpawnSyncResult {
 	const { command, argv } = resolveGwdInvocation(args, env.binary);
 	const result = spawnSync(command, argv, {
 		cwd: env.cwd,
@@ -156,7 +156,7 @@ export interface AsyncChild {
  * Spawn the gwd CLI as a long-running child. Caller is responsible for
  * calling `.kill()` (typically via t.after).
  */
-export function gsdAsync(args: string[], env: E2eEnv, opts: SpawnOptions = {}): AsyncChild {
+export function gwdAsync(args: string[], env: E2eEnv, opts: SpawnOptions = {}): AsyncChild {
 	const { command, argv } = resolveGwdInvocation(args, env.binary);
 	const child = spawn(command, argv, {
 		cwd: env.cwd,

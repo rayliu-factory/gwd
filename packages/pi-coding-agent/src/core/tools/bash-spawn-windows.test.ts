@@ -13,7 +13,7 @@
  *   with `detached: process.platform !== "win32"` (process-manager.ts);
  *   this test ensures all other spawn sites are aligned.
  *
- * See: gwd-build/gwd-2#XXXX
+ * See: rayliu-factory/gwd#XXXX
  */
 
 import test from "node:test";

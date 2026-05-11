@@ -22,7 +22,7 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 
-const gsdDir = join(process.cwd(), "src/resources/extensions/gwd");
+const gwdDir = join(process.cwd(), "src/resources/extensions/gwd");
 
 const ALLOWLIST = new Set([
   "gwd-db.ts",
@@ -76,13 +76,13 @@ const PREPARE_WRITE_RE = /\.prepare\s*\(\s*[`'"][^`'"]*\b(INSERT|UPDATE|DELETE|R
 const EXEC_WRITE_RE = /\.exec\s*\(\s*[`'"][^`'"]*\b(INSERT|UPDATE|DELETE|REPLACE|BEGIN|COMMIT|ROLLBACK)\b/i;
 
 test("no module outside gwd-db.ts issues raw write SQL against the engine DB", () => {
-  const files = walkTsFiles(gsdDir);
+  const files = walkTsFiles(gwdDir);
   assert.ok(files.length >= 20, `Expected at least 20 .ts files under gwd/, found ${files.length}`);
 
   const violations: Violation[] = [];
 
   for (const abs of files) {
-    const rel = relative(gsdDir, abs);
+    const rel = relative(gwdDir, abs);
     const base = rel.split("/").pop()!;
     if (ALLOWLIST.has(base)) continue;
 
@@ -167,12 +167,12 @@ test("gwd-db.ts exports the expected single-writer wrappers", async () => {
 });
 
 test("the invariant test touches every .ts module under gwd/ (sanity check)", () => {
-  const files = walkTsFiles(gsdDir);
+  const files = walkTsFiles(gwdDir);
   // Rough sanity: ensure we're not accidentally walking an empty tree
   assert.ok(files.length >= 30, `Expected to scan at least 30 .ts files, scanned ${files.length}`);
 
   // Spot-check a couple of known files that must be included
-  const rels = files.map((f) => relative(gsdDir, f));
+  const rels = files.map((f) => relative(gwdDir, f));
   assert.ok(rels.includes("gwd-db.ts"), "walker must include gwd-db.ts");
   assert.ok(rels.includes("memory-store.ts"), "walker must include memory-store.ts");
   assert.ok(rels.includes("workflow-manifest.ts"), "walker must include workflow-manifest.ts");

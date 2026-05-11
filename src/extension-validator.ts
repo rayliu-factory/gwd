@@ -1,4 +1,4 @@
-// GSD-2 — Extension Package Format Validator
+// GWD-2 — Extension Package Format Validator
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 /**

@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { assertSafeDirectory } from "./validate-directory.js";
 import { detectWorkflowMcpLaunchConfig } from "./workflow-mcp.js";
 
-export const GWD_WORKFLOW_MCP_SERVER_NAME = "gsd-workflow";
+export const GWD_WORKFLOW_MCP_SERVER_NAME = "gwd-workflow";
 
 export interface ProjectMcpServerConfig {
   command?: string;
@@ -27,7 +27,7 @@ interface McpConfigFile {
   [key: string]: unknown;
 }
 
-export function resolveBundledGsdCliPath(env: NodeJS.ProcessEnv = process.env): string | null {
+export function resolveBundledGwdCliPath(env: NodeJS.ProcessEnv = process.env): string | null {
   const explicit = env.GWD_CLI_PATH?.trim() || env.GWD_BIN_PATH?.trim();
   if (explicit) return explicit;
 
@@ -49,10 +49,10 @@ export function buildProjectWorkflowMcpServerConfig(
   env: NodeJS.ProcessEnv = process.env,
 ): ProjectMcpServerConfig {
   const resolvedProjectRoot = resolve(projectRoot);
-  const gsdCliPath = resolveBundledGsdCliPath(env);
+  const gwdCliPath = resolveBundledGwdCliPath(env);
   const launch = detectWorkflowMcpLaunchConfig(resolvedProjectRoot, {
     ...env,
-    ...(gsdCliPath ? { GWD_CLI_PATH: gsdCliPath, GWD_BIN_PATH: gsdCliPath } : {}),
+    ...(gwdCliPath ? { GWD_CLI_PATH: gwdCliPath, GWD_BIN_PATH: gwdCliPath } : {}),
   });
 
   if (!launch) {

@@ -1,7 +1,7 @@
 {
   "name": "@gwd-build/contracts",
   "version": "0.0.1",
-  "description": "Shared public contracts for GSD workspace boundaries",
+  "description": "Shared public contracts for GWD workspace boundaries",
   "license": "MIT",
   "gwd": {
     "linkable": true,

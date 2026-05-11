@@ -10,7 +10,7 @@ import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
 import { readUnitRuntimeRecord, writeUnitRuntimeRecord } from "./unit-runtime.js";
 import { isDbAvailable, getMilestoneSlices, getSliceTasks } from "./gwd-db.js";
 import { resolveAutoSupervisorConfig } from "./preferences.js";
-import type { AutoSupervisorConfig, GSDPreferences } from "./preferences.js";
+import type { AutoSupervisorConfig, GWDPreferences } from "./preferences.js";
 import { computeBudgets, resolveExecutorContextWindow } from "./context-budget.js";
 import {
   getInFlightToolCount,
@@ -32,7 +32,7 @@ export interface SupervisionContext {
   pi: ExtensionAPI;
   unitType: string;
   unitId: string;
-  prefs: GSDPreferences | undefined;
+  prefs: GWDPreferences | undefined;
   buildSnapshotOpts: () => CloseoutOptions & Record<string, unknown>;
   buildRecoveryContext: () => RecoveryContext;
   pauseAuto: (ctx?: ExtensionContext, pi?: ExtensionAPI) => Promise<void>;

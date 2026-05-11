@@ -1,12 +1,12 @@
 /**
  * GWD2 — regression tests for #5187 and git-root anchor guard:
  *
- * #5187: gsdRoot() must refuse to use the global GWD home (~/.gwd) as a
+ * #5187: gwdRoot() must refuse to use the global GWD home (~/.gwd) as a
  * project .gwd directory when basePath resolves to $HOME. Paths under
  * ~/.gwd/projects/<hash>/ remain valid.
  *
  * git-root anchor guard: when $HOME is itself a git repo and ~/.gwd exists,
- * gsdRoot() must NOT return ~/.gwd for a subdir basePath like ~/projects/foo.
+ * gwdRoot() must NOT return ~/.gwd for a subdir basePath like ~/projects/foo.
  * It should fall through to step 4 (creation fallback) instead.
  */
 
@@ -17,9 +17,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
-import { gsdRoot, _clearGwdRootCache } from '../paths.ts';
+import { gwdRoot, _clearGwdRootCache } from '../paths.ts';
 
-describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#5187)', () => {
+describe('gwdRoot() refuses ~/.gwd as project state when basePath is $HOME (#5187)', () => {
   let fakeHome: string;
   let savedHome: string | undefined;
   let savedUserProfile: string | undefined;
@@ -53,7 +53,7 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
   });
 
   test('does not use the global GWD home when basePath is the home directory', () => {
-    assert.equal(gsdRoot(fakeHome), join(fakeHome, '.gwd'));
+    assert.equal(gwdRoot(fakeHome), join(fakeHome, '.gwd'));
   });
 
   test('does NOT throw for paths under ~/.gwd/projects/<hash>/', () => {
@@ -61,7 +61,7 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
     mkdirSync(join(projectStateDir, '.gwd'), { recursive: true });
     _clearGwdRootCache();
 
-    const resolved = gsdRoot(projectStateDir);
+    const resolved = gwdRoot(projectStateDir);
     assert.equal(resolved, join(projectStateDir, '.gwd'));
   });
 
@@ -70,7 +70,7 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
     mkdirSync(join(projectDir, '.gwd'), { recursive: true });
     _clearGwdRootCache();
     try {
-      const resolved = gsdRoot(projectDir);
+      const resolved = gwdRoot(projectDir);
       assert.equal(resolved, join(projectDir, '.gwd'));
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
@@ -123,16 +123,16 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gwd', ()
     // fakeHome IS the git root AND $HOME, so git rev-parse returns fakeHome,
     // and ~/.gwd (fakeHome/.gwd) exists. The guard must skip that candidate
     // and fall through to the creation fallback: subDir/.gwd.
-    const result = gsdRoot(subDir);
+    const result = gwdRoot(subDir);
     assert.notEqual(
       result,
       join(fakeHome, '.gwd'),
-      'gsdRoot must not return ~/.gwd for a subdir basePath',
+      'gwdRoot must not return ~/.gwd for a subdir basePath',
     );
     assert.equal(
       result,
       join(subDir, '.gwd'),
-      'gsdRoot should fall through to the creation fallback for a subdir',
+      'gwdRoot should fall through to the creation fallback for a subdir',
     );
   });
 });

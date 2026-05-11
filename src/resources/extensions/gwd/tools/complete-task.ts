@@ -39,7 +39,7 @@ import { renderAllProjections, renderSummaryContent } from "../workflow-projecti
 import { writeManifest } from "../workflow-manifest.js";
 import { appendEvent } from "../workflow-events.js";
 import { logWarning, logError } from "../workflow-logger.js";
-import { loadEffectiveGSDPreferences } from "../preferences.js";
+import { loadEffectiveGWDPreferences } from "../preferences.js";
 import { isStaleWrite } from "../auto/turn-epoch.js";
 import { buildEscalationArtifact, writeEscalationArtifact } from "../escalation.js";
 
@@ -184,7 +184,7 @@ export async function handleCompleteTask(
   let validatedEscalationArtifact: ReturnType<typeof buildEscalationArtifact> | null = null;
   let escalationWriteEnabled = false;
   if (params.escalation) {
-    escalationWriteEnabled = loadEffectiveGSDPreferences()?.preferences?.phases?.mid_execution_escalation === true;
+    escalationWriteEnabled = loadEffectiveGWDPreferences()?.preferences?.phases?.mid_execution_escalation === true;
     if (escalationWriteEnabled) {
       try {
         validatedEscalationArtifact = buildEscalationArtifact({
@@ -317,8 +317,8 @@ export async function handleCompleteTask(
     summaryPath = join(tasksDir, `${params.taskId}-SUMMARY.md`);
   } else {
     // Tasks dir doesn't exist on disk yet — build path manually and ensure dirs
-    const gsdDir = join(basePath, ".gwd");
-    const manualTasksDir = join(gsdDir, "milestones", params.milestoneId, "slices", params.sliceId, "tasks");
+    const gwdDir = join(basePath, ".gwd");
+    const manualTasksDir = join(gwdDir, "milestones", params.milestoneId, "slices", params.sliceId, "tasks");
     mkdirSync(manualTasksDir, { recursive: true });
     summaryPath = join(manualTasksDir, `${params.taskId}-SUMMARY.md`);
   }

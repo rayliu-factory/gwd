@@ -67,8 +67,8 @@ describe('doctor-runtime', async () => {
       // Phase C pt 2: stale lock state lives in the workers table now.
       // Insert a fake stale worker row directly (PID 9999999 is dead).
       const { openDatabase, _getAdapter } = await import("../../gwd-db.ts");
-      const gsdDb = await import("../../gwd-db.ts");
-      t.after(() => { gsdDb.closeDatabase(); });
+      const gwdDb = await import("../../gwd-db.ts");
+      t.after(() => { gwdDb.closeDatabase(); });
       const { randomUUID } = await import("node:crypto");
       openDatabase(join(dir, ".gwd", "gwd.db"));
       const db = _getAdapter()!;

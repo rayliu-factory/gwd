@@ -1,14 +1,14 @@
 // GWD Migration Preview — Pre-write statistics
-// Pure function, no I/O. Computes counts from a GSDProject.
+// Pure function, no I/O. Computes counts from a GWDProject.
 
-import type { GSDProject } from './types.js';
+import type { GWDProject } from './types.js';
 import type { MigrationPreview } from './writer.js';
 
 /**
- * Compute pre-write statistics from a GSDProject without performing I/O.
+ * Compute pre-write statistics from a GWDProject without performing I/O.
  * Used to show the user what a migration will produce before writing anything.
  */
-export function generatePreview(project: GSDProject): MigrationPreview {
+export function generatePreview(project: GWDProject): MigrationPreview {
   let totalSlices = 0;
   let totalTasks = 0;
   let doneSlices = 0;

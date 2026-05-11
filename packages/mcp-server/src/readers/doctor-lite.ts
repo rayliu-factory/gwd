@@ -3,7 +3,7 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import {
-  resolveGsdRoot,
+  resolveGwdRoot,
   resolveRootFile,
   findMilestoneIds,
   resolveMilestoneFile,
@@ -38,9 +38,9 @@ export interface DoctorResult {
 // Check implementations
 // ---------------------------------------------------------------------------
 
-function checkProjectLevel(gsdRoot: string, issues: DoctorIssue[]): void {
+function checkProjectLevel(gwdRoot: string, issues: DoctorIssue[]): void {
   // PROJECT.md should exist
-  const projectPath = resolveRootFile(gsdRoot, 'PROJECT.md');
+  const projectPath = resolveRootFile(gwdRoot, 'PROJECT.md');
   if (!existsSync(projectPath)) {
     issues.push({
       severity: 'warning',
@@ -53,9 +53,9 @@ function checkProjectLevel(gsdRoot: string, issues: DoctorIssue[]): void {
   }
 
   // STATE.md should exist if milestones exist
-  const milestones = findMilestoneIds(gsdRoot);
+  const milestones = findMilestoneIds(gwdRoot);
   if (milestones.length > 0) {
-    const statePath = resolveRootFile(gsdRoot, 'STATE.md');
+    const statePath = resolveRootFile(gwdRoot, 'STATE.md');
     if (!existsSync(statePath)) {
       issues.push({
         severity: 'warning',
@@ -69,8 +69,8 @@ function checkProjectLevel(gsdRoot: string, issues: DoctorIssue[]): void {
   }
 }
 
-function checkMilestoneLevel(gsdRoot: string, mid: string, issues: DoctorIssue[]): void {
-  const mDir = resolveMilestoneDir(gsdRoot, mid);
+function checkMilestoneLevel(gwdRoot: string, mid: string, issues: DoctorIssue[]): void {
+  const mDir = resolveMilestoneDir(gwdRoot, mid);
   if (!mDir) {
     issues.push({
       severity: 'error',
@@ -83,10 +83,10 @@ function checkMilestoneLevel(gsdRoot: string, mid: string, issues: DoctorIssue[]
   }
 
   // CONTEXT.md should exist
-  const ctxPath = resolveMilestoneFile(gsdRoot, mid, 'CONTEXT');
+  const ctxPath = resolveMilestoneFile(gwdRoot, mid, 'CONTEXT');
   if (!ctxPath || !existsSync(ctxPath)) {
     // Check for draft
-    const draftPath = resolveMilestoneFile(gsdRoot, mid, 'CONTEXT-DRAFT');
+    const draftPath = resolveMilestoneFile(gwdRoot, mid, 'CONTEXT-DRAFT');
     if (!draftPath || !existsSync(draftPath)) {
       issues.push({
         severity: 'warning',
@@ -99,9 +99,9 @@ function checkMilestoneLevel(gsdRoot: string, mid: string, issues: DoctorIssue[]
   }
 
   // ROADMAP.md should exist if slices exist
-  const sliceIds = findSliceIds(gsdRoot, mid);
+  const sliceIds = findSliceIds(gwdRoot, mid);
   if (sliceIds.length > 0) {
-    const roadmapPath = resolveMilestoneFile(gsdRoot, mid, 'ROADMAP');
+    const roadmapPath = resolveMilestoneFile(gwdRoot, mid, 'ROADMAP');
     if (!roadmapPath || !existsSync(roadmapPath)) {
       issues.push({
         severity: 'warning',
@@ -116,10 +116,10 @@ function checkMilestoneLevel(gsdRoot: string, mid: string, issues: DoctorIssue[]
   // Check if all slices done but no SUMMARY
   if (sliceIds.length > 0) {
     const allDone = sliceIds.every((sid) => {
-      const tasks = findTaskFiles(gsdRoot, mid, sid);
+      const tasks = findTaskFiles(gwdRoot, mid, sid);
       return tasks.length > 0 && tasks.every((t) => t.hasSummary);
     });
-    const summaryPath = resolveMilestoneFile(gsdRoot, mid, 'SUMMARY');
+    const summaryPath = resolveMilestoneFile(gwdRoot, mid, 'SUMMARY');
     if (allDone && (!summaryPath || !existsSync(summaryPath))) {
       issues.push({
         severity: 'error',
@@ -133,12 +133,12 @@ function checkMilestoneLevel(gsdRoot: string, mid: string, issues: DoctorIssue[]
 }
 
 function checkSliceLevel(
-  gsdRoot: string, mid: string, sid: string, issues: DoctorIssue[],
+  gwdRoot: string, mid: string, sid: string, issues: DoctorIssue[],
 ): void {
   const unitId = `${mid}/${sid}`;
 
   // PLAN.md should exist
-  const planPath = resolveSliceFile(gsdRoot, mid, sid, 'PLAN');
+  const planPath = resolveSliceFile(gwdRoot, mid, sid, 'PLAN');
   if (!planPath || !existsSync(planPath)) {
     issues.push({
       severity: 'error',
@@ -150,7 +150,7 @@ function checkSliceLevel(
   }
 
   // Tasks should have plans
-  const tasks = findTaskFiles(gsdRoot, mid, sid);
+  const tasks = findTaskFiles(gwdRoot, mid, sid);
   for (const task of tasks) {
     const taskUnitId = `${unitId}/${task.id}`;
     if (!task.hasPlan) {
@@ -181,37 +181,37 @@ function checkSliceLevel(
 // ---------------------------------------------------------------------------
 
 export function runDoctorLite(projectDir: string, scope?: string): DoctorResult {
-  const gsdRoot = resolveGsdRoot(projectDir);
+  const gwdRoot = resolveGwdRoot(projectDir);
   const issues: DoctorIssue[] = [];
 
-  if (!existsSync(gsdRoot)) {
+  if (!existsSync(gwdRoot)) {
     return {
       ok: true,
       issues: [{
         severity: 'info',
-        code: 'no_gsd_directory',
+        code: 'no_gwd_directory',
         scope: 'project',
         unitId: '',
-        message: 'No .gsd/ directory found — project not initialized',
+        message: 'No .gwd/ directory found — project not initialized',
       }],
       counts: { error: 0, warning: 0, info: 1 },
     };
   }
 
   // Project-level checks
-  checkProjectLevel(gsdRoot, issues);
+  checkProjectLevel(gwdRoot, issues);
 
   // Milestone + slice checks
   const milestoneIds = scope
-    ? findMilestoneIds(gsdRoot).filter((id) => id === scope)
-    : findMilestoneIds(gsdRoot);
+    ? findMilestoneIds(gwdRoot).filter((id) => id === scope)
+    : findMilestoneIds(gwdRoot);
 
   for (const mid of milestoneIds) {
-    checkMilestoneLevel(gsdRoot, mid, issues);
+    checkMilestoneLevel(gwdRoot, mid, issues);
 
-    const sliceIds = findSliceIds(gsdRoot, mid);
+    const sliceIds = findSliceIds(gwdRoot, mid);
     for (const sid of sliceIds) {
-      checkSliceLevel(gsdRoot, mid, sid, issues);
+      checkSliceLevel(gwdRoot, mid, sid, issues);
     }
   }
 

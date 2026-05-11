@@ -12,25 +12,25 @@ import { logWarning } from "./workflow-logger.js";
 export async function handleCleanupBranches(ctx: ExtensionCommandContext, basePath: string): Promise<void> {
   let branches: string[];
   try {
-    branches = nativeBranchList(basePath, "gsd/*");
+    branches = nativeBranchList(basePath, "gwd/*");
   } catch (e) {
     logWarning("command", `branch list failed: ${(e as Error).message}`);
     ctx.ui.notify("No GWD branches to clean up.", "info");
     return;
   }
 
-  const quickBranches = branches.filter((b) => b.startsWith("gsd/quick/"));
+  const quickBranches = branches.filter((b) => b.startsWith("gwd/quick/"));
 
   const mainBranch = nativeDetectMainBranch(basePath);
   let merged: string[];
   try {
-    merged = nativeBranchListMerged(basePath, mainBranch, "gsd/*");
+    merged = nativeBranchListMerged(basePath, mainBranch, "gwd/*");
   } catch (e) {
     logWarning("command", `merged branch list failed: ${(e as Error).message}`);
     merged = [];
   }
 
-  const mergedNonQuick = merged.filter((b) => !b.startsWith("gsd/quick/"));
+  const mergedNonQuick = merged.filter((b) => !b.startsWith("gwd/quick/"));
   let deletedMerged = 0;
   for (const branch of mergedNonQuick) {
     try {
@@ -105,11 +105,11 @@ export async function handleCleanupBranches(ctx: ExtensionCommandContext, basePa
     summary.push(`Deleted ${deletedStaleMilestones} stale milestone branch${deletedStaleMilestones === 1 ? "" : "es"}.`);
   }
   if (quickBranches.length > 0) {
-    summary.push(`Skipped ${quickBranches.length} quick branch${quickBranches.length === 1 ? "" : "es"} (gsd/quick/*).`);
+    summary.push(`Skipped ${quickBranches.length} quick branch${quickBranches.length === 1 ? "" : "es"} (gwd/quick/*).`);
   }
 
   if (summary.length === 0) {
-    const nonQuickCount = branches.filter((b) => !b.startsWith("gsd/quick/")).length;
+    const nonQuickCount = branches.filter((b) => !b.startsWith("gwd/quick/")).length;
     ctx.ui.notify(
       nonQuickCount > 0
         ? `${nonQuickCount} GWD branch${nonQuickCount === 1 ? "" : "es"} found, none merged into ${mainBranch} yet.`
@@ -293,7 +293,7 @@ export async function handleDryRun(ctx: ExtensionCommandContext, basePath: strin
   }
 
   const { getLedger, getProjectTotals, formatCost, formatTokenCount, loadLedgerFromDisk } = await import("./metrics.js");
-  const { loadEffectiveGSDPreferences: loadPrefs } = await import("./preferences.js");
+  const { loadEffectiveGWDPreferences: loadPrefs } = await import("./preferences.js");
   const { formatDuration } = await import("../shared/format-utils.js");
 
   const ledger = getLedger();
@@ -479,7 +479,7 @@ export async function handleCleanupProjects(args: string, ctx: ExtensionCommandC
 }
 
 /**
- * `gsd recover` — Reconstruct DB hierarchy state from rendered markdown on disk.
+ * `gwd recover` — Reconstruct DB hierarchy state from rendered markdown on disk.
  *
  * Deletes milestones, slices, and tasks table rows (preserves decisions,
  * requirements, artifacts, memories), re-runs `migrateHierarchyToDb()` to
@@ -493,7 +493,7 @@ export async function handleRecover(ctx: ExtensionCommandContext, basePath: stri
   const { invalidateStateCache } = await import("./state.js");
 
   if (!dbAvailable()) {
-    ctx.ui.notify("gsd recover: No database open. Run a GWD command first to initialize the DB.", "error");
+    ctx.ui.notify("gwd recover: No database open. Run a GWD command first to initialize the DB.", "error");
     return;
   }
 
@@ -515,7 +515,7 @@ export async function handleRecover(ctx: ExtensionCommandContext, basePath: stri
 
     // 5. Report
     const lines = [
-      `gsd recover: reconstructed hierarchy from markdown`,
+      `gwd recover: reconstructed hierarchy from markdown`,
       `  Milestones: ${counts.milestones}`,
       `  Slices:     ${counts.slices}`,
       `  Tasks:      ${counts.tasks}`,
@@ -539,6 +539,6 @@ export async function handleRecover(ctx: ExtensionCommandContext, basePath: stri
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     logWarning("command", `recover failed: ${msg}`);
-    ctx.ui.notify(`gsd recover failed: ${msg}`, "error");
+    ctx.ui.notify(`gwd recover failed: ${msg}`, "error");
   }
 }

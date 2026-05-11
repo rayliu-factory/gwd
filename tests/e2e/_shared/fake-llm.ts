@@ -9,7 +9,7 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { canonicalTmpdir, gsdSync, type SpawnSyncResult } from "./spawn.ts";
+import { canonicalTmpdir, gwdSync, type SpawnSyncResult } from "./spawn.ts";
 
 export interface ExpectFields {
 	modelId?: string;
@@ -72,7 +72,7 @@ export function runWithFakeLlm(transcriptPath: string, opts: FakeRunOptions): Sp
 		opts.mode ?? "text",
 		...(opts.extraArgs ?? []),
 	];
-	return gsdSync(args, {
+	return gwdSync(args, {
 		cwd: opts.cwd,
 		timeoutMs: opts.timeoutMs ?? 30_000,
 		env: {

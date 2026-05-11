@@ -6,7 +6,7 @@
  * start in that scenario — otherwise it runs at ~4,600 renders/second
  * consuming 500%+ CPU doing nothing useful.
  *
- * Regression test for: https://github.com/gwd-build/gwd-2/issues/3095
+ * Regression test for: https://github.com/rayliu-factory/gwd/issues/3095
  */
 import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert/strict";

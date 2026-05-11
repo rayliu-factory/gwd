@@ -7,8 +7,8 @@
 import type { ExtensionAPI, ExtensionContext } from "@gwd/pi-coding-agent";
 
 import type { AutoSession } from "./session.js";
-import type { GSDPreferences } from "../preferences.js";
-import type { GSDState } from "../types.js";
+import type { GWDPreferences } from "../preferences.js";
+import type { GWDState } from "../types.js";
 import type { CmuxLogLevel } from "../../shared/cmux-events.js";
 import type { LoopDeps } from "./loop-deps.js";
 
@@ -84,7 +84,7 @@ export interface IterationContext {
   pi: ExtensionAPI;
   s: AutoSession;
   deps: LoopDeps;
-  prefs: GSDPreferences | undefined;
+  prefs: GWDPreferences | undefined;
   iteration: number;
   /** UUID grouping all journal events for this iteration. */
   flowId: string;
@@ -103,7 +103,7 @@ export interface LoopState {
 export const MAX_FINALIZE_TIMEOUTS = 3;
 
 export interface PreDispatchData {
-  state: GSDState;
+  state: GWDState;
   mid: string;
   midTitle: string;
 }
@@ -114,7 +114,7 @@ export interface IterationData {
   prompt: string;
   finalPrompt: string;
   pauseAfterUatDispatch: boolean;
-  state: GSDState;
+  state: GWDState;
   mid: string | undefined;
   midTitle: string | undefined;
   isRetry: boolean;

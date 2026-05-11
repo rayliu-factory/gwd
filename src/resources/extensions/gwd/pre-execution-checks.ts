@@ -99,7 +99,7 @@ export function extractPackageReferences(description: string): string[] {
   // natural-language prose like `from "What's Next"` or `from 'master'` does
   // not produce false package-existence failures.  Requiring the leading import
   // keyword anchors the match to JavaScript/TypeScript syntax.
-  // See: https://github.com/gwd-build/gwd-2/issues/4388
+  // See: https://github.com/rayliu-factory/gwd/issues/4388
   const importPattern = /(?:require\s*\(\s*['"]|import\b[\s\S]*?\bfrom\s+['"])([a-zA-Z0-9@/_-]+)['"\)]/g;
   let importMatch: RegExpExecArray | null;
   while ((importMatch = importPattern.exec(description)) !== null) {

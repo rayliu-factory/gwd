@@ -89,7 +89,7 @@ export function rollbackToCheckpoint(
     try {
       execFileSync(
         "git",
-        ["stash", "push", "--include-untracked", "-m", `gsd: pre-rollback-stash ${unitId} ${new Date().toISOString()}`],
+        ["stash", "push", "--include-untracked", "-m", `gwd: pre-rollback-stash ${unitId} ${new Date().toISOString()}`],
         { cwd: basePath, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" },
       );
     } catch {

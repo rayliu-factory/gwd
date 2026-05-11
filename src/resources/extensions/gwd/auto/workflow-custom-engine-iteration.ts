@@ -1,7 +1,7 @@
 // Project/App: GWD-2
 // File Purpose: Custom-engine iteration-data adapter for auto-mode loop.
 
-import type { GSDState } from "../types.js";
+import type { GWDState } from "../types.js";
 import type { IterationData } from "./types.js";
 
 export interface CustomEngineStep {
@@ -15,12 +15,12 @@ export interface BuildCustomEngineIterationDataInput {
   basePath: string;
   canonicalProjectRoot: string;
   currentMilestoneId?: string | null;
-  deriveState: (basePath: string) => Promise<GSDState>;
+  deriveState: (basePath: string) => Promise<GWDState>;
   logPostDerive: (details: {
-    site: "custom-engine-gsd-state";
+    site: "custom-engine-gwd-state";
     basePath: string;
     canonicalProjectRoot: string;
-    derivedPhase: GSDState["phase"];
+    derivedPhase: GWDState["phase"];
     activeUnit: string | undefined;
   }) => void;
 }
@@ -28,13 +28,13 @@ export interface BuildCustomEngineIterationDataInput {
 export async function buildCustomEngineIterationData(
   input: BuildCustomEngineIterationDataInput,
 ): Promise<IterationData> {
-  const gsdState = await input.deriveState(input.canonicalProjectRoot);
+  const gwdState = await input.deriveState(input.canonicalProjectRoot);
   input.logPostDerive({
-    site: "custom-engine-gsd-state",
+    site: "custom-engine-gwd-state",
     basePath: input.basePath,
     canonicalProjectRoot: input.canonicalProjectRoot,
-    derivedPhase: gsdState.phase,
-    activeUnit: gsdState.activeTask?.id ?? gsdState.activeSlice?.id ?? gsdState.activeMilestone?.id,
+    derivedPhase: gwdState.phase,
+    activeUnit: gwdState.activeTask?.id ?? gwdState.activeSlice?.id ?? gwdState.activeMilestone?.id,
   });
 
   return {
@@ -43,7 +43,7 @@ export async function buildCustomEngineIterationData(
     prompt: input.step.prompt,
     finalPrompt: input.step.prompt,
     pauseAfterUatDispatch: false,
-    state: gsdState,
+    state: gwdState,
     mid: input.currentMilestoneId ?? "workflow",
     midTitle: "Workflow",
     isRetry: false,

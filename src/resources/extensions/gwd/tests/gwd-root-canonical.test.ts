@@ -1,4 +1,4 @@
-// GWD-2 + gwd-root-canonical: gsdRoot() result is realpath-canonicalized before caching
+// GWD-2 + gwd-root-canonical: gwdRoot() result is realpath-canonicalized before caching
 
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
@@ -13,11 +13,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 
-import { gsdRoot, _clearGwdRootCache } from "../paths.ts";
+import { gwdRoot, _clearGwdRootCache } from "../paths.ts";
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
-describe("gsdRoot: returns realpath-canonicalized result", () => {
+describe("gwdRoot: returns realpath-canonicalized result", () => {
   let projectDir: string;
 
   beforeEach(() => {
@@ -31,13 +31,13 @@ describe("gsdRoot: returns realpath-canonicalized result", () => {
     rmSync(projectDir, { recursive: true, force: true });
   });
 
-  test("gsdRoot from a canonical project path returns a realpath-canonicalized result", () => {
-    const result = gsdRoot(projectDir);
+  test("gwdRoot from a canonical project path returns a realpath-canonicalized result", () => {
+    const result = gwdRoot(projectDir);
     const canonical = realpathSync(join(projectDir, ".gwd"));
-    assert.equal(result, canonical, "gsdRoot must return the realpath of the .gwd directory");
+    assert.equal(result, canonical, "gwdRoot must return the realpath of the .gwd directory");
   });
 
-  test("gsdRoot via a symlinked project path returns the realpath-canonicalized .gwd", (t) => {
+  test("gwdRoot via a symlinked project path returns the realpath-canonicalized .gwd", (t) => {
     // Create a symlink pointing to projectDir
     const linkPath = join(tmpdir(), `gwd-root-link-${randomUUID()}`);
     symlinkSync(projectDir, linkPath);
@@ -47,20 +47,20 @@ describe("gsdRoot: returns realpath-canonicalized result", () => {
 
     _clearGwdRootCache();
 
-    const result = gsdRoot(linkPath);
+    const result = gwdRoot(linkPath);
     // The canonical .gwd is under the realpath of projectDir, not the symlink
     const canonicalGwd = realpathSync(join(projectDir, ".gwd"));
 
     assert.equal(
       result,
       canonicalGwd,
-      `gsdRoot via symlink ("${linkPath}") must return the realpath'd .gwd ("${canonicalGwd}"), not a symlink-based path`,
+      `gwdRoot via symlink ("${linkPath}") must return the realpath'd .gwd ("${canonicalGwd}"), not a symlink-based path`,
     );
 
     // Also verify that the result does NOT contain the symlink in its path
     assert.ok(
       !result.startsWith(linkPath),
-      `gsdRoot result must not start with the symlink path "${linkPath}"`,
+      `gwdRoot result must not start with the symlink path "${linkPath}"`,
     );
   });
 });

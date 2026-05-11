@@ -24,7 +24,7 @@ import {
 } from './component-types.js';
 
 const SUPPORTED_COMPONENT_KINDS: ComponentKind[] = ['skill', 'agent'];
-const SUPPORTED_API_VERSIONS: ComponentApiVersion[] = ['gsd/v1'];
+const SUPPORTED_API_VERSIONS: ComponentApiVersion[] = ['gwd/v1'];
 
 // ============================================================================
 // Load Result

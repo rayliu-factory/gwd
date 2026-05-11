@@ -13,9 +13,9 @@ import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, readFileSync } from "node:fs";
 import { saveFile } from "./files.js";
 import {
-  getGlobalGSDPreferencesPath,
-  loadEffectiveGSDPreferences,
-  loadGlobalGSDPreferences,
+  getGlobalGWDPreferencesPath,
+  loadEffectiveGWDPreferences,
+  loadGlobalGWDPreferences,
 } from "./preferences.js";
 import { ensurePreferencesFile, serializePreferencesToFrontmatter } from "./commands-prefs-wizard.js";
 
@@ -38,7 +38,7 @@ const SERVICE_TIER_SCOPE_NOTE = "Only affects gpt-5.4 models, regardless of prov
  * GPT-5.5 is intentionally excluded until we verify its provider payload
  * contract instead of assuming `service_tier` support.
  *
- * See: https://github.com/gwd-build/gwd-2/issues/2546
+ * See: https://github.com/rayliu-factory/gwd/issues/2546
  */
 const SERVICE_TIER_MODEL_PREFIXES = ["gpt-5.4"] as const;
 
@@ -111,7 +111,7 @@ export function resolveServiceTierIcon(tier: ServiceTierSetting, modelId: string
  * Read the effective service_tier setting from preferences.
  */
 export function getEffectiveServiceTier(): ServiceTierSetting {
-  const prefs = loadEffectiveGSDPreferences()?.preferences;
+  const prefs = loadEffectiveGWDPreferences()?.preferences;
   const raw = prefs?.service_tier;
   if (raw === "priority" || raw === "flex") return raw;
   return undefined;
@@ -132,10 +132,10 @@ async function writeGlobalServiceTier(
   ctx: ExtensionCommandContext,
   tier: ServiceTierSetting,
 ): Promise<void> {
-  const path = getGlobalGSDPreferencesPath();
+  const path = getGlobalGWDPreferencesPath();
   await ensurePreferencesFile(path, ctx, "global");
 
-  const existing = loadGlobalGSDPreferences();
+  const existing = loadGlobalGWDPreferences();
   const prefs: Record<string, unknown> = existing?.preferences ? { ...existing.preferences } : {};
   prefs.version = prefs.version || 1;
 
@@ -173,21 +173,21 @@ export async function handleFast(args: string, ctx: ExtensionCommandContext): Pr
 
   if (trimmed === "on") {
     await writeGlobalServiceTier(ctx, "priority");
-    ctx.ui.setStatus("gsd-fast", formatServiceTierFooterStatus("priority", ctx.model?.id));
+    ctx.ui.setStatus("gwd-fast", formatServiceTierFooterStatus("priority", ctx.model?.id));
     ctx.ui.notify("Service tier set to priority (2x cost, faster responses). Only affects gpt-5.4 models, regardless of provider.", "info");
     return;
   }
 
   if (trimmed === "off") {
     await writeGlobalServiceTier(ctx, undefined);
-    ctx.ui.setStatus("gsd-fast", undefined);
+    ctx.ui.setStatus("gwd-fast", undefined);
     ctx.ui.notify("Service tier disabled.", "info");
     return;
   }
 
   if (trimmed === "flex") {
     await writeGlobalServiceTier(ctx, "flex");
-    ctx.ui.setStatus("gsd-fast", formatServiceTierFooterStatus("flex", ctx.model?.id));
+    ctx.ui.setStatus("gwd-fast", formatServiceTierFooterStatus("flex", ctx.model?.id));
     ctx.ui.notify("Service tier set to flex (0.5x cost, slower responses). Only affects gpt-5.4 models, regardless of provider.", "info");
     return;
   }

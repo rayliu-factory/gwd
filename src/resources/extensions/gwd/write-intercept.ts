@@ -25,8 +25,8 @@ const BLOCKED_PATTERNS: RegExp[] = [
   // Also match resolved symlink paths under ~/.gwd/projects/ (Pitfall #6)
   /(^|[/\\])\.gwd[/\\]projects[/\\][^/\\]+[/\\]STATE\.md$/i,
   // GWD DB and legacy gwd.db WAL/SHM files — single-writer WAL connection managed by engine (#3625)
-  /(^|[/\\])\.gwd[/\\](?:gwd|gsd)\.db(-wal|-shm)?$/i,
-  /(^|[/\\])\.gwd[/\\]projects[/\\][^/\\]+[/\\](?:gwd|gsd)\.db(-wal|-shm)?$/i,
+  /(^|[/\\])\.gwd[/\\](?:gwd|gwd)\.db(-wal|-shm)?$/i,
+  /(^|[/\\])\.gwd[/\\]projects[/\\][^/\\]+[/\\](?:gwd|gwd)\.db(-wal|-shm)?$/i,
 ];
 
 /**
@@ -45,11 +45,11 @@ const BASH_STATE_PATTERNS: RegExp[] = [
   // dd output to STATE.md
   /\bdd\b.*of=\S*STATE\.md/i,
   // Direct DB access via sqlite3/sql.js/better-sqlite3 targeting GWD DB files (#3625)
-  /\b(sqlite3|sql\.js|better-sqlite3|node:sqlite)\b.*(?:gwd|gsd)\.db/i,
-  /\b(?:gwd|gsd)\.db\b.*\b(sqlite3|sql\.js|better-sqlite3)\b/i,
+  /\b(sqlite3|sql\.js|better-sqlite3|node:sqlite)\b.*(?:gwd|gwd)\.db/i,
+  /\b(?:gwd|gwd)\.db\b.*\b(sqlite3|sql\.js|better-sqlite3)\b/i,
   // Shell writes targeting GWD DB files
-  /[>|]+\s*\S*(?:gwd|gsd)\.db/i,
-  /\b(cp|mv|dd)\b.*(?:gwd|gsd)\.db/i,
+  /[>|]+\s*\S*(?:gwd|gwd)\.db/i,
+  /\b(cp|mv|dd)\b.*(?:gwd|gwd)\.db/i,
 ];
 
 /**

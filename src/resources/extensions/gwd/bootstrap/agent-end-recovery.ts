@@ -13,7 +13,7 @@ import {
 } from "../guided-flow.js";
 import { clearPathCache } from "../paths.js";
 import { getAutoDashboardData, getAutoModeStartModel, isAutoActive, pauseAuto, setCurrentDispatchedModelId } from "../auto.js";
-import { getNextFallbackModel, loadEffectiveGSDPreferences, resolveModelWithFallbacksForUnit } from "../preferences.js";
+import { getNextFallbackModel, loadEffectiveGWDPreferences, resolveModelWithFallbacksForUnit } from "../preferences.js";
 import { pauseAutoForProviderError } from "../provider-error-pause.js";
 import {
   isSessionSwitchAbortGraceActive,
@@ -362,7 +362,7 @@ export async function handleAgentEnd(
         "ollama",
       );
       if (fallback) {
-        const prefs = loadEffectiveGSDPreferences(resolveAgentEndBasePath())?.preferences;
+        const prefs = loadEffectiveGWDPreferences(resolveAgentEndBasePath())?.preferences;
         const fallbackToApply = applyOllamaAppleSiliconContextOverride(fallback, prefs);
         const ok = await pi.setModel(fallbackToApply, { persist: false });
         if (ok) {

@@ -27,7 +27,7 @@ import {
   buildRunUatPrompt,
   buildReplanSlicePrompt,
 } from "./auto-prompts.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import type { MinimalModelRegistry } from "./context-budget.js";
 import { pauseAuto } from "./auto.js";
 import { resolveCanonicalMilestoneRoot } from "./worktree-manager.js";
@@ -80,7 +80,7 @@ export async function dispatchDirectPhase(
         // When require_slice_discussion is enabled, pause auto-mode before
         // each new slice so the user can discuss requirements first (#789).
         const sliceContextFile = resolveSliceFile(dispatchBase, mid, sid, "CONTEXT");
-        const requireDiscussion = loadEffectiveGSDPreferences()?.preferences?.phases?.require_slice_discussion;
+        const requireDiscussion = loadEffectiveGWDPreferences()?.preferences?.phases?.require_slice_discussion;
         if (requireDiscussion && !sliceContextFile) {
           ctx.ui.notify(
             `Slice ${sid} requires discussion before planning. Run /gwd discuss to discuss this slice, then /gwd auto to resume.`,

@@ -13,9 +13,9 @@ import type { ExtensionAPI, ExtensionCommandContext } from "@gwd/pi-coding-agent
 import { existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { isAbsolute, join, relative } from "node:path";
 import { loadPrompt } from "./prompt-loader.js";
-import { gsdRoot } from "./paths.js";
+import { gwdRoot } from "./paths.js";
 import { GitServiceImpl, runGit } from "./git-service.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import { nativeHasStagedChanges } from "./native-git-bridge.js";
 
 interface QuickReturnState {
@@ -71,7 +71,7 @@ function getNextTaskNum(quickDir: string): number {
  * Returns the task directory path.
  */
 function ensureQuickDir(basePath: string, taskNum: number, slug: string): string {
-  const quickDir = join(gsdRoot(basePath), "quick");
+  const quickDir = join(gwdRoot(basePath), "quick");
   const taskDir = join(quickDir, `${taskNum}-${slug}`);
   mkdirSync(taskDir, { recursive: true });
   return taskDir;
@@ -82,7 +82,7 @@ function isPathInside(parent: string, child: string): boolean {
   return rel === "" || (!!rel && !rel.startsWith("..") && !isAbsolute(rel));
 }
 
-function isExternalGsdRoot(basePath: string, root: string): boolean {
+function isExternalGwdRoot(basePath: string, root: string): boolean {
   try {
     return !isPathInside(realpathSync(basePath), realpathSync(root));
   } catch {
@@ -91,7 +91,7 @@ function isExternalGsdRoot(basePath: string, root: string): boolean {
 }
 
 export function buildQuickCommitInstruction(basePath: string, root: string): string {
-  const externalState = isExternalGsdRoot(basePath, root);
+  const externalState = isExternalGwdRoot(basePath, root);
   if (externalState) {
     return [
       "Commit repo changes atomically, but do not stage or commit `.gwd/quick/...`:",
@@ -112,12 +112,12 @@ export function buildQuickCommitInstruction(basePath: string, root: string): str
 }
 
 function quickReturnStatePath(basePath: string): string {
-  return join(gsdRoot(basePath), "runtime", "quick-return.json");
+  return join(gwdRoot(basePath), "runtime", "quick-return.json");
 }
 
 function persistPendingReturn(state: QuickReturnState): void {
   pendingQuickReturn = state;
-  mkdirSync(join(gsdRoot(state.basePath), "runtime"), { recursive: true });
+  mkdirSync(join(gwdRoot(state.basePath), "runtime"), { recursive: true });
   writeFileSync(quickReturnStatePath(state.basePath), JSON.stringify(state) + "\n", "utf-8");
 }
 
@@ -163,7 +163,7 @@ export function cleanupQuickBranch(basePath = process.cwd()): boolean {
   if (!state) return false;
 
   const repoPath = state.basePath;
-  const gitPrefs = loadEffectiveGSDPreferences()?.preferences?.git ?? {};
+  const gitPrefs = loadEffectiveGWDPreferences()?.preferences?.git ?? {};
   const git = new GitServiceImpl(repoPath, gitPrefs);
 
   if (git.getCurrentBranch() === state.quickBranch) {
@@ -197,7 +197,7 @@ export async function handleQuick(
   pi: ExtensionAPI,
 ): Promise<void> {
   const basePath = process.cwd();
-  const root = gsdRoot(basePath);
+  const root = gwdRoot(basePath);
 
   // Validate: .gwd/ must exist
   if (!existsSync(root)) {
@@ -227,9 +227,9 @@ export async function handleQuick(
   const date = new Date().toISOString().split("T")[0];
 
   // Create git branch for the quick task (unless isolation:none — #3337)
-  const gitPrefs = loadEffectiveGSDPreferences()?.preferences?.git ?? {};
+  const gitPrefs = loadEffectiveGWDPreferences()?.preferences?.git ?? {};
   const git = new GitServiceImpl(basePath, gitPrefs);
-  const branchName = `gsd/quick/${taskNum}-${slug}`;
+  const branchName = `gwd/quick/${taskNum}-${slug}`;
   let originalBranch = git.getCurrentBranch();
 
   const { getIsolationMode } = await import("./preferences.js");

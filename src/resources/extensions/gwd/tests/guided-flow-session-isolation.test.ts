@@ -103,15 +103,15 @@ describe("#2985 Bug 4 — getDiscussionMilestoneId must be keyed by basePath", (
 test("checkAutoStartAfterDiscuss ignores missing manifest for single-milestone discuss on established project", () => {
   const base = mkdtempSync(join(tmpdir(), "gwd-auto-start-manifest-"));
   try {
-    const gsdDir = join(base, ".gwd");
-    const milestoneDir = join(gsdDir, "milestones", "M001");
+    const gwdDir = join(base, ".gwd");
+    const milestoneDir = join(gwdDir, "milestones", "M001");
     mkdirSync(milestoneDir, { recursive: true });
-    mkdirSync(join(gsdDir, "milestones", "M002"), { recursive: true });
+    mkdirSync(join(gwdDir, "milestones", "M002"), { recursive: true });
     writeFileSync(
-      join(gsdDir, "PROJECT.md"),
+      join(gwdDir, "PROJECT.md"),
       `# Project\n\n| M001 | First milestone | active |\n| M002 | Second milestone | queued |\n`,
     );
-    writeFileSync(join(gsdDir, "STATE.md"), "# State\n");
+    writeFileSync(join(gwdDir, "STATE.md"), "# State\n");
     writeFileSync(join(milestoneDir, "M001-CONTEXT.md"), "# M001 Context\n");
 
     clearPendingAutoStart();

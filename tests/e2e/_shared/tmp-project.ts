@@ -15,7 +15,7 @@ export interface TmpProjectOptions {
 	/** Run `git init` and create an initial empty commit. */
 	git?: boolean;
 	/** Create an empty `.gwd/` directory (does not create milestones). */
-	gsdSkeleton?: boolean;
+	gwdSkeleton?: boolean;
 	/** Files to write into the project before any test action. */
 	files?: Record<string, string>;
 }

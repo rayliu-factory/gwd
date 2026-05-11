@@ -31,7 +31,7 @@ export interface BeforeAgentStartEventResult {
   systemPrompt?: string;
 }
 
-import type { GSDActiveUnit, GSDState, Phase } from "../types.js";
+import type { GWDActiveUnit, GWDState, Phase } from "../types.js";
 import { isGWDActive, getCurrentPhase } from "../../shared/gwd-phase-state.js";
 import { logWarning } from "../workflow-logger.js";
 
@@ -41,7 +41,7 @@ export interface GWDExtensionAPI extends ExtensionAPI {
   /** Current GWD workflow phase, or null if no project state. */
   getPhase(): Phase | null;
   /** Currently active milestone/slice/task triple, or null if none. */
-  getActiveUnit(): GSDActiveUnit | null;
+  getActiveUnit(): GWDActiveUnit | null;
 }
 
 export type GWDEcosystemBeforeAgentStartHandler = ExtensionHandler<
@@ -71,7 +71,7 @@ export function mapAutoLoopPhase(raw: string): Phase | null {
   return AUTO_LOOP_PHASE_MAP[raw] ?? null;
 }
 
-function resolvePhase(state: GSDState | null): Phase | null {
+function resolvePhase(state: GWDState | null): Phase | null {
   if (!state) return null;
   if (isGWDActive()) {
     const raw = getCurrentPhase();
@@ -85,7 +85,7 @@ function resolvePhase(state: GSDState | null): Phase | null {
   return state.phase;
 }
 
-function resolveActiveUnit(state: GSDState | null): GSDActiveUnit | null {
+function resolveActiveUnit(state: GWDState | null): GWDActiveUnit | null {
   if (!state) return null;
   const m = state.activeMilestone;
   const s = state.activeSlice;
@@ -105,13 +105,13 @@ function resolveActiveUnit(state: GSDState | null): GSDActiveUnit | null {
 
 interface Snapshot {
   phase: Phase | null;
-  activeUnit: GSDActiveUnit | null;
+  activeUnit: GWDActiveUnit | null;
 }
 
 let _snapshot: Snapshot = { phase: null, activeUnit: null };
 
-/** Refresh the snapshot from a freshly derived GSDState (or null on failure). */
-export function updateSnapshot(state: GSDState | null): void {
+/** Refresh the snapshot from a freshly derived GWDState (or null on failure). */
+export function updateSnapshot(state: GWDState | null): void {
   _snapshot = {
     phase: resolvePhase(state),
     activeUnit: resolveActiveUnit(state),
@@ -122,7 +122,7 @@ export function getSnapshotPhase(): Phase | null {
   return _snapshot.phase;
 }
 
-export function getSnapshotActiveUnit(): GSDActiveUnit | null {
+export function getSnapshotActiveUnit(): GWDActiveUnit | null {
   return _snapshot.activeUnit;
 }
 
@@ -226,7 +226,7 @@ export function createGWDExtensionAPI(
 
     // ── GWD-specific additions ─────────────────────────────────────────
     getPhase: (): Phase | null => _snapshot.phase,
-    getActiveUnit: (): GSDActiveUnit | null => _snapshot.activeUnit,
+    getActiveUnit: (): GWDActiveUnit | null => _snapshot.activeUnit,
   } satisfies GWDExtensionAPI;
 
   return wrapper;

@@ -25,7 +25,7 @@ import { existsSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 
-import { GSDError, GWD_GIT_ERROR } from "./errors.js";
+import { GWDError, GWD_GIT_ERROR } from "./errors.js";
 import { MergeConflictError, readIntegrationBranch } from "./git-service.js";
 import {
   nativeBranchForceReset,
@@ -40,7 +40,7 @@ import {
 import { resolveGitDir } from "./worktree-manager.js";
 import { logWarning } from "./workflow-logger.js";
 import { emitSliceMerged, emitMilestoneResquash } from "./worktree-telemetry.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import { GIT_NO_PROMPT_ENV } from "./git-constants.js";
 import { getMilestone, getSlice, isDbAvailable } from "./gwd-db.js";
 
@@ -56,7 +56,7 @@ function resolveIntegrationBranch(projectRoot: string, milestoneId: string): str
   const recorded = readIntegrationBranch(projectRoot, milestoneId);
   if (recorded && nativeBranchExists(projectRoot, recorded)) return recorded;
 
-  const prefs = loadEffectiveGSDPreferences(projectRoot)?.preferences?.git ?? {};
+  const prefs = loadEffectiveGWDPreferences(projectRoot)?.preferences?.git ?? {};
   const configured = prefs.main_branch;
   if (configured && nativeBranchExists(projectRoot, configured)) return configured;
 
@@ -145,7 +145,7 @@ function advanceMilestoneBranch(
       env: GIT_NO_PROMPT_ENV,
     }).trim();
     if (status) {
-      throw new GSDError(
+      throw new GWDError(
         GWD_GIT_ERROR,
         `slice-cadence cannot advance ${milestoneBranch}: worktree has uncommitted changes. Status:\n${status}`,
       );
@@ -185,7 +185,7 @@ export interface SliceMergeResult {
  *   - caller's process.cwd is restored
  *
  * Throws MergeConflictError on conflicts; caller should surface and stop.
- * Throws GSDError on dirty main / detection failures.
+ * Throws GWDError on dirty main / detection failures.
  */
 export function mergeSliceToMain(
   projectRoot: string,
@@ -198,7 +198,7 @@ export function mergeSliceToMain(
   const mainBranch = resolveIntegrationBranch(projectRoot, milestoneId);
 
   if (mainBranch === milestoneBranch) {
-    throw new GSDError(
+    throw new GWDError(
       GWD_GIT_ERROR,
       `slice-cadence resolved integration branch "${mainBranch}" to the milestone branch; refusing to self-merge.`,
     );
@@ -239,7 +239,7 @@ export function mergeSliceToMain(
       encoding: "utf-8",
     }).trim();
     if (status) {
-      throw new GSDError(
+      throw new GWDError(
         GWD_GIT_ERROR,
         `slice-cadence merge requires a clean project root; uncommitted changes detected. ` +
         `Commit or stash at ${projectRoot} before retrying. Status:\n${status}`,
@@ -394,7 +394,7 @@ export function resquashMilestoneOnMain(
 
 /**
  * Read the effective collapse cadence from validated preferences. Accepts
- * a raw preferences object (the shape loadEffectiveGSDPreferences returns).
+ * a raw preferences object (the shape loadEffectiveGWDPreferences returns).
  */
 export function getCollapseCadence(
   prefs: { git?: { collapse_cadence?: "milestone" | "slice" } } | undefined | null,

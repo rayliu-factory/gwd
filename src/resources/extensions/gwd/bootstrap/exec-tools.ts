@@ -1,6 +1,6 @@
 // Project/App: GWD-2
 // File Purpose: Registers Context Mode execution tools.
-// GSD2 — Exec (context-mode) tool registration.
+// GWD2 — Exec (context-mode) tool registration.
 //
 // Exposes the Context Mode runtime tools in-process. Default-on; opt out with
 // `context_mode.enabled: false` in preferences.
@@ -12,12 +12,12 @@ import { resolveCtxCwd } from "./dynamic-tools.js";
 
 
 async function loadContextModePreferences(baseDir: string) {
-  const [{ loadEffectiveGSDPreferences }, { logWarning }] = await Promise.all([
+  const [{ loadEffectiveGWDPreferences }, { logWarning }] = await Promise.all([
     import("../preferences.js"),
     import("../workflow-logger.js"),
   ]);
   try {
-    return loadEffectiveGSDPreferences(baseDir)?.preferences ?? null;
+    return loadEffectiveGWDPreferences(baseDir)?.preferences ?? null;
   } catch (err) {
     logWarning("tool", `Context Mode tool could not load preferences: ${err instanceof Error ? err.message : String(err)}`);
     return null;

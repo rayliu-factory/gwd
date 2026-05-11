@@ -19,14 +19,14 @@ import { deriveState } from "./state.js";
 import { loadFile, getManifestStatus } from "./files.js";
 import type { InterruptedSessionAssessment } from "./interrupted-session.js";
 import {
-  loadEffectiveGSDPreferences,
+  loadEffectiveGWDPreferences,
   resolveSkillDiscoveryMode,
   getIsolationMode,
 } from "./preferences.js";
-import { ensureGsdSymlink, isInheritedRepo, validateProjectId } from "./repo-identity.js";
+import { ensureGwdSymlink, isInheritedRepo, validateProjectId } from "./repo-identity.js";
 import { migrateToExternalState, recoverFailedMigration } from "./migrate-external.js";
 import { collectSecretsFromManifest } from "../get-secrets-from-user.js";
-import { gsdRoot, resolveMilestoneFile } from "./paths.js";
+import { gwdRoot, resolveMilestoneFile } from "./paths.js";
 import { invalidateAllCaches } from "./cache.js";
 import { writeLock, clearLock } from "./crash-recovery.js";
 import {
@@ -133,21 +133,21 @@ export function hasGitIndexLockForTest(basePath: string): boolean {
 }
 
 export function _shouldAbortBootstrapForUnavailableDbForTest(
-  gsdDbPath: string,
+  gwdDbPath: string,
   dbAvailable: boolean,
   pathExists: (path: string) => boolean = existsSync,
 ): boolean {
-  return pathExists(gsdDbPath) && !dbAvailable;
+  return pathExists(gwdDbPath) && !dbAvailable;
 }
 
 export async function openProjectDbIfPresent(basePath: string): Promise<void> {
-  const gsdDbPath = resolveProjectRootDbPath(basePath);
-  if (!existsSync(gsdDbPath) || isDbAvailable()) return;
+  const gwdDbPath = resolveProjectRootDbPath(basePath);
+  if (!existsSync(gwdDbPath) || isDbAvailable()) return;
 
   try {
-    openDatabase(gsdDbPath);
+    openDatabase(gwdDbPath);
   } catch (err) {
-    logWarning("engine", `gsd-db: failed to open existing database: ${err instanceof Error ? err.message : String(err)}`);
+    logWarning("engine", `gwd-db: failed to open existing database: ${err instanceof Error ? err.message : String(err)}`);
   }
 }
 
@@ -640,7 +640,7 @@ export async function bootstrapAutoSession(
     const hasLocalGit = existsSync(join(base, ".git"));
     if (!hasLocalGit || isInheritedRepo(base)) {
       const mainBranch =
-        loadEffectiveGSDPreferences(base)?.preferences?.git?.main_branch || "main";
+        loadEffectiveGWDPreferences(base)?.preferences?.git?.main_branch || "main";
       nativeInit(base, mainBranch);
     }
 
@@ -653,26 +653,26 @@ export async function bootstrapAutoSession(
       ctx.ui.notify(`External state migration warning: ${migration.error}`, "warning");
     }
     // Ensure symlink exists (handles fresh projects and post-migration)
-    ensureGsdSymlink(base);
+    ensureGwdSymlink(base);
 
     // Ensure .gitignore has baseline patterns.
     // ensureGitignore checks for git-tracked .gwd/ files and skips the
     // ".gwd" pattern if the project intentionally tracks .gwd/ in git.
-    const gitPrefs = loadEffectiveGSDPreferences(base)?.preferences?.git;
+    const gitPrefs = loadEffectiveGWDPreferences(base)?.preferences?.git;
     const manageGitignore = gitPrefs?.manage_gitignore;
     ensureGitignore(base, { manageGitignore });
     if (manageGitignore !== false) untrackRuntimeFiles(base);
 
     // Bootstrap milestones/ if it doesn't exist.
-    // Check milestones/ directly — ensureGsdSymlink above already created .gwd/,
+    // Check milestones/ directly — ensureGwdSymlink above already created .gwd/,
     // so checking .gwd/ existence would be dead code (#2942).
-    const gsdDir = join(base, ".gwd");
-    const milestonesPath = join(gsdDir, "milestones");
+    const gwdDir = join(base, ".gwd");
+    const milestonesPath = join(gwdDir, "milestones");
     if (!existsSync(milestonesPath)) {
       mkdirSync(milestonesPath, { recursive: true });
       try {
         nativeAddAll(base);
-        nativeCommit(base, "chore: init gsd");
+        nativeCommit(base, "chore: init gwd");
       } catch (err) {
         /* nothing to commit */
         logWarning("engine", `mkdir failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -687,7 +687,7 @@ export async function bootstrapAutoSession(
     // Initialize GitServiceImpl
     s.gitService = new GitServiceImpl(
       s.basePath,
-      loadEffectiveGSDPreferences(base)?.preferences?.git ?? {},
+      loadEffectiveGWDPreferences(base)?.preferences?.git ?? {},
     );
 
     // ── Debug mode ──
@@ -729,7 +729,7 @@ export async function bootstrapAutoSession(
     // trusted as proof of completion (#4663). Fall back to SUMMARY-file
     // presence only when DB is unavailable (legacy/pre-migration).
     cleanStaleRuntimeUnits(
-      gsdRoot(base),
+      gwdRoot(base),
       (mid) => {
         if (isDbAvailable()) {
           const row = getMilestone(mid);
@@ -925,7 +925,7 @@ export async function bootstrapAutoSession(
       }
     }
 
-    const effectivePrefs = loadEffectiveGSDPreferences(base)?.preferences;
+    const effectivePrefs = loadEffectiveGWDPreferences(base)?.preferences;
     const { shouldRunDeepProjectSetup } = await import("./auto-dispatch.js");
     const deepProjectStagePending = shouldRunDeepProjectSetup(
       state,
@@ -1100,7 +1100,7 @@ export async function bootstrapAutoSession(
     // (ADR-016 phase 2 / B2, #5620). The redundant assignment that used to
     // live here is gone.
 
-    const isUnderGsdWorktrees = (p: string): boolean => {
+    const isUnderGwdWorktrees = (p: string): boolean => {
       // Direct layout: /.gwd/worktrees/
       const marker = `${pathSep}.gwd${pathSep}worktrees${pathSep}`;
       if (p.includes(marker)) return true;
@@ -1117,7 +1117,7 @@ export async function bootstrapAutoSession(
       s.currentMilestoneId &&
       getIsolationMode(base) !== "none" &&
       !detectWorktreeName(base) &&
-      !isUnderGsdWorktrees(base)
+      !isUnderGwdWorktrees(base)
     ) {
       const enterResult = buildLifecycle().enterMilestone(s.currentMilestoneId, {
         notify: ctx.ui.notify.bind(ctx.ui),
@@ -1154,20 +1154,20 @@ export async function bootstrapAutoSession(
     }
 
     // ── DB lifecycle ──
-    const gsdDbPath = resolveProjectRootDbPath(s.basePath);
-    const gsdDirPath = join(s.basePath, ".gwd");
-    if (existsSync(gsdDirPath) && !existsSync(gsdDbPath)) {
+    const gwdDbPath = resolveProjectRootDbPath(s.basePath);
+    const gwdDirPath = join(s.basePath, ".gwd");
+    if (existsSync(gwdDirPath) && !existsSync(gwdDbPath)) {
       try {
         const { openDatabase: openDb } = await import("./gwd-db.js");
-        openDb(gsdDbPath);
+        openDb(gwdDbPath);
       } catch (err) {
         logError("engine", `failed to initialize project database: ${(err as Error).message}`);
       }
     }
-    if (_shouldAbortBootstrapForUnavailableDbForTest(gsdDbPath, isDbAvailable())) {
+    if (_shouldAbortBootstrapForUnavailableDbForTest(gwdDbPath, isDbAvailable())) {
       try {
         const { openDatabase: openDb } = await import("./gwd-db.js");
-        openDb(gsdDbPath);
+        openDb(gwdDbPath);
       } catch (err) {
         logError("engine", `failed to open existing database: ${(err as Error).message}`);
       }
@@ -1178,7 +1178,7 @@ export async function bootstrapAutoSession(
     // auto-mode starts but every gwd_task_complete / gwd_slice_complete
     // call returns "db_unavailable", triggering artifact-retry which
     // re-dispatches the same task — producing an infinite loop (#2419).
-    if (existsSync(gsdDbPath) && !isDbAvailable()) {
+    if (existsSync(gwdDbPath) && !isDbAvailable()) {
       const dbStatus = getDbStatus();
       const phaseHint = dbStatus.lastPhase === "open"
         ? "The database file could not be opened"
@@ -1194,7 +1194,7 @@ export async function bootstrapAutoSession(
         ? ` Provider: ${dbStatus.provider}.`
         : " No SQLite provider available — check Node >= 22 or install better-sqlite3.";
       ctx.ui.notify(
-        `SQLite database exists but failed to open: ${gsdDbPath}. ${phaseHint}${errorDetail}.${providerHint}`,
+        `SQLite database exists but failed to open: ${gwdDbPath}. ${phaseHint}${errorDetail}.${providerHint}`,
         "error",
       );
       return releaseLockAndReturn();
@@ -1240,7 +1240,7 @@ export async function bootstrapAutoSession(
       snapshotSkills();
     }
 
-    ctx.ui.setStatus("gsd-auto", s.stepMode ? "next" : "auto");
+    ctx.ui.setStatus("gwd-auto", s.stepMode ? "next" : "auto");
     ctx.ui.setWidget("gwd-health", undefined);
     const modeLabel = s.stepMode ? "Step-mode" : "Auto-mode";
     const pendingCount = (state.registry ?? []).filter(
@@ -1255,7 +1255,7 @@ export async function bootstrapAutoSession(
     ctx.ui.notify(`${modeLabel} started. ${scopeMsg}`, "info");
 
     const providerReportedWindow = ctx.model?.contextWindow ?? 0;
-    const contextOverride = loadEffectiveGSDPreferences(base)?.preferences.context_window_override;
+    const contextOverride = loadEffectiveGWDPreferences(base)?.preferences.context_window_override;
     if (providerReportedWindow > 500_000 && contextOverride === undefined) {
       ctx.ui.notify(
         `Model reports a ${Math.round(providerReportedWindow / 1000)}K context window. If the provider's real API limit is lower, set context_window_override in .gwd/PREFERENCES.md so wrap-up signals fire before context overflow.`,
@@ -1278,7 +1278,7 @@ export async function bootstrapAutoSession(
     // FlatRateContext used by selectAndApplyModel so user-declared
     // flat-rate providers and externalCli auto-detection are respected.
     const { isFlatRateProvider, buildFlatRateContext } = await import("./auto-model-selection.js");
-    const bannerPrefs = loadEffectiveGSDPreferences(base)?.preferences;
+    const bannerPrefs = loadEffectiveGWDPreferences(base)?.preferences;
     const effectiveProvider = s.autoModeStartModel?.provider ?? ctx.model?.provider;
     const effectivelyEnabled = routingConfig.enabled
       && (routingConfig.allow_flat_rate_providers

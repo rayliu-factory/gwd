@@ -1,5 +1,5 @@
 ---
-name: gsd-headless
+name: gwd-headless
 description: Orchestrate GWD (Get Work Done) projects programmatically via headless CLI. Use when an agent needs to create milestones from specs, execute software development workflows, monitor task progress, check project status, or control GWD execution (pause/stop/skip/steer). Triggers on requests to "run gwd", "create milestone", "execute project", "check gwd status", "orchestrate development", "run headless workflow", or any programmatic interaction with the GWD project management system. Essential for building orchestrators that coordinate multiple GWD workers.
 ---
 
@@ -34,7 +34,7 @@ gwd headless [flags] [command] [args...]
 gwd headless new-milestone --context spec.md --auto
 ```
 
-Reads spec, bootstraps `.gsd/`, creates milestone, then chains into auto-mode executing all phases (discuss → research → plan → execute → summarize → complete).
+Reads spec, bootstraps `.gwd/`, creates milestone, then chains into auto-mode executing all phases (discuss → research → plan → execute → summarize → complete).
 
 Extra flags for `new-milestone`: `--context <path>` (use `-` for stdin), `--context-text <text>`, `--auto`.
 
@@ -119,26 +119,26 @@ done
 
 ### Multi-Session Orchestration
 
-GWD tracks concurrent workers via file-based IPC in `.gsd/parallel/`. See [references/multi-session.md](references/multi-session.md) for the full architecture.
+GWD tracks concurrent workers via file-based IPC in `.gwd/parallel/`. See [references/multi-session.md](references/multi-session.md) for the full architecture.
 
 **Quick overview:**
 
-Each worker spawns with `GWD_MILESTONE_LOCK=M00X` + its own git worktree. Workers write heartbeats to `.gsd/parallel/<milestoneId>.status.json`. The orchestrator enumerates all status files to get a dashboard of all workers, and sends commands via signal files.
+Each worker spawns with `GWD_MILESTONE_LOCK=M00X` + its own git worktree. Workers write heartbeats to `.gwd/parallel/<milestoneId>.status.json`. The orchestrator enumerates all status files to get a dashboard of all workers, and sends commands via signal files.
 
 ```bash
 # Spawn a worker for milestone M001 in its worktree
 GWD_MILESTONE_LOCK=M001 GWD_PARALLEL_WORKER=1 \
   gwd headless --json auto \
-  --cwd .gsd/worktrees/M001 2>worker-M001.log &
+  --cwd .gwd/worktrees/M001 2>worker-M001.log &
 
-# Monitor all workers: read .gsd/parallel/*.status.json
-for f in .gsd/parallel/*.status.json; do
+# Monitor all workers: read .gwd/parallel/*.status.json
+for f in .gwd/parallel/*.status.json; do
   jq '{mid: .milestoneId, state: .state, unit: .currentUnit.id, cost: .cost}' "$f"
 done
 
 # Send pause signal to M001
 echo '{"signal":"pause","sentAt":'$(date +%s000)',"from":"coordinator"}' \
-  > .gsd/parallel/M001.signal.json
+  > .gwd/parallel/M001.signal.json
 ```
 
 **Status file fields:** `milestoneId`, `pid`, `state` (running/paused/stopped/error), `currentUnit`, `completedUnits`, `cost`, `lastHeartbeat`, `startedAt`, `worktreePath`.
@@ -147,7 +147,7 @@ echo '{"signal":"pause","sentAt":'$(date +%s000)',"from":"coordinator"}' \
 
 **Liveness detection:** PID alive check (`kill -0 $pid`) + heartbeat freshness (30s timeout). Stale sessions are auto-cleaned.
 
-**For multiple projects:** each project has its own `.gsd/` directory. The orchestrator must track `(projectPath, milestoneId)` tuples externally.
+**For multiple projects:** each project has its own `.gwd/` directory. The orchestrator must track `(projectPath, milestoneId)` tuples externally.
 
 ### JSONL Event Stream
 
@@ -207,10 +207,10 @@ See [references/answer-injection.md](references/answer-injection.md) for full de
 
 ## GWD Project Structure
 
-All state lives in `.gsd/` as markdown files (version-controllable):
+All state lives in `.gwd/` as markdown files (version-controllable):
 
 ```
-.gsd/
+.gwd/
   milestones/M001/
     M001-CONTEXT.md      # Requirements, scope, decisions
     M001-ROADMAP.md      # Slices with tasks, dependencies, checkboxes

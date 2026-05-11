@@ -182,8 +182,8 @@ function loadPreferencesFromFile(path: string): Record<string, unknown> | null {
 }
 
 function resolveRemoteConfig(): ResolvedConfig | null {
-  const gsdHome = process.env['GWD_HOME'] ?? join(homedir(), '.gwd');
-  const globalPath = join(gsdHome, 'PREFERENCES.md');
+  const gwdHome = process.env['GWD_HOME'] ?? join(homedir(), '.gwd');
+  const globalPath = join(gwdHome, 'PREFERENCES.md');
 
   const prefs = loadPreferencesFromFile(globalPath);
   if (!prefs) return null;

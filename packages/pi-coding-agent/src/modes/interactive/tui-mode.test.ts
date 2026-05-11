@@ -1,4 +1,4 @@
-// GSD2 - Tests for adaptive TUI mode selection
+// GWD2 - Tests for adaptive TUI mode selection
 
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
@@ -13,14 +13,14 @@ initTheme("dark", false);
 describe("resolveTuiMode", () => {
 	test("explicit overrides beat auto selection", () => {
 		assert.equal(
-			resolveTuiMode({ terminalWidth: 60, override: "debug", gsdPhase: "validating-milestone" }),
+			resolveTuiMode({ terminalWidth: 60, override: "debug", gwdPhase: "validating-milestone" }),
 			"debug",
 		);
 	});
 
 	test("prioritizes compact layouts on narrow terminals", () => {
 		assert.equal(
-			resolveTuiMode({ terminalWidth: 60, override: "auto", hasBlockingError: true, gsdPhase: "validating-milestone" }),
+			resolveTuiMode({ terminalWidth: 60, override: "auto", hasBlockingError: true, gwdPhase: "validating-milestone" }),
 			"compact",
 		);
 	});
@@ -30,13 +30,13 @@ describe("resolveTuiMode", () => {
 	});
 
 	test("uses validation mode for validation and completion phases", () => {
-		assert.equal(resolveTuiMode({ terminalWidth: 100, gsdPhase: "validating-milestone" }), "validation");
-		assert.equal(resolveTuiMode({ terminalWidth: 100, gsdPhase: "complete-milestone" }), "validation");
+		assert.equal(resolveTuiMode({ terminalWidth: 100, gwdPhase: "validating-milestone" }), "validation");
+		assert.equal(resolveTuiMode({ terminalWidth: 100, gwdPhase: "complete-milestone" }), "validation");
 	});
 
 	test("uses workflow mode when tools or non-validation phases are active", () => {
 		assert.equal(resolveTuiMode({ terminalWidth: 100, activeToolCount: 1 }), "workflow");
-		assert.equal(resolveTuiMode({ terminalWidth: 100, gsdPhase: "execute-phase" }), "workflow");
+		assert.equal(resolveTuiMode({ terminalWidth: 100, gwdPhase: "execute-phase" }), "workflow");
 	});
 
 	test("falls back to chat mode for plain conversation", () => {
@@ -49,7 +49,7 @@ describe("AdaptiveLayoutComponent", () => {
 		const layout = new AdaptiveLayoutComponent(() => ({
 			override: "workflow",
 			activeToolCount: 2,
-			gsdPhase: "execute-task",
+			gwdPhase: "execute-task",
 			sessionName: "main",
 			cwd: "/Users/example/project",
 		}));

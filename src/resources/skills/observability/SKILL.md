@@ -75,7 +75,7 @@ When something fails in a way the caller can't immediately handle, write the fai
 
 ```ts
 await writeAtomically(
-  resolve(".gsd/runtime/last-error.json"),
+  resolve(".gwd/runtime/last-error.json"),
   JSON.stringify({
     ts: new Date().toISOString(),
     phase: "execute",
@@ -86,7 +86,7 @@ await writeAtomically(
 );
 ```
 
-A fresh agent reading `.gsd/runtime/` sees what happened last, what was retried, and where the process stopped. Pattern exists already in gwd-2 — reuse the `atomic-write.ts` helpers and the `.gsd/runtime/` and `.gsd/forensics/` directories.
+A fresh agent reading `.gwd/runtime/` sees what happened last, what was retried, and where the process stopped. Pattern exists already in gwd-2 — reuse the `atomic-write.ts` helpers and the `.gwd/runtime/` and `.gwd/forensics/` directories.
 
 ## Step 4: Health and status surfaces
 
@@ -165,7 +165,7 @@ If any signal is missing, add it — that's the gap this skill exists to catch.
 
 - [ ] Failure modes were listed before instrumenting.
 - [ ] Logs are at decision points, structured, and contain the driving values.
-- [ ] Failure state is persisted to a known location (`.gsd/runtime/`, `/var/log/`, a status file).
+- [ ] Failure state is persisted to a known location (`.gwd/runtime/`, `/var/log/`, a status file).
 - [ ] Long-running processes expose a health or status surface.
 - [ ] No silent `try/catch` swallowing errors.
 - [ ] Ad-hoc debug instrumentation was removed.

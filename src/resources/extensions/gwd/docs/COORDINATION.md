@@ -24,18 +24,18 @@ machines.
 
 ## What does work
 
-- Multiple `gsd auto` worker processes on the **same machine**, sharing
+- Multiple `gwd auto` worker processes on the **same machine**, sharing
   the project's SQLite DB via WAL. The lease check refuses concurrent
   claims on the same milestone; the dispatch ledger's partial unique
   index refuses double-claims of the same unit.
-- A single `gsd auto` worker plus arbitrary read-only consumers
+- A single `gwd auto` worker plus arbitrary read-only consumers
   (dashboards, doctors) on the same machine.
 - Worktree-based parallelism on the same machine, where each worker
   holds a different milestone lease.
 
 ## Multi-host alternatives
 
-If you need to coordinate `gsd auto` workers across machines, you need
+If you need to coordinate `gwd auto` workers across machines, you need
 a real coordinator: Postgres for the ledger + a leader-election service
 (etcd, Consul) for the leases. That's out of scope for these phases.
 The schema and module shapes here would need a non-trivial backend

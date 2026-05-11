@@ -2,9 +2,9 @@ import type { ExtensionCommandContext } from "@gwd/pi-coding-agent";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { saveFile } from "./files.js";
 import {
-  getProjectGSDPreferencesPath,
-  loadEffectiveGSDPreferences,
-  loadProjectGSDPreferences,
+  getProjectGWDPreferencesPath,
+  loadEffectiveGWDPreferences,
+  loadProjectGWDPreferences,
 } from "./preferences.js";
 import { ensurePreferencesFile, serializePreferencesToFrontmatter } from "./commands-prefs-wizard.js";
 
@@ -17,7 +17,7 @@ export function autoEnableCmuxPreferences(): boolean {
   const path = resolveProjectPreferencesWritePath();
   if (!existsSync(path)) return false;
 
-  const existing = loadProjectGSDPreferences();
+  const existing = loadProjectGWDPreferences();
   const prefs: Record<string, unknown> = existing?.preferences ? { ...existing.preferences } : { version: 1 };
   prefs.cmux = {
     enabled: true,
@@ -55,7 +55,7 @@ async function writeProjectCmuxPreferences(
   const path = resolveProjectPreferencesWritePath();
   await ensurePreferencesFile(path, ctx, "project");
 
-  const existing = loadProjectGSDPreferences();
+  const existing = loadProjectGWDPreferences();
   const prefs: Record<string, unknown> = existing?.preferences ? { ...existing.preferences } : { version: 1 };
   updater(prefs);
   prefs.version = prefs.version || 1;
@@ -73,13 +73,13 @@ async function writeProjectCmuxPreferences(
 }
 
 function resolveProjectPreferencesWritePath(): string {
-  return loadProjectGSDPreferences()?.path ?? getProjectGSDPreferencesPath();
+  return loadProjectGWDPreferences()?.path ?? getProjectGWDPreferencesPath();
 }
 
 async function formatCmuxStatus(): Promise<string> {
   const { CmuxClient, detectCmuxEnvironment, resolveCmuxConfig } =
     await import("../cmux/index.js");
-  const loaded = loadEffectiveGSDPreferences();
+  const loaded = loadEffectiveGWDPreferences();
   const detected = detectCmuxEnvironment();
   const resolved = resolveCmuxConfig(loaded?.preferences);
   const capabilities = new CmuxClient(resolved).getCapabilities() as Record<string, unknown> | null;
@@ -109,7 +109,7 @@ async function ensureCmuxAvailableForEnable(ctx: ExtensionCommandContext): Promi
   const detected = detectCmuxEnvironment();
   if (detected.available) return true;
   ctx.ui.notify(
-    "cmux not detected. Install it from https://cmux.com and run gsd inside a cmux terminal.",
+    "cmux not detected. Install it from https://cmux.com and run gwd inside a cmux terminal.",
     "warning",
   );
   return false;
@@ -140,7 +140,7 @@ export async function handleCmux(args: string, ctx: ExtensionCommandContext): Pr
   }
 
   if (trimmed === "off") {
-    const effective = loadEffectiveGSDPreferences()?.preferences;
+    const effective = loadEffectiveGWDPreferences()?.preferences;
     await writeProjectCmuxPreferences(ctx, (prefs) => {
       prefs.cmux = { ...((prefs.cmux as Record<string, unknown> | undefined) ?? {}), enabled: false };
     });
@@ -165,7 +165,7 @@ export async function handleCmux(args: string, ctx: ExtensionCommandContext): Pr
 
     if (!enabled && feature === "sidebar") {
       const { clearCmuxSidebar } = await import("../cmux/index.js");
-      clearCmuxSidebar(loadEffectiveGSDPreferences()?.preferences);
+      clearCmuxSidebar(loadEffectiveGWDPreferences()?.preferences);
     }
 
     const note = feature === "browser" && enabled

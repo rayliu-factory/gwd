@@ -16,14 +16,14 @@
 
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { gsdRoot, resolveGsdRootFile } from "./paths.js";
+import { gwdRoot, resolveGwdRootFile } from "./paths.js";
 import { readCrashLock, isLockProcessAlive, clearLock } from "./crash-recovery.js";
 import { abortAndReset } from "./git-self-heal.js";
 import { rebuildState } from "./doctor.js";
 import { deriveState } from "./state.js";
 import { resolveMilestoneIntegrationBranch } from "./git-service.js";
 import { nativeIsRepo, nativeHasChanges, nativeLastCommitEpoch, nativeGetCurrentBranch, nativeAddTracked, nativeCommit } from "./native-git-bridge.js";
-import { loadEffectiveGSDPreferences } from "./preferences.js";
+import { loadEffectiveGWDPreferences } from "./preferences.js";
 import { runEnvironmentChecks } from "./doctor-environment.js";
 import { ensureDbOpen } from "./bootstrap/dynamic-tools.js";
 
@@ -220,7 +220,7 @@ export async function preDispatchHealthGate(basePath: string): Promise<PreDispat
   // If a stale lock exists, the crash recovery path should handle it,
   // not a new dispatch. This prevents double-dispatch after crashes.
   try {
-    if (existsSync(join(gsdRoot(basePath), "gwd.db"))) {
+    if (existsSync(join(gwdRoot(basePath), "gwd.db"))) {
       await ensureDbOpen(basePath);
     }
     const lock = readCrashLock(basePath);
@@ -259,8 +259,8 @@ export async function preDispatchHealthGate(basePath: string): Promise<PreDispat
   // If STATE.md is missing, attempt to rebuild it for the next unit's context.
   // Non-blocking — fresh worktrees won't have it until the first unit completes (#889).
   try {
-    const stateFile = resolveGsdRootFile(basePath, "STATE");
-    const milestonesDir = join(gsdRoot(basePath), "milestones");
+    const stateFile = resolveGwdRootFile(basePath, "STATE");
+    const milestonesDir = join(gwdRoot(basePath), "milestones");
     if (existsSync(milestonesDir) && !existsSync(stateFile)) {
       try {
         await rebuildState(basePath);
@@ -282,7 +282,7 @@ export async function preDispatchHealthGate(basePath: string): Promise<PreDispat
     if (nativeIsRepo(basePath)) {
       const state = await deriveState(basePath);
       if (state.activeMilestone) {
-        const gitPrefs = loadEffectiveGSDPreferences()?.preferences?.git ?? {};
+        const gitPrefs = loadEffectiveGWDPreferences()?.preferences?.git ?? {};
         const resolution = resolveMilestoneIntegrationBranch(basePath, state.activeMilestone.id, gitPrefs);
         if (resolution.status === "fallback" && resolution.effectiveBranch) {
           fixesApplied.push(
@@ -304,7 +304,7 @@ export async function preDispatchHealthGate(basePath: string): Promise<PreDispat
   // create a safety snapshot so work isn't lost if the next unit crashes.
   try {
     if (nativeIsRepo(basePath)) {
-      const prefs = loadEffectiveGSDPreferences()?.preferences ?? {};
+      const prefs = loadEffectiveGWDPreferences()?.preferences ?? {};
       // `git.snapshots: false` is the canonical toggle that disables WIP
       // snapshot commits — honour it before touching the threshold path (#4420).
       const snapshotsEnabled = prefs.git?.snapshots !== false;
@@ -320,14 +320,14 @@ export async function preDispatchHealthGate(basePath: string): Promise<PreDispat
           const mins = Math.floor(minutesSinceCommit);
           try {
             nativeAddTracked(basePath);
-            const commitMsg = `gsd snapshot: pre-dispatch, uncommitted changes after ${mins}m inactivity`;
+            const commitMsg = `gwd snapshot: pre-dispatch, uncommitted changes after ${mins}m inactivity`;
             const result = nativeCommit(basePath, commitMsg);
             if (result) {
-              fixesApplied.push(`pre-dispatch: created gsd snapshot after ${mins}m of uncommitted changes`);
+              fixesApplied.push(`pre-dispatch: created gwd snapshot after ${mins}m of uncommitted changes`);
             }
           } catch {
             // Non-blocking — snapshot failed but dispatch can continue
-            fixesApplied.push("pre-dispatch: gsd snapshot failed");
+            fixesApplied.push("pre-dispatch: gwd snapshot failed");
           }
         }
       }

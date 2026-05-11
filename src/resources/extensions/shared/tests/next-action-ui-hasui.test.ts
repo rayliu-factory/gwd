@@ -1,8 +1,8 @@
-// GSD2 — Regression test for next-action-ui ctx.hasUI short-circuit (bare /gsd lockup)
+// GWD2 — Regression test for next-action-ui ctx.hasUI short-circuit (bare /gwd lockup)
 
 /**
- * Regression test for the bare /gsd lockup investigated in
- * .planning/reports/2026-04-30-gsd-bare-and-new-project-investigation.md.
+ * Regression test for the bare /gwd lockup investigated in
+ * .planning/reports/2026-04-30-gwd-bare-and-new-project-investigation.md.
  *
  * showNextAction() awaits ctx.ui.custom() to render a TUI prompt. In a
  * headless context (no UI bound, ctx.hasUI === false), both ctx.ui.custom
@@ -38,7 +38,7 @@ describe("showNextAction ctx.hasUI guard (#5125 lockup root protection)", () => 
     };
 
     const result = await showNextAction(ctx as any, {
-      title: "GSD — test",
+      title: "GWD — test",
       actions: [
         { id: "a", label: "Option A", description: "first", recommended: true },
         { id: "b", label: "Option B", description: "second" },
@@ -69,7 +69,7 @@ describe("showNextAction ctx.hasUI guard (#5125 lockup root protection)", () => 
     };
 
     const result = await showNextAction(ctx as any, {
-      title: "GSD — test",
+      title: "GWD — test",
       actions: [
         { id: "alpha", label: "Alpha", description: "first", recommended: true },
         { id: "beta", label: "Beta", description: "second" },
@@ -99,7 +99,7 @@ describe("showNextAction ctx.hasUI guard (#5125 lockup root protection)", () => 
     };
 
     const result = await showNextAction(ctx as any, {
-      title: "GSD — test",
+      title: "GWD — test",
       actions: [
         { id: "alpha", label: "Alpha", description: "first", recommended: true },
         { id: "beta", label: "Beta", description: "second" },

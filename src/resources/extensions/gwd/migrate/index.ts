@@ -3,8 +3,8 @@
 export { handleMigrate } from './command.js';
 export { parsePlanningDirectory } from './parser.js';
 export { validatePlanningDirectory } from './validator.js';
-export { transformToGSD } from './transformer.js';
-export { writeGSDDirectory } from './writer.js';
+export { transformToGWD } from './transformer.js';
+export { writeGWDDirectory } from './writer.js';
 export type { WrittenFiles, MigrationPreview } from './writer.js';
 export { generatePreview } from './preview.js';
 export type {
@@ -31,12 +31,12 @@ export type {
   ValidationIssue,
   ValidationSeverity,
   // Output types (GWD-2 format)
-  GSDProject,
-  GSDMilestone,
-  GSDSlice,
-  GSDTask,
-  GSDRequirement,
-  GSDSliceSummaryData,
-  GSDTaskSummaryData,
-  GSDBoundaryEntry,
+  GWDProject,
+  GWDMilestone,
+  GWDSlice,
+  GWDTask,
+  GWDRequirement,
+  GWDSliceSummaryData,
+  GWDTaskSummaryData,
+  GWDBoundaryEntry,
 } from './types.js';

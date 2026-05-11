@@ -1,4 +1,4 @@
-// GSD-2 - Behavior coverage for tool target metadata.
+// GWD-2 - Behavior coverage for tool target metadata.
 
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -14,7 +14,7 @@ import { createReadTool } from "./read.js";
 import { createWriteTool } from "./write.js";
 
 test("read metadata records resolved path without changing output text", async () => {
-	const cwd = mkdtempSync(join(tmpdir(), "gsd-read-target-"));
+	const cwd = mkdtempSync(join(tmpdir(), "gwd-read-target-"));
 	try {
 		const filePath = join(cwd, "fixture.txt");
 		writeFileSync(filePath, "one\ntwo\nthree\n", "utf8");
@@ -44,7 +44,7 @@ test("read metadata records resolved path without changing output text", async (
 });
 
 test("write metadata records resolved path without changing output text", async () => {
-	const cwd = mkdtempSync(join(tmpdir(), "gsd-write-target-"));
+	const cwd = mkdtempSync(join(tmpdir(), "gwd-write-target-"));
 	try {
 		const filePath = join(cwd, "out.txt");
 		const result = await createWriteTool(cwd).execute("write-1", {
@@ -61,7 +61,7 @@ test("write metadata records resolved path without changing output text", async 
 });
 
 test("edit metadata records first changed line and resolved path", async () => {
-	const cwd = mkdtempSync(join(tmpdir(), "gsd-edit-target-"));
+	const cwd = mkdtempSync(join(tmpdir(), "gwd-edit-target-"));
 	try {
 		const filePath = join(cwd, "edit.txt");
 		writeFileSync(filePath, "alpha\nbeta\ngamma\n", "utf8");
@@ -81,7 +81,7 @@ test("edit metadata records first changed line and resolved path", async () => {
 });
 
 test("list and find metadata record resolved targets", async () => {
-	const cwd = mkdtempSync(join(tmpdir(), "gsd-search-target-"));
+	const cwd = mkdtempSync(join(tmpdir(), "gwd-search-target-"));
 	try {
 		const srcPath = join(cwd, "src");
 		const filePath = join(srcPath, "needle.txt");
@@ -105,7 +105,7 @@ test("list and find metadata record resolved targets", async () => {
 });
 
 test("grep metadata records resolved search target", async () => {
-	const cwd = mkdtempSync(join(tmpdir(), "gsd-grep-target-"));
+	const cwd = mkdtempSync(join(tmpdir(), "gwd-grep-target-"));
 	try {
 		const srcPath = join(cwd, "src");
 		mkdirSync(srcPath);

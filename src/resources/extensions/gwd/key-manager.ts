@@ -17,7 +17,7 @@ import { existsSync, statSync, chmodSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { mkdirSync } from "node:fs";
 import { getErrorMessage } from "./error-utils.js";
-import { gsdHome } from "./gwd-home.js";
+import { gwdHome } from "./gwd-home.js";
 
 // ─── Provider Registry ─────────────────────────────────────────────────────────
 
@@ -40,7 +40,7 @@ export const PROVIDER_REGISTRY: ProviderInfo[] = [
   // authentication is handled by the CLI's own OAuth flow.
   // Referenced by doctor-providers.ts, auto-model-selection.ts, and others;
   // must be in the canonical registry so all consumers see the same catalog.
-  // See: https://github.com/gwd-build/gwd-2/issues/4541
+  // See: https://github.com/rayliu-factory/gwd/issues/4541
   { id: "claude-code",      label: "Claude Code CLI",         category: "llm",                                   hasOAuth: true },
   { id: "openai",           label: "OpenAI",                  category: "llm", envVar: "OPENAI_API_KEY",         prefixes: ["sk-"],     dashboardUrl: "platform.openai.com/api-keys" },
   { id: "github-copilot",   label: "GitHub Copilot",          category: "llm", envVar: "GITHUB_TOKEN",           hasOAuth: true },
@@ -123,7 +123,7 @@ export function describeCredential(cred: AuthCredential): string {
  * Get the auth.json path.
  */
 export function getAuthPath(): string {
-  return join(gsdHome(), "agent", "auth.json");
+  return join(gwdHome(), "agent", "auth.json");
 }
 
 /**

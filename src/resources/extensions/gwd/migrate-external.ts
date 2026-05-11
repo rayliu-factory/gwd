@@ -9,9 +9,9 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, lstatSync, mkdirSync, readdirSync, realpathSync, renameSync, cpSync, rmSync, symlinkSync } from "node:fs";
 import { join } from "node:path";
-import { externalGsdRoot, isInsideWorktree } from "./repo-identity.js";
+import { externalGwdRoot, isInsideWorktree } from "./repo-identity.js";
 import { getErrorMessage } from "./error-utils.js";
-import { hasGitTrackedGsdFiles } from "./gitignore.js";
+import { hasGitTrackedGwdFiles } from "./gitignore.js";
 import { GIT_NO_PROMPT_ENV } from "./git-constants.js";
 
 export interface MigrationResult {
@@ -34,24 +34,24 @@ export interface MigrationResult {
  * 3. On failure: rename `.gwd.migrating` back to `.gwd` (rollback)
  */
 export function migrateToExternalState(basePath: string): MigrationResult {
-  // Worktrees get their .gwd via syncGsdStateToWorktree(), not migration.
+  // Worktrees get their .gwd via syncGwdStateToWorktree(), not migration.
   // Migration inside a worktree would compute the same external hash as the
-  // main repo (externalGsdRoot hashes remoteUrl + gitRoot), creating a broken
+  // main repo (externalGwdRoot hashes remoteUrl + gitRoot), creating a broken
   // junction and orphaning .gwd.migrating (#2970).
   if (isInsideWorktree(basePath)) {
     return { migrated: false };
   }
 
-  const localGsd = join(basePath, ".gwd");
+  const localGwd = join(basePath, ".gwd");
 
   // Skip if doesn't exist
-  if (!existsSync(localGsd)) {
+  if (!existsSync(localGwd)) {
     return { migrated: false };
   }
 
   // Skip if already a symlink
   try {
-    const stat = lstatSync(localGsd);
+    const stat = lstatSync(localGwd);
     if (stat.isSymbolicLink()) {
       return { migrated: false };
     }
@@ -64,14 +64,14 @@ export function migrateToExternalState(basePath: string): MigrationResult {
 
   // Skip if .gwd/ contains git-tracked files — the project intentionally
   // keeps .gwd/ in version control and migration would destroy that.
-  if (hasGitTrackedGsdFiles(basePath)) {
+  if (hasGitTrackedGwdFiles(basePath)) {
     return { migrated: false };
   }
 
   // Skip if .gwd/worktrees/ has active worktree directories (#1337).
   // On Windows, active git worktrees hold OS-level directory handles that
   // prevent rename/delete. Attempting migration causes EBUSY and data loss.
-  const worktreesDir = join(localGsd, "worktrees");
+  const worktreesDir = join(localGwd, "worktrees");
   if (existsSync(worktreesDir)) {
     try {
       const entries = readdirSync(worktreesDir, { withFileTypes: true });
@@ -84,7 +84,7 @@ export function migrateToExternalState(basePath: string): MigrationResult {
     }
   }
 
-  const externalPath = externalGsdRoot(basePath);
+  const externalPath = externalGwdRoot(basePath);
   const migratingPath = join(basePath, ".gwd.migrating");
 
   try {
@@ -96,12 +96,12 @@ export function migrateToExternalState(basePath: string): MigrationResult {
     // open (VS Code watchers, antivirus on-access scan). Fall back to
     // copy+delete (#1292).
     try {
-      renameSync(localGsd, migratingPath);
+      renameSync(localGwd, migratingPath);
     } catch (renameErr: any) {
       if (renameErr?.code === "EPERM" || renameErr?.code === "EBUSY") {
         try {
-          cpSync(localGsd, migratingPath, { recursive: true, force: true });
-          rmSync(localGsd, { recursive: true, force: true });
+          cpSync(localGwd, migratingPath, { recursive: true, force: true });
+          rmSync(localGwd, { recursive: true, force: true });
         } catch (copyErr) {
           return { migrated: false, error: `Migration rename/copy failed: ${copyErr instanceof Error ? copyErr.message : String(copyErr)}` };
         }
@@ -130,27 +130,27 @@ export function migrateToExternalState(basePath: string): MigrationResult {
     }
 
     // Create symlink .gwd -> external path
-    symlinkSync(externalPath, localGsd, "junction");
+    symlinkSync(externalPath, localGwd, "junction");
 
     // Verify the symlink resolves correctly before removing the backup (#1377).
     // On Windows, junction creation can silently succeed but resolve to the wrong
     // target, or the external dir may not be accessible. If verification fails,
     // restore from the backup.
     try {
-      const resolved = realpathSync(localGsd);
+      const resolved = realpathSync(localGwd);
       const resolvedExternal = realpathSync(externalPath);
       if (resolved !== resolvedExternal) {
         // Symlink points to wrong target — restore backup
-        try { rmSync(localGsd, { force: true }); } catch { /* may not exist */ }
-        renameSync(migratingPath, localGsd);
+        try { rmSync(localGwd, { force: true }); } catch { /* may not exist */ }
+        renameSync(migratingPath, localGwd);
         return { migrated: false, error: `Migration verification failed: symlink resolves to ${resolved}, expected ${resolvedExternal}` };
       }
       // Verify we can read through the symlink
-      readdirSync(localGsd);
+      readdirSync(localGwd);
     } catch (verifyErr) {
       // Symlink broken or unreadable — restore backup
-      try { rmSync(localGsd, { force: true }); } catch { /* may not exist */ }
-      try { renameSync(migratingPath, localGsd); } catch { /* best-effort restore */ }
+      try { rmSync(localGwd, { force: true }); } catch { /* may not exist */ }
+      try { renameSync(migratingPath, localGwd); } catch { /* best-effort restore */ }
       return { migrated: false, error: `Migration verification failed: ${getErrorMessage(verifyErr)}` };
     }
 
@@ -176,8 +176,8 @@ export function migrateToExternalState(basePath: string): MigrationResult {
   } catch (err) {
     // Rollback: rename .gwd.migrating back to .gwd
     try {
-      if (existsSync(migratingPath) && !existsSync(localGsd)) {
-        renameSync(migratingPath, localGsd);
+      if (existsSync(migratingPath) && !existsSync(localGwd)) {
+        renameSync(migratingPath, localGwd);
       }
     } catch {
       // Rollback failed -- leave .gwd.migrating for doctor to detect
@@ -195,14 +195,14 @@ export function migrateToExternalState(basePath: string): MigrationResult {
  * Moves `.gwd.migrating` back to `.gwd` if `.gwd` doesn't exist.
  */
 export function recoverFailedMigration(basePath: string): boolean {
-  const localGsd = join(basePath, ".gwd");
+  const localGwd = join(basePath, ".gwd");
   const migratingPath = join(basePath, ".gwd.migrating");
 
   if (!existsSync(migratingPath)) return false;
-  if (existsSync(localGsd)) return false; // both exist -- ambiguous, don't touch
+  if (existsSync(localGwd)) return false; // both exist -- ambiguous, don't touch
 
   try {
-    renameSync(migratingPath, localGsd);
+    renameSync(migratingPath, localGwd);
     return true;
   } catch {
     return false;

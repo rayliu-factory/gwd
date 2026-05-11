@@ -22,7 +22,7 @@ test("forensics prompt renders compact investigation and issue routing guidance"
   const prompt = loadPrompt("forensics", {
     problemDescription: "Auto-mode repeats the same unit.",
     forensicData: "stuck-detected event for execute-task/M001/S01/T01",
-    gsdSourceDir: process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd(),
+    gwdSourceDir: process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd(),
     dedupSection: "No duplicate issue found.",
   });
 

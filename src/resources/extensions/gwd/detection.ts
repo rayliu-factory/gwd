@@ -10,8 +10,8 @@ import { execFileSync } from "node:child_process";
 import { existsSync, openSync, readSync, closeSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, parse as parsePath } from "node:path";
 import { homedir } from "node:os";
-import { gsdRoot } from "./paths.js";
-import { gsdHome } from "./gwd-home.js";
+import { gwdRoot } from "./paths.js";
+import { gwdHome } from "./gwd-home.js";
 
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
@@ -311,7 +311,7 @@ const MAX_RECURSIVE_SCAN_DEPTH = 6;
  */
 export function detectProjectState(basePath: string): ProjectDetection {
   const v1 = detectV1Planning(basePath);
-  const v2 = detectV2Gsd(basePath);
+  const v2 = detectV2Gwd(basePath);
   const projectSignals = detectProjectSignals(basePath);
   const globalSetup = hasGlobalSetup();
   const firstEver = isFirstEverLaunch();
@@ -379,19 +379,19 @@ export function detectV1Planning(basePath: string): V1Detection | null {
 
 // ─── V2 GWD Detection ──────────────────────────────────────────────────────────
 
-function detectV2Gsd(basePath: string): V2Detection | null {
-  const gsdPath = gsdRoot(basePath);
+function detectV2Gwd(basePath: string): V2Detection | null {
+  const gwdPath = gwdRoot(basePath);
 
-  if (!existsSync(gsdPath)) return null;
+  if (!existsSync(gwdPath)) return null;
 
   const hasPreferences =
-    existsSync(join(gsdPath, "PREFERENCES.md")) ||
-    existsSync(join(gsdPath, "preferences.md"));
+    existsSync(join(gwdPath, "PREFERENCES.md")) ||
+    existsSync(join(gwdPath, "preferences.md"));
 
-  const hasContext = existsSync(join(gsdPath, "CONTEXT.md"));
+  const hasContext = existsSync(join(gwdPath, "CONTEXT.md"));
 
   let milestoneCount = 0;
-  const milestonesPath = join(gsdPath, "milestones");
+  const milestonesPath = join(gwdPath, "milestones");
   if (existsSync(milestonesPath)) {
     try {
       const entries = readdirSync(milestonesPath, { withFileTypes: true });
@@ -848,8 +848,8 @@ function detectVerificationCommands(
  */
 export function hasGlobalSetup(): boolean {
   return (
-    existsSync(join(gsdHome(), "PREFERENCES.md")) ||
-    existsSync(join(gsdHome(), "preferences.md"))
+    existsSync(join(gwdHome(), "PREFERENCES.md")) ||
+    existsSync(join(gwdHome(), "preferences.md"))
   );
 }
 
@@ -858,21 +858,21 @@ export function hasGlobalSetup(): boolean {
  * Returns true if ~/.gwd/ doesn't exist or has no preferences or auth.
  */
 export function isFirstEverLaunch(): boolean {
-  if (!existsSync(gsdHome())) return true;
+  if (!existsSync(gwdHome())) return true;
 
   // If we have preferences, not first launch
   if (
-    existsSync(join(gsdHome(), "PREFERENCES.md")) ||
-    existsSync(join(gsdHome(), "preferences.md"))
+    existsSync(join(gwdHome(), "PREFERENCES.md")) ||
+    existsSync(join(gwdHome(), "preferences.md"))
   ) {
     return false;
   }
 
   // If we have auth.json, not first launch (onboarding.ts already ran)
-  if (existsSync(join(gsdHome(), "agent", "auth.json"))) return false;
+  if (existsSync(join(gwdHome(), "agent", "auth.json"))) return false;
 
   // Check legacy path too
-  const legacyPath = join(homedir(), ".pi", "agent", "gsd-preferences.md");
+  const legacyPath = join(homedir(), ".pi", "agent", "gwd-preferences.md");
   if (existsSync(legacyPath)) return false;
 
   return true;
@@ -1287,21 +1287,21 @@ export function hasProjectFileInAncestor(
  *
  * A zombie `.gwd/` state — symlink exists but neither artifact is present —
  * must be treated as "needs init wizard". The previous guard checked only
- * `existsSync(gsdRoot(basePath))`, which accepted zombie states and skipped
+ * `existsSync(gwdRoot(basePath))`, which accepted zombie states and skipped
  * the wizard (#2942).
  *
  * `existsFn` is injectable so tests can run deterministically; defaults to
  * `fs.existsSync`.
  */
-export function hasGsdBootstrapArtifacts(
-  gsdPath: string,
+export function hasGwdBootstrapArtifacts(
+  gwdPath: string,
   existsFn: (p: string) => boolean = existsSync,
 ): boolean {
   return (
-    existsFn(gsdPath) &&
-    (existsFn(join(gsdPath, "PREFERENCES.md")) ||
-      existsFn(join(gsdPath, "preferences.md")) ||
-      existsFn(join(gsdPath, "milestones")))
+    existsFn(gwdPath) &&
+    (existsFn(join(gwdPath, "PREFERENCES.md")) ||
+      existsFn(join(gwdPath, "preferences.md")) ||
+      existsFn(join(gwdPath, "milestones")))
   );
 }
 

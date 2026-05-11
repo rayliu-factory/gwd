@@ -1,4 +1,4 @@
-// GSD2 - Write gate runtime persistence and policy guards.
+// GWD2 - Write gate runtime persistence and policy guards.
 import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readlinkSync, realpathSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 
@@ -7,7 +7,7 @@ import { minimatch } from "minimatch";
 import { getIsolationMode } from "../preferences.js";
 import type { ToolsPolicy } from "../unit-context-manifest.js";
 import { logWarning } from "../workflow-logger.js";
-import { isGsdWorktreePath, resolveWorktreeProjectRoot } from "../worktree-root.js";
+import { isGwdWorktreePath, resolveWorktreeProjectRoot } from "../worktree-root.js";
 
 /**
  * Regex matching milestone CONTEXT.md file names in both legacy M001
@@ -149,19 +149,19 @@ function writeGateSnapshotPath(basePath: string): string {
 }
 
 function ensureWriteGateSnapshotDirectory(basePath: string): void {
-  const gsdPath = join(basePath, ".gwd");
-  if (!existsSync(gsdPath)) {
+  const gwdPath = join(basePath, ".gwd");
+  if (!existsSync(gwdPath)) {
     try {
-      const stat = lstatSync(gsdPath);
+      const stat = lstatSync(gwdPath);
       if (stat.isSymbolicLink()) {
-        const target = readlinkSync(gsdPath);
+        const target = readlinkSync(gwdPath);
         mkdirSync(isAbsolute(target) ? target : resolve(basePath, target), { recursive: true });
       }
     } catch {
       // If .gwd truly does not exist, the runtime mkdir below will create it.
     }
   }
-  mkdirSync(join(gsdPath, "runtime"), { recursive: true });
+  mkdirSync(join(gwdPath, "runtime"), { recursive: true });
 }
 
 function currentWriteGateSnapshot(basePath: string = process.cwd()): WriteGateSnapshot {
@@ -730,9 +730,9 @@ const PLANNING_SAFE_TOOLS = new Set([
   "search_and_read",
 ]);
 
-function isPathUnderGsd(absPath: string, basePath: string): boolean {
-  const gsdRoot = resolve(basePath, ".gwd");
-  const rel = relative(gsdRoot, absPath);
+function isPathUnderGwd(absPath: string, basePath: string): boolean {
+  const gwdRoot = resolve(basePath, ".gwd");
+  const rel = relative(gwdRoot, absPath);
   return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
 }
 
@@ -879,7 +879,7 @@ export function shouldBlockPlanningUnit(
     const absPath = isAbsolute(pathOrCommand) ? pathOrCommand : resolve(basePath, pathOrCommand);
 
     // Always allow .gwd/ writes — that's where planning artifacts live.
-    if (isPathUnderGsd(absPath, basePath)) return { block: false };
+    if (isPathUnderGwd(absPath, basePath)) return { block: false };
 
     // docs mode additionally allows the manifest's allowedPathGlobs.
     if (policy.mode === "docs" && matchesAllowedGlob(absPath, basePath, policy.allowedPathGlobs)) {
@@ -997,7 +997,7 @@ export function shouldBlockWorktreeWrite(
   const absTarget = isAbsolute(targetPath) ? targetPath : resolve(projectRoot, targetPath);
   const realTarget = realpathOrResolve(absTarget);
   const realRoot = realpathOrResolve(projectRoot);
-  const realGsd = realpathOrResolve(join(projectRoot, ".gwd"));
+  const realGwd = realpathOrResolve(join(projectRoot, ".gwd"));
   const realWorktreesDir = realpathOrResolve(join(projectRoot, ".gwd", "worktrees"));
 
   // Allow writes inside the legitimate worktrees subtree.
@@ -1005,8 +1005,8 @@ export function shouldBlockWorktreeWrite(
 
   // Allow writes to .gwd/ planning artifacts, but reject siblings whose name
   // starts with "worktrees" (the worktrees-extra prefix trick — case 4).
-  if (isPathContained(realTarget, realGsd)) {
-    const rel = relative(realGsd, realTarget);
+  if (isPathContained(realTarget, realGwd)) {
+    const rel = relative(realGwd, realTarget);
     const firstSeg = rel.split(/[\/\\]/)[0] ?? "";
     if (!firstSeg.startsWith("worktrees")) return { block: false };
     // fall through: looks like worktrees<something> sibling — block
@@ -1014,7 +1014,7 @@ export function shouldBlockWorktreeWrite(
 
   // Auto is live and the caller is operating inside a worktree path —
   // host tool's write happens in worktree context; let it through.
-  if (isAutoLive && isGsdWorktreePath(effectiveBasePath)) return { block: false };
+  if (isAutoLive && isGwdWorktreePath(effectiveBasePath)) return { block: false };
 
   // Block. Provide enough context that the agent can self-correct.
   const displayTarget = isPathContained(realTarget, realRoot)

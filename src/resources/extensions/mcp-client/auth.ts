@@ -86,7 +86,7 @@ function createCliOAuthProvider(config: NonNullable<McpHttpOAuthConfig["oauth"]>
 		get clientMetadata() {
 			return {
 				redirect_uris: [config.redirectUrl ?? "http://localhost:0/callback"],
-				client_name: "gsd",
+				client_name: "gwd",
 				...(config.scopes ? { scope: config.scopes.join(" ") } : {}),
 			};
 		},

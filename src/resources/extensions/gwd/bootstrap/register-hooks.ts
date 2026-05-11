@@ -45,9 +45,9 @@ type WelcomeScreenModule = {
 
 async function loadWelcomeScreenModule(): Promise<WelcomeScreenModule | undefined> {
   const candidates: string[] = [];
-  const gsdBinPath = process.env.GWD_BIN_PATH;
-  if (gsdBinPath) {
-    candidates.push(join(dirname(gsdBinPath), "welcome-screen.js"));
+  const gwdBinPath = process.env.GWD_BIN_PATH;
+  if (gwdBinPath) {
+    candidates.push(join(dirname(gwdBinPath), "welcome-screen.js"));
   }
 
   const packageRoot = process.env.GWD_PKG_ROOT;
@@ -301,7 +301,7 @@ async function resetAskUserQuestionsTurnCache(): Promise<void> {
 
 async function syncServiceTierStatus(ctx: ExtensionContext): Promise<void> {
   const { getEffectiveServiceTier, formatServiceTierFooterStatus } = await import("../service-tier.js");
-  ctx.ui.setStatus("gsd-fast", formatServiceTierFooterStatus(getEffectiveServiceTier(), ctx.model?.id));
+  ctx.ui.setStatus("gwd-fast", formatServiceTierFooterStatus(getEffectiveServiceTier(), ctx.model?.id));
 }
 
 async function applyDisabledModelProviderPolicy(ctx: ExtensionContext): Promise<void> {
@@ -322,8 +322,8 @@ async function applyDisabledModelProviderPolicy(ctx: ExtensionContext): Promise<
  */
 async function applyCompactionThresholdOverride(ctx: ExtensionContext): Promise<void> {
   try {
-    const { loadEffectiveGSDPreferences } = await import("../preferences.js");
-    const prefs = loadEffectiveGSDPreferences();
+    const { loadEffectiveGWDPreferences } = await import("../preferences.js");
+    const prefs = loadEffectiveGWDPreferences();
     const raw = prefs?.preferences.context_management?.compaction_threshold_percent;
     const value =
       typeof raw === "number" && Number.isFinite(raw) && raw > 0 && raw < 1 ? raw : undefined;
@@ -389,9 +389,9 @@ function initSessionNotifications(ctx: ExtensionContext): void {
 
 async function writeContextModeCompactionSnapshot(basePath: string): Promise<void> {
   try {
-    const { loadEffectiveGSDPreferences } = await import("../preferences.js");
+    const { loadEffectiveGWDPreferences } = await import("../preferences.js");
     const { isContextModeEnabled } = await import("../preferences-types.js");
-    const prefs = loadEffectiveGSDPreferences(basePath);
+    const prefs = loadEffectiveGWDPreferences(basePath);
     if (!isContextModeEnabled(prefs?.preferences)) return;
 
     const { writeCompactionSnapshot } = await import("../compaction-snapshot.js");
@@ -447,8 +447,8 @@ export function registerHooks(
 
     // Apply show_token_cost preference (#1515)
     try {
-      const { loadEffectiveGSDPreferences } = await import("../preferences.js");
-      const prefs = loadEffectiveGSDPreferences(basePath);
+      const { loadEffectiveGWDPreferences } = await import("../preferences.js");
+      const prefs = loadEffectiveGWDPreferences(basePath);
       process.env.GWD_SHOW_TOKEN_COST = prefs?.preferences.show_token_cost ? "1" : "";
     } catch { /* non-fatal */ }
     await installWelcomeHeader(ctx);
@@ -506,7 +506,7 @@ export function registerHooks(
 
     // GWD's own context injection (existing behavior — unchanged).
     const { buildBeforeAgentStartResult } = await import("./system-context.js");
-    const gsdResult = await buildBeforeAgentStartResult(event, ctx);
+    const gwdResult = await buildBeforeAgentStartResult(event, ctx);
 
     // Refresh the snapshot used by ecosystem getPhase()/getActiveUnit().
     // deriveState has its own ~100ms cache so this is cheap on repeat calls.
@@ -519,10 +519,10 @@ export function registerHooks(
 
     // Chain ecosystem handlers using pi's runner.ts chaining protocol:
     // each handler sees the systemPrompt mutated by prior handlers.
-    let currentSystemPrompt = gsdResult?.systemPrompt ?? event.systemPrompt;
+    let currentSystemPrompt = gwdResult?.systemPrompt ?? event.systemPrompt;
     // `any` because pi's BeforeAgentStartEventResult.message uses an internal
     // CustomMessage type that's not re-exported (see ecosystem/gwd-extension-api.ts).
-    let lastMessage: any = gsdResult?.message;
+    let lastMessage: any = gwdResult?.message;
 
     for (const handler of ecosystemHandlers) {
       try {
@@ -1038,8 +1038,8 @@ export function registerHooks(
     // Only active during auto-mode when context_management.observation_masking is enabled.
     if (isAutoActive()) {
       try {
-        const { loadEffectiveGSDPreferences } = await import("../preferences.js");
-        const prefs = loadEffectiveGSDPreferences();
+        const { loadEffectiveGWDPreferences } = await import("../preferences.js");
+        const prefs = loadEffectiveGWDPreferences();
         const cmConfig = prefs?.preferences.context_management;
 
         // Observation masking: replace old tool results with placeholders

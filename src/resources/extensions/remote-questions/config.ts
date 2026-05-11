@@ -3,7 +3,7 @@
  */
 
 import { AuthStorage } from "@gwd/pi-coding-agent";
-import { loadEffectiveGSDPreferences, type RemoteQuestionsConfig } from "../gwd/preferences.js";
+import { loadEffectiveGWDPreferences, type RemoteQuestionsConfig } from "../gwd/preferences.js";
 import type { RemoteChannel } from "./types.js";
 
 export interface ResolvedConfig {
@@ -76,7 +76,7 @@ function hydrateRemoteTokensFromAuth(): void {
 
 export function resolveRemoteConfig(): ResolvedConfig | null {
   hydrateRemoteTokensFromAuth();
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   const rq: RemoteQuestionsConfig | undefined = prefs?.preferences.remote_questions;
   if (!rq || !rq.channel || !rq.channel_id) return null;
   if (rq.channel !== "slack" && rq.channel !== "discord" && rq.channel !== "telegram") return null;
@@ -101,7 +101,7 @@ export function resolveRemoteConfig(): ResolvedConfig | null {
 
 export function getRemoteConfigStatus(): string {
   hydrateRemoteTokensFromAuth();
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   const rq: RemoteQuestionsConfig | undefined = prefs?.preferences.remote_questions;
   if (!rq || !rq.channel || !rq.channel_id) return "Remote questions: not configured";
   if (rq.channel !== "slack" && rq.channel !== "discord" && rq.channel !== "telegram") return `Remote questions: unknown channel type \"${rq.channel}\"`;

@@ -79,11 +79,11 @@ assert(
 console.log("=== No-draft cleanup: no-op ===");
 
 const tmpBase2 = mkdtempSync(join(tmpdir(), "gwd-draft-promotion-noop-"));
-const gsd2 = join(tmpBase2, ".gwd");
+const gwd2 = join(tmpBase2, ".gwd");
 
-mkdirSync(join(gsd2, "milestones", "M001"), { recursive: true });
+mkdirSync(join(gwd2, "milestones", "M001"), { recursive: true });
 writeFileSync(
-  join(gsd2, "milestones", "M001", "M001-CONTEXT.md"),
+  join(gwd2, "milestones", "M001", "M001-CONTEXT.md"),
   "# M001: Normal\n\nStandard discussion output.\n",
 );
 
@@ -106,14 +106,14 @@ assert(
 console.log("=== Both files: CONTEXT wins, draft cleanable ===");
 
 const tmpBase3 = mkdtempSync(join(tmpdir(), "gwd-draft-promotion-both-"));
-const gsd3 = join(tmpBase3, ".gwd");
+const gwd3 = join(tmpBase3, ".gwd");
 
-mkdirSync(join(gsd3, "milestones", "M001"), { recursive: true });
+mkdirSync(join(gwd3, "milestones", "M001"), { recursive: true });
 writeFileSync(
-  join(gsd3, "milestones", "M001", "M001-CONTEXT.md"),
+  join(gwd3, "milestones", "M001", "M001-CONTEXT.md"),
   "# M001: Full\n\nFull context.\n",
 );
-const bothDraftPath = join(gsd3, "milestones", "M001", "M001-CONTEXT-DRAFT.md");
+const bothDraftPath = join(gwd3, "milestones", "M001", "M001-CONTEXT-DRAFT.md");
 writeFileSync(bothDraftPath, "# M001: Draft\n\nStale draft.\n");
 
 const state5 = await deriveState(tmpBase3);
