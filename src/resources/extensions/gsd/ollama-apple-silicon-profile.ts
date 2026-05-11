@@ -42,6 +42,10 @@ function isOllamaSession(input: OllamaAppleSiliconPresetInput): boolean {
 }
 
 function hasExplicitModelRouting(input: OllamaAppleSiliconPresetInput): boolean {
+  if (input.prefs?.models !== undefined || input.prefs?.dynamic_routing !== undefined) {
+    return true;
+  }
+
   if (input.basePath !== undefined) {
     const globalPrefs = loadGlobalGSDPreferences()?.preferences;
     const projectPrefs = loadProjectGSDPreferences(input.basePath)?.preferences;
@@ -50,7 +54,8 @@ function hasExplicitModelRouting(input: OllamaAppleSiliconPresetInput): boolean 
       projectPrefs?.models !== undefined ||
       projectPrefs?.dynamic_routing !== undefined;
   }
-  return input.prefs?.models !== undefined || input.prefs?.dynamic_routing !== undefined;
+
+  return false;
 }
 
 function isSuppressed(provider: string, id: string): boolean {

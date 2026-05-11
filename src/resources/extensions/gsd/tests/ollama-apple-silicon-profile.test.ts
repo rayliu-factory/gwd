@@ -113,6 +113,26 @@ test("resolveOllamaAppleSiliconPreset respects explicit models and dynamic_routi
   }), undefined);
 });
 
+test("resolveOllamaAppleSiliconPreset respects explicit runtime prefs when basePath is present", () => {
+  clearOllamaAppleSiliconRuntimeSuppressions();
+  const tempRoot = mkdtempSync(join(tmpdir(), "ollama-profile-runtime-prefs-"));
+
+  try {
+    mkdirSync(join(tempRoot, ".gsd"), { recursive: true });
+
+    assert.equal(resolveOllamaAppleSiliconPreset({
+      isAutoMode: true,
+      prefs: { dynamic_routing: { enabled: false } } as any,
+      basePath: tempRoot,
+      availableModels: models,
+      autoModeStartModel: { provider: "ollama", id: OLLAMA_QWEN36_27B_NVFP4 },
+      currentProvider: "ollama",
+    }), undefined);
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true });
+  }
+});
+
 test("resolveOllamaAppleSiliconPreset reads basePath preference files for opt outs", () => {
   const previousGwdHome = process.env.GWD_HOME;
   const previousCwd = process.cwd();

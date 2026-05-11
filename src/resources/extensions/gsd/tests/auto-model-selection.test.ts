@@ -8,6 +8,10 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { resolvePreferredModelConfig, resolveModelId, selectAndApplyModel } from "../auto-model-selection.js";
+import {
+  clearOllamaAppleSiliconRuntimeSuppressions,
+  suppressOllamaAppleSiliconModelForRun,
+} from "../ollama-apple-silicon-profile.js";
 
 function makeTempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix));
@@ -615,6 +619,65 @@ test("selectAndApplyModel falls back to 27B for heavy work when 35B tag is missi
 
   assert.deepEqual(setModelCalls, ["ollama/qwen3.6:27b-coding-nvfp4"]);
   assert.equal(result.appliedModel?.id, "qwen3.6:27b-coding-nvfp4");
+  assert.ok(notifications.some((message) => message.includes("qwen3.6:35b-a3b-coding-nvfp4")));
+});
+
+test("selectAndApplyModel falls back to 27B for heavy work when 35B is suppressed", async (t) => {
+  clearOllamaAppleSiliconRuntimeSuppressions();
+  suppressOllamaAppleSiliconModelForRun("ollama", "qwen3.6:35b-a3b-coding-nvfp4");
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
+  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const setModelCalls: string[] = [];
+  const notifications: string[] = [];
+
+  t.after(() => {
+    clearOllamaAppleSiliconRuntimeSuppressions();
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  const result = await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => [
+        { id: "qwen3.6:27b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+        { id: "qwen3.6:35b-a3b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+      ] },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: (message: string) => notifications.push(message) },
+      model: { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4", api: "ollama-chat" },
+    } as any,
+    {
+      setModel: async (model: { provider: string; id: string }) => {
+        setModelCalls.push(`${model.provider}/${model.id}`);
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "replan-slice",
+    "M001/S01",
+    tempProject,
+    undefined,
+    false,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+    undefined,
+    true,
+  );
+
+  assert.deepEqual(setModelCalls, ["ollama/qwen3.6:27b-coding-nvfp4"]);
+  assert.equal(result.appliedModel?.id, "qwen3.6:27b-coding-nvfp4");
+  assert.ok(notifications.some((message) => /suppressed.*local resource failure/i.test(message)));
   assert.ok(notifications.some((message) => message.includes("qwen3.6:35b-a3b-coding-nvfp4")));
 });
 
