@@ -45,7 +45,7 @@ Use `@gwd` in VS Code Chat (`Cmd+Shift+I`) to talk to the agent:
 
 ```
 @gwd refactor the auth module to use JWT
-@gwd /gsd auto
+@gwd /gwd auto
 @gwd fix the errors in this file
 ```
 
@@ -130,7 +130,7 @@ When the agent needs input (questions, confirmations, selections), VS Code dialo
 ### Additional Features
 
 - **Conversation History** — full message viewer with tool calls, thinking blocks, search, and fork-from-here
-- **Slash Command Completion** — type `/` for auto-complete of `/gsd` commands
+- **Slash Command Completion** — type `/` for auto-complete of `/gwd` commands
 - **File Decorations** — "G" badge on agent-modified files in the Explorer
 - **Plan View** — dedicated panel for the agent's current plan
 - **Bash Terminal** — dedicated terminal for agent shell output
@@ -181,19 +181,19 @@ When the agent needs input (questions, confirmations, selections), VS Code dialo
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `gsd.binaryPath` | `"gsd"` | Path to the GWD binary |
-| `gsd.autoStart` | `false` | Start agent on extension activation |
-| `gsd.autoCompaction` | `true` | Automatic context compaction |
-| `gsd.codeLens` | `true` | Code lens above functions/classes |
-| `gsd.showProgressNotifications` | `false` | Progress notification (off — Chat shows progress) |
-| `gsd.activityFeedMaxItems` | `100` | Max items in Activity feed |
-| `gsd.showContextWarning` | `true` | Warn when context exceeds threshold |
-| `gsd.contextWarningThreshold` | `80` | Context % that triggers warning |
-| `gsd.approvalMode` | `"auto-approve"` | Agent permission mode |
+| `gwd.binaryPath` | `"gwd"` | Path to the GWD binary |
+| `gwd.autoStart` | `false` | Start agent on extension activation |
+| `gwd.autoCompaction` | `true` | Automatic context compaction |
+| `gwd.codeLens` | `true` | Code lens above functions/classes |
+| `gwd.showProgressNotifications` | `false` | Progress notification (off — Chat shows progress) |
+| `gwd.activityFeedMaxItems` | `100` | Max items in Activity feed |
+| `gwd.showContextWarning` | `true` | Warn when context exceeds threshold |
+| `gwd.contextWarningThreshold` | `80` | Context % that triggers warning |
+| `gwd.approvalMode` | `"auto-approve"` | Agent permission mode |
 
 ## How It Works
 
-The extension spawns `gsd --mode rpc` and communicates over JSON-RPC via stdin/stdout. Agent events stream in real-time. The change tracker captures file state before modifications for SCM diffs and rollback. UI requests from the agent (questions, confirmations) are handled via VS Code dialogs.
+The extension spawns `gwd --mode rpc` and communicates over JSON-RPC via stdin/stdout. Agent events stream in real-time. The change tracker captures file state before modifications for SCM diffs and rollback. UI requests from the agent (questions, confirmations) are handled via VS Code dialogs.
 
 ## Links
 

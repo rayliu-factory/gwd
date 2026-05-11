@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import type { GsdClient, AgentEvent } from "./gsd-client.js";
+import type { GwdClient, AgentEvent } from "./gwd-client.js";
 
 interface PlanStep {
 	id: number;
@@ -15,8 +15,8 @@ interface PlanStep {
  * Displays steps as they happen, showing what the agent is doing and
  * what it has completed — a live execution plan.
  */
-export class GsdPlanViewerProvider implements vscode.TreeDataProvider<PlanStep>, vscode.Disposable {
-	public static readonly viewId = "gsd-plan";
+export class GwdPlanViewerProvider implements vscode.TreeDataProvider<PlanStep>, vscode.Disposable {
+	public static readonly viewId = "gwd-plan";
 
 	private readonly _onDidChangeTreeData = new vscode.EventEmitter<void>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
@@ -26,7 +26,7 @@ export class GsdPlanViewerProvider implements vscode.TreeDataProvider<PlanStep>,
 	private runningTools = new Map<string, number>(); // toolUseId -> step id
 	private disposables: vscode.Disposable[] = [];
 
-	constructor(private readonly client: GsdClient) {
+	constructor(private readonly client: GwdClient) {
 		this.disposables.push(
 			this._onDidChangeTreeData,
 			client.onEvent((evt) => this.handleEvent(evt)),

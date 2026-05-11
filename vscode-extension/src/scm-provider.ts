@@ -1,26 +1,26 @@
 import * as vscode from "vscode";
 import * as path from "node:path";
-import type { GsdChangeTracker } from "./change-tracker.js";
+import type { GwdChangeTracker } from "./change-tracker.js";
 
-const GWD_ORIGINAL_SCHEME = "gsd-original";
+const GWD_ORIGINAL_SCHEME = "gwd-original";
 
 /**
- * Source Control provider that shows files modified by the GSD agent
- * in a dedicated "GSD Agent" section of the Source Control panel.
+ * Source Control provider that shows files modified by the GWD agent
+ * in a dedicated "GWD Agent" section of the Source Control panel.
  * Supports QuickDiff to show before/after diffs, and accept/discard per-file.
  */
-export class GsdScmProvider implements vscode.Disposable {
+export class GwdScmProvider implements vscode.Disposable {
 	private readonly scm: vscode.SourceControl;
 	private readonly changesGroup: vscode.SourceControlResourceGroup;
-	private readonly contentProvider: GsdOriginalContentProvider;
+	private readonly contentProvider: GwdOriginalContentProvider;
 	private disposables: vscode.Disposable[] = [];
 
 	constructor(
-		private readonly tracker: GsdChangeTracker,
+		private readonly tracker: GwdChangeTracker,
 		private readonly workspaceRoot: string,
 	) {
 		// Register content provider for original file contents
-		this.contentProvider = new GsdOriginalContentProvider(tracker);
+		this.contentProvider = new GwdOriginalContentProvider(tracker);
 		this.disposables.push(
 			vscode.workspace.registerTextDocumentContentProvider(
 				GWD_ORIGINAL_SCHEME,
@@ -30,8 +30,8 @@ export class GsdScmProvider implements vscode.Disposable {
 
 		// Create source control instance
 		this.scm = vscode.scm.createSourceControl(
-			"gsd",
-			"GSD Agent",
+			"gwd",
+			"GWD Agent",
 			vscode.Uri.file(workspaceRoot),
 		);
 		this.scm.quickDiffProvider = {
@@ -45,7 +45,7 @@ export class GsdScmProvider implements vscode.Disposable {
 		};
 		this.scm.inputBox.placeholder = "Describe changes to accept...";
 		this.scm.acceptInputCommand = {
-			command: "gsd.acceptAllChanges",
+			command: "gwd.acceptAllChanges",
 			title: "Accept All",
 		};
 		this.scm.count = 0;
@@ -75,7 +75,7 @@ export class GsdScmProvider implements vscode.Disposable {
 				resourceUri: uri,
 				decorations: {
 					strikeThrough: false,
-					tooltip: `Modified by GSD Agent`,
+					tooltip: `Modified by GWD Agent`,
 					light: { iconPath: new vscode.ThemeIcon("edit") },
 					dark: { iconPath: new vscode.ThemeIcon("edit") },
 				},
@@ -85,7 +85,7 @@ export class GsdScmProvider implements vscode.Disposable {
 					arguments: [
 						uri.with({ scheme: GWD_ORIGINAL_SCHEME }),
 						uri,
-						`${fileName} (GSD Agent Changes)`,
+						`${fileName} (GWD Agent Changes)`,
 					],
 				},
 			};
@@ -103,13 +103,13 @@ export class GsdScmProvider implements vscode.Disposable {
 
 /**
  * TextDocumentContentProvider that serves the original (pre-agent) content
- * of files via the `gsd-original:` URI scheme.
+ * of files via the `gwd-original:` URI scheme.
  */
-class GsdOriginalContentProvider implements vscode.TextDocumentContentProvider {
+class GwdOriginalContentProvider implements vscode.TextDocumentContentProvider {
 	private readonly _onDidChange = new vscode.EventEmitter<vscode.Uri>();
 	readonly onDidChange = this._onDidChange.event;
 
-	constructor(private readonly tracker: GsdChangeTracker) {
+	constructor(private readonly tracker: GwdChangeTracker) {
 		tracker.onDidChange((paths) => {
 			for (const p of paths) {
 				this._onDidChange.fire(vscode.Uri.file(p).with({ scheme: GWD_ORIGINAL_SCHEME }));

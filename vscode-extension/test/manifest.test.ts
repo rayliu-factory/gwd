@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD
 // File Purpose: VS Code extension manifest and pure helper behavior tests.
 
 import assert from "node:assert/strict";
@@ -11,7 +11,7 @@ import {
 	describeApprovalEvent,
 	nextApprovalMode,
 } from "../src/approval-mode.ts";
-import { buildGsdClientSpawnPlan } from "../src/gsd-client-spawn.ts";
+import { buildGwdClientSpawnPlan } from "../src/gwd-client-spawn.ts";
 import {
 	buildAgentGitAddArgs,
 	buildAgentGitDiffArgs,
@@ -39,15 +39,15 @@ test("manifest contributes unique executable commands with titles", () => {
 	assert.equal(new Set(contributed).size, contributed.length);
 
 	for (const entry of pkg.contributes.commands) {
-		assert.equal(entry.command.startsWith("gsd."), true);
+		assert.equal(entry.command.startsWith("gwd."), true);
 		assert.equal(typeof entry.title, "string");
 		assert.ok(entry.title.length > 0);
 	}
 });
 
-test("GSDClient spawn plan launches the configured binary in RPC mode with a controlled cwd", () => {
-	const plan = buildGsdClientSpawnPlan("/opt/bin/gsd", "/tmp/project", { PATH: "/usr/bin" }, "linux");
-	assert.equal(plan.command, "/opt/bin/gsd");
+test("GWDClient spawn plan launches the configured binary in RPC mode with a controlled cwd", () => {
+	const plan = buildGwdClientSpawnPlan("/opt/bin/gwd", "/tmp/project", { PATH: "/usr/bin" }, "linux");
+	assert.equal(plan.command, "/opt/bin/gwd");
 	assert.deepEqual(plan.args, ["--mode", "rpc"]);
 	assert.deepEqual(plan.options, {
 		cwd: "/tmp/project",
@@ -56,16 +56,16 @@ test("GSDClient spawn plan launches the configured binary in RPC mode with a con
 		shell: false,
 	});
 
-	assert.equal(buildGsdClientSpawnPlan("gsd.cmd", "C:\\repo", {}, "win32").options.shell, true);
+	assert.equal(buildGwdClientSpawnPlan("gwd.cmd", "C:\\repo", {}, "win32").options.shell, true);
 });
 
 test("approval mode contributes settings and executable command behavior", () => {
 	const pkg = readPackage();
 	const commands = new Set(pkg.contributes.commands.map((entry) => entry.command));
 
-	assert.ok(pkg.contributes.configuration.properties["gsd.approvalMode"]);
-	assert.ok(commands.has("gsd.cycleApprovalMode"));
-	assert.ok(commands.has("gsd.selectApprovalMode"));
+	assert.ok(pkg.contributes.configuration.properties["gwd.approvalMode"]);
+	assert.ok(commands.has("gwd.cycleApprovalMode"));
+	assert.ok(commands.has("gwd.selectApprovalMode"));
 	assert.deepEqual(APPROVAL_MODES, ["auto-approve", "ask", "plan-only"]);
 	assert.equal(nextApprovalMode("auto-approve"), "ask");
 	assert.equal(nextApprovalMode("ask"), "plan-only");
@@ -85,8 +85,8 @@ test("approval mode contributes settings and executable command behavior", () =>
 test("checkpoint view is contributed in the extension manifest", () => {
 	const pkg = readPackage();
 
-	assert.ok(pkg.contributes.views.gsd.some((view) => view.id === "gsd-checkpoints"));
-	assert.ok(pkg.contributes.commands.some((entry) => entry.command === "gsd.restoreCheckpoint"));
+	assert.ok(pkg.contributes.views.gwd.some((view) => view.id === "gwd-checkpoints"));
+	assert.ok(pkg.contributes.commands.some((entry) => entry.command === "gwd.restoreCheckpoint"));
 });
 
 test("agent git helpers scope git output to tracked agent files", () => {

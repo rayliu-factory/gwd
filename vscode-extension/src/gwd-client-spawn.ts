@@ -1,20 +1,20 @@
-// Project/App: GSD-2
-// File Purpose: Pure spawn planning for the VS Code GSD RPC client.
+// Project/App: GWD
+// File Purpose: Pure spawn planning for the VS Code GWD RPC client.
 
 import type { SpawnOptions } from "node:child_process";
 
-export interface GsdClientSpawnPlan {
+export interface GwdClientSpawnPlan {
 	command: string;
 	args: string[];
 	options: SpawnOptions;
 }
 
-export function buildGsdClientSpawnPlan(
+export function buildGwdClientSpawnPlan(
 	binaryPath: string,
 	cwd: string,
 	env: NodeJS.ProcessEnv = process.env,
 	platform: NodeJS.Platform = process.platform,
-): GsdClientSpawnPlan {
+): GwdClientSpawnPlan {
 	return {
 		command: binaryPath,
 		args: ["--mode", "rpc"],

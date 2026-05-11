@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: VS Code extension RPC client for communicating with the GSD agent.
+// Project/App: GWD
+// File Purpose: VS Code extension RPC client for communicating with the GWD agent.
 
 import { ChildProcess, spawn } from "node:child_process";
 import * as vscode from "vscode";
@@ -11,10 +11,10 @@ import type {
 	SessionStats,
 	ThinkingLevel,
 } from "@gwd-build/contracts" with { "resolution-mode": "import" };
-import { buildGsdClientSpawnPlan } from "./gsd-client-spawn.js";
+import { buildGwdClientSpawnPlan } from "./gwd-client-spawn.js";
 
 /**
- * Mirrors the RPC command/response protocol from the GSD agent.
+ * Mirrors the RPC command/response protocol from the GWD agent.
  * Shared command and response payloads come from @gwd-build/contracts.
  */
 export type { BashResult, ModelInfo, SessionStats, ThinkingLevel };
@@ -41,10 +41,10 @@ type PendingRequest = {
 };
 
 /**
- * Client that spawns `gsd --mode rpc` and communicates via JSON lines
+ * Client that spawns `gwd --mode rpc` and communicates via JSON lines
  * over stdin/stdout. Emits VS Code events for streaming responses.
  */
-export class GsdClient implements vscode.Disposable {
+export class GwdClient implements vscode.Disposable {
 	private process: ChildProcess | null = null;
 	private pendingRequests = new Map<string, PendingRequest>();
 	private requestId = 0;
@@ -80,14 +80,14 @@ export class GsdClient implements vscode.Disposable {
 	}
 
 	/**
-	 * Spawn the GSD agent in RPC mode.
+	 * Spawn the GWD agent in RPC mode.
 	 */
 	async start(): Promise<void> {
 		if (this.process) {
 			return;
 		}
 
-		const spawnPlan = buildGsdClientSpawnPlan(this.binaryPath, this.cwd);
+		const spawnPlan = buildGwdClientSpawnPlan(this.binaryPath, this.cwd);
 		const proc = spawn(spawnPlan.command, spawnPlan.args, spawnPlan.options);
 		this.process = proc;
 
@@ -127,9 +127,9 @@ export class GsdClient implements vscode.Disposable {
 					this.process = null;
 				}
 				const hint = err.code === "ENOENT"
-					? ` Make sure GSD is installed ("npm install -g gwd-pi") and set "gsd.binaryPath" to the absolute path if it is not on PATH.`
+					? ` Make sure GWD is installed ("npm install -g gwd-pi") and set "gwd.binaryPath" to the absolute path if it is not on PATH.`
 					: "";
-				const message = `Failed to start GSD process: ${err.message}.${hint}`;
+				const message = `Failed to start GWD process: ${err.message}.${hint}`;
 				this._onError.fire(message);
 				reject(new Error(message));
 			};
@@ -147,16 +147,16 @@ export class GsdClient implements vscode.Disposable {
 			}
 			this._onConnectionChange.fire(false);
 			const hint = err.code === "ENOENT"
-				? ` Make sure GSD is installed ("npm install -g gwd-pi") and set "gsd.binaryPath" to the absolute path if it is not on PATH.`
+				? ` Make sure GWD is installed ("npm install -g gwd-pi") and set "gwd.binaryPath" to the absolute path if it is not on PATH.`
 				: "";
-			this._onError.fire(`GSD process error: ${err.message}.${hint}`);
+			this._onError.fire(`GWD process error: ${err.message}.${hint}`);
 		});
 
 		proc.on("exit", (code, signal) => {
 			if (this.process === proc) {
 				this.process = null;
 			}
-			this.rejectAllPending(`GSD process exited (code=${code}, signal=${signal})`);
+			this.rejectAllPending(`GWD process exited (code=${code}, signal=${signal})`);
 			this._onConnectionChange.fire(false);
 
 			if (code !== 0 && signal !== "SIGTERM") {
@@ -168,7 +168,7 @@ export class GsdClient implements vscode.Disposable {
 				if (this.restartTimestamps.length > 3) {
 					// Too many crashes within 60s — stop retrying
 					this._onError.fire(
-						`GSD process crashed ${this.restartTimestamps.length} times within 60s. Not restarting. Use "GSD: Start Agent" to retry manually.`,
+						`GWD process crashed ${this.restartTimestamps.length} times within 60s. Not restarting. Use "GWD: Start Agent" to retry manually.`,
 					);
 				} else if (this.restartCount < 3) {
 					this.restartCount++;
@@ -181,7 +181,7 @@ export class GsdClient implements vscode.Disposable {
 	}
 
 	/**
-	 * Stop the GSD agent process.
+	 * Stop the GWD agent process.
 	 */
 	async stop(): Promise<void> {
 		if (!this.process) {
@@ -611,11 +611,11 @@ export class GsdClient implements vscode.Disposable {
 					const message = String(request.message ?? "");
 					const notifyType = String(request.notifyType ?? "info");
 					if (notifyType === "error") {
-						vscode.window.showErrorMessage(`GSD: ${message}`);
+						vscode.window.showErrorMessage(`GWD: ${message}`);
 					} else if (notifyType === "warning") {
-						vscode.window.showWarningMessage(`GSD: ${message}`);
+						vscode.window.showWarningMessage(`GWD: ${message}`);
 					} else {
-						vscode.window.showInformationMessage(`GSD: ${message}`);
+						vscode.window.showInformationMessage(`GWD: ${message}`);
 					}
 					// Notify doesn't need a response
 					break;
@@ -640,7 +640,7 @@ export class GsdClient implements vscode.Disposable {
 
 	private send(command: Record<string, unknown>): Promise<RpcResponse> {
 		if (!this.process?.stdin) {
-			return Promise.reject(new Error("GSD client not started"));
+			return Promise.reject(new Error("GWD client not started"));
 		}
 
 		const id = `req_${++this.requestId}`;

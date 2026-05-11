@@ -1,15 +1,15 @@
 import * as vscode from "vscode";
-import type { AgentEvent, GsdClient } from "./gsd-client.js";
+import type { AgentEvent, GwdClient } from "./gwd-client.js";
 
 /**
- * Registers the @gsd chat participant that forwards messages to the
- * GSD RPC client and streams tool execution events back to the chat.
+ * Registers the @gwd chat participant that forwards messages to the
+ * GWD RPC client and streams tool execution events back to the chat.
  */
 export function registerChatParticipant(
 	context: vscode.ExtensionContext,
-	client: GsdClient,
+	client: GwdClient,
 ): vscode.Disposable {
-	const participant = vscode.chat.createChatParticipant("gsd.agent", async (
+	const participant = vscode.chat.createChatParticipant("gwd.agent", async (
 		request: vscode.ChatRequest,
 		_chatContext: vscode.ChatContext,
 		response: vscode.ChatResponseStream,
@@ -17,12 +17,12 @@ export function registerChatParticipant(
 	) => {
 		// Auto-start the agent if not connected
 		if (!client.isConnected) {
-			response.progress("Starting GSD agent...");
+			response.progress("Starting GWD agent...");
 			try {
 				await client.start();
 			} catch (err) {
 				const msg = err instanceof Error ? err.message : String(err);
-				response.markdown(`**Failed to start GSD agent:** ${msg}\n\nMake sure \`gsd\` is installed (\`npm install -g gwd-pi\`) and try again.`);
+				response.markdown(`**Failed to start GWD agent:** ${msg}\n\nMake sure \`gwd\` is installed (\`npm install -g gwd-pi\`) and try again.`);
 				return;
 			}
 		}
@@ -64,7 +64,7 @@ export function registerChatParticipant(
 		const eventHandler = (event: AgentEvent) => {
 			switch (event.type) {
 				case "agent_start":
-					response.progress("GSD is working...");
+					response.progress("GWD is working...");
 					break;
 
 				case "tool_execution_start": {
@@ -179,17 +179,17 @@ export function registerChatParticipant(
 		provideFollowups: (_result, _context, _token) => {
 			return [
 				{
-					prompt: "/gsd status",
+					prompt: "/gwd status",
 					label: "$(info) Check status",
 					title: "Check project status",
 				},
 				{
-					prompt: "/gsd auto",
+					prompt: "/gwd auto",
 					label: "$(rocket) Run auto mode",
 					title: "Run autonomous mode",
 				},
 				{
-					prompt: "/gsd capture",
+					prompt: "/gwd capture",
 					label: "$(note) Capture a thought",
 					title: "Capture a thought mid-session",
 				},

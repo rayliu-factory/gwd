@@ -1,16 +1,16 @@
 import * as vscode from "vscode";
-import type { AgentEvent, GsdClient } from "./gsd-client.js";
+import type { AgentEvent, GwdClient } from "./gwd-client.js";
 
 /**
- * Routes the GSD agent's Bash tool output to a dedicated VS Code terminal panel.
+ * Routes the GWD agent's Bash tool output to a dedicated VS Code terminal panel.
  * Shows streaming output from tool_execution_update events in real time.
  */
-export class GsdBashTerminal implements vscode.Disposable {
+export class GwdBashTerminal implements vscode.Disposable {
 	private terminal: vscode.Terminal | undefined;
 	private writeEmitter: vscode.EventEmitter<string> | undefined;
 	private disposables: vscode.Disposable[] = [];
 
-	constructor(client: GsdClient) {
+	constructor(client: GwdClient) {
 		this.disposables.push(
 			client.onEvent((evt: AgentEvent) => this.handleEvent(evt)),
 			client.onConnectionChange((connected) => {
@@ -31,7 +31,7 @@ export class GsdBashTerminal implements vscode.Disposable {
 				open: () => {},
 				close: () => { this.terminal = undefined; },
 			};
-			this.terminal = vscode.window.createTerminal({ name: "GSD Agent", pty });
+			this.terminal = vscode.window.createTerminal({ name: "GWD Agent", pty });
 		}
 		return { terminal: this.terminal, writeEmitter: this.writeEmitter! };
 	}

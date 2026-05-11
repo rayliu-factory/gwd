@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import type { GsdClient, AgentEvent } from "./gsd-client.js";
+import type { GwdClient, AgentEvent } from "./gwd-client.js";
 import {
 	APPROVAL_MODE_LABELS,
 	APPROVAL_MODES,
@@ -15,14 +15,14 @@ import {
  * Permission/approval system for agent actions.
  * Can be configured to prompt before file writes, command execution, etc.
  */
-export class GsdPermissionManager implements vscode.Disposable {
+export class GwdPermissionManager implements vscode.Disposable {
 	private _mode: ApprovalMode = "auto-approve";
 	private disposables: vscode.Disposable[] = [];
 
 	private readonly _onModeChange = new vscode.EventEmitter<ApprovalMode>();
 	readonly onModeChange = this._onModeChange.event;
 
-	constructor(private readonly client: GsdClient) {
+	constructor(private readonly client: GwdClient) {
 		// Load saved mode from configuration
 		this._mode = vscode.workspace.getConfiguration(GWD_APPROVAL_CONFIG_SECTION).get<ApprovalMode>(GWD_APPROVAL_CONFIG_KEY, "auto-approve");
 

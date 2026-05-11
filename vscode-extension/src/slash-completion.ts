@@ -1,21 +1,21 @@
 import * as vscode from "vscode";
-import type { GsdClient, SlashCommand } from "./gsd-client.js";
+import type { GwdClient, SlashCommand } from "./gwd-client.js";
 
 /**
- * CompletionItemProvider that surfaces GSD slash commands when the user
+ * CompletionItemProvider that surfaces GWD slash commands when the user
  * types `/` at the start of a line (or after only whitespace) in Markdown,
  * plaintext, and TypeScript/JavaScript files.
  *
  * Commands are fetched from the running agent via get_commands RPC and
  * cached so the list remains available between keystrokes.
  */
-export class GsdSlashCompletionProvider
+export class GwdSlashCompletionProvider
 	implements vscode.CompletionItemProvider, vscode.Disposable
 {
 	private cachedCommands: SlashCommand[] = [];
 	private disposables: vscode.Disposable[] = [];
 
-	constructor(private readonly client: GsdClient) {
+	constructor(private readonly client: GwdClient) {
 		// Refresh cache whenever the connection (re)establishes.
 		this.disposables.push(
 			client.onConnectionChange(async (connected) => {
@@ -78,8 +78,8 @@ export class GsdSlashCompletionProvider
 	private async refreshCache(): Promise<void> {
 		try {
 			const all = await this.client.getCommands();
-			// Only show /gsd commands — filter out unrelated extension/skill commands
-			this.cachedCommands = all.filter((cmd) => cmd.name.startsWith("gsd"));
+			// Only show /gwd commands — filter out unrelated extension/skill commands
+			this.cachedCommands = all.filter((cmd) => cmd.name.startsWith("gwd"));
 		} catch {
 			// Silently ignore — agent may not be ready yet.
 		}
