@@ -7,7 +7,7 @@ import { randomUUID } from "node:crypto";
 
 import { symlinkSync, realpathSync } from "node:fs";
 
-import { _getAdapter, closeDatabase } from "../../../src/resources/extensions/gsd/gsd-db.ts";
+import { _getAdapter, closeDatabase } from "../../../src/resources/extensions/gwd/gwd-db.ts";
 import { _buildImportCandidates, registerWorkflowTools, WORKFLOW_TOOL_NAMES, validateProjectDir } from "./workflow-tools.ts";
 
 function makeTmpBase(): string {
@@ -98,12 +98,12 @@ describe("workflow MCP tools", () => {
 
   it("prefers source TypeScript before compiled dist fallbacks", () => {
     assert.deepEqual(
-      _buildImportCandidates("../../../src/resources/extensions/gsd/tools/workflow-tool-executors.js"),
+      _buildImportCandidates("../../../src/resources/extensions/gwd/tools/workflow-tool-executors.js"),
       [
-        "../../../src/resources/extensions/gsd/tools/workflow-tool-executors.ts",
-        "../../../src/resources/extensions/gsd/tools/workflow-tool-executors.js",
-        "../../../dist/resources/extensions/gsd/tools/workflow-tool-executors.ts",
-        "../../../dist/resources/extensions/gsd/tools/workflow-tool-executors.js",
+        "../../../src/resources/extensions/gwd/tools/workflow-tool-executors.ts",
+        "../../../src/resources/extensions/gwd/tools/workflow-tool-executors.js",
+        "../../../dist/resources/extensions/gwd/tools/workflow-tool-executors.ts",
+        "../../../dist/resources/extensions/gwd/tools/workflow-tool-executors.js",
       ],
     );
   });
@@ -784,7 +784,7 @@ export const executeTaskComplete = async (params, projectDir) => {
             title: "Add planning bridge",
             description: "Implement the shared executor path.",
             estimate: "15m",
-            files: ["src/resources/extensions/gsd/tools/workflow-tool-executors.ts"],
+            files: ["src/resources/extensions/gwd/tools/workflow-tool-executors.ts"],
             verify: "node --test",
             inputs: ["ROADMAP.md"],
             expectedOutput: ["S01-PLAN.md", "T01-PLAN.md"],
