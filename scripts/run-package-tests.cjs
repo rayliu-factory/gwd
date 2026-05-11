@@ -42,8 +42,8 @@ function commandExists(command, args = ['--version']) {
 function hasNativeAddon() {
 	const platformTag = `${process.platform}-${process.arch}`
 	return (
-		existsSync(join(REPO_ROOT, 'native', 'addon', `gsd_engine.${platformTag}.node`)) ||
-		existsSync(join(REPO_ROOT, 'native', 'addon', 'gsd_engine.dev.node'))
+		existsSync(join(REPO_ROOT, 'native', 'addon', `gwd_engine.${platformTag}.node`)) ||
+		existsSync(join(REPO_ROOT, 'native', 'addon', 'gwd_engine.dev.node'))
 	)
 }
 
