@@ -228,7 +228,7 @@ export function resolveExecutorContextWindow(
     return preferences.context_window_override;
   }
 
-  // Step 1: Try configured executor model
+  // Step 2: Try configured executor model
   if (preferences?.models?.execution && registry) {
     const executionConfig = preferences.models.execution;
     const modelId = typeof executionConfig === "string"
@@ -243,12 +243,12 @@ export function resolveExecutorContextWindow(
     }
   }
 
-  // Step 2: Fall back to session context window
+  // Step 3: Fall back to session context window
   if (sessionContextWindow && sessionContextWindow > 0) {
     return resolveEffectiveContextWindow(sessionContextWindow, sessionProvider);
   }
 
-  // Step 3: Fall back to default (D002)
+  // Step 4: Fall back to default (D002)
   return DEFAULT_CONTEXT_WINDOW;
 }
 
