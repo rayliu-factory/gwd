@@ -116,7 +116,7 @@ export function adjustOllamaAppleSiliconFallbacks<T extends RoutingDecision>(dec
 }
 
 const OLLAMA_RESOURCE_RE =
-  /\b(?:oom|out of memory)\b|failed to allocate|cannot allocate|\ballocation(?: failed)?\b|requires more system memory|llama runner.*(?:terminated|exited|failed)|runner process.*(?:terminated|exited|failed)|runner termination|\bmodel load(?: error| failed)?\b|failed to load model|context (?:window|length).*exceed|context overflow|input.*too large|500 internal server error/i;
+  /\b(?:oom|out of memory)\b|failed to allocate|cannot allocate|\ballocation(?: failed)?\b|requires more system memory|llama runner.*(?:terminated|exited|failed)|runner process.*(?:terminated|exited|failed)|runner termination|\bmodel load(?: error| failed)?\b|failed to load model/i;
 
 export function isOllamaAppleSiliconResourceFailure(
   provider: string | undefined,

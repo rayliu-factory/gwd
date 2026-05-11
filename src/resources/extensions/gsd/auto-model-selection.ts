@@ -272,7 +272,9 @@ export async function selectAndApplyModel(
       routingConfig.enabled = false;
     }
     // burn-max defaults to quality-first dispatch (no downgrade routing).
-    if (prefs?.token_profile === "burn-max") {
+    // The Ollama Apple Silicon preset is a memory-safety router, not a cost
+    // downgrade; keep it enabled so standard work stays on 27B.
+    if (prefs?.token_profile === "burn-max" && !ollamaAppleSiliconPreset) {
       routingConfig.enabled = false;
     }
     if (modelConfig.source === "explicit") {

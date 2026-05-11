@@ -275,6 +275,19 @@ test("isOllamaAppleSiliconResourceFailure matches local 35B resource failures on
     "llama runner process has terminated: out of memory",
   ), false);
 
+  for (const message of [
+    "500 internal server error",
+    "context overflow",
+    "context length exceeded",
+    "input is too large",
+  ]) {
+    assert.equal(isOllamaAppleSiliconResourceFailure(
+      "ollama",
+      OLLAMA_QWEN36_35B_A3B_NVFP4,
+      message,
+    ), false, message);
+  }
+
   assert.equal(isOllamaAppleSiliconResourceFailure(
     "anthropic",
     OLLAMA_QWEN36_35B_A3B_NVFP4,
