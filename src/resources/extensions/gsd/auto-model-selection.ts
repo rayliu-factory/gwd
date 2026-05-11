@@ -20,6 +20,10 @@ import { resolveUokFlags } from "./uok/flags.js";
 import { applyModelPolicyFilter } from "./uok/model-policy.js";
 import { isModelBlocked } from "./blocked-models.js";
 import { getRequiredWorkflowToolsForAutoUnit } from "./workflow-mcp.js";
+import {
+  adjustOllamaAppleSiliconFallbacks,
+  resolveOllamaAppleSiliconPreset,
+} from "./ollama-apple-silicon-profile.js";
 
 /**
  * Thrown when the model-policy gate rejects every candidate model for a unit
@@ -200,9 +204,31 @@ export async function selectAndApplyModel(
       flatRateCtx: buildFlatRateContext(autoModeStartModel.provider, ctx, prefs),
     };
   }
+  const availableModels = ctx.modelRegistry.getAvailable();
+  const ollamaAppleSiliconPreset = effectiveSessionModelOverride
+    ? undefined
+    : resolveOllamaAppleSiliconPreset({
+        isAutoMode,
+        prefs,
+        basePath,
+        availableModels,
+        autoModeStartModel,
+        currentProvider: ctx.model?.provider,
+      });
+  if (ollamaAppleSiliconPreset?.missingHeavyModel) {
+    ctx.ui.notify(
+      "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 is not installed; heavy work will use qwen3.6:27b-coding-nvfp4.",
+      "warning",
+    );
+  } else if (ollamaAppleSiliconPreset?.heavySuppressed) {
+    ctx.ui.notify(
+      "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 is suppressed for this run after a local resource failure; heavy work will use qwen3.6:27b-coding-nvfp4.",
+      "warning",
+    );
+  }
   const modelConfig = effectiveSessionModelOverride
     ? undefined
-    : resolvePreferredModelConfig(unitType, autoModeStartModel, isAutoMode);
+    : (ollamaAppleSiliconPreset?.modelConfig ?? resolvePreferredModelConfig(unitType, autoModeStartModel, isAutoMode));
   let routing: { tier: string; modelDowngraded: boolean } | null = null;
   let appliedModel: Model<Api> | null = null;
 
@@ -230,7 +256,6 @@ export async function selectAndApplyModel(
   if (isAutoMode) restoreToolBaseline(pi);
 
   if (modelConfig) {
-    const availableModels = ctx.modelRegistry.getAvailable();
     const modelPolicyTraceId = `model:${ctx.sessionManager.getSessionId()}:${Date.now()}`;
     const modelPolicyTurnId = `${unitType}:${unitId}`;
     let policyAllowedModelKeys: Set<string> | null = null;
@@ -239,7 +264,10 @@ export async function selectAndApplyModel(
     // Dynamic routing (complexity-based downgrading) only applies in auto-mode.
     // Interactive/guided-flow dispatches use the user's session model directly,
     // respecting their /model selection without silent downgrades (#3962).
-    const routingConfig = resolveDynamicRoutingConfig();
+    const routingConfig = {
+      ...resolveDynamicRoutingConfig(),
+      ...(ollamaAppleSiliconPreset?.routingConfig ?? {}),
+    };
     if (!isAutoMode) {
       routingConfig.enabled = false;
     }
@@ -436,6 +464,9 @@ export async function selectAndApplyModel(
             capabilityOverrides,
           );
         }
+        if (ollamaAppleSiliconPreset) {
+          routingResult = adjustOllamaAppleSiliconFallbacks(routingResult);
+        }
 
         if (routingResult.wasDowngraded) {
           effectiveModelConfig = {
@@ -575,7 +606,6 @@ export async function selectAndApplyModel(
   } else if (autoModeStartModel) {
     // No model preference for this unit type — re-apply the model captured
     // at auto-mode start to prevent bleed from shared global settings.json (#650).
-    const availableModels = ctx.modelRegistry.getAvailable();
     const startBlocked = isModelBlocked(basePath, autoModeStartModel.provider, autoModeStartModel.id);
     if (startBlocked) {
       ctx.ui.notify(
