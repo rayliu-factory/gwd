@@ -674,13 +674,13 @@ describe('createMcpServer tool registration', () => {
     assert.ok(typeof server.close === 'function');
   });
 
-  it('gsd_execute flow returns sessionId on success', async () => {
+  it('gwd_execute flow returns sessionId on success', async () => {
     const sessionId = await sm.startSession('/tmp/tool-exec', { cliPath: '/usr/bin/gwd' });
     assert.equal(typeof sessionId, 'string');
     assert.ok(sessionId.length > 0);
   });
 
-  it('gsd_status flow returns correct shape', async () => {
+  it('gwd_status flow returns correct shape', async () => {
     const sessionId = await sm.startSession('/tmp/tool-status', { cliPath: '/usr/bin/gwd' });
     const session = sm.getSession(sessionId)!;
 
@@ -690,7 +690,7 @@ describe('createMcpServer tool registration', () => {
     assert.equal(typeof session.startTime, 'number');
   });
 
-  it('gsd_resolve_blocker flow returns error when no blocker', async () => {
+  it('gwd_resolve_blocker flow returns error when no blocker', async () => {
     const sessionId = await sm.startSession('/tmp/tool-resolve', { cliPath: '/usr/bin/gwd' });
     await assert.rejects(
       () => sm.resolveBlocker(sessionId, 'fix'),
@@ -701,7 +701,7 @@ describe('createMcpServer tool registration', () => {
     );
   });
 
-  it('gsd_result flow returns HeadlessJsonResult shape', async () => {
+  it('gwd_result flow returns HeadlessJsonResult shape', async () => {
     const sessionId = await sm.startSession('/tmp/tool-result', { cliPath: '/usr/bin/gwd' });
     const result = sm.getResult(sessionId);
 
@@ -715,14 +715,14 @@ describe('createMcpServer tool registration', () => {
     assert.ok('error' in result);
   });
 
-  it('gsd_cancel flow marks session as cancelled', async () => {
+  it('gwd_cancel flow marks session as cancelled', async () => {
     const sessionId = await sm.startSession('/tmp/tool-cancel', { cliPath: '/usr/bin/gwd' });
     await sm.cancelSession(sessionId);
     const session = sm.getSession(sessionId)!;
     assert.equal(session.status, 'cancelled');
   });
 
-  it('gsd_cancel can cancel an interactive session (no sessionId) via projectDir fallback', async () => {
+  it('gwd_cancel can cancel an interactive session (no sessionId) via projectDir fallback', async () => {
     // Simulate an interactive session: registered by projectDir but with an empty sessionId
     // (e.g. started via `/gwd auto` in terminal or from a restarted MCP server that lost its session registry)
     const projectDir = resolve('/tmp/interactive-session');
@@ -748,7 +748,7 @@ describe('createMcpServer tool registration', () => {
     assert.ok(mockClient.aborted, 'client.abort() should have been called');
   });
 
-  it('gsd_cancel via projectDir works even when sessionId lookup returns undefined', async () => {
+  it('gwd_cancel via projectDir works even when sessionId lookup returns undefined', async () => {
     // Start a normal session to get its projectDir
     const sessionId = await sm.startSession('/tmp/cancel-by-dir', { cliPath: '/usr/bin/gwd' });
     const session = sm.getSession(sessionId)!;

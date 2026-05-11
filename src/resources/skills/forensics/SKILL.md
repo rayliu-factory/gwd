@@ -30,7 +30,7 @@ Invocation points:
 </context>
 
 <core_principle>
-**READ-ONLY.** Forensics touches no live state. Non-mutating inspection commands (e.g., `ps`, `top -b`, `cat /proc/*`) are allowed for checking process status or reading system files. Strictly prohibited: `gsd_*` writes, commands that modify state, executing binaries that produce side effects, writing to files (outside the final report), or re-running the failed unit. The evidence must stay pristine for future investigations.
+**READ-ONLY.** Forensics touches no live state. Non-mutating inspection commands (e.g., `ps`, `top -b`, `cat /proc/*`) are allowed for checking process status or reading system files. Strictly prohibited: `gwd_*` writes, commands that modify state, executing binaries that produce side effects, writing to files (outside the final report), or re-running the failed unit. The evidence must stay pristine for future investigations.
 
 **SYMPTOM → ROOT CAUSE, WITH CITATIONS.** Every claim in the report is backed by an artifact path and either a line number or a JSONL field. "The loop got stuck because of a race" is not useful; "`.gsd/journal/2026-04-19.jsonl:142` shows `stuck-detected` with flowId X, caused by `dispatch-guard.ts:87` returning the same unit after `unit-end`" is.
 
@@ -103,7 +103,7 @@ Format the output as a GitHub-issue-ready report:
 ## Evidence Trail
 
 1. `.gsd/auto.lock` — <state: stale / fresh>
-2. `.gsd/activity/042-slice-S02.jsonl:128` — <isError: true from `gsd_task_complete`>
+2. `.gsd/activity/042-slice-S02.jsonl:128` — <isError: true from `gwd_task_complete`>
 3. `.gsd/journal/2026-04-19.jsonl:87` — <stuck-detected flowId 7a3c…>
 4. `.gsd/metrics.json` — <unit type/id "slice/S02" appears 3 times>
 
@@ -132,7 +132,7 @@ Offer to file this as a GitHub issue via `mcp__github__issue_write` — explicit
 
 <anti_patterns>
 
-- **Running any `gsd_*` write tool during forensics.** Evidence stays pristine.
+- **Running any `gwd_*` write tool during forensics.** Evidence stays pristine.
 - **Re-running the auto-mode loop to "reproduce."** That overwrites the activity log. Read the existing one.
 - **Vague root cause.** "There's a race" is not a root cause. Name the race.
 - **No citations.** Every claim gets an artifact path.

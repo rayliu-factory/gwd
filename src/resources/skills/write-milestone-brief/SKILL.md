@@ -32,7 +32,7 @@ Find the active milestone:
 
 1. Read `.gsd/STATE.md` — it names the active milestone.
 2. If no milestone is active, ask the user whether this is a new milestone (create directory + files) or appending to an existing one.
-3. For a new milestone, use `gsd_milestone_new` or the `/gwd new-milestone` flow — do not create directories by hand.
+3. For a new milestone, use the `/gwd new-milestone` flow; when a tool-generated ID is needed, call `gwd_milestone_generate_id`. Do not create directories by hand.
 
 ## Step 2: Read the template
 

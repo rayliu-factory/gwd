@@ -79,28 +79,28 @@ Add to `.cursor/mcp.json`:
 
 The workflow MCP surface includes:
 
-- `gsd_decision_save`
-- `gsd_requirement_update`
-- `gsd_requirement_save`
-- `gsd_milestone_generate_id`
-- `gsd_plan_milestone`
-- `gsd_plan_slice`
-- `gsd_plan_task`
-- `gsd_replan_slice`
-- `gsd_task_complete`
-- `gsd_slice_complete`
-- `gsd_skip_slice`
-- `gsd_validate_milestone`
-- `gsd_complete_milestone`
-- `gsd_reassess_roadmap`
-- `gsd_save_gate_result`
-- `gsd_summary_save`
-- `gsd_milestone_status`
-- `gsd_journal_query`
+- `gwd_decision_save`
+- `gwd_requirement_update`
+- `gwd_requirement_save`
+- `gwd_milestone_generate_id`
+- `gwd_plan_milestone`
+- `gwd_plan_slice`
+- `gwd_plan_task`
+- `gwd_replan_slice`
+- `gwd_task_complete`
+- `gwd_slice_complete`
+- `gwd_skip_slice`
+- `gwd_validate_milestone`
+- `gwd_complete_milestone`
+- `gwd_reassess_roadmap`
+- `gwd_save_gate_result`
+- `gwd_summary_save`
+- `gwd_milestone_status`
+- `gwd_journal_query`
 
 These tools use the same GWD workflow handlers as the native in-process tool path wherever a shared handler exists.
 
-`gsd_summary_save` computes artifact paths from the supplied IDs. `milestone_id` is required for milestone-, slice-, and task-scoped artifact types (`SUMMARY`, `RESEARCH`, `CONTEXT`, `ASSESSMENT`, `CONTEXT-DRAFT`) and should be omitted only for root-level `PROJECT`, `PROJECT-DRAFT`, `REQUIREMENTS`, and `REQUIREMENTS-DRAFT` artifacts. For final `REQUIREMENTS` saves, the tool renders content from active database requirement rows; callers must create those rows with `gsd_requirement_save` first.
+`gwd_summary_save` computes artifact paths from the supplied IDs. `milestone_id` is required for milestone-, slice-, and task-scoped artifact types (`SUMMARY`, `RESEARCH`, `CONTEXT`, `ASSESSMENT`, `CONTEXT-DRAFT`) and should be omitted only for root-level `PROJECT`, `PROJECT-DRAFT`, `REQUIREMENTS`, and `REQUIREMENTS-DRAFT` artifacts. For final `REQUIREMENTS` saves, the tool renders content from active database requirement rows; callers must create those rows with `gwd_requirement_save` first.
 
 ### Interactive tools
 
@@ -124,7 +124,7 @@ Current support boundary:
 
 If the executor bridge cannot be loaded, workflow mutation calls will fail with a precise configuration error instead of silently degrading.
 
-### `gsd_execute`
+### `gwd_execute`
 
 Start a GWD auto-mode session for a project directory.
 
@@ -137,13 +137,13 @@ Start a GWD auto-mode session for a project directory.
 
 **Returns:** `{ sessionId, status: "started" }`
 
-### `gsd_status`
+### `gwd_status`
 
 Poll the current status of a running GWD session.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `sessionId` | `string` | ✅ | Session ID from `gsd_execute` |
+| `sessionId` | `string` | ✅ | Session ID from `gwd_execute` |
 
 **Returns:**
 
@@ -158,13 +158,13 @@ Poll the current status of a running GWD session.
 }
 ```
 
-### `gsd_result`
+### `gwd_result`
 
 Get the accumulated result of a session. Works for both running (partial) and completed sessions.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `sessionId` | `string` | ✅ | Session ID from `gsd_execute` |
+| `sessionId` | `string` | ✅ | Session ID from `gwd_execute` |
 
 **Returns:**
 
@@ -181,17 +181,17 @@ Get the accumulated result of a session. Works for both running (partial) and co
 }
 ```
 
-### `gsd_cancel`
+### `gwd_cancel`
 
 Cancel a running session. Aborts the current operation and stops the agent process.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `sessionId` | `string` | ✅ | Session ID from `gsd_execute` |
+| `sessionId` | `string` | ✅ | Session ID from `gwd_execute` |
 
 **Returns:** `{ cancelled: true }`
 
-### `gsd_query`
+### `gwd_query`
 
 Query GWD project state from the filesystem without an active session. Returns STATE.md, PROJECT.md, requirements, and milestone listing.
 
@@ -214,13 +214,13 @@ Query GWD project state from the filesystem without an active session. Returns S
 }
 ```
 
-### `gsd_resolve_blocker`
+### `gwd_resolve_blocker`
 
 Resolve a pending blocker in a session by sending a response to the blocked UI request.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `sessionId` | `string` | ✅ | Session ID from `gsd_execute` |
+| `sessionId` | `string` | ✅ | Session ID from `gwd_execute` |
 | `response` | `string` | ✅ | Response to send for the pending blocker |
 
 **Returns:** `{ resolved: true }`

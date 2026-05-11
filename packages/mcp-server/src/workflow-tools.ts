@@ -276,16 +276,16 @@ function isWithinRoot(candidatePath: string, rootPath: string): boolean {
 }
 
 /**
- * Resolve the symlink target of `<allowedRoot>/.gsd` when it points into the
+ * Resolve the symlink target of `<allowedRoot>/.gwd` when it points into the
  * external state layout (`~/.gwd/projects/<hash>/`). Returns the realpath of
  * that target so callers can accept worktree paths that live under
- * `<external-state>/worktrees/<MID>/`. Returns null when `.gsd` is absent or
+ * `<external-state>/worktrees/<MID>/`. Returns null when `.gwd` is absent or
  * resolution fails — the caller should fall back to the direct containment
  * check in that case.
  */
 function resolveExternalStateRoot(allowedRoot: string): string | null {
   try {
-    return realpathSync(join(allowedRoot, ".gsd"));
+    return realpathSync(join(allowedRoot, ".gwd"));
   } catch {
     return null;
   }
@@ -309,10 +309,10 @@ export function validateProjectDir(projectDir: string, env: NodeJS.ProcessEnv = 
   const resolvedAllowedRoot = safeRealpath(allowedRoot);
   if (isWithinRoot(resolvedProjectDir, resolvedAllowedRoot)) return resolvedProjectDir;
 
-  // External state layout: `<allowedRoot>/.gsd` may be a symlink into
+  // External state layout: `<allowedRoot>/.gwd` may be a symlink into
   // `~/.gwd/projects/<hash>/`, and auto-worktrees live under
   // `~/.gwd/projects/<hash>/worktrees/<MID>/`. Accept candidates that are
-  // under the realpath of `<allowedRoot>/.gsd` — they belong to this project
+  // under the realpath of `<allowedRoot>/.gwd` — they belong to this project
   // even though their absolute path is outside allowedRoot (#issue-a44).
   const externalRoot = resolveExternalStateRoot(resolvedAllowedRoot);
   if (externalRoot && isWithinRoot(resolvedProjectDir, externalRoot)) {
@@ -356,22 +356,22 @@ function extractMilestoneId(parsed: Record<string, unknown>): string | null {
 
 /**
  * If an auto-worktree exists for the given milestone under
- * `<projectRoot>/.gsd/worktrees/<milestoneId>/`, return that path as the
+ * `<projectRoot>/.gwd/worktrees/<milestoneId>/`, return that path as the
  * basePath the tool should write against. Returns null when no worktree
  * exists for this milestone, leaving the caller to use the project root.
  *
  * This unbreaks the external-state layout where the MCP server's process.cwd()
  * is the project root (set at Claude Code launch) but auto-mode is actually
  * working inside a per-milestone worktree. Without this, tool writes go to
- * the shared project `.gsd/` and auto-mode's verifyExpectedArtifact (which
- * uses the worktree `.gsd/`) fails, triggering a guaranteed retry per unit.
+ * the shared project `.gwd/` and auto-mode's verifyExpectedArtifact (which
+ * uses the worktree `.gwd/`) fails, triggering a guaranteed retry per unit.
  */
 function resolveActiveWorktreeBasePath(
   projectRoot: string,
   milestoneId: string | null,
 ): string | null {
   if (!milestoneId) return null;
-  const wtPath = join(projectRoot, ".gsd", "worktrees", milestoneId);
+  const wtPath = join(projectRoot, ".gwd", "worktrees", milestoneId);
   if (!existsSync(wtPath)) return null;
   // Sanity check: a real git worktree has a `.git` file with a gitdir pointer.
   // Bare directories without it shouldn't hijack the write path.
@@ -381,11 +381,11 @@ function resolveActiveWorktreeBasePath(
 
 /**
  * Fallback when the tool call has no milestoneId: if exactly one auto-worktree
- * exists under `<projectRoot>/.gsd/worktrees/`, treat it as the active one.
+ * exists under `<projectRoot>/.gwd/worktrees/`, treat it as the active one.
  * Multiple worktrees → ambiguous, return null and let writes go to project root.
  */
 function resolveSoleActiveWorktree(projectRoot: string): string | null {
-  const worktreesDir = join(projectRoot, ".gsd", "worktrees");
+  const worktreesDir = join(projectRoot, ".gwd", "worktrees");
   if (!existsSync(worktreesDir)) return null;
   let entries: string[];
   try {
@@ -447,8 +447,8 @@ function parseWorkflowArgs<T extends { projectDir?: string }>(
   const projectRoot = validateProjectDir(projectRootCandidate);
 
   // Step 2: if this tool call is scoped to a milestone that has an active
-  // auto-worktree, re-route writes to the worktree's .gsd rather than the
-  // project's shared .gsd. auto-mode's verifyExpectedArtifact runs against
+  // auto-worktree, re-route writes to the worktree's .gwd rather than the
+  // project's shared .gwd. auto-mode's verifyExpectedArtifact runs against
   // the worktree, and a mismatch here causes every unit to retry once.
   // When the agent omits milestoneId, fall back to the sole live worktree
   // if exactly one exists — that's the active auto-mode session.
@@ -822,7 +822,7 @@ async function handleTaskComplete(
   projectDir: string,
   args: Omit<z.infer<typeof taskCompleteSchema>, "projectDir">,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_task_complete", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("gwd_task_complete", projectDir, args.milestoneId);
   const { executeTaskComplete } = await getWorkflowToolExecutors();
   // Pass `args` through directly rather than destructure-then-rebuild. The
   // previous implementation re-listed each field, which silently dropped
@@ -839,7 +839,7 @@ async function handleSliceComplete(
   projectDir: string,
   args: z.infer<typeof sliceCompleteSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_slice_complete", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("gwd_slice_complete", projectDir, args.milestoneId);
   const { executeSliceComplete } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return adaptExecutorResult(
@@ -851,7 +851,7 @@ async function handleReplanSlice(
   projectDir: string,
   args: z.infer<typeof replanSliceSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_replan_slice", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("gwd_replan_slice", projectDir, args.milestoneId);
   const { executeReplanSlice } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return adaptExecutorResult(
@@ -863,7 +863,7 @@ async function handleCompleteMilestone(
   projectDir: string,
   args: z.infer<typeof completeMilestoneSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_complete_milestone", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("gwd_complete_milestone", projectDir, args.milestoneId);
   const { executeCompleteMilestone } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return adaptExecutorResult(
@@ -875,7 +875,7 @@ async function handleValidateMilestone(
   projectDir: string,
   args: z.infer<typeof validateMilestoneSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_validate_milestone", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("gwd_validate_milestone", projectDir, args.milestoneId);
   const { executeValidateMilestone } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return adaptExecutorResult(
@@ -887,7 +887,7 @@ async function handleReassessRoadmap(
   projectDir: string,
   args: z.infer<typeof reassessRoadmapSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_reassess_roadmap", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("gwd_reassess_roadmap", projectDir, args.milestoneId);
   const { executeReassessRoadmap } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return adaptExecutorResult(
@@ -899,7 +899,7 @@ async function handleSaveGateResult(
   projectDir: string,
   args: z.infer<typeof saveGateResultSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_save_gate_result", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("gwd_save_gate_result", projectDir, args.milestoneId);
   const { executeSaveGateResult } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return adaptExecutorResult(
@@ -931,7 +931,7 @@ async function findDatabaseMilestoneIds(): Promise<string[]> {
 }
 
 /**
- * Fix #4996: Shared helper for gsd_milestone_generate_id. Reuses the lowest
+ * Fix #4996: Shared helper for gwd_milestone_generate_id. Reuses the lowest
  * reusable ghost milestone ID
  * (a disk-only stub with no DB row, no worktree, no content files) before
  * falling back to max+1. Uses the stricter `isReusableGhostMilestone` —
@@ -1406,7 +1406,7 @@ const execRuntimeSchema = z.enum(["bash", "node", "python"]);
 const execParams = {
   projectDir: projectDirParam,
   runtime: execRuntimeSchema.describe("Interpreter: bash (-c), node (-e), or python3 (-c)."),
-  script: nonEmptyString("script").describe("Script body. Keep output small; capped stdout/stderr are persisted under .gsd/exec."),
+  script: nonEmptyString("script").describe("Script body. Keep output small; capped stdout/stderr are persisted under .gwd/exec."),
   purpose: z.string().optional().describe("Short label recorded in meta.json for later review."),
   timeout_ms: z.number().int().min(1_000).max(600_000).optional().describe("Per-invocation timeout in milliseconds."),
 };
@@ -1460,13 +1460,13 @@ function wrapServerWithErrorHandler(realServer: McpToolServer): McpToolServer {
 export function registerWorkflowTools(realServer: McpToolServer): void {
   const server = wrapServerWithErrorHandler(realServer);
   server.tool(
-    "gsd_decision_save",
+    "gwd_decision_save",
     "Record a project decision to the GWD database and regenerate DECISIONS.md.",
     decisionSaveParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(decisionSaveSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_decision_save", projectDir);
+      await enforceWorkflowWriteGate("gwd_decision_save", projectDir);
       const result = await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { saveDecisionToDb } = await importLocalModule<any>("../../../src/resources/extensions/gwd/db-writer.js");
         return saveDecisionToDb(params, projectDir);
@@ -1476,13 +1476,13 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_requirement_update",
+    "gwd_requirement_update",
     "Update an existing requirement in the GWD database and regenerate REQUIREMENTS.md.",
     requirementUpdateParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(requirementUpdateSchema, args);
       const { projectDir, id, ...updates } = parsed;
-      await enforceWorkflowWriteGate("gsd_requirement_update", projectDir);
+      await enforceWorkflowWriteGate("gwd_requirement_update", projectDir);
       await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { updateRequirementInDb } = await importLocalModule<any>("../../../src/resources/extensions/gwd/db-writer.js");
         return updateRequirementInDb(id, updates, projectDir);
@@ -1492,13 +1492,13 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_requirement_save",
+    "gwd_requirement_save",
     "Record a new requirement to the GWD database and regenerate REQUIREMENTS.md.",
     requirementSaveParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(requirementSaveSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_requirement_save", projectDir);
+      await enforceWorkflowWriteGate("gwd_requirement_save", projectDir);
       const result = await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { saveRequirementToDb } = await importLocalModule<any>("../../../src/resources/extensions/gwd/db-writer.js");
         return saveRequirementToDb(params, projectDir);
@@ -1508,12 +1508,12 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_milestone_generate_id",
+    "gwd_milestone_generate_id",
     "Generate the next milestone ID for a new GWD milestone.",
     milestoneGenerateIdParams,
     async (args: Record<string, unknown>) => {
       const { projectDir } = parseWorkflowArgs(milestoneGenerateIdSchema, args);
-      await enforceWorkflowWriteGate("gsd_milestone_generate_id", projectDir);
+      await enforceWorkflowWriteGate("gwd_milestone_generate_id", projectDir);
       const id = await runSerializedWorkflowDbOperation(projectDir, () =>
         generateOrReuseMilestoneId(projectDir),
       );
@@ -1522,13 +1522,13 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_plan_milestone",
+    "gwd_plan_milestone",
     "Write milestone planning state to the GWD database and render ROADMAP.md from DB.",
     planMilestoneParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(planMilestoneSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_plan_milestone", projectDir, params.milestoneId);
+      await enforceWorkflowWriteGate("gwd_plan_milestone", projectDir, params.milestoneId);
       const { executePlanMilestone } = await getWorkflowToolExecutors();
       return adaptExecutorResult(
         await runSerializedWorkflowOperation(() => executePlanMilestone(params, projectDir)),
@@ -1537,13 +1537,13 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_plan_slice",
+    "gwd_plan_slice",
     "Write slice/task planning state to the GWD database and render plan artifacts from DB.",
     planSliceParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(planSliceSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_plan_slice", projectDir, params.milestoneId);
+      await enforceWorkflowWriteGate("gwd_plan_slice", projectDir, params.milestoneId);
       const { executePlanSlice } = await getWorkflowToolExecutors();
       return adaptExecutorResult(
         await runSerializedWorkflowOperation(() => executePlanSlice(params, projectDir)),
@@ -1552,13 +1552,13 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_plan_task",
+    "gwd_plan_task",
     "Write task planning state to the GWD database and render tasks/T##-PLAN.md from DB.",
     planTaskParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(planTaskSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_plan_task", projectDir, params.milestoneId);
+      await enforceWorkflowWriteGate("gwd_plan_task", projectDir, params.milestoneId);
       const result = await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { handlePlanTask } = await importLocalModule<any>("../../../src/resources/extensions/gwd/tools/plan-task.js");
         return handlePlanTask(params, projectDir);
@@ -1573,7 +1573,7 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_replan_slice",
+    "gwd_replan_slice",
     "Replan a slice after a blocker is discovered, preserving completed tasks and re-rendering PLAN.md + REPLAN.md.",
     replanSliceParams,
     async (args: Record<string, unknown>) => {
@@ -1583,7 +1583,7 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_slice_complete",
+    "gwd_slice_complete",
     "Record a completed slice to the GWD database, render SUMMARY.md + UAT.md, and update roadmap projection.",
     sliceCompleteParams,
     async (args: Record<string, unknown>) => {
@@ -1593,12 +1593,12 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_skip_slice",
+    "gwd_skip_slice",
     "Mark a slice as skipped so auto-mode advances past it without executing.",
     skipSliceParams,
     async (args: Record<string, unknown>) => {
       const { projectDir, milestoneId, sliceId, reason } = parseWorkflowArgs(skipSliceSchema, args);
-      await enforceWorkflowWriteGate("gsd_skip_slice", projectDir, milestoneId);
+      await enforceWorkflowWriteGate("gwd_skip_slice", projectDir, milestoneId);
       await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { getSlice, updateSliceStatus } = await importLocalModule<any>("../../../src/resources/extensions/gwd/gwd-db.js");
         const { invalidateStateCache } = await importLocalModule<any>("../../../src/resources/extensions/gwd/state.js");
@@ -1623,7 +1623,7 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_complete_milestone",
+    "gwd_complete_milestone",
     "Record a completed milestone to the GWD database and render its SUMMARY.md.",
     completeMilestoneParams,
     async (args: Record<string, unknown>) => {
@@ -1633,7 +1633,7 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_validate_milestone",
+    "gwd_validate_milestone",
     "Validate a milestone, persist validation results to the GWD database, and render VALIDATION.md.",
     validateMilestoneParams,
     async (args: Record<string, unknown>) => {
@@ -1643,7 +1643,7 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_reassess_roadmap",
+    "gwd_reassess_roadmap",
     "Reassess a milestone roadmap after a slice completes, writing ASSESSMENT.md and re-rendering ROADMAP.md.",
     reassessRoadmapParams,
     async (args: Record<string, unknown>) => {
@@ -1653,7 +1653,7 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_save_gate_result",
+    "gwd_save_gate_result",
     "Save a quality gate result to the GWD database.",
     saveGateResultParams,
     async (args: Record<string, unknown>) => {
@@ -1663,13 +1663,13 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_summary_save",
+    "gwd_summary_save",
     "Save a GWD summary/research/context/assessment artifact to the database and disk. Omit milestone_id only for root-level PROJECT/PROJECT-DRAFT/REQUIREMENTS/REQUIREMENTS-DRAFT artifacts.",
     summarySaveParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(summarySaveSchema, args);
       const { projectDir, milestone_id, slice_id, task_id, artifact_type, content } = parsed;
-      await enforceWorkflowWriteGate("gsd_summary_save", projectDir, milestone_id ?? null);
+      await enforceWorkflowWriteGate("gwd_summary_save", projectDir, milestone_id ?? null);
       const executors = await getWorkflowToolExecutors();
       const supportedArtifactTypes = getSupportedSummaryArtifactTypes(executors);
       if (!supportedArtifactTypes.includes(artifact_type)) {
@@ -1686,7 +1686,7 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_task_complete",
+    "gwd_task_complete",
     "Record a completed task to the GWD database and render its SUMMARY.md.",
     taskCompleteParams,
     async (args: Record<string, unknown>) => {
@@ -1697,11 +1697,11 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_milestone_status",
+    "gwd_milestone_status",
     "Read the current status of a milestone and all its slices from the GWD database.",
     milestoneStatusParams,
     async (args: Record<string, unknown>) => {
-      // gsd_milestone_status is a read-only query. In-process (query-tools.ts)
+      // gwd_milestone_status is a read-only query. In-process (query-tools.ts)
       // does not apply the write-gate; MCP must match to avoid blocking reads
       // during pending-gate or queue-mode states.
       const { projectDir, milestoneId } = parseWorkflowArgs(milestoneStatusSchema, args);
@@ -1713,7 +1713,7 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_journal_query",
+    "gwd_journal_query",
     "Query the structured event journal for auto-mode iterations.",
     journalQueryParams,
     async (args: Record<string, unknown>) => {
@@ -1728,18 +1728,18 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_exec",
-    "Run a short bash/node/python script in the project directory. Capped stdout/stderr and metadata persist under .gsd/exec; only a digest returns to MCP.",
+    "gwd_exec",
+    "Run a short bash/node/python script in the project directory. Capped stdout/stderr and metadata persist under .gwd/exec; only a digest returns to MCP.",
     execParams,
     async (args: Record<string, unknown>) => {
       const { projectDir, ...params } = parseWorkflowArgs(execSchema, args);
-      await enforceWorkflowWriteGate("gsd_exec", projectDir);
-      const { executeGsdExec } = await importLocalModule<any>(
+      await enforceWorkflowWriteGate("gwd_exec", projectDir);
+      const { executeGwdExec } = await importLocalModule<any>(
         "../../../src/resources/extensions/gwd/tools/exec-tool.js",
       );
       return adaptExecutorResult(
         await runSerializedWorkflowOperation(async () =>
-          executeGsdExec(params, {
+          executeGwdExec(params, {
             baseDir: projectDir,
             preferences: await loadProjectPreferences(projectDir),
           }),
@@ -1749,8 +1749,8 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_exec_search",
-    "Search prior gsd_exec runs from .gsd/exec/*.meta.json without re-running them.",
+    "gwd_exec_search",
+    "Search prior gwd_exec runs from .gwd/exec/*.meta.json without re-running them.",
     execSearchParams,
     async (args: Record<string, unknown>) => {
       const { projectDir, ...params } = parseWorkflowArgs(execSearchSchema, args);
@@ -1767,8 +1767,8 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_resume",
-    "Read .gsd/last-snapshot.md so agents can re-orient after compaction or session resume.",
+    "gwd_resume",
+    "Read .gwd/last-snapshot.md so agents can re-orient after compaction or session resume.",
     resumeParams,
     async (args: Record<string, unknown>) => {
       const { projectDir, ...params } = parseWorkflowArgs(resumeSchema, args);
@@ -1787,10 +1787,10 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   // ─── ADR-013 step 3 — memory-store tools for external MCP clients ────────
   //
   // The same three tools the LLM sees in-process as `capture_thought`,
-  // `memory_query`, and `gsd_graph` (the memory variant). MCP exposes them
-  // under the gsd_* prefix and renames the memory graph to gsd_memory_graph
+  // `memory_query`, and the memory graph variant. MCP exposes them
+  // under the gwd_* prefix and renames the memory graph to gwd_memory_graph
   // to avoid collision with the project knowledge graph tool registered as
-  // `gsd_graph` in server.ts.
+  // a separate tool in server.ts.
 
   const MEMORY_CATEGORY = z.enum([
     "architecture",
@@ -1823,12 +1823,12 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   };
 
   server.tool(
-    "gsd_capture_thought",
+    "gwd_capture_thought",
     "Record a durable project insight into the GWD memory store. Categories: architecture, convention, gotcha, preference, environment, pattern. Mirrors the in-process capture_thought tool for external MCP clients.",
     captureThoughtParams,
     async (args: Record<string, unknown>) => {
       const { projectDir, ...params } = parseWorkflowArgs(captureThoughtSchema, args);
-      await enforceWorkflowWriteGate("gsd_capture_thought", projectDir);
+      await enforceWorkflowWriteGate("gwd_capture_thought", projectDir);
       return runSerializedWorkflowDbOperation(projectDir, async () => {
         const { executeMemoryCapture } = await importLocalModule<any>(
           "../../../src/resources/extensions/gwd/tools/memory-tools.js",
@@ -1862,7 +1862,7 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   };
 
   server.tool(
-    "gsd_memory_query",
+    "gwd_memory_query",
     "Search the GWD memory store by keyword. Returns ranked memories with id, category, content, confidence, scope, and tags. Mirrors the in-process memory_query tool for external MCP clients.",
     memoryQueryParams,
     async (args: Record<string, unknown>) => {
@@ -1895,16 +1895,16 @@ export function registerWorkflowTools(realServer: McpToolServer): void {
   };
 
   server.tool(
-    "gsd_memory_graph",
-    "Inspect the relationship graph between memories. mode=query walks edges from a given memoryId. mode=build is a placeholder reserved for future graph rebuilds. Distinct from gsd_graph (project knowledge graph) — see ADR-013.",
+    "gwd_memory_graph",
+    "Inspect the relationship graph between memories. mode=query walks edges from a given memoryId. mode=build is a placeholder reserved for future graph rebuilds. Distinct from the project knowledge graph tool — see ADR-013.",
     memoryGraphParams,
     async (args: Record<string, unknown>) => {
       const { projectDir, ...params } = parseWorkflowArgs(memoryGraphSchema, args);
       return runSerializedWorkflowDbOperation(projectDir, async () => {
-        const { executeGsdGraph } = await importLocalModule<any>(
+        const { executeGwdGraph } = await importLocalModule<any>(
           "../../../src/resources/extensions/gwd/tools/memory-tools.js",
         );
-        return executeGsdGraph(params);
+        return executeGwdGraph(params);
       });
     },
   );

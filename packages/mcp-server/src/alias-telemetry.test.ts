@@ -28,22 +28,22 @@ describe("logAliasUsage", () => {
 	});
 
 	test("emits a single JSON line per call", () => {
-		logAliasUsage("gsd_save_decision", "gsd_decision_save");
+		logAliasUsage("gsd_save_decision", "gwd_decision_save");
 		assert.equal(captured.length, 1);
 		assert.ok(captured[0].endsWith("\n"), "line must terminate with newline");
 	});
 
 	test("emitted JSON has the documented shape", () => {
-		logAliasUsage("gsd_save_decision", "gsd_decision_save");
+		logAliasUsage("gsd_save_decision", "gwd_decision_save");
 		const parsed = JSON.parse(captured[0].trimEnd());
 		assert.equal(parsed.event, ALIAS_USAGE_EVENT);
 		assert.equal(parsed.alias, "gsd_save_decision");
-		assert.equal(parsed.canonical, "gsd_decision_save");
+		assert.equal(parsed.canonical, "gwd_decision_save");
 		assert.equal(typeof parsed.ts, "number");
 	});
 
 	test("event field is namespaced under 'deprecation.' for grep-friendly filtering", () => {
-		logAliasUsage("gsd_save_decision", "gsd_decision_save");
+		logAliasUsage("gsd_save_decision", "gwd_decision_save");
 		const parsed = JSON.parse(captured[0].trimEnd());
 		assert.ok(
 			(parsed.event as string).startsWith("deprecation."),

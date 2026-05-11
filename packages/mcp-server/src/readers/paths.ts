@@ -1,4 +1,4 @@
-// GWD MCP Server — .gsd/ directory resolution
+// GWD MCP Server — .gwd/ directory resolution
 
 import { existsSync, statSync, readdirSync } from 'node:fs';
 import { join, resolve, dirname, basename } from 'node:path';
@@ -8,10 +8,10 @@ import { execFileSync } from 'node:child_process';
 // Caching
 // ---------------------------------------------------------------------------
 //
-// Read-only MCP tools (gsd_progress, gsd_roadmap, gsd_doctor, …) hammer the
-// filesystem on every call: gsd_roadmap alone resolves milestone directories
+// Read-only MCP tools (gwd_progress, gwd_roadmap, gwd_doctor, …) hammer the
+// filesystem on every call: gwd_roadmap alone resolves milestone directories
 // 5–6× per milestone, and resolveGsdRoot can spawn `git rev-parse` for
-// non-direct .gsd/ layouts. Without caching, an MCP host pipelining several
+// non-direct .gwd/ layouts. Without caching, an MCP host pipelining several
 // tool calls blocks the event loop on dozens of redundant readdir/stat
 // syscalls per request.
 //
@@ -111,13 +111,13 @@ export function _resetReaderCaches(): void {
 }
 
 /**
- * Resolve the .gsd/ root directory for a project.
+ * Resolve the .gwd/ root directory for a project.
  *
  * Probes in order:
- *   1. projectDir/.gsd (fast path)
- *   2. git repo root/.gsd
+ *   1. projectDir/.gwd (fast path)
+ *   2. git repo root/.gwd
  *   3. Walk up from projectDir
- *   4. Fallback: projectDir/.gsd (even if missing — for init)
+ *   4. Fallback: projectDir/.gwd (even if missing — for init)
  */
 export function resolveGsdRoot(projectDir: string): string {
   const resolved = resolve(projectDir);
@@ -125,8 +125,8 @@ export function resolveGsdRoot(projectDir: string): string {
   const cached = cachedGsdRoot(resolved);
   if (cached) return cached;
 
-  // Fast path: .gsd/ in the given directory
-  const direct = join(resolved, '.gsd');
+  // Fast path: .gwd/ in the given directory
+  const direct = join(resolved, '.gwd');
   if (existsSync(direct) && statSync(direct).isDirectory()) {
     rememberGsdRoot(resolved, direct);
     return direct;
@@ -139,7 +139,7 @@ export function resolveGsdRoot(projectDir: string): string {
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
     }).trim();
-    const gitGsd = join(gitRoot, '.gsd');
+    const gitGsd = join(gitRoot, '.gwd');
     if (existsSync(gitGsd) && statSync(gitGsd).isDirectory()) {
       rememberGsdRoot(resolved, gitGsd);
       return gitGsd;
@@ -151,7 +151,7 @@ export function resolveGsdRoot(projectDir: string): string {
   // Walk up from projectDir
   let dir = resolved;
   while (dir !== dirname(dir)) {
-    const candidate = join(dir, '.gsd');
+    const candidate = join(dir, '.gwd');
     if (existsSync(candidate) && statSync(candidate).isDirectory()) {
       rememberGsdRoot(resolved, candidate);
       return candidate;
@@ -163,7 +163,7 @@ export function resolveGsdRoot(projectDir: string): string {
   return direct;
 }
 
-/** Resolve path to a .gsd/ root file (STATE.md, KNOWLEDGE.md, etc.) */
+/** Resolve path to a .gwd/ root file (STATE.md, KNOWLEDGE.md, etc.) */
 export function resolveRootFile(gsdRoot: string, name: string): string {
   return join(gsdRoot, name);
 }

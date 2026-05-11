@@ -12,7 +12,7 @@ Enforce the GWD "work is not done when code compiles; work is done when verifica
 GWD's system prompt sets the expectation; `complete-slice.md` and `auto-verification.ts` enforce it at the slice boundary. But between slice boundaries — mid-task, mid-debug, mid-review — an agent can drift into "I think it works" mode and ship broken work. This skill is the ritual to break that pattern at any completion point.
 
 Invocation points:
-- About to toggle a checkbox from `[ ]` to `[x]` via a `gsd_*` tool
+- About to toggle a checkbox from `[ ]` to `[x]` via a `gwd_*` tool
 - About to commit, push, or open a PR
 - About to summarize a task or slice as complete
 - About to say "tests pass", "build works", "lint clean", "fixed", "done"
@@ -67,7 +67,7 @@ If you ran the verification early in this message, then made further code change
 
 Only now, after fresh output, can you:
 
-- Mark a task/slice/milestone complete via `gsd_*`
+- Mark a task/slice/milestone complete via `gwd_*`
 - Commit / push / open PR
 - State "done", "fixed", "passes", "works"
 

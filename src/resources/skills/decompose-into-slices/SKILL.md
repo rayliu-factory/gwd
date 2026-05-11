@@ -80,7 +80,7 @@ Once approved, write or update `M###-ROADMAP.md` matching the template exactly. 
 
 Fill the rest of the template: Vision, Success Criteria, Key Risks, Proof Strategy, Verification Classes, Definition of Done, Requirement Coverage, Horizontal Checklist (omit entirely for trivial milestones), and the Boundary Map (`S01 → S02` produces/consumes blocks — be specific, name real APIs/types/invariants).
 
-Use `write` to the path `.gsd/milestones/<MID>/<MID>-ROADMAP.md`. Do not edit checkboxes by hand during normal execution — the `gsd_*` tools own state.
+Use `write` to the path `.gsd/milestones/<MID>/<MID>-ROADMAP.md`. Do not edit checkboxes by hand during normal execution — the `gwd_*` tools own state.
 
 ## Step 6: Optionally file as GitHub issues
 
@@ -121,7 +121,7 @@ Do NOT close or modify any parent issue.
 - **Research-only slices.** A slice whose deliverable is a document, not working code, is a spike. Use `/gwd start spike`.
 - **Foundation slices with no demo.** "Set up the base class for X" is a layer, not a slice.
 - **Auto-filing GitHub issues.** Requires explicit user confirmation every time.
-- **Editing roadmap checkboxes by hand later.** `gsd_*` tools own that state during execution.
+- **Editing roadmap checkboxes by hand later.** `gwd_*` tools own that state during execution.
 - **Vague demo lines.** "Feature X is implemented" is not a demo. "User can submit the form and see the result" is.
 
 </anti_patterns>
