@@ -244,6 +244,7 @@ Full documentation is in the [`docs/`](./docs/) directory:
 ### Developer Docs
 
 - **[Architecture](./docs/dev/architecture.md)** — system design and dispatch pipeline
+- **[Contributor Architecture and Data Flow](./docs/dev/architecture-data-flow.md)** — repo map, runtime flow, and agent-oriented change paths
 - **[CI/CD Pipeline](./docs/dev/ci-cd-pipeline.md)** — three-stage promotion pipeline (Dev → Test → Prod)
 - **[E2E Testing](./tests/e2e/README.md)** — real-process CLI/runtime coverage and CI runner expectations
 - **[Pipeline Simplification (ADR-003)](./docs/dev/ADR-003-pipeline-simplification.md)** — merged research into planning, mechanical completion
