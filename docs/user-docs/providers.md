@@ -362,6 +362,27 @@ Inside GSD, type `/model` and pick your Ollama model.
 - If you get empty responses, check that `ollama serve` is running and the model is pulled.
 - Context window and max tokens default to 128K / 16K if not specified. Override these if your model has different limits.
 
+#### Apple Silicon Qwen3.6 48GB Profile
+
+On Apple Silicon machines with 48GB RAM, GSD auto-mode has a conservative Ollama preset for the MLX NVFP4 Qwen3.6 coding tags:
+
+```bash
+ollama pull qwen3.6:27b-coding-nvfp4
+ollama pull qwen3.6:35b-a3b-coding-nvfp4
+```
+
+When both tags are installed and no explicit `models` or `dynamic_routing` preferences are set, auto-mode uses:
+
+| Tier | Model |
+| --- | --- |
+| Light | `qwen3.6:27b-coding-nvfp4` |
+| Standard | `qwen3.6:27b-coding-nvfp4` |
+| Heavy | `qwen3.6:35b-a3b-coding-nvfp4` |
+
+Both tags are registered with a 64K effective context and `keep_alive: "0"` so Ollama unloads the active model after each request. This trades speed for memory safety and avoids keeping 27B and 35B resident at the same time.
+
+The 64K context is a safe execution envelope, not a promise that a large repository fits into one prompt. Large repositories should still be handled through smaller slices, targeted file reads, and verification-focused task plans. To opt into a larger context, set `context_window_override` in `.gsd/PREFERENCES.md`; this can increase memory pressure.
+
 ### LM Studio
 
 **Step 1 — Install LM Studio:**

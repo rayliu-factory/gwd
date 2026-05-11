@@ -96,6 +96,7 @@ export const MODEL_CAPABILITY_TIER: Record<string, ComplexityTier> = {
   "gpt-5.1-codex-max": "standard",
   "gemini-2.5-pro": "standard",
   "deepseek-chat": "standard",
+  "qwen3.6:27b-coding-nvfp4": "standard",
 
   // Heavy-tier models (most capable)
   "claude-opus-4-6": "heavy",
@@ -114,6 +115,7 @@ export const MODEL_CAPABILITY_TIER: Record<string, ComplexityTier> = {
   "o3": "heavy",
   "o4-mini": "heavy",
   "o4-mini-deep-research": "heavy",
+  "qwen3.6:35b-a3b-coding-nvfp4": "heavy",
 };
 
 // ─── Cost Table (per 1K input tokens, approximate USD) ───────────────────────
@@ -207,6 +209,10 @@ export const MODEL_CAPABILITY_PROFILES: Record<string, ModelCapabilities> = {
 
   // ── DeepSeek ───────────────────────────────────────────────────────────────
   "deepseek-chat":                { coding: 75, debugging: 65, research: 55, reasoning: 70, speed: 70, longContext: 55, instruction: 65 },
+
+  // ── Ollama / Qwen ─────────────────────────────────────────────────────────
+  "qwen3.6:27b-coding-nvfp4":     { coding: 80, debugging: 76, research: 60, reasoning: 78, speed: 45, longContext: 68, instruction: 78 },
+  "qwen3.6:35b-a3b-coding-nvfp4": { coding: 88, debugging: 84, research: 65, reasoning: 86, speed: 30, longContext: 70, instruction: 84 },
 };
 
 // ─── Base Task Requirements Data Table ───────────────────────────────────────

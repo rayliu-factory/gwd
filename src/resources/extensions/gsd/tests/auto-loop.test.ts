@@ -41,6 +41,23 @@ async function drainMicrotasks(turns = 20): Promise<void> {
   }
 }
 
+async function waitForPendingAgentEnd(label: string, turns = 500): Promise<void> {
+  for (let i = 0; i < turns; i++) {
+    if (_hasPendingResolveForTest()) return;
+    await new Promise<void>((resolve) => setImmediate(resolve));
+  }
+  assert.fail(`Timed out waiting for ${label}`);
+}
+
+async function resolvePendingAgentEnd(
+  event: AgentEndEvent = makeEvent(),
+  label = "pending agent_end resolver",
+): Promise<void> {
+  await waitForPendingAgentEnd(label);
+  resolveAgentEnd(event);
+  await drainMicrotasks();
+}
+
 async function waitForMicrotasks(
   condition: () => boolean,
   label: string,
@@ -48,7 +65,7 @@ async function waitForMicrotasks(
 ): Promise<void> {
   for (let i = 0; i < turns; i++) {
     if (condition()) return;
-    await Promise.resolve();
+    await new Promise<void>((resolve) => setImmediate(resolve));
   }
   assert.fail(`Timed out waiting for ${label}`);
 }
@@ -151,11 +168,7 @@ test("resolveAgentEnd resolves a pending runUnit promise", async () => {
     "do stuff",
   );
 
-  // Give the microtask queue a tick so runUnit reaches the await
-  await new Promise((r) => setTimeout(r, 10));
-
-  // Now resolve the agent_end
-  resolveAgentEnd(event);
+  await resolvePendingAgentEnd(event, "runUnit awaiting agent_end");
 
   const result = await resultPromise;
   assert.equal(result.status, "completed");
@@ -182,10 +195,8 @@ test("double resolveAgentEnd only resolves once (second is dropped)", async () =
 
   const resultPromise = runUnit(ctx, pi, s, "task", "T01", "prompt");
 
-  await new Promise((r) => setTimeout(r, 10));
-
   // First resolve — should work
-  resolveAgentEnd(event1);
+  await resolvePendingAgentEnd(event1, "runUnit awaiting first agent_end");
 
   // Second resolve — should be dropped (no pending resolver)
   assert.doesNotThrow(() => {
@@ -357,11 +368,12 @@ test("runUnit only arms resolve after newSession completes", async () => {
   const resultPromise = runUnit(ctx, pi, s, "task", "T01", "prompt");
 
   await new Promise((r) => setTimeout(r, 30));
+  await waitForPendingAgentEnd("runUnit awaiting agent_end after newSession");
 
   assert.equal(sawSwitchFlag, true, "session switch guard should be active during newSession");
   assert.equal(isSessionSwitchInFlight(), false, "session switch guard should clear after newSession settles");
 
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "runUnit awaiting agent_end after newSession");
 
   const result = await resultPromise;
   assert.equal(result.status, "completed");
@@ -389,8 +401,7 @@ test("runUnit re-applies the selected unit model after newSession before dispatc
 
   const resultPromise = runUnit(ctx, pi, s, "task", "T01", "prompt");
 
-  await new Promise((r) => setTimeout(r, 10));
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "model restore runUnit awaiting agent_end");
 
   const result = await resultPromise;
   assert.equal(result.status, "completed");
@@ -503,8 +514,7 @@ test("runUnit does not cancel before dispatch when provider is request-ready (#4
 
   const resultPromise = runUnit(ctx, pi, s, "task", "T01", "prompt");
 
-  await new Promise((r) => setTimeout(r, 10));
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "provider-ready runUnit awaiting agent_end");
 
   const result = await resultPromise;
   assert.equal(result.status, "completed");
@@ -523,8 +533,7 @@ test("runUnit proceeds when modelRegistry is absent (no readiness check availabl
 
   const resultPromise = runUnit(ctx, pi, s, "task", "T01", "prompt");
 
-  await new Promise((r) => setTimeout(r, 10));
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "registry-absent runUnit awaiting agent_end");
 
   const result = await resultPromise;
   assert.equal(result.status, "completed");
@@ -1160,9 +1169,7 @@ test("autoLoop dequeues sidecar item before session-lock break (mid-session, #53
   });
 
   const loopPromise = autoLoop(ctx, pi, s, deps);
-  // Allow the loop to reach runUnit's await on iteration 1.
-  await new Promise((r) => setTimeout(r, 50));
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "main unit awaiting agent_end");
   await loopPromise;
 
   assert.ok(lockCheckCount >= 2, "lock validator must run on iteration 2");
@@ -1259,11 +1266,7 @@ test("autoLoop calls deriveState → resolveDispatch → runUnit in sequence", a
   // We need to resolve the promise from outside via resolveAgentEnd.
   const loopPromise = autoLoop(ctx, pi, s, deps);
 
-  // Give the loop time to reach runUnit's await
-  await new Promise((r) => setTimeout(r, 50));
-
-  // Resolve the first unit's agent_end
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "first unit awaiting agent_end");
 
   await loopPromise;
 
@@ -1363,11 +1366,7 @@ test("crash lock records session file from AFTER newSession, not before (#1710)"
 
   const loopPromise = autoLoop(ctx, pi, s, deps);
 
-  // Give the loop time to reach runUnit's await
-  await new Promise((r) => setTimeout(r, 50));
-
-  // Resolve the unit's agent_end
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "unit awaiting agent_end");
 
   await loopPromise;
 
@@ -1461,12 +1460,10 @@ test("autoLoop handles verification retry by continuing loop", async (t) => {
   const loopPromise = autoLoop(ctx, pi, s, deps);
 
   // First iteration: runUnit → verification returns "retry" → loop continues
-  await new Promise((r) => setTimeout(r, 50));
-  resolveAgentEnd(makeEvent()); // resolve first unit
+  await resolvePendingAgentEnd(makeEvent(), "first unit awaiting agent_end");
 
   // Second iteration: runUnit → verification returns "continue"
-  await new Promise((r) => setTimeout(r, 50));
-  resolveAgentEnd(makeEvent()); // resolve retry unit
+  await resolvePendingAgentEnd(makeEvent(), "retry unit awaiting agent_end");
 
   await loopPromise;
 
@@ -1659,19 +1656,9 @@ test("autoLoop drains sidecar queue after postUnitPostVerification enqueues item
 
   const loopPromise = autoLoop(ctx, pi, s, deps);
 
-  // Wait for main unit's runUnit to be awaiting
-  for (let i = 0; !_hasPendingResolveForTest() && i < 100; i++) {
-    await new Promise((r) => setTimeout(r, 5));
-  }
-  assert.equal(_hasPendingResolveForTest(), true, "main unit should be awaiting agent_end");
-  resolveAgentEnd(makeEvent()); // resolve main unit
+  await resolvePendingAgentEnd(makeEvent(), "main unit awaiting agent_end");
 
-  // Wait for the sidecar unit's runUnit to be awaiting
-  for (let i = 0; !_hasPendingResolveForTest() && postVerCallCount < 2 && i < 100; i++) {
-    await new Promise((r) => setTimeout(r, 5));
-  }
-  assert.equal(_hasPendingResolveForTest(), true, "sidecar unit should be awaiting agent_end");
-  resolveAgentEnd(makeEvent()); // resolve sidecar unit
+  await resolvePendingAgentEnd(makeEvent(), "sidecar unit awaiting agent_end");
 
   await loopPromise;
 
@@ -1772,8 +1759,7 @@ test("stuck detection: stops when sliding window detects same unit 3 consecutive
   // before runUnit), so no 4th resolve needed.
 
   for (let i = 0; i < 3; i++) {
-    await new Promise((r) => setTimeout(r, 30));
-    resolveAgentEnd(makeEvent());
+    await resolvePendingAgentEnd(makeEvent(), `stuck detection unit ${i + 1} awaiting agent_end`);
   }
 
   await loopPromise;
@@ -1851,8 +1837,7 @@ test("stuck detection: window resets recovery when deriveState returns a differe
 
   // Resolve agent_end for iterations 1-4
   for (let i = 0; i < 4; i++) {
-    await new Promise((r) => setTimeout(r, 30));
-    resolveAgentEnd(makeEvent());
+    await resolvePendingAgentEnd(makeEvent(), `reset-window unit ${i + 1} awaiting agent_end`);
   }
 
   await loopPromise;
@@ -1922,8 +1907,7 @@ test("stuck detection: does not push to window during verification retry", async
 
   // Resolve agent_end for 4 iterations (1 initial + 3 retries)
   for (let i = 0; i < 4; i++) {
-    await new Promise((r) => setTimeout(r, 30));
-    resolveAgentEnd(makeEvent());
+    await resolvePendingAgentEnd(makeEvent(), `verification retry unit ${i + 1} awaiting agent_end`);
   }
 
   await loopPromise;
@@ -2133,8 +2117,7 @@ test("autoLoop lifecycle: advances through research → plan → execute → ver
 
   // Resolve each iteration's agent_end — 5 iterations, each dispatches a unit
   for (let i = 0; i < 5; i++) {
-    await new Promise((r) => setTimeout(r, 30));
-    resolveAgentEnd(makeEvent());
+    await resolvePendingAgentEnd(makeEvent(), `lifecycle unit ${i + 1} awaiting agent_end`);
   }
 
   await loopPromise;
@@ -2210,8 +2193,7 @@ test("resolveAgentEndCancelled resolves a pending promise with cancelled status"
 
   const resultPromise = runUnit(ctx, pi, s, "task", "T01", "prompt");
 
-  await new Promise((r) => setTimeout(r, 10));
-
+  await waitForPendingAgentEnd("runUnit awaiting cancellation");
   resolveAgentEndCancelled();
 
   const result = await resultPromise;
@@ -2236,8 +2218,7 @@ test("resolveAgentEndCancelled prevents orphaned promise after abort path", asyn
 
   const resultPromise = runUnit(ctx, pi, s, "task", "T01", "prompt");
 
-  await new Promise((r) => setTimeout(r, 10));
-
+  await waitForPendingAgentEnd("runUnit awaiting abort cancellation");
   s.active = false;
   resolveAgentEndCancelled();
 
@@ -2350,11 +2331,9 @@ test("autoLoop re-iterates when postUnitPreVerification returns retry (#1571)", 
 
   const loopPromise = autoLoop(ctx, pi, s, deps);
 
-  await new Promise((r) => setTimeout(r, 50));
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "pre-verification retry unit awaiting agent_end");
 
-  await new Promise((r) => setTimeout(r, 50));
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "pre-verification follow-up unit awaiting agent_end");
 
   await loopPromise;
 
@@ -2382,9 +2361,7 @@ test("resolveAgentEnd unblocks pending runUnit when called before session reset 
 
   const resultPromise = runUnit(ctx, pi, s, "task", "T01", "do work");
 
-  await new Promise((r) => setTimeout(r, 10));
-
-  resolveAgentEnd({ messages: [] });
+  await resolvePendingAgentEnd({ messages: [] }, "runUnit awaiting agent_end before reset");
   _resetPendingResolve();
   s.active = false;
 
@@ -2461,11 +2438,10 @@ test("autoLoop rejects execute-task with 0 tool calls as hallucinated (#1833)", 
   const loopPromise = autoLoop(ctx, pi, s, deps);
 
   // First iteration: execute-task with 0 tool calls → rejected
-  await new Promise((r) => setTimeout(r, 50));
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "zero-tool execute-task awaiting agent_end");
 
   // Second iteration: same task re-dispatched, this time with tool calls
-  await new Promise((r) => setTimeout(r, 50));
+  await waitForPendingAgentEnd("retry execute-task awaiting agent_end");
   mockLedger.units.length = 0; // clear previous entry
   (deps as any).closeoutUnit = async () => {
     mockLedger.units.push({
@@ -2478,7 +2454,7 @@ test("autoLoop rejects execute-task with 0 tool calls as hallucinated (#1833)", 
       cost: 1.00,
     });
   };
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "retry execute-task awaiting agent_end");
 
   await loopPromise;
 
@@ -2559,15 +2535,14 @@ test("autoLoop pauses user-driven deep question instead of flagging 0 tool calls
 
   const loopPromise = autoLoop(ctx, pi, s, deps);
 
-  await new Promise((r) => setTimeout(r, 50));
-  resolveAgentEnd(makeEvent([
+  await resolvePendingAgentEnd(makeEvent([
     {
       role: "assistant",
       content: [
         { type: "text", text: "What do you want to build?" },
       ],
     },
-  ]));
+  ]), "deep question unit awaiting agent_end");
 
   await loopPromise;
 
@@ -2647,11 +2622,10 @@ test("autoLoop rejects complete-slice with 0 tool calls as context-exhausted (#2
   const loopPromise = autoLoop(ctx, pi, s, deps);
 
   // First iteration: complete-slice with 0 tool calls → rejected
-  await new Promise((r) => setTimeout(r, 50));
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "zero-tool complete-slice awaiting agent_end");
 
   // Second iteration: re-dispatched, this time with tool calls
-  await new Promise((r) => setTimeout(r, 50));
+  await waitForPendingAgentEnd("retry complete-slice awaiting agent_end");
   mockLedger.units.length = 0;
   (deps as any).closeoutUnit = async () => {
     mockLedger.units.push({
@@ -2664,7 +2638,7 @@ test("autoLoop rejects complete-slice with 0 tool calls as context-exhausted (#2
       cost: 0.30,
     });
   };
-  resolveAgentEnd(makeEvent());
+  await resolvePendingAgentEnd(makeEvent(), "retry complete-slice awaiting agent_end");
 
   await loopPromise;
 
@@ -3119,7 +3093,7 @@ test("autoLoop enforces min_request_interval_ms delay between LLM dispatches (#2
     const loopPromise = autoLoop(ctx, pi, s, deps);
 
     await waitForMicrotasks(() => dispatchTimestamps.length === 1, "first dispatch");
-    resolveAgentEnd(makeEvent());
+    await resolvePendingAgentEnd(makeEvent(), "rate-limited first unit awaiting agent_end");
     await waitForMicrotasks(
       () => deps.callLog.filter((entry) => entry === "resolveDispatch").length >= 2,
       "second dispatch planning",
@@ -3132,7 +3106,7 @@ test("autoLoop enforces min_request_interval_ms delay between LLM dispatches (#2
 
     mock.timers.tick(1);
     await waitForMicrotasks(() => dispatchTimestamps.length === 2, "second dispatch");
-    resolveAgentEnd(makeEvent());
+    await resolvePendingAgentEnd(makeEvent(), "rate-limited second unit awaiting agent_end");
 
     await loopPromise;
 
@@ -3205,7 +3179,7 @@ test("autoLoop skips rate-limit delay when min_request_interval_ms is 0 (default
 
     for (let i = 1; i <= 3; i++) {
       await waitForMicrotasks(() => dispatchTimestamps.length === i, `dispatch ${i}`);
-      resolveAgentEnd(makeEvent());
+      await resolvePendingAgentEnd(makeEvent(), `unthrottled unit ${i} awaiting agent_end`);
     }
 
     await loopPromise;

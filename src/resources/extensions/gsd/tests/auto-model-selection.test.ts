@@ -8,6 +8,11 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { resolvePreferredModelConfig, resolveModelId, selectAndApplyModel } from "../auto-model-selection.js";
+import { loadEffectiveGSDPreferences } from "../preferences.js";
+import {
+  clearOllamaAppleSiliconRuntimeSuppressions,
+  suppressOllamaAppleSiliconModelForRun,
+} from "../ollama-apple-silicon-profile.js";
 
 function makeTempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix));
@@ -450,6 +455,536 @@ test("selectAndApplyModel re-applies captured thinking level after setModel succ
   );
 
   assert.deepEqual(thinkingLevels, [{ effort: "high" }]);
+});
+
+test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for standard work", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
+  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const setModelCalls: string[] = [];
+  const notifications: Array<{ message: string; level: string }> = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  const availableModels = [
+    { id: "qwen3.6:27b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+    { id: "qwen3.6:35b-a3b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+  ];
+
+  const result = await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => availableModels },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: (message: string, level: string) => notifications.push({ message, level }) },
+      model: { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4", api: "ollama-chat" },
+    } as any,
+    {
+      setModel: async (model: { provider: string; id: string }) => {
+        setModelCalls.push(`${model.provider}/${model.id}`);
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "execute-task",
+    "M001/S01/T01",
+    tempProject,
+    undefined,
+    false,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+    undefined,
+    true,
+  );
+
+  assert.deepEqual(setModelCalls, ["ollama/qwen3.6:27b-coding-nvfp4"]);
+  assert.equal(result.appliedModel?.id, "qwen3.6:27b-coding-nvfp4");
+  assert.equal(result.routing?.tier, "standard");
+  assert.equal(notifications.some((n) => /missing.*35b/i.test(n.message)), false);
+});
+
+test("selectAndApplyModel keeps Ollama Apple profile routing enabled under burn-max for standard work", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
+  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const setModelCalls: string[] = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  const availableModels = [
+    { id: "qwen3.6:27b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+    { id: "qwen3.6:35b-a3b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+  ];
+
+  const result = await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => availableModels },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4", api: "ollama-chat" },
+    } as any,
+    {
+      setModel: async (model: { provider: string; id: string }) => {
+        setModelCalls.push(`${model.provider}/${model.id}`);
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "execute-task",
+    "M001/S01/T01",
+    tempProject,
+    { token_profile: "burn-max" } as any,
+    false,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+    undefined,
+    true,
+  );
+
+  assert.deepEqual(setModelCalls, ["ollama/qwen3.6:27b-coding-nvfp4"]);
+  assert.equal(result.appliedModel?.id, "qwen3.6:27b-coding-nvfp4");
+  assert.equal(result.routing?.tier, "standard");
+});
+
+test("selectAndApplyModel keeps Ollama Apple profile routing with effective burn-max preferences", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
+  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const setModelCalls: string[] = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  writeFileSync(
+    join(tempProject, ".gsd", "PREFERENCES.md"),
+    ["---", "token_profile: burn-max", "---"].join("\n"),
+    "utf-8",
+  );
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  const prefs = loadEffectiveGSDPreferences(tempProject)?.preferences;
+  assert.equal(prefs?.dynamic_routing?.enabled, false);
+
+  const availableModels = [
+    { id: "qwen3.6:27b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+    { id: "qwen3.6:35b-a3b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+  ];
+
+  const result = await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => availableModels },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: { provider: "ollama", id: "qwen3.6:35b-a3b-coding-nvfp4", api: "ollama-chat" },
+    } as any,
+    {
+      setModel: async (model: { provider: string; id: string }) => {
+        setModelCalls.push(`${model.provider}/${model.id}`);
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "execute-task",
+    "M001/S01/T01",
+    tempProject,
+    prefs,
+    false,
+    { provider: "ollama", id: "qwen3.6:35b-a3b-coding-nvfp4" },
+    undefined,
+    true,
+  );
+
+  assert.deepEqual(setModelCalls, ["ollama/qwen3.6:27b-coding-nvfp4"]);
+  assert.equal(result.appliedModel?.id, "qwen3.6:27b-coding-nvfp4");
+  assert.equal(result.routing?.tier, "standard");
+});
+
+test("selectAndApplyModel applies context_window_override to Ollama Qwen request options", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
+  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const setModelCalls: Array<{ model: any; options: unknown }> = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  const availableModels = [
+    {
+      id: "qwen3.6:27b-coding-nvfp4",
+      provider: "ollama",
+      api: "ollama-chat",
+      contextWindow: 65_536,
+      providerOptions: { num_ctx: 65_536, keep_alive: "0" },
+    },
+    {
+      id: "qwen3.6:35b-a3b-coding-nvfp4",
+      provider: "ollama",
+      api: "ollama-chat",
+      contextWindow: 65_536,
+      providerOptions: { num_ctx: 65_536, keep_alive: "0" },
+    },
+  ];
+
+  await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => availableModels },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: availableModels[0],
+    } as any,
+    {
+      setModel: async (model: any, options: unknown) => {
+        setModelCalls.push({ model, options });
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "execute-task",
+    "M001/S01/T01",
+    tempProject,
+    { context_window_override: 131_072 } as any,
+    false,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+    undefined,
+    true,
+  );
+
+  assert.equal(setModelCalls[0]?.model.providerOptions?.num_ctx, 131_072);
+  assert.equal(setModelCalls[0]?.model.providerOptions?.keep_alive, "0");
+  assert.equal(setModelCalls[0]?.model.contextWindow, 131_072);
+});
+
+test("selectAndApplyModel applies context_window_override to pinned Ollama Qwen start model", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
+  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const setModelCalls: Array<{ model: any; options: unknown }> = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  const startModel = {
+    id: "qwen3.6:27b-coding-nvfp4",
+    provider: "ollama",
+    api: "ollama-chat",
+    contextWindow: 65_536,
+    providerOptions: { num_ctx: 65_536, keep_alive: "0" },
+  };
+
+  await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => [startModel] },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: startModel,
+    } as any,
+    {
+      setModel: async (model: any, options: unknown) => {
+        setModelCalls.push({ model, options });
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "execute-task",
+    "M001/S01/T01",
+    tempProject,
+    { context_window_override: 131_072 } as any,
+    false,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+    undefined,
+    true,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+  );
+
+  assert.equal(setModelCalls[0]?.model.providerOptions?.num_ctx, 131_072);
+  assert.equal(setModelCalls[0]?.model.providerOptions?.keep_alive, "0");
+  assert.equal(setModelCalls[0]?.model.contextWindow, 131_072);
+});
+
+test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for heavy work", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
+  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const setModelCalls: string[] = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  const availableModels = [
+    { id: "qwen3.6:27b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+    { id: "qwen3.6:35b-a3b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+  ];
+
+  const result = await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => availableModels },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4", api: "ollama-chat" },
+    } as any,
+    {
+      setModel: async (model: { provider: string; id: string }) => {
+        setModelCalls.push(`${model.provider}/${model.id}`);
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "replan-slice",
+    "M001/S01",
+    tempProject,
+    undefined,
+    false,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+    undefined,
+    true,
+  );
+
+  assert.deepEqual(setModelCalls, ["ollama/qwen3.6:35b-a3b-coding-nvfp4"]);
+  assert.equal(result.appliedModel?.id, "qwen3.6:35b-a3b-coding-nvfp4");
+  assert.equal(result.routing?.tier, "heavy");
+});
+
+test("selectAndApplyModel falls back to 27B for heavy work when 35B tag is missing", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
+  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const setModelCalls: string[] = [];
+  const notifications: string[] = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  const result = await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => [{ id: "qwen3.6:27b-coding-nvfp4", provider: "ollama", api: "ollama-chat" }] },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: (message: string) => notifications.push(message) },
+      model: { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4", api: "ollama-chat" },
+    } as any,
+    {
+      setModel: async (model: { provider: string; id: string }) => {
+        setModelCalls.push(`${model.provider}/${model.id}`);
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "replan-slice",
+    "M001/S01",
+    tempProject,
+    undefined,
+    false,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+    undefined,
+    true,
+  );
+
+  assert.deepEqual(setModelCalls, ["ollama/qwen3.6:27b-coding-nvfp4"]);
+  assert.equal(result.appliedModel?.id, "qwen3.6:27b-coding-nvfp4");
+  assert.ok(notifications.some((message) => message.includes("qwen3.6:35b-a3b-coding-nvfp4")));
+});
+
+test("selectAndApplyModel falls back to 27B for heavy work when 35B is suppressed", async (t) => {
+  clearOllamaAppleSiliconRuntimeSuppressions();
+  suppressOllamaAppleSiliconModelForRun("ollama", "qwen3.6:35b-a3b-coding-nvfp4");
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
+  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const setModelCalls: string[] = [];
+  const notifications: string[] = [];
+
+  t.after(() => {
+    clearOllamaAppleSiliconRuntimeSuppressions();
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  const result = await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => [
+        { id: "qwen3.6:27b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+        { id: "qwen3.6:35b-a3b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+      ] },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: (message: string) => notifications.push(message) },
+      model: { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4", api: "ollama-chat" },
+    } as any,
+    {
+      setModel: async (model: { provider: string; id: string }) => {
+        setModelCalls.push(`${model.provider}/${model.id}`);
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "replan-slice",
+    "M001/S01",
+    tempProject,
+    undefined,
+    false,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+    undefined,
+    true,
+  );
+
+  assert.deepEqual(setModelCalls, ["ollama/qwen3.6:27b-coding-nvfp4"]);
+  assert.equal(result.appliedModel?.id, "qwen3.6:27b-coding-nvfp4");
+  assert.ok(notifications.some((message) => /suppressed.*local resource failure/i.test(message)));
+  assert.ok(notifications.some((message) => message.includes("qwen3.6:35b-a3b-coding-nvfp4")));
+});
+
+test("selectAndApplyModel does not synthesize Ollama Apple profile when dynamic_routing is explicit", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
+  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const setModelCalls: string[] = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  writeFileSync(
+    join(tempProject, ".gsd", "PREFERENCES.md"),
+    ["---", "dynamic_routing:", "  enabled: false", "---"].join("\n"),
+    "utf-8",
+  );
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => [
+        { id: "qwen3.6:27b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+        { id: "qwen3.6:35b-a3b-coding-nvfp4", provider: "ollama", api: "ollama-chat" },
+      ] },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4", api: "ollama-chat" },
+    } as any,
+    {
+      setModel: async (model: { provider: string; id: string }) => {
+        setModelCalls.push(`${model.provider}/${model.id}`);
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "replan-slice",
+    "M001/S01",
+    tempProject,
+    undefined,
+    false,
+    { provider: "ollama", id: "qwen3.6:27b-coding-nvfp4" },
+    undefined,
+    true,
+  );
+
+  assert.deepEqual(setModelCalls, ["ollama/qwen3.6:27b-coding-nvfp4"]);
 });
 
 test("resolveModelId: anthropic wins over claude-code when session provider is not claude-code", () => {

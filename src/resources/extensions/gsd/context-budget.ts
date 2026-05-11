@@ -108,6 +108,7 @@ export interface MinimalModelRegistry {
 }
 
 export interface MinimalPreferences {
+  context_window_override?: number;
   models?: {
     execution?: string | { model: string; fallbacks?: string[] };
   };
@@ -210,9 +211,10 @@ export function truncateAtSectionBoundary(content: string, budgetChars: number):
 /**
  * Resolve the executor model's context window size using a fallback chain:
  *
- * 1. Look up the configured executor model ID in preferences → find in registry → return contextWindow
- * 2. Fall back to sessionContextWindow if provided
- * 3. Fall back to 200K default (D002)
+ * 1. Use explicit context_window_override when configured
+ * 2. Look up the configured executor model ID in preferences → find in registry → return contextWindow
+ * 3. Fall back to sessionContextWindow if provided
+ * 4. Fall back to 200K default (D002)
  *
  * Supports "provider/model" format in preferences for explicit provider targeting.
  */
@@ -222,7 +224,11 @@ export function resolveExecutorContextWindow(
   sessionContextWindow?: number,
   sessionProvider?: string,
 ): number {
-  // Step 1: Try configured executor model
+  if (preferences?.context_window_override !== undefined && preferences.context_window_override > 0) {
+    return preferences.context_window_override;
+  }
+
+  // Step 2: Try configured executor model
   if (preferences?.models?.execution && registry) {
     const executionConfig = preferences.models.execution;
     const modelId = typeof executionConfig === "string"
@@ -237,12 +243,12 @@ export function resolveExecutorContextWindow(
     }
   }
 
-  // Step 2: Fall back to session context window
+  // Step 3: Fall back to session context window
   if (sessionContextWindow && sessionContextWindow > 0) {
     return resolveEffectiveContextWindow(sessionContextWindow, sessionProvider);
   }
 
-  // Step 3: Fall back to default (D002)
+  // Step 4: Fall back to default (D002)
   return DEFAULT_CONTEXT_WINDOW;
 }
 

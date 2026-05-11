@@ -7,17 +7,249 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { classifyError, isTransient, isTransientNetworkError } from "../error-classifier.ts";
 import { pauseAutoForProviderError } from "../provider-error-pause.ts";
 import { resumeAutoAfterProviderDelay } from "../bootstrap/provider-error-resume.ts";
-import { MAX_TRANSIENT_AUTO_RESUMES, resetTransientRetryState } from "../bootstrap/agent-end-recovery.ts";
+import { handleAgentEnd, MAX_TRANSIENT_AUTO_RESUMES, resetTransientRetryState } from "../bootstrap/agent-end-recovery.ts";
+import { _setAutoActiveForTest } from "../auto.ts";
+import { _resetPendingResolve } from "../auto/resolve.ts";
+import { autoSession } from "../auto-runtime-state.ts";
 import { _buildCancelledUnitStopReason } from "../auto/phases.ts";
 import { getNextFallbackModel } from "../preferences.ts";
+import {
+  OLLAMA_QWEN36_27B_MODEL,
+  OLLAMA_QWEN36_27B_NVFP4,
+  OLLAMA_QWEN36_35B_A3B_NVFP4,
+  OLLAMA_QWEN36_35B_MODEL,
+  clearOllamaAppleSiliconRuntimeSuppressions,
+  resolveOllamaAppleSiliconPreset,
+} from "../ollama-apple-silicon-profile.ts";
 // Zero-import module — imported by path rather than through the package
 // barrel to avoid pulling the full AgentSession / @gwd/pi-ai dep graph into
 // this unit test (see #4837).
 import { RETRYABLE_ERROR_RE } from "../../../../../packages/pi-coding-agent/src/core/retryable-error-regex.ts";
 import { streamOpenAICodexResponses } from "../../../../../packages/pi-ai/src/providers/openai-codex-responses.ts";
+
+const ollama27BModel = { provider: "ollama", id: OLLAMA_QWEN36_27B_NVFP4, api: "ollama-chat" };
+const ollama35BModel = { provider: "ollama", id: OLLAMA_QWEN36_35B_A3B_NVFP4, api: "ollama-chat" };
+const ollamaAppleSiliconModels = [ollama27BModel, ollama35BModel];
+const ollama35BResourceFailure = "llama runner process has terminated: out of memory";
+
+function cleanupOllamaAppleSiliconAgentEndTest(): void {
+  clearOllamaAppleSiliconRuntimeSuppressions();
+  _resetPendingResolve();
+  autoSession.reset();
+}
+
+function resolveOllamaAppleSiliconHeavyTier(): string | undefined {
+  const preset = resolveOllamaAppleSiliconPreset({
+    isAutoMode: true,
+    prefs: undefined,
+    availableModels: ollamaAppleSiliconModels,
+    autoModeStartModel: { provider: "ollama", id: OLLAMA_QWEN36_27B_NVFP4 },
+    currentProvider: "ollama",
+  });
+  assert.ok(preset);
+  return preset.routingConfig.tier_models?.heavy;
+}
+
+function makeOllama35BResourceFailureHarness(input: {
+  availableModels?: Array<{
+    provider: string;
+    id: string;
+    api?: string;
+    contextWindow?: number;
+    providerOptions?: Record<string, unknown>;
+  }>;
+  setModelResult: boolean;
+}) {
+  const notifications: Array<{ message: string; level: string }> = [];
+  const setModelCalls: Array<{ model: unknown; options: unknown }> = [];
+  const sendMessageCalls: Array<{ message: unknown; options: unknown }> = [];
+
+  const ctx = {
+    model: { provider: "ollama", id: OLLAMA_QWEN36_35B_A3B_NVFP4 },
+    modelRegistry: {
+      getAvailable: () => input.availableModels ?? ollamaAppleSiliconModels,
+    },
+    sessionManager: {
+      getSessionFile: () => null,
+    },
+    ui: {
+      notify: (message: string, level = "info") => {
+        notifications.push({ message, level });
+      },
+      setStatus: () => {},
+      setWidget: () => {},
+    },
+  };
+
+  const pi = {
+    setModel: async (model: unknown, options: unknown) => {
+      setModelCalls.push({ model, options });
+      return input.setModelResult;
+    },
+    sendMessage: (message: unknown, options: unknown) => {
+      sendMessageCalls.push({ message, options });
+    },
+  };
+
+  const event = {
+    messages: [
+      {
+        stopReason: "error",
+        errorMessage: ollama35BResourceFailure,
+      },
+    ],
+  };
+
+  return { ctx, pi, event, notifications, setModelCalls, sendMessageCalls };
+}
+
+test("agent-end recovery handles Ollama Apple Silicon 35B resource failures before generic transient return", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { dirname, join } = await import("node:path");
+  const { fileURLToPath } = await import("node:url");
+  const testDir = dirname(fileURLToPath(import.meta.url));
+  const source = readFileSync(join(testDir, "../bootstrap/agent-end-recovery.ts"), "utf-8");
+
+  const localFailureIndex = source.indexOf("isOllamaAppleSiliconResourceFailure(");
+  const transientReturnIndex = source.indexOf("if (isTransient(cls) && cls.kind !== \"rate-limit\")");
+
+  assert.ok(localFailureIndex > 0, "agent-end recovery must check Ollama Apple Silicon resource failures");
+  assert.ok(transientReturnIndex > 0, "generic transient early return must remain present");
+  assert.ok(
+    localFailureIndex < transientReturnIndex,
+    "Ollama local resource fallback must run before generic transient handling returns",
+  );
+});
+
+test("agent-end recovery switches Ollama Apple Silicon 35B resource failures to 27B and suppresses 35B after success", async () => {
+  cleanupOllamaAppleSiliconAgentEndTest();
+  try {
+    _setAutoActiveForTest(true);
+    const harness = makeOllama35BResourceFailureHarness({ setModelResult: true });
+
+    await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+    assert.deepEqual(harness.setModelCalls, [
+      { model: ollama27BModel, options: { persist: false } },
+    ]);
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /retrying on qwen3\.6:27b-coding-nvfp4.*suppressing 35B/.test(message),
+      ),
+      "warning should mention retrying on 27B and suppressing 35B",
+    );
+    assert.equal(harness.sendMessageCalls.length, 1);
+    assert.deepEqual(harness.sendMessageCalls[0]?.options, { triggerTurn: true });
+    assert.match(
+      String((harness.sendMessageCalls[0]?.message as { content?: unknown } | undefined)?.content),
+      /27B Ollama fallback/,
+    );
+    assert.equal(resolveOllamaAppleSiliconHeavyTier(), OLLAMA_QWEN36_27B_MODEL);
+  } finally {
+    cleanupOllamaAppleSiliconAgentEndTest();
+  }
+});
+
+test("agent-end recovery applies context_window_override to Ollama Apple Silicon fallback", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gsd-ollama-agent-context-project-"));
+  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-ollama-agent-context-home-"));
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+    cleanupOllamaAppleSiliconAgentEndTest();
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  writeFileSync(
+    join(tempProject, ".gsd", "PREFERENCES.md"),
+    "---\ncontext_window_override: 131072\n---\n",
+    "utf-8",
+  );
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  cleanupOllamaAppleSiliconAgentEndTest();
+  _setAutoActiveForTest(true);
+  const fallbackModel = {
+    provider: "ollama",
+    id: OLLAMA_QWEN36_27B_NVFP4,
+    api: "ollama-chat",
+    contextWindow: 65_536,
+    providerOptions: { num_ctx: 65_536, keep_alive: "0" },
+  };
+  const harness = makeOllama35BResourceFailureHarness({
+    availableModels: [fallbackModel, ollama35BModel],
+    setModelResult: true,
+  });
+
+  await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+  const applied = harness.setModelCalls[0]?.model as typeof fallbackModel | undefined;
+  assert.equal(applied?.contextWindow, 131_072);
+  assert.equal(applied?.providerOptions?.num_ctx, 131_072);
+  assert.equal(applied?.providerOptions?.keep_alive, "0");
+});
+
+test("agent-end recovery does not suppress Ollama Apple Silicon 35B when switching to 27B fails", async () => {
+  cleanupOllamaAppleSiliconAgentEndTest();
+  try {
+    _setAutoActiveForTest(true);
+    const harness = makeOllama35BResourceFailureHarness({ setModelResult: false });
+
+    await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+    assert.deepEqual(harness.setModelCalls, [
+      { model: ollama27BModel, options: { persist: false } },
+    ]);
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /failed to switch to qwen3\.6:27b-coding-nvfp4 fallback/.test(message),
+      ),
+      "warning should mention failure to switch to 27B fallback",
+    );
+    assert.equal(harness.sendMessageCalls.length, 0);
+    assert.equal(resolveOllamaAppleSiliconHeavyTier(), OLLAMA_QWEN36_35B_MODEL);
+  } finally {
+    cleanupOllamaAppleSiliconAgentEndTest();
+  }
+});
+
+test("agent-end recovery does not suppress Ollama Apple Silicon 35B when 27B fallback is unavailable", async () => {
+  cleanupOllamaAppleSiliconAgentEndTest();
+  try {
+    _setAutoActiveForTest(true);
+    const harness = makeOllama35BResourceFailureHarness({
+      availableModels: [ollama35BModel],
+      setModelResult: true,
+    });
+
+    await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+    assert.equal(harness.setModelCalls.length, 0);
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /qwen3\.6:27b-coding-nvfp4 is not available for fallback/.test(message),
+      ),
+      "warning should mention unavailable 27B fallback",
+    );
+    assert.equal(harness.sendMessageCalls.length, 0);
+    assert.equal(resolveOllamaAppleSiliconHeavyTier(), OLLAMA_QWEN36_35B_MODEL);
+  } finally {
+    cleanupOllamaAppleSiliconAgentEndTest();
+  }
+});
 
 // ── classifyError ────────────────────────────────────────────────────────────
 

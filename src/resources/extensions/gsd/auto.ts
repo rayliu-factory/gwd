@@ -186,6 +186,7 @@ import { recoverFailedMigration } from "./migrate-external.js";
 import { initRegistry, convertDispatchRules } from "./rule-registry.js";
 import { emitJournalEvent as _emitJournalEvent, type JournalEntry } from "./journal.js";
 import { isClosedStatus } from "./status-guards.js";
+import { clearOllamaAppleSiliconRuntimeSuppressions } from "./ollama-apple-silicon-profile.js";
 import {
   type AutoDashboardData,
   updateProgressWidget as _updateProgressWidget,
@@ -1542,6 +1543,7 @@ export async function stopAuto(
     // restoring this session's snapshot and silently undoing any tool
     // changes the user made between sessions (#4959 / CodeRabbit).
     if (pi) clearToolBaseline(pi);
+    clearOllamaAppleSiliconRuntimeSuppressions();
 
     try {
       await s.orchestration?.stop(reason ?? "stop");
@@ -2074,7 +2076,10 @@ export async function startAuto(
   // set as the new baseline — exactly the cross-unit poisoning this PR is
   // fixing (#4959 / CodeRabbit Major).  The pre-pause baseline survives in
   // the WeakMap keyed by `pi`.
-  if (!s.paused) clearToolBaseline(pi);
+  if (!s.paused) {
+    clearToolBaseline(pi);
+    clearOllamaAppleSiliconRuntimeSuppressions();
+  }
 
   const requestedStepMode = options?.step ?? false;
   const interruptedAssessment = options?.interrupted ?? null;
