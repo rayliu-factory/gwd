@@ -1,4 +1,4 @@
-// GSD Web — Notifications Service
+// GWD Web — Notifications Service
 // Loads notification data via a child process that imports the notification store.
 
 import { execFile } from "node:child_process"

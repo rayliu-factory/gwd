@@ -4,31 +4,31 @@ import Image from "next/image"
 import dynamic from "next/dynamic"
 import { useState, useEffect, useCallback, useRef, useSyncExternalStore } from "react"
 import { Menu, X } from "lucide-react"
-import { Sidebar, MilestoneExplorer, CollapsedMilestoneSidebar } from "@/components/gsd/sidebar"
-import { ShellTerminal } from "@/components/gsd/shell-terminal"
-import { Dashboard } from "@/components/gsd/dashboard"
-import { StatusBar } from "@/components/gsd/status-bar"
-import { FocusedPanel } from "@/components/gsd/focused-panel"
-import { OnboardingGate } from "@/components/gsd/onboarding-gate"
-import { CommandSurface } from "@/components/gsd/command-surface"
+import { Sidebar, MilestoneExplorer, CollapsedMilestoneSidebar } from "@/components/gwd/sidebar"
+import { ShellTerminal } from "@/components/gwd/shell-terminal"
+import { Dashboard } from "@/components/gwd/dashboard"
+import { StatusBar } from "@/components/gwd/status-bar"
+import { FocusedPanel } from "@/components/gwd/focused-panel"
+import { OnboardingGate } from "@/components/gwd/onboarding-gate"
+import { CommandSurface } from "@/components/gwd/command-surface"
 import { DevOverridesProvider } from "@/lib/dev-overrides"
 import { ProjectStoreManagerProvider, useProjectStoreManager } from "@/lib/project-store-manager"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import {
-  GSDWorkspaceProvider,
+  GWDWorkspaceProvider,
   getCurrentScopeLabel,
   getProjectDisplayName,
   getStatusPresentation,
   getVisibleWorkspaceError,
-  useGSDWorkspaceState,
-  useGSDWorkspaceActions,
-} from "@/lib/gsd-workspace-store"
-import { ScopeBadge } from "@/components/gsd/scope-badge"
+  useGWDWorkspaceState,
+  useGWDWorkspaceActions,
+} from "@/lib/gwd-workspace-store"
+import { ScopeBadge } from "@/components/gwd/scope-badge"
 import { Badge } from "@/components/ui/badge"
-import { ProjectsPanel, ProjectSelectionGate } from "@/components/gsd/projects-view"
-import { UpdateBanner } from "@/components/gsd/update-banner"
+import { ProjectsPanel, ProjectSelectionGate } from "@/components/gwd/projects-view"
+import { UpdateBanner } from "@/components/gwd/update-banner"
 import { getAuthToken } from "@/lib/auth"
 
 const KNOWN_VIEWS = new Set(["dashboard", "power", "chat", "roadmap", "files", "activity", "visualize"])
@@ -39,33 +39,33 @@ const ViewLoading = () => (
   </div>
 )
 
-const Roadmap = dynamic(() => import("@/components/gsd/roadmap").then((mod) => mod.Roadmap), {
+const Roadmap = dynamic(() => import("@/components/gwd/roadmap").then((mod) => mod.Roadmap), {
   loading: ViewLoading,
   ssr: false,
 })
-const FilesView = dynamic(() => import("@/components/gsd/files-view").then((mod) => mod.FilesView), {
+const FilesView = dynamic(() => import("@/components/gwd/files-view").then((mod) => mod.FilesView), {
   loading: ViewLoading,
   ssr: false,
 })
-const ActivityView = dynamic(() => import("@/components/gsd/activity-view").then((mod) => mod.ActivityView), {
+const ActivityView = dynamic(() => import("@/components/gwd/activity-view").then((mod) => mod.ActivityView), {
   loading: ViewLoading,
   ssr: false,
 })
-const VisualizerView = dynamic(() => import("@/components/gsd/visualizer-view").then((mod) => mod.VisualizerView), {
+const VisualizerView = dynamic(() => import("@/components/gwd/visualizer-view").then((mod) => mod.VisualizerView), {
   loading: ViewLoading,
   ssr: false,
 })
-const DualTerminal = dynamic(() => import("@/components/gsd/dual-terminal").then((mod) => mod.DualTerminal), {
+const DualTerminal = dynamic(() => import("@/components/gwd/dual-terminal").then((mod) => mod.DualTerminal), {
   loading: ViewLoading,
   ssr: false,
 })
-const ChatMode = dynamic(() => import("@/components/gsd/chat-mode").then((mod) => mod.ChatMode), {
+const ChatMode = dynamic(() => import("@/components/gwd/chat-mode").then((mod) => mod.ChatMode), {
   loading: ViewLoading,
   ssr: false,
 })
 
 function viewStorageKey(projectCwd: string): string {
-  return `gsd-active-view:${projectCwd}`
+  return `gwd-active-view:${projectCwd}`
 }
 
 function WorkspaceChrome() {
@@ -86,8 +86,8 @@ function WorkspaceChrome() {
   const [projectsPanelOpen, setProjectsPanelOpen] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [mobileMilestoneOpen, setMobileMilestoneOpen] = useState(false)
-  const workspace = useGSDWorkspaceState()
-  const { refreshBoot } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { refreshBoot } = useGWDWorkspaceActions()
 
   const status = getStatusPresentation(workspace)
   const projectPath = workspace.boot?.project.cwd
@@ -137,7 +137,7 @@ function WorkspaceChrome() {
   useEffect(() => {
     const restoreTimer = window.setTimeout(() => {
       try {
-        const stored = localStorage.getItem("gsd-sidebar-collapsed")
+        const stored = localStorage.getItem("gwd-sidebar-collapsed")
         if (stored === "true") setSidebarCollapsed(true)
       } catch {
         // localStorage may be unavailable
@@ -149,7 +149,7 @@ function WorkspaceChrome() {
   // Persist sidebar collapsed state
   useEffect(() => {
     try {
-      localStorage.setItem("gsd-sidebar-collapsed", String(sidebarCollapsed))
+      localStorage.setItem("gwd-sidebar-collapsed", String(sidebarCollapsed))
     } catch {
       // localStorage may be unavailable
     }
@@ -172,8 +172,8 @@ function WorkspaceChrome() {
     const handler = () => {
       setActiveView("files")
     }
-    window.addEventListener("gsd:open-file", handler)
-    return () => window.removeEventListener("gsd:open-file", handler)
+    window.addEventListener("gwd:open-file", handler)
+    return () => window.removeEventListener("gwd:open-file", handler)
   }, [])
 
   // Listen for cross-component view navigation events (e.g. /gwd visualize dispatch)
@@ -183,15 +183,15 @@ function WorkspaceChrome() {
         handleViewChange(e.detail.view)
       }
     }
-    window.addEventListener("gsd:navigate-view", handler as EventListener)
-    return () => window.removeEventListener("gsd:navigate-view", handler as EventListener)
+    window.addEventListener("gwd:navigate-view", handler as EventListener)
+    return () => window.removeEventListener("gwd:navigate-view", handler as EventListener)
   }, [handleViewChange])
 
   // Listen for projects panel toggle (sidebar icon, or programmatic)
   useEffect(() => {
     const handler = () => setProjectsPanelOpen(true)
-    window.addEventListener("gsd:open-projects", handler)
-    return () => window.removeEventListener("gsd:open-projects", handler)
+    window.addEventListener("gwd:open-projects", handler)
+    return () => window.removeEventListener("gwd:open-projects", handler)
   }, [])
 
   // Terminal + sidebar panel drag-to-resize
@@ -268,8 +268,8 @@ function WorkspaceChrome() {
     !isConnecting &&
     activeView === "dashboard" &&
     detection != null &&
-    detection.kind !== "active-gsd" &&
-    detection.kind !== "empty-gsd"
+    detection.kind !== "active-gwd" &&
+    detection.kind !== "empty-gwd"
 
   // --- Unauthenticated gate ---
   // Render a clear recovery screen before any workspace chrome is mounted so
@@ -575,7 +575,7 @@ function WorkspaceChrome() {
   )
 }
 
-export function GSDAppShell() {
+export function GWDAppShell() {
   // Extract the auth token from the URL fragment on first render.
   // Must happen before any API calls fire.
   getAuthToken()
@@ -624,10 +624,10 @@ function ProjectAwareWorkspace() {
   }
 
   return (
-    <GSDWorkspaceProvider store={activeStore}>
+    <GWDWorkspaceProvider store={activeStore}>
       <DevOverridesProvider>
         <WorkspaceChrome />
       </DevOverridesProvider>
-    </GSDWorkspaceProvider>
+    </GWDWorkspaceProvider>
   )
 }

@@ -24,12 +24,12 @@ import {
 import { cn } from "@/lib/utils"
 import { useProjectStoreManager } from "@/lib/project-store-manager"
 import {
-  useGSDWorkspaceState,
+  useGWDWorkspaceState,
   getLiveWorkspaceIndex,
   getLiveAutoDashboard,
   formatCost,
   getCurrentSlice,
-} from "@/lib/gsd-workspace-store"
+} from "@/lib/gwd-workspace-store"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -53,10 +53,10 @@ import {
 
 // ─── Types (mirroring server-side ProjectMetadata) ─────────────────────────
 
-type ProjectDetectionKind = "active-gsd" | "empty-gsd" | "v1-legacy" | "brownfield" | "blank"
+type ProjectDetectionKind = "active-gwd" | "empty-gwd" | "v1-legacy" | "brownfield" | "blank"
 
 interface ProjectDetectionSignals {
-  hasGsdFolder: boolean
+  hasGwdFolder: boolean
   hasPlanningFolder: boolean
   hasGitRepo: boolean
   hasPackageJson: boolean
@@ -88,13 +88,13 @@ interface ProjectMetadata {
 // ─── Kind style config ─────────────────────────────────────────────────
 
 const KIND_STYLE: Record<ProjectDetectionKind, { label: string; color: string; bgClass: string; icon: typeof Layers }> = {
-  "active-gsd": {
+  "active-gwd": {
     label: "Active",
     color: "text-success",
     bgClass: "bg-success/10",
     icon: Layers,
   },
-  "empty-gsd": {
+  "empty-gwd": {
     label: "Initialized",
     color: "text-info",
     bgClass: "bg-info/10",
@@ -348,7 +348,7 @@ export function ProjectsPanel({
 
   const [newProjectOpen, setNewProjectOpen] = useState(false)
   const [changeRootOpen, setChangeRootOpen] = useState(false)
-  const workspaceState = useGSDWorkspaceState()
+  const workspaceState = useGWDWorkspaceState()
 
   const handleProjectCreated = useCallback(
     (newProject: ProjectMetadata) => {
@@ -373,11 +373,11 @@ export function ProjectsPanel({
     manager.switchProject(project.path)
   }
 
-  // Sort: active-gsd first, then by name
+  // Sort: active-gwd first, then by name
   const sortedProjects = [...projects].sort((a, b) => {
     const kindOrder: Record<ProjectDetectionKind, number> = {
-      "active-gsd": 0,
-      "empty-gsd": 1,
+      "active-gwd": 0,
+      "empty-gwd": 1,
       brownfield: 2,
       "v1-legacy": 3,
       blank: 4,
@@ -521,7 +521,7 @@ export function ProjectsPanel({
 
 // ─── Active project inline summary (compact for panel card) ────────────
 
-function ActiveProjectSummary({ workspaceState }: { workspaceState: ReturnType<typeof useGSDWorkspaceState> }) {
+function ActiveProjectSummary({ workspaceState }: { workspaceState: ReturnType<typeof useGWDWorkspaceState> }) {
   const workspace = getLiveWorkspaceIndex(workspaceState)
   const dashboard = getLiveAutoDashboard(workspaceState)
   const currentSlice = getCurrentSlice(workspace)
@@ -1059,11 +1059,11 @@ export function ProjectSelectionGate() {
     manager.switchProject(project.path)
   }
 
-  // Sort: active-gsd first, then by name
+  // Sort: active-gwd first, then by name
   const sortedProjects = [...projects].sort((a, b) => {
     const kindOrder: Record<ProjectDetectionKind, number> = {
-      "active-gsd": 0,
-      "empty-gsd": 1,
+      "active-gwd": 0,
+      "empty-gwd": 1,
       brownfield: 2,
       "v1-legacy": 3,
       blank: 4,

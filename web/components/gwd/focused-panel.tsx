@@ -19,9 +19,9 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import {
   type PendingUiRequest,
-  useGSDWorkspaceActions,
-  useGSDWorkspaceState,
-} from "@/lib/gsd-workspace-store"
+  useGWDWorkspaceActions,
+  useGWDWorkspaceState,
+} from "@/lib/gwd-workspace-store"
 import { cn } from "@/lib/utils"
 
 function methodIcon(method: PendingUiRequest["method"]) {
@@ -252,8 +252,8 @@ function RequestBody({
 }
 
 export function FocusedPanel() {
-  const workspace = useGSDWorkspaceState()
-  const { respondToUiRequest, dismissUiRequest } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { respondToUiRequest, dismissUiRequest } = useGWDWorkspaceActions()
 
   const pending = workspace.pendingUiRequests
   const isOpen = pending.length > 0

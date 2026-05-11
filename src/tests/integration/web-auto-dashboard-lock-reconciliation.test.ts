@@ -26,7 +26,7 @@ import {
 const repoRoot = join(import.meta.dirname, "..", "..", "..");
 
 function makeTempFixture(): { projectCwd: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), "gsd-auto-lock-test-"));
+  const root = mkdtempSync(join(tmpdir(), "gwd-auto-lock-test-"));
   const projectCwd = join(root, "project");
   mkdirSync(projectCwd, { recursive: true });
   return {

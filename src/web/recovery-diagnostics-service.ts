@@ -397,7 +397,7 @@ async function collectRecoveryDiagnosticsChildPayload(
     'const unitId = process.env.GWD_RECOVERY_UNIT_ID || "project";',
     'const sessionFile = process.env.GWD_RECOVERY_SESSION_FILE || undefined;',
     'const activityDir = process.env.GWD_RECOVERY_ACTIVITY_DIR || undefined;',
-    'const report = await doctor.runGSDDoctor(basePath, { fix: false, scope, fixLevel: "task" });',
+    'const report = await doctor.runGWDDoctor(basePath, { fix: false, scope, fixLevel: "task" });',
     'const summary = doctor.summarizeDoctorIssues(report.issues);',
     'const briefing = forensics.synthesizeCrashRecovery(basePath, unitType, unitId, sessionFile, activityDir);',
     'const trace = briefing?.trace;',

@@ -86,7 +86,7 @@ export function discoverProjects(devRootPath: string, includeProgress?: boolean)
     // ── Check if the root itself is a project/monorepo ──────────────
     // If the devRoot has a .git repo AND looks like a monorepo (pnpm-workspace,
     // lerna, workspaces, etc.) or looks like a standalone project root (has
-    // .gsd, or is a recognizable project), return it as a single entry.
+    // .gwd, or is a recognizable project), return it as a single entry.
     const rootDetection = detectProjectKind(devRootPath);
     if (rootDetection.signals.isMonorepo) {
       const stat = statSync(devRootPath);

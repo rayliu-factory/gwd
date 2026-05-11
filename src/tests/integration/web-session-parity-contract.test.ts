@@ -15,7 +15,7 @@ const browserRoute = await import("../../../web/app/api/session/browser/route.ts
 const manageRoute = await import("../../../web/app/api/session/manage/route.ts")
 const gitRoute = await import("../../../web/app/api/git/route.ts")
 const commandSurfaceContract = await import("../../../web/lib/command-surface-contract.ts")
-const { GSDWorkspaceStore } = await import("../../../web/lib/gsd-workspace-store.tsx")
+const { GWDWorkspaceStore } = await import("../../../web/lib/gwd-workspace-store.tsx")
 const { AuthStorage } = await import("@gwd/pi-coding-agent")
 
 class FakeRpcChild extends EventEmitter {
@@ -67,7 +67,7 @@ function makeWorkspaceFixture(): {
   otherSessionsDir: string
   cleanup: () => void
 } {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-session-parity-"))
+  const root = mkdtempSync(join(tmpdir(), "gwd-web-session-parity-"))
   const projectCwd = join(root, "project")
   const sessionsDir = join(root, "sessions")
   const otherProjectCwd = join(root, "other-project")
@@ -566,7 +566,7 @@ test("/api/session/manage renames inactive sessions via authoritative session-fi
 })
 
 test("/api/git returns a current-project-scoped repo summary and ignores changes outside the current project subtree", async (t) => {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-git-summary-"))
+  const root = mkdtempSync(join(tmpdir(), "gwd-web-git-summary-"))
   const repoRoot = join(root, "repo")
   const projectCwd = join(repoRoot, "apps", "current-project")
   const docsDir = join(repoRoot, "docs")
@@ -581,8 +581,8 @@ test("/api/git returns a current-project-scoped repo summary and ignores changes
   writeFileSync(join(docsDir, "outside.txt"), "baseline outside\n")
 
   git(repoRoot, ["init"])
-  git(repoRoot, ["config", "user.name", "GSD Test"])
-  git(repoRoot, ["config", "user.email", "gsd-test@example.com"])
+  git(repoRoot, ["config", "user.name", "GWD Test"])
+  git(repoRoot, ["config", "user.email", "gwd-test@example.com"])
   git(repoRoot, ["add", "."])
   git(repoRoot, ["commit", "-m", "initial"])
 
@@ -619,7 +619,7 @@ test("/api/git returns a current-project-scoped repo summary and ignores changes
 })
 
 test("/api/git exposes an explicit not-a-repo state instead of failing silently", async (t) => {
-  const projectCwd = mkdtempSync(join(tmpdir(), "gsd-web-not-repo-"))
+  const projectCwd = mkdtempSync(join(tmpdir(), "gwd-web-not-repo-"))
 
   t.after(() => { rmSync(projectCwd, { recursive: true, force: true }) });
 
@@ -677,7 +677,7 @@ test("browser session, settings, and git surfaces keep inspectable state through
   assert.equal(loadedGit.gitSummary.loaded, true)
   assert.equal(loadedGit.gitSummary.result?.kind, "not_repo")
 
-  const store = new GSDWorkspaceStore("/tmp/project")
+  const store = new GWDWorkspaceStore("/tmp/project")
   assert.equal(typeof store.loadGitSummary, "function")
   assert.equal(typeof store.renameSessionFromSurface, "function")
   assert.equal(typeof store.switchSessionFromSurface, "function")

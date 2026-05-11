@@ -47,11 +47,11 @@ import { cn } from "@/lib/utils"
 import {
   formatCost,
   getLiveWorkspaceIndex,
-  useGSDWorkspaceActions,
-  useGSDWorkspaceState,
+  useGWDWorkspaceActions,
+  useGWDWorkspaceState,
   type WorkspaceMilestoneTarget,
   type WorkspaceSliceTarget,
-} from "@/lib/gsd-workspace-store"
+} from "@/lib/gwd-workspace-store"
 
 // ═══════════════════════════════════════════════════════════════════════
 // SHARED INFRASTRUCTURE
@@ -149,7 +149,7 @@ function formatDuration(ms: number): string {
 
 export function QuickPanel() {
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-quick">
+    <div className="space-y-4" data-testid="gwd-surface-gwd-quick">
       <PanelHeader
         title="Quick Task"
         icon={<Zap className="h-3.5 w-3.5" />}
@@ -201,15 +201,15 @@ export function QuickPanel() {
 type HistoryTab = "phase" | "slice" | "model" | "units"
 
 export function HistoryPanel() {
-  const workspace = useGSDWorkspaceState()
-  const { loadHistoryData } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { loadHistoryData } = useGWDWorkspaceActions()
   const state = workspace.commandSurface.remainingCommands.history
   const data = state.data as HistoryData | null
   const busy = state.phase === "loading"
   const [activeTab, setActiveTab] = useState<HistoryTab>("phase")
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-history">
+    <div className="space-y-4" data-testid="gwd-surface-gwd-history">
       <PanelHeader
         title="History & Metrics"
         icon={<Clock className="h-3.5 w-3.5" />}
@@ -373,8 +373,8 @@ export function HistoryPanel() {
 // ═══════════════════════════════════════════════════════════════════════
 
 export function UndoPanel() {
-  const workspace = useGSDWorkspaceState()
-  const { loadUndoInfo, executeUndoAction } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { loadUndoInfo, executeUndoAction } = useGWDWorkspaceActions()
   const state = workspace.commandSurface.remainingCommands.undo
   const data = state.data as UndoInfo | null
   const busy = state.phase === "loading"
@@ -395,7 +395,7 @@ export function UndoPanel() {
   }
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-undo">
+    <div className="space-y-4" data-testid="gwd-surface-gwd-undo">
       <PanelHeader
         title="Undo Last Unit"
         icon={<Undo2 className="h-3.5 w-3.5" />}
@@ -519,8 +519,8 @@ export function UndoPanel() {
 // ═══════════════════════════════════════════════════════════════════════
 
 export function SteerPanel() {
-  const workspace = useGSDWorkspaceState()
-  const { loadSteerData, sendSteer } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { loadSteerData, sendSteer } = useGWDWorkspaceActions()
   const state = workspace.commandSurface.remainingCommands.steer
   const data = state.data as SteerData | null
   const busy = state.phase === "loading"
@@ -544,7 +544,7 @@ export function SteerPanel() {
   }
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-steer">
+    <div className="space-y-4" data-testid="gwd-surface-gwd-steer">
       <PanelHeader
         title="Steer"
         icon={<Navigation className="h-3.5 w-3.5" />}
@@ -607,14 +607,14 @@ export function SteerPanel() {
 // ═══════════════════════════════════════════════════════════════════════
 
 export function HooksPanel() {
-  const workspace = useGSDWorkspaceState()
-  const { loadHooksData } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { loadHooksData } = useGWDWorkspaceActions()
   const state = workspace.commandSurface.remainingCommands.hooks
   const data = state.data as HooksData | null
   const busy = state.phase === "loading"
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-hooks">
+    <div className="space-y-4" data-testid="gwd-surface-gwd-hooks">
       <PanelHeader
         title="Hooks"
         icon={<Layers className="h-3.5 w-3.5" />}
@@ -699,14 +699,14 @@ export function HooksPanel() {
 // ═══════════════════════════════════════════════════════════════════════
 
 export function InspectPanel() {
-  const workspace = useGSDWorkspaceState()
-  const { loadInspectData } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { loadInspectData } = useGWDWorkspaceActions()
   const state = workspace.commandSurface.remainingCommands.inspect
   const data = state.data as InspectData | null
   const busy = state.phase === "loading"
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-inspect">
+    <div className="space-y-4" data-testid="gwd-surface-gwd-inspect">
       <PanelHeader
         title="Inspect Database"
         icon={<Database className="h-3.5 w-3.5" />}
@@ -807,8 +807,8 @@ export function InspectPanel() {
 // ═══════════════════════════════════════════════════════════════════════
 
 export function ExportPanel() {
-  const workspace = useGSDWorkspaceState()
-  const { loadExportData } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { loadExportData } = useGWDWorkspaceActions()
   const state = workspace.commandSurface.remainingCommands.exportData
   const data = state.data as ExportResult | null
   const busy = state.phase === "loading"
@@ -833,7 +833,7 @@ export function ExportPanel() {
   }
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-export">
+    <div className="space-y-4" data-testid="gwd-surface-gwd-export">
       <PanelHeader
         title="Export"
         icon={<Download className="h-3.5 w-3.5" />}
@@ -907,8 +907,8 @@ export function ExportPanel() {
 // ═══════════════════════════════════════════════════════════════════════
 
 export function CleanupPanel() {
-  const workspace = useGSDWorkspaceState()
-  const { loadCleanupData, executeCleanupAction } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { loadCleanupData, executeCleanupAction } = useGWDWorkspaceActions()
   const state = workspace.commandSurface.remainingCommands.cleanup
   const data = state.data as CleanupData | null
   const busy = state.phase === "loading"
@@ -934,7 +934,7 @@ export function CleanupPanel() {
   }
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-cleanup">
+    <div className="space-y-4" data-testid="gwd-surface-gwd-cleanup">
       <PanelHeader
         title="Cleanup"
         icon={<Trash2 className="h-3.5 w-3.5" />}
@@ -1072,13 +1072,13 @@ function sliceProgress(slices: WorkspaceSliceTarget[]): { done: number; total: n
 }
 
 export function QueuePanel() {
-  const workspace = useGSDWorkspaceState()
+  const workspace = useGWDWorkspaceState()
   const workspaceIndex = getLiveWorkspaceIndex(workspace)
   const milestones = workspaceIndex?.milestones ?? []
   const active = workspaceIndex?.active
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-queue">
+    <div className="space-y-4" data-testid="gwd-surface-gwd-queue">
       <PanelHeader
         title="Queue"
         icon={<ListChecks className="h-3.5 w-3.5" />}
@@ -1175,7 +1175,7 @@ export function QueuePanel() {
 // ═══════════════════════════════════════════════════════════════════════
 
 export function StatusPanel() {
-  const workspace = useGSDWorkspaceState()
+  const workspace = useGWDWorkspaceState()
   const workspaceIndex = getLiveWorkspaceIndex(workspace)
   const active = workspaceIndex?.active
   const milestones = workspaceIndex?.milestones ?? []
@@ -1187,7 +1187,7 @@ export function StatusPanel() {
   const doneSlices = milestones.reduce((sum: number, m: WorkspaceMilestoneTarget) => sum + m.slices.filter((s) => s.done).length, 0)
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-status">
+    <div className="space-y-4" data-testid="gwd-surface-gwd-status">
       <PanelHeader
         title="Status"
         icon={<Terminal className="h-3.5 w-3.5" />}

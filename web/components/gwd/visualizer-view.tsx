@@ -24,7 +24,7 @@ import {
   SkipForward,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useGSDWorkspaceState, buildProjectUrl } from "@/lib/gsd-workspace-store"
+import { useGWDWorkspaceState, buildProjectUrl } from "@/lib/gwd-workspace-store"
 import type {
   VisualizerData,
   VisualizerSlice,
@@ -1058,8 +1058,8 @@ function ExportTab({ data }: { data: VisualizerData }) {
     return lines.join("\n")
   }, [data])
 
-  const handleMarkdown = () => downloadBlob(generateMarkdown(), "gsd-report.md", "text/markdown")
-  const handleJSON = () => downloadBlob(JSON.stringify(data, null, 2), "gsd-report.json", "application/json")
+  const handleMarkdown = () => downloadBlob(generateMarkdown(), "gwd-report.md", "text/markdown")
+  const handleJSON = () => downloadBlob(JSON.stringify(data, null, 2), "gwd-report.json", "application/json")
 
   return (
     <div className="space-y-6">
@@ -1168,7 +1168,7 @@ function VisualizerTabList() {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function VisualizerView() {
-  const workspace = useGSDWorkspaceState()
+  const workspace = useGWDWorkspaceState()
   const projectCwd = workspace.boot?.project.cwd
   const [data, setData] = useState<VisualizerData | null>(null)
   const [loading, setLoading] = useState(true)

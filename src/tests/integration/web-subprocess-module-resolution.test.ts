@@ -13,7 +13,7 @@ import {
 // ---------------------------------------------------------------------------
 
 test("isUnderNodeModules returns false for paths outside node_modules", () => {
-  assert.equal(isUnderNodeModules("/home/user/projects/gsd"), false)
+  assert.equal(isUnderNodeModules("/home/user/projects/gwd"), false)
 })
 
 test("isUnderNodeModules returns true for Unix paths under node_modules/", () => {
@@ -32,7 +32,7 @@ test("isUnderNodeModules returns true for Windows paths under node_modules/", ()
 
 test("isUnderNodeModules returns false for substring match without trailing slash", () => {
   assert.equal(
-    isUnderNodeModules("/home/user/my_node_modules_backup/gsd"),
+    isUnderNodeModules("/home/user/my_node_modules_backup/gwd"),
     false,
   )
 })
@@ -42,7 +42,7 @@ test("isUnderNodeModules returns false for substring match without trailing slas
 // ---------------------------------------------------------------------------
 
 test("resolveSubprocessModule returns source .ts path when NOT under node_modules", () => {
-  const packageRoot = "/home/user/projects/gsd"
+  const packageRoot = "/home/user/projects/gwd"
   const result = resolveSubprocessModule(
     packageRoot,
     "resources/extensions/gwd/workspace-index.ts",
@@ -135,9 +135,9 @@ test("buildSubprocessPrefixArgs omits TS loaders when compiled JS was selected",
 
 test("buildSubprocessPrefixArgs keeps TS loader path when source TS was selected", () => {
   const args = buildSubprocessPrefixArgs(
-    "/home/user/projects/gsd",
+    "/home/user/projects/gwd",
     {
-      modulePath: "/home/user/projects/gsd/src/resources/extensions/gwd/workspace-index.ts",
+      modulePath: "/home/user/projects/gwd/src/resources/extensions/gwd/workspace-index.ts",
       useCompiledJs: false,
     },
     "file:///loader.mjs",

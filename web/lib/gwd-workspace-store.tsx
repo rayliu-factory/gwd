@@ -281,14 +281,14 @@ export interface WorkspaceOnboardingState {
 // ─── Project Detection ──────────────────────────────────────────────────────
 
 export type ProjectDetectionKind =
-  | "active-gsd"
-  | "empty-gsd"
+  | "active-gwd"
+  | "empty-gwd"
   | "v1-legacy"
   | "brownfield"
   | "blank"
 
 export interface ProjectDetectionSignals {
-  hasGsdFolder: boolean
+  hasGwdFolder: boolean
   hasPlanningFolder: boolean
   hasGitRepo: boolean
   hasPackageJson: boolean
@@ -597,26 +597,26 @@ const IMPLEMENTED_BROWSER_COMMAND_SURFACES = new Set<BrowserSlashCommandSurface>
   "session",
   "export",
   // GWD subcommand surfaces (S02)
-  "gsd-status",
-  "gsd-visualize",
-  "gsd-forensics",
-  "gsd-doctor",
-  "gsd-skill-health",
-  "gsd-knowledge",
-  "gsd-capture",
-  "gsd-triage",
-  "gsd-quick",
-  "gsd-history",
-  "gsd-undo",
-  "gsd-inspect",
-  "gsd-prefs",
-  "gsd-config",
-  "gsd-hooks",
-  "gsd-mode",
-  "gsd-steer",
-  "gsd-export",
-  "gsd-cleanup",
-  "gsd-queue",
+  "gwd-status",
+  "gwd-visualize",
+  "gwd-forensics",
+  "gwd-doctor",
+  "gwd-skill-health",
+  "gwd-knowledge",
+  "gwd-capture",
+  "gwd-triage",
+  "gwd-quick",
+  "gwd-history",
+  "gwd-undo",
+  "gwd-inspect",
+  "gwd-prefs",
+  "gwd-config",
+  "gwd-hooks",
+  "gwd-mode",
+  "gwd-steer",
+  "gwd-export",
+  "gwd-cleanup",
+  "gwd-queue",
 ])
 
 function timestampLabel(date = new Date()): string {
@@ -1843,7 +1843,7 @@ export function buildProjectUrl(path: string, projectCwd?: string): string {
   return url.pathname + url.search
 }
 
-export class GSDWorkspaceStore {
+export class GWDWorkspaceStore {
   constructor(private readonly projectCwd?: string) {}
 
   private buildUrl(path: string): string {
@@ -4069,7 +4069,7 @@ export class GSDWorkspaceStore {
           await this.refreshBoot()
           return outcome
         }
-        if (outcome.action === "gsd_help") {
+        if (outcome.action === "gwd_help") {
           this.patchState({
             terminalLines: withTerminalLine(
               withTerminalLine(this.state.terminalLines, createTerminalLine("input", trimmed)),
@@ -4113,7 +4113,7 @@ export class GSDWorkspaceStore {
           ),
         })
         window.dispatchEvent(
-          new CustomEvent("gsd:navigate-view", { detail: { view: outcome.view } }),
+          new CustomEvent("gwd:navigate-view", { detail: { view: outcome.view } }),
         )
         return outcome
       }
@@ -5229,10 +5229,10 @@ export class GSDWorkspaceStore {
   }
 }
 
-const WorkspaceStoreContext = createContext<GSDWorkspaceStore | null>(null)
+const WorkspaceStoreContext = createContext<GWDWorkspaceStore | null>(null)
 
-export function GSDWorkspaceProvider({ children, store: externalStore }: { children: ReactNode; store?: GSDWorkspaceStore }) {
-  const [internalStore] = useState(() => new GSDWorkspaceStore())
+export function GWDWorkspaceProvider({ children, store: externalStore }: { children: ReactNode; store?: GWDWorkspaceStore }) {
+  const [internalStore] = useState(() => new GWDWorkspaceStore())
   const store = externalStore ?? internalStore
 
   useEffect(() => {
@@ -5246,7 +5246,7 @@ export function GSDWorkspaceProvider({ children, store: externalStore }: { child
   return <WorkspaceStoreContext.Provider value={store}>{children}</WorkspaceStoreContext.Provider>
 }
 
-function useWorkspaceStore(): GSDWorkspaceStore {
+function useWorkspaceStore(): GWDWorkspaceStore {
   const store = useContext(WorkspaceStoreContext)
   if (!store) {
     throw new Error("useWorkspaceStore must be used within GWDWorkspaceProvider")
@@ -5254,13 +5254,13 @@ function useWorkspaceStore(): GSDWorkspaceStore {
   return store
 }
 
-export function useGSDWorkspaceState(): WorkspaceStoreState {
+export function useGWDWorkspaceState(): WorkspaceStoreState {
   const store = useWorkspaceStore()
   return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)
 }
 
-export function useGSDWorkspaceActions(): Pick<
-  GSDWorkspaceStore,
+export function useGWDWorkspaceActions(): Pick<
+  GWDWorkspaceStore,
   | "sendCommand"
   | "submitInput"
   | "clearTerminalLines"

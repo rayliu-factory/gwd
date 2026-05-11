@@ -20,7 +20,7 @@
  * appended as a `?_token=` query parameter instead.
  */
 
-const AUTH_STORAGE_KEY = "gsd-auth-token"
+const AUTH_STORAGE_KEY = "gwd-auth-token"
 
 let cachedToken: string | null = null
 

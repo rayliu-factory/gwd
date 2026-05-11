@@ -108,7 +108,7 @@ export type RuntimeReadyProof<TBoot = unknown> = {
 }
 
 export function writePreseededAuthFile(tempHome: string): void {
-  const agentDir = join(tempHome, ".gsd", "agent")
+  const agentDir = join(tempHome, ".gwd", "agent")
   mkdirSync(agentDir, { recursive: true, mode: 0o700 })
   const authPath = join(agentDir, "auth.json")
   const fakeCredential = { type: "api_key", key: "sk-ant-test-fake-key-for-runtime-test" }
@@ -176,7 +176,7 @@ export async function launchPackagedWebHost(options: {
 }): Promise<RuntimeLaunchResult> {
   ensureRuntimeArtifacts()
 
-  mkdirSync(join(options.tempHome, ".gsd"), { recursive: true })
+  mkdirSync(join(options.tempHome, ".gwd"), { recursive: true })
   const browserLogPath = options.browserLogPath ?? join(options.tempHome, "browser-open.log")
   const fakeBin = join(options.tempHome, "fake-bin")
   mkdirSync(fakeBin, { recursive: true })

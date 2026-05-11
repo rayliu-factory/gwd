@@ -35,9 +35,9 @@ import { cn } from "@/lib/utils"
 import {
   formatCost,
   formatTokens,
-  useGSDWorkspaceActions,
-  useGSDWorkspaceState,
-} from "@/lib/gsd-workspace-store"
+  useGWDWorkspaceActions,
+  useGWDWorkspaceState,
+} from "@/lib/gwd-workspace-store"
 import { useTerminalFontSize } from "@/lib/use-terminal-font-size"
 import { useEditorFontSize } from "@/lib/use-editor-font-size"
 import { authFetch } from "@/lib/auth"
@@ -176,8 +176,8 @@ function KvRow({ label, children }: { label: string; children: React.ReactNode }
 // ═══════════════════════════════════════════════════════════════════════
 
 function useSettingsData() {
-  const workspace = useGSDWorkspaceState()
-  const { loadSettingsData } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { loadSettingsData } = useGWDWorkspaceActions()
   const state = workspace.commandSurface.settingsData
   return {
     state,
@@ -1094,7 +1094,7 @@ function FontSizeControl({
  * Canonical onboarding step IDs and human-readable labels.
  *
  * Mirrors `ONBOARDING_STEPS` in
- * `src/resources/extensions/gsd/setup-catalog.ts`. Kept inline here (rather
+ * `src/resources/extensions/gwd/setup-catalog.ts`. Kept inline here (rather
  * than imported from the CLI tree) to avoid pulling Node-only modules into
  * the web bundle. If the CLI catalog adds a step, mirror the entry here so
  * unrecognized step IDs don't break the rendering.
@@ -1125,7 +1125,7 @@ function formatCompletionDate(iso: string | null | undefined): string {
 }
 
 function OnboardingStatusSection() {
-  const workspace = useGSDWorkspaceState()
+  const workspace = useGWDWorkspaceState()
   const devOverrides = useDevOverrides()
   const onboarding = workspace.boot?.onboarding
   const record = onboarding?.completionRecord ?? null
@@ -1290,7 +1290,7 @@ export function ExperimentalPanel() {
   const [saveError, setSaveError] = useState<string | null>(null)
 
   // Trigger a settings load if data hasn't been fetched yet (e.g. navigating
-  // directly to the Experimental tab without going through gsd-prefs first).
+  // directly to the Experimental tab without going through gwd-prefs first).
   useEffect(() => {
     if (!data && !busy && state.phase === "idle") {
       refresh()
@@ -1419,6 +1419,6 @@ export function ExperimentalPanel() {
 // LEGACY EXPORTS
 // ═══════════════════════════════════════════════════════════════════════
 
-// Legacy exports for backward compatibility with gsd-prefs mega-scroll
+// Legacy exports for backward compatibility with gwd-prefs mega-scroll
 export const TerminalSizePanel = GeneralPanel
 export const EditorSizePanel = () => null

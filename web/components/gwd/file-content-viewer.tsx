@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from "react"
 import { Loader2, Save, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { CodeEditor } from "@/components/gsd/code-editor"
+import { CodeEditor } from "@/components/gwd/code-editor"
 import { useEditorFontSize } from "@/lib/use-editor-font-size"
 import { useTheme } from "next-themes"
 
@@ -530,7 +530,7 @@ interface FileContentViewerProps {
   filepath: string
   className?: string
   /** Required for editing — the root context for the file */
-  root?: "gsd" | "project"
+  root?: "gwd" | "project"
   /** Required for editing — the relative path within the root */
   path?: string
   /** Required for editing — called with new content when the user saves */

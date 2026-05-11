@@ -44,10 +44,10 @@ import {
   getCurrentScopeLabel,
   getLiveWorkspaceIndex,
   getLiveAutoDashboard,
-  useGSDWorkspaceState,
-  useGSDWorkspaceActions,
+  useGWDWorkspaceState,
+  useGWDWorkspaceActions,
   buildPromptCommand,
-} from "@/lib/gsd-workspace-store"
+} from "@/lib/gwd-workspace-store"
 import { getMilestoneStatus, getSliceStatus, getTaskStatus, type ItemStatus } from "@/lib/workspace-status"
 import { deriveWorkflowAction } from "@/lib/workflow-actions"
 import { executeWorkflowActionInPowerMode } from "@/lib/workflow-action-execution"
@@ -77,7 +77,7 @@ interface NavRailProps {
 }
 
 export function NavRail({ activeView, onViewChange, isConnecting = false }: NavRailProps) {
-  const { openCommandSurface } = useGSDWorkspaceActions()
+  const { openCommandSurface } = useGWDWorkspaceActions()
   const manager = useProjectStoreManager()
   const activeProjectCwd = useSyncExternalStore(manager.subscribe, manager.getSnapshot, manager.getSnapshot)
   const [exitDialogOpen, setExitDialogOpen] = useState(false)
@@ -125,7 +125,7 @@ export function NavRail({ activeView, onViewChange, isConnecting = false }: NavR
       ))}
       <div className="mt-auto flex flex-col gap-1">
         <button
-          onClick={() => window.dispatchEvent(new CustomEvent("gsd:open-projects"))}
+          onClick={() => window.dispatchEvent(new CustomEvent("gwd:open-projects"))}
           disabled={isConnecting}
           className={cn(
             "flex h-10 w-10 items-center justify-center rounded-md transition-colors",
@@ -317,8 +317,8 @@ function ExitDialog({
 /* ─── Milestone Explorer (right sidebar) ─── */
 
 export function MilestoneExplorer({ isConnecting = false, width, onCollapse }: { isConnecting?: boolean; width?: number; onCollapse?: () => void }) {
-  const workspace = useGSDWorkspaceState()
-  const { openCommandSurface, setCommandSurfaceSection, sendCommand } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { openCommandSurface, setCommandSurfaceSection, sendCommand } = useGWDWorkspaceActions()
   const [expandedMilestones, setExpandedMilestones] = useState<string[]>([])
   const [expandedSlices, setExpandedSlices] = useState<string[]>([])
 
@@ -334,10 +334,10 @@ export function MilestoneExplorer({ isConnecting = false, width, onCollapse }: {
 
   const openTaskFile = (absolutePath: string | undefined) => {
     if (!absolutePath || !projectCwd) return
-    const gsdPrefix = `${projectCwd}/.gsd/`
-    if (!absolutePath.startsWith(gsdPrefix)) return
-    const relativePath = absolutePath.slice(gsdPrefix.length)
-    window.dispatchEvent(new CustomEvent("gsd:open-file", { detail: { root: "gsd", path: relativePath } }))
+    const gwdPrefix = `${projectCwd}/.gwd/`
+    if (!absolutePath.startsWith(gwdPrefix)) return
+    const relativePath = absolutePath.slice(gwdPrefix.length)
+    window.dispatchEvent(new CustomEvent("gwd:open-file", { detail: { root: "gwd", path: relativePath } }))
   }
 
   const workflowAction = deriveWorkflowAction({
@@ -627,8 +627,8 @@ export function MilestoneExplorer({ isConnecting = false, width, onCollapse }: {
 /* ─── Collapsed Milestone Sidebar (icon-only rail) ─── */
 
 export function CollapsedMilestoneSidebar({ onExpand }: { onExpand: () => void }) {
-  const workspace = useGSDWorkspaceState()
-  const { sendCommand } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { sendCommand } = useGWDWorkspaceActions()
 
   const liveWorkspace = getLiveWorkspaceIndex(workspace)
   const milestones = liveWorkspace?.milestones ?? []
@@ -718,7 +718,7 @@ export function Sidebar({ activeView, onViewChange, isConnecting = false, mobile
 /* ─── Mobile Nav Panel (full-width labels for touch) ─── */
 
 function MobileNavPanel({ activeView, onViewChange, isConnecting = false }: NavRailProps) {
-  const { openCommandSurface } = useGSDWorkspaceActions()
+  const { openCommandSurface } = useGWDWorkspaceActions()
   const { theme, setTheme } = useTheme()
 
   const cycleTheme = () => {
@@ -764,7 +764,7 @@ function MobileNavPanel({ activeView, onViewChange, isConnecting = false }: NavR
       </div>
       <div className="border-t border-border px-2 py-2 space-y-1">
         <button
-          onClick={() => window.dispatchEvent(new CustomEvent("gsd:open-projects"))}
+          onClick={() => window.dispatchEvent(new CustomEvent("gwd:open-projects"))}
           disabled={isConnecting}
           className="flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-colors min-h-[44px]"
         >

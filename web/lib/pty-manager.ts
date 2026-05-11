@@ -8,7 +8,7 @@
 import { chmodSync, existsSync, statSync } from "node:fs";
 import { basename, join, dirname } from "node:path";
 import type { IPty } from "node-pty";
-import { resolveGsdCliEntry } from "../../src/web/cli-entry.ts";
+import { resolveGwdCliEntry } from "../../src/web/cli-entry.ts";
 
 // Webpack escape hatch — this global exists at runtime in webpack bundles and
 // forwards to Node's native require(), bypassing webpack's module resolution.
@@ -29,8 +29,8 @@ interface LoadedNodePty {
 }
 
 // Use globalThis to persist across Turbopack/HMR module re-evaluations in dev
-const GLOBAL_KEY = "__gsd_pty_sessions__" as const;
-const CLEANUP_GUARD_KEY = "__gsd_pty_cleanup_installed__" as const;
+const GLOBAL_KEY = "__gwd_pty_sessions__" as const;
+const CLEANUP_GUARD_KEY = "__gwd_pty_cleanup_installed__" as const;
 const MAX_SESSION_BUFFER_BYTES = 1024 * 1024;
 
 function getSessions(): Map<string, PtySession> {
@@ -144,7 +144,7 @@ function resolveTerminalSpawnSpec(cwd: string, command?: string, commandArgs: st
 
   if (command === "gwd") {
     try {
-      const cliEntry = resolveGsdCliEntry({
+      const cliEntry = resolveGwdCliEntry({
         packageRoot: process.env.GWD_WEB_PACKAGE_ROOT || process.cwd(),
         cwd,
         execPath: process.execPath,

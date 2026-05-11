@@ -16,11 +16,11 @@ import type {
   RpcSessionState,
 } from "@gwd-build/contracts";
 import type {
-  WorkspaceIndex as GSDWorkspaceIndex,
-  WorkspaceMilestoneTarget as GSDWorkspaceMilestoneTarget,
-  WorkspaceScopeTarget as GSDWorkspaceScopeTarget,
-  WorkspaceSliceTarget as GSDWorkspaceSliceTarget,
-  WorkspaceTaskTarget as GSDWorkspaceTaskTarget,
+  WorkspaceIndex as GWDWorkspaceIndex,
+  WorkspaceMilestoneTarget as GWDWorkspaceMilestoneTarget,
+  WorkspaceScopeTarget as GWDWorkspaceScopeTarget,
+  WorkspaceSliceTarget as GWDWorkspaceSliceTarget,
+  WorkspaceTaskTarget as GWDWorkspaceTaskTarget,
 } from "../shared/workspace-types.ts";
 import {
   SESSION_BROWSER_SCOPE,
@@ -46,7 +46,7 @@ import {
   collectTestOnlyFallbackAutoDashboardData,
 } from "./auto-dashboard-service.ts";
 import type { AutoDashboardData, RtkSessionSavings } from "./auto-dashboard-types.ts";
-import { resolveGsdCliEntry } from "./cli-entry.ts";
+import { resolveGwdCliEntry } from "./cli-entry.ts";
 
 // The standalone Next.js bundle bakes import.meta.url at build time with the
 // CI runner's absolute path.  On Windows, fileURLToPath() rejects a Linux
@@ -441,24 +441,24 @@ export interface BootResumableSession {
 }
 
 export type {
-  GSDWorkspaceTaskTarget,
-  GSDWorkspaceSliceTarget,
-  GSDWorkspaceMilestoneTarget,
-  GSDWorkspaceScopeTarget,
-  GSDWorkspaceIndex,
+  GWDWorkspaceTaskTarget,
+  GWDWorkspaceSliceTarget,
+  GWDWorkspaceMilestoneTarget,
+  GWDWorkspaceScopeTarget,
+  GWDWorkspaceIndex,
 };
 
 // ─── Project Detection ──────────────────────────────────────────────────────
 
 export type ProjectDetectionKind =
-  | "active-gsd"    // .gsd with milestones — normal operation
-  | "empty-gsd"     // .gsd exists but no milestones (freshly bootstrapped)
-  | "v1-legacy"     // .planning/ exists, no .gsd
-  | "brownfield"    // existing code (git, package.json, files) but no .gsd
+  | "active-gwd"    // .gwd with milestones — normal operation
+  | "empty-gwd"     // .gwd exists but no milestones (freshly bootstrapped)
+  | "v1-legacy"     // .planning/ exists, no .gwd
+  | "brownfield"    // existing code (git, package.json, files) but no .gwd
   | "blank";        // empty/near-empty folder
 
 export interface ProjectDetectionSignals {
-  hasGsdFolder: boolean;
+  hasGwdFolder: boolean;
   hasPlanningFolder: boolean;
   hasGitRepo: boolean;
   hasPackageJson: boolean;
@@ -518,7 +518,7 @@ export function detectMonorepo(dirPath: string, checkExists?: (path: string) => 
 export function detectProjectKind(projectCwd: string): ProjectDetection {
   const checkExists = getBridgeDeps().existsSync ?? existsSync;
 
-  const hasGsdFolder = checkExists(join(projectCwd, ".gwd"));
+  const hasGwdFolder = checkExists(join(projectCwd, ".gwd"));
   const hasPlanningFolder = checkExists(join(projectCwd, ".planning"));
   const hasGitRepo = checkExists(join(projectCwd, ".git"));
   const hasPackageJson = checkExists(join(projectCwd, "package.json"));
@@ -537,7 +537,7 @@ export function detectProjectKind(projectCwd: string): ProjectDetection {
   }
 
   const signals: ProjectDetectionSignals = {
-    hasGsdFolder,
+    hasGwdFolder,
     hasPlanningFolder,
     hasGitRepo,
     hasPackageJson,
@@ -550,7 +550,7 @@ export function detectProjectKind(projectCwd: string): ProjectDetection {
 
   let kind: ProjectDetectionKind;
 
-  if (hasGsdFolder) {
+  if (hasGwdFolder) {
     // Check if milestones exist
     const milestonesDir = join(projectCwd, ".gwd", "milestones");
     let hasMilestones = false;
@@ -560,7 +560,7 @@ export function detectProjectKind(projectCwd: string): ProjectDetection {
     } catch {
       // No milestones dir or can't read it
     }
-    kind = hasMilestones ? "active-gsd" : "empty-gsd";
+    kind = hasMilestones ? "active-gwd" : "empty-gwd";
   } else if (hasPlanningFolder) {
     kind = "v1-legacy";
   } else if (hasPackageJson || hasCargo || hasGoMod || hasPyproject || fileCount > 2 || (hasGitRepo && fileCount > 0)) {
@@ -580,7 +580,7 @@ export interface BridgeBootPayload {
     sessionsDir: string;
     packageRoot: string;
   };
-  workspace: GSDWorkspaceIndex;
+  workspace: GWDWorkspaceIndex;
   auto: AutoDashboardData;
   onboarding: OnboardingState;
   onboardingNeeded: boolean;
@@ -647,7 +647,7 @@ interface BridgeServiceDeps {
   existsSync?: (path: string) => boolean;
   execPath?: string;
   env?: NodeJS.ProcessEnv;
-  indexWorkspace?: (basePath: string) => Promise<GSDWorkspaceIndex>;
+  indexWorkspace?: (basePath: string) => Promise<GWDWorkspaceIndex>;
   getAutoDashboardData?: () => AutoDashboardData | Promise<AutoDashboardData>;
   listSessions?: (projectSessionsDir: string) => Promise<LocalSessionInfo[]>;
   getOnboardingState?: () => OnboardingState | Promise<OnboardingState>;
@@ -655,9 +655,9 @@ interface BridgeServiceDeps {
 }
 
 type WorkspaceIndexCacheEntry = {
-  value: GSDWorkspaceIndex | null;
+  value: GWDWorkspaceIndex | null;
   expiresAt: number;
-  promise: Promise<GSDWorkspaceIndex> | null;
+  promise: Promise<GWDWorkspaceIndex> | null;
 };
 
 const defaultBridgeServiceDeps: BridgeServiceDeps = {
@@ -875,7 +875,7 @@ function getBridgeDeps(): BridgeServiceDeps {
   return { ...defaultBridgeServiceDeps, ...(bridgeServiceOverrides ?? {}) };
 }
 
-function cloneWorkspaceIndex(index: GSDWorkspaceIndex): GSDWorkspaceIndex {
+function cloneWorkspaceIndex(index: GWDWorkspaceIndex): GWDWorkspaceIndex {
   return structuredClone(index);
 }
 
@@ -890,8 +890,8 @@ function invalidateWorkspaceIndexCache(basePath?: string): void {
 
 async function loadCachedWorkspaceIndex(
   basePath: string,
-  loader: () => Promise<GSDWorkspaceIndex>,
-): Promise<GSDWorkspaceIndex> {
+  loader: () => Promise<GWDWorkspaceIndex>,
+): Promise<GWDWorkspaceIndex> {
   const cached = workspaceIndexCache.get(basePath);
   const now = Date.now();
 
@@ -926,7 +926,7 @@ async function loadCachedWorkspaceIndex(
   return cloneWorkspaceIndex(await promise);
 }
 
-async function loadWorkspaceIndexViaChildProcess(basePath: string, packageRoot: string): Promise<GSDWorkspaceIndex> {
+async function loadWorkspaceIndexViaChildProcess(basePath: string, packageRoot: string): Promise<GWDWorkspaceIndex> {
   const deps = getBridgeDeps();
   const checkExists = deps.existsSync ?? existsSync;
   const resolveTsLoader = join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs");
@@ -956,7 +956,7 @@ async function loadWorkspaceIndexViaChildProcess(basePath: string, packageRoot: 
     pathToFileURL(resolveTsLoader).href,
   );
 
-  return await new Promise<GSDWorkspaceIndex>((resolveResult, reject) => {
+  return await new Promise<GWDWorkspaceIndex>((resolveResult, reject) => {
     execFile(
       deps.execPath ?? process.execPath,
       [
@@ -981,7 +981,7 @@ async function loadWorkspaceIndexViaChildProcess(basePath: string, packageRoot: 
         }
 
         try {
-          resolveResult(JSON.parse(stdout) as GSDWorkspaceIndex);
+          resolveResult(JSON.parse(stdout) as GWDWorkspaceIndex);
         } catch (parseError) {
           reject(new Error(`workspace index subprocess returned invalid JSON: ${parseError instanceof Error ? parseError.message : String(parseError)}`));
         }
@@ -1074,7 +1074,7 @@ function listProjectSessions(projectSessionsDir: string): LocalSessionInfo[] {
   return sessions;
 }
 
-async function fallbackWorkspaceIndex(basePath: string): Promise<GSDWorkspaceIndex> {
+async function fallbackWorkspaceIndex(basePath: string): Promise<GWDWorkspaceIndex> {
   const packageRoot = resolveBridgeRuntimeConfig().packageRoot;
   return await loadWorkspaceIndexViaChildProcess(basePath, packageRoot);
 }
@@ -1087,7 +1087,7 @@ export function resolveBridgeRuntimeConfig(env: NodeJS.ProcessEnv = getBridgeDep
 }
 
 function resolveBridgeCliEntry(config: BridgeRuntimeConfig, deps: BridgeServiceDeps): BridgeCliEntry {
-  return resolveGsdCliEntry({
+  return resolveGwdCliEntry({
     packageRoot: config.packageRoot,
     cwd: config.projectCwd,
     execPath: deps.execPath ?? process.execPath,
@@ -2129,7 +2129,7 @@ export type BridgeSelectiveLiveStateDomain = "auto" | "workspace" | "resumable_s
 
 export interface BridgeSelectiveLiveStatePayload {
   auto?: AutoDashboardData;
-  workspace?: GSDWorkspaceIndex;
+  workspace?: GWDWorkspaceIndex;
   resumableSessions?: BootResumableSession[];
   bridge: BridgeRuntimeSnapshot;
 }

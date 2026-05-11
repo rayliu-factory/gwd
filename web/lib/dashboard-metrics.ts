@@ -1,5 +1,5 @@
 /**
- * GSD2 Web dashboard metric derivation helpers.
+ * GWD2 Web dashboard metric derivation helpers.
  */
 
 export type DashboardRtkSavings = {

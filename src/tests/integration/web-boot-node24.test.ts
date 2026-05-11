@@ -46,13 +46,13 @@ const [nodeMajor, nodeMinor] = process.versions.node.split(".").map(Number)
 const isNode22_7OrNewer = nodeMajor > 22 || (nodeMajor === 22 && nodeMinor >= 7)
 
 test("resolveTypeStrippingFlag returns --experimental-strip-types for paths outside node_modules", () => {
-  const flag = resolveTypeStrippingFlag("/home/user/projects/gsd")
+  const flag = resolveTypeStrippingFlag("/home/user/projects/gwd")
   assert.equal(flag, "--experimental-strip-types")
 })
 
 test("resolveTypeStrippingFlag returns --experimental-strip-types for path with node_modules substring not as directory", () => {
-  // e.g. /home/user/my_node_modules_backup/gsd — not actually under node_modules/
-  const flag = resolveTypeStrippingFlag("/home/user/my_node_modules_backup/gsd")
+  // e.g. /home/user/my_node_modules_backup/gwd — not actually under node_modules/
+  const flag = resolveTypeStrippingFlag("/home/user/my_node_modules_backup/gwd")
   assert.equal(flag, "--experimental-strip-types")
 })
 
@@ -163,7 +163,7 @@ test("waitForBootReady pattern: mixed 4xx and 5xx only counts 5xx", () => {
 // ---------------------------------------------------------------------------
 
 test("boot route returns { error } JSON on handler failure", async (t) => {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-boot-error-"))
+  const root = mkdtempSync(join(tmpdir(), "gwd-web-boot-error-"))
   const sessionsDir = join(root, "sessions")
   mkdirSync(sessionsDir, { recursive: true })
 
@@ -196,7 +196,7 @@ test("boot route returns { error } JSON on handler failure", async (t) => {
 // ---------------------------------------------------------------------------
 
 test("bridge-service lists project sessions without ReferenceError (#1936)", async (t) => {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-session-list-"))
+  const root = mkdtempSync(join(tmpdir(), "gwd-web-session-list-"))
   const projectCwd = join(root, "project")
   const sessionsDir = join(root, "sessions")
   mkdirSync(projectCwd, { recursive: true })

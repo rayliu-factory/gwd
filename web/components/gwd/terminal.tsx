@@ -8,9 +8,9 @@ import {
   getOnboardingPresentation,
   getSessionLabelFromBridge,
   getStatusPresentation,
-  useGSDWorkspaceActions,
-  useGSDWorkspaceState,
-} from "@/lib/gsd-workspace-store"
+  useGWDWorkspaceActions,
+  useGWDWorkspaceState,
+} from "@/lib/gwd-workspace-store"
 
 interface TerminalProps {
   className?: string
@@ -21,14 +21,14 @@ type WidgetPlacement = "aboveEditor" | "belowEditor"
 
 const MAX_VISIBLE_WIDGET_LINES = 6
 
-function getInputMode(state: ReturnType<typeof useGSDWorkspaceState>): InputMode {
+function getInputMode(state: ReturnType<typeof useGWDWorkspaceState>): InputMode {
   const session = state.boot?.bridge.sessionState
   if (!session) return "prompt"
   if (session.isStreaming) return "follow_up"
   return "prompt"
 }
 
-function inputModePlaceholder(mode: InputMode, state: ReturnType<typeof useGSDWorkspaceState>): string {
+function inputModePlaceholder(mode: InputMode, state: ReturnType<typeof useGWDWorkspaceState>): string {
   if (state.bootStatus === "loading") return "Loading workspace…"
   if (state.bootStatus === "error") return "Workspace boot failed — check the visible error state"
   if (state.commandInFlight) return `Sending ${state.commandInFlight}…`
@@ -126,8 +126,8 @@ function TerminalWidgetBand({
 }
 
 export function Terminal({ className }: TerminalProps) {
-  const workspace = useGSDWorkspaceState()
-  const { submitInput, sendAbort, sendSteer, consumeEditorTextBuffer } = useGSDWorkspaceActions()
+  const workspace = useGWDWorkspaceState()
+  const { submitInput, sendAbort, sendSteer, consumeEditorTextBuffer } = useGWDWorkspaceActions()
   const [input, setInput] = useState("")
   const [steerMode, setSteerMode] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)

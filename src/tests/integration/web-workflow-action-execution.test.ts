@@ -4,7 +4,7 @@ import assert from "node:assert/strict"
 const {
   derivePendingWorkflowCommandLabel,
   executeWorkflowActionInPowerMode,
-  navigateToGSDView,
+  navigateToGWDView,
 } = await import("../../../web/lib/workflow-action-execution.ts")
 
 test("derivePendingWorkflowCommandLabel prefers the latest input line while a command is in flight", () => {
@@ -29,12 +29,12 @@ test("derivePendingWorkflowCommandLabel falls back to the command type when no i
   assert.equal(label, "/abort")
 })
 
-test("navigateToGSDView dispatches the shared browser navigation event", (t) => {
+test("navigateToGWDView dispatches the shared browser navigation event", (t) => {
   const originalWindow = (globalThis as { window?: EventTarget }).window
   const fakeWindow = new EventTarget()
   const seen: string[] = []
 
-  fakeWindow.addEventListener("gsd:navigate-view", (event: Event) => {
+  fakeWindow.addEventListener("gwd:navigate-view", (event: Event) => {
     seen.push((event as CustomEvent<{ view: string }>).detail.view)
   })
 
@@ -42,7 +42,7 @@ test("navigateToGSDView dispatches the shared browser navigation event", (t) => 
 
   t.after(() => { ;(globalThis as { window?: EventTarget }).window = originalWindow });
 
-  navigateToGSDView("power")
+  navigateToGWDView("power")
 
   assert.deepEqual(seen, ["power"])
 })
@@ -54,7 +54,7 @@ test("executeWorkflowActionInPowerMode calls dispatch and navigates to the appro
   const seenViews: string[] = []
   let dispatchCalled = false
 
-  fakeWindow.addEventListener("gsd:navigate-view", (event: Event) => {
+  fakeWindow.addEventListener("gwd:navigate-view", (event: Event) => {
     seenViews.push((event as CustomEvent<{ view: string }>).detail.view)
   })
 

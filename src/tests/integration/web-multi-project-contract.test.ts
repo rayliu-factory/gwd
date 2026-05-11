@@ -52,10 +52,10 @@ function attachJsonLineReader(stream: PassThrough, onLine: (line: string) => voi
 }
 
 function makeWorkspaceFixture(label: string): { projectCwd: string; sessionsDir: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), `gsd-multi-project-${label}-`));
+  const root = mkdtempSync(join(tmpdir(), `gwd-multi-project-${label}-`));
   const projectCwd = join(root, "project");
   const sessionsDir = join(root, "sessions");
-  const milestoneDir = join(projectCwd, ".gsd", "milestones", "M001");
+  const milestoneDir = join(projectCwd, ".gwd", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
 
@@ -112,20 +112,20 @@ function fakeWorkspaceIndex() {
       {
         id: "M001",
         title: "Demo Milestone",
-        roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+        roadmapPath: ".gwd/milestones/M001/M001-ROADMAP.md",
         slices: [
           {
             id: "S01",
             title: "Demo Slice",
             done: false,
-            planPath: ".gsd/milestones/M001/slices/S01/S01-PLAN.md",
-            tasksDir: ".gsd/milestones/M001/slices/S01/tasks",
+            planPath: ".gwd/milestones/M001/slices/S01/S01-PLAN.md",
+            tasksDir: ".gwd/milestones/M001/slices/S01/tasks",
             tasks: [
               {
                 id: "T01",
                 title: "Wire boot",
                 done: false,
-                planPath: ".gsd/milestones/M001/slices/S01/tasks/T01-PLAN.md",
+                planPath: ".gwd/milestones/M001/slices/S01/tasks/T01-PLAN.md",
               },
             ],
           },

@@ -1,5 +1,5 @@
 /**
- * GSD2 Web auth token behavior tests.
+ * GWD2 Web auth token behavior tests.
  */
 
 import test from 'node:test'
@@ -47,7 +47,7 @@ function installBrowserState(options: {
   throwOnSet?: boolean
 } = {}): BrowserState {
   const storage = new Map<string, string>()
-  if (options.storedToken) storage.set('gsd-auth-token', options.storedToken)
+  if (options.storedToken) storage.set('gwd-auth-token', options.storedToken)
 
   const replaceCalls: string[] = []
   const storageListeners: Array<(event: { key: string; newValue: string | null }) => void> = []
@@ -112,7 +112,7 @@ test('getAuthToken extracts, persists, caches, and clears fragment token', async
     const auth = await importAuth('fragment-token')
 
     assert.equal(auth.getAuthToken(), 'abc123DEF456')
-    assert.equal(browser.storage.get('gsd-auth-token'), 'abc123DEF456')
+    assert.equal(browser.storage.get('gwd-auth-token'), 'abc123DEF456')
     assert.deepEqual(browser.replaceCalls, ['/dashboard?view=dashboard'])
 
     ;(globalThis as unknown as { window: FakeWindow }).window.location.hash = ''
@@ -161,7 +161,7 @@ test('storage events update auth headers and URL token parameters', async () => 
     assert.equal(auth.getAuthToken(), null)
     assert.equal(browser.storageListeners.length, 1)
 
-    browser.storageListeners[0]({ key: 'gsd-auth-token', newValue: 'cafe42' })
+    browser.storageListeners[0]({ key: 'gwd-auth-token', newValue: 'cafe42' })
 
     assert.deepEqual(auth.authHeaders({ Accept: 'application/json' }), {
       Accept: 'application/json',

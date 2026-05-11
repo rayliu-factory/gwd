@@ -79,7 +79,7 @@ export async function POST(request: Request): Promise<Response> {
   // Generate unique filename and write to temp dir
   const ext = MIME_TO_EXT[file.type] ?? "bin";
   const hex = randomBytes(4).toString("hex");
-  const filename = `gsd-upload-${Date.now()}-${hex}.${ext}`;
+  const filename = `gwd-upload-${Date.now()}-${hex}.${ext}`;
   const filePath = join(tmpdir(), filename);
 
   try {

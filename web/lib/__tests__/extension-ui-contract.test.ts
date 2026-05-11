@@ -3,7 +3,7 @@
 
 import test from "node:test"
 import assert from "node:assert/strict"
-import type { ExtensionUiRequestEvent, PendingUiRequest } from "../gsd-workspace-store.tsx"
+import type { ExtensionUiRequestEvent, PendingUiRequest } from "../gwd-workspace-store.tsx"
 
 test("web pending UI request accepts canonical secure input payloads", () => {
   const request = {

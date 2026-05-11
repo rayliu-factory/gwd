@@ -13,15 +13,15 @@ import {
   getModelLabel,
   getStatusPresentation,
   getVisibleWorkspaceError,
-  useGSDWorkspaceState,
-} from "@/lib/gsd-workspace-store"
+  useGWDWorkspaceState,
+} from "@/lib/gwd-workspace-store"
 import {
   formatCost as formatProjectCost,
   formatDuration as formatProjectDuration,
   formatTokenCount,
   type ProjectTotals,
 } from "@/lib/visualizer-types"
-import { ScopeBadgeInline } from "@/components/gsd/scope-badge"
+import { ScopeBadgeInline } from "@/components/gwd/scope-badge"
 import { authFetch } from "@/lib/auth"
 
 function toneClass(tone: ReturnType<typeof getStatusPresentation>["tone"]): string {
@@ -38,7 +38,7 @@ function toneClass(tone: ReturnType<typeof getStatusPresentation>["tone"]): stri
 }
 
 export function StatusBar() {
-  const workspace = useGSDWorkspaceState()
+  const workspace = useGWDWorkspaceState()
   const status = getStatusPresentation(workspace)
   const liveWorkspace = getLiveWorkspaceIndex(workspace)
   const auto = getLiveAutoDashboard(workspace)

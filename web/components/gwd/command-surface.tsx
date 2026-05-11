@@ -77,9 +77,9 @@ import {
   getModelLabel,
   getSessionLabelFromBridge,
   shortenPath,
-  useGSDWorkspaceActions,
-  useGSDWorkspaceState,
-} from "@/lib/gsd-workspace-store"
+  useGWDWorkspaceActions,
+  useGWDWorkspaceState,
+} from "@/lib/gwd-workspace-store"
 
 // ─── Section metadata ────────────────────────────────────────────────
 
@@ -318,7 +318,7 @@ function SegmentedControl<T extends string>({
 // ═════════════════════════════════════════════════════════════════════
 
 export function CommandSurface() {
-  const workspace = useGSDWorkspaceState()
+  const workspace = useGWDWorkspaceState()
   const {
     closeCommandSurface,
     openCommandSurface,
@@ -361,7 +361,7 @@ export function CommandSurface() {
     loadUndoInfo,
     loadCleanupData,
     loadSteerData,
-  } = useGSDWorkspaceActions()
+  } = useGWDWorkspaceActions()
 
   const { commandSurface } = workspace
   const onboarding = workspace.boot?.onboarding ?? null
@@ -417,43 +417,43 @@ export function CommandSurface() {
   const remainingCommands = commandSurface.remainingCommands
   useEffect(() => {
     if (!commandSurface.open) return
-    if (commandSurface.section === "gsd-forensics" && diagnostics.forensics.phase === "idle") {
+    if (commandSurface.section === "gwd-forensics" && diagnostics.forensics.phase === "idle") {
       void loadForensicsDiagnostics()
-    } else if (commandSurface.section === "gsd-doctor" && diagnostics.doctor.phase === "idle") {
+    } else if (commandSurface.section === "gwd-doctor" && diagnostics.doctor.phase === "idle") {
       void loadDoctorDiagnostics()
-    } else if (commandSurface.section === "gsd-skill-health" && diagnostics.skillHealth.phase === "idle") {
+    } else if (commandSurface.section === "gwd-skill-health" && diagnostics.skillHealth.phase === "idle") {
       void loadSkillHealthDiagnostics()
     } else if (
-      commandSurface.section === "gsd-knowledge" &&
+      commandSurface.section === "gwd-knowledge" &&
       knowledgeCaptures.knowledge.phase === "idle"
     ) {
       void loadKnowledgeData()
       void loadCapturesData()
     } else if (
-      (commandSurface.section === "gsd-capture" || commandSurface.section === "gsd-triage") &&
+      (commandSurface.section === "gwd-capture" || commandSurface.section === "gwd-triage") &&
       knowledgeCaptures.captures.phase === "idle"
     ) {
       void loadCapturesData()
       void loadKnowledgeData()
     } else if (
-      (commandSurface.section === "gsd-prefs" ||
-       commandSurface.section === "gsd-mode" ||
-       commandSurface.section === "gsd-config" ||
+      (commandSurface.section === "gwd-prefs" ||
+       commandSurface.section === "gwd-mode" ||
+       commandSurface.section === "gwd-config" ||
        commandSurface.section === "experimental") &&
       settingsData.phase === "idle"
     ) {
       void loadSettingsData()
-    } else if (commandSurface.section === "gsd-history" && remainingCommands.history.phase === "idle") {
+    } else if (commandSurface.section === "gwd-history" && remainingCommands.history.phase === "idle") {
       void loadHistoryData()
-    } else if (commandSurface.section === "gsd-inspect" && remainingCommands.inspect.phase === "idle") {
+    } else if (commandSurface.section === "gwd-inspect" && remainingCommands.inspect.phase === "idle") {
       void loadInspectData()
-    } else if (commandSurface.section === "gsd-hooks" && remainingCommands.hooks.phase === "idle") {
+    } else if (commandSurface.section === "gwd-hooks" && remainingCommands.hooks.phase === "idle") {
       void loadHooksData()
-    } else if (commandSurface.section === "gsd-undo" && remainingCommands.undo.phase === "idle") {
+    } else if (commandSurface.section === "gwd-undo" && remainingCommands.undo.phase === "idle") {
       void loadUndoInfo()
-    } else if (commandSurface.section === "gsd-cleanup" && remainingCommands.cleanup.phase === "idle") {
+    } else if (commandSurface.section === "gwd-cleanup" && remainingCommands.cleanup.phase === "idle") {
       void loadCleanupData()
-    } else if (commandSurface.section === "gsd-steer" && remainingCommands.steer.phase === "idle") {
+    } else if (commandSurface.section === "gwd-steer" && remainingCommands.steer.phase === "idle") {
       void loadSteerData()
     }
   }, [
@@ -2048,7 +2048,7 @@ export function CommandSurface() {
 
       <div className="rounded-lg border border-border/50 bg-card/50 px-3 py-2.5 text-xs text-muted-foreground">
         This tab is only visible when running via{" "}
-        <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">npm run gsd:web</code>.
+        <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">npm run gwd:web</code>.
         Overrides reset on page refresh.
       </div>
     </div>
@@ -2130,13 +2130,13 @@ export function CommandSurface() {
       case "compact": return renderCompactSection()
       case "workspace": return <DevRootSettingsSection />
       case "integrations": return <RemoteQuestionsPanel />
-      case "gsd-forensics": return <ForensicsPanel />
-      case "gsd-doctor": return <DoctorPanel />
-      case "gsd-skill-health": return <SkillHealthPanel />
-      case "gsd-knowledge": return <KnowledgeCapturesPanel initialTab="knowledge" />
-      case "gsd-capture": return <KnowledgeCapturesPanel initialTab="captures" />
-      case "gsd-triage": return <KnowledgeCapturesPanel initialTab="captures" />
-      case "gsd-prefs": return (
+      case "gwd-forensics": return <ForensicsPanel />
+      case "gwd-doctor": return <DoctorPanel />
+      case "gwd-skill-health": return <SkillHealthPanel />
+      case "gwd-knowledge": return <KnowledgeCapturesPanel initialTab="knowledge" />
+      case "gwd-capture": return <KnowledgeCapturesPanel initialTab="captures" />
+      case "gwd-triage": return <KnowledgeCapturesPanel initialTab="captures" />
+      case "gwd-prefs": return (
         <div className="space-y-6">
           <DevRootSettingsSection />
           <PrefsPanel />
@@ -2147,23 +2147,23 @@ export function CommandSurface() {
           <ExperimentalPanel />
         </div>
       )
-      case "gsd-mode": return <ModelRoutingPanel />
-      case "gsd-config": return <BudgetPanel />
-      case "gsd-quick": return <QuickPanel />
-      case "gsd-history": return <HistoryPanel />
-      case "gsd-undo": return <UndoPanel />
-      case "gsd-steer": return <SteerPanel />
-      case "gsd-hooks": return <HooksPanel />
-      case "gsd-inspect": return <InspectPanel />
-      case "gsd-export": return <ExportPanel />
-      case "gsd-cleanup": return <CleanupPanel />
-      case "gsd-queue": return <QueuePanel />
-      case "gsd-status": return <StatusPanel />
+      case "gwd-mode": return <ModelRoutingPanel />
+      case "gwd-config": return <BudgetPanel />
+      case "gwd-quick": return <QuickPanel />
+      case "gwd-history": return <HistoryPanel />
+      case "gwd-undo": return <UndoPanel />
+      case "gwd-steer": return <SteerPanel />
+      case "gwd-hooks": return <HooksPanel />
+      case "gwd-inspect": return <InspectPanel />
+      case "gwd-export": return <ExportPanel />
+      case "gwd-cleanup": return <CleanupPanel />
+      case "gwd-queue": return <QueuePanel />
+      case "gwd-status": return <StatusPanel />
       default:
         // Safety net for any unknown GWD surface
-        if (commandSurface.section?.startsWith("gsd-")) {
+        if (commandSurface.section?.startsWith("gwd-")) {
           return (
-            <div className="p-4 text-sm text-muted-foreground" data-testid={`gsd-surface-${commandSurface.section}`}>
+            <div className="p-4 text-sm text-muted-foreground" data-testid={`gwd-surface-${commandSurface.section}`}>
               <p className="font-medium text-foreground">/gwd {commandSurface.section.slice(4)}</p>
               <p className="mt-1">Unknown GWD surface.</p>
             </div>

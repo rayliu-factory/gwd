@@ -228,7 +228,7 @@ const OPTIONAL_SECTION_CATALOG: OptionalSectionCatalogEntry[] = [
 
 /**
  * ExternalCli providers authenticate through a local CLI tool rather than
- * storing credentials in GSD. They are always treated as "configured" by the
+ * storing credentials in GWD. They are always treated as "configured" by the
  * onboarding service — if the binary is missing, inference will fail at
  * runtime (the correct place to surface that error).
  *
@@ -307,7 +307,7 @@ function resolveCredentialSource(
   isExternalCliProviderFn: (id: string) => boolean,
 ): OnboardingCredentialSource | null {
   // ExternalCli providers authenticate through a local CLI — no credentials
-  // are stored in GSD. Treat them as always configured.
+  // are stored in GWD. Treat them as always configured.
   if (isExternalCliProviderFn(providerId)) {
     return "external_cli";
   }
@@ -470,7 +470,7 @@ async function defaultValidateApiKey(
     case "openrouter":
       return await validateBearerRequest(fetchImpl, providerId, "https://openrouter.ai/api/v1/models", apiKey, {
         "HTTP-Referer": "https://localhost",
-        "X-Title": "GSD onboarding",
+        "X-Title": "GWD onboarding",
       });
     case "mistral":
       return await validateBearerRequest(fetchImpl, providerId, "https://api.mistral.ai/v1/models", apiKey);

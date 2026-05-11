@@ -11,7 +11,7 @@ import {
   Folder,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { ProjectDetection } from "@/lib/gsd-workspace-store"
+import type { ProjectDetection } from "@/lib/gwd-workspace-store"
 
 // ─── Variant Config ─────────────────────────────────────────────────────────
 
@@ -48,7 +48,7 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
       return {
         icon: <ArrowUpCircle className="h-8 w-8 text-foreground" strokeWidth={1.5} />,
         headline: "GWD v1 project found",
-        body: "This project has a .planning/ folder from an earlier GWD version. Migration converts your existing planning data into the new .gsd/ format.",
+        body: "This project has a .planning/ folder from an earlier GWD version. Migration converts your existing planning data into the new .gwd/ format.",
         detail: "Your original files will be preserved — migration creates the new structure alongside them.",
         primaryLabel: "Migrate to v2",
         primaryCommand: "/gwd migrate",
@@ -68,7 +68,7 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
         primaryCommand: "/gwd",
       }
 
-    // active-gsd and empty-gsd shouldn't reach here, but handle gracefully
+    // active-gwd and empty-gwd shouldn't reach here, but handle gracefully
     default:
       return {
         icon: <Folder className="h-8 w-8 text-foreground" strokeWidth={1.5} />,

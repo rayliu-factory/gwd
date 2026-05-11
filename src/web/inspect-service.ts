@@ -5,15 +5,15 @@ import { resolveBridgeRuntimeConfig } from "./bridge-service.ts"
 import type { InspectData } from "../../web/lib/remaining-command-types.ts"
 
 /**
- * Collects project inspection data by reading gsd-db.json directly.
- * No child process needed — gsd-db.json is plain JSON with no .js imports.
+ * Collects project inspection data by reading gwd-db.json directly.
+ * No child process needed — gwd-db.json is plain JSON with no .js imports.
  */
 export async function collectInspectData(projectCwdOverride?: string): Promise<InspectData> {
   const config = resolveBridgeRuntimeConfig(undefined, projectCwdOverride)
   const { projectCwd } = config
 
   const gwdDir = join(projectCwd, ".gwd")
-  const dbPath = join(gwdDir, "gsd-db.json")
+  const dbPath = join(gwdDir, "gwd-db.json")
 
   let schemaVersion: number | null = null
   let decisions: Array<{ id: string; decision: string; choice: string; [k: string]: unknown }> = []

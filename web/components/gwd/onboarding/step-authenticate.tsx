@@ -25,7 +25,7 @@ import type {
   WorkspaceOnboardingRequestState,
   WorkspaceOnboardingState,
   WorkspaceOnboardingValidationResult,
-} from "@/lib/gsd-workspace-store"
+} from "@/lib/gwd-workspace-store"
 import { cn } from "@/lib/utils"
 
 // ─── Error parsing ──────────────────────────────────────────────────

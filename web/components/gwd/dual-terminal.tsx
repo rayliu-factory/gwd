@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from "react"
 import { GripVertical, Loader2 } from "lucide-react"
-import { MainSessionTerminal } from "@/components/gsd/main-session-terminal"
-import { ShellTerminal } from "@/components/gsd/shell-terminal"
+import { MainSessionTerminal } from "@/components/gwd/main-session-terminal"
+import { ShellTerminal } from "@/components/gwd/shell-terminal"
 import { useTerminalFontSize } from "@/lib/use-terminal-font-size"
-import { useGSDWorkspaceState } from "@/lib/gsd-workspace-store"
+import { useGWDWorkspaceState } from "@/lib/gwd-workspace-store"
 import { derivePendingWorkflowCommandLabel } from "@/lib/workflow-action-execution"
 
 export function DualTerminal() {
@@ -14,7 +14,7 @@ export function DualTerminal() {
   const rootRef = useRef<HTMLDivElement>(null)
   const isDragging = useRef(false)
   const [terminalFontSize] = useTerminalFontSize()
-  const workspace = useGSDWorkspaceState()
+  const workspace = useGWDWorkspaceState()
   const projectCwd = workspace.boot?.project.cwd
   const pendingCommandLabel = derivePendingWorkflowCommandLabel({
     commandInFlight: workspace.commandInFlight,
@@ -106,10 +106,10 @@ export function DualTerminal() {
         <div style={{ width: `${100 - splitPosition}%` }} className="h-full min-w-0 overflow-hidden bg-terminal">
           <ShellTerminal
             className="h-full"
-            command="gsd"
-            sessionPrefix="gsd-interactive"
+            command="gwd"
+            sessionPrefix="gwd-interactive"
             fontSize={terminalFontSize}
-            hideInitialGsdHeader
+            hideInitialGwdHeader
             projectCwd={projectCwd}
           />
         </div>

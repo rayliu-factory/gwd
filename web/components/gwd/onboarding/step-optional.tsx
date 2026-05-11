@@ -6,7 +6,7 @@ import { ArrowRight, Check, CircleDashed } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import type { WorkspaceOnboardingOptionalSectionState } from "@/lib/gsd-workspace-store"
+import type { WorkspaceOnboardingOptionalSectionState } from "@/lib/gwd-workspace-store"
 import { cn } from "@/lib/utils"
 
 interface StepOptionalProps {

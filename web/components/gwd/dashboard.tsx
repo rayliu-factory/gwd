@@ -15,8 +15,8 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
-  useGSDWorkspaceState,
-  useGSDWorkspaceActions,
+  useGWDWorkspaceState,
+  useGWDWorkspaceActions,
   buildPromptCommand,
   buildProjectUrl,
   formatDuration,
@@ -29,7 +29,7 @@ import {
   getLiveWorkspaceIndex,
   type WorkspaceTerminalLine,
   type TerminalLineType,
-} from "@/lib/gsd-workspace-store"
+} from "@/lib/gwd-workspace-store"
 import { getTaskStatus, type ItemStatus } from "@/lib/workspace-status"
 import { deriveWorkflowAction } from "@/lib/workflow-actions"
 import { executeWorkflowActionInPowerMode } from "@/lib/workflow-action-execution"
@@ -38,9 +38,9 @@ import { Skeleton } from "@/components/ui/skeleton"
 import {
   CurrentSliceCardSkeleton,
   ActivityCardSkeleton,
-} from "@/components/gsd/loading-skeletons"
-import { ScopeBadge } from "@/components/gsd/scope-badge"
-import { ProjectWelcome } from "@/components/gsd/project-welcome"
+} from "@/components/gwd/loading-skeletons"
+import { ScopeBadge } from "@/components/gwd/scope-badge"
+import { ProjectWelcome } from "@/components/gwd/project-welcome"
 import { authFetch } from "@/lib/auth"
 import { type ProjectTotals } from "@/lib/visualizer-types"
 
@@ -115,8 +115,8 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onSwitchView, onExpandTerminal }: DashboardProps = {}) {
-  const state = useGSDWorkspaceState()
-  const { sendCommand } = useGSDWorkspaceActions()
+  const state = useGWDWorkspaceState()
+  const { sendCommand } = useGWDWorkspaceActions()
   const boot = state.boot
   const workspace = getLiveWorkspaceIndex(state)
   const auto = getLiveAutoDashboard(state)
@@ -201,8 +201,8 @@ export function Dashboard({ onSwitchView, onExpandTerminal }: DashboardProps = {
   const showWelcome =
     !isConnecting &&
     detection &&
-    detection.kind !== "active-gsd" &&
-    detection.kind !== "empty-gsd"
+    detection.kind !== "active-gwd" &&
+    detection.kind !== "empty-gwd"
 
   if (showWelcome) {
     return (

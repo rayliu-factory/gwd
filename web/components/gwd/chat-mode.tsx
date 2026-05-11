@@ -10,14 +10,14 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import { ChatMessage, TuiPrompt } from "@/lib/pty-chat-parser"
 import { PendingImage, processImageFile, generateImageId, MAX_PENDING_IMAGES } from "@/lib/image-utils"
 import {
-  useGSDWorkspaceState,
-  useGSDWorkspaceActions,
+  useGWDWorkspaceState,
+  useGWDWorkspaceActions,
   buildPromptCommand,
   type CompletedToolExecution,
   type ActiveToolExecution,
   type PendingUiRequest,
   type TurnSegment,
-} from "@/lib/gsd-workspace-store"
+} from "@/lib/gwd-workspace-store"
 import { deriveWorkflowAction } from "@/lib/workflow-actions"
 import { useTerminalFontSize } from "@/lib/use-terminal-font-size"
 
@@ -32,7 +32,7 @@ import { useTerminalFontSize } from "@/lib/use-terminal-font-size"
  * Top 3 are shown as standalone buttons; the rest live in the overflow menu.
  * All commands dispatch through the main bridge session.
  */
-interface GSDActionDef {
+interface GWDActionDef {
   label: string
   command: string
   icon: LucideIcon
@@ -42,7 +42,7 @@ interface GSDActionDef {
   disabledDuringAuto?: boolean
 }
 
-const GWD_ACTIONS: GSDActionDef[] = [
+const GWD_ACTIONS: GWDActionDef[] = [
   // ── Top 3 (standalone buttons) ──
   { label: "Discuss",   command: "/gwd discuss",   icon: MessageCircle,     description: "Start guided milestone/slice discussion",                    category: "workflow",    disabledDuringAuto: true },
   { label: "Next",      command: "/gwd next",      icon: Play,              description: "Execute next task, then pause",                              category: "workflow" },
@@ -67,7 +67,7 @@ const GWD_ACTIONS: GSDActionDef[] = [
   { label: "Mode",      command: "/gwd mode",      icon: SlidersHorizontal, description: "Set workflow mode (solo/team)",                               category: "config" },
   { label: "Prefs",     command: "/gwd prefs",     icon: Settings,          description: "Manage preferences (global/project)",                        category: "config" },
   // ── Overflow: Maintenance ──
-  { label: "Doctor",    command: "/gwd doctor",    icon: Stethoscope,       description: "Diagnose and repair .gsd/ state",                            category: "maintenance" },
+  { label: "Doctor",    command: "/gwd doctor",    icon: Stethoscope,       description: "Diagnose and repair .gwd/ state",                            category: "maintenance" },
   { label: "Export",    command: "/gwd export",    icon: FileOutput,        description: "Export milestone/slice results (JSON or Markdown)",           category: "maintenance" },
   { label: "Cleanup",   command: "/gwd cleanup",   icon: Trash2,            description: "Remove merged branches or snapshots",                        category: "maintenance" },
   { label: "Remote",    command: "/gwd remote",    icon: Globe,             description: "Control remote auto-mode (Slack/Discord)",                    category: "maintenance" },
@@ -78,7 +78,7 @@ const TOP_ACTIONS = GWD_ACTIONS.slice(0, 3)
 /** Remaining actions in the overflow menu */
 const OVERFLOW_ACTIONS = GWD_ACTIONS.slice(3)
 
-const CATEGORY_LABELS: Record<GSDActionDef["category"], string> = {
+const CATEGORY_LABELS: Record<GWDActionDef["category"], string> = {
   workflow: "Workflow",
   visibility: "Visibility",
   correction: "Course Correction",
@@ -87,8 +87,8 @@ const CATEGORY_LABELS: Record<GSDActionDef["category"], string> = {
   maintenance: "Maintenance",
 }
 
-function groupByCategory(actions: GSDActionDef[]): Array<{ category: GSDActionDef["category"]; label: string; items: GSDActionDef[] }> {
-  const seen = new Map<GSDActionDef["category"], GSDActionDef[]>()
+function groupByCategory(actions: GWDActionDef[]): Array<{ category: GWDActionDef["category"]; label: string; items: GWDActionDef[] }> {
+  const seen = new Map<GWDActionDef["category"], GWDActionDef[]>()
   for (const a of actions) {
     let group = seen.get(a.category)
     if (!group) {
@@ -109,14 +109,14 @@ function groupByCategory(actions: GSDActionDef[]): Array<{ category: GSDActionDe
  *
  * Observability:
  *   - This component mounts only when activeView === "chat" (no hidden pre-init).
- *   - sessionStorage key "gsd-active-view:<cwd>" equals "chat" when this view is active.
+ *   - sessionStorage key "gwd-active-view:<cwd>" equals "chat" when this view is active.
  *   - Header toolbar: data-testid="chat-mode-action-bar" confirms toolbar rendered.
  *   - Primary button: data-testid="chat-primary-action" reflects current workflowAction label.
  *   - Secondary buttons: data-testid="chat-secondary-action-{command}".
  */
 export function ChatMode({ className }: { className?: string }) {
-  const state = useGSDWorkspaceState()
-  const { sendCommand } = useGSDWorkspaceActions()
+  const state = useGWDWorkspaceState()
+  const { sendCommand } = useGWDWorkspaceActions()
 
   const bridge = state.boot?.bridge ?? null
 
@@ -137,8 +137,8 @@ export function ChatMode({ className }: { className?: string }) {
 
       {/* ── Main chat pane ── */}
       <ChatPane
-        sessionId="gsd-main"
-        command="gsd"
+        sessionId="gwd-main"
+        command="gwd"
         className="flex-1"
         onOpenAction={(action) => handleAction(action.command)}
       />
@@ -165,7 +165,7 @@ interface ChatModeHeaderProps {
  *   - data-testid="chat-secondary-action-{command}" on each secondary button
  */
 function ChatModeHeader({ onPrimaryAction, onSecondaryAction }: ChatModeHeaderProps) {
-  const state = useGSDWorkspaceState()
+  const state = useGWDWorkspaceState()
 
   const boot = state.boot
   const workspace = boot?.workspace ?? null
@@ -1166,9 +1166,9 @@ function ChatInputBar({
 }: {
   onSendInput: (data: string, images?: PendingImage[]) => void
   connected: boolean
-  onOpenAction?: (action: GSDActionDef) => void
+  onOpenAction?: (action: GWDActionDef) => void
 }) {
-  const autoActive = useGSDWorkspaceState().boot?.auto?.active ?? false
+  const autoActive = useGWDWorkspaceState().boot?.auto?.active ?? false
   const [value, setValue] = useState("")
   const [overflowOpen, setOverflowOpen] = useState(false)
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([])
@@ -1592,8 +1592,8 @@ function PlaceholderState({
  * first resolves the request — the store deduplicates.
  */
 function InlineUiRequest({ request }: { request: PendingUiRequest }) {
-  const { respondToUiRequest, dismissUiRequest } = useGSDWorkspaceActions()
-  const isSubmitting = useGSDWorkspaceState().commandInFlight === "extension_ui_response"
+  const { respondToUiRequest, dismissUiRequest } = useGWDWorkspaceActions()
+  const isSubmitting = useGWDWorkspaceState().commandInFlight === "extension_ui_response"
 
   const handleSubmit = useCallback((value: Record<string, unknown>) => {
     void respondToUiRequest(request.id, value)
@@ -1875,7 +1875,7 @@ interface ChatPaneProps {
   className?: string
   initialCommand?: string
   onCompletionSignal?: () => void
-  onOpenAction?: (action: GSDActionDef) => void
+  onOpenAction?: (action: GWDActionDef) => void
   activityLabel?: string
   suppressTerminalChrome?: boolean
   suppressInitialEcho?: boolean
@@ -2020,8 +2020,8 @@ function ToolExecutionBlock({ tool }: { tool: CompletedToolExecution }) {
  *   - ChatInputBar shows "Disconnected" badge when bridge is not connected
  */
 export function ChatPane({ className, onOpenAction }: ChatPaneProps) {
-  const state = useGSDWorkspaceState()
-  const { submitInput, sendCommand, pushChatUserMessage } = useGSDWorkspaceActions()
+  const state = useGWDWorkspaceState()
+  const { submitInput, sendCommand, pushChatUserMessage } = useGWDWorkspaceActions()
   const [terminalFontSize] = useTerminalFontSize()
 
   const connected = state.connectionState === "connected"
