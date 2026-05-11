@@ -10,7 +10,7 @@ Full documentation for `~/.gwd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md
 - Prefer explicit skill names or absolute paths.
 - Use absolute paths for personal/local skills when you want zero ambiguity.
 - These preferences guide which skills GWD should load and follow; they do not override higher-priority instructions in the current conversation.
-- For Claude marketplace/plugin import behavior, see `~/.gwd/agent/extensions/gsd/docs/claude-marketplace-import.md`.
+- For Claude marketplace/plugin import behavior, see `~/.gwd/agent/extensions/gwd/docs/claude-marketplace-import.md`.
 
 ---
 
