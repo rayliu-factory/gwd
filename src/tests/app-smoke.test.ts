@@ -61,7 +61,7 @@ test("loader sets all 4 GWD_ env vars and PI_PACKAGE_DIR", async (t) => {
     process.env.GWD_BIN_PATH = process.argv[1];
     const resourcesDir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'resources');
     process.env.GWD_WORKFLOW_PATH = join(resourcesDir, 'GWD-WORKFLOW.md');
-    const exts = ['extensions/gsd/index.ts'].map(r => join(resourcesDir, r));
+    const exts = ['extensions/gwd/index.ts'].map(r => join(resourcesDir, r));
     process.env.GWD_BUNDLED_EXTENSION_PATHS = exts.join(delimiter);
 
     // Print for verification
@@ -410,7 +410,7 @@ test("loadStoredEnvKeys does not overwrite existing env vars", async (t) => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test("deriveState returns pre-planning phase for empty .gsd/ directory", async (t) => {
-  const { deriveState } = await import("../resources/extensions/gsd/state.ts");
+  const { deriveState } = await import("../resources/extensions/gwd/state.ts");
   const tmp = mkdtempSync(join(tmpdir(), "gsd-state-smoke-"));
 
   // Create minimal .gsd/ structure with no milestones
@@ -432,7 +432,7 @@ test("deriveState returns pre-planning phase for empty .gsd/ directory", async (
 });
 
 test("deriveState returns pre-planning phase when no .gsd/ directory exists", async (t) => {
-  const { deriveState } = await import("../resources/extensions/gsd/state.ts");
+  const { deriveState } = await import("../resources/extensions/gwd/state.ts");
   // Use a temp dir with no .gsd/ subdirectory at all
   const tmp = mkdtempSync(join(tmpdir(), "gsd-state-nogsd-"));
 
@@ -446,7 +446,7 @@ test("deriveState returns pre-planning phase when no .gsd/ directory exists", as
 });
 
 test("deriveState shape is structurally complete", async (t) => {
-  const { deriveState } = await import("../resources/extensions/gsd/state.ts");
+  const { deriveState } = await import("../resources/extensions/gwd/state.ts");
   const tmp = mkdtempSync(join(tmpdir(), "gsd-state-shape-"));
   mkdirSync(join(tmp, ".gsd"), { recursive: true });
 
@@ -477,7 +477,7 @@ test("deriveState shape is structurally complete", async (t) => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test("runGSDDoctor completes without throwing on empty .gsd/ directory", async (t) => {
-  const { runGSDDoctor } = await import("../resources/extensions/gsd/doctor.ts");
+  const { runGSDDoctor } = await import("../resources/extensions/gwd/doctor.ts");
   const tmp = mkdtempSync(join(tmpdir(), "gsd-doctor-smoke-"));
   mkdirSync(join(tmp, ".gsd"), { recursive: true });
 
@@ -498,7 +498,7 @@ test("runGSDDoctor completes without throwing on empty .gsd/ directory", async (
 });
 
 test("runGSDDoctor issue objects have required fields", async (t) => {
-  const { runGSDDoctor } = await import("../resources/extensions/gsd/doctor.ts");
+  const { runGSDDoctor } = await import("../resources/extensions/gwd/doctor.ts");
   const tmp = mkdtempSync(join(tmpdir(), "gsd-doctor-fields-"));
   mkdirSync(join(tmp, ".gsd"), { recursive: true });
 
@@ -526,7 +526,7 @@ test("runGSDDoctor issue objects have required fields", async (t) => {
 });
 
 test("runGSDDoctor with fix:false never modifies the filesystem", async (t) => {
-  const { runGSDDoctor } = await import("../resources/extensions/gsd/doctor.ts");
+  const { runGSDDoctor } = await import("../resources/extensions/gwd/doctor.ts");
   const tmp = mkdtempSync(join(tmpdir(), "gsd-doctor-readonly-"));
   const gsdDir = join(tmp, ".gsd");
   mkdirSync(gsdDir, { recursive: true });

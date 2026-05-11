@@ -11,8 +11,8 @@
 
 import { AuthStorage } from '@gwd/pi-coding-agent'
 import { join } from 'path'
-import { resolveSearchProviderFromPreferences } from '../gsd/preferences.js'
-import { gsdHome } from "../gsd/gsd-home.js";
+import { resolveSearchProviderFromPreferences } from '../gwd/preferences.js'
+import { gsdHome } from "../gwd/gwd-home.js";
 
 // Compute authFilePath lazily so GWD_HOME overrides (e.g. in tests) take effect.
 // Imported locally instead of from app-paths.ts because extensions are copied to

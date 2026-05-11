@@ -21,7 +21,7 @@ test("resolveGsdCliEntry prefers the built loader for packaged standalone intera
   const packageRoot = makeFixture([
     "dist/loader.js",
     "src/loader.ts",
-    "src/resources/extensions/gsd/tests/resolve-ts.mjs",
+    "src/resources/extensions/gwd/tests/resolve-ts.mjs",
   ]);
 
   t.after(() => { rmSync(packageRoot, { recursive: true, force: true }); });
@@ -45,7 +45,7 @@ test("resolveGsdCliEntry prefers the source loader for source-dev interactive se
   const packageRoot = makeFixture([
     "dist/loader.js",
     "src/loader.ts",
-    "src/resources/extensions/gsd/tests/resolve-ts.mjs",
+    "src/resources/extensions/gwd/tests/resolve-ts.mjs",
   ]);
 
   t.after(() => { rmSync(packageRoot, { recursive: true, force: true }); });
@@ -62,7 +62,7 @@ test("resolveGsdCliEntry prefers the source loader for source-dev interactive se
     command: "/custom/node",
     args: [
       "--import",
-      pathToFileURL(join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")).href,
+      pathToFileURL(join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")).href,
       "--experimental-strip-types",
       join(packageRoot, "src", "loader.ts"),
     ],

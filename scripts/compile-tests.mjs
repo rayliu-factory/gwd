@@ -346,8 +346,8 @@ async function main() {
   const { rm } = await import('node:fs/promises');
   const testDirsToClean = [
     [join(DIST_TEST_DIR, 'src', 'tests'), join(ROOT, 'src', 'tests')],
-    [join(DIST_TEST_DIR, 'src', 'resources', 'extensions', 'gsd', 'tests'),
-     join(ROOT, 'src', 'resources', 'extensions', 'gsd', 'tests')],
+    [join(DIST_TEST_DIR, 'src', 'resources', 'extensions', 'gwd', 'tests'),
+     join(ROOT, 'src', 'resources', 'extensions', 'gwd', 'tests')],
   ];
   let staleCleaned = 0;
   for (const [distDir, srcDir] of testDirsToClean) {

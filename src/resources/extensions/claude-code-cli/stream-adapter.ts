@@ -27,7 +27,7 @@ import { homedir } from "node:os";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { PartialMessageBuilder, ZERO_USAGE, mapUsage } from "./partial-builder.js";
-import { buildWorkflowMcpServers } from "../gsd/workflow-mcp.js";
+import { buildWorkflowMcpServers } from "../gwd/workflow-mcp.js";
 import { showInterviewRound, type Question, type RoundResult } from "../shared/tui.js";
 import type {
 	SDKAssistantMessage,

@@ -13,7 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_ROOT = resolve(__dirname, "..");
 
 const DEFAULT_PROMPT_DIRS = [
-  "src/resources/extensions/gsd/prompts",
+  "src/resources/extensions/gwd/prompts",
 ];
 
 const DEFAULT_CONTEXT_FILES = [
@@ -343,10 +343,10 @@ export async function collectContractsMetrics(root) {
 export async function collectProcessMetrics(root) {
   const sourceFiles = await collectFiles(join(root, "src", "resources", "extensions"), file => file.endsWith(".ts"));
   const docFiles = [
-    ...await collectFiles(join(root, "src", "resources", "extensions", "gsd", "docs"), file => file.endsWith(".md")),
+    ...await collectFiles(join(root, "src", "resources", "extensions", "gwd", "docs"), file => file.endsWith(".md")),
     ...await collectFiles(join(root, "docs", "dev"), file => file.endsWith(".md")),
   ];
-  const prEvidencePath = normalizePath(join("src", "resources", "extensions", "gsd", "pr-evidence.ts"));
+  const prEvidencePath = normalizePath(join("src", "resources", "extensions", "gwd", "pr-evidence.ts"));
   const consumerFiles = [];
   const shipPathFiles = [];
 

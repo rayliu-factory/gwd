@@ -369,8 +369,8 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
   // suite) get the same diagnostic without a TTY.
   if (options.command === 'doctor') {
     const wantsJson = options.json || options.commandArgs.includes('--json')
-    const { runGSDDoctor } = await import('./resources/extensions/gsd/doctor.js')
-    const { formatDoctorReport, formatDoctorReportJson } = await import('./resources/extensions/gsd/doctor-format.js')
+    const { runGSDDoctor } = await import('./resources/extensions/gwd/doctor.js')
+    const { formatDoctorReport, formatDoctorReportJson } = await import('./resources/extensions/gwd/doctor-format.js')
     let exitCode = 1
     try {
       const report = await runGSDDoctor(process.cwd())

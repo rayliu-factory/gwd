@@ -35,8 +35,8 @@ import {
 	readIsolationMode,
 } from "./isolation.js";
 import { registerWorker, updateWorker } from "./worker-registry.js";
-import { loadEffectiveGSDPreferences } from "../gsd/preferences.js";
-import { emitJournalEvent } from "../gsd/journal.js";
+import { loadEffectiveGSDPreferences } from "../gwd/preferences.js";
+import { emitJournalEvent } from "../gwd/journal.js";
 import { CmuxClient, shellEscape } from "../cmux/index.js";
 
 const MAX_PARALLEL_TASKS = 8;

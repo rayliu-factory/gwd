@@ -10,7 +10,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const devCliPath = fileURLToPath(import.meta.url)
 const root = resolve(__dirname, '..')
 const srcLoaderPath = resolve(root, 'src', 'loader.ts')
-const resolveTsPath = resolve(root, 'src', 'resources', 'extensions', 'gsd', 'tests', 'resolve-ts.mjs')
+const resolveTsPath = resolve(root, 'src', 'resources', 'extensions', 'gwd', 'tests', 'resolve-ts.mjs')
 
 function runDevCli() {
   const child = spawn(

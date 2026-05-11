@@ -11,7 +11,7 @@ const HOOKS_MAX_BUFFER = 512 * 1024
 const HOOKS_MODULE_ENV = "GWD_HOOKS_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 }
 
 /**
@@ -25,7 +25,7 @@ export async function collectHooksData(projectCwdOverride?: string): Promise<Hoo
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/post-unit-hooks.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/post-unit-hooks.ts")
   const hooksModulePath = moduleResolution.modulePath
 
   if (!moduleResolution.useCompiledJs && (!existsSync(resolveTsLoader) || !existsSync(hooksModulePath))) {

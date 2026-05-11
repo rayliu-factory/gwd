@@ -36,7 +36,7 @@ export interface SerializedVisualizerData {
 }
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 }
 
 /**
@@ -50,7 +50,7 @@ export async function collectVisualizerData(projectCwdOverride?: string): Promis
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/visualizer-data.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/visualizer-data.ts")
   const visualizerModulePath = moduleResolution.modulePath
 
   if (!moduleResolution.useCompiledJs && (!existsSync(resolveTsLoader) || !existsSync(visualizerModulePath))) {

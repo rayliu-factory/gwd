@@ -24,7 +24,7 @@ const DEFAULT_TIMEOUT_MS = 30_000
 export interface ModuleSpec {
   /** Environment variable name the child process reads to find this module. */
   envKey: string
-  /** Path relative to packageRoot (e.g. "src/resources/extensions/gsd/doctor.ts"). */
+  /** Path relative to packageRoot (e.g. "src/resources/extensions/gwd/doctor.ts"). */
   relativePath: string
 }
 
@@ -128,7 +128,7 @@ export async function runSubprocess<T>(options: RunSubprocessOptions): Promise<T
 
   const tsLoaderPath =
     options.tsLoaderPath ??
-    join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+    join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 
   return await new Promise<T>((resolveResult, reject) => {
     execFile(

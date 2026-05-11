@@ -24,21 +24,21 @@ import { mkdtempSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-import { runGSDDoctor } from "../resources/extensions/gsd/doctor.ts";
+import { runGSDDoctor } from "../resources/extensions/gwd/doctor.ts";
 import {
   formatDoctorReport,
   formatDoctorReportJson,
-} from "../resources/extensions/gsd/doctor-format.ts";
+} from "../resources/extensions/gwd/doctor-format.ts";
 import {
   openDatabase,
   closeDatabase,
   insertMilestone,
   _getAdapter,
-} from "../resources/extensions/gsd/gsd-db.ts";
-import { registerAutoWorker } from "../resources/extensions/gsd/db/auto-workers.ts";
-import { claimMilestoneLease } from "../resources/extensions/gsd/db/milestone-leases.ts";
-import { recordDispatchClaim } from "../resources/extensions/gsd/db/unit-dispatches.ts";
-import { normalizeRealPath } from "../resources/extensions/gsd/paths.ts";
+} from "../resources/extensions/gwd/gwd-db.ts";
+import { registerAutoWorker } from "../resources/extensions/gwd/db/auto-workers.ts";
+import { claimMilestoneLease } from "../resources/extensions/gwd/db/milestone-leases.ts";
+import { recordDispatchClaim } from "../resources/extensions/gwd/db/unit-dispatches.ts";
+import { normalizeRealPath } from "../resources/extensions/gwd/paths.ts";
 
 function makeStaleLockFixture(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-headless-doctor-"));

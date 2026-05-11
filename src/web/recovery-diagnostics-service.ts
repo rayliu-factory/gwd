@@ -357,7 +357,7 @@ function resolveSummary(options: {
 }
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 }
 
 async function collectRecoveryDiagnosticsChildPayload(
@@ -371,8 +371,8 @@ async function collectRecoveryDiagnosticsChildPayload(
   const env = options.env ?? process.env
   const checkExists = options.existsSync ?? existsSync
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const doctorResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/doctor.ts", checkExists)
-  const forensicsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/session-forensics.ts", checkExists)
+  const doctorResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/doctor.ts", checkExists)
+  const forensicsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/session-forensics.ts", checkExists)
   const doctorModulePath = doctorResolution.modulePath
   const sessionForensicsModulePath = forensicsResolution.modulePath
 

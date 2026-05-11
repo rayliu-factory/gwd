@@ -28,7 +28,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { buildHttpTransportOpts } from "./auth.js";
 import type { McpHttpAuthConfig } from "./auth.js";
-import { gsdHome } from "../gsd/gsd-home.js";
+import { gsdHome } from "../gwd/gwd-home.js";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

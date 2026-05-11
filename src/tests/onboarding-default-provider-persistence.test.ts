@@ -5,7 +5,7 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 
-const resolveTsPath = join(process.cwd(), "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+const resolveTsPath = join(process.cwd(), "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 
 function runOnboardingFlow(gsdHome: string, answers: string[]): void {
   execFileSync(

@@ -12,7 +12,7 @@ const UNDO_MODULE_ENV = "GWD_UNDO_MODULE"
 const PATHS_MODULE_ENV = "GWD_PATHS_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 }
 
 /**
@@ -121,8 +121,8 @@ export async function executeUndo(projectCwdOverride?: string): Promise<UndoResu
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const undoResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/undo.ts")
-  const pathsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/paths.ts")
+  const undoResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/undo.ts")
+  const pathsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/paths.ts")
   const undoModulePath = undoResolution.modulePath
   const pathsModulePath = pathsResolution.modulePath
 

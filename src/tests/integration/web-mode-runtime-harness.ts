@@ -6,7 +6,7 @@ import { join } from "node:path"
 import type { Page, Request, Response } from "playwright"
 
 const projectRoot = process.cwd()
-const resolveTsPath = join(projectRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+const resolveTsPath = join(projectRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 const loaderPath = join(projectRoot, "src", "loader.ts")
 const builtAgentEntryPath = join(projectRoot, "packages", "pi-coding-agent", "dist", "index.js")
 const packagedWebHostPath = join(projectRoot, "dist", "web", "standalone", "server.js")

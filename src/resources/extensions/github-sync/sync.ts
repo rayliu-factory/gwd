@@ -10,15 +10,15 @@
 
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { loadFile, parseSummary } from "../gsd/files.js";
-import { parseRoadmap, parsePlan } from "../gsd/parsers-legacy.js";
+import { loadFile, parseSummary } from "../gwd/files.js";
+import { parseRoadmap, parsePlan } from "../gwd/parsers-legacy.js";
 import {
   resolveMilestoneFile,
   resolveSliceFile,
   resolveTaskFile,
-} from "../gsd/paths.js";
-import { debugLog } from "../gsd/debug-logger.js";
-import { loadEffectiveGSDPreferences } from "../gsd/preferences.js";
+} from "../gwd/paths.js";
+import { debugLog } from "../gwd/debug-logger.js";
+import { loadEffectiveGSDPreferences } from "../gwd/preferences.js";
 
 import type { GitHubSyncConfig, SyncMapping } from "./types.js";
 import {

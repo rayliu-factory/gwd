@@ -5,7 +5,7 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 
-const resolveTsPath = join(process.cwd(), "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+const resolveTsPath = join(process.cwd(), "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 
 test("onboarding claude-cli path persists defaultProvider to settings.json", (t) => {
   const gsdHome = mkdtempSync(join(tmpdir(), "gsd-onboarding-claude-cli-"))
