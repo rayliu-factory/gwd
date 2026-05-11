@@ -17,11 +17,11 @@ import { formatRecommendedProcessPaths } from "./process-task-path.js";
 const __extensionDir = resolveGsdExtensionDir();
 const registryPath = join(__extensionDir, "workflow-templates", "registry.json");
 
-/** Resolve the GWD extension dir with fallback to ~/.gwd/agent/extensions/gsd/. */
+/** Resolve the GWD extension dir with fallback to ~/.gwd/agent/extensions/gwd/. */
 function resolveGsdExtensionDir(): string {
   const moduleDir = dirname(fileURLToPath(import.meta.url));
   if (existsSync(join(moduleDir, "workflow-templates"))) return moduleDir;
-  const agentGsdDir = join(gsdHome(), "agent", "extensions", "gsd");
+  const agentGsdDir = join(gsdHome(), "agent", "extensions", "gwd");
   if (existsSync(join(agentGsdDir, "workflow-templates"))) return agentGsdDir;
   return moduleDir;
 }

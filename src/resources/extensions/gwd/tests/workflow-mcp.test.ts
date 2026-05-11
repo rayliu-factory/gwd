@@ -229,11 +229,11 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
   assert.ok(launch, "expected a workflow MCP launch config");
   assert.match(
     launch.env?.GWD_WORKFLOW_EXECUTORS_MODULE ?? "",
-    /(dist[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]tools[\/\\]workflow-tool-executors\.js|src[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]tools[\/\\]workflow-tool-executors\.(js|ts))$/,
+    /(dist[\/\\]resources[\/\\]extensions[\/\\]gwd[\/\\]tools[\/\\]workflow-tool-executors\.js|src[\/\\]resources[\/\\]extensions[\/\\]gwd[\/\\]tools[\/\\]workflow-tool-executors\.(js|ts))$/,
   );
   assert.match(
     launch.env?.GWD_WORKFLOW_WRITE_GATE_MODULE ?? "",
-    /(dist[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]bootstrap[\/\\]write-gate\.js|src[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]bootstrap[\/\\]write-gate\.(js|ts))$/,
+    /(dist[\/\\]resources[\/\\]extensions[\/\\]gwd[\/\\]bootstrap[\/\\]write-gate\.js|src[\/\\]resources[\/\\]extensions[\/\\]gwd[\/\\]bootstrap[\/\\]write-gate\.(js|ts))$/,
   );
   if ((launch.env?.GWD_WORKFLOW_EXECUTORS_MODULE ?? "").endsWith(".ts")) {
     assert.match(launch.env?.NODE_OPTIONS ?? "", /--experimental-strip-types/);

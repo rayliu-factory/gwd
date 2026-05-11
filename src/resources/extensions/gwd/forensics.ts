@@ -169,7 +169,7 @@ async function writeForensicsDedupPref(ctx: ExtensionCommandContext, enabled: bo
 
   const frontmatter = serializePreferencesToFrontmatter(prefs);
   const raw = existsSync(prefsPath) ? readFileSync(prefsPath, "utf-8") : "";
-  let body = "\n# GWD Skill Preferences\n\nSee `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# GWD Skill Preferences\n\nSee `~/.gwd/agent/extensions/gwd/docs/preferences-reference.md` for full field documentation and examples.\n";
   const start = raw.startsWith("---\n") ? 4 : raw.startsWith("---\r\n") ? 5 : -1;
   if (start !== -1) {
     const closingIdx = raw.indexOf("\n---", start);
@@ -241,11 +241,11 @@ export async function handleForensics(
   const report = await buildForensicReport(basePath);
   const savedPath = saveForensicReport(basePath, report, problemDescription);
 
-  // Derive GWD source dir for prompt — fall back to ~/.gwd/agent/extensions/gsd/
+  // Derive GWD source dir for prompt — fall back to ~/.gwd/agent/extensions/gwd/
   // when import.meta.url resolves to the npm-global install path (Windows).
   let gsdSourceDir = dirname(fileURLToPath(import.meta.url));
   if (!existsSync(join(gsdSourceDir, "prompts"))) {
-    const fallback = join(gsdHome(), "agent", "extensions", "gsd");
+    const fallback = join(gsdHome(), "agent", "extensions", "gwd");
     if (existsSync(join(fallback, "prompts"))) gsdSourceDir = fallback;
   }
 
@@ -322,7 +322,7 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
   }
 
   // 8. GWD version — use GWD_VERSION env var set by the loader at startup.
-  // Extensions run from ~/.gwd/agent/extensions/gsd/ at runtime, so path-traversal
+  // Extensions run from ~/.gwd/agent/extensions/gwd/ at runtime, so path-traversal
   // from import.meta.url would resolve to ~/package.json (wrong on every system).
   const gsdVersion = process.env.GWD_VERSION || "unknown";
 

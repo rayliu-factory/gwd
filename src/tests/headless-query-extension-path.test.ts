@@ -30,13 +30,13 @@ function makeTempDir(): string {
 
 test('GWD_AGENT_DIR overrides homedir-based agent dir resolution', () => {
   const root = resolveGsdAgentExtensionsDir({ GWD_AGENT_DIR: '/some/agent' })
-  assert.equal(root, join('/some/agent', 'extensions', 'gsd'))
+  assert.equal(root, join('/some/agent', 'extensions', 'gwd'))
 })
 
 test('agent dir is selected when state.ts exists under it (#3471)', (t) => {
   const root = makeTempDir()
   t.after(() => rmSync(root, { recursive: true, force: true }))
-  const extDir = join(root, 'extensions', 'gsd')
+  const extDir = join(root, 'extensions', 'gwd')
   mkdirSync(extDir, { recursive: true })
   writeFileSync(join(extDir, 'state.ts'), '// fixture')
 
@@ -48,7 +48,7 @@ test('agent dir is selected when state.ts exists under it (#3471)', (t) => {
 test('agent dir is selected when synced JS state exists under it', (t) => {
   const root = makeTempDir()
   t.after(() => rmSync(root, { recursive: true, force: true }))
-  const extDir = join(root, 'extensions', 'gsd')
+  const extDir = join(root, 'extensions', 'gwd')
   mkdirSync(extDir, { recursive: true })
   writeFileSync(join(extDir, 'state.js'), '// fixture')
 
@@ -59,7 +59,7 @@ test('agent dir is selected when synced JS state exists under it', (t) => {
 
 test('GWD_HOME drives default agent dir when GWD_AGENT_DIR is absent', () => {
   const root = resolveGsdAgentExtensionsDir({ GWD_HOME: '/custom/gsd-home' })
-  assert.equal(root, join('/custom/gsd-home', 'agent', 'extensions', 'gsd'))
+  assert.equal(root, join('/custom/gsd-home', 'agent', 'extensions', 'gwd'))
 })
 
 test('agent dir is rejected when state.ts is absent (falls back to bundled)', (t) => {
@@ -82,7 +82,7 @@ test('fileExists callback drives the decision (no real fs required)', () => {
   })
   assert.equal(result.useAgentDir, true)
   assert.deepEqual(calls, [
-    join('/agent', 'extensions', 'gsd', 'state.ts'),
-    join('/agent', 'extensions', 'gsd', 'state.js'),
+    join('/agent', 'extensions', 'gwd', 'state.ts'),
+    join('/agent', 'extensions', 'gwd', 'state.js'),
   ])
 })

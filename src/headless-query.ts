@@ -35,7 +35,7 @@ const { existsSync } = await import('node:fs')
  */
 export function resolveGsdAgentExtensionsDir(env: NodeJS.ProcessEnv = process.env): string {
   const agentRoot = env.GWD_AGENT_DIR || join(env.GWD_HOME || join(homedir(), '.gwd'), 'agent')
-  return join(agentRoot, 'extensions', 'gsd')
+  return join(agentRoot, 'extensions', 'gwd')
 }
 
 /**

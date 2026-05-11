@@ -108,7 +108,7 @@ test("loader sets all 4 GWD_ env vars and PI_PACKAGE_DIR", async (t) => {
   const rel = p.slice(bundledExtensionsDir.length + 1);
   return rel.split(/[\\/]/)[0].replace(/\.(?:ts|js)$/, "");
   });
-  for (const core of ["gsd", "bg-shell", "browser-tools", "subagent", "search-the-web"]) {
+  for (const core of ["gwd", "bg-shell", "browser-tools", "subagent", "search-the-web"]) {
   assert.ok(discoveredNames.includes(core), `core extension '${core}' is discoverable`);
   }
 
@@ -277,7 +277,7 @@ test("initResources syncs extensions, agents, and skills to target dir", async (
   initResources(fakeAgentDir);
 
   // Extensions synced
-  assertExtensionIndexExists(fakeAgentDir, "gsd");
+  assertExtensionIndexExists(fakeAgentDir, "gwd");
   assertExtensionIndexExists(fakeAgentDir, "browser-tools");
   assertExtensionIndexExists(fakeAgentDir, "search-the-web");
   assertExtensionIndexExists(fakeAgentDir, "context7");
@@ -294,7 +294,7 @@ test("initResources syncs extensions, agents, and skills to target dir", async (
 
   // Idempotent: run again, no crash
   initResources(fakeAgentDir);
-  assertExtensionIndexExists(fakeAgentDir, "gsd");
+  assertExtensionIndexExists(fakeAgentDir, "gwd");
 });
 
 test("initResources skips copy when managed version matches current version", async (t) => {
@@ -309,7 +309,7 @@ test("initResources skips copy when managed version matches current version", as
   assert.ok(version, "manifest written after first sync");
 
   // Add a marker file to detect whether sync runs again
-  const markerPath = join(fakeAgentDir, "extensions", "gsd", "_marker.txt");
+  const markerPath = join(fakeAgentDir, "extensions", "gwd", "_marker.txt");
   writeFileSync(markerPath, "test-marker");
 
   // Second run: version matches — should skip, marker survives
