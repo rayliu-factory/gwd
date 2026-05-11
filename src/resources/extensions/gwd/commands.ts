@@ -1,9 +1,9 @@
-export { registerGSDCommand } from "./commands/index.js";
+export { registerGWDCommand } from "./commands/index.js";
 
-export async function handleGSDCommand(
-  ...args: Parameters<typeof import("./commands/dispatcher.js").handleGSDCommand>
+export async function handleGWDCommand(
+  ...args: Parameters<typeof import("./commands/dispatcher.js").handleGWDCommand>
 ) {
-  const { handleGSDCommand: dispatch } = await import("./commands/dispatcher.js");
+  const { handleGWDCommand: dispatch } = await import("./commands/dispatcher.js");
   return dispatch(...args);
 }
 

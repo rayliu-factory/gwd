@@ -1,4 +1,4 @@
-// GWD Exec Tool — executor for the gsd_exec MCP tool.
+// GWD Exec Tool — executor for the gwd_exec MCP tool.
 //
 // Thin wrapper around exec-sandbox.ts that reads effective options from
 // the project preferences (context_mode block) and formats the result
@@ -76,16 +76,16 @@ function isEnabled(prefs: ExecToolDeps["preferences"]): boolean {
 function paramError(message: string): ToolExecutionResult {
   return {
     content: [{ type: "text", text: `Error: ${message}` }],
-    details: { operation: "gsd_exec", error: "invalid_params", detail: message },
+    details: { operation: "gwd_exec", error: "invalid_params", detail: message },
     isError: true,
   };
 }
 
-export async function executeGsdExec(
+export async function executeGwdExec(
   params: ExecToolParams,
   deps: ExecToolDeps,
 ): Promise<ToolExecutionResult> {
-  if (!isEnabled(deps.preferences)) return contextModeDisabledResult("gsd_exec");
+  if (!isEnabled(deps.preferences)) return contextModeDisabledResult("gwd_exec");
 
   const runtime = params.runtime;
   if (runtime !== "bash" && runtime !== "node" && runtime !== "python") {
@@ -120,8 +120,8 @@ export async function executeGsdExec(
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return {
-      content: [{ type: "text", text: `Error: gsd_exec failed — ${message}` }],
-      details: { operation: "gsd_exec", error: message },
+      content: [{ type: "text", text: `Error: gwd_exec failed — ${message}` }],
+      details: { operation: "gwd_exec", error: message },
       isError: true,
     };
   }
@@ -129,7 +129,7 @@ export async function executeGsdExec(
 
 function formatResult(result: ExecSandboxResult): ToolExecutionResult {
   const headerLines = [
-    `gsd_exec[${result.id}] runtime=${result.runtime} exit=${formatExit(result)} duration=${result.duration_ms}ms`,
+    `gwd_exec[${result.id}] runtime=${result.runtime} exit=${formatExit(result)} duration=${result.duration_ms}ms`,
     `  stdout: ${result.stdout_bytes}B${result.stdout_truncated ? " (truncated)" : ""} → ${result.stdout_path}`,
     `  stderr: ${result.stderr_bytes}B${result.stderr_truncated ? " (truncated)" : ""} → ${result.stderr_path}`,
   ];
@@ -137,7 +137,7 @@ function formatResult(result: ExecSandboxResult): ToolExecutionResult {
   return {
     content: [{ type: "text", text: summary }],
     details: {
-      operation: "gsd_exec",
+      operation: "gwd_exec",
       id: result.id,
       runtime: result.runtime,
       exit_code: result.exit_code,

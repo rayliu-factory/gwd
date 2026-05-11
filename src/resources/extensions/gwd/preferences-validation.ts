@@ -686,7 +686,7 @@ export function validatePreferences(preferences: GSDPreferences): {
     }
   }
 
-  // ─── Context Mode (gsd_exec sandbox) ────────────────────────────────────
+  // ─── Context Mode (gwd_exec sandbox) ────────────────────────────────────
   if (preferences.context_mode !== undefined) {
     if (typeof preferences.context_mode === "object" && preferences.context_mode !== null) {
       const cmode = preferences.context_mode as unknown as Record<string, unknown>;

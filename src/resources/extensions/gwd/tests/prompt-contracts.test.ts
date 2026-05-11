@@ -91,11 +91,11 @@ test("guided requirements prompt requires milestone-qualified provisional owners
 test("guided requirements prompt saves requirement records before final summary write", () => {
   const prompt = readPrompt("guided-discuss-requirements");
   const output = prompt.slice(prompt.indexOf("## Output"));
-  const requirementSaveIndex = output.indexOf("gsd_requirement_save");
-  const summarySaveIndex = output.indexOf("gsd_summary_save");
+  const requirementSaveIndex = output.indexOf("gwd_requirement_save");
+  const summarySaveIndex = output.indexOf("gwd_summary_save");
 
-  assert.ok(requirementSaveIndex >= 0, "output instructions should call gsd_requirement_save");
-  assert.ok(summarySaveIndex >= 0, "output instructions should call gsd_summary_save");
+  assert.ok(requirementSaveIndex >= 0, "output instructions should call gwd_requirement_save");
+  assert.ok(summarySaveIndex >= 0, "output instructions should call gwd_summary_save");
   assert.ok(
     requirementSaveIndex < summarySaveIndex,
     "DB-backed requirement records should be saved before writing REQUIREMENTS.md",
@@ -109,7 +109,7 @@ test("guided requirements prompt uses supported summary artifact types", () => {
   assert.match(prompt, /omit `milestone_id`/);
   assert.match(prompt, /Do NOT use `artifact_type: "CONTEXT"` and do NOT pass `milestone_id: "REQUIREMENTS"`/);
   assert.match(prompt, /depth_verification_requirements_confirm/);
-  assert.doesNotMatch(prompt, /call `gsd_summary_save` with `artifact_type: "CONTEXT"`/);
+  assert.doesNotMatch(prompt, /call `gwd_summary_save` with `artifact_type: "CONTEXT"`/);
 });
 
 test("workflow preferences prompt writes defaults without interactive questions", () => {
@@ -177,17 +177,17 @@ test("guided-resume-task prompt preserves recovery state until work is supersede
   assert.doesNotMatch(prompt, /Delete the continue file after reading it/i);
 });
 
-// ─── Prompt migration: execute-task → gsd_complete_task ───────────────
+// ─── Prompt migration: execute-task → gwd_complete_task ───────────────
 
-test("execute-task prompt references gsd_task_complete tool", () => {
+test("execute-task prompt references gwd_task_complete tool", () => {
   const prompt = readPrompt("execute-task");
-  assert.match(prompt, /gsd_task_complete/);
+  assert.match(prompt, /gwd_task_complete/);
 });
 
-test("execute-task prompt uses gsd_task_complete as canonical summary write path", () => {
+test("execute-task prompt uses gwd_task_complete as canonical summary write path", () => {
   const prompt = readPrompt("execute-task");
   assert.match(prompt, /\{\{taskSummaryPath\}\}/);
-  assert.match(prompt, /gsd_task_complete/);
+  assert.match(prompt, /gwd_task_complete/);
   assert.match(prompt, /DB-backed tool is the canonical write path/i);
   assert.match(prompt, /Do \*\*not\*\* manually write `?\{\{taskSummaryPath\}\}`?/i);
   assert.doesNotMatch(prompt, /^\d+\.\s+Write `?\{\{taskSummaryPath\}\}`?\s*$/m);
@@ -205,11 +205,11 @@ test("execute-task prompt still contains template variables for context", () => 
   assert.match(prompt, /\{\{planPath\}\}/);
 });
 
-// ─── Prompt migration: complete-slice → gsd_complete_slice ────────────
+// ─── Prompt migration: complete-slice → gwd_complete_slice ────────────
 
-test("complete-slice prompt references gsd_slice_complete tool", () => {
+test("complete-slice prompt references gwd_slice_complete tool", () => {
   const prompt = readPrompt("complete-slice");
-  assert.match(prompt, /gsd_slice_complete/);
+  assert.match(prompt, /gwd_slice_complete/);
 });
 
 test("complete-slice prompt does not instruct LLM to toggle checkboxes manually", () => {
@@ -221,7 +221,7 @@ test("complete-slice prompt instructs writing summary and UAT files before tool 
   const prompt = readPrompt("complete-slice");
   assert.match(prompt, /\{\{sliceSummaryPath\}\}/);
   assert.match(prompt, /\{\{sliceUatPath\}\}/);
-  assert.match(prompt, /gsd_slice_complete/);
+  assert.match(prompt, /gwd_slice_complete/);
   assert.match(prompt, /DB-backed tool is the canonical write path/i);
   assert.match(prompt, /Do \*\*not\*\* manually write `?\{\{sliceSummaryPath\}\}`?/i);
   assert.match(prompt, /Do \*\*not\*\* manually write `?\{\{sliceUatPath\}\}`?/i);
@@ -235,9 +235,9 @@ test("complete-slice prompt preserves decisions and knowledge review steps", () 
   assert.match(prompt, /KNOWLEDGE\.md/);
 });
 
-test("validate-milestone prompt uses gsd_validate_milestone as canonical validation write path", () => {
+test("validate-milestone prompt uses gwd_validate_milestone as canonical validation write path", () => {
   const prompt = readPrompt("validate-milestone");
-  assert.match(prompt, /gsd_validate_milestone/);
+  assert.match(prompt, /gwd_validate_milestone/);
   assert.match(prompt, /\{\{validationPath\}\}/);
   assert.match(prompt, /DB-backed tool is the canonical write path/i);
   assert.match(prompt, /Do \*\*not\*\* manually write `?\{\{validationPath\}\}`?/i);
@@ -252,7 +252,7 @@ test("complete-slice prompt still contains template variables for context", () =
 
 test("plan-milestone prompt references DB-backed planning tool and explicitly forbids manual roadmap writes", () => {
   const prompt = readPrompt("plan-milestone");
-  assert.match(prompt, /gsd_plan_milestone/);
+  assert.match(prompt, /gwd_plan_milestone/);
   assert.match(prompt, /Do \*\*not\*\* write `?\{\{outputPath\}\}`?, `?ROADMAP\.md`?, or other planning artifacts manually/i);
 });
 
@@ -261,10 +261,10 @@ test("plan-slice prompt no longer frames direct PLAN writes as the source of tru
   assert.match(prompt, /Do \*\*not\*\* rely on direct `PLAN\.md` writes as the source of truth/i);
 });
 
-test("plan-slice prompt explicitly names gsd_plan_slice as DB-backed planning tool", () => {
+test("plan-slice prompt explicitly names gwd_plan_slice as DB-backed planning tool", () => {
   const prompt = readPrompt("plan-slice");
-  assert.match(prompt, /gsd_plan_slice/);
-  assert.match(prompt, /gsd_plan_task/);
+  assert.match(prompt, /gwd_plan_slice/);
+  assert.match(prompt, /gwd_plan_task/);
   // The prompt should describe the DB-backed tool as the canonical write path
   assert.match(prompt, /DB-backed tool is the canonical write path/i);
 });
@@ -275,25 +275,25 @@ test("plan-slice prompt does not instruct direct file writes as a primary step",
   assert.doesNotMatch(prompt, /^\d+\.\s+Write `?\{\{outputPath\}\}`?\s*$/m);
 });
 
-test("plan-slice prompt clarifies gsd_plan_slice handles task persistence", () => {
+test("plan-slice prompt clarifies gwd_plan_slice handles task persistence", () => {
   const prompt = readPrompt("plan-slice");
-  // gsd_plan_slice persists tasks in its transaction — no separate gsd_plan_task calls needed
-  assert.match(prompt, /gsd_plan_task/);
-  assert.match(prompt, /gsd_plan_slice` handles task persistence/i);
+  // gwd_plan_slice persists tasks in its transaction — no separate gwd_plan_task calls needed
+  assert.match(prompt, /gwd_plan_task/);
+  assert.match(prompt, /gwd_plan_slice` handles task persistence/i);
 });
 
-test("replan-slice prompt uses gsd_replan_slice as canonical DB-backed tool", () => {
+test("replan-slice prompt uses gwd_replan_slice as canonical DB-backed tool", () => {
   const prompt = readPrompt("replan-slice");
-  assert.match(prompt, /gsd_replan_slice/);
+  assert.match(prompt, /gwd_replan_slice/);
   // Degraded fallback (direct file writes) was removed — DB tools are always available
   assert.doesNotMatch(prompt, /Degraded fallback/i);
 });
 
 // ─── ADR-011 refine-slice prompt contracts ────────────────────────────
 
-test("refine-slice prompt names gsd_plan_slice as the DB-backed write path", () => {
+test("refine-slice prompt names gwd_plan_slice as the DB-backed write path", () => {
   const prompt = readPrompt("refine-slice");
-  assert.match(prompt, /gsd_plan_slice/, "refine-slice must call gsd_plan_slice to persist");
+  assert.match(prompt, /gwd_plan_slice/, "refine-slice must call gwd_plan_slice to persist");
 });
 
 test("refine-slice prompt does not instruct direct PLAN.md writes", () => {
@@ -313,9 +313,9 @@ test("refine-slice prompt frames the unit as a transformation, not blank-sheet p
   assert.match(prompt, /Sketch Scope/);
 });
 
-test("reassess-roadmap prompt references gsd_reassess_roadmap tool", () => {
+test("reassess-roadmap prompt references gwd_reassess_roadmap tool", () => {
   const prompt = readPrompt("reassess-roadmap");
-  assert.match(prompt, /gsd_reassess_roadmap/);
+  assert.match(prompt, /gwd_reassess_roadmap/);
 });
 
 test("validate-milestone prompt dispatches parallel reviewers", () => {
@@ -329,28 +329,28 @@ test("validate-milestone prompt dispatches parallel reviewers", () => {
   assert.match(prompt, /assessment evidence/i);
 });
 
-// ─── Prompt migration: replan-slice → gsd_replan_slice ────────────────
+// ─── Prompt migration: replan-slice → gwd_replan_slice ────────────────
 
-test("replan-slice prompt names gsd_replan_slice as the tool to use", () => {
+test("replan-slice prompt names gwd_replan_slice as the tool to use", () => {
   const prompt = readPrompt("replan-slice");
-  assert.match(prompt, /gsd_replan_slice/);
+  assert.match(prompt, /gwd_replan_slice/);
 });
 
-// ─── Prompt migration: reassess-roadmap → gsd_reassess_roadmap ───────
+// ─── Prompt migration: reassess-roadmap → gwd_reassess_roadmap ───────
 
-test("reassess-roadmap prompt names gsd_reassess_roadmap as the tool to use", () => {
+test("reassess-roadmap prompt names gwd_reassess_roadmap as the tool to use", () => {
   const prompt = readPrompt("reassess-roadmap");
-  assert.match(prompt, /gsd_reassess_roadmap/);
+  assert.match(prompt, /gwd_reassess_roadmap/);
 });
 
 // ─── Bug #2933: prompt parameter names must match camelCase TypeBox schema ───
 
 test("execute-task prompt uses camelCase parameter names matching TypeBox schema", () => {
   const prompt = readPrompt("execute-task");
-  // The gsd_complete_task tool schema uses camelCase: milestoneId, sliceId, taskId
+  // The gwd_complete_task tool schema uses camelCase: milestoneId, sliceId, taskId
   // Prompts must NOT tell the LLM to use snake_case (milestone_id, slice_id, task_id)
-  const toolCallLine = prompt.split("\n").find((l) => /gsd_complete_task/.test(l) || /gsd_task_complete/.test(l));
-  assert.ok(toolCallLine, "prompt must contain a gsd_complete_task or gsd_task_complete tool call line");
+  const toolCallLine = prompt.split("\n").find((l) => /gwd_complete_task/.test(l) || /gwd_task_complete/.test(l));
+  assert.ok(toolCallLine, "prompt must contain a gwd_complete_task or gwd_task_complete tool call line");
   assert.doesNotMatch(toolCallLine!, /milestone_id/, "must use milestoneId, not milestone_id");
   assert.doesNotMatch(toolCallLine!, /slice_id/, "must use sliceId, not slice_id");
   assert.doesNotMatch(toolCallLine!, /task_id/, "must use taskId, not task_id");
@@ -362,9 +362,9 @@ test("execute-task prompt uses camelCase parameter names matching TypeBox schema
 
 test("complete-slice prompt uses camelCase parameter names matching TypeBox schema", () => {
   const prompt = readPrompt("complete-slice");
-  // The gsd_complete_slice tool schema uses camelCase: milestoneId, sliceId
-  const toolCallLine = prompt.split("\n").find((l) => /gsd_complete_slice/.test(l) || /gsd_slice_complete/.test(l));
-  assert.ok(toolCallLine, "prompt must contain a gsd_complete_slice or gsd_slice_complete tool call line");
+  // The gwd_complete_slice tool schema uses camelCase: milestoneId, sliceId
+  const toolCallLine = prompt.split("\n").find((l) => /gwd_complete_slice/.test(l) || /gwd_slice_complete/.test(l));
+  assert.ok(toolCallLine, "prompt must contain a gwd_complete_slice or gwd_slice_complete tool call line");
   assert.doesNotMatch(toolCallLine!, /milestone_id/, "must use milestoneId, not milestone_id");
   assert.doesNotMatch(toolCallLine!, /slice_id/, "must use sliceId, not slice_id");
   // Positive: must mention the camelCase names

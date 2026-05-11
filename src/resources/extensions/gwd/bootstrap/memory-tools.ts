@@ -2,7 +2,7 @@
 // File Purpose: Registers memory-layer tools.
 // GSD2 — Memory tool registration
 //
-// Exposes the memory-layer tools (capture_thought, memory_query, gsd_graph)
+// Exposes the memory-layer tools (capture_thought, memory_query, gwd_graph)
 // to the LLM over MCP. All three degrade gracefully when the GWD database
 // is unavailable.
 
@@ -11,7 +11,7 @@ import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 
 import { ensureDbOpen, resolveCtxCwd } from "./dynamic-tools.js";
 import {
-  executeGsdGraph,
+  executeGwdGraph,
   executeMemoryCapture,
   executeMemoryQuery,
 } from "../tools/memory-tools.js";
@@ -123,10 +123,10 @@ export function registerMemoryTools(pi: ExtensionAPI): void {
     },
   });
 
-  // ─── gsd_graph ──────────────────────────────────────────────────────────
+  // ─── gwd_graph ──────────────────────────────────────────────────────────
 
   pi.registerTool({
-    name: "gsd_graph",
+    name: "gwd_graph",
     label: "GWD Knowledge Graph",
     description:
       "Inspect the relationship graph between memories. mode=query walks supersedes edges from a " +
@@ -156,11 +156,11 @@ export function registerMemoryTools(pi: ExtensionAPI): void {
       if (!ok) {
         return {
           content: [{ type: "text" as const, text: "Error: GWD database is not available." }],
-          details: { operation: "gsd_graph", error: "db_unavailable" },
+          details: { operation: "gwd_graph", error: "db_unavailable" },
           isError: true,
         };
       }
-      return executeGsdGraph(params as Parameters<typeof executeGsdGraph>[0]);
+      return executeGwdGraph(params as Parameters<typeof executeGwdGraph>[0]);
     },
   });
 }

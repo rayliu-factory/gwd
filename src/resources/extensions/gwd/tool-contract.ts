@@ -40,7 +40,7 @@ export function compileUnitToolContract(unitType: string): ToolContractResult {
 
   const requiredWorkflowTools = getRequiredWorkflowToolsForAutoUnit(unitType);
   const closeoutTools = requiredWorkflowTools.filter((tool) =>
-    /^gsd_(?:task|slice|milestone|complete|validate|save|summary)/.test(tool),
+    /^gwd_(?:task|slice|milestone|complete|validate|save|summary)/.test(tool),
   );
 
   if (requiresCloseoutTool(unitType) && closeoutTools.length === 0) {

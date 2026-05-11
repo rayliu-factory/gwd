@@ -1,4 +1,4 @@
-// GWD Memory Tools — Phase 1 executors for capture_thought, memory_query, gsd_graph
+// GWD Memory Tools — Phase 1 executors for capture_thought, memory_query, gwd_graph
 //
 // These executors back the three memory-layer tools the LLM can call at any
 // point in a session. They build on the existing `memory-store.ts` layer
@@ -7,7 +7,7 @@
 // Phase 1 scope:
 //   - capture_thought → create a memory with the caller-supplied category/content
 //   - memory_query    → keyword-filtered, score-ranked listing of active memories
-//   - gsd_graph       → returns a memory and its supersedes edges only (Phase 4 adds memory_relations)
+//   - gwd_graph       → returns a memory and its supersedes edges only (Phase 4 adds memory_relations)
 
 import { _getAdapter, isDbAvailable } from "../gwd-db.js";
 import {
@@ -316,9 +316,9 @@ function includeSupersededMemories(rankedActive: Memory[]): Memory[] {
   }
 }
 
-// ─── gsd_graph ──────────────────────────────────────────────────────────────
+// ─── gwd_graph ──────────────────────────────────────────────────────────────
 
-export interface GsdGraphParams {
+export interface GwdGraphParams {
   mode: "build" | "query";
   memoryId?: string;
   depth?: number;
@@ -339,8 +339,8 @@ export interface GraphEdge {
   confidence: number;
 }
 
-export function executeGsdGraph(params: GsdGraphParams): ToolExecutionResult {
-  if (!isDbAvailable()) return dbUnavailable("gsd_graph");
+export function executeGwdGraph(params: GwdGraphParams): ToolExecutionResult {
+  if (!isDbAvailable()) return dbUnavailable("gwd_graph");
 
   if (params.mode === "build") {
     // The extractor emits LINK actions incrementally (Phase 4). There is no
@@ -351,19 +351,19 @@ export function executeGsdGraph(params: GsdGraphParams): ToolExecutionResult {
         {
           type: "text",
           text:
-            "gsd_graph build acknowledged. Graph edges are populated incrementally by memory " +
+            "gwd_graph build acknowledged. Graph edges are populated incrementally by memory " +
             "extraction (including LINK actions). Use `/gwd memory extract <SRC-...>` to trigger " +
             "extraction against a specific ingested source.",
         },
       ],
-      details: { operation: "gsd_graph", mode: "build", built: 0 },
+      details: { operation: "gwd_graph", mode: "build", built: 0 },
     };
   }
 
   if (params.mode !== "query") {
     return {
       content: [{ type: "text", text: `Error: unknown mode "${params.mode}". Must be "build" or "query".` }],
-      details: { operation: "gsd_graph", error: "invalid_mode" },
+      details: { operation: "gwd_graph", error: "invalid_mode" },
       isError: true,
     };
   }
@@ -372,7 +372,7 @@ export function executeGsdGraph(params: GsdGraphParams): ToolExecutionResult {
   if (!memoryId) {
     return {
       content: [{ type: "text", text: "Error: memoryId is required for mode=query." }],
-      details: { operation: "gsd_graph", error: "missing_memory_id" },
+      details: { operation: "gwd_graph", error: "missing_memory_id" },
       isError: true,
     };
   }
@@ -391,7 +391,7 @@ export function executeGsdGraph(params: GsdGraphParams): ToolExecutionResult {
     if (nodes.length === 0) {
       return {
         content: [{ type: "text", text: `No memory found with id ${memoryId}.` }],
-        details: { operation: "gsd_graph", mode: "query", memoryId, nodes: [], edges: [] },
+        details: { operation: "gwd_graph", mode: "query", memoryId, nodes: [], edges: [] },
       };
     }
 
@@ -403,7 +403,7 @@ export function executeGsdGraph(params: GsdGraphParams): ToolExecutionResult {
     return {
       content: [{ type: "text", text: summary }],
       details: {
-        operation: "gsd_graph",
+        operation: "gwd_graph",
         mode: "query",
         memoryId,
         nodes: nodes.map((n) => ({ id: n.id, category: n.category, content: n.content })),
@@ -413,7 +413,7 @@ export function executeGsdGraph(params: GsdGraphParams): ToolExecutionResult {
   } catch (err) {
     return {
       content: [{ type: "text", text: `Error: graph query failed: ${(err as Error).message}` }],
-      details: { operation: "gsd_graph", error: (err as Error).message },
+      details: { operation: "gwd_graph", error: (err as Error).message },
       isError: true,
     };
   }

@@ -33,7 +33,7 @@ function populateDir(base: string, mid: string): void {
   writeFileSync(join(base, ".gwd", "milestones", mid, `${mid}-CONTEXT.md`), `# ${mid}\n`);
 }
 
-describe("gsd_doctor orphan milestone directory check (#4996)", () => {
+describe("gwd_doctor orphan milestone directory check (#4996)", () => {
   let base: string;
 
   afterEach(() => {

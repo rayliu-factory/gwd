@@ -10,7 +10,7 @@ Rules:
 5. For a missing milestone `CONTEXT.md` when the milestone is already past `pre-planning` (phase is `executing`, `summarizing`, `validating-milestone`, or `completing-milestone`): the artifact was skipped during bootstrap and must be reconstructed before execution can resume. Read `PROJECT.md`, `REQUIREMENTS.md`, the milestone's `ROADMAP.md`, and any slice-level context on disk, then write `.gwd/milestones/<milestone-id>/<milestone-id>-CONTEXT.md` with the real context for the scoped milestone. Do not leave a stub — the plan gate will reject it on the next cycle.
 6. After each repair cluster, verify the relevant invariant directly from disk.
 7. When done, rerun `/gwd doctor {{doctorCommandSuffix}}` mentally by ensuring the remaining issue set for this scope is reduced or cleared.
-8. Do NOT query `.gwd/gwd.db` directly via `sqlite3` or `node -e require('better-sqlite3')` — use `gsd_milestone_status` to inspect DB state. Direct access bypasses the WAL connection owned by the engine and can corrupt in-flight writes.
+8. Do NOT query `.gwd/gwd.db` directly via `sqlite3` or `node -e require('better-sqlite3')` — use `gwd_milestone_status` to inspect DB state. Direct access bypasses the WAL connection owned by the engine and can corrupt in-flight writes.
 
 ## Doctor Summary
 

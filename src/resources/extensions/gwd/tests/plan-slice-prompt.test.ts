@@ -63,8 +63,8 @@ test("plan-slice prompt: all variables substituted", () => {
 
 test("plan-slice prompt: DB-backed tool names survive template substitution", () => {
   const result = loadPrompt("plan-slice", { ...BASE_VARS, commitInstruction: "Do not commit." });
-  assert.ok(result.includes("gsd_plan_slice"), "gsd_plan_slice should appear in rendered prompt");
-  assert.ok(result.includes("gsd_plan_task"), "gsd_plan_task should appear in rendered prompt");
+  assert.ok(result.includes("gwd_plan_slice"), "gwd_plan_slice should appear in rendered prompt");
+  assert.ok(result.includes("gwd_plan_task"), "gwd_plan_task should appear in rendered prompt");
   assert.ok(result.includes("canonical write path"), "canonical write path language should survive substitution");
 });
 
@@ -81,11 +81,11 @@ test("plan-slice prompt: compact planning gates survive template substitution", 
   assert.ok(!result.includes("{{"));
 });
 
-test("plan-slice prompt: footer references gsd_plan_slice tool, not direct write", () => {
+test("plan-slice prompt: footer references gwd_plan_slice tool, not direct write", () => {
   const result = loadPrompt("plan-slice", { ...BASE_VARS, commitInstruction: "Do not commit." });
   assert.ok(
-    result.includes("MUST call `gsd_plan_slice`"),
-    "footer should instruct calling gsd_plan_slice tool",
+    result.includes("MUST call `gwd_plan_slice`"),
+    "footer should instruct calling gwd_plan_slice tool",
   );
   assert.ok(
     !result.includes("MUST write the file"),
@@ -191,7 +191,7 @@ test("research-milestone prompt substitutes skillActivation", () => {
   assert.ok(!result.includes("{{skillActivation}}"));
 });
 
-test("research-milestone prompt references gsd_summary_save, not direct write", () => {
+test("research-milestone prompt references gwd_summary_save, not direct write", () => {
   const result = loadPrompt("research-milestone", {
     workingDirectory: fixtureRoot,
     milestoneId: "M001",
@@ -206,8 +206,8 @@ test("research-milestone prompt references gsd_summary_save, not direct write", 
   });
 
   assert.ok(
-    result.includes("gsd_summary_save"),
-    "research-milestone should reference gsd_summary_save tool",
+    result.includes("gwd_summary_save"),
+    "research-milestone should reference gwd_summary_save tool",
   );
   assert.ok(
     result.includes('artifact_type: "RESEARCH"'),
@@ -282,7 +282,7 @@ test("plan-milestone prompt: compact planning gates survive template substitutio
   });
 
   assert.ok(result.includes("Already Planned? Soft Brake"));
-  assert.ok(result.includes("gsd_plan_milestone"));
+  assert.ok(result.includes("gwd_plan_milestone"));
   assert.ok(result.includes("Dependency format is comma-separated"));
   assert.ok(result.includes("phases.progressive_planning"));
   assert.ok(result.includes("Single-Slice Fast Path"));

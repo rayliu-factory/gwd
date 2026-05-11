@@ -40,7 +40,7 @@ const DIAGNOSTICS: Record<LegacyTelemetryCounter, string> = {
   "legacy.markdownFallbackUsed": "Deprecated markdown state fallback used; migrate projects to DB-authoritative state before removing markdown derivation.",
   "legacy.workflowEngineUsed": "Deprecated workflow engine path used; prefer auto-milestone workflow templates before removing legacy engines.",
   "legacy.uokFallbackUsed": "Deprecated UOK fallback path used; resolve UOK kernel blockers before removing parity fallback wrappers.",
-  "legacy.mcpAliasUsed": "Deprecated MCP alias tool used; update callers to the canonical gsd_* tool name before alias removal.",
+  "legacy.mcpAliasUsed": "Deprecated MCP alias tool used; update callers to the canonical gwd_* tool name before alias removal.",
   "legacy.componentFormatUsed": "Deprecated component format loaded; migrate skills/agents to component.yaml before removing legacy loaders.",
   "legacy.providerDefaultUsed": "Provider-specific default fallback used without an explicit available model; configure provider-aware model preferences before removing defaults.",
 };

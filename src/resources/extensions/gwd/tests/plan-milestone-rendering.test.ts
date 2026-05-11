@@ -34,8 +34,8 @@ test("plan-milestone prompt renders compact DB-backed planning guidance", async 
   });
 
   assert.match(prompt, /Explore First, Then Decompose/);
-  assert.match(prompt, /Call `gsd_plan_milestone`/);
-  assert.match(prompt, /call `gsd_decision_save`/);
+  assert.match(prompt, /Call `gwd_plan_milestone`/);
+  assert.match(prompt, /call `gwd_decision_save`/);
   assert.match(prompt, /Every relevant Active requirement must end as mapped/);
   assert.match(prompt, /Risk-first means proof-first/);
   assert.match(prompt, /Progressive Planning \(ADR-011\)/);

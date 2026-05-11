@@ -53,10 +53,10 @@ export type EvidenceEntry = BashEvidence | FileWriteEvidence | FileEditEvidence;
 const EXECUTION_TOOL_NAMES = new Set([
   "bash",
   "Bash",
-  "gsd_exec",
-  "gsd_exec_search",
-  "mcp__gsd-workflow__gsd_exec",
-  "mcp__gsd-workflow__gsd_exec_search",
+  "gwd_exec",
+  "gwd_exec_search",
+  "mcp__gsd-workflow__gwd_exec",
+  "mcp__gsd-workflow__gwd_exec_search",
 ]);
 
 // ─── Module State ───────────────────────────────────────────────────────────

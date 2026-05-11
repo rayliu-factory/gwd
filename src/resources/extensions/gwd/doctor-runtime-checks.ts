@@ -461,7 +461,7 @@ export async function checkRuntimeHealth(
         if (nativeIsRepo(basePath) && !isGsdGitignored(basePath)) {
           issues.push({
             severity: "warning",
-            code: "symlinked_gsd_unignored",
+            code: "symlinked_gwd_unignored",
             scope: "project",
             unitId: "project",
             message: ".gwd is a symlink to external state but is not listed in .gitignore. This causes git pathspec exclusions to fail and can lead to silently dropped new files during auto-commit. Add `.gwd` to .gitignore.",
@@ -469,7 +469,7 @@ export async function checkRuntimeHealth(
             fixable: true,
           });
 
-          if (shouldFix("symlinked_gsd_unignored")) {
+          if (shouldFix("symlinked_gwd_unignored")) {
             const modified = ensureGitignore(basePath);
             if (modified) fixesApplied.push("added .gwd to .gitignore (symlinked external state)");
           }
@@ -491,7 +491,7 @@ export async function checkRuntimeHealth(
       for (const v of variants) {
         issues.push({
           severity: "warning",
-          code: "numbered_gsd_variant",
+          code: "numbered_gwd_variant",
           scope: "project",
           unitId: "project",
           message: `Found macOS collision variant "${v}" — this can cause GWD state to appear deleted.`,
@@ -500,7 +500,7 @@ export async function checkRuntimeHealth(
         });
       }
 
-      if (shouldFix("numbered_gsd_variant")) {
+      if (shouldFix("numbered_gwd_variant")) {
         const removed = cleanNumberedGsdVariants(basePath);
         for (const name of removed) {
           fixesApplied.push(`removed numbered .gwd variant: ${name}`);

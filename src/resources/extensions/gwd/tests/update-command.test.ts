@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { registerGSDCommand } from "../commands.ts";
+import { registerGWDCommand } from "../commands.ts";
 
 function createMockPi() {
   const commands = new Map<string, any>();
@@ -33,10 +33,10 @@ function createMockCtx() {
 
 test("/gwd update appears in subcommand completions", () => {
   const pi = createMockPi();
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
 
   const gsd = pi.commands.get("gwd");
-  assert.ok(gsd, "registerGSDCommand should register /gwd");
+  assert.ok(gsd, "registerGWDCommand should register /gwd");
 
   const completions = gsd.getArgumentCompletions("update");
   const updateEntry = completions.find((c: any) => c.value === "update");
@@ -46,7 +46,7 @@ test("/gwd update appears in subcommand completions", () => {
 
 test("/gwd update appears in help description", () => {
   const pi = createMockPi();
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
 
   const gsd = pi.commands.get("gwd");
   assert.ok(gsd?.description?.includes("update"), "description should mention update");
@@ -54,7 +54,7 @@ test("/gwd update appears in help description", () => {
 
 test("/gwd update is listed in completions with correct description", () => {
   const pi = createMockPi();
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
 
   const gsd = pi.commands.get("gwd");
   const completions = gsd.getArgumentCompletions("");
@@ -68,7 +68,7 @@ test("/gwd update is listed in completions with correct description", () => {
 
 test("/gwd codebase appears in top-level completions", () => {
   const pi = createMockPi();
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
 
   const gsd = pi.commands.get("gwd");
   const completions = gsd.getArgumentCompletions("code");
@@ -79,7 +79,7 @@ test("/gwd codebase appears in top-level completions", () => {
 
 test("/gwd codebase appears in help description", () => {
   const pi = createMockPi();
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
 
   const gsd = pi.commands.get("gwd");
   assert.ok(gsd?.description?.includes("codebase"), "description should mention codebase");

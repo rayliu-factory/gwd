@@ -25,7 +25,7 @@ function cleanup(dir: string): void {
 test('buildSnapshot: renders memories, exec history, and active context', () => {
   const snap = buildSnapshot({
     generatedAt: new Date('2026-04-20T12:00:00.000Z'),
-    activeContext: 'M001 / S01 / T01 — wire gsd_exec',
+    activeContext: 'M001 / S01 / T01 — wire gwd_exec',
     memories: [
       { id: 'MEM001', category: 'gotcha', content: 'FTS5 needs Porter tokenizer', confidence: 0.9,
         source_unit_type: null, source_unit_id: null, created_at: '', updated_at: '',

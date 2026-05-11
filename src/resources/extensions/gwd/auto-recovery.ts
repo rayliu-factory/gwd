@@ -854,7 +854,7 @@ export function verifyExpectedArtifact(
       } else if (!isDbAvailable()) {
         // LEGACY: Pre-migration fallback for projects without DB.
         // Require a CHECKED checkbox — a bare heading or unchecked checkbox
-        // does not prove gsd_task_complete ran. Summary file on disk alone
+        // does not prove gwd_task_complete ran. Summary file on disk alone
         // is not sufficient evidence (could be a rogue write) (#3607).
         if (!hasCheckedTaskCompletionOnDisk(base, mid, sid, tid)) return false;
       } else {

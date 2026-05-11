@@ -379,7 +379,7 @@ export async function handleAgentEnd(
           return;
         }
         ctx.ui.notify(
-          "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 hit local resource limits, but GSD failed to switch to qwen3.6:27b-coding-nvfp4 fallback.",
+          "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 hit local resource limits, but GWD failed to switch to qwen3.6:27b-coding-nvfp4 fallback.",
           "warning",
         );
       } else {

@@ -305,7 +305,7 @@ node_modules/
 
     // ─── Test 8b: Symlinked .gwd without .gitignore entry (#4423) ─────
     if (process.platform !== "win32") {
-    test('symlinked_gsd_unignored', async () => {
+    test('symlinked_gwd_unignored', async () => {
       const dir = createGitProject();
       cleanups.push(dir);
 
@@ -319,7 +319,7 @@ node_modules/
       writeFileSync(join(dir, ".gitignore"), "node_modules/\n");
 
       const detect = await runGSDDoctor(dir);
-      const symlinkIssues = detect.issues.filter(i => i.code === "symlinked_gsd_unignored");
+      const symlinkIssues = detect.issues.filter(i => i.code === "symlinked_gwd_unignored");
       assert.ok(symlinkIssues.length > 0, "detects symlinked .gwd without gitignore entry");
 
       const fixed = await runGSDDoctor(dir, { fix: true });

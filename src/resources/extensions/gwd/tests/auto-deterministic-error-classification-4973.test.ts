@@ -1,6 +1,6 @@
 // GWD-2 + Regression tests for deterministic policy error classification (#4973)
 //
-// When gsd_summary_save returns context_write_blocked (a deterministic write-gate
+// When gwd_summary_save returns context_write_blocked (a deterministic write-gate
 // rejection), the retry controller must NOT re-dispatch with escalating model tiers.
 // Instead it must write a blocker placeholder and advance the pipeline immediately.
 //
@@ -54,7 +54,7 @@ describe("Test 5 — isDeterministicPolicyError classifier (#4973)", () => {
   test("classifies context_write_blocked fallback text as deterministic", () => {
     // This is the text emitted by workflow-tool-executors.ts when contextGuard.reason
     // is undefined: `Error saving artifact: ${contextGuard.reason ?? "context write blocked"}`
-    const errorText = "gsd_summary_save: Error saving artifact: context write blocked";
+    const errorText = "gwd_summary_save: Error saving artifact: context write blocked";
     assert.strictEqual(
       isDeterministicPolicyError(errorText),
       true,
@@ -66,7 +66,7 @@ describe("Test 5 — isDeterministicPolicyError classifier (#4973)", () => {
     // This is the text when shouldBlockContextArtifactSaveInSnapshot returns its reason:
     // "HARD BLOCK: Cannot save milestone CONTEXT without depth verification for M001. ..."
     const verboseError = [
-      "gsd_summary_save: Error saving artifact:",
+      "gwd_summary_save: Error saving artifact:",
       "HARD BLOCK: Cannot save milestone CONTEXT without depth verification for M001.",
       "This is a mechanical gate — you MUST NOT proceed, retry, or rationalize past this block.",
     ].join(" ");
@@ -84,7 +84,7 @@ describe("Test 5 — isDeterministicPolicyError classifier (#4973)", () => {
       "malformed-JSON errors are not deterministic policy errors",
     );
     assert.strictEqual(
-      isDeterministicPolicyError("Validation failed for tool gsd_complete_slice"),
+      isDeterministicPolicyError("Validation failed for tool gwd_complete_slice"),
       false,
     );
   });
@@ -143,7 +143,7 @@ describe("Test 5 — recordToolInvocationError captures deterministic errors (#4
     // Simulate what postUnitPreVerification checks: if isDeterministicPolicyError
     // matches on lastToolInvocationError, the short-circuit fires.
     // The value is set by recordToolInvocationError (tested via auto.ts integration).
-    s.lastToolInvocationError = "gsd_summary_save: Error saving artifact: context write blocked";
+    s.lastToolInvocationError = "gwd_summary_save: Error saving artifact: context write blocked";
     assert.ok(
       isDeterministicPolicyError(s.lastToolInvocationError),
       "classifier recognises the stored error — short-circuit will fire",
@@ -153,14 +153,14 @@ describe("Test 5 — recordToolInvocationError captures deterministic errors (#4
 
   test("AutoSession.lastToolInvocationError can hold a deterministic policy error string", () => {
     const s = new AutoSession();
-    s.lastToolInvocationError = "gsd_summary_save: Error saving artifact: context write blocked";
+    s.lastToolInvocationError = "gwd_summary_save: Error saving artifact: context write blocked";
     assert.ok(s.lastToolInvocationError);
     assert.ok(isDeterministicPolicyError(s.lastToolInvocationError));
   });
 
   test("AutoSession.lastToolInvocationError is cleared on reset()", () => {
     const s = new AutoSession();
-    s.lastToolInvocationError = "gsd_summary_save: Error saving artifact: context write blocked";
+    s.lastToolInvocationError = "gwd_summary_save: Error saving artifact: context write blocked";
     s.reset();
     assert.strictEqual(s.lastToolInvocationError, null);
   });
@@ -192,7 +192,7 @@ describe("Test 5 — postUnitPreVerification short-circuits on deterministic err
     s.basePath = base;
     s.currentUnit = { type: "discuss-milestone", id: "M001", startedAt: Date.now() };
     // Set the deterministic error that would be recorded by recordToolInvocationError
-    s.lastToolInvocationError = "gsd_summary_save: Error saving artifact: context write blocked";
+    s.lastToolInvocationError = "gwd_summary_save: Error saving artifact: context write blocked";
     s.verificationRetryCount.set("discuss-milestone:M001", 2);
 
     let pauseCalled = false;

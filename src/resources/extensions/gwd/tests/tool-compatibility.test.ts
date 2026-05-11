@@ -20,6 +20,11 @@ import {
 import {
   getProviderCapabilities,
 } from "@gwd/pi-ai";
+import { registerDbTools } from "../bootstrap/db-tools.js";
+import { registerExecTools } from "../bootstrap/exec-tools.js";
+import { registerJournalTools } from "../bootstrap/journal-tools.js";
+import { registerMemoryTools } from "../bootstrap/memory-tools.js";
+import { registerQueryTools } from "../bootstrap/query-tools.js";
 
 // ─── Tool Compatibility Registry ────────────────────────────────────────────
 
@@ -79,6 +84,28 @@ describe("tool compatibility registry", () => {
     resetToolCompatibilityRegistry();
     assert.equal(getToolCompatibility("custom_tool"), undefined);
     assert.ok(getToolCompatibility("bash")); // built-in preserved
+  });
+});
+
+describe("GWD runtime tool names", () => {
+  test("registered workflow tools use the gwd_ prefix", () => {
+    const names: string[] = [];
+    const pi = {
+      registerTool(tool: { name: string }) {
+        names.push(tool.name);
+      },
+    } as any;
+
+    registerDbTools(pi);
+    registerExecTools(pi);
+    registerJournalTools(pi);
+    registerMemoryTools(pi);
+    registerQueryTools(pi);
+
+    const workflowNames = names.filter((name) => name.startsWith("gwd_") || name.startsWith("gsd_"));
+    assert.ok(workflowNames.length > 0, "expected workflow tools to be registered");
+    assert.ok(!workflowNames.some((name) => name.startsWith("gsd_")), workflowNames.join(", "));
+    assert.ok(workflowNames.every((name) => name.startsWith("gwd_")), workflowNames.join(", "));
   });
 });
 

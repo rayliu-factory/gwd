@@ -130,7 +130,7 @@ describe("deep setup approval questions pause immediately", () => {
 
       const draftResult = await emit("tool_call", {
         toolCallId: "draft-save",
-        toolName: "gsd_summary_save",
+        toolName: "gwd_summary_save",
         input: {
           milestone_id: "M003",
           artifact_type: "CONTEXT-DRAFT",
@@ -145,7 +145,7 @@ describe("deep setup approval questions pause immediately", () => {
 
       const finalContextResult = await emit("tool_call", {
         toolCallId: "final-context",
-        toolName: "gsd_summary_save",
+        toolName: "gwd_summary_save",
         input: {
           milestone_id: "M003",
           artifact_type: "CONTEXT",

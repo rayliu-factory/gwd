@@ -15,10 +15,10 @@ test("discuss workflow scopes tools for the queued turn and restores the full to
   const workflowPath = join(dir, "GWD-WORKFLOW.md");
   const originalWorkflowPath = process.env.GWD_WORKFLOW_PATH;
   const originalTools = [
-    "gsd_task_complete",
-    "gsd_summary_save",
+    "gwd_task_complete",
+    "gwd_summary_save",
     "shell_exec",
-    "gsd_plan_milestone",
+    "gwd_plan_milestone",
   ];
   let activeTools = [...originalTools];
   let sentTools: string[] | null = null;
@@ -47,7 +47,7 @@ test("discuss workflow scopes tools for the queued turn and restores the full to
       "discuss-milestone",
     );
 
-    assert.deepEqual(sentTools, ["gsd_summary_save"]);
+    assert.deepEqual(sentTools, ["gwd_summary_save"]);
     assert.deepEqual(activeTools, originalTools);
     assert.equal(triggerTurn, true);
   } finally {

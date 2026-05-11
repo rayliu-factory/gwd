@@ -275,7 +275,7 @@ test('handlePlanMilestone promotes pre-existing queued milestone to active (#302
 
   try {
     // Simulate ensureMilestoneDbRow: pre-create row with status "queued"
-    // (this is what gsd_milestone_generate_id does)
+    // (this is what gwd_milestone_generate_id does)
     insertMilestone({ id: 'M001', status: 'queued' });
 
     const before = getMilestone('M001');

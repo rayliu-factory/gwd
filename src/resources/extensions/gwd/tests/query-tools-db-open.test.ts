@@ -1,7 +1,7 @@
 /**
  * Regression test for #3672 — query-tools uses ensureDbOpen
  *
- * gsd_milestone_status previously called isDbAvailable() but never
+ * gwd_milestone_status previously called isDbAvailable() but never
  * ensureDbOpen(), making it always fail outside auto-mode sessions.
  * The fix imports ensureDbOpen from dynamic-tools and calls it before
  * querying the DB.
@@ -19,7 +19,7 @@ import { closeDatabase, insertMilestone, openDatabase } from '../gwd-db.ts';
 import { registerQueryTools } from '../bootstrap/query-tools.ts';
 
 describe('query-tools ensureDbOpen usage (#3672)', () => {
-  test('gsd_milestone_status opens the workspace DB before querying', async () => {
+  test('gwd_milestone_status opens the workspace DB before querying', async () => {
     const base = mkdtempSync(join(tmpdir(), 'gsd-query-tools-'));
     const dbPath = join(base, '.gwd', 'gwd.db');
     const tools: Record<string, any> = {};

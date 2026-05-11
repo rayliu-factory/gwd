@@ -10,10 +10,10 @@ import {
 
 // Pin the GOOD set: changes here must come with explicit re-evaluation.
 const EXPECTED_BACKGROUNDABLE = [
-  "gsd_execute",
-  "gsd_plan_slice",
-  "gsd_reassess_roadmap",
-  "gsd_validate_milestone",
+  "gwd_execute",
+  "gwd_plan_slice",
+  "gwd_reassess_roadmap",
+  "gwd_validate_milestone",
 ];
 
 test("isBackgroundable returns true for the four GOOD-verdict tools", () => {
@@ -23,17 +23,17 @@ test("isBackgroundable returns true for the four GOOD-verdict tools", () => {
 });
 
 test("isBackgroundable returns false for RISKY-verdict tools", () => {
-  for (const name of ["gsd_doctor", "gsd_plan_milestone", "gsd_replan_slice"]) {
+  for (const name of ["gwd_doctor", "gwd_plan_milestone", "gwd_replan_slice"]) {
     assert.equal(isBackgroundable(name), false, `${name} should not be backgroundable`);
   }
 });
 
 test("isBackgroundable returns false for NO-verdict tools", () => {
-  assert.equal(isBackgroundable("gsd_plan_task"), false);
+  assert.equal(isBackgroundable("gwd_plan_task"), false);
 });
 
 test("isBackgroundable defaults to false for unknown tools (default-deny)", () => {
-  assert.equal(isBackgroundable("gsd_nonexistent_tool"), false);
+  assert.equal(isBackgroundable("gwd_nonexistent_tool"), false);
   assert.equal(isBackgroundable(""), false);
 });
 
@@ -43,17 +43,17 @@ test("listBackgroundableTools returns exactly the four GOOD tools, sorted", () =
 
 test("getDelegationVerdict does not resolve removed alias names", () => {
   for (const alias of [
-    "gsd_milestone_validate",
-    "gsd_roadmap_reassess",
-    "gsd_slice_replan",
-    "gsd_task_plan",
+    "gwd_milestone_validate",
+    "gwd_roadmap_reassess",
+    "gwd_slice_replan",
+    "gwd_task_plan",
   ] as const) {
     assert.equal(getDelegationVerdict(alias), null, `${alias} should not resolve after hard cutover`);
   }
 });
 
 test("plan_slice carries the slice-lock + await constraints", () => {
-  const entry = getDelegationVerdict("gsd_plan_slice");
+  const entry = getDelegationVerdict("gwd_plan_slice");
   assert.ok(entry);
   assert.ok(entry.constraints && entry.constraints.length >= 3);
   assert.ok(
@@ -67,7 +67,7 @@ test("plan_slice carries the slice-lock + await constraints", () => {
 });
 
 test("doctor carries fix-mode safety constraints", () => {
-  const entry = getDelegationVerdict("gsd_doctor");
+  const entry = getDelegationVerdict("gwd_doctor");
   assert.ok(entry);
   assert.equal(entry.verdict, "risky");
   assert.ok(
@@ -77,16 +77,16 @@ test("doctor carries fix-mode safety constraints", () => {
 });
 
 test("getVerdictByUnitType maps dispatcher unit types back to the policy", () => {
-  assert.equal(getVerdictByUnitType("plan-slice")?.toolName, "gsd_plan_slice");
-  assert.equal(getVerdictByUnitType("validate-milestone")?.toolName, "gsd_validate_milestone");
-  assert.equal(getVerdictByUnitType("reassess-roadmap")?.toolName, "gsd_reassess_roadmap");
-  assert.equal(getVerdictByUnitType("plan-milestone")?.toolName, "gsd_plan_milestone");
-  assert.equal(getVerdictByUnitType("replan-slice")?.toolName, "gsd_replan_slice");
+  assert.equal(getVerdictByUnitType("plan-slice")?.toolName, "gwd_plan_slice");
+  assert.equal(getVerdictByUnitType("validate-milestone")?.toolName, "gwd_validate_milestone");
+  assert.equal(getVerdictByUnitType("reassess-roadmap")?.toolName, "gwd_reassess_roadmap");
+  assert.equal(getVerdictByUnitType("plan-milestone")?.toolName, "gwd_plan_milestone");
+  assert.equal(getVerdictByUnitType("replan-slice")?.toolName, "gwd_replan_slice");
   assert.equal(getVerdictByUnitType("nonexistent-unit"), null);
 });
 
 test("every entry carries a non-empty rationale so the verdict is auditable", () => {
-  for (const name of [...EXPECTED_BACKGROUNDABLE, "gsd_doctor", "gsd_plan_milestone", "gsd_replan_slice", "gsd_plan_task"]) {
+  for (const name of [...EXPECTED_BACKGROUNDABLE, "gwd_doctor", "gwd_plan_milestone", "gwd_replan_slice", "gwd_plan_task"]) {
     const entry = getDelegationVerdict(name);
     assert.ok(entry, `${name} should be in the policy`);
     assert.ok(entry.rationale.length > 20, `${name} rationale must be substantive`);
@@ -132,8 +132,8 @@ test("annotateBackgroundable passes stop/skip actions through unchanged", () => 
 
 // ─── F4 latent gap pin: silent default-deny on unit types invoking GOOD tools ──
 
-test("execute-task / reactive-execute / execute-task-simple intentionally default-deny despite gsd_execute being GOOD", () => {
-  // gsd_execute carries a GOOD verdict but no `unitType`, by design — the
+test("execute-task / reactive-execute / execute-task-simple intentionally default-deny despite gwd_execute being GOOD", () => {
+  // gwd_execute carries a GOOD verdict but no `unitType`, by design — the
   // unit-level orchestrations wrap prompt and harness work whose safety is
   // a separate analysis. Lifting these out of default-deny must be an
   // explicit, audited change. This test pins the current behavior; if the

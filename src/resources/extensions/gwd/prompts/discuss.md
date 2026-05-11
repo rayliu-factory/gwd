@@ -48,7 +48,7 @@ Questions have four layers. At each layer, ask 1-3 open questions per round, inv
 
 **If `{{structuredQuestionsAvailable}}` is `false`:** ask questions in plain text. Keep each round to 1-3 focused questions. Wait for answers before asking the next round.
 
-**Incremental persistence:** After every 2 question rounds, silently save `{{milestoneId}}-CONTEXT-DRAFT.md` using `gsd_summary_save` with `artifact_type: "CONTEXT-DRAFT"` and `milestone_id: "{{milestoneId}}"`. Do NOT mention this save to the user.
+**Incremental persistence:** After every 2 question rounds, silently save `{{milestoneId}}-CONTEXT-DRAFT.md` using `gwd_summary_save` with `artifact_type: "CONTEXT-DRAFT"` and `milestone_id: "{{milestoneId}}"`. Do NOT mention this save to the user.
 
 ### Identify Work Type
 
@@ -235,8 +235,8 @@ When writing context.md, preserve the user's exact terminology, emphasis, and fr
 When writing CONTEXT.md, include discussion-layer sections: **Scope**, **Architectural Decisions** with rationale/evidence/alternatives, **Error Handling Strategy**, and **Acceptance Criteria** specific enough for planning.
 
 4. Write `{{contextPath}}` — use the **Context** output template below. Preserve key risks, unknowns, existing codebase constraints, integration points, and relevant requirements surfaced during discussion.
-5. Call `gsd_plan_milestone` to create the roadmap. Decompose into demoable vertical slices with risk, depends, demo sentences, proof strategy, verification classes, definition of done, requirement coverage, and a boundary map. If crossing runtime boundaries, include a final integration slice proving end-to-end behavior in a real environment. Use the **Roadmap** template below for tool parameters.
-6. For each architectural or pattern decision made during discussion, call `gsd_decision_save` — the tool auto-assigns IDs and regenerates `.gwd/DECISIONS.md` automatically.
+5. Call `gwd_plan_milestone` to create the roadmap. Decompose into demoable vertical slices with risk, depends, demo sentences, proof strategy, verification classes, definition of done, requirement coverage, and a boundary map. If crossing runtime boundaries, include a final integration slice proving end-to-end behavior in a real environment. Use the **Roadmap** template below for tool parameters.
+6. For each architectural or pattern decision made during discussion, call `gwd_decision_save` — the tool auto-assigns IDs and regenerates `.gwd/DECISIONS.md` automatically.
 7. {{commitInstruction}}
 
 ### Ready-phrase pre-condition (NON-BYPASSABLE)
@@ -246,7 +246,7 @@ Before emitting the ready phrase, verify in the CURRENT turn that you have:
 - [ ] Written `.gwd/PROJECT.md` (step 2)
 - [ ] Written `.gwd/REQUIREMENTS.md` (step 3)
 - [ ] Written `{{contextPath}}` (step 4)
-- [ ] Called `gsd_plan_milestone` (step 5)
+- [ ] Called `gwd_plan_milestone` (step 5)
 
 If ANY box is unchecked, **STOP**. Do NOT emit the ready phrase. Emit the missing tool calls in this same turn. The system detects missing artifacts and will reject premature ready signals — you will be asked again and retries are capped.
 
@@ -260,15 +260,15 @@ Once the user confirms the milestone split:
 
 #### Phase 1: Shared artifacts
 
-1. For each milestone, call `gsd_milestone_generate_id`; never invent IDs. Then `mkdir -p .gwd/milestones/<ID>/slices`.
+1. For each milestone, call `gwd_milestone_generate_id`; never invent IDs. Then `mkdir -p .gwd/milestones/<ID>/slices`.
 2. Write `.gwd/PROJECT.md` — use the **Project** output template below.
 3. Write `.gwd/REQUIREMENTS.md` — use the **Requirements** output template below. Capture Active, Deferred, Out of Scope, and any already Validated requirements. Later milestones may have provisional ownership where slice plans do not exist yet.
-4. For any architectural or pattern decisions made during discussion, call `gsd_decision_save` — the tool auto-assigns IDs and regenerates `.gwd/DECISIONS.md` automatically.
+4. For any architectural or pattern decisions made during discussion, call `gwd_decision_save` — the tool auto-assigns IDs and regenerates `.gwd/DECISIONS.md` automatically.
 
 #### Phase 2: Primary milestone
 
 5. Write a full `CONTEXT.md` for the primary milestone (the one discussed in depth).
-6. Call `gsd_plan_milestone` for **only the primary milestone**; detail-planning later milestones now is waste because the codebase will change. Include requirement coverage and definition of done.
+6. Call `gwd_plan_milestone` for **only the primary milestone**; detail-planning later milestones now is waste because the codebase will change. Include requirement coverage and definition of done.
 
 #### MANDATORY: depends_on Frontmatter in CONTEXT.md
 
@@ -338,7 +338,7 @@ Before emitting the ready phrase, verify in the CURRENT turn that you have:
 - [ ] Written `.gwd/PROJECT.md` (Phase 1)
 - [ ] Written `.gwd/REQUIREMENTS.md` (Phase 1)
 - [ ] Written primary-milestone `CONTEXT.md` (Phase 2)
-- [ ] Called `gsd_plan_milestone` for the primary milestone (Phase 2)
+- [ ] Called `gwd_plan_milestone` for the primary milestone (Phase 2)
 - [ ] Written `.gwd/DISCUSSION-MANIFEST.json` with `gates_completed === total` (Phase 3)
 
 If ANY box is unchecked, **STOP**. Do NOT emit the ready phrase. Emit the missing tool calls in this same turn. The system detects missing artifacts and will reject premature ready signals — you will be asked again and retries are capped.

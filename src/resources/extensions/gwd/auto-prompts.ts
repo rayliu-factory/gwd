@@ -165,7 +165,7 @@ function formatCloseoutReviewInstructions(validationContent: string | null, vali
       "",
       `A passing validation artifact is present at \`${validationRel}\`. Treat it as authoritative for success criteria, requirement coverage, verification classes, and cross-slice integration.`,
       "",
-      "Do not delegate fresh reviewer/security/tester audits and do not redo the validation evidence review unless the artifact is internally inconsistent with the inlined summaries. Focus this unit on final milestone narrative, learnings, PROJECT/requirements updates, and `gsd_complete_milestone`.",
+      "Do not delegate fresh reviewer/security/tester audits and do not redo the validation evidence review unless the artifact is internally inconsistent with the inlined summaries. Focus this unit on final milestone narrative, learnings, PROJECT/requirements updates, and `gwd_complete_milestone`.",
     ].join("\n");
   }
 
@@ -1589,7 +1589,7 @@ export async function checkNeedsRunUat(
         // If the UAT file already contains a verdict, UAT has been run — skip
         if (hasVerdict(uatContent)) return null;
         // Also check the ASSESSMENT file — the run-uat prompt writes the verdict
-        // there (via gsd_summary_save artifact_type:"ASSESSMENT"), not into the
+        // there (via gwd_summary_save artifact_type:"ASSESSMENT"), not into the
         // UAT spec file. Without this check the unit re-dispatches indefinitely.
         const assessmentFile = resolveSliceFile(base, mid, sid, "ASSESSMENT");
         if (assessmentFile) {
@@ -2522,7 +2522,7 @@ export async function buildCompleteSlicePrompt(
   // Gates owned by complete-slice (e.g. Q8). Pull from the DB so the
   // prompt only prompts for gates the plan actually seeded. The tool
   // handler closes each gate based on the SUMMARY.md section content
-  // after the assistant calls gsd_slice_complete.
+  // after the assistant calls gwd_slice_complete.
   const csPending = getPendingGatesForTurn(mid, sid, "complete-slice");
   // coverage check: every pending row must be owned by complete-slice.
   // requireAll:false because a slice may have already closed some gates.
@@ -3258,7 +3258,7 @@ export async function buildGateEvaluatePrompt(
       "## Instructions",
       "",
       "Analyze the slice plan above and answer the gate question.",
-      `Call the \`gsd_save_gate_result\` tool with:`,
+      `Call the \`gwd_save_gate_result\` tool with:`,
       `- \`milestoneId\`: "${mid}"`,
       `- \`sliceId\`: "${sid}"`,
       `- \`gateId\`: "${def.id}"`,

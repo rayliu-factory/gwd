@@ -228,7 +228,7 @@ test('(k) run-uat prompt template', () => {
   );
 });
 
-test('(k2) run-uat prompt references gsd_summary_save, not direct write', () => {
+test('(k2) run-uat prompt references gwd_summary_save, not direct write', () => {
   const promptResult = loadPromptFromWorktree('run-uat', {
     workingDirectory: '/tmp/test-project',
     milestoneId: 'M001',
@@ -240,8 +240,8 @@ test('(k2) run-uat prompt references gsd_summary_save, not direct write', () => 
   });
 
   assert.ok(
-    promptResult.includes('gsd_summary_save'),
-    'run-uat prompt should reference gsd_summary_save tool',
+    promptResult.includes('gwd_summary_save'),
+    'run-uat prompt should reference gwd_summary_save tool',
   );
   assert.ok(
     promptResult.includes('artifact_type: "ASSESSMENT"'),
@@ -462,7 +462,7 @@ test('(n) stale replay guard', async () => {
 
 test('(q) verdict in ASSESSMENT file skips UAT dispatch (file-based path)', async () => {
     // Regression test for #2644: run-uat prompt writes the verdict to
-    // S{sid}-ASSESSMENT.md (via gsd_summary_save artifact_type:"ASSESSMENT"),
+    // S{sid}-ASSESSMENT.md (via gwd_summary_save artifact_type:"ASSESSMENT"),
     // but checkNeedsRunUat only checked S{sid}-UAT.md — causing a stuck loop.
     const base = createFixtureBase();
     try {

@@ -266,7 +266,7 @@ describe("buildExtractLearningsPrompt", () => {
     );
   });
 
-  it("does NOT reference phantom gsd_graph tool (regression for #4429)", () => {
+  it("does NOT reference phantom gwd_graph tool (regression for #4429)", () => {
     const result = buildExtractLearningsPrompt({
       milestoneId: "M001",
       milestoneName: "Test Milestone",
@@ -281,8 +281,8 @@ describe("buildExtractLearningsPrompt", () => {
     });
 
     assert.ok(
-      !result.includes("gsd_graph"),
-      "prompt must not advertise the non-existent gsd_graph tool",
+      !result.includes("gwd_graph"),
+      "prompt must not advertise the non-existent gwd_graph tool",
     );
   });
 
@@ -458,14 +458,14 @@ describe("buildExtractionStepsBlock", () => {
   // The following nine tests asserted structural properties of the legacy
   // KNOWLEDGE.md table scaffolding (Rules/Patterns/Lessons headers, P###/L###
   // row templates, em-dash placeholders, append-only semantics, "missing file"
-  // template) and the gsd_save_decision call-out (parameter list, "never edit
+  // template) and the gwd_save_decision call-out (parameter list, "never edit
   // DECISIONS.md" prohibition). The cutover replaced both surfaces with
   // capture_thought calls into the memories table; the extraction steps no
-  // longer reference KNOWLEDGE.md tables or gsd_save_decision at all, so each
+  // longer reference KNOWLEDGE.md tables or gwd_save_decision at all, so each
   // assertion is now structurally false.
   //
   // The replacement assertions ("removes the legacy KNOWLEDGE.md table append
-  // step", "removes the gsd_save_decision call", "requires structuredFields
+  // step", "removes the gwd_save_decision call", "requires structuredFields
   // payload on architecture-category memories") below cover the inverse
   // contract.
   //
@@ -521,13 +521,13 @@ describe("buildExtractionStepsBlock", () => {
     assert.ok(!block.includes(".gwd/KNOWLEDGE.md"), "extraction flow must not reference KNOWLEDGE.md as a write target");
   });
 
-  it("removes the gsd_save_decision call (ADR-013 step 6 cutover)", () => {
+  it("removes the gwd_save_decision call (ADR-013 step 6 cutover)", () => {
     const block = buildExtractionStepsBlock(ctx);
     // ADR-013 Cutover: decisions are now persisted via capture_thought with
     // category=architecture and a structuredFields payload that preserves the
-    // gsd_save_decision schema. The legacy MCP tool is no longer called from
+    // gwd_save_decision schema. The legacy MCP tool is no longer called from
     // the extraction flow.
-    assert.ok(!block.includes("gsd_save_decision"), "gsd_save_decision must no longer appear in extraction steps");
+    assert.ok(!block.includes("gwd_save_decision"), "gwd_save_decision must no longer appear in extraction steps");
   });
 
   it("requires structuredFields payload on architecture-category memories (ADR-013 lossless projection)", () => {
@@ -535,15 +535,15 @@ describe("buildExtractionStepsBlock", () => {
     // ADR-013 Cutover: architecture-category memories must carry structured
     // fields so projection back to a human-visible decisions register stays
     // lossless. The Decisions persistence step must instruct the LLM to set
-    // structuredFields with the original gsd_save_decision schema fields.
+    // structuredFields with the original gwd_save_decision schema fields.
     assert.ok(/structuredFields/.test(block), "Decisions persistence step must instruct structuredFields use");
     assert.ok(/scope/i.test(block) && /decision/i.test(block) && /choice/i.test(block) && /rationale/i.test(block),
       "structuredFields must enumerate the preserved decision fields");
   });
 
-  it("does NOT reference the non-existent gsd_graph tool (#4429 regression)", () => {
+  it("does NOT reference the non-existent gwd_graph tool (#4429 regression)", () => {
     const block = buildExtractionStepsBlock(ctx);
-    assert.ok(!block.includes("gsd_graph"));
+    assert.ok(!block.includes("gwd_graph"));
   });
 
   it("substitutes the milestone ID into every placeholder callout", () => {
@@ -623,7 +623,7 @@ describe("complete-milestone loadPrompt round-trip (#4429)", () => {
     // Placeholder must be gone — real content must be in.
     assert.ok(!rendered.includes("{{extractLearningsSteps}}"));
     assert.ok(rendered.includes("Structured Learnings Extraction"));
-    // ADR-013 cutover: gsd_save_decision is no longer in the rendered block;
+    // ADR-013 cutover: gwd_save_decision is no longer in the rendered block;
     // the new persistence path is capture_thought with structuredFields.
     assert.ok(rendered.includes("capture_thought"));
     assert.ok(rendered.includes("M123"));

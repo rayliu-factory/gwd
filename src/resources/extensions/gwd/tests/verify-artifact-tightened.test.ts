@@ -3,7 +3,7 @@
  *
  * The legacy (pre-migration) fallback in verifyExpectedArtifact previously
  * accepted either a heading match (### T01 --) or a checked checkbox as proof
- * that gsd_complete_task ran. A heading alone does not prove completion —
+ * that gwd_complete_task ran. A heading alone does not prove completion —
  * it could result from a rogue write.
  *
  * These tests exercise verifyExpectedArtifact directly for execute-task units

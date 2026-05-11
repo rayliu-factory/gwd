@@ -170,14 +170,14 @@ test("vacuous-truth (a): unit type with empty workflow-required tools → dispat
 test("vacuous-truth (b): non-empty workflow tool requirement that the model carries → dispatch succeeds", async () => {
   const env = makeTempProject();
   try {
-    // gate-evaluate has tool requirement ["gsd_save_gate_result"]; if the
+    // gate-evaluate has tool requirement ["gwd_save_gate_result"]; if the
     // model's API can carry it, policy must still allow dispatch. Counter-test
     // to (a): proves the path with a non-empty requirement isn't denying
     // legitimate dispatches.
     const availableModels = [
       { id: "claude-sonnet-4-6", provider: "anthropic", api: "anthropic-messages" },
     ];
-    const pi = makeRecordingPi(["gsd_save_gate_result"]);
+    const pi = makeRecordingPi(["gwd_save_gate_result"]);
     clearToolBaseline(pi as unknown as object);
 
     const result = await selectAndApplyModel(
@@ -219,7 +219,7 @@ test("cross-unit poisoning: prior unit narrowing must not deny next unit's eligi
     ];
     // The baseline contains a synthetic "thinking_partner" that openai-completions
     // does not support.
-    const pi = makeRecordingPi(["gsd_save_gate_result", "thinking_partner"]);
+    const pi = makeRecordingPi(["gwd_save_gate_result", "thinking_partner"]);
     clearToolBaseline(pi as unknown as object);
 
     // Unit-N: dispatch on openai/openai-narrow.  Soft adjustToolSet will narrow
@@ -243,7 +243,7 @@ test("cross-unit poisoning: prior unit narrowing must not deny next unit's eligi
     // Unit-N+1: now dispatch with claude-wide.  If active-tool snapshot were
     // still the policy required-set, the previous narrowing wouldn't matter
     // (anthropic-messages can carry both tools), so we instead simulate the
-    // 4959 path: a second unit whose workflow requires "gsd_save_gate_result"
+    // 4959 path: a second unit whose workflow requires "gwd_save_gate_result"
     // (small) — must succeed reaching pi.setModel for claude-wide.
     const beforeCount = pi.__calls.filter(c => c.kind === "setModel").length;
     await selectAndApplyModel(
@@ -271,7 +271,7 @@ test("cross-unit poisoning: prior unit narrowing must not deny next unit's eligi
 // Exercises the real `getRequiredWorkflowToolsForAutoUnit` →
 // `filterToolsForProvider` path that #4959 was about (CodeRabbit Minor:
 // existing 3b test used cross-provider denial which never hit this path).
-// Registers `gsd_plan_slice` as `producesImages: true`, then offers only an
+// Registers `gwd_plan_slice` as `producesImages: true`, then offers only an
 // `ollama-chat` candidate (which has `imageToolResults: false`) — the
 // workflow-required tool is incompatible with the candidate's API, so the
 // policy filter denies the model with a `tool policy denied (...)` reason.
@@ -280,7 +280,7 @@ test("genuinely-impossible (a): workflow tool incompatible with candidate API �
   try {
     // Register the workflow tool as image-producing for the duration of this
     // test. afterEach() resets the registry below.
-    registerToolCompatibility("gsd_plan_slice", { producesImages: true });
+    registerToolCompatibility("gwd_plan_slice", { producesImages: true });
 
     // PREFERENCES needs tier_models so resolvePreferredModelConfig returns a
     // non-undefined modelConfig — without that, selectAndApplyModel skips the
@@ -294,7 +294,7 @@ test("genuinely-impossible (a): workflow tool incompatible with candidate API �
     const availableModels = [
       { id: "ollama-llama-3", provider: "ollama", api: "ollama-chat" },
     ];
-    const pi = makeRecordingPi(["gsd_plan_slice"]);
+    const pi = makeRecordingPi(["gwd_plan_slice"]);
     clearToolBaseline(pi as unknown as object);
 
     const ctx = makeCtx(availableModels);
@@ -324,7 +324,7 @@ test("genuinely-impossible (a): workflow tool incompatible with candidate API �
     const err = thrown as ModelPolicyDispatchBlockedError;
     assert.equal(err.unitType, "plan-slice");
     assert.match(err.message, /tool policy denied/, "throw must surface the tool-compatibility deny reason");
-    assert.match(err.message, /gsd_plan_slice/, "throw must name the incompatible tool");
+    assert.match(err.message, /gwd_plan_slice/, "throw must name the incompatible tool");
     assert.match(err.message, /ollama-chat/, "throw must name the api for which the tool was filtered");
   } finally {
     resetToolCompatibilityRegistry();
@@ -337,13 +337,13 @@ test("genuinely-impossible (a): workflow tool incompatible with candidate API �
 test("genuinely-impossible (b): cross-provider routing disabled + provider mismatch → typed error", async () => {
   const env = makeTempProject();
   try {
-    // Use plan-slice (workflow-required: ["gsd_plan_slice"]) but pretend no
+    // Use plan-slice (workflow-required: ["gwd_plan_slice"]) but pretend no
     // candidate model can carry it.  The simplest way: provide a model whose
     // api is a fictitious "no-tools" string — `filterToolsForProvider` returns
     // every tool as filtered for an unknown api with toolCalling=false, OR we
     // can pick a real api that also denies the tool.  We use an api that
     // exists but has known incompatibility — no such case is portable, so we
-    // fall back to a model whose api is recognized to deny `gsd_plan_slice`.
+    // fall back to a model whose api is recognized to deny `gwd_plan_slice`.
     //
     // Pragmatic approach: monkey the policy via `allowCrossProvider=false` +
     // a single candidate model on a *different* provider than current, which
@@ -403,7 +403,7 @@ test("restore baseline: setActiveTools(BASELINE) called between units before nex
     const availableModels = [
       { id: "claude-sonnet-4-6", provider: "anthropic", api: "anthropic-messages" },
     ];
-    const baselineTools = ["gsd_save_gate_result", "tool_a", "tool_b"];
+    const baselineTools = ["gwd_save_gate_result", "tool_a", "tool_b"];
     const pi = makeRecordingPi(baselineTools);
     clearToolBaseline(pi as unknown as object);
 
@@ -422,7 +422,7 @@ test("restore baseline: setActiveTools(BASELINE) called between units before nex
     );
 
     // Simulate a downstream caller narrowing the tool set (post-unit poisoning).
-    pi.setActiveTools(["gsd_save_gate_result"]);
+    pi.setActiveTools(["gwd_save_gate_result"]);
     const callsBeforeU2 = pi.__calls.length;
 
     // Second call should restore the baseline before reading anything.
@@ -628,7 +628,7 @@ test("cross-mode (#4965): isAutoMode=false does NOT restore baseline even when o
     const availableModels = [
       { id: "claude-sonnet-4-6", provider: "anthropic", api: "anthropic-messages" },
     ];
-    const baselineTools = ["gsd_save_gate_result", "tool_a", "tool_b"];
+    const baselineTools = ["gwd_save_gate_result", "tool_a", "tool_b"];
     const pi = makeRecordingPi(baselineTools);
     clearToolBaseline(pi as unknown as object);
 
@@ -690,7 +690,7 @@ test("cross-mode (#4965): auto → guided → auto preserves the original auto-e
     const availableModels = [
       { id: "claude-sonnet-4-6", provider: "anthropic", api: "anthropic-messages" },
     ];
-    const baselineTools = ["gsd_save_gate_result", "tool_a", "tool_b"];
+    const baselineTools = ["gwd_save_gate_result", "tool_a", "tool_b"];
     const pi = makeRecordingPi(baselineTools);
     clearToolBaseline(pi as unknown as object);
 

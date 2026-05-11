@@ -114,19 +114,19 @@ const CONTEXT_MODE_LANE_LABELS: Record<Exclude<ContextModePolicy, "none">, strin
 
 const CONTEXT_MODE_GUIDANCE_BY_LANE: Record<Exclude<ContextModePolicy, "none">, string> = {
   interview:
-    "Use `gsd_resume` to restore prior discussion, `gsd_exec` for noisy discovery, and `gsd_exec_search` before repeating scans.",
+    "Use `gwd_resume` to restore prior discussion, `gwd_exec` for noisy discovery, and `gwd_exec_search` before repeating scans.",
   research:
-    "Use `gsd_exec` for noisy research scans, `gsd_exec_search` before reruns, and `gsd_resume` to restore prior findings.",
+    "Use `gwd_exec` for noisy research scans, `gwd_exec_search` before reruns, and `gwd_resume` to restore prior findings.",
   planning:
-    "Use `gsd_resume` for planning continuity, `gsd_exec` for noisy checks, and `gsd_exec_search` before rerunning diagnostics.",
+    "Use `gwd_resume` for planning continuity, `gwd_exec` for noisy checks, and `gwd_exec_search` before rerunning diagnostics.",
   execution:
-    "Use `gsd_exec` for builds, tests, and diagnostics, `gsd_exec_search` before reruns, and `gsd_resume` after compaction or resume.",
+    "Use `gwd_exec` for builds, tests, and diagnostics, `gwd_exec_search` before reruns, and `gwd_resume` after compaction or resume.",
   verification:
-    "Use `gsd_exec` for verification commands, `gsd_exec_search` to reuse prior evidence, and `gsd_resume` after compaction or resume.",
+    "Use `gwd_exec` for verification commands, `gwd_exec_search` to reuse prior evidence, and `gwd_resume` after compaction or resume.",
   orchestration:
-    "Use `gsd_resume` before resuming orchestration, `gsd_exec_search` to reuse prior runs, and `gsd_exec` for noisy coordination checks.",
+    "Use `gwd_resume` before resuming orchestration, `gwd_exec_search` to reuse prior runs, and `gwd_exec` for noisy coordination checks.",
   docs:
-    "Use `gsd_resume` for prior context, `gsd_exec_search` for saved evidence, and `gsd_exec` for noisy doc validation commands.",
+    "Use `gwd_resume` for prior context, `gwd_exec_search` for saved evidence, and `gwd_exec` for noisy doc validation commands.",
 };
 
 /**

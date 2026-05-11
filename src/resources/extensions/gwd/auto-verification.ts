@@ -58,7 +58,7 @@ function isInfraVerificationFailure(stderr: string): boolean {
  * Post-unit guard for `validate-milestone` units (#4094).
  *
  * When validate-milestone writes verdict=needs-remediation, the agent is
- * expected to also call gsd_reassess_roadmap in the same turn to add
+ * expected to also call gwd_reassess_roadmap in the same turn to add
  * remediation slices. If they don't, the state machine re-derives
  * `phase: validating-milestone` indefinitely (all slices still complete +
  * verdict still needs-remediation), wasting ~3 dispatches before the stuck
@@ -149,7 +149,7 @@ async function runValidateMilestonePostCheck(
   );
   process.stderr.write(
     `validate-milestone: pausing — verdict=needs-remediation with no incomplete slices for ${mid}. ` +
-      `The agent must call gsd_reassess_roadmap to add remediation slices before re-validation.\n`,
+      `The agent must call gwd_reassess_roadmap to add remediation slices before re-validation.\n`,
   );
   await persistMilestoneValidationGate(
     "manual-attention",

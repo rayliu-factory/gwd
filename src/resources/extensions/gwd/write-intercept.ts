@@ -91,9 +91,9 @@ function matchesBlockedPattern(path: string): boolean {
  * Directs the agent to use engine tool calls instead.
  */
 export const BLOCKED_WRITE_ERROR = `Direct writes to .gwd/STATE.md and .gwd/gwd.db are blocked. Use engine tool calls instead:
-- To complete a task: call gsd_task_complete(milestone_id, slice_id, task_id, summary)
-- To complete a slice: call gsd_slice_complete(milestone_id, slice_id, summary, uat_result)
-- To save a decision: call gsd_decision_save(scope, decision, choice, rationale)
-- To start a task: call gsd_start_task(milestone_id, slice_id, task_id)
-- To record verification: call gsd_record_verification(milestone_id, slice_id, task_id, evidence)
-- To report a blocker: call gsd_report_blocker(milestone_id, slice_id, task_id, description)`;
+- To complete a task: call gwd_task_complete(milestone_id, slice_id, task_id, summary)
+- To complete a slice: call gwd_slice_complete(milestone_id, slice_id, summary, uat_result)
+- To save a decision: call gwd_decision_save(scope, decision, choice, rationale)
+- To start a task: call gwd_start_task(milestone_id, slice_id, task_id)
+- To record verification: call gwd_record_verification(milestone_id, slice_id, task_id, evidence)
+- To report a blocker: call gwd_report_blocker(milestone_id, slice_id, task_id, description)`;

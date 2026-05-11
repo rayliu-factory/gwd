@@ -45,7 +45,7 @@ After answers, investigate new unknowns if needed, then ask the next round.
 
 After each answer round, decide whether you have enough signal to write context cleanly.
 
-- **Incremental persistence:** After every 2 question rounds, silently save `{{sliceId}}-CONTEXT-DRAFT.md` in `{{sliceDirPath}}` using `gsd_summary_save` with `milestone_id: {{milestoneId}}`, `slice_id: {{sliceId}}`, `artifact_type: "CONTEXT-DRAFT"`. Do NOT mention this to the user. Final context replaces it.
+- **Incremental persistence:** After every 2 question rounds, silently save `{{sliceId}}-CONTEXT-DRAFT.md` in `{{sliceDirPath}}` using `gwd_summary_save` with `milestone_id: {{milestoneId}}`, `slice_id: {{sliceId}}`, `artifact_type: "CONTEXT-DRAFT"`. Do NOT mention this to the user. Final context replaces it.
 - If more signal is needed, investigate new unknowns and continue. Do **not** ask a meta "ready to wrap up?" question after every round.
 - Ask one wrap-up question only when the slice is well understood or the user wants to stop.
 - Offer exactly two choices: "Write the context file" *(recommended when understood)* or "One more pass". Use `ask_user_questions` if available; otherwise ask in plain text.
@@ -60,7 +60,7 @@ Once the user has explicitly confirmed they are ready to write the context file:
 
 1. Use the **Slice Context** template below.
 2. `mkdir -p {{sliceDirPath}}`
-3. Call `gsd_summary_save` with `milestone_id: {{milestoneId}}`, `slice_id: {{sliceId}}`, `artifact_type: "CONTEXT"`, and context as `content`; the tool writes to disk and DB. Fill:
+3. Call `gwd_summary_save` with `milestone_id: {{milestoneId}}`, `slice_id: {{sliceId}}`, `artifact_type: "CONTEXT"`, and context as `content`; the tool writes to disk and DB. Fill:
    - **Goal** — one sentence.
    - **Why this Slice** — why now and what it unblocks.
    - **Scope / In Scope** — confirmed scope.

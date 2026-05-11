@@ -53,16 +53,16 @@ If all criteria have at least one remaining owning slice, the coverage check pas
 
 **If the roadmap is still good:**
 
-Use `gsd_reassess_roadmap` with `verdict: "roadmap-confirmed"`, an empty `sliceChanges` object, and the assessment text — the tool writes the assessment to the DB and renders `{{assessmentPath}}`. If requirements exist, explicitly note whether requirement coverage remains sound.
+Use `gwd_reassess_roadmap` with `verdict: "roadmap-confirmed"`, an empty `sliceChanges` object, and the assessment text — the tool writes the assessment to the DB and renders `{{assessmentPath}}`. If requirements exist, explicitly note whether requirement coverage remains sound.
 
 **If changes are needed:**
 
-**Persist changes through `gsd_reassess_roadmap`.** Pass: `milestoneId`, `completedSliceId`, `verdict` (e.g. "roadmap-adjusted"), `assessment` (text explaining the decision), and `sliceChanges` with `modified` (array of sliceId, title, risk, depends, demo), `added` (same shape), `removed` (array of slice ID strings). The tool structurally enforces preservation of completed slices, writes the assessment to the DB, re-renders `{{roadmapPath}}`, and renders `{{assessmentPath}}`.
+**Persist changes through `gwd_reassess_roadmap`.** Pass: `milestoneId`, `completedSliceId`, `verdict` (e.g. "roadmap-adjusted"), `assessment` (text explaining the decision), and `sliceChanges` with `modified` (array of sliceId, title, risk, depends, demo), `added` (same shape), `removed` (array of slice ID strings). The tool structurally enforces preservation of completed slices, writes the assessment to the DB, re-renders `{{roadmapPath}}`, and renders `{{assessmentPath}}`.
 
 If `.gwd/REQUIREMENTS.md` exists and requirement ownership or status changed, update it.
 
 {{commitInstruction}}
 
-**DB access safety:** Do NOT query `.gwd/gwd.db` directly via `sqlite3` or `node -e require('better-sqlite3')`. Use `gsd_milestone_status` to read current milestone and slice state. All roadmap mutations go through `gsd_reassess_roadmap` — the tool writes to the DB and re-renders ROADMAP.md atomically.
+**DB access safety:** Do NOT query `.gwd/gwd.db` directly via `sqlite3` or `node -e require('better-sqlite3')`. Use `gwd_milestone_status` to read current milestone and slice state. All roadmap mutations go through `gwd_reassess_roadmap` — the tool writes to the DB and re-renders ROADMAP.md atomically.
 
 When done, say: "Roadmap reassessed."

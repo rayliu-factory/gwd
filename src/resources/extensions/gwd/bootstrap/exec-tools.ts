@@ -26,7 +26,7 @@ async function loadContextModePreferences(baseDir: string) {
 
 export function registerExecTools(pi: ExtensionAPI): void {
   pi.registerTool({
-    name: "gsd_exec",
+    name: "gwd_exec",
     label: "Exec (Sandboxed)",
     description:
       "Run a short script (bash/node/python) in a subprocess. Capped stdout/stderr and metadata persist to " +
@@ -37,7 +37,7 @@ export function registerExecTools(pi: ExtensionAPI): void {
     promptSnippet:
       "Run a bash/node/python script in a sandbox; capped output is saved to disk and only a digest returns",
     promptGuidelines: [
-      "Prefer gsd_exec for analyses that would otherwise read >3 files or produce large tool output.",
+      "Prefer gwd_exec for analyses that would otherwise read >3 files or produce large tool output.",
       "Write scripts that log the finding (counts, matches, summaries) rather than raw dumps.",
       "The digest is the last ~300 chars of stdout — size your log output accordingly.",
       "Need persisted output? Read the stdout_path returned in details (file on local disk).",
@@ -58,9 +58,9 @@ export function registerExecTools(pi: ExtensionAPI): void {
       ),
     }),
     async execute(_toolCallId, params, _signal, _onUpdate, _ctx) {
-      const { executeGsdExec } = await import("../tools/exec-tool.js");
+      const { executeGwdExec } = await import("../tools/exec-tool.js");
       const baseDir = resolveCtxCwd(_ctx);
-      return executeGsdExec(params as Parameters<typeof executeGsdExec>[0], {
+      return executeGwdExec(params as Parameters<typeof executeGwdExec>[0], {
         baseDir,
         preferences: await loadContextModePreferences(baseDir),
       });
@@ -68,12 +68,12 @@ export function registerExecTools(pi: ExtensionAPI): void {
   });
 
   pi.registerTool({
-    name: "gsd_exec_search",
-    label: "Search gsd_exec History",
+    name: "gwd_exec_search",
+    label: "Search gwd_exec History",
     description:
-      "List prior gsd_exec runs (most recent first) from .gwd/exec/*.meta.json. Useful for " +
+      "List prior gwd_exec runs (most recent first) from .gwd/exec/*.meta.json. Useful for " +
       "rediscovering the stdout_path of an earlier run without re-executing it. Read-only.",
-    promptSnippet: "Search prior gsd_exec runs by substring, runtime, or failing-only filter",
+    promptSnippet: "Search prior gwd_exec runs by substring, runtime, or failing-only filter",
     promptGuidelines: [
       "Use this before re-running an expensive analysis — the prior run's stdout file may still answer.",
       "The preview shows the trailing ~300 chars of stdout; read stdout_path for persisted output.",
@@ -99,16 +99,16 @@ export function registerExecTools(pi: ExtensionAPI): void {
   });
 
   pi.registerTool({
-    name: "gsd_resume",
+    name: "gwd_resume",
     label: "Resume (Read Snapshot)",
     description:
       "Return the contents of .gwd/last-snapshot.md — a ≤2 KB digest of top memories, recent " +
-      "gsd_exec runs, and active context, written automatically on session_before_compact. Use " +
+      "gwd_exec runs, and active context, written automatically on session_before_compact. Use " +
       "this after compaction or session resume to re-orient quickly.",
     promptSnippet: "Read the pre-compaction snapshot to re-orient after context loss",
     promptGuidelines: [
       "Call this right after a session resumes if you feel you've lost durable context.",
-      "The snapshot is a summary — use memory_query or gsd_exec_search for detail.",
+      "The snapshot is a summary — use memory_query or gwd_exec_search for detail.",
     ],
     parameters: Type.Object({}),
     async execute(_toolCallId, params, _signal, _onUpdate, _ctx) {

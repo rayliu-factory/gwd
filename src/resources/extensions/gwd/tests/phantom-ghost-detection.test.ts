@@ -1,7 +1,7 @@
 /**
  * Regression test for #3671 — isGhostMilestone detects phantom queued rows
  *
- * gsd_milestone_generate_id inserts a DB row with status "queued" as a side
+ * gwd_milestone_generate_id inserts a DB row with status "queued" as a side
  * effect. If the milestone is never planned, isGhostMilestone previously
  * returned false for any milestone with a DB row, blocking the state machine.
  *

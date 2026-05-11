@@ -35,21 +35,21 @@ export const CACHE_MAX = 50;
  * sent to the provider stays well under provider limits.
  *
  * Included tools and why:
- *   - gsd_summary_save: writes CONTEXT.md artifacts (all discuss prompts)
- *   - gsd_decision_save: records decisions (discuss.md output phase)
- *   - gsd_plan_milestone: writes roadmap (discuss.md single/multi milestone)
- *   - gsd_milestone_generate_id: generates milestone IDs (discuss.md multi-milestone)
- *   - gsd_requirement_update: updates requirements during discuss
+ *   - gwd_summary_save: writes CONTEXT.md artifacts (all discuss prompts)
+ *   - gwd_decision_save: records decisions (discuss.md output phase)
+ *   - gwd_plan_milestone: writes roadmap (discuss.md single/multi milestone)
+ *   - gwd_milestone_generate_id: generates milestone IDs (discuss.md multi-milestone)
+ *   - gwd_requirement_update: updates requirements during discuss
  */
 export const DISCUSS_TOOLS_ALLOWLIST: readonly string[] = [
   // Context / summary writing
-  "gsd_summary_save",
+  "gwd_summary_save",
   // Decision recording
-  "gsd_decision_save",
+  "gwd_decision_save",
   // Milestone planning (needed for discuss.md output phase)
-  "gsd_plan_milestone",
+  "gwd_plan_milestone",
   // Milestone ID generation (multi-milestone flow)
-  "gsd_milestone_generate_id",
+  "gwd_milestone_generate_id",
   // Requirement updates
-  "gsd_requirement_update",
+  "gwd_requirement_update",
 ];

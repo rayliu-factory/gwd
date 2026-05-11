@@ -54,7 +54,7 @@ Ask **1–3 questions per round**, one dimension at a time: capability scoping, 
 
 ### Round cadence
 
-- **Incremental persistence:** After every 2 question rounds, silently save the draft using `gsd_summary_save` with `artifact_type: "REQUIREMENTS-DRAFT"` and no `milestone_id`. Do NOT mention this save to the user.
+- **Incremental persistence:** After every 2 question rounds, silently save the draft using `gwd_summary_save` with `artifact_type: "REQUIREMENTS-DRAFT"` and no `milestone_id`. Do NOT mention this save to the user.
 - Continue rounds until the depth checklist is satisfied or the user signals stop.
 
 ---
@@ -90,8 +90,8 @@ If they adjust, absorb and re-verify.
 Once the user confirms:
 
 1. Use the **Requirements** output template to render final markdown in memory.
-2. Every entry must use `R###` and all fields. Use `gsd_requirement_save` for each requirement so DB state is saved first.
-3. After all `gsd_requirement_save` calls, call `gsd_summary_save` with `artifact_type: "REQUIREMENTS"`; omit `milestone_id`. The requirements table is source of truth, and this tool renders `.gwd/REQUIREMENTS.md` from DB state. Pass markdown as audit context only; do not rely on markdown to update DB rows.
+2. Every entry must use `R###` and all fields. Use `gwd_requirement_save` for each requirement so DB state is saved first.
+3. After all `gwd_requirement_save` calls, call `gwd_summary_save` with `artifact_type: "REQUIREMENTS"`; omit `milestone_id`. The requirements table is source of truth, and this tool renders `.gwd/REQUIREMENTS.md` from DB state. Pass markdown as audit context only; do not rely on markdown to update DB rows.
 4. The file MUST contain all required sections: `## Active`, `## Validated`, `## Deferred`, `## Out of Scope`, `## Traceability`, `## Coverage Summary`. Empty sections are OK; missing sections are not.
 5. Print the final coverage summary in chat: `Active: N | Validated: N | Deferred: N | Out of Scope: N | Mapped to slices: N | Unmapped active: N`.
 6. Do NOT use `artifact_type: "CONTEXT"` and do NOT pass `milestone_id: "REQUIREMENTS"`; that creates a fake milestone instead of `.gwd/REQUIREMENTS.md`.

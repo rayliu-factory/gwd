@@ -27,34 +27,34 @@ import { _dispatchWorkflowForTest } from "../guided-flow.ts";
 
 /** Tools that are only needed during planning, execution, or completion phases */
 const HEAVY_TOOLS = [
-  "gsd_plan_slice",
-  "gsd_slice_plan",
-  "gsd_plan_task",
-  "gsd_task_plan",
-  "gsd_task_complete",
-  "gsd_complete_task",
-  "gsd_slice_complete",
-  "gsd_complete_slice",
-  "gsd_complete_milestone",
-  "gsd_milestone_complete",
-  "gsd_validate_milestone",
-  "gsd_milestone_validate",
-  "gsd_replan_slice",
-  "gsd_slice_replan",
-  "gsd_reassess_roadmap",
-  "gsd_roadmap_reassess",
-  "gsd_save_gate_result",
+  "gwd_plan_slice",
+  "gwd_slice_plan",
+  "gwd_plan_task",
+  "gwd_task_plan",
+  "gwd_task_complete",
+  "gwd_complete_task",
+  "gwd_slice_complete",
+  "gwd_complete_slice",
+  "gwd_complete_milestone",
+  "gwd_milestone_complete",
+  "gwd_validate_milestone",
+  "gwd_milestone_validate",
+  "gwd_replan_slice",
+  "gwd_slice_replan",
+  "gwd_reassess_roadmap",
+  "gwd_roadmap_reassess",
+  "gwd_save_gate_result",
 ];
 
 // ─── Tools that discuss prompts reference ────────────────────────────────────
 
 /** Tools explicitly called by discuss prompt templates */
 const DISCUSS_REQUIRED_TOOLS = [
-  "gsd_summary_save",          // guided-discuss-slice.md, guided-discuss-milestone.md, discuss.md
-  "gsd_decision_save",         // discuss.md output phase
-  "gsd_plan_milestone",        // discuss.md output phase (single + multi milestone)
-  "gsd_milestone_generate_id", // discuss.md multi-milestone Phase 1
-  "gsd_requirement_update",    // used during discuss for requirement updates
+  "gwd_summary_save",          // guided-discuss-slice.md, guided-discuss-milestone.md, discuss.md
+  "gwd_decision_save",         // discuss.md output phase
+  "gwd_plan_milestone",        // discuss.md output phase (single + multi milestone)
+  "gwd_milestone_generate_id", // discuss.md multi-milestone Phase 1
+  "gwd_requirement_update",    // used during discuss for requirement updates
 ];
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
@@ -100,7 +100,7 @@ describe("discuss tool scoping (#2949)", () => {
     const setCalls: string[][] = [];
     const sent: unknown[] = [];
     let sentTools: string[] = [];
-    let activeTools = ["gsd_summary_save", "gsd_task_complete", "bash"];
+    let activeTools = ["gwd_summary_save", "gwd_task_complete", "bash"];
     process.env.GWD_WORKFLOW_PATH = workflowPath;
     try {
       await _dispatchWorkflowForTest(
@@ -126,11 +126,11 @@ describe("discuss tool scoping (#2949)", () => {
       rmSync(tmp, { recursive: true, force: true });
     }
 
-    assert.deepEqual(setCalls[0], ["gsd_summary_save", "bash"]);
-    assert.deepEqual(setCalls.at(-1), ["gsd_summary_save", "gsd_task_complete", "bash"]);
+    assert.deepEqual(setCalls[0], ["gwd_summary_save", "bash"]);
+    assert.deepEqual(setCalls.at(-1), ["gwd_summary_save", "gwd_task_complete", "bash"]);
     assert.ok(sentTools.length > 0, "dispatch should queue a message");
-    assert.ok(sentTools.includes("gsd_summary_save"), "dispatch keeps the discuss save tool");
-    assert.ok(!sentTools.includes("gsd_task_complete"), "dispatch removes heavy completion tools");
+    assert.ok(sentTools.includes("gwd_summary_save"), "dispatch keeps the discuss save tool");
+    assert.ok(!sentTools.includes("gwd_task_complete"), "dispatch removes heavy completion tools");
     assert.equal(sent.length, 1);
     assert.match(String((sent[0] as { content?: unknown }).content), /Discuss the project/);
   });

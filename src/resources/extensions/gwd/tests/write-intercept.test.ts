@@ -71,6 +71,6 @@ test('write-intercept: BLOCKED_WRITE_ERROR is a non-empty string', () => {
 });
 
 test('write-intercept: BLOCKED_WRITE_ERROR mentions engine tool calls', () => {
-  assert.ok(BLOCKED_WRITE_ERROR.includes('gsd_task_complete'), 'should mention gsd_task_complete');
+  assert.ok(BLOCKED_WRITE_ERROR.includes('gwd_task_complete'), 'should mention gwd_task_complete');
   assert.ok(BLOCKED_WRITE_ERROR.includes('engine tool calls'), 'should mention engine tool calls');
 });

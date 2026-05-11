@@ -1143,13 +1143,13 @@ export function setSliceSketchFlag(milestoneId: string, sliceId: string, isSketc
  * to keep path logic in one place — do not hand-roll the path inside the callback.
  *
  * Recovers from two scenarios:
- *   1. Crash between `gsd_plan_slice` write and the sketch flag flip.
+ *   1. Crash between `gwd_plan_slice` write and the sketch flag flip.
  *   2. Flag-OFF downgrade path: when `progressive_planning` is off, the dispatch
  *      rule routes sketch slices to plan-slice, which writes PLAN.md but leaves
  *      `is_sketch=1` — the next state derivation auto-heals it to 0 here.
  *
  * Not aggressive in practice: PLAN.md is only written via the DB-backed
- * `gsd_plan_slice` tool (which also inserts tasks), so a "stale PLAN.md with
+ * `gwd_plan_slice` tool (which also inserts tasks), so a "stale PLAN.md with
  * is_sketch=1" is extremely unlikely to indicate anything other than the two
  * recovery scenarios above.
  */

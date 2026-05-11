@@ -121,7 +121,7 @@ test("resolveExpectedArtifactPath returns correct path for all slice-level types
 // ─── run-uat artifact path contract (#2873) ──────────────────────────────
 
 test("resolveExpectedArtifactPath for run-uat returns ASSESSMENT path, not UAT (#2873)", (t) => {
-  // The run-uat prompt instructs the agent to call gsd_summary_save with
+  // The run-uat prompt instructs the agent to call gwd_summary_save with
   // artifact_type: "ASSESSMENT", which writes S##-ASSESSMENT.md. The artifact
   // verification path must match — otherwise verification fails and auto-mode
   // retries the unit in an infinite loop.
@@ -149,12 +149,12 @@ test("diagnoseExpectedArtifact for run-uat references ASSESSMENT (#2873)", (t) =
 });
 
 test("verifyExpectedArtifact passes for run-uat when ASSESSMENT file exists (#2873)", (t) => {
-  // Regression test: run-uat writes S##-ASSESSMENT.md via gsd_summary_save,
+  // Regression test: run-uat writes S##-ASSESSMENT.md via gwd_summary_save,
   // but verification looked for S##-UAT.md, causing false stuck retries.
   const base = makeTmpBase();
   t.after(() => cleanup(base));
 
-  // Write the ASSESSMENT file (what gsd_summary_save actually produces)
+  // Write the ASSESSMENT file (what gwd_summary_save actually produces)
   const assessPath = join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-ASSESSMENT.md");
   writeFileSync(assessPath, "---\nverdict: PASS\n---\n# UAT Assessment\n");
 
@@ -553,7 +553,7 @@ test("verifyExpectedArtifact execute-task rejects heading-style plan without che
   ].join("\n"));
   writeFileSync(join(tasksDir, "T01-SUMMARY.md"), "# T01 Summary\n\nDone.");
   // Heading-style entries no longer count as verified — only checked
-  // checkboxes prove gsd_complete_task ran (#3607).
+  // checkboxes prove gwd_complete_task ran (#3607).
   assert.strictEqual(
     verifyExpectedArtifact("execute-task", "M001/S01/T01", base),
     false,

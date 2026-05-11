@@ -24,11 +24,11 @@ export type DoctorIssueCode =
   | "state_file_stale"
   | "state_file_missing"
   | "gitignore_missing_patterns"
-  | "symlinked_gsd_unignored"
+  | "symlinked_gwd_unignored"
   | "unresolvable_dependency"
   | "failed_migration"
   | "broken_symlink"
-  | "numbered_gsd_variant"
+  | "numbered_gwd_variant"
   // Environment health checks (#1221)
   | "env_node_version"
   | "env_dependencies"

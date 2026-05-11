@@ -135,9 +135,9 @@ describe("complete-milestone", () => {
       "prompt contains 'Verification Gate' section",
     );
 
-    // Failure path must block gsd_complete_milestone
+    // Failure path must block gwd_complete_milestone
     assert.ok(
-      prompt.includes("Do NOT call `gsd_complete_milestone`"),
+      prompt.includes("Do NOT call `gwd_complete_milestone`"),
       "failure path explicitly blocks calling the completion tool",
     );
 
@@ -576,8 +576,8 @@ describe("complete-milestone", () => {
     const codeChange = findStep(/Verify code changes/);
     const successCriteria = findStep(/Verify every \*\*success criterion\*\*/);
     const defOfDone = findStep(/Verify \*\*definition of done\*\*/);
-    const completeMilestone = findStep(/Persist completion through `gsd_complete_milestone`/);
-    const requirementUpdate = findStep(/gsd_requirement_update/);
+    const completeMilestone = findStep(/Persist completion through `gwd_complete_milestone`/);
+    const requirementUpdate = findStep(/gwd_requirement_update/);
 
     // Gate clause references the verification steps.
     const gateLine = prompt.split("\n").find(l => l.includes("Verification failure was recorded") || l.includes("verification failure was recorded"));
@@ -586,12 +586,12 @@ describe("complete-milestone", () => {
       gateLine!.includes(`steps ${codeChange}, ${successCriteria}, or ${defOfDone}`),
       `gate must cite verification steps ${codeChange}, ${successCriteria}, ${defOfDone}; got: ${gateLine}`,
     );
-    // "Do NOT proceed with steps X-Y" — Y must be at least the gsd_complete_milestone step.
+    // "Do NOT proceed with steps X-Y" — Y must be at least the gwd_complete_milestone step.
     const proceedMatch = /Do NOT proceed with steps (\d+)[–-](\d+)/.exec(gateLine!);
     assert.ok(proceedMatch, "gate must include a 'Do NOT proceed with steps X–Y' clause");
     assert.ok(
       Number(proceedMatch![1]) > requirementUpdate - 1 && Number(proceedMatch![2]) >= completeMilestone,
-      `'Do NOT proceed' range ${proceedMatch![1]}–${proceedMatch![2]} must cover steps from after the gate through gsd_complete_milestone (${completeMilestone})`,
+      `'Do NOT proceed' range ${proceedMatch![1]}–${proceedMatch![2]} must cover steps from after the gate through gwd_complete_milestone (${completeMilestone})`,
     );
 
     // "Important" footer references the same verification steps.
@@ -603,7 +603,7 @@ describe("complete-milestone", () => {
       `Important footer must cite verification range ${codeChange}-${defOfDone}; got: ${importantLine}`,
     );
 
-    // On-demand Read ordering line cites the gsd_complete_milestone step.
+    // On-demand Read ordering line cites the gwd_complete_milestone step.
     const readOrderLine = prompt.split("\n").find(l => l.includes("On-demand Read ordering"));
     assert.ok(readOrderLine, "On-demand Read ordering line is present");
     assert.ok(

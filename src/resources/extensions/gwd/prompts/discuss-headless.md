@@ -112,8 +112,8 @@ In a single pass:
 **Depth-Preservation Guidance for context.md:** Preserve the specification's exact terminology, emphasis, and framing. Do not flatten domain-specific language into generics. CONTEXT.md is downstream agents' only window into this spec.
 
 4. Write `{{contextPath}}` from the **Context** template. Preserve risks, unknowns, codebase constraints, integration points, relevant requirements, and an "Assumptions" section.
-5. Call `gsd_plan_milestone` to create demoable vertical slices with risk, depends, demo, proof strategy, verification classes, definition of done, requirement coverage, and boundary map. If crossing runtime boundaries, include a final end-to-end integration slice. Use the **Roadmap** output template below.
-6. For each architectural or pattern decision, call `gsd_decision_save` — the tool auto-assigns IDs and regenerates `.gwd/DECISIONS.md` automatically.
+5. Call `gwd_plan_milestone` to create demoable vertical slices with risk, depends, demo, proof strategy, verification classes, definition of done, requirement coverage, and boundary map. If crossing runtime boundaries, include a final end-to-end integration slice. Use the **Roadmap** output template below.
+6. For each architectural or pattern decision, call `gwd_decision_save` — the tool auto-assigns IDs and regenerates `.gwd/DECISIONS.md` automatically.
 7. {{commitInstruction}}
 
 ### Ready-phrase pre-condition (NON-BYPASSABLE)
@@ -123,7 +123,7 @@ Before emitting the ready phrase, verify in the CURRENT turn that you have:
 - [ ] Written `.gwd/PROJECT.md` (step 2)
 - [ ] Written `.gwd/REQUIREMENTS.md` (step 3)
 - [ ] Written `{{contextPath}}` (step 4)
-- [ ] Called `gsd_plan_milestone` (step 5)
+- [ ] Called `gwd_plan_milestone` (step 5)
 
 If ANY box is unchecked, **STOP**. Do NOT emit the ready phrase. Emit the missing tool calls in this same turn. The system detects missing artifacts and will reject premature ready signals — you will be asked again and retries are capped.
 
@@ -135,15 +135,15 @@ After completing steps 1–7 above, say exactly: "Milestone {{milestoneId}} read
 
 #### Phase 1: Shared artifacts
 
-1. For each milestone, call `gsd_milestone_generate_id`; never invent IDs. Then `mkdir -p .gwd/milestones/<ID>/slices`.
+1. For each milestone, call `gwd_milestone_generate_id`; never invent IDs. Then `mkdir -p .gwd/milestones/<ID>/slices`.
 2. Write `.gwd/PROJECT.md` — use the **Project** output template below.
 3. Write `.gwd/REQUIREMENTS.md` — use the **Requirements** output template below. Capture Active, Deferred, Out of Scope, and any already Validated requirements. Later milestones may have provisional ownership where slice plans do not exist yet.
-4. For any architectural or pattern decisions, call `gsd_decision_save` — the tool auto-assigns IDs and regenerates `.gwd/DECISIONS.md` automatically.
+4. For any architectural or pattern decisions, call `gwd_decision_save` — the tool auto-assigns IDs and regenerates `.gwd/DECISIONS.md` automatically.
 
 #### Phase 2: Primary milestone
 
 5. Write a full `CONTEXT.md` for the primary milestone (the first in sequence). Include an "Assumptions" section.
-6. Call `gsd_plan_milestone` for **only the primary milestone**; detail-planning later milestones now is waste because the codebase will change. Include requirement coverage and definition of done.
+6. Call `gwd_plan_milestone` for **only the primary milestone**; detail-planning later milestones now is waste because the codebase will change. Include requirement coverage and definition of done.
 
 #### MANDATORY: depends_on Frontmatter in CONTEXT.md
 
@@ -208,7 +208,7 @@ Before emitting the ready phrase, verify in the CURRENT turn that you have:
 - [ ] Written `.gwd/PROJECT.md`
 - [ ] Written `.gwd/REQUIREMENTS.md`
 - [ ] Written the primary milestone `CONTEXT.md`
-- [ ] Called `gsd_plan_milestone` for the primary milestone
+- [ ] Called `gwd_plan_milestone` for the primary milestone
 - [ ] Written `.gwd/DISCUSSION-MANIFEST.json` with `gates_completed === total`
 
 If ANY box is unchecked, **STOP**. Do NOT emit the ready phrase. Emit the missing tool calls in this same turn. The system detects missing artifacts and will reject premature ready signals — you will be asked again and retries are capped.
@@ -224,11 +224,11 @@ After completing every step above, say exactly: "Milestone {{milestoneId}} ready
 - **Document assumptions** — every judgment call gets noted in CONTEXT.md under "Assumptions" with reasoning
 - **Investigate thoroughly** — scout codebase, check library docs, and web search with the same rigor as interactive mode.
 - **Do focused research** — identify table stakes, domain standards, omissions, and scope traps.
-- **Use proper tools** — `gsd_plan_milestone` for roadmaps, `gsd_decision_save` for decisions, `gsd_milestone_generate_id` for IDs
+- **Use proper tools** — `gwd_plan_milestone` for roadmaps, `gwd_decision_save` for decisions, `gwd_milestone_generate_id` for IDs
 - **Print artifacts in chat** — requirements table, roadmap preview, depth summary. The TUI scrollback is the user's audit trail.
 - **Use depends_on frontmatter** for multi-milestone sequences
 - **Anti-reduction rule** — if the spec describes a big vision, plan it. Phase complexity; do not cut it.
-- **Naming convention** — always use `gsd_milestone_generate_id` for IDs. Directories use bare IDs, files use ID-SUFFIX format.
+- **Naming convention** — always use `gwd_milestone_generate_id` for IDs. Directories use bare IDs, files use ID-SUFFIX format.
 - **End with "Milestone {{milestoneId}} ready."** — this triggers auto-start detection
 
 {{inlinedTemplates}}

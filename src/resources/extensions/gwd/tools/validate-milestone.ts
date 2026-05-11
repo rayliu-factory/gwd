@@ -1,5 +1,5 @@
 /**
- * validate-milestone handler — the core operation behind gsd_validate_milestone.
+ * validate-milestone handler — the core operation behind gwd_validate_milestone.
  *
  * Persists milestone validation results to the assessments table and
  * quality_gates table, renders VALIDATION.md to disk, and invalidates caches.

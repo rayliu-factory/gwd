@@ -1311,7 +1311,7 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
   }
 
   // ── Pre-execution checks (after plan-slice or ADR-011 refine-slice completes) ──
-  // Both emit the same PLAN.md + task artifacts via gsd_plan_slice, so the
+  // Both emit the same PLAN.md + task artifacts via gwd_plan_slice, so the
   // same structural validation applies to both.
   if (
     s.currentUnit &&

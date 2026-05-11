@@ -571,7 +571,7 @@ export interface BrowserFlowResult {
   duration: number;
 }
 
-// ─── Complete Task Params (gsd_task_complete tool input) ─────────────────
+// ─── Complete Task Params (gwd_task_complete tool input) ─────────────────
 
 export interface CompleteTaskParams {
   taskId: string;
@@ -635,7 +635,7 @@ export interface CompleteTaskParams {
   triggerReason?: string;
 }
 
-// ─── Complete Slice Params (gsd_slice_complete tool input) ───────────────
+// ─── Complete Slice Params (gwd_slice_complete tool input) ───────────────
 
 export interface CompleteSliceParams {
   sliceId: string;

@@ -28,34 +28,34 @@ function extractElicitPayload(request: unknown): ElicitPayload {
 }
 
 test("guided execute-task requires canonical task completion tool", () => {
-  assert.deepEqual(getRequiredWorkflowToolsForGuidedUnit("execute-task"), ["gsd_task_complete"]);
+  assert.deepEqual(getRequiredWorkflowToolsForGuidedUnit("execute-task"), ["gwd_task_complete"]);
 });
 
 test("auto execute-task requires canonical task completion tool", () => {
-  assert.deepEqual(getRequiredWorkflowToolsForAutoUnit("execute-task"), ["gsd_task_complete"]);
+  assert.deepEqual(getRequiredWorkflowToolsForAutoUnit("execute-task"), ["gwd_task_complete"]);
 });
 
 test("deep project setup units declare required workflow MCP tools", () => {
   assert.deepEqual(getRequiredWorkflowToolsForGuidedUnit("discuss-project"), [
     "ask_user_questions",
-    "gsd_summary_save",
+    "gwd_summary_save",
   ]);
   assert.deepEqual(getRequiredWorkflowToolsForGuidedUnit("discuss-requirements"), [
     "ask_user_questions",
-    "gsd_requirement_save",
-    "gsd_summary_save",
+    "gwd_requirement_save",
+    "gwd_summary_save",
   ]);
   assert.deepEqual(getRequiredWorkflowToolsForGuidedUnit("research-decision"), [
     "ask_user_questions",
   ]);
   assert.deepEqual(getRequiredWorkflowToolsForAutoUnit("discuss-project"), [
     "ask_user_questions",
-    "gsd_summary_save",
+    "gwd_summary_save",
   ]);
   assert.deepEqual(getRequiredWorkflowToolsForAutoUnit("discuss-requirements"), [
     "ask_user_questions",
-    "gsd_requirement_save",
-    "gsd_summary_save",
+    "gwd_requirement_save",
+    "gwd_summary_save",
   ]);
   assert.deepEqual(getRequiredWorkflowToolsForAutoUnit("research-decision"), [
     "ask_user_questions",
@@ -111,21 +111,21 @@ test("buildWorkflowMcpServers mirrors explicit launch config", () => {
   });
 
   assert.deepEqual(servers, {
-    "gsd-workflow": {
+    "gwd-workflow": {
       command: "node",
       args: ["dist/cli.js"],
-      env: servers?.["gsd-workflow"]?.env,
+      env: servers?.["gwd-workflow"]?.env,
     },
   });
-  assert.equal((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.GWD_PERSIST_WRITE_GATE_STATE, "1");
-  assert.equal((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.GWD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
-  assert.match((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.GWD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
-  assert.match((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.GWD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
+  assert.equal((servers?.["gwd-workflow"]?.env as Record<string, string> | undefined)?.GWD_PERSIST_WRITE_GATE_STATE, "1");
+  assert.equal((servers?.["gwd-workflow"]?.env as Record<string, string> | undefined)?.GWD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
+  assert.match((servers?.["gwd-workflow"]?.env as Record<string, string> | undefined)?.GWD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
+  assert.match((servers?.["gwd-workflow"]?.env as Record<string, string> | undefined)?.GWD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
 });
 
 test("detectWorkflowMcpLaunchConfig resolves the bundled server from GWD_PROJECT_ROOT", () => {
-  const repoRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-root-"));
-  const worktreeRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-worktree-"));
+  const repoRoot = mkdtempSync(join(tmpdir(), "gwd-workflow-root-"));
+  const worktreeRoot = mkdtempSync(join(tmpdir(), "gwd-workflow-worktree-"));
   const cliPath = join(repoRoot, "packages", "mcp-server", "dist", "cli.js");
 
   mkdirSync(join(repoRoot, "packages", "mcp-server", "dist"), { recursive: true });
@@ -136,7 +136,7 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from GWD_PROJECT
   });
 
   assert.deepEqual(launch, {
-    name: "gsd-workflow",
+    name: "gwd-workflow",
     command: process.execPath,
     args: [cliPath],
     cwd: repoRoot,
@@ -149,8 +149,8 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from GWD_PROJECT
 });
 
 test("detectWorkflowMcpLaunchConfig resolves the bundled server from GWD_BIN_PATH ancestry", () => {
-  const repoRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-root-"));
-  const worktreeRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-worktree-"));
+  const repoRoot = mkdtempSync(join(tmpdir(), "gwd-workflow-root-"));
+  const worktreeRoot = mkdtempSync(join(tmpdir(), "gwd-workflow-worktree-"));
   const cliPath = join(repoRoot, "packages", "mcp-server", "dist", "cli.js");
   const devCliPath = join(repoRoot, "scripts", "dev-cli.js");
 
@@ -164,7 +164,7 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from GWD_BIN_PAT
   });
 
   assert.deepEqual(launch, {
-    name: "gsd-workflow",
+    name: "gwd-workflow",
     command: process.execPath,
     args: [cliPath],
     cwd: worktreeRoot,
@@ -217,13 +217,13 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server relative to the 
 });
 
 test("workflow MCP launch config reaches mutation tools over stdio", async () => {
-  const projectRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-transport-"));
+  const projectRoot = mkdtempSync(join(tmpdir(), "gwd-workflow-transport-"));
   mkdirSync(join(projectRoot, ".gwd"), { recursive: true });
   // Isolate the spawned MCP server from the developer's real ~/.gwd so it
   // can't pick up a configured Discord/Slack/Telegram channel from global
   // PREFERENCES.md and route ask_user_questions through a remote adapter
   // instead of MCP elicitation.
-  const isolatedGsdHome = mkdtempSync(join(tmpdir(), "gsd-workflow-home-"));
+  const isolatedGsdHome = mkdtempSync(join(tmpdir(), "gwd-workflow-home-"));
 
   const launch = detectWorkflowMcpLaunchConfig(projectRoot, {});
   assert.ok(launch, "expected a workflow MCP launch config");
@@ -280,8 +280,8 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
 
     const tools = await client.listTools(undefined, { timeout: 30_000 });
     assert.ok(
-      (tools.tools ?? []).some((tool) => tool.name === "gsd_plan_slice"),
-      "expected workflow MCP surface to expose gsd_plan_slice",
+      (tools.tools ?? []).some((tool) => tool.name === "gwd_plan_slice"),
+      "expected workflow MCP surface to expose gwd_plan_slice",
     );
     assert.ok(
       (tools.tools ?? []).some((tool) => tool.name === "ask_user_questions"),
@@ -322,7 +322,7 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
 
     const milestoneResult = await client.callTool(
       {
-        name: "gsd_plan_milestone",
+        name: "gwd_plan_milestone",
         arguments: {
           projectDir: projectRoot,
           milestoneId: "M001",
@@ -336,7 +336,7 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
               depends: [],
               demo: "Milestone planning succeeds over stdio MCP.",
               goal: "Prove the executor bridge works in the spawned server.",
-              successCriteria: "gsd_plan_slice can write plan artifacts.",
+              successCriteria: "gwd_plan_slice can write plan artifacts.",
               proofLevel: "integration",
               integrationClosure: "Stdio MCP client reaches the workflow executor bridge.",
               observabilityImpact: "Regression test covers the spawned-server path.",
@@ -355,7 +355,7 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
 
     const sliceResult = await client.callTool(
       {
-        name: "gsd_plan_slice",
+        name: "gwd_plan_slice",
         arguments: {
           projectDir: projectRoot,
           milestoneId: "M001",
@@ -401,9 +401,9 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
 });
 
 test("workflow MCP ask_user_questions uses stdio elicitation round-trip", async () => {
-  const projectRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-elicit-"));
+  const projectRoot = mkdtempSync(join(tmpdir(), "gwd-workflow-elicit-"));
   mkdirSync(join(projectRoot, ".gwd"), { recursive: true });
-  const isolatedGsdHome = mkdtempSync(join(tmpdir(), "gsd-workflow-home-"));
+  const isolatedGsdHome = mkdtempSync(join(tmpdir(), "gwd-workflow-home-"));
 
   const launch = detectWorkflowMcpLaunchConfig(projectRoot, {});
   assert.ok(launch, "expected a workflow MCP launch config");
@@ -513,7 +513,7 @@ test("supportsStructuredQuestions disables local workflow MCP questions unless e
     false,
   );
   assert.equal(
-    supportsStructuredQuestions(["mcp__gsd-workflow__ask_user_questions"], {
+    supportsStructuredQuestions(["mcp__gwd-workflow__ask_user_questions"], {
       authMode: "externalCli",
       baseUrl: "local://claude-code",
       env: { GWD_WORKFLOW_MCP_STRUCTURED_QUESTIONS: "1" } as NodeJS.ProcessEnv,
@@ -539,7 +539,7 @@ test("supportsStructuredQuestions disables local workflow MCP questions unless e
 test("transport compatibility passes when required tools fit current MCP surface", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_task_complete"],
+    ["gwd_task_complete"],
     {
       projectRoot: "/tmp/project",
       env: { GWD_WORKFLOW_MCP_COMMAND: "node" },
@@ -556,7 +556,7 @@ test("transport compatibility passes when required tools fit current MCP surface
 test("transport compatibility discovers the bundled MCP server without env overrides", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_task_complete"],
+    ["gwd_task_complete"],
     {
       projectRoot: "/tmp/project",
       env: {},
@@ -573,7 +573,7 @@ test("transport compatibility discovers the bundled MCP server without env overr
 test("transport compatibility now allows auto execute-task over workflow MCP surface", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_task_complete"],
+    ["gwd_task_complete"],
     {
       projectRoot: "/tmp/project",
       env: { GWD_WORKFLOW_MCP_COMMAND: "node" },
@@ -590,7 +590,7 @@ test("transport compatibility now allows auto execute-task over workflow MCP sur
 test("transport compatibility ignores API-backed providers", () => {
   const error = getWorkflowTransportSupportError(
     "openai-codex",
-    ["gsd_plan_slice"],
+    ["gwd_plan_slice"],
     {
       projectRoot: "/tmp/project",
       env: {},
@@ -607,7 +607,7 @@ test("transport compatibility ignores API-backed providers", () => {
 test("transport compatibility now allows plan-slice over workflow MCP surface", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_plan_slice"],
+    ["gwd_plan_slice"],
     {
       projectRoot: "/tmp/project",
       env: { GWD_WORKFLOW_MCP_COMMAND: "node" },
@@ -624,7 +624,7 @@ test("transport compatibility now allows plan-slice over workflow MCP surface", 
 test("transport compatibility now allows complete-slice over workflow MCP surface", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_slice_complete"],
+    ["gwd_slice_complete"],
     {
       projectRoot: "/tmp/project",
       env: { GWD_WORKFLOW_MCP_COMMAND: "node" },
@@ -641,7 +641,7 @@ test("transport compatibility now allows complete-slice over workflow MCP surfac
 test("transport compatibility now allows reassess-roadmap over workflow MCP surface", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_milestone_status", "gsd_reassess_roadmap"],
+    ["gwd_milestone_status", "gwd_reassess_roadmap"],
     {
       projectRoot: "/tmp/project",
       env: { GWD_WORKFLOW_MCP_COMMAND: "node" },
@@ -658,7 +658,7 @@ test("transport compatibility now allows reassess-roadmap over workflow MCP surf
 test("transport compatibility now allows gate-evaluate over workflow MCP surface", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_save_gate_result"],
+    ["gwd_save_gate_result"],
     {
       projectRoot: "/tmp/project",
       env: { GWD_WORKFLOW_MCP_COMMAND: "node" },
@@ -675,7 +675,7 @@ test("transport compatibility now allows gate-evaluate over workflow MCP surface
 test("transport compatibility now allows validate-milestone over workflow MCP surface", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_milestone_status", "gsd_validate_milestone"],
+    ["gwd_milestone_status", "gwd_validate_milestone"],
     {
       projectRoot: "/tmp/project",
       env: { GWD_WORKFLOW_MCP_COMMAND: "node" },
@@ -692,7 +692,7 @@ test("transport compatibility now allows validate-milestone over workflow MCP su
 test("transport compatibility now allows complete-milestone over workflow MCP surface", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_milestone_status", "gsd_complete_milestone"],
+    ["gwd_milestone_status", "gwd_complete_milestone"],
     {
       projectRoot: "/tmp/project",
       env: { GWD_WORKFLOW_MCP_COMMAND: "node" },
@@ -709,7 +709,7 @@ test("transport compatibility now allows complete-milestone over workflow MCP su
 test("transport compatibility now allows replan-slice over workflow MCP surface", () => {
   const error = getWorkflowTransportSupportError(
     "claude-code",
-    ["gsd_replan_slice"],
+    ["gwd_replan_slice"],
     {
       projectRoot: "/tmp/project",
       env: { GWD_WORKFLOW_MCP_COMMAND: "node" },

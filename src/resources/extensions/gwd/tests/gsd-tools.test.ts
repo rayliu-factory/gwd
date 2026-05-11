@@ -2,7 +2,7 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 // gsd-tools — Structured LLM tool tests
 //
-// Tests the three registered tools: gsd_decision_save, gsd_requirement_update, gsd_summary_save.
+// Tests the three registered tools: gwd_decision_save, gwd_requirement_update, gwd_summary_save.
 // Each tool is tested via direct function invocation against an in-memory DB.
 
 import * as path from 'node:path';
@@ -51,7 +51,7 @@ function cleanupDir(dir: string): void {
  */
 
 describe('gsd-tools', () => {
-  test('gsd_decision_save', async () => {
+  test('gwd_decision_save', async () => {
     const tmpDir = makeTmpDir();
     try {
       const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
@@ -116,7 +116,7 @@ describe('gsd-tools', () => {
     }
   });
 
-  test('gsd_requirement_update', async () => {
+  test('gwd_requirement_update', async () => {
     const tmpDir = makeTmpDir();
     try {
       const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
@@ -174,7 +174,7 @@ describe('gsd-tools', () => {
     }
   });
 
-  test('gsd_summary_save', async () => {
+  test('gwd_summary_save', async () => {
     const tmpDir = makeTmpDir();
     try {
       const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
@@ -245,7 +245,7 @@ describe('gsd-tools', () => {
     }
   });
 
-  test('gsd_summary_save supports CONTEXT-DRAFT persistence', async () => {
+  test('gwd_summary_save supports CONTEXT-DRAFT persistence', async () => {
     const tmpDir = makeTmpDir();
     try {
       const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
@@ -293,7 +293,7 @@ describe('gsd-tools', () => {
     assert.deepStrictEqual(fallbackId, 'D001', 'nextDecisionId should return D001 when DB unavailable');
   });
 
-  test('gsd_requirement_save creates new requirement', async () => {
+  test('gwd_requirement_save creates new requirement', async () => {
     const tmpDir = makeTmpDir();
     try {
       const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');
@@ -381,7 +381,7 @@ describe('gsd-tools', () => {
     }
   });
 
-  test('gsd_requirement_update upserts when requirement not in DB', async () => {
+  test('gwd_requirement_update upserts when requirement not in DB', async () => {
     const tmpDir = makeTmpDir();
     try {
       const dbPath = path.join(tmpDir, '.gwd', 'gwd.db');

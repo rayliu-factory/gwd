@@ -10,7 +10,7 @@ import { resolveCtxCwd } from "./dynamic-tools.js";
 
 export function registerJournalTools(pi: ExtensionAPI): void {
   pi.registerTool({
-    name: "gsd_journal_query",
+    name: "gwd_journal_query",
     label: "Query Journal",
     description:
       "Query the structured event journal for auto-mode iterations. " +
@@ -56,7 +56,7 @@ export function registerJournalTools(pi: ExtensionAPI): void {
         };
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        logWarning("tool", `gsd_journal_query tool failed: ${msg}`);
+        logWarning("tool", `gwd_journal_query tool failed: ${msg}`);
         return {
           content: [{ type: "text" as const, text: `Error querying journal: ${msg}` }],
           details: { operation: "journal_query", error: msg } as any,

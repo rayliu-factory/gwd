@@ -65,7 +65,7 @@ After each round, investigate only new unknowns, then ask the next round.
 
 After each round, decide whether PROJECT.md would be strong enough.
 
-- **Incremental persistence:** After every 2 question rounds, silently save `.gwd/PROJECT-DRAFT.md` via `gsd_summary_save` with `artifact_type: "PROJECT-DRAFT"` and no `milestone_id`. Do NOT mention this save to the user.
+- **Incremental persistence:** After every 2 question rounds, silently save `.gwd/PROJECT-DRAFT.md` via `gwd_summary_save` with `artifact_type: "PROJECT-DRAFT"` and no `milestone_id`. Do NOT mention this save to the user.
 - If not ready, continue to the next round.
 - Use a wrap-up prompt only when the depth checklist is satisfied or the user wants to stop.
 
@@ -104,7 +104,7 @@ The depth verification is the only required confirmation gate. Do not add a seco
 Once the user confirms depth:
 
 1. Use the **Project** output template (inlined above).
-2. Call `gsd_summary_save` with `artifact_type: "PROJECT"` and full project markdown as `content`; omit `milestone_id`. The tool writes `.gwd/PROJECT.md` and persists to DB. Preserve the user's terms and framing.
+2. Call `gwd_summary_save` with `artifact_type: "PROJECT"` and full project markdown as `content`; omit `milestone_id`. The tool writes `.gwd/PROJECT.md` and persists to DB. Preserve the user's terms and framing.
 3. The `## Project Shape` section MUST contain `**Complexity:** simple` or `**Complexity:** complex` (matching the verdict you announced) plus a one-line `**Why:**` rationale. Downstream stages read this line.
 4. The `## Capability Contract` section MUST reference `.gwd/REQUIREMENTS.md` — that file does not yet exist; the next stage (`discuss-requirements`) will produce it.
 5. The `## Milestone Sequence` MUST list at least M001 with title and one-liner. Subsequent milestones may be listed as known intents; they will be elaborated in their own discuss-milestone stages.

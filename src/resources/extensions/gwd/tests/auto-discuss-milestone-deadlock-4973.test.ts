@@ -1,7 +1,7 @@
 // GWD-2 + Regression tests for auto-mode discuss-milestone write-gate deadlock (#4973)
 //
 // The depth-verification write-gate in write-gate.ts:415-443 blocks
-// gsd_summary_save({artifact_type:"CONTEXT"}) until markDepthVerified() is
+// gwd_summary_save({artifact_type:"CONTEXT"}) until markDepthVerified() is
 // called. In interactive mode this happens when the user picks the confirmation
 // option in ask_user_questions. In auto-mode there is no human — the gate
 // deadlocked every discuss-milestone unit, wasting 200K-360K tokens per run.
@@ -43,7 +43,7 @@ describe('auto-discuss-milestone-deadlock-4973', () => {
   afterEach(resetState);
 
   // ── Test 1 ──────────────────────────────────────────────────────────────
-  // CONTEXT artifact save via gsd_summary_save is blocked before the mark
+  // CONTEXT artifact save via gwd_summary_save is blocked before the mark
   // and unblocked after it. This is the exact path that deadlocked in #4973:
   // workflow-tool-executors.ts calls shouldBlockContextArtifactSaveInSnapshot
   // against a snapshot that had no verified milestones.

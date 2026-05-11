@@ -27,7 +27,7 @@ test("forensics prompt renders compact investigation and issue routing guidance"
   });
 
   assert.match(prompt, /Investigation Protocol/);
-  assert.match(prompt, /gsd_milestone_status/);
+  assert.match(prompt, /gwd_milestone_status/);
   assert.match(prompt, /sqlite3 .gwd\/gwd.db/);
   assert.match(prompt, /gh issue create --repo rayliu-factory\/gwd/);
   assert.match(prompt, /Do NOT use the `github_issues` tool/);

@@ -30,7 +30,7 @@ export interface ContextManagementConfig {
 }
 
 /**
- * Opt-in tool-output sandboxing for sub-sessions. When enabled, the gsd_exec
+ * Opt-in tool-output sandboxing for sub-sessions. When enabled, the gwd_exec
  * MCP tool runs scripts in an isolated subprocess and returns only a short
  * digest to the calling agent's context window; capped stdout/stderr persist
  * in the project memory store and can be retrieved by id later.
@@ -52,7 +52,7 @@ export interface ContextModeConfig {
 }
 
 /**
- * Resolve whether context-mode features (gsd_exec sandbox + compaction
+ * Resolve whether context-mode features (gwd_exec sandbox + compaction
  * snapshot) should be active. Default is ON: missing config or missing
  * `enabled` is treated as true. Only `enabled: false` disables.
  */
@@ -359,7 +359,7 @@ export interface GSDPreferences {
   context_window_override?: number;
   context_management?: ContextManagementConfig;
   /**
-   * Tool-output sandboxing via gsd_exec. Keeps sub-session context windows
+   * Tool-output sandboxing via gwd_exec. Keeps sub-session context windows
    * clean by running scripts in a subprocess and only surfacing a short
    * digest. See `ContextModeConfig`. Default: enabled unless explicitly
    * disabled with `context_mode.enabled: false`.

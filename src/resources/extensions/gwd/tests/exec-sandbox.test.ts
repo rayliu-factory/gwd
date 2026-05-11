@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { EXEC_DEFAULTS, runExecSandbox, type ExecSandboxOptions } from '../exec-sandbox.ts';
-import { buildExecOptions, executeGsdExec } from '../tools/exec-tool.ts';
+import { buildExecOptions, executeGwdExec } from '../tools/exec-tool.ts';
 import { isContextModeEnabled } from '../preferences-types.ts';
 import { validatePreferences } from '../preferences-validation.ts';
 
@@ -117,15 +117,15 @@ test('runExecSandbox: node runtime executes JS', async () => {
 
 // ── exec-tool executor ────────────────────────────────────────────────────
 
-test('executeGsdExec: runs by default when context_mode is unset', async () => {
+test('executeGwdExec: runs by default when context_mode is unset', async () => {
   const base = freshBase();
   try {
-    const result = await executeGsdExec(
+    const result = await executeGwdExec(
       { runtime: 'bash', script: 'echo default-on-run' },
       { baseDir: base, preferences: {} },
     );
     assert.ok(!result.isError, 'should succeed with no preferences');
-    assert.equal(result.details.operation, 'gsd_exec');
+    assert.equal(result.details.operation, 'gwd_exec');
     assert.equal(result.details.exit_code, 0);
     assert.ok(result.content[0].text.includes('default-on-run'));
   } finally {
@@ -133,10 +133,10 @@ test('executeGsdExec: runs by default when context_mode is unset', async () => {
   }
 });
 
-test('executeGsdExec: runs when preferences is null (fresh project)', async () => {
+test('executeGwdExec: runs when preferences is null (fresh project)', async () => {
   const base = freshBase();
   try {
-    const result = await executeGsdExec(
+    const result = await executeGwdExec(
       { runtime: 'bash', script: 'echo null-prefs-run' },
       { baseDir: base, preferences: null },
     );
@@ -147,10 +147,10 @@ test('executeGsdExec: runs when preferences is null (fresh project)', async () =
   }
 });
 
-test('executeGsdExec: blocked only when context_mode.enabled=false', async () => {
+test('executeGwdExec: blocked only when context_mode.enabled=false', async () => {
   const base = freshBase();
   try {
-    const result = await executeGsdExec(
+    const result = await executeGwdExec(
       { runtime: 'bash', script: 'echo should-not-run' },
       { baseDir: base, preferences: { context_mode: { enabled: false } } },
     );
@@ -161,10 +161,10 @@ test('executeGsdExec: blocked only when context_mode.enabled=false', async () =>
   }
 });
 
-test('executeGsdExec: runs when enabled explicitly set to true', async () => {
+test('executeGwdExec: runs when enabled explicitly set to true', async () => {
   const base = freshBase();
   try {
-    const result = await executeGsdExec(
+    const result = await executeGwdExec(
       { runtime: 'bash', script: 'echo explicit-on' },
       { baseDir: base, preferences: { context_mode: { enabled: true } } },
     );
@@ -175,10 +175,10 @@ test('executeGsdExec: runs when enabled explicitly set to true', async () => {
   }
 });
 
-test('executeGsdExec: forwards custom exec_env_allowlist from preferences', async () => {
+test('executeGwdExec: forwards custom exec_env_allowlist from preferences', async () => {
   const base = freshBase();
   try {
-    const result = await executeGsdExec(
+    const result = await executeGwdExec(
       {
         runtime: 'bash',
         script: 'printf "allowed=%s blocked=%s\\n" "$GWD_ALLOWED" "$GWD_BLOCKED"',
@@ -207,10 +207,10 @@ test('executeGsdExec: forwards custom exec_env_allowlist from preferences', asyn
   }
 });
 
-test('executeGsdExec: enforces per-call timeout override end-to-end', async () => {
+test('executeGwdExec: enforces per-call timeout override end-to-end', async () => {
   const base = freshBase();
   try {
-    const result = await executeGsdExec(
+    const result = await executeGwdExec(
       { runtime: 'bash', script: 'sleep 2', timeout_ms: 1 },
       { baseDir: base, preferences: { context_mode: { enabled: true, exec_timeout_ms: 10_000 } } },
     );
@@ -221,10 +221,10 @@ test('executeGsdExec: enforces per-call timeout override end-to-end', async () =
   }
 });
 
-test('executeGsdExec: rejects empty script', async () => {
+test('executeGwdExec: rejects empty script', async () => {
   const base = freshBase();
   try {
-    const result = await executeGsdExec(
+    const result = await executeGwdExec(
       { runtime: 'bash', script: '   ' },
       { baseDir: base, preferences: { context_mode: { enabled: true } } },
     );

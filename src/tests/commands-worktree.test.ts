@@ -1,4 +1,4 @@
-// GSD-2 — Unit tests for /gsd worktree formatter and dispatcher
+// GWD-2 — Unit tests for /gwd worktree formatter and dispatcher
 import test from "node:test";
 import assert from "node:assert/strict";
 
@@ -26,7 +26,7 @@ function mkStatus(over: Partial<WorktreeStatus>): WorktreeStatus {
 test("empty list shows hint to create one", () => {
   const out = formatWorktreeList([]);
   assert.match(out, /No worktrees\./);
-  assert.match(out, /gsd -w/);
+  assert.match(out, /gwd -w/);
 });
 
 test("clean worktree shows (clean) badge and no diff line", () => {

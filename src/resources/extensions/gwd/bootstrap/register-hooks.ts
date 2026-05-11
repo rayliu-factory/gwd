@@ -112,11 +112,11 @@ async function installWelcomeHeader(ctx: ExtensionContext): Promise<void> {
 let deferredApprovalGate: DeferredApprovalGate | null = null;
 
 export const MINIMAL_GWD_TOOL_NAMES = [
-  "gsd_exec",
-  "gsd_exec_search",
-  "gsd_resume",
-  "gsd_milestone_status",
-  "gsd_checkpoint_db",
+  "gwd_exec",
+  "gwd_exec_search",
+  "gwd_resume",
+  "gwd_milestone_status",
+  "gwd_checkpoint_db",
   "memory_query",
   "capture_thought",
 ] as const;
@@ -134,47 +134,47 @@ export const MINIMAL_AUTO_BASE_TOOL_NAMES = [
 ] as const;
 
 const AUTO_UNIT_SCOPED_TOOLS: Record<string, readonly string[]> = {
-  "research-milestone": ["gsd_summary_save", "gsd_decision_save"],
-  "plan-milestone": ["gsd_plan_milestone", "gsd_decision_save", "gsd_requirement_update"],
-  "discuss-milestone": ["gsd_summary_save", "gsd_decision_save", "gsd_requirement_save"],
-  "validate-milestone": ["gsd_validate_milestone", "gsd_reassess_roadmap", "subagent"],
-  "complete-milestone": ["gsd_complete_milestone", "subagent"],
-  "research-slice": ["gsd_summary_save", "gsd_decision_save"],
-  "plan-slice": ["gsd_plan_slice", "gsd_plan_task", "gsd_decision_save"],
-  "refine-slice": ["gsd_plan_slice", "gsd_plan_task", "gsd_decision_save"],
-  "replan-slice": ["gsd_replan_slice", "gsd_plan_task", "gsd_decision_save"],
-  "complete-slice": ["gsd_slice_complete", "gsd_decision_save", "gsd_requirement_update", "subagent"],
-  "reassess-roadmap": ["gsd_reassess_roadmap"],
-  "execute-task": ["gsd_task_complete", "gsd_decision_save"],
-  "execute-task-simple": ["gsd_task_complete", "gsd_decision_save"],
-  "reactive-execute": ["gsd_task_complete", "gsd_decision_save"],
-  "run-uat": ["gsd_summary_save"],
-  "gate-evaluate": ["gsd_save_gate_result"],
-  "rewrite-docs": ["gsd_summary_save", "gsd_decision_save"],
-  "workflow-preferences": ["gsd_summary_save"],
-  "discuss-project": ["gsd_summary_save", "gsd_decision_save", "gsd_requirement_save"],
-  "discuss-requirements": ["gsd_requirement_save", "gsd_summary_save"],
-  "research-decision": ["gsd_summary_save"],
-  "research-project": ["gsd_summary_save", "gsd_decision_save"],
+  "research-milestone": ["gwd_summary_save", "gwd_decision_save"],
+  "plan-milestone": ["gwd_plan_milestone", "gwd_decision_save", "gwd_requirement_update"],
+  "discuss-milestone": ["gwd_summary_save", "gwd_decision_save", "gwd_requirement_save"],
+  "validate-milestone": ["gwd_validate_milestone", "gwd_reassess_roadmap", "subagent"],
+  "complete-milestone": ["gwd_complete_milestone", "subagent"],
+  "research-slice": ["gwd_summary_save", "gwd_decision_save"],
+  "plan-slice": ["gwd_plan_slice", "gwd_plan_task", "gwd_decision_save"],
+  "refine-slice": ["gwd_plan_slice", "gwd_plan_task", "gwd_decision_save"],
+  "replan-slice": ["gwd_replan_slice", "gwd_plan_task", "gwd_decision_save"],
+  "complete-slice": ["gwd_slice_complete", "gwd_decision_save", "gwd_requirement_update", "subagent"],
+  "reassess-roadmap": ["gwd_reassess_roadmap"],
+  "execute-task": ["gwd_task_complete", "gwd_decision_save"],
+  "execute-task-simple": ["gwd_task_complete", "gwd_decision_save"],
+  "reactive-execute": ["gwd_task_complete", "gwd_decision_save"],
+  "run-uat": ["gwd_summary_save"],
+  "gate-evaluate": ["gwd_save_gate_result"],
+  "rewrite-docs": ["gwd_summary_save", "gwd_decision_save"],
+  "workflow-preferences": ["gwd_summary_save"],
+  "discuss-project": ["gwd_summary_save", "gwd_decision_save", "gwd_requirement_save"],
+  "discuss-requirements": ["gwd_requirement_save", "gwd_summary_save"],
+  "research-decision": ["gwd_summary_save"],
+  "research-project": ["gwd_summary_save", "gwd_decision_save"],
 };
 
 const WORKFLOW_GWD_TOOL_NAMES = [
   ...MINIMAL_GWD_TOOL_NAMES,
   ...Object.values(AUTO_UNIT_SCOPED_TOOLS).flat(),
-].filter(isGsdManagedTool);
+].filter(isGwdManagedTool);
 
-function isGsdManagedTool(name: string): boolean {
-  return name.startsWith("gsd_") || name === "memory_query" || name === "capture_thought" || name === "gsd_graph";
+function isGwdManagedTool(name: string): boolean {
+  return name.startsWith("gwd_") || name === "memory_query" || name === "capture_thought" || name === "gwd_graph";
 }
 
-export function buildMinimalGsdToolSet(activeToolNames: readonly string[]): string[] {
+export function buildMinimalGwdToolSet(activeToolNames: readonly string[]): string[] {
   const active = new Set(activeToolNames);
-  const preserved = activeToolNames.filter((name) => !isGsdManagedTool(name));
+  const preserved = activeToolNames.filter((name) => !isGwdManagedTool(name));
   const minimal = MINIMAL_GWD_TOOL_NAMES.filter((name) => active.has(name));
   return [...new Set([...preserved, ...minimal])];
 }
 
-export function buildMinimalAutoGsdToolSet(
+export function buildMinimalAutoGwdToolSet(
   activeToolNames: readonly string[],
   unitType: string | undefined,
 ): string[] {
@@ -186,7 +186,7 @@ export function buildMinimalAutoGsdToolSet(
   return [...new Set([...preserved, ...scoped])];
 }
 
-export function buildMinimalGsdWorkflowToolSet(activeToolNames: readonly string[]): string[] {
+export function buildMinimalGwdWorkflowToolSet(activeToolNames: readonly string[]): string[] {
   const active = new Set(activeToolNames);
   const autoBaseTools = new Set<string>(MINIMAL_AUTO_BASE_TOOL_NAMES);
   const preserved = activeToolNames.filter((name) => autoBaseTools.has(name));
@@ -194,7 +194,7 @@ export function buildMinimalGsdWorkflowToolSet(activeToolNames: readonly string[
   return [...new Set([...preserved, ...scoped])];
 }
 
-export function buildRequestScopedGsdToolSet(
+export function buildRequestScopedGwdToolSet(
   activeToolNames: readonly string[],
   requestCustomMessages: readonly { customType?: string }[] | undefined,
 ): string[] | undefined {
@@ -206,48 +206,48 @@ export function buildRequestScopedGsdToolSet(
       currentCustomType === "gsd-doctor-heal" ||
       currentCustomType === "gsd-triage"
     ) {
-      return buildMinimalGsdWorkflowToolSet(activeToolNames);
+      return buildMinimalGwdWorkflowToolSet(activeToolNames);
     }
   }
   return undefined;
 }
 
-export function isFullGsdToolSurfaceRequested(): boolean {
+export function isFullGwdToolSurfaceRequested(): boolean {
   return process.env.PI_GWD_FULL_TOOLS === "1";
 }
 
-function isGeneralGsdToolScopingRequested(): boolean {
+function isGeneralGwdToolScopingRequested(): boolean {
   return process.env.PI_GWD_MINIMAL_TOOLS === "1";
 }
 
-export interface ScopedGsdWorkflowState {
+export interface ScopedGwdWorkflowState {
   tools: string[] | null;
   visibleSkills: string[] | undefined;
   restoreVisibleSkills: boolean;
 }
 
-type GsdWorkflowScopeApi = Pick<ExtensionAPI, "getActiveTools" | "setActiveTools"> & Partial<Pick<ExtensionAPI, "getVisibleSkills" | "setVisibleSkills">>;
+type GwdWorkflowScopeApi = Pick<ExtensionAPI, "getActiveTools" | "setActiveTools"> & Partial<Pick<ExtensionAPI, "getVisibleSkills" | "setVisibleSkills">>;
 
-function applyMinimalGsdToolSurface(pi: ExtensionAPI): void {
-  if (isFullGsdToolSurfaceRequested()) return;
+function applyMinimalGwdToolSurface(pi: ExtensionAPI): void {
+  if (isFullGwdToolSurfaceRequested()) return;
   const dash = getAutoRuntimeSnapshot();
   if (dash.active && dash.currentUnit) {
-    pi.setActiveTools(buildMinimalAutoGsdToolSet(pi.getActiveTools(), dash.currentUnit.type));
+    pi.setActiveTools(buildMinimalAutoGwdToolSet(pi.getActiveTools(), dash.currentUnit.type));
     return;
   }
-  if (!isGeneralGsdToolScopingRequested()) return;
-  pi.setActiveTools(buildMinimalGsdToolSet(pi.getActiveTools()));
+  if (!isGeneralGwdToolScopingRequested()) return;
+  pi.setActiveTools(buildMinimalGwdToolSet(pi.getActiveTools()));
 }
 
-export function scopeGsdWorkflowToolsForDispatch(
-  pi: GsdWorkflowScopeApi,
+export function scopeGwdWorkflowToolsForDispatch(
+  pi: GwdWorkflowScopeApi,
   unitType?: string,
-): ScopedGsdWorkflowState | null {
-  if (isFullGsdToolSurfaceRequested()) return null;
+): ScopedGwdWorkflowState | null {
+  if (isFullGwdToolSurfaceRequested()) return null;
   const current = pi.getActiveTools();
   const scoped = unitType
-    ? buildMinimalAutoGsdToolSet(current, unitType)
-    : buildMinimalGsdWorkflowToolSet(current);
+    ? buildMinimalAutoGwdToolSet(current, unitType)
+    : buildMinimalGwdWorkflowToolSet(current);
   const toolsChanged = !(scoped.length === current.length && scoped.every((name, index) => name === current[index]));
   const skillManifest = resolveSkillManifest(unitType);
   const canScopeSkills = skillManifest !== null && pi.getVisibleSkills && pi.setVisibleSkills;
@@ -268,9 +268,9 @@ export function scopeGsdWorkflowToolsForDispatch(
   };
 }
 
-export function restoreGsdWorkflowTools(
+export function restoreGwdWorkflowTools(
   pi: Pick<ExtensionAPI, "setActiveTools"> & Partial<Pick<ExtensionAPI, "setVisibleSkills">>,
-  savedState: ScopedGsdWorkflowState | null,
+  savedState: ScopedGwdWorkflowState | null,
 ): void {
   if (!savedState) return;
   if (savedState.tools) pi.setActiveTools(savedState.tools);
@@ -279,7 +279,7 @@ export function restoreGsdWorkflowTools(
   }
 }
 
-async function deriveGsdState(basePath: string) {
+async function deriveGwdState(basePath: string) {
   const { deriveState } = await import("../state.js");
   return deriveState(basePath);
 }
@@ -354,7 +354,7 @@ function activateDeferredApprovalGate(basePath: string): void {
 }
 
 function isContextDraftSummarySave(toolName: string, input: unknown): boolean {
-  if (toolName !== "gsd_summary_save" && toolName !== "summary_save") return false;
+  if (toolName !== "gwd_summary_save" && toolName !== "summary_save") return false;
   if (!input || typeof input !== "object") return false;
   return (input as { artifact_type?: unknown }).artifact_type === "CONTEXT-DRAFT";
 }
@@ -400,7 +400,7 @@ async function writeContextModeCompactionSnapshot(basePath: string): Promise<voi
 
     let activeContext: string | null = null;
     try {
-      const state = await deriveGsdState(basePath);
+      const state = await deriveGwdState(basePath);
       if (state.activeMilestone && state.activeSlice && state.activeTask) {
         activeContext =
           `Active: ${state.activeMilestone.id} / ${state.activeSlice.id} / ${state.activeTask.id}` +
@@ -488,7 +488,7 @@ export function registerHooks(
   });
 
   pi.on("before_agent_start", async (event, ctx: ExtensionContext) => {
-    applyMinimalGsdToolSurface(pi);
+    applyMinimalGwdToolSurface(pi);
 
     // Wait for ecosystem loader to finish (no-op after first turn).
     const { getEcosystemReadyPromise } = await import("../ecosystem/loader.js");
@@ -511,7 +511,7 @@ export function registerHooks(
     // Refresh the snapshot used by ecosystem getPhase()/getActiveUnit().
     // deriveState has its own ~100ms cache so this is cheap on repeat calls.
     try {
-      const state = await deriveGsdState(beforeAgentBasePath);
+      const state = await deriveGwdState(beforeAgentBasePath);
       updateSnapshot(state);
     } catch {
       updateSnapshot(null);
@@ -586,7 +586,7 @@ export function registerHooks(
     }
     const { ensureDbOpen } = await import("./dynamic-tools.js");
     await ensureDbOpen(basePath);
-    const state = await deriveGsdState(basePath);
+    const state = await deriveGwdState(basePath);
     if (!state.activeMilestone || !state.activeSlice) return;
     // Write checkpoint for ALL phases, not just "executing" — discuss, research,
     // and planning also carry in-memory state (user answers, gate verification)
@@ -889,7 +889,7 @@ export function registerHooks(
             : (typeof (event as any).content === "string"
                 ? (event as any).content
                 : String(resultPayload ?? "")));
-      // Let recordToolInvocationError classify the failure so non-gsd_ harness
+      // Let recordToolInvocationError classify the failure so non-gwd_ harness
       // errors and deterministic policy rejections are handled consistently.
       recordToolInvocationError(event.toolName, errorText);
     }
@@ -1006,7 +1006,7 @@ export function registerHooks(
       const errorText = typeof event.result === "string"
         ? event.result
         : (typeof event.result?.content?.[0]?.text === "string" ? event.result.content[0].text : String(event.result));
-      // Let recordToolInvocationError classify the failure so non-gsd_ harness
+      // Let recordToolInvocationError classify the failure so non-gwd_ harness
       // errors and deterministic policy rejections are handled consistently.
       recordToolInvocationError(event.toolName, errorText);
     }
@@ -1102,19 +1102,19 @@ export function registerHooks(
   // Extensions can override tool set after model selection by returning { toolNames: [...] }
   // Return undefined to let the built-in provider compatibility filtering proceed.
   pi.on("adjust_tool_set", async (event) => {
-    if (isFullGsdToolSurfaceRequested()) return undefined;
+    if (isFullGwdToolSurfaceRequested()) return undefined;
     const removed = new Set(event.filteredTools);
     const providerCompatible = event.activeToolNames.filter((name) => !removed.has(name));
-    const requestScoped = buildRequestScopedGsdToolSet(providerCompatible, event.requestCustomMessages);
+    const requestScoped = buildRequestScopedGwdToolSet(providerCompatible, event.requestCustomMessages);
     if (requestScoped) {
       return { toolNames: requestScoped };
     }
     const dash = getAutoRuntimeSnapshot();
     if (dash.active && dash.currentUnit) {
-      return { toolNames: buildMinimalAutoGsdToolSet(providerCompatible, dash.currentUnit.type) };
+      return { toolNames: buildMinimalAutoGwdToolSet(providerCompatible, dash.currentUnit.type) };
     }
-    if (isGeneralGsdToolScopingRequested()) {
-      return { toolNames: buildMinimalGsdToolSet(providerCompatible) };
+    if (isGeneralGwdToolScopingRequested()) {
+      return { toolNames: buildMinimalGwdToolSet(providerCompatible) };
     }
     return undefined;
   });

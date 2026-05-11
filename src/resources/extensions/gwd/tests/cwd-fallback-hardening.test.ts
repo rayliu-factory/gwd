@@ -66,7 +66,7 @@ test("dynamic tools register when cwd was removed", async () => {
 test("db-backed tool fallbacks return normal unavailable-db errors when cwd was removed", async () => {
   await withDeletedCwd(async () => {
     const tools = collectTools(registerDbTools);
-    const decisionSave = tools.find((tool) => tool.name === "gsd_decision_save");
+    const decisionSave = tools.find((tool) => tool.name === "gwd_decision_save");
 
     const result = await decisionSave.execute(
       "call-1",
@@ -100,7 +100,7 @@ test("memory and query tools do not throw when cwd was removed", async () => {
       ),
     );
     await assert.doesNotReject(() =>
-      queryTools.find((tool) => tool.name === "gsd_milestone_status").execute(
+      queryTools.find((tool) => tool.name === "gwd_milestone_status").execute(
         "call-2",
         { milestoneId: "M001" },
         undefined,
@@ -117,7 +117,7 @@ test("journal and exec tools do not throw when cwd was removed", async () => {
     const execTools = collectTools(registerExecTools);
 
     await assert.doesNotReject(() =>
-      journalTools.find((tool) => tool.name === "gsd_journal_query").execute(
+      journalTools.find((tool) => tool.name === "gwd_journal_query").execute(
         "call-1",
         { limit: 1 },
         undefined,
@@ -126,7 +126,7 @@ test("journal and exec tools do not throw when cwd was removed", async () => {
       ),
     );
     await assert.doesNotReject(() =>
-      execTools.find((tool) => tool.name === "gsd_resume").execute(
+      execTools.find((tool) => tool.name === "gwd_resume").execute(
         "call-2",
         {},
         undefined,

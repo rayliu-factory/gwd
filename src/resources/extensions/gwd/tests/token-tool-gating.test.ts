@@ -4,23 +4,23 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildMinimalAutoGsdToolSet, buildMinimalGsdToolSet, buildMinimalGsdWorkflowToolSet, buildRequestScopedGsdToolSet, MINIMAL_AUTO_BASE_TOOL_NAMES, MINIMAL_GWD_TOOL_NAMES, restoreGsdWorkflowTools, scopeGsdWorkflowToolsForDispatch } from "../bootstrap/register-hooks.ts";
+import { buildMinimalAutoGwdToolSet, buildMinimalGwdToolSet, buildMinimalGwdWorkflowToolSet, buildRequestScopedGwdToolSet, MINIMAL_AUTO_BASE_TOOL_NAMES, MINIMAL_GWD_TOOL_NAMES, restoreGwdWorkflowTools, scopeGwdWorkflowToolsForDispatch } from "../bootstrap/register-hooks.ts";
 
-test("buildMinimalGsdToolSet preserves non-GWD tools and replaces broad GWD surface", () => {
-  const result = buildMinimalGsdToolSet([
+test("buildMinimalGwdToolSet preserves non-GWD tools and replaces broad GWD surface", () => {
+  const result = buildMinimalGwdToolSet([
     "bash",
     "read",
     "browser_open",
-    "gsd_plan_milestone",
-    "gsd_task_complete",
-    "gsd_exec",
-    "gsd_exec_search",
-    "gsd_resume",
-    "gsd_milestone_status",
-    "gsd_checkpoint_db",
+    "gwd_plan_milestone",
+    "gwd_task_complete",
+    "gwd_exec",
+    "gwd_exec_search",
+    "gwd_resume",
+    "gwd_milestone_status",
+    "gwd_checkpoint_db",
     "memory_query",
     "capture_thought",
-    "gsd_graph",
+    "gwd_graph",
   ]);
 
   assert.ok(result.includes("bash"));
@@ -29,41 +29,41 @@ test("buildMinimalGsdToolSet preserves non-GWD tools and replaces broad GWD surf
   for (const toolName of MINIMAL_GWD_TOOL_NAMES) {
     assert.ok(result.includes(toolName), `expected ${toolName}`);
   }
-  assert.ok(!result.includes("gsd_plan_milestone"));
-  assert.ok(!result.includes("gsd_task_complete"));
-  assert.ok(!result.includes("gsd_graph"));
+  assert.ok(!result.includes("gwd_plan_milestone"));
+  assert.ok(!result.includes("gwd_task_complete"));
+  assert.ok(!result.includes("gwd_graph"));
 });
 
-test("buildMinimalGsdToolSet deduplicates preserved and minimal tools", () => {
-  const result = buildMinimalGsdToolSet(["bash", "bash", "memory_query"]);
+test("buildMinimalGwdToolSet deduplicates preserved and minimal tools", () => {
+  const result = buildMinimalGwdToolSet(["bash", "bash", "memory_query"]);
 
   assert.deepEqual(result.filter((toolName) => toolName === "bash"), ["bash"]);
   assert.deepEqual(result.filter((toolName) => toolName === "memory_query"), ["memory_query"]);
 });
 
-test("buildMinimalGsdToolSet does not reintroduce provider-filtered GWD tools", () => {
-  const result = buildMinimalGsdToolSet(["bash", "read", "memory_query"]);
+test("buildMinimalGwdToolSet does not reintroduce provider-filtered GWD tools", () => {
+  const result = buildMinimalGwdToolSet(["bash", "read", "memory_query"]);
 
   assert.deepEqual(result, ["bash", "read", "memory_query"]);
-  assert.ok(!result.includes("gsd_exec"));
+  assert.ok(!result.includes("gwd_exec"));
 });
 
-test("buildMinimalAutoGsdToolSet keeps unit-specific completion tools without aliases", () => {
-  const result = buildMinimalAutoGsdToolSet([
+test("buildMinimalAutoGwdToolSet keeps unit-specific completion tools without aliases", () => {
+  const result = buildMinimalAutoGwdToolSet([
     "ask_user_questions",
     "bash",
     "read",
     "lsp",
     "browser_click",
-    "gsd_task_complete",
-    "gsd_complete_task",
-    "gsd_exec",
-    "gsd_exec_search",
-    "gsd_resume",
-    "gsd_milestone_status",
-    "gsd_checkpoint_db",
-    "gsd_slice_complete",
-    "gsd_complete_slice",
+    "gwd_task_complete",
+    "gwd_complete_task",
+    "gwd_exec",
+    "gwd_exec_search",
+    "gwd_resume",
+    "gwd_milestone_status",
+    "gwd_checkpoint_db",
+    "gwd_slice_complete",
+    "gwd_complete_slice",
     "memory_query",
     "capture_thought",
   ], "execute-task");
@@ -71,17 +71,17 @@ test("buildMinimalAutoGsdToolSet keeps unit-specific completion tools without al
   assert.ok(result.includes("ask_user_questions"));
   assert.ok(result.includes("bash"));
   assert.ok(result.includes("read"));
-  assert.ok(result.includes("gsd_task_complete"));
+  assert.ok(result.includes("gwd_task_complete"));
   assert.ok(result.includes("memory_query"));
   assert.ok(!result.includes("lsp"));
   assert.ok(!result.includes("browser_click"));
-  assert.ok(!result.includes("gsd_complete_task"));
-  assert.ok(!result.includes("gsd_slice_complete"));
-  assert.ok(!result.includes("gsd_complete_slice"));
+  assert.ok(!result.includes("gwd_complete_task"));
+  assert.ok(!result.includes("gwd_slice_complete"));
+  assert.ok(!result.includes("gwd_complete_slice"));
 });
 
-test("buildMinimalAutoGsdToolSet keeps only the auto base non-GWD tools", () => {
-  const result = buildMinimalAutoGsdToolSet([
+test("buildMinimalAutoGwdToolSet keeps only the auto base non-GWD tools", () => {
+  const result = buildMinimalAutoGwdToolSet([
     "ask_user_questions",
     "bash",
     "bg_shell",
@@ -95,11 +95,11 @@ test("buildMinimalAutoGsdToolSet keeps only the auto base non-GWD tools", () => 
     "read",
     "subagent",
     "write",
-    "gsd_exec",
-    "gsd_exec_search",
-    "gsd_resume",
-    "gsd_milestone_status",
-    "gsd_checkpoint_db",
+    "gwd_exec",
+    "gwd_exec_search",
+    "gwd_resume",
+    "gwd_milestone_status",
+    "gwd_checkpoint_db",
     "memory_query",
     "capture_thought",
   ], "execute-task");
@@ -113,48 +113,48 @@ test("buildMinimalAutoGsdToolSet keeps only the auto base non-GWD tools", () => 
   assert.ok(!result.includes("subagent"));
 });
 
-test("buildMinimalAutoGsdToolSet includes closeout tool for complete-slice", () => {
-  const result = buildMinimalAutoGsdToolSet([
+test("buildMinimalAutoGwdToolSet includes closeout tool for complete-slice", () => {
+  const result = buildMinimalAutoGwdToolSet([
     "bash",
     "read",
     "subagent",
-    "gsd_exec",
-    "gsd_exec_search",
-    "gsd_resume",
-    "gsd_milestone_status",
-    "gsd_checkpoint_db",
-    "gsd_task_complete",
-    "gsd_slice_complete",
-    "gsd_complete_slice",
+    "gwd_exec",
+    "gwd_exec_search",
+    "gwd_resume",
+    "gwd_milestone_status",
+    "gwd_checkpoint_db",
+    "gwd_task_complete",
+    "gwd_slice_complete",
+    "gwd_complete_slice",
     "memory_query",
     "capture_thought",
   ], "complete-slice");
 
-  assert.ok(result.includes("gsd_slice_complete"));
+  assert.ok(result.includes("gwd_slice_complete"));
   assert.ok(result.includes("subagent"));
   assert.ok(result.includes("capture_thought"));
-  assert.ok(!result.includes("gsd_task_complete"));
-  assert.ok(!result.includes("gsd_complete_slice"));
+  assert.ok(!result.includes("gwd_task_complete"));
+  assert.ok(!result.includes("gwd_complete_slice"));
 });
 
-test("buildMinimalAutoGsdToolSet covers execute-task-simple", () => {
-  const result = buildMinimalAutoGsdToolSet([
+test("buildMinimalAutoGwdToolSet covers execute-task-simple", () => {
+  const result = buildMinimalAutoGwdToolSet([
     "bash",
     "read",
-    "gsd_task_complete",
-    "gsd_decision_save",
-    "gsd_plan_task",
+    "gwd_task_complete",
+    "gwd_decision_save",
+    "gwd_plan_task",
     "memory_query",
     "capture_thought",
   ], "execute-task-simple");
 
-  assert.ok(result.includes("gsd_task_complete"));
-  assert.ok(result.includes("gsd_decision_save"));
-  assert.ok(!result.includes("gsd_plan_task"));
+  assert.ok(result.includes("gwd_task_complete"));
+  assert.ok(result.includes("gwd_decision_save"));
+  assert.ok(!result.includes("gwd_plan_task"));
 });
 
-test("buildMinimalGsdWorkflowToolSet keeps workflow GWD tools but drops broad non-GWD tools", () => {
-  const result = buildMinimalGsdWorkflowToolSet([
+test("buildMinimalGwdWorkflowToolSet keeps workflow GWD tools but drops broad non-GWD tools", () => {
+  const result = buildMinimalGwdWorkflowToolSet([
     "ask_user_questions",
     "bash",
     "bg_shell",
@@ -165,18 +165,18 @@ test("buildMinimalGsdWorkflowToolSet keeps workflow GWD tools but drops broad no
     "read",
     "subagent",
     "write",
-    "gsd_plan_milestone",
-    "gsd_complete_milestone",
-    "gsd_task_complete",
-    "gsd_summary_save",
+    "gwd_plan_milestone",
+    "gwd_complete_milestone",
+    "gwd_task_complete",
+    "gwd_summary_save",
     "memory_query",
     "capture_thought",
-    "gsd_exec",
-    "gsd_exec_search",
-    "gsd_resume",
-    "gsd_milestone_status",
-    "gsd_checkpoint_db",
-    "gsd_graph",
+    "gwd_exec",
+    "gwd_exec_search",
+    "gwd_resume",
+    "gwd_milestone_status",
+    "gwd_checkpoint_db",
+    "gwd_graph",
   ]);
 
   assert.ok(result.includes("ask_user_questions"));
@@ -184,29 +184,29 @@ test("buildMinimalGsdWorkflowToolSet keeps workflow GWD tools but drops broad no
   assert.ok(result.includes("bg_shell"));
   assert.ok(result.includes("read"));
   assert.ok(result.includes("write"));
-  assert.ok(result.includes("gsd_plan_milestone"));
-  assert.ok(result.includes("gsd_complete_milestone"));
-  assert.ok(result.includes("gsd_task_complete"));
-  assert.ok(result.includes("gsd_summary_save"));
+  assert.ok(result.includes("gwd_plan_milestone"));
+  assert.ok(result.includes("gwd_complete_milestone"));
+  assert.ok(result.includes("gwd_task_complete"));
+  assert.ok(result.includes("gwd_summary_save"));
   assert.ok(!result.includes("browser_wait_for"));
   assert.ok(!result.includes("lsp"));
   assert.ok(!result.includes("mac_find"));
   assert.ok(!result.includes("subagent"));
-  assert.ok(!result.includes("gsd_graph"));
+  assert.ok(!result.includes("gwd_graph"));
 });
 
-test("buildRequestScopedGsdToolSet scopes queued workflow custom-message requests", () => {
-  const result = buildRequestScopedGsdToolSet([
+test("buildRequestScopedGwdToolSet scopes queued workflow custom-message requests", () => {
+  const result = buildRequestScopedGwdToolSet([
     "ask_user_questions",
     "bash",
     "browser_wait_for",
     "lsp",
     "read",
     "write",
-    "gsd_plan_milestone",
-    "gsd_complete_milestone",
-    "gsd_task_complete",
-    "gsd_graph",
+    "gwd_plan_milestone",
+    "gwd_complete_milestone",
+    "gwd_task_complete",
+    "gwd_graph",
     "memory_query",
     "capture_thought",
   ], [{ customType: "gsd-run" }, { customType: "gsd-memory" }]);
@@ -216,31 +216,31 @@ test("buildRequestScopedGsdToolSet scopes queued workflow custom-message request
   assert.ok(result.includes("bash"));
   assert.ok(result.includes("read"));
   assert.ok(result.includes("write"));
-  assert.ok(result.includes("gsd_plan_milestone"));
-  assert.ok(result.includes("gsd_complete_milestone"));
+  assert.ok(result.includes("gwd_plan_milestone"));
+  assert.ok(result.includes("gwd_complete_milestone"));
   assert.ok(!result.includes("browser_wait_for"));
   assert.ok(!result.includes("lsp"));
-  assert.ok(!result.includes("gsd_graph"));
+  assert.ok(!result.includes("gwd_graph"));
 });
 
-test("buildRequestScopedGsdToolSet ignores stale workflow messages outside the current request tail", () => {
-  assert.equal(buildRequestScopedGsdToolSet(["bash", "gsd_plan_milestone"], []), undefined);
+test("buildRequestScopedGwdToolSet ignores stale workflow messages outside the current request tail", () => {
+  assert.equal(buildRequestScopedGwdToolSet(["bash", "gwd_plan_milestone"], []), undefined);
 });
 
-test("scopeGsdWorkflowToolsForDispatch applies and restores per-unit skill visibility", () => {
+test("scopeGwdWorkflowToolsForDispatch applies and restores per-unit skill visibility", () => {
   const calls: Array<{ kind: "tools" | "skills"; value: string[] | undefined }> = [];
   let activeTools = [
     "bash",
     "read",
     "lsp",
-    "gsd_plan_milestone",
-    "gsd_decision_save",
+    "gwd_plan_milestone",
+    "gwd_decision_save",
     "memory_query",
     "capture_thought",
   ];
   let visibleSkills: string[] | undefined = ["previous-skill"];
 
-  const state = scopeGsdWorkflowToolsForDispatch({
+  const state = scopeGwdWorkflowToolsForDispatch({
     getActiveTools: () => activeTools,
     setActiveTools: (names) => {
       activeTools = names;
@@ -266,7 +266,7 @@ test("scopeGsdWorkflowToolsForDispatch applies and restores per-unit skill visib
   ]);
   assert.ok(!activeTools.includes("lsp"));
 
-  restoreGsdWorkflowTools({
+  restoreGwdWorkflowTools({
     setActiveTools: (names) => {
       activeTools = names;
       calls.push({ kind: "tools", value: names });
@@ -281,8 +281,8 @@ test("scopeGsdWorkflowToolsForDispatch applies and restores per-unit skill visib
     "bash",
     "read",
     "lsp",
-    "gsd_plan_milestone",
-    "gsd_decision_save",
+    "gwd_plan_milestone",
+    "gwd_decision_save",
     "memory_query",
     "capture_thought",
   ]);

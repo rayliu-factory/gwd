@@ -91,7 +91,7 @@ import { logWarning } from "./workflow-logger.js";
 import { deleteRuntimeKv } from "./db/runtime-kv.js";
 import { PAUSED_SESSION_KV_KEY } from "./interrupted-session.js";
 import { buildWorkflowDispatchContent } from "./workflow-protocol.js";
-import { isFullGsdToolSurfaceRequested, restoreGsdWorkflowTools, scopeGsdWorkflowToolsForDispatch } from "./bootstrap/register-hooks.js";
+import { isFullGwdToolSurfaceRequested, restoreGwdWorkflowTools, scopeGwdWorkflowToolsForDispatch } from "./bootstrap/register-hooks.js";
 
 type AutoStartOptions = Parameters<typeof startAutoDetached>[4];
 type AutoStartLauncher = typeof startAutoDetached;
@@ -585,9 +585,9 @@ export function checkAutoStartAfterDiscuss(): boolean {
 
   // Gate 1b: Discriminate plan-blocked from discuss-incomplete when the DB row is queued.
   // If the DB is available and the row is still "queued" but CONTEXT.md already exists on
-  // disk, the discuss phase completed but gsd_plan_milestone was hard-blocked by the
+  // disk, the discuss phase completed but gwd_plan_milestone was hard-blocked by the
   // depth-verification gate.  Emit a recovery hint so the next agent turn can retry
-  // gsd_plan_milestone, then return false (keep blocking auto-start).
+  // gwd_plan_milestone, then return false (keep blocking auto-start).
   // If CONTEXT.md does not exist (discuss-incomplete), Gate 1 already blocked above.
   if (isDbAvailable()) {
     const dbRow = getMilestone(milestoneId);
@@ -614,7 +614,7 @@ export function checkAutoStartAfterDiscuss(): boolean {
       );
       ctx.ui.notify(
         `Milestone ${milestoneId}: context file exists but milestone is still queued. ` +
-        `Retrying gsd_plan_milestone to complete the blocked planning step.`,
+        `Retrying gwd_plan_milestone to complete the blocked planning step.`,
         "warning",
       );
       try {
@@ -623,8 +623,8 @@ export function checkAutoStartAfterDiscuss(): boolean {
             customType: "gsd-plan-milestone-blocked-recovery",
             content:
               `Milestone ${milestoneId} has ${contextFile} on disk but its DB row is still ` +
-              `"queued". The gsd_plan_milestone tool was previously blocked by the ` +
-              `depth-verification gate. Call gsd_plan_milestone now to complete the ` +
+              `"queued". The gwd_plan_milestone tool was previously blocked by the ` +
+              `depth-verification gate. Call gwd_plan_milestone now to complete the ` +
               `planning phase.`,
             display: false,
           },
@@ -875,7 +875,7 @@ export function maybeHandleReadyPhraseWithoutFiles(event: { messages: any[] }): 
     `${contextRel} nor ${roadmapRel} exists on disk. ` +
     `The ready phrase is a POST-WRITE signal and has been rejected. ` +
     `In this turn: (1) write PROJECT.md, REQUIREMENTS.md, and the milestone ` +
-    `CONTEXT.md, (2) call gsd_plan_milestone, then (3) emit the ready phrase. ` +
+    `CONTEXT.md, (2) call gwd_plan_milestone, then (3) emit the ready phrase. ` +
     `Do not describe these steps — execute them as tool calls. ` +
     `This is retry ${entry.readyRejectCount}/${MAX_READY_REJECTS}; further ` +
     `premature signals will clear the session.`;
@@ -1084,7 +1084,7 @@ async function dispatchWorkflow(
   // Guided workflow turns only need the active unit's tool surface; strip
   // unrelated GWD tools and broad non-GWD tools for this queued turn, then
   // restore so the narrowed surface does not leak into future dispatches.
-  let savedTools: ReturnType<typeof scopeGsdWorkflowToolsForDispatch> = null;
+  let savedTools: ReturnType<typeof scopeGwdWorkflowToolsForDispatch> = null;
 
   try {
     const currentTools = pi.getActiveTools();
@@ -1093,14 +1093,14 @@ async function dispatchWorkflow(
       visibleSkills: typeof pi.getVisibleSkills === "function" ? pi.getVisibleSkills() : undefined,
       restoreVisibleSkills: typeof pi.setVisibleSkills === "function",
     };
-    if (unitType?.startsWith("discuss-") && !isFullGsdToolSurfaceRequested()) {
+    if (unitType?.startsWith("discuss-") && !isFullGwdToolSurfaceRequested()) {
       // Keep all non-GWD tools (builtins, other extensions) and only the
       // GWD tools on the discuss allowlist.
       const scopedTools = currentTools.filter(
-        (t) => !t.startsWith("gsd_") || DISCUSS_TOOLS_ALLOWLIST.includes(t),
+        (t) => !t.startsWith("gwd_") || DISCUSS_TOOLS_ALLOWLIST.includes(t),
       );
       pi.setActiveTools(scopedTools);
-      const scopedState = scopeGsdWorkflowToolsForDispatch(pi, unitType);
+      const scopedState = scopeGwdWorkflowToolsForDispatch(pi, unitType);
       savedTools = {
         tools: currentTools,
         visibleSkills: scopedState?.visibleSkills ?? savedTools.visibleSkills,
@@ -1113,7 +1113,7 @@ async function dispatchWorkflow(
         removed: currentTools.length - pi.getActiveTools().length,
       });
     } else {
-      savedTools = scopeGsdWorkflowToolsForDispatch(pi, unitType) ?? savedTools;
+      savedTools = scopeGwdWorkflowToolsForDispatch(pi, unitType) ?? savedTools;
     }
 
     const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GWD-WORKFLOW.md");
@@ -1132,7 +1132,7 @@ async function dispatchWorkflow(
     // already captured the scoped set — restoring prevents the narrowed
     // tools from leaking into subsequent dispatches (#3628). The finally
     // block ensures restoration even if sendMessage throws.
-    restoreGsdWorkflowTools(pi, savedTools);
+    restoreGwdWorkflowTools(pi, savedTools);
   }
 }
 
@@ -1352,7 +1352,7 @@ export async function showHeadlessMilestoneCreation(
   setPendingAutoStart(basePath, { ctx, pi, basePath, milestoneId: nextId });
 
   // Dispatch as discuss-milestone. The LLM writes PROJECT.md, REQUIREMENTS.md,
-  // and CONTEXT.md, then calls gsd_plan_milestone — this is semantically the
+  // and CONTEXT.md, then calls gwd_plan_milestone — this is semantically the
   // discuss path, just non-interactive. Using "plan-milestone" here caused
   // model/tool routing to skip discuss-flow tool scoping and
   // `checkAutoStartAfterDiscuss` guardrails that rely on the

@@ -1,4 +1,4 @@
-// GWD Exec Search Tool — lists and filters prior gsd_exec runs.
+// GWD Exec Search Tool — lists and filters prior gwd_exec runs.
 //
 // Scans .gwd/exec/*.meta.json and returns a ranked summary so agents can
 // re-discover past runs without re-executing. Read-only; no DB writes.
@@ -19,7 +19,7 @@ export function executeExecSearch(
   opts: { baseDir: string; preferences?: { context_mode?: ContextModeConfig } | null },
 ): ToolExecutionResult {
   if (!isContextModeEnabled(opts.preferences)) {
-    return contextModeDisabledResult("gsd_exec_search");
+    return contextModeDisabledResult("gwd_exec_search");
   }
 
   const searchOpts: ExecSearchOptions = {
@@ -32,8 +32,8 @@ export function executeExecSearch(
 
   if (hits.length === 0) {
     return {
-      content: [{ type: "text", text: "No prior gsd_exec runs match those filters." }],
-      details: { operation: "gsd_exec_search", matches: 0 },
+      content: [{ type: "text", text: "No prior gwd_exec runs match those filters." }],
+      details: { operation: "gwd_exec_search", matches: 0 },
     };
   }
 
@@ -56,7 +56,7 @@ export function executeExecSearch(
   return {
     content: [{ type: "text", text: lines.join("\n") }],
     details: {
-      operation: "gsd_exec_search",
+      operation: "gwd_exec_search",
       matches: hits.length,
       results: hits.map((hit) => ({
         id: hit.entry.id,

@@ -17,8 +17,8 @@ You are a GWD project reorganization assistant. The user wants to rethink milest
 ## Supported Operations
 
 <!-- NOTE: Park, unpark, reorder, discard, and dependency-update operations are intentionally
-     file-based. No gsd_* tool API exists for these milestone-lifecycle mutations yet.
-     The single-writer DB tools (gsd_plan_milestone, gsd_complete_milestone, etc.) own
+     file-based. No gwd_* tool API exists for these milestone-lifecycle mutations yet.
+     The single-writer DB tools (gwd_plan_milestone, gwd_complete_milestone, etc.) own
      create and complete; queue management is file-driven until tool support is added. -->
 
 ### Reorder milestones
@@ -46,14 +46,14 @@ reason: "<reason>"
 Remove the `{ID}-PARKED.md` file from the milestone directory to reactivate it.
 
 ### Skip a slice
-Mark a slice skipped so auto-mode advances. **You MUST call the `gsd_skip_slice` tool** — editing roadmap markdown alone is NOT sufficient because auto-mode reads slice status from the database, not the roadmap file:
+Mark a slice skipped so auto-mode advances. **You MUST call the `gwd_skip_slice` tool** — editing roadmap markdown alone is NOT sufficient because auto-mode reads slice status from the database, not the roadmap file:
 ```
-gsd_skip_slice({ milestoneId: "M003", sliceId: "S02", reason: "Descoped — feature moved to M005" })
+gwd_skip_slice({ milestoneId: "M003", sliceId: "S02", reason: "Descoped — feature moved to M005" })
 ```
 Skipped slices are closed by the state machine (like "complete" but distinct). Use when superseded or no longer needed. Slice data is preserved.
 **Do NOT** just check the slice checkbox in the roadmap — this does not update the DB and auto-mode will resume the slice.
 
-**CRITICAL — Non-bypassable gate:** Skipping a slice is a permanent DB operation. You MUST confirm with the user before calling `gsd_skip_slice`. If the user does not respond or gives an ambiguous answer, you MUST re-ask — never proceed without explicit approval.
+**CRITICAL — Non-bypassable gate:** Skipping a slice is a permanent DB operation. You MUST confirm with the user before calling `gwd_skip_slice`. If the user does not respond or gives an ambiguous answer, you MUST re-ask — never proceed without explicit approval.
 
 ### Discard a milestone
 **Permanently** delete a milestone directory and prune it from QUEUE-ORDER.json.
@@ -61,7 +61,7 @@ Skipped slices are closed by the state machine (like "complete" but distinct). U
 **CRITICAL — Non-bypassable gate:** Discarding is irreversible. You MUST confirm with the user before discarding. Warn explicitly if the milestone has completed work. If the user does not respond or gives an ambiguous answer, you MUST re-ask — never rationalize past the block. A missing confirmation is a "do not discard."
 
 ### Add a new milestone
-Use `gsd_milestone_generate_id` for the next ID, then call `gsd_summary_save` with `milestone_id: {ID}`, `artifact_type: "CONTEXT"`, and scope/goals/success criteria as `content`. The tool writes disk and DB. Update QUEUE-ORDER.json for placement.
+Use `gwd_milestone_generate_id` for the next ID, then call `gwd_summary_save` with `milestone_id: {ID}`, `artifact_type: "CONTEXT"`, and scope/goals/success criteria as `content`. The tool writes disk and DB. Update QUEUE-ORDER.json for placement.
 
 ### Update dependencies
 Edit `depends_on` in the YAML frontmatter of a milestone's `{ID}-CONTEXT.md` file. For example:

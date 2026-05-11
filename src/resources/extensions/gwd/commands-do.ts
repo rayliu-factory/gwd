@@ -98,8 +98,8 @@ export async function handleDo(
     ctx.ui.notify(`→ /gwd ${fullCommand}`, "info");
 
     // Re-dispatch through the main dispatcher
-    const { handleGSDCommand } = await import("./commands/dispatcher.js");
-    await handleGSDCommand(fullCommand, ctx, pi);
+    const { handleGWDCommand } = await import("./commands/dispatcher.js");
+    await handleGWDCommand(fullCommand, ctx, pi);
     return;
   }
 

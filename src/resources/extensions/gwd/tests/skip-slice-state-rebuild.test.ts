@@ -1,5 +1,5 @@
 /**
- * Regression test for #3477: gsd_skip_slice updates DB state and rebuilds
+ * Regression test for #3477: gwd_skip_slice updates DB state and rebuilds
  * the projected STATE.md artifact.
  */
 
@@ -18,7 +18,7 @@ import {
   openDatabase,
 } from "../gwd-db.ts";
 
-test("gsd_skip_slice marks a slice skipped and refreshes STATE.md", async () => {
+test("gwd_skip_slice marks a slice skipped and refreshes STATE.md", async () => {
   const base = mkdtempSync(join(tmpdir(), "gsd-skip-slice-"));
   const tools = new Map<string, any>();
   const pi = { registerTool: (tool: any) => tools.set(tool.name, tool) };
@@ -39,8 +39,8 @@ test("gsd_skip_slice marks a slice skipped and refreshes STATE.md", async () => 
     });
 
     registerDbTools(pi as any);
-    const skipSlice = tools.get("gsd_skip_slice");
-    assert.ok(skipSlice, "gsd_skip_slice is registered");
+    const skipSlice = tools.get("gwd_skip_slice");
+    assert.ok(skipSlice, "gwd_skip_slice is registered");
 
     const result = await skipSlice.execute(
       "tool-call",

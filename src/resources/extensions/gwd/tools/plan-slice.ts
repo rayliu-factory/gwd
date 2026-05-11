@@ -177,7 +177,7 @@ export async function handlePlanSlice(
         return;
       }
       if (isClosedStatus(parentSlice.status)) {
-        guardError = `cannot re-plan slice ${params.sliceId}: it is already complete — use gsd_slice_reopen first`;
+        guardError = `cannot re-plan slice ${params.sliceId}: it is already complete — use gwd_slice_reopen first`;
         return;
       }
 

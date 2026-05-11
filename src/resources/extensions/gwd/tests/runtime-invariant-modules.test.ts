@@ -59,7 +59,7 @@ test("Tool Contract compiles known Unit prompt and tool policy", () => {
 
   assert.equal(result.ok, true);
   assert.equal(result.ok && result.contract.unitType, "execute-task");
-  assert.deepEqual(result.ok && result.contract.requiredWorkflowTools, ["gsd_task_complete"]);
+  assert.deepEqual(result.ok && result.contract.requiredWorkflowTools, ["gwd_task_complete"]);
   assert.equal(result.ok && result.contract.toolsPolicy.mode, "all");
   assert.ok(result.ok && result.contract.validationRules.includes("closeout-tool-present"));
 });

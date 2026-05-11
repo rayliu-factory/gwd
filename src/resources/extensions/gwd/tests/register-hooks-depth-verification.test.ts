@@ -417,7 +417,7 @@ test("register-hooks gates MCP ask_user_questions cancellation before requiremen
   for (const handler of handlers.get("tool_call") ?? []) {
     const result = await handler({
       toolName: "ToolSearch",
-      input: { query: "select:mcp__gsd-workflow__gsd_requirement_save", max_results: 2 },
+      input: { query: "select:mcp__gsd-workflow__gwd_requirement_save", max_results: 2 },
     });
     if (result?.block) toolSearchBlock = result;
   }
@@ -426,7 +426,7 @@ test("register-hooks gates MCP ask_user_questions cancellation before requiremen
   let requirementBlock: any;
   for (const handler of handlers.get("tool_call") ?? []) {
     const result = await handler({
-      toolName: "mcp__gsd-workflow__gsd_requirement_save",
+      toolName: "mcp__gsd-workflow__gwd_requirement_save",
       input: {
         class: "functional",
         description: "User can add tasks to the todo list",

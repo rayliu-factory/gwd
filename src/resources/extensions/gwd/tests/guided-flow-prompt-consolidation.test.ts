@@ -6,7 +6,7 @@
  * `buildCompleteSlicePrompt` from `auto-prompts.ts`. This test exercises the
  * consolidated builders against a real fixture and asserts they produce
  * prompts carrying the contract the deleted variants used to enforce:
- *   - the canonical `gsd_*_complete` tool reference,
+ *   - the canonical `gwd_*_complete` tool reference,
  *   - the explicit working directory binding,
  *   - the unit identifiers (milestone/slice/task),
  *   - the quality-gate doctrine that was backported into the canonical files
@@ -86,8 +86,8 @@ describe("guided-flow → auto-prompts consolidation (#5183)", () => {
     assert.ok(prompt.includes(TID), "must mention task id");
     assert.ok(prompt.includes(T_TITLE), "must mention task title");
     assert.ok(
-      prompt.includes("gsd_task_complete"),
-      "must instruct calling the canonical gsd_task_complete tool",
+      prompt.includes("gwd_task_complete"),
+      "must instruct calling the canonical gwd_task_complete tool",
     );
     assert.ok(
       prompt.includes(base),
@@ -124,8 +124,8 @@ describe("guided-flow → auto-prompts consolidation (#5183)", () => {
     assert.ok(prompt.includes(SID), "must mention slice id");
     assert.ok(prompt.includes(S_TITLE), "must mention slice title");
     assert.ok(
-      prompt.includes("gsd_slice_complete"),
-      "must instruct calling gsd_slice_complete (was in guided-complete-slice.md)",
+      prompt.includes("gwd_slice_complete"),
+      "must instruct calling gwd_slice_complete (was in guided-complete-slice.md)",
     );
     assert.ok(
       prompt.includes(base),

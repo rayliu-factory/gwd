@@ -22,7 +22,7 @@ test("system.md anti-patterns section prohibits direct .gwd/gwd.db access", () =
   );
   assert.match(prompt, /sqlite3/, "system.md DB guardrail must name the sqlite3 CLI");
   assert.match(prompt, /better-sqlite3/, "system.md DB guardrail must name better-sqlite3");
-  assert.match(prompt, /gsd_\*/, "system.md DB guardrail must redirect to gsd_* tools");
+  assert.match(prompt, /gwd_\*/, "system.md DB guardrail must redirect to gwd_* tools");
 });
 
 test("system.md DB guardrail explains single-writer WAL risk", () => {
@@ -35,34 +35,34 @@ test("system.md DB guardrail explains single-writer WAL risk", () => {
 test("validate-milestone.md contains DB access safety guardrail with tool redirect", () => {
   const prompt = readPrompt("validate-milestone");
   assert.match(prompt, /DB access safety/i, "validate-milestone.md must have DB access safety section");
-  assert.match(prompt, /gsd_milestone_status/, "validate-milestone.md must name gsd_milestone_status as alternative");
+  assert.match(prompt, /gwd_milestone_status/, "validate-milestone.md must name gwd_milestone_status as alternative");
   assert.match(prompt, /Do NOT query.*\.gwd\/gwd\.db/i, "validate-milestone.md must prohibit direct DB queries");
 });
 
 test("complete-milestone.md contains DB access safety guardrail with tool redirect", () => {
   const prompt = readPrompt("complete-milestone");
   assert.match(prompt, /DB access safety/i, "complete-milestone.md must have DB access safety section");
-  assert.match(prompt, /gsd_milestone_status/, "complete-milestone.md must name gsd_milestone_status as alternative");
+  assert.match(prompt, /gwd_milestone_status/, "complete-milestone.md must name gwd_milestone_status as alternative");
   assert.match(prompt, /Do NOT query.*\.gwd\/gwd\.db/i, "complete-milestone.md must prohibit direct DB queries");
 });
 
-test("doctor-heal.md contains DB access guardrail naming gsd_milestone_status", () => {
+test("doctor-heal.md contains DB access guardrail naming gwd_milestone_status", () => {
   const prompt = readPrompt("doctor-heal");
-  assert.match(prompt, /gsd_milestone_status/, "doctor-heal.md must name gsd_milestone_status as the DB inspection tool");
+  assert.match(prompt, /gwd_milestone_status/, "doctor-heal.md must name gwd_milestone_status as the DB inspection tool");
   assert.match(prompt, /Do NOT query.*\.gwd\/gwd\.db/i, "doctor-heal.md must prohibit direct DB queries");
   assert.doesNotMatch(prompt, /\{\{milestoneId\}\}/, "doctor-heal.md must not declare unprovided milestoneId template variables");
 });
 
 test("forensics.md contains DB inspection guardrail", () => {
   const prompt = readPrompt("forensics");
-  assert.match(prompt, /gsd_milestone_status/, "forensics.md must name gsd_milestone_status as the DB inspection tool");
+  assert.match(prompt, /gwd_milestone_status/, "forensics.md must name gwd_milestone_status as the DB inspection tool");
   assert.match(prompt, /sqlite3.*\.gwd\/gwd\.db/i, "forensics.md must prohibit sqlite3 against .gwd/gwd.db");
 });
 
 test("reassess-roadmap.md contains DB access safety guardrail", () => {
   const prompt = readPrompt("reassess-roadmap");
   assert.match(prompt, /DB access safety/i, "reassess-roadmap.md must have DB access safety section");
-  assert.match(prompt, /gsd_milestone_status/, "reassess-roadmap.md must name gsd_milestone_status as alternative");
+  assert.match(prompt, /gwd_milestone_status/, "reassess-roadmap.md must name gwd_milestone_status as alternative");
 });
 
 // ─── Negative assertion: no prompt instructs running sqlite3 as a command ─────

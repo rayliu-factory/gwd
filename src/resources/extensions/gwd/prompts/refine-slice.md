@@ -65,7 +65,7 @@ Then:
 3. Define slice-level verification: the objective stopping condition. Plan real test files with real assertions; for simple slices, executable commands are fine.
 4. For non-trivial slices, plan observability / proof level / integration closure, threat surface, and requirement impact. Omit entirely for simple slices.
 5. Decompose the slice into tasks that fit one context window each. Every task must have Why / Files / Do / Verify / Done-when, plus a task plan with description, steps, must-haves, verification, inputs (backtick-wrapped paths), and expected output (backtick-wrapped paths).
-6. **Persist planning state through `gsd_plan_slice`.** Call it with the full payload. The tool writes to the DB and renders `{{outputPath}}` and `{{slicePath}}/tasks/T##-PLAN.md` automatically. Do NOT rely on direct `PLAN.md` writes.
+6. **Persist planning state through `gwd_plan_slice`.** Call it with the full payload. The tool writes to the DB and renders `{{outputPath}}` and `{{slicePath}}/tasks/T##-PLAN.md` automatically. Do NOT rely on direct `PLAN.md` writes.
 7. **Self-audit the plan.** If every task were completed exactly as written, the slice goal/demo should be true. Every must-have maps to a task. Inputs and Expected Output are backtick-wrapped file paths.
 8. If refinement produced structural decisions that diverge from the sketch, append them to `.gwd/DECISIONS.md`.
 9. {{commitInstruction}}
@@ -74,6 +74,6 @@ The slice directory and tasks/ subdirectory already exist. Do NOT mkdir.
 
 **Autonomous execution:** Do not call `ask_user_questions` or `secure_env_collect`. Document assumptions in the plan.
 
-**You MUST call `gsd_plan_slice` to persist planning state before finishing.** After success, the pipeline clears the sketch flag on next state derivation; the on-disk PLAN file is the signal.
+**You MUST call `gwd_plan_slice` to persist planning state before finishing.** After success, the pipeline clears the sketch flag on next state derivation; the on-disk PLAN file is the signal.
 
 When done, say: "Slice {{sliceId}} refined."

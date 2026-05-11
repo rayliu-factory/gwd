@@ -12,7 +12,7 @@ All relevant context is preloaded below. Start immediately without re-reading th
 
 ## Already Planned? Soft Brake
 
-If `{{outputPath}}` exists with at least one slice line (e.g. `- [ ] **S01:`) AND `gsd_query` reports slice rows for this milestone, a prior `gsd_plan_milestone` call already persisted the plan. Do **not** re-call it; its UPSERT could overwrite existing planning. Skip to the ready phrase.
+If `{{outputPath}}` exists with at least one slice line (e.g. `- [ ] **S01:`) AND `gwd_query` reports slice rows for this milestone, a prior `gwd_plan_milestone` call already persisted the plan. Do **not** re-call it; its UPSERT could overwrite existing planning. Skip to the ready phrase.
 
 If only the file or only DB rows exist, the prior write was incomplete; plan normally so the tool reconciles both.
 
@@ -50,8 +50,8 @@ Then:
 2. {{skillActivation}}
 3. Create only as many demoable vertical slices as the work genuinely needs. Use 1-10 slices, sized to the work; tiny/single-file/static work should usually be one slice.
 4. Order by risk, high-risk first.
-5. Call `gsd_plan_milestone` to persist milestone fields, slice rows, and **Horizontal Checklist** through the DB-backed path. Fill checklist concerns considered during planning: requirements, decisions, shutdown, revenue, auth, shared resources, reconnection. Omit for trivial milestones. Do **not** write `{{outputPath}}`, `ROADMAP.md`, or other planning artifacts manually; the tool owns rendering and persistence.
-6. If planning produced structural decisions (slice ordering, technology choices, scope exclusions), call `gsd_decision_save` for each; the tool assigns IDs and regenerates `.gwd/DECISIONS.md`.
+5. Call `gwd_plan_milestone` to persist milestone fields, slice rows, and **Horizontal Checklist** through the DB-backed path. Fill checklist concerns considered during planning: requirements, decisions, shutdown, revenue, auth, shared resources, reconnection. Omit for trivial milestones. Do **not** write `{{outputPath}}`, `ROADMAP.md`, or other planning artifacts manually; the tool owns rendering and persistence.
+6. If planning produced structural decisions (slice ordering, technology choices, scope exclusions), call `gwd_decision_save` for each; the tool assigns IDs and regenerates `.gwd/DECISIONS.md`.
 
 ## Requirement Mapping Rules
 
@@ -87,7 +87,7 @@ If `phases.progressive_planning` is enabled and the roadmap has **2+ slices**, p
 
 A **sketch slice** keeps title, risk, depends, demo line, and 2-3 sentence `sketchScope`. Do not decompose it into tasks. Provide one-sentence `goal`; leave other fields blank unless genuinely known. Later `refine-slice` expands it from real state and prior slice SUMMARY.
 
-**To mark a slice as a sketch in the `gsd_plan_milestone` tool call:** set `isSketch: true` and `sketchScope: "<2-3 sentence scope>"` on that slice entry.
+**To mark a slice as a sketch in the `gwd_plan_milestone` tool call:** set `isSketch: true` and `sketchScope: "<2-3 sentence scope>"` on that slice entry.
 
 S01 is never a sketch — it must always be fully decomposed in this unit.
 
@@ -97,7 +97,7 @@ If the preference is off, ignore this section and plan every slice fully.
 
 If the roadmap has one slice, also plan S01 and its tasks inline:
 
-1. After `gsd_plan_milestone` returns, call `gsd_plan_slice` for S01 with full task breakdown.
+1. After `gwd_plan_milestone` returns, call `gwd_plan_slice` for S01 with full task breakdown.
 2. Use inlined **Slice Plan** and **Task Plan** templates for tool parameters.
 3. Keep simple slices lean. Omit Proof Level, Integration Closure, and Observability if all would be "none"; executable verification commands are enough.
 

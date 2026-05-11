@@ -31,7 +31,7 @@ test("queue prompt renders compact draft, verification, and persistence guidance
   assert.match(prompt, /Investigate between question rounds/);
   assert.match(prompt, /Pre-Write Verification/);
   assert.match(prompt, /depth_verification/);
-  assert.match(prompt, /gsd_milestone_generate_id/);
-  assert.match(prompt, /gsd_summary_save/);
+  assert.match(prompt, /gwd_milestone_generate_id/);
+  assert.match(prompt, /gwd_summary_save/);
   assert.doesNotMatch(prompt, /\{\{[a-zA-Z][a-zA-Z0-9_]*\}\}/);
 });

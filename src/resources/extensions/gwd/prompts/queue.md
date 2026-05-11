@@ -8,7 +8,7 @@ Before asking "What do you want to add?", check existing milestone context. If a
 
 1. Tell the user which milestones have draft contexts and summarize each after reading it.
 2. Use `ask_user_questions` to ask per-draft milestone:
-   - **"Discuss now"** — Treat the draft as primary topic. Run reflection -> investigation -> questions -> depth verification -> requirements -> roadmap, call `gsd_summary_save` with `artifact_type: "CONTEXT"`, then delete `CONTEXT-DRAFT.md`.
+   - **"Discuss now"** — Treat the draft as primary topic. Run reflection -> investigation -> questions -> depth verification -> requirements -> roadmap, call `gwd_summary_save` with `artifact_type: "CONTEXT"`, then delete `CONTEXT-DRAFT.md`.
    - **"Leave for later"** — Keep the draft. Auto-mode will keep pausing when it reaches this milestone.
 3. Resolve all draft discussions before new queue work.
 4. If no drafts exist in the context, skip this section entirely and proceed to "What do you want to add?"
@@ -103,8 +103,8 @@ The user confirms or corrects before you write. Use one depth verification per m
 
 Once the user is satisfied, in one pass for **each** new milestone:
 
-1. Call `gsd_milestone_generate_id`; never invent IDs. Then `mkdir -p .gwd/milestones/<ID>/slices`.
-2. Call `gsd_summary_save` with `artifact_type: "CONTEXT"` and full context markdown. The tool computes path and persists DB + disk. Capture intent, scope, risks, constraints, integration points, and requirements. Mark status "Queued — pending auto-mode execution." **If dependent, include YAML frontmatter:**
+1. Call `gwd_milestone_generate_id`; never invent IDs. Then `mkdir -p .gwd/milestones/<ID>/slices`.
+2. Call `gwd_summary_save` with `artifact_type: "CONTEXT"` and full context markdown. The tool computes path and persists DB + disk. Capture intent, scope, risks, constraints, integration points, and requirements. Mark status "Queued — pending auto-mode execution." **If dependent, include YAML frontmatter:**
    ```yaml
    ---
    depends_on: [M001, M002]

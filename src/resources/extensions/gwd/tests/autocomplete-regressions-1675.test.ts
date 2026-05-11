@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { registerGSDCommand } from "../commands.ts";
-import { handleGSDCommand } from "../commands/dispatcher.ts";
+import { registerGWDCommand } from "../commands.ts";
+import { handleGWDCommand } from "../commands/dispatcher.ts";
 
 function createMockPi() {
   const commands = new Map<string, any>();
@@ -34,10 +34,10 @@ function createMockCtx() {
 
 test("/gwd description includes discuss", () => {
   const pi = createMockPi();
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
 
   const gsd = pi.commands.get("gwd");
-  assert.ok(gsd, "registerGSDCommand should register /gwd");
+  assert.ok(gsd, "registerGWDCommand should register /gwd");
   assert.ok(
     gsd.description.includes("discuss"),
     "description should include discuss",
@@ -46,7 +46,7 @@ test("/gwd description includes discuss", () => {
 
 test("/gwd description includes debug", () => {
   const pi = createMockPi();
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
 
   const gsd = pi.commands.get("gwd");
   assert.ok(gsd.description.includes("debug"), "description should include debug");
@@ -54,7 +54,7 @@ test("/gwd description includes debug", () => {
 
 test("/gwd next completions include --debug", () => {
   const pi = createMockPi();
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
 
   const gsd = pi.commands.get("gwd");
   const completions = gsd.getArgumentCompletions("next ");
@@ -64,7 +64,7 @@ test("/gwd next completions include --debug", () => {
 
 test("/gwd debug completions include list|status|continue|--diagnose", () => {
   const pi = createMockPi();
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
 
   const gsd = pi.commands.get("gwd");
   const completions = gsd.getArgumentCompletions("debug ");
@@ -76,7 +76,7 @@ test("/gwd debug completions include list|status|continue|--diagnose", () => {
 
 test("/gwd widget completions include full|small|min|off", () => {
   const pi = createMockPi();
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
 
   const gsd = pi.commands.get("gwd");
   const completions = gsd.getArgumentCompletions("widget ");
@@ -88,7 +88,7 @@ test("/gwd widget completions include full|small|min|off", () => {
 
 test("/gwd logs completions still include debug after adding /gwd debug", () => {
   const pi = createMockPi();
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
 
   const gsd = pi.commands.get("gwd");
   const completions = gsd.getArgumentCompletions("logs ");
@@ -99,7 +99,7 @@ test("/gwd logs completions still include debug after adding /gwd debug", () => 
 test("/gwd help full includes /gwd debug command", async () => {
   const ctx = createMockCtx();
 
-  await handleGSDCommand("help full", ctx as any, {} as any);
+  await handleGWDCommand("help full", ctx as any, {} as any);
 
   const helpText = ctx.notifications.map((n) => n.message).join("\n");
   assert.match(helpText, /\/gwd debug\s+Create\/list\/continue persistent debug sessions/);
@@ -108,7 +108,7 @@ test("/gwd help full includes /gwd debug command", async () => {
 test("bare /gwd skip shows usage and does not fall through to unknown-command warning", async () => {
   const ctx = createMockCtx();
 
-  await handleGSDCommand("skip", ctx as any, {} as any);
+  await handleGWDCommand("skip", ctx as any, {} as any);
 
   assert.ok(
     ctx.notifications.some((n) => n.message.includes("Usage: /gwd skip <unit-id>")),

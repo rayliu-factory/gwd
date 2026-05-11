@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Shared prompt fixture definitions for Phase 0 characterization and Phase 2 reduction targets.
 
 export const promptGoldenUnits = [
@@ -8,7 +8,7 @@ export const promptGoldenUnits = [
     requiredMarkers: [
       "UNIT: Plan Slice S01",
       "Inlined Context",
-      "gsd_plan_slice",
+      "gwd_plan_slice",
       "Baseline Slice",
     ],
   },
@@ -21,7 +21,7 @@ export const promptGoldenUnits = [
       "Background process rule",
       "Verification Evidence",
       "blocker_discovered",
-      "gsd_task_complete",
+      "gwd_task_complete",
       "Implement baseline harness",
     ],
   },
@@ -31,7 +31,7 @@ export const promptGoldenUnits = [
     requiredMarkers: [
       "UNIT: Complete Slice S01",
       "Inlined Context",
-      "gsd_slice_complete",
+      "gwd_slice_complete",
       "Slice Summary",
     ],
   },

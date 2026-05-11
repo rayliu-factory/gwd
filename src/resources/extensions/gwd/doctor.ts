@@ -174,7 +174,7 @@ function auditRequirements(content: string | null): DoctorIssue[] {
     if (status === "active" && (!owner || owner === "none" || owner === "none yet")) {
       // #4414: Downgrade to warning. A newly-created requirement has
       // primary_owner='' by default until the planning agent wires it to
-      // a slice via gsd_requirement_update. Flagging this as an error
+      // a slice via gwd_requirement_update. Flagging this as an error
       // during normal planning is noisy — the real failure mode is when
       // it persists past milestone completion, which is covered by other
       // audits. Keep the signal but don't treat it as a blocker.

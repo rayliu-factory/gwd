@@ -70,7 +70,7 @@ describe("headless milestone bootstrap — parity with interactive flow", () => 
       "`.gwd/PROJECT.md`",
       "`.gwd/REQUIREMENTS.md`",
       "`{{contextPath}}`",
-      "`gsd_plan_milestone`",
+      "`gwd_plan_milestone`",
     ]) {
       assert.ok(
         new RegExp(`- \\[ \\] [A-Za-z]+ ${artifact.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`).test(section),
@@ -100,7 +100,7 @@ describe("headless milestone bootstrap — parity with interactive flow", () => 
     for (const artifact of [
       "`.gwd/PROJECT.md`",
       "`.gwd/REQUIREMENTS.md`",
-      "`gsd_plan_milestone`",
+      "`gwd_plan_milestone`",
       "`.gwd/DISCUSSION-MANIFEST.json`",
     ]) {
       const escaped = artifact.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

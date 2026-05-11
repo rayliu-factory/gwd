@@ -163,7 +163,7 @@ export async function executeSummarySave(
       : null;
     if (params.artifact_type === "REQUIREMENTS" && activeRequirements?.length === 0) {
       return {
-        content: [{ type: "text", text: "Error: Cannot save REQUIREMENTS artifact — no active requirements found in the database. Call gsd_requirement_save for each requirement before calling gsd_summary_save(REQUIREMENTS)." }],
+        content: [{ type: "text", text: "Error: Cannot save REQUIREMENTS artifact — no active requirements found in the database. Call gwd_requirement_save for each requirement before calling gwd_summary_save(REQUIREMENTS)." }],
         details: { operation: "save_summary", error: "no_active_requirements" },
         isError: true,
       };
@@ -196,8 +196,8 @@ export async function executeSummarySave(
         if (registeredMilestones.length > 0) invalidateStateCache();
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        logError("tool", `gsd_summary_save: PROJECT artifact persisted but milestone registration threw: ${msg}`, {
-          tool: "gsd_summary_save",
+        logError("tool", `gwd_summary_save: PROJECT artifact persisted but milestone registration threw: ${msg}`, {
+          tool: "gwd_summary_save",
           error: String(err),
           stack: err instanceof Error ? err.stack ?? "" : "",
         });
@@ -211,7 +211,7 @@ export async function executeSummarySave(
             text:
               `Error: PROJECT.md was saved to ${relativePath} but milestone registration failed: ${msg}. ` +
               `The DB has no milestone rows for this project, so /gwd will report "No Active Milestone". ` +
-              `Re-call gsd_summary_save(PROJECT) once the underlying error is resolved — INSERT OR IGNORE makes registration idempotent.`,
+              `Re-call gwd_summary_save(PROJECT) once the underlying error is resolved — INSERT OR IGNORE makes registration idempotent.`,
           }],
           details: {
             operation: "save_summary",
@@ -224,8 +224,8 @@ export async function executeSummarySave(
         };
       }
       if (registeredMilestones.length === 0) {
-        logError("tool", `gsd_summary_save: PROJECT.md saved to ${relativePath} but parsed zero milestones — registration produced no DB rows`, {
-          tool: "gsd_summary_save",
+        logError("tool", `gwd_summary_save: PROJECT.md saved to ${relativePath} but parsed zero milestones — registration produced no DB rows`, {
+          tool: "gwd_summary_save",
         });
         // PROJECT.md was persisted; invalidate so subsequent reads see the new
         // artifacts row even though no milestones registered.
@@ -237,7 +237,7 @@ export async function executeSummarySave(
               `Error: PROJECT.md was saved to ${relativePath} but contains zero parseable milestone lines, ` +
               `so no milestones were registered in the DB. /gwd will report "No Active Milestone". ` +
               `Rewrite PROJECT.md so the "Milestone Sequence" section uses canonical lines: ` +
-              `\`- [ ] M001: <Title> — <One-liner>\` (em-dash, double-dash \`--\`, or single-dash \`-\` separator), then re-call gsd_summary_save(PROJECT).`,
+              `\`- [ ] M001: <Title> — <One-liner>\` (em-dash, double-dash \`--\`, or single-dash \`-\` separator), then re-call gwd_summary_save(PROJECT).`,
           }],
           details: {
             operation: "save_summary",
@@ -273,7 +273,7 @@ export async function executeSummarySave(
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    logError("tool", `gsd_summary_save tool failed: ${msg}`, { tool: "gsd_summary_save", error: String(err) });
+    logError("tool", `gwd_summary_save tool failed: ${msg}`, { tool: "gwd_summary_save", error: String(err) });
     return {
       content: [{ type: "text", text: `Error saving artifact: ${msg}` }],
       details: { operation: "save_summary", error: msg },
@@ -362,7 +362,7 @@ export async function executeTaskComplete(
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    logError("tool", `complete_task tool failed: ${msg}`, { tool: "gsd_task_complete", error: String(err) });
+    logError("tool", `complete_task tool failed: ${msg}`, { tool: "gwd_task_complete", error: String(err) });
     return {
       content: [{ type: "text", text: `Error completing task: ${msg}` }],
       details: { operation: "complete_task", error: msg },
@@ -446,7 +446,7 @@ export async function executeSliceComplete(
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    logError("tool", `complete_slice tool failed: ${msg}`, { tool: "gsd_slice_complete", error: String(err) });
+    logError("tool", `complete_slice tool failed: ${msg}`, { tool: "gwd_slice_complete", error: String(err) });
     return {
       content: [{ type: "text", text: `Error completing slice: ${msg}` }],
       details: { operation: "complete_slice", error: msg },
@@ -492,7 +492,7 @@ export async function executeCompleteMilestone(
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    logError("tool", `complete_milestone tool failed: ${msg}`, { tool: "gsd_complete_milestone", error: String(err) });
+    logError("tool", `complete_milestone tool failed: ${msg}`, { tool: "gwd_complete_milestone", error: String(err) });
     return {
       content: [{ type: "text", text: `Error completing milestone: ${msg}` }],
       details: { operation: "complete_milestone", error: msg },
@@ -533,7 +533,7 @@ export async function executeValidateMilestone(
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    logError("tool", `validate_milestone tool failed: ${msg}`, { tool: "gsd_validate_milestone", error: String(err) });
+    logError("tool", `validate_milestone tool failed: ${msg}`, { tool: "gwd_validate_milestone", error: String(err) });
     return {
       content: [{ type: "text", text: `Error validating milestone: ${msg}` }],
       details: { operation: "validate_milestone", error: msg },
@@ -575,7 +575,7 @@ export async function executeReassessRoadmap(
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    logError("tool", `reassess_roadmap tool failed: ${msg}`, { tool: "gsd_reassess_roadmap", error: String(err) });
+    logError("tool", `reassess_roadmap tool failed: ${msg}`, { tool: "gwd_reassess_roadmap", error: String(err) });
     return {
       content: [{ type: "text", text: `Error reassessing roadmap: ${msg}` }],
       details: { operation: "reassess_roadmap", error: msg },
@@ -634,7 +634,7 @@ export async function executeSaveGateResult(
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    logError("tool", `gsd_save_gate_result failed: ${msg}`, { tool: "gsd_save_gate_result", error: String(err) });
+    logError("tool", `gwd_save_gate_result failed: ${msg}`, { tool: "gwd_save_gate_result", error: String(err) });
     return {
       content: [{ type: "text", text: `Error saving gate result: ${msg}` }],
       details: { operation: "save_gate_result", error: msg },
@@ -674,7 +674,7 @@ export async function executePlanMilestone(
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    logError("tool", `plan_milestone tool failed: ${msg}`, { tool: "gsd_plan_milestone", error: String(err) });
+    logError("tool", `plan_milestone tool failed: ${msg}`, { tool: "gwd_plan_milestone", error: String(err) });
     return {
       content: [{ type: "text", text: `Error planning milestone: ${msg}` }],
       details: { operation: "plan_milestone", error: msg },
@@ -716,7 +716,7 @@ export async function executePlanSlice(
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    logError("tool", `plan_slice tool failed: ${msg}`, { tool: "gsd_plan_slice", error: String(err) });
+    logError("tool", `plan_slice tool failed: ${msg}`, { tool: "gwd_plan_slice", error: String(err) });
     return {
       content: [{ type: "text", text: `Error planning slice: ${msg}` }],
       details: { operation: "plan_slice", error: msg },
@@ -758,7 +758,7 @@ export async function executeReplanSlice(
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    logError("tool", `replan_slice tool failed: ${msg}`, { tool: "gsd_replan_slice", error: String(err) });
+    logError("tool", `replan_slice tool failed: ${msg}`, { tool: "gwd_replan_slice", error: String(err) });
     return {
       content: [{ type: "text", text: `Error replanning slice: ${msg}` }],
       details: { operation: "replan_slice", error: msg },
@@ -818,7 +818,7 @@ export async function executeMilestoneStatus(
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    logWarning("tool", `gsd_milestone_status tool failed: ${msg}`);
+    logWarning("tool", `gwd_milestone_status tool failed: ${msg}`);
     return {
       content: [{ type: "text", text: `Error querying milestone status: ${msg}` }],
       details: { operation: "milestone_status", error: msg },

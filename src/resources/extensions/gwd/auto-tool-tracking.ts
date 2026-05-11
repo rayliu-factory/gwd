@@ -125,14 +125,14 @@ export function isQueuedUserMessageSkip(errorMsg: string): boolean {
  * regex — explicit substrings keep the list auditable.
  */
 export const DETERMINISTIC_POLICY_ERROR_STRINGS = [
-  // gsd_summary_save write-gate: CONTEXT artifact blocked pending depth verification (#4973).
+  // gwd_summary_save write-gate: CONTEXT artifact blocked pending depth verification (#4973).
   // Matches the fallback text in workflow-tool-executors.ts and the verbose reason
   // from shouldBlockContextArtifactSaveInSnapshot at write-gate.ts:432-442.
   "context write blocked",
   "CONTEXT without depth verification",
   // Raw write tool gate (#4973): shouldBlockContextWrite at write-gate.ts:390-399 emits
   // "Cannot write to milestone CONTEXT.md without depth verification." for direct
-  // write tool calls to *-CONTEXT.md paths (different code path than gsd_summary_save).
+  // write tool calls to *-CONTEXT.md paths (different code path than gwd_summary_save).
   "CONTEXT.md without depth verification",
 ] as const;
 

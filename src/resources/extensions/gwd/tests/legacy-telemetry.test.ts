@@ -57,7 +57,7 @@ test("legacy telemetry emits one actionable diagnostic per counter", () => {
     assert.equal(logs.length, 1);
     assert.equal(logs[0]?.component, "migration");
     assert.equal(logs[0]?.context?.counter, "legacy.mcpAliasUsed");
-    assert.match(logs[0]?.message ?? "", /canonical gsd_\* tool name/);
+    assert.match(logs[0]?.message ?? "", /canonical gwd_\* tool name/);
   } finally {
     _resetLogs();
     resetLegacyTelemetry();

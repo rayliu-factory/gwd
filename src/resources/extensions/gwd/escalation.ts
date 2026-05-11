@@ -42,7 +42,7 @@ export function escalationArtifactPath(
 
 // ─── Artifact I/O ─────────────────────────────────────────────────────────
 
-/** Build an EscalationArtifact from a gsd_task_complete escalation payload. */
+/** Build an EscalationArtifact from a gwd_task_complete escalation payload. */
 export function buildEscalationArtifact(params: {
   taskId: string;
   sliceId: string;

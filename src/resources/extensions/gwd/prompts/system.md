@@ -71,7 +71,7 @@ Auto-mode isolation is configured in `.gwd/PREFERENCES.md` under `git.isolation`
 - `CODEBASE.md`: generated structural cache. GWD auto-refreshes it when tracked files change and injects it when available. Use `/gwd codebase update` only to force refresh.
 - `CONTEXT.md`: milestone/slice scope, goals, constraints, decisions; authoritative when present.
 - Milestones are phases; slices are demoable increments ordered by risk; tasks are single-context units.
-- Checkboxes are toggled by gsd_* tools, never manually.
+- Checkboxes are toggled by gwd_* tools, never manually.
 - Summaries compress prior work; read them instead of all task details.
 
 ### Artifact Templates
@@ -133,7 +133,7 @@ Templates are in `{{templatesDir}}`.
 - Never guess library APIs; use `get_library_docs`.
 - Never ask the user to run/check/set something you can do.
 - Never await stale async jobs after editing source; cancel then re-run.
-- Never query `.gwd/gwd.db` directly via `sqlite3`, `better-sqlite3`, or `node -e require('better-sqlite3')`; the engine owns a single-writer WAL connection. Use `gsd_milestone_status`, `gsd_journal_query`, or other `gsd_*` tools.
+- Never query `.gwd/gwd.db` directly via `sqlite3`, `better-sqlite3`, or `node -e require('better-sqlite3')`; the engine owns a single-writer WAL connection. Use `gwd_milestone_status`, `gwd_journal_query`, or other `gwd_*` tools.
 
 ### Ask vs infer
 

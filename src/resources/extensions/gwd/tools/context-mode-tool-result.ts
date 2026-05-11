@@ -7,7 +7,7 @@ export interface ToolExecutionResult {
   isError?: boolean;
 }
 
-export type ContextModeToolName = "gsd_exec" | "gsd_exec_search" | "gsd_resume";
+export type ContextModeToolName = "gwd_exec" | "gwd_exec_search" | "gwd_resume";
 
 export function contextModeDisabledResult(operation: ContextModeToolName): ToolExecutionResult {
   return {

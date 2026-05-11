@@ -16,7 +16,7 @@ export function executeResume(
   opts: { baseDir: string; preferences?: { context_mode?: ContextModeConfig } | null },
 ): ToolExecutionResult {
   if (!isContextModeEnabled(opts.preferences)) {
-    return contextModeDisabledResult("gsd_resume");
+    return contextModeDisabledResult("gwd_resume");
   }
 
   const snapshot = readCompactionSnapshot(opts.baseDir);
@@ -30,11 +30,11 @@ export function executeResume(
             "on session_before_compact (enabled by default; set context_mode.enabled=false to opt out).",
         },
       ],
-      details: { operation: "gsd_resume", found: false },
+      details: { operation: "gwd_resume", found: false },
     };
   }
   return {
     content: [{ type: "text", text: snapshot }],
-    details: { operation: "gsd_resume", found: true, bytes: Buffer.byteLength(snapshot, "utf-8") },
+    details: { operation: "gwd_resume", found: true, bytes: Buffer.byteLength(snapshot, "utf-8") },
   };
 }

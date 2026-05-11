@@ -539,7 +539,7 @@ export async function saveDecisionToDb(
     clearParseCache();
 
     // ADR-013 dual-write: keep the memory store in sync with every decision
-    // persisted through gsd_decision_save so decision rows stay visible to
+    // persisted through gwd_decision_save so decision rows stay visible to
     // memory_query and loadMemoryBlock.
     // Best-effort — never throw, never roll back the decision on failure.
     try {

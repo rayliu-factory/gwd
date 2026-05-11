@@ -52,7 +52,7 @@ export async function loadContext(options: ContextOptions): Promise<string> {
  * Bootstrap .gwd/ directory structure for headless new-milestone.
  * Mirrors the bootstrap logic from guided-flow.ts showSmartEntry().
  */
-export function bootstrapGsdProject(basePath: string): void {
+export function bootstrapGwdProject(basePath: string): void {
   const gsdDir = join(basePath, '.gwd')
   mkdirSync(join(gsdDir, 'milestones'), { recursive: true })
   mkdirSync(join(gsdDir, 'runtime'), { recursive: true })

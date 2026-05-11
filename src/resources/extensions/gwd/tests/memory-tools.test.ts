@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { _getAdapter, closeDatabase, openDatabase } from '../gwd-db.ts';
 import { createMemory, supersedeMemory } from '../memory-store.ts';
 import {
-  executeGsdGraph,
+  executeGwdGraph,
   executeMemoryCapture,
   executeMemoryQuery,
 } from '../tools/memory-tools.ts';
@@ -241,33 +241,33 @@ test('memory-tools: memory_query ignores superseded memories by default', () => 
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
-// gsd_graph
+// gwd_graph
 // ═══════════════════════════════════════════════════════════════════════════
 
-test('memory-tools: gsd_graph build acknowledges request', () => {
+test('memory-tools: gwd_graph build acknowledges request', () => {
   openDatabase(':memory:');
-  const result = executeGsdGraph({ mode: 'build' });
+  const result = executeGwdGraph({ mode: 'build' });
   assert.ok(!result.isError);
-  assert.equal(result.details.operation, 'gsd_graph');
+  assert.equal(result.details.operation, 'gwd_graph');
   assert.equal(result.details.mode, 'build');
   closeDatabase();
 });
 
-test('memory-tools: gsd_graph query rejects missing memoryId', () => {
+test('memory-tools: gwd_graph query rejects missing memoryId', () => {
   openDatabase(':memory:');
-  const result = executeGsdGraph({ mode: 'query' });
+  const result = executeGwdGraph({ mode: 'query' });
   assert.ok(result.isError);
   assert.equal(result.details.error, 'missing_memory_id');
   closeDatabase();
 });
 
-test('memory-tools: gsd_graph query returns node + supersedes edge', () => {
+test('memory-tools: gwd_graph query returns node + supersedes edge', () => {
   openDatabase(':memory:');
   createMemory({ category: 'convention', content: 'first' });
   createMemory({ category: 'convention', content: 'second' });
   supersedeMemory('MEM001', 'MEM002');
 
-  const result = executeGsdGraph({ mode: 'query', memoryId: 'MEM001', depth: 1 });
+  const result = executeGwdGraph({ mode: 'query', memoryId: 'MEM001', depth: 1 });
   assert.ok(!result.isError);
   const nodes = result.details.nodes as Array<{ id: string }>;
   const edges = result.details.edges as Array<{ from: string; to: string; rel: string }>;
@@ -279,17 +279,17 @@ test('memory-tools: gsd_graph query returns node + supersedes edge', () => {
   closeDatabase();
 });
 
-test('memory-tools: gsd_graph query returns empty when memoryId does not exist', () => {
+test('memory-tools: gwd_graph query returns empty when memoryId does not exist', () => {
   openDatabase(':memory:');
-  const result = executeGsdGraph({ mode: 'query', memoryId: 'MEM999' });
+  const result = executeGwdGraph({ mode: 'query', memoryId: 'MEM999' });
   assert.ok(!result.isError, 'missing memory is not an error, just empty');
   assert.equal((result.details.nodes as unknown[]).length, 0);
   closeDatabase();
 });
 
-test('memory-tools: gsd_graph errors when DB is closed', () => {
+test('memory-tools: gwd_graph errors when DB is closed', () => {
   closeDatabase();
-  const result = executeGsdGraph({ mode: 'query', memoryId: 'MEM001' });
+  const result = executeGwdGraph({ mode: 'query', memoryId: 'MEM001' });
   assert.ok(result.isError);
   assert.equal(result.details.error, 'db_unavailable');
 });

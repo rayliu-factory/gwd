@@ -56,7 +56,7 @@ test("execute-task prompt renders compact execution and completion gates", async
   assert.match(prompt, /Read `C:\\Users\\Test\\.gwd\\agent\\extensions\\gsd\\templates\\task-summary\.md` only if the inlined template is absent or visibly truncated/);
   assert.match(prompt, /### Output Template: Task Summary/);
   assert.doesNotMatch(prompt, /\{\{templatesDir\}\}\/task-summary\.md/);
-  assert.match(prompt, /Call `gsd_task_complete`/);
+  assert.match(prompt, /Call `gwd_task_complete`/);
   assert.match(prompt, /Do not run git commands/);
   assert.doesNotMatch(prompt, /\{\{[a-zA-Z][a-zA-Z0-9_]*\}\}/);
 });

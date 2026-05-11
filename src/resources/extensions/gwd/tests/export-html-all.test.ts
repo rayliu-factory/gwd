@@ -83,7 +83,7 @@ test("handleExport --html --all sets milestone kind based on status", async () =
 });
 
 test("export completions include --html and --html --all", async () => {
-  const { registerGSDCommand } = await import("../commands.js");
+  const { registerGWDCommand } = await import("../commands.js");
 
   const commands = new Map<string, any>();
   const pi = {
@@ -94,7 +94,7 @@ test("export completions include --html and --html --all", async () => {
     sendMessage() {},
   };
 
-  registerGSDCommand(pi as any);
+  registerGWDCommand(pi as any);
   const gsd = commands.get("gwd");
   assert.ok(gsd, "should register /gwd command");
 

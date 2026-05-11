@@ -85,7 +85,7 @@ function getStatus(basePath: string, name: string, wtPath: string): WorktreeStat
 
 export function formatWorktreeList(statuses: WorktreeStatus[]): string {
   if (statuses.length === 0) {
-    return "No worktrees.\n\nCreate one from the CLI: gsd -w <name>";
+    return "No worktrees.\n\nCreate one from the CLI: gwd -w <name>";
   }
 
   const lines: string[] = [`Worktrees — ${statuses.length}`, ""];
@@ -336,8 +336,8 @@ const HELP_TEXT = [
   "  clean                      Remove all merged/empty worktrees",
   "",
   "The -w flag (CLI only) creates/resumes worktrees on session start:",
-  "  gsd -w               Auto-name a new worktree, or resume the only active one",
-  "  gsd -w my-feature    Create or resume a named worktree",
+  "  gwd -w               Auto-name a new worktree, or resume the only active one",
+  "  gwd -w my-feature    Create or resume a named worktree",
 ].join("\n");
 
 // ─── Dispatcher ─────────────────────────────────────────────────────────────

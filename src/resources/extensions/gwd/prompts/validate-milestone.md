@@ -44,7 +44,7 @@ Aggregate reviewer verdicts:
 
 ### Step 3 - Persist Validation
 
-Prepare validation content for `gsd_validate_milestone`. Do **not** manually write `{{validationPath}}` - the DB-backed tool is the canonical write path and renders the file.
+Prepare validation content for `gwd_validate_milestone`. Do **not** manually write `{{validationPath}}` - the DB-backed tool is the canonical write path and renders the file.
 
 ```markdown
 ---
@@ -71,16 +71,16 @@ reviewers: 3
 <if verdict is not pass: specific actions required>
 ```
 
-Call `gsd_validate_milestone` with the camelCase fields `milestoneId`, `verdict`, `remediationRound`, `successCriteriaChecklist`, `sliceDeliveryAudit`, `crossSliceIntegration`, `requirementCoverage`, `verdictRationale`, and `remediationPlan` when needed. If you include verification-class analysis, pass it in `verificationClasses`.
+Call `gwd_validate_milestone` with the camelCase fields `milestoneId`, `verdict`, `remediationRound`, `successCriteriaChecklist`, `sliceDeliveryAudit`, `crossSliceIntegration`, `requirementCoverage`, `verdictRationale`, and `remediationPlan` when needed. If you include verification-class analysis, pass it in `verificationClasses`.
 Extract the `Verification Classes` subsection from Reviewer C and pass it verbatim in `verificationClasses` so the persisted validation output uses the canonical class names `Contract`, `Integration`, `Operational`, and `UAT`.
 
-**DB access safety:** Do NOT query `.gwd/gwd.db` directly via `sqlite3` or `node -e require('better-sqlite3')` - the engine owns the WAL connection. Use `gsd_milestone_status` for milestone and slice state. Data is already inlined or available via `gsd_*` tools. Direct DB access risks WAL corruption and bypasses validation.
+**DB access safety:** Do NOT query `.gwd/gwd.db` directly via `sqlite3` or `node -e require('better-sqlite3')` - the engine owns the WAL connection. Use `gwd_milestone_status` for milestone and slice state. Data is already inlined or available via `gwd_*` tools. Direct DB access risks WAL corruption and bypasses validation.
 
 If verdict is `needs-remediation`:
-- Use `gsd_reassess_roadmap` to add remediation slices instead of editing `{{roadmapPath}}` manually.
+- Use `gwd_reassess_roadmap` to add remediation slices instead of editing `{{roadmapPath}}` manually.
 - Those slices will be planned and executed before validation re-runs
 
-**You MUST call `gsd_validate_milestone` before finishing. Do not manually write `{{validationPath}}`.**
+**You MUST call `gwd_validate_milestone` before finishing. Do not manually write `{{validationPath}}`.**
 
 **File system safety:** When scanning milestone directories, use `ls` or `find` first. Never pass a directory path such as `tasks/` or `slices/` directly to `read`; it only accepts files.
 

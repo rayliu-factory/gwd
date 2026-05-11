@@ -102,7 +102,7 @@ test('executeExecSearch: returns helpful empty-state message when no matches', (
   try {
     const result = executeExecSearch({ query: 'missing' }, { baseDir: base });
     assert.ok(!result.isError);
-    assert.match(result.content[0].text, /No prior gsd_exec runs/);
+    assert.match(result.content[0].text, /No prior gwd_exec runs/);
   } finally {
     cleanup(base);
   }

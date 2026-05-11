@@ -81,7 +81,7 @@ A unit dispatched more than once (`type/id` repeated) indicates a stuck loop: un
 
 5. Read actual source at `{{gsdSourceDir}}` to confirm or deny each hypothesis. Do not guess.
 
-   **DB inspection:** Use `gsd_milestone_status`; never run `sqlite3 .gwd/gwd.db` or `node -e require('better-sqlite3')`. The engine owns the WAL connection; direct access can fail or return stale data.
+   **DB inspection:** Use `gwd_milestone_status`; never run `sqlite3 .gwd/gwd.db` or `node -e require('better-sqlite3')`. The engine owns the WAL connection; direct access can fail or return stale data.
 
 6. Trace from entry point, usually `auto-loop.ts` or `auto-dispatch.ts`, to failure across files.
 

@@ -1234,7 +1234,7 @@ export async function stopAuto(
         const lifecycle = buildLifecycle();
 
         // Check if the milestone is complete. DB status is the authoritative
-        // signal — only a successful gsd_complete_milestone call flips it to
+        // signal — only a successful gwd_complete_milestone call flips it to
         // "complete" (tools/complete-milestone.ts). SUMMARY file presence is
         // NOT sufficient: a blocker placeholder stub or a partial write can
         // leave a file behind without the milestone actually being done,

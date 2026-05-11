@@ -7,18 +7,18 @@
 // Default-deny: unknown tools are never backgroundable.
 //
 // ─── Tool-name vs unit-type namespaces ───────────────────────────────────
-// Entries are keyed by canonical MCP tool name (`gsd_*`). The optional
+// Entries are keyed by canonical MCP tool name (`gwd_*`). The optional
 // `unitType` field is a *secondary* index for the dispatcher's convenience
 // — it bridges this policy to `auto-dispatch.ts`' `DispatchAction.unitType`
 // values. The two namespaces are not 1:1:
 //
-//   - Some tools have no corresponding unit type (e.g. `gsd_doctor`,
-//     `gsd_plan_task`) and intentionally omit `unitType`.
+//   - Some tools have no corresponding unit type (e.g. `gwd_doctor`,
+//     `gwd_plan_task`) and intentionally omit `unitType`.
 //   - Some unit types share a tool — e.g. `execute-task`, `execute-task-simple`,
-//     and `reactive-execute` all invoke `gsd_execute`. The current shape
+//     and `reactive-execute` all invoke `gwd_execute`. The current shape
 //     allows only one `unitType` per entry, so those units fall through to
 //     `getVerdictByUnitType() === null` (→ `backgroundable: false`) even
-//     though `gsd_execute` itself is GOOD. This is the intended default-deny
+//     though `gwd_execute` itself is GOOD. This is the intended default-deny
 //     posture until a future PR wires actual background dispatch and
 //     decides whether each unit-level orchestration is safe — the unit
 //     wraps a prompt, harness setup, and post-processing on top of the
@@ -38,7 +38,7 @@
 export type BackgroundabilityVerdict = "good" | "risky" | "no";
 
 export interface DelegationPolicyEntry {
-  /** Canonical MCP tool name (the verb_object form, e.g. `gsd_plan_slice`). */
+  /** Canonical MCP tool name (the verb_object form, e.g. `gwd_plan_slice`). */
   toolName: string;
   /** Workflow unit type from auto-dispatch.ts, when one exists. */
   unitType?: string;
@@ -53,8 +53,8 @@ export interface DelegationPolicyEntry {
 }
 
 const POLICY: Record<string, DelegationPolicyEntry> = {
-  gsd_plan_slice: {
-    toolName: "gsd_plan_slice",
+  gwd_plan_slice: {
+    toolName: "gwd_plan_slice",
     unitType: "plan-slice",
     verdict: "good",
     rationale:
@@ -65,8 +65,8 @@ const POLICY: Record<string, DelegationPolicyEntry> = {
       "Foreground must await background completion before any tool reads the planned tasks/gates.",
     ],
   },
-  gsd_execute: {
-    toolName: "gsd_execute",
+  gwd_execute: {
+    toolName: "gwd_execute",
     // No `unitType` set on purpose — the underlying tool is safe, but the
     // unit-level orchestrations that invoke it (`execute-task`,
     // `execute-task-simple`, `reactive-execute`) wrap additional prompt and
@@ -77,22 +77,22 @@ const POLICY: Record<string, DelegationPolicyEntry> = {
     rationale:
       "No DB writes; UUID-isolated stdout/stderr/meta files; existing reactive-execute parallel-subagent precedent.",
   },
-  gsd_validate_milestone: {
-    toolName: "gsd_validate_milestone",
+  gwd_validate_milestone: {
+    toolName: "gwd_validate_milestone",
     unitType: "validate-milestone",
     verdict: "good",
     rationale:
       "Verdict pre-computed by parallel reviewers; atomic DB tx plus isolated VALIDATION.md write; no user interaction.",
   },
-  gsd_reassess_roadmap: {
-    toolName: "gsd_reassess_roadmap",
+  gwd_reassess_roadmap: {
+    toolName: "gwd_reassess_roadmap",
     unitType: "reassess-roadmap",
     verdict: "good",
     rationale:
       "Narrower mutation scope than plan_milestone; structural guards prevent modification of completed slices.",
   },
-  gsd_doctor: {
-    toolName: "gsd_doctor",
+  gwd_doctor: {
+    toolName: "gwd_doctor",
     verdict: "risky",
     rationale:
       "Diagnostic-only mode (fix=false) is safe to background; fix=true writes STATE.md/ROADMAP.md without session-lock coordination and can race the foreground flow.",
@@ -101,25 +101,25 @@ const POLICY: Record<string, DelegationPolicyEntry> = {
       "Apply fixes synchronously, only when no foreground unit is dispatched.",
     ],
   },
-  gsd_plan_milestone: {
-    toolName: "gsd_plan_milestone",
+  gwd_plan_milestone: {
+    toolName: "gwd_plan_milestone",
     unitType: "plan-milestone",
     verdict: "risky",
     rationale:
       "Inputs require CONTEXT.md from discuss-milestone, so initial questioning is already done by the time it can start; TOCTOU guards and projection coherence make concurrency unsafe.",
   },
-  gsd_replan_slice: {
-    toolName: "gsd_replan_slice",
+  gwd_replan_slice: {
+    toolName: "gwd_replan_slice",
     unitType: "replan-slice",
     verdict: "risky",
     rationale:
       "Blocks the replanning→executing state transition on a gate that waits for S##-REPLAN.md; background failure leaves the flow stuck.",
   },
-  gsd_plan_task: {
-    toolName: "gsd_plan_task",
+  gwd_plan_task: {
+    toolName: "gwd_plan_task",
     verdict: "no",
     rationale:
-      "plan-slice prompt explicitly forbids calling gsd_plan_task separately; per-task granularity multiplies manifest writes and projection re-renders with no payoff.",
+      "plan-slice prompt explicitly forbids calling gwd_plan_task separately; per-task granularity multiplies manifest writes and projection re-renders with no payoff.",
   },
 };
 

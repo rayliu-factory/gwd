@@ -57,7 +57,7 @@ import type { ExtensionUIRequest, ProgressContext } from './headless-ui.js'
 
 import {
   loadContext,
-  bootstrapGsdProject,
+  bootstrapGwdProject,
 } from './headless-context.js'
 
 // ---------------------------------------------------------------------------
@@ -329,7 +329,7 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
       if (!options.json) {
         process.stderr.write('[headless] Bootstrapping .gwd/ project structure...\n')
       }
-      bootstrapGsdProject(process.cwd())
+      bootstrapGwdProject(process.cwd())
     }
 
     // Write context to temp file for the RPC child to read

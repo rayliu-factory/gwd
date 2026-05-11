@@ -4,10 +4,10 @@
 // full bootstrap (shortcuts, tools, hooks, ecosystem) throws during import or
 // execution. Prior regressions: a Windows-specific failure in register-
 // shortcuts.ts silently prevented /gwd from being registered at all because
-// registerGSDCommand was called inside the same try that loaded shortcuts.
+// registerGWDCommand was called inside the same try that loaded shortcuts.
 //
 // These tests exercise the real default export of index.ts (which calls
-// registerGSDCommand via dynamic import, then attempts the full bootstrap)
+// registerGWDCommand via dynamic import, then attempts the full bootstrap)
 // with a minimal mock ExtensionAPI and verify the observable behaviour
 // directly: /gwd is registered in both the happy path and the degraded path.
 //
@@ -89,9 +89,9 @@ describe("extension bootstrap isolation (#4168, #4172)", () => {
 
   test("degraded path: /gwd registered BEFORE any non-core command", async () => {
     // Ordering guard: the first registerCommand call must be for 'gwd',
-    // because index.ts awaits registerGSDCommand(pi) before importing
+    // because index.ts awaits registerGWDCommand(pi) before importing
     // register-extension. Regression scenario: if a future refactor moves
-    // registerGSDCommand into the try block or after other registrations,
+    // registerGWDCommand into the try block or after other registrations,
     // a failure in those earlier registrations would take /gwd down too.
     const calls: string[] = [];
     const pi = {

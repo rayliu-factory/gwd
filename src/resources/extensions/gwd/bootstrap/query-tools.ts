@@ -9,7 +9,7 @@ import { ensureDbOpen, resolveCtxCwd } from "./dynamic-tools.js";
 
 export function registerQueryTools(pi: ExtensionAPI): void {
   pi.registerTool({
-    name: "gsd_milestone_status",
+    name: "gwd_milestone_status",
     label: "Milestone Status",
     description:
       "Read the current status of a milestone and all its slices from the GWD database. " +
@@ -36,7 +36,7 @@ export function registerQueryTools(pi: ExtensionAPI): void {
   });
 
   pi.registerTool({
-    name: "gsd_checkpoint_db",
+    name: "gwd_checkpoint_db",
     label: "Checkpoint GWD Database",
     description:
       "Flush the SQLite WAL (Write-Ahead Log) into the base gwd.db file. " +
@@ -45,7 +45,7 @@ export function registerQueryTools(pi: ExtensionAPI): void {
       "Safe to call at any time while GWD is running.",
     promptSnippet: "Flush WAL into gwd.db so git add stages current state",
     promptGuidelines: [
-      "Call gsd_checkpoint_db immediately before staging .gwd/gwd.db with git add.",
+      "Call gwd_checkpoint_db immediately before staging .gwd/gwd.db with git add.",
       "Do not use sqlite3 or shell commands to checkpoint — they are blocked. Use this tool instead.",
     ],
     parameters: Type.Object({}),

@@ -12,7 +12,7 @@
  *   (d) write/edit to .gwd/ path → pass (planning artifacts)
  *   (e) write/edit to source path → block
  *   (f) bash command → block (could execute work)
- *   (g) registered GWD tools (gsd_milestone_generate_id, gsd_summary_save) → pass
+ *   (g) registered GWD tools (gwd_milestone_generate_id, gwd_summary_save) → pass
  *   (h) unknown custom tools → block
  */
 
@@ -48,11 +48,11 @@ test('queue-guard: allows discussion and planning tools during queue mode', () =
   const r1 = shouldBlockQueueExecution('ask_user_questions', '', true);
   assert.strictEqual(r1.block, false, 'ask_user_questions should pass');
 
-  const r2 = shouldBlockQueueExecution('gsd_milestone_generate_id', '', true);
-  assert.strictEqual(r2.block, false, 'gsd_milestone_generate_id should pass');
+  const r2 = shouldBlockQueueExecution('gwd_milestone_generate_id', '', true);
+  assert.strictEqual(r2.block, false, 'gwd_milestone_generate_id should pass');
 
-  const r3 = shouldBlockQueueExecution('gsd_summary_save', '', true);
-  assert.strictEqual(r3.block, false, 'gsd_summary_save should pass');
+  const r3 = shouldBlockQueueExecution('gwd_summary_save', '', true);
+  assert.strictEqual(r3.block, false, 'gwd_summary_save should pass');
 });
 
 // ─── Scenario 4: Write to .gwd/ paths passes (planning artifacts) ──

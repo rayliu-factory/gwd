@@ -572,9 +572,9 @@ export function removeWorktree(
         // entry created here would appear in the user's main-tree stash
         // list and reference paths that disappear after worktree removal.
         // A branch persists in the shared .git refs after worktree removal
-        // and is discoverable via `git branch --list 'gsd/submodule-rescue/*'`.
+        // and is discoverable via `git branch --list 'gwd/submodule-rescue/*'`.
         // (Issue #4980 HIGH-11)
-        const rescueBranch = `gsd/submodule-rescue/${name}-${Date.now()}`;
+        const rescueBranch = `gwd/submodule-rescue/${name}-${Date.now()}`;
         try {
           execFileSync(
             "git", ["add", "-A"],

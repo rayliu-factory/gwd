@@ -84,7 +84,7 @@ import type { SliceRow, TaskRow } from './db-task-slice-rows.js';
 export function isGhostMilestone(basePath: string, mid: string): boolean {
   // If the milestone has a DB row, it's usually a known milestone — not a ghost.
   // Exception: a "queued" row with no disk artifacts is a phantom from
-  // gsd_milestone_generate_id that was never planned (#3645).
+  // gwd_milestone_generate_id that was never planned (#3645).
   if (isDbAvailable()) {
     const dbRow = getMilestone(mid);
     if (dbRow) {
@@ -119,7 +119,7 @@ export function isGhostMilestone(basePath: string, mid: string): boolean {
  * following hold:
  *   1. No DB row exists for `mid` (any status, including "queued") — a DB row
  *      means the milestone was intentionally registered by
- *      `gsd_milestone_generate_id` and may have an in-flight discuss flow.
+ *      `gwd_milestone_generate_id` and may have an in-flight discuss flow.
  *      Reusing it would collide with that flow. (#4996 race window)
  *   2. No worktree directory exists at `gsdRoot/worktrees/{mid}` — a worktree
  *      means the milestone is legitimately in-flight.
@@ -591,7 +591,7 @@ async function handleAllSlicesDone(
       recentDecisions: [],
       blockers: [
         `Milestone ${activeMilestone.id} validation verdict is needs-remediation but all slices are complete. ` +
-          `Add remediation slices via gsd_reassess_roadmap or override the verdict manually.`,
+          `Add remediation slices via gwd_reassess_roadmap or override the verdict manually.`,
       ],
       nextAction: `Resolve ${activeMilestone.id} remediation before proceeding.`,
       registry, requirements,
@@ -1314,7 +1314,7 @@ export async function _deriveStateImpl(
         recentDecisions: [],
         blockers: [
           `Milestone ${activeMilestone.id} validation verdict is needs-remediation but all slices are complete. ` +
-            `Add remediation slices via gsd_reassess_roadmap or override the verdict manually.`,
+            `Add remediation slices via gwd_reassess_roadmap or override the verdict manually.`,
         ],
         nextAction: `Resolve ${activeMilestone.id} remediation before proceeding.`,
         registry,

@@ -270,8 +270,8 @@ test('planning-unit: allows ask_user_questions', () => {
   assert.strictEqual(r.block, false);
 });
 
-test('planning-unit: allows gsd_* MCP tools (own validation)', () => {
-  const r = shouldBlockPlanningUnit('gsd_summary_save', '', BASE, 'discuss-milestone', PLANNING);
+test('planning-unit: allows gwd_* MCP tools (own validation)', () => {
+  const r = shouldBlockPlanningUnit('gwd_summary_save', '', BASE, 'discuss-milestone', PLANNING);
   assert.strictEqual(r.block, false);
 });
 

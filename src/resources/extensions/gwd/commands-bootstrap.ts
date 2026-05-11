@@ -64,7 +64,7 @@ function filterStartsWith(
     }));
 }
 
-function getGsdArgumentCompletions(prefix: string) {
+function getGwdArgumentCompletions(prefix: string) {
   const parts = prefix.trim().split(/\s+/);
 
   if (parts.length <= 1) {
@@ -258,13 +258,13 @@ function getGsdArgumentCompletions(prefix: string) {
   return null;
 }
 
-export function registerLazyGSDCommand(pi: ExtensionAPI): void {
+export function registerLazyGWDCommand(pi: ExtensionAPI): void {
   pi.registerCommand("gwd", {
     description: "GWD — Get Work Done",
-    getArgumentCompletions: getGsdArgumentCompletions,
+    getArgumentCompletions: getGwdArgumentCompletions,
     handler: async (args: string, ctx: ExtensionCommandContext) => {
-      const { handleGSDCommand } = await importExtensionModule<typeof import("./commands.js")>(import.meta.url, "./commands.js");
-      await handleGSDCommand(args, ctx, pi);
+      const { handleGWDCommand } = await importExtensionModule<typeof import("./commands.js")>(import.meta.url, "./commands.js");
+      await handleGWDCommand(args, ctx, pi);
     },
   });
 }

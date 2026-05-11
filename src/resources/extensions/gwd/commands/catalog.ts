@@ -5,17 +5,17 @@ import { loadRegistry } from "../workflow-templates.js";
 import { gsdHome } from "../gwd-home.js";
 
 
-export interface GsdCommandDefinition {
+export interface GwdCommandDefinition {
   cmd: string;
   desc: string;
 }
 
-type CompletionMap = Record<string, readonly GsdCommandDefinition[]>;
+type CompletionMap = Record<string, readonly GwdCommandDefinition[]>;
 
 export const GWD_COMMAND_DESCRIPTION =
   "GWD — Get Work Done: /gwd help|start|templates|next|auto|stop|pause|status|widget|visualize|queue|quick|discuss|capture|triage|dispatch|history|undo|undo-task|reset-slice|rate|skip|export|cleanup|model|mode|prefs|config|keys|hooks|run-hook|skill-health|doctor|debug|logs|forensics|changelog|migrate|remote|steer|knowledge|new-milestone|new-project|parallel|cmux|park|unpark|init|setup|onboarding|inspect|extensions|update|fast|mcp|rethink|workflow|codebase|notifications|ship|do|session-report|backlog|pr-branch|add-tests|scan|language|worktree|eval-review";
 
-export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
+export const TOP_LEVEL_SUBCOMMANDS: readonly GwdCommandDefinition[] = [
   { cmd: "help", desc: "Categorized command reference with descriptions" },
   { cmd: "next", desc: "Explicit step mode (same as /gwd)" },
   { cmd: "auto", desc: "Autonomous mode — research, plan, execute, commit, repeat" },
@@ -311,7 +311,7 @@ const NESTED_COMPLETIONS: CompletionMap = {
 
 function filterOptions(
   partial: string,
-  options: readonly GsdCommandDefinition[],
+  options: readonly GwdCommandDefinition[],
   prefix = "",
 ) {
   const normalizedPrefix = prefix ? `${prefix} ` : "";
@@ -424,7 +424,7 @@ function resolveProjectRootForCompletion(basePath: string): string {
   return candidate;
 }
 
-export function getGsdArgumentCompletions(prefix: string) {
+export function getGwdArgumentCompletions(prefix: string) {
   const hasTrailingSpace = prefix.endsWith(" ");
   const parts = prefix.trim().split(/\s+/);
   if (hasTrailingSpace && parts.length >= 1) {
@@ -505,7 +505,7 @@ export function getGsdArgumentCompletions(prefix: string) {
 
   // Completion for `/gwd workflow info <name>` — list all discoverable plugins (project + global).
   if (command === "workflow" && subcommand === "info" && parts.length <= 3) {
-    const results: GsdCommandDefinition[] = [];
+    const results: GwdCommandDefinition[] = [];
     const seen = new Set<string>();
     const scanDir = (dir: string, source: string) => {
       if (!existsSync(dir)) return;

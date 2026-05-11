@@ -31,12 +31,12 @@ test("complete milestone prompt renders compact verification and completion guid
 
   assert.match(prompt, /Complete Milestone M001/);
   assert.match(prompt, /Verification Gate/);
-  assert.match(prompt, /Do NOT call `gsd_complete_milestone`/);
+  assert.match(prompt, /Do NOT call `gwd_complete_milestone`/);
   assert.match(prompt, /verification FAILED/);
-  assert.match(prompt, /gsd_requirement_update/);
-  assert.match(prompt, /gsd_complete_milestone/);
+  assert.match(prompt, /gwd_requirement_update/);
+  assert.match(prompt, /gwd_complete_milestone/);
   assert.match(prompt, /verificationPassed/);
-  assert.match(prompt, /gsd_milestone_status/);
+  assert.match(prompt, /gwd_milestone_status/);
   assert.match(prompt, /Do NOT query.*\.gwd\/gwd\.db/i);
   assert.match(prompt, /Horizontal Checklist/);
   assert.match(prompt, /Decision Re-evaluation/);

@@ -170,7 +170,7 @@ function makePi(messages: unknown[]) {
     "write",
     "edit",
     "bash",
-    "gsd_summary_save",
+    "gwd_summary_save",
   ];
   return {
     sendMessage: (message: unknown) => {
@@ -1594,7 +1594,7 @@ test("deep project setup: approval wait wins over deterministic write-gate place
     s.active = true;
     s.basePath = base;
     s.currentUnit = { type: "discuss-requirements", id: "REQUIREMENTS", startedAt: Date.now() };
-    s.lastToolInvocationError = "gsd_summary_save: Error saving artifact: root_artifact_write_blocked";
+    s.lastToolInvocationError = "gwd_summary_save: Error saving artifact: root_artifact_write_blocked";
     s.verificationRetryCount.set("discuss-requirements:REQUIREMENTS", 2);
 
     let pauseCalled = false;

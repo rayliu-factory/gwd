@@ -80,7 +80,7 @@ describe("workflow-logger audit persistence", () => {
   test("persisted errors have context filtered to safe allowlist", () => {
     logError("tool", "tool failed", {
       fn: "saveDecisionToDb",
-      tool: "gsd_decision_save",
+      tool: "gwd_decision_save",
       error: "SQLITE_BUSY: database is locked",
       file: "/home/user/project/gwd.db",
     });
@@ -89,7 +89,7 @@ describe("workflow-logger audit persistence", () => {
     const ctx = lines[0].context as Record<string, string>;
     assert.ok(ctx, "context should exist");
     assert.equal(ctx.fn, "saveDecisionToDb");
-    assert.equal(ctx.tool, "gsd_decision_save");
+    assert.equal(ctx.tool, "gwd_decision_save");
     assert.equal(ctx.error, "SQLITE_BUSY: database is locked", "error key should be preserved in persisted context");
     assert.equal(ctx.file, undefined, "file key must be stripped from persisted context");
   });

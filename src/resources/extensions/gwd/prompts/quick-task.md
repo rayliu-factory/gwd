@@ -19,7 +19,7 @@ You are executing a GWD quick task — a lightweight, focused unit of work outsi
    - Verify both happy path and failure modes for non-trivial changes.
 6. {{commitInstruction}}
 7. Write a brief summary to `{{summaryPath}}`:
-   - Quick tasks operate outside the milestone/slice/task DB structure, so `gsd_summary_save` (which requires a `milestone_id`) cannot be used here. Write the file directly.
+   - Quick tasks operate outside the milestone/slice/task DB structure, so `gwd_summary_save` (which requires a `milestone_id`) cannot be used here. Write the file directly.
 
 ```markdown
 # Quick Task: {{description}}

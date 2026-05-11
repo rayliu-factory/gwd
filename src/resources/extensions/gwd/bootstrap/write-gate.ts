@@ -32,8 +32,8 @@ const QUEUE_SAFE_TOOLS = new Set([
   "read", "grep", "find", "ls", "glob",
   // Discussion & planning tools
   "ask_user_questions",
-  "gsd_milestone_generate_id",
-  "gsd_summary_save",
+  "gwd_milestone_generate_id",
+  "gwd_summary_save",
   // Web research tools used during queue discussion
   "search-the-web", "resolve_library", "get_library_docs", "fetch_page",
   "search_and_read",
@@ -497,7 +497,7 @@ export function shouldBlockContextWrite(
 }
 
 /**
- * Check whether a gsd_summary_save CONTEXT artifact should be blocked.
+ * Check whether a gwd_summary_save CONTEXT artifact should be blocked.
  * Slice-level CONTEXT artifacts are allowed; milestone-level CONTEXT writes
  * require the milestone to be depth-verified first.
  */
@@ -720,7 +720,7 @@ function warnMissingPlanningDispatchAgentClasses(unitType: string, mode: string,
  * QUEUE_SAFE_TOOLS / GATE_SAFE_TOOLS but is the inclusive default for
  * planning units (which need their full discussion + research surface).
  *
- * gsd_* MCP tools are passed through unconditionally — they have their own
+ * gwd_* MCP tools are passed through unconditionally — they have their own
  * domain validation (e.g. depth-verification gate, single-writer DB).
  */
 const PLANNING_SAFE_TOOLS = new Set([
@@ -796,7 +796,7 @@ export function shouldBlockPlanningUnit(
   // Read-only mode: only Read-class tools are permitted.
   if (policy.mode === "read-only") {
     if (PLANNING_SAFE_TOOLS.has(tool)) return { block: false };
-    if (tool.startsWith("gsd_")) return { block: false };
+    if (tool.startsWith("gwd_")) return { block: false };
     if (PLANNING_WRITE_TOOLS.has(tool) || tool === "bash" || PLANNING_SUBAGENT_TOOLS.has(tool)) {
       return { block: true, reason: blockReason(unitType, policy.mode, `${tool} is not permitted (read-only)`) };
     }
@@ -806,7 +806,7 @@ export function shouldBlockPlanningUnit(
 
   // planning / planning-dispatch / docs modes share the same surface for safe tools, bash, and subagent.
   if (PLANNING_SAFE_TOOLS.has(tool)) return { block: false };
-  if (tool.startsWith("gsd_")) return { block: false };
+  if (tool.startsWith("gwd_")) return { block: false };
 
   if (PLANNING_SUBAGENT_TOOLS.has(tool)) {
     if (policy.mode === "planning-dispatch") {
@@ -898,7 +898,7 @@ export function shouldBlockPlanningUnit(
 
   // Unknown tool name — pass through. Other layers (queue, pending-gate,
   // CONTEXT.md write) catch known mutating shapes; defaulting to allow here
-  // avoids breaking gsd_* MCP tools or future safe additions.
+  // avoids breaking gwd_* MCP tools or future safe additions.
   return { block: false };
 }
 

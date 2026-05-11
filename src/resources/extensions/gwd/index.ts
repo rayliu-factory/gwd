@@ -19,8 +19,8 @@ export default async function registerExtension(pi: ExtensionAPI) {
   // Always register the core /gwd command first, in isolation.
   // This ensures /gwd is available even if the full bootstrap (shortcuts,
   // tools, hooks) fails — e.g. due to a Windows-specific import error.
-  const { registerGSDCommand } = await import("./commands/index.js");
-  registerGSDCommand(pi);
+  const { registerGWDCommand } = await import("./commands/index.js");
+  registerGWDCommand(pi);
 
   // Full setup (shortcuts, tools, hooks) in a separate try/catch so that
   // any platform-specific load failure doesn't take out the core command.

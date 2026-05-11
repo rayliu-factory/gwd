@@ -32,8 +32,8 @@ import {
   buildWorkflowDispatchContent,
 } from "./workflow-protocol.js";
 import {
-  restoreGsdWorkflowTools,
-  scopeGsdWorkflowToolsForDispatch,
+  restoreGwdWorkflowTools,
+  scopeGwdWorkflowToolsForDispatch,
 } from "./bootstrap/register-hooks.js";
 
 const UPDATE_REGISTRY_URL = "https://registry.npmjs.org/gwd-pi/latest";
@@ -88,7 +88,7 @@ export function dispatchDoctorHeal(pi: ExtensionAPI, scope: string | undefined, 
   });
 
   const content = buildWorkflowDispatchContent({ workflow, workflowPath, task: prompt });
-  const savedTools = scopeGsdWorkflowToolsForDispatch(pi);
+  const savedTools = scopeGwdWorkflowToolsForDispatch(pi);
 
   try {
     pi.sendMessage(
@@ -96,7 +96,7 @@ export function dispatchDoctorHeal(pi: ExtensionAPI, scope: string | undefined, 
       { triggerTurn: true },
     );
   } finally {
-    restoreGsdWorkflowTools(pi, savedTools);
+    restoreGwdWorkflowTools(pi, savedTools);
   }
 }
 
@@ -272,7 +272,7 @@ export async function handleTriage(ctx: ExtensionCommandContext, pi: ExtensionAP
 
   const workflowPath = process.env.GWD_WORKFLOW_PATH ?? join(gsdHome(), "agent", "GWD-WORKFLOW.md");
   const workflow = readFileSync(workflowPath, "utf-8");
-  const savedTools = scopeGsdWorkflowToolsForDispatch(pi);
+  const savedTools = scopeGwdWorkflowToolsForDispatch(pi);
 
   try {
     pi.sendMessage(
@@ -284,7 +284,7 @@ export async function handleTriage(ctx: ExtensionCommandContext, pi: ExtensionAP
       { triggerTurn: true },
     );
   } finally {
-    restoreGsdWorkflowTools(pi, savedTools);
+    restoreGwdWorkflowTools(pi, savedTools);
   }
 }
 

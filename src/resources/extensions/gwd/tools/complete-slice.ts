@@ -1,5 +1,5 @@
 /**
- * complete-slice handler — the core operation behind gsd_slice_complete.
+ * complete-slice handler — the core operation behind gwd_slice_complete.
  *
  * Validates inputs, checks all tasks are complete, writes slice row to DB in
  * a transaction, then (outside the transaction) renders SUMMARY.md + UAT.md
@@ -296,7 +296,7 @@ export async function handleCompleteSlice(
         guardError = "__stale_duplicate__";
         return;
       }
-      guardError = `slice ${params.sliceId} is already complete — use gsd_slice_reopen first if you need to redo it`;
+      guardError = `slice ${params.sliceId} is already complete — use gwd_slice_reopen first if you need to redo it`;
       return;
     }
 

@@ -126,11 +126,11 @@ test("Context Mode composer: standalone output starts with heading and includes 
   const out = composeContextModeInstructions("execute-task", { enabled: true, renderMode: "standalone" });
   assert.ok(out.startsWith("## Context Mode"));
   assert.match(out, /execution lane/i);
-  assert.match(out, /`gsd_exec`/);
+  assert.match(out, /`gwd_exec`/);
   assert.match(out, /builds, tests, and diagnostics/);
-  assert.match(out, /`gsd_exec_search`/);
+  assert.match(out, /`gwd_exec_search`/);
   assert.match(out, /before reruns/);
-  assert.match(out, /`gsd_resume`/);
+  assert.match(out, /`gwd_resume`/);
   assert.match(out, /after compaction or resume/);
 });
 
@@ -139,9 +139,9 @@ test("Context Mode composer: nested output is compact single sentence", () => {
   assert.ok(!out.startsWith("## Context Mode"));
   assert.match(out, /^Context Mode \(verification lane\): /);
   assert.strictEqual(out.split(/\n/).length, 1);
-  assert.match(out, /`gsd_exec`/);
-  assert.match(out, /`gsd_exec_search`/);
-  assert.match(out, /`gsd_resume`/);
+  assert.match(out, /`gwd_exec`/);
+  assert.match(out, /`gwd_exec_search`/);
+  assert.match(out, /`gwd_resume`/);
   assert.ok(out.length < 240, `nested guidance should stay compact, got ${out.length} chars`);
 });
 
@@ -166,9 +166,9 @@ test("Context Mode composer: every known eligible unit renders its configured la
     }
     assert.ok(out.startsWith("## Context Mode"), `${unitType} should render standalone Context Mode heading`);
     assert.match(out, new RegExp(`Lane: \\*\\*${laneLabelByMode[manifest.contextMode]} lane\\*\\*\\.`, "i"));
-    assert.match(out, /`gsd_exec`/, `${unitType} should mention gsd_exec`);
-    assert.match(out, /`gsd_exec_search`/, `${unitType} should mention gsd_exec_search`);
-    assert.match(out, /`gsd_resume`/, `${unitType} should mention gsd_resume`);
+    assert.match(out, /`gwd_exec`/, `${unitType} should mention gwd_exec`);
+    assert.match(out, /`gwd_exec_search`/, `${unitType} should mention gwd_exec_search`);
+    assert.match(out, /`gwd_resume`/, `${unitType} should mention gwd_resume`);
   }
 });
 

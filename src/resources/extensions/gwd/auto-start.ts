@@ -1175,7 +1175,7 @@ export async function bootstrapAutoSession(
 
     // Gate: abort bootstrap if the DB file exists but the provider is
     // still unavailable after both open attempts above. Without this,
-    // auto-mode starts but every gsd_task_complete / gsd_slice_complete
+    // auto-mode starts but every gwd_task_complete / gwd_slice_complete
     // call returns "db_unavailable", triggering artifact-retry which
     // re-dispatches the same task — producing an infinite loop (#2419).
     if (existsSync(gsdDbPath) && !isDbAvailable()) {

@@ -22,34 +22,34 @@ export interface WorkflowCapabilityOptions {
 
 const MCP_WORKFLOW_TOOL_SURFACE = new Set([
   "ask_user_questions",
-  "gsd_decision_save",
-  "gsd_exec",
-  "gsd_exec_search",
-  "gsd_resume",
-  "gsd_complete_milestone",
-  "gsd_journal_query",
-  "gsd_milestone_generate_id",
-  "gsd_milestone_reopen",
-  "gsd_checkpoint_db",
-  "gsd_milestone_status",
-  "gsd_plan_task",
-  "gsd_plan_milestone",
-  "gsd_plan_slice",
-  "gsd_replan_slice",
-  "gsd_reassess_roadmap",
-  "gsd_reopen_milestone",
-  "gsd_reopen_slice",
-  "gsd_reopen_task",
-  "gsd_requirement_save",
-  "gsd_requirement_update",
-  "gsd_save_gate_result",
-  "gsd_skip_slice",
-  "gsd_slice_complete",
-  "gsd_slice_reopen",
-  "gsd_summary_save",
-  "gsd_task_complete",
-  "gsd_task_reopen",
-  "gsd_validate_milestone",
+  "gwd_decision_save",
+  "gwd_exec",
+  "gwd_exec_search",
+  "gwd_resume",
+  "gwd_complete_milestone",
+  "gwd_journal_query",
+  "gwd_milestone_generate_id",
+  "gwd_milestone_reopen",
+  "gwd_checkpoint_db",
+  "gwd_milestone_status",
+  "gwd_plan_task",
+  "gwd_plan_milestone",
+  "gwd_plan_slice",
+  "gwd_replan_slice",
+  "gwd_reassess_roadmap",
+  "gwd_reopen_milestone",
+  "gwd_reopen_slice",
+  "gwd_reopen_task",
+  "gwd_requirement_save",
+  "gwd_requirement_update",
+  "gwd_save_gate_result",
+  "gwd_skip_slice",
+  "gwd_slice_complete",
+  "gwd_slice_reopen",
+  "gwd_summary_save",
+  "gwd_task_complete",
+  "gwd_task_reopen",
+  "gwd_validate_milestone",
 ]);
 
 function parseLookupOutput(output: Buffer | string): string {
@@ -209,7 +209,7 @@ export function detectWorkflowMcpLaunchConfig(
   projectRoot = process.cwd(),
   env: NodeJS.ProcessEnv = process.env,
 ): WorkflowMcpLaunchConfig | null {
-  const name = env.GWD_WORKFLOW_MCP_NAME?.trim() || "gsd-workflow";
+  const name = env.GWD_WORKFLOW_MCP_NAME?.trim() || "gwd-workflow";
   const explicitCommand = env.GWD_WORKFLOW_MCP_COMMAND?.trim();
   const explicitArgs = parseJsonEnv<unknown>(env, "GWD_WORKFLOW_MCP_ARGS");
   const explicitEnv = parseJsonEnv<Record<string, string>>(env, "GWD_WORKFLOW_MCP_ENV");
@@ -292,26 +292,26 @@ export function buildWorkflowMcpServers(
 export function getRequiredWorkflowToolsForGuidedUnit(unitType: string): string[] {
   switch (unitType) {
     case "discuss-project":
-      return ["ask_user_questions", "gsd_summary_save"];
+      return ["ask_user_questions", "gwd_summary_save"];
     case "discuss-requirements":
-      return ["ask_user_questions", "gsd_requirement_save", "gsd_summary_save"];
+      return ["ask_user_questions", "gwd_requirement_save", "gwd_summary_save"];
     case "research-decision":
       return ["ask_user_questions"];
     case "discuss-milestone":
-      return ["gsd_summary_save", "gsd_plan_milestone"];
+      return ["gwd_summary_save", "gwd_plan_milestone"];
     case "discuss-slice":
-      return ["gsd_summary_save"];
+      return ["gwd_summary_save"];
     case "research-milestone":
     case "research-slice":
-      return ["gsd_summary_save"];
+      return ["gwd_summary_save"];
     case "plan-milestone":
-      return ["gsd_plan_milestone"];
+      return ["gwd_plan_milestone"];
     case "plan-slice":
-      return ["gsd_plan_slice"];
+      return ["gwd_plan_slice"];
     case "execute-task":
-      return ["gsd_task_complete"];
+      return ["gwd_task_complete"];
     case "complete-slice":
-      return ["gsd_slice_complete"];
+      return ["gwd_slice_complete"];
     default:
       return [];
   }
@@ -320,37 +320,37 @@ export function getRequiredWorkflowToolsForGuidedUnit(unitType: string): string[
 export function getRequiredWorkflowToolsForAutoUnit(unitType: string): string[] {
   switch (unitType) {
     case "discuss-project":
-      return ["ask_user_questions", "gsd_summary_save"];
+      return ["ask_user_questions", "gwd_summary_save"];
     case "discuss-requirements":
-      return ["ask_user_questions", "gsd_requirement_save", "gsd_summary_save"];
+      return ["ask_user_questions", "gwd_requirement_save", "gwd_summary_save"];
     case "research-decision":
       return ["ask_user_questions"];
     case "discuss-milestone":
-      return ["gsd_summary_save", "gsd_plan_milestone"];
+      return ["gwd_summary_save", "gwd_plan_milestone"];
     case "research-milestone":
     case "research-slice":
     case "run-uat":
-      return ["gsd_summary_save"];
+      return ["gwd_summary_save"];
     case "plan-milestone":
-      return ["gsd_plan_milestone"];
+      return ["gwd_plan_milestone"];
     case "plan-slice":
-      return ["gsd_plan_slice"];
+      return ["gwd_plan_slice"];
     case "execute-task":
     case "execute-task-simple":
     case "reactive-execute":
-      return ["gsd_task_complete"];
+      return ["gwd_task_complete"];
     case "complete-slice":
-      return ["gsd_slice_complete"];
+      return ["gwd_slice_complete"];
     case "replan-slice":
-      return ["gsd_replan_slice"];
+      return ["gwd_replan_slice"];
     case "reassess-roadmap":
-      return ["gsd_milestone_status", "gsd_reassess_roadmap"];
+      return ["gwd_milestone_status", "gwd_reassess_roadmap"];
     case "gate-evaluate":
-      return ["gsd_save_gate_result"];
+      return ["gwd_save_gate_result"];
     case "validate-milestone":
-      return ["gsd_milestone_status", "gsd_validate_milestone"];
+      return ["gwd_milestone_status", "gwd_validate_milestone"];
     case "complete-milestone":
-      return ["gsd_milestone_status", "gsd_complete_milestone"];
+      return ["gwd_milestone_status", "gwd_complete_milestone"];
     default:
       return [];
   }

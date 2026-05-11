@@ -194,9 +194,9 @@ test('write-gate: markDepthVerified unlocks only the matching milestone', () => 
   assert.strictEqual(isMilestoneDepthVerified('M002'), false);
 });
 
-// ─── Scenario 11: gsd_summary_save CONTEXT contract is milestone-scoped ──
+// ─── Scenario 11: gwd_summary_save CONTEXT contract is milestone-scoped ──
 
-test('write-gate: gsd_summary_save only blocks final milestone CONTEXT writes', () => {
+test('write-gate: gwd_summary_save only blocks final milestone CONTEXT writes', () => {
   clearDiscussionFlowState(process.cwd());
 
   assert.strictEqual(
@@ -394,9 +394,9 @@ test('write-gate: shouldBlockPendingGate blocks write/edit during pending gate',
   const editResult = shouldBlockPendingGate('edit', 'M001', false);
   assert.strictEqual(editResult.block, true, 'edit should be blocked');
 
-  // gsd tools should be blocked
-  const gsdResult = shouldBlockPendingGate('gsd_plan_milestone', 'M001', false);
-  assert.strictEqual(gsdResult.block, true, 'gsd tools should be blocked');
+  // gwd tools should be blocked
+  const gsdResult = shouldBlockPendingGate('gwd_plan_milestone', 'M001', false);
+  assert.strictEqual(gsdResult.block, true, 'gwd tools should be blocked');
 });
 
 // ─── Scenario 22: shouldBlockPendingGate allows only re-asking when gate is pending ──

@@ -1,5 +1,5 @@
 /**
- * Regression tests for #2883: gsd_complete_slice tool invocation fails with
+ * Regression tests for #2883: gwd_complete_slice tool invocation fails with
  * JSON truncation, causing stuck retry loop.
  *
  * When a GWD tool is invoked with malformed/truncated JSON arguments, the tool
@@ -28,7 +28,7 @@ describe("#2883: tool invocation error tracking on AutoSession", () => {
 
   test("lastToolInvocationError is cleared on reset()", () => {
     const s = new AutoSession();
-    s.lastToolInvocationError = "Validation failed for tool gsd_complete_slice";
+    s.lastToolInvocationError = "Validation failed for tool gwd_complete_slice";
     assert.ok(s.lastToolInvocationError);
     s.reset();
     assert.equal(s.lastToolInvocationError, null);
@@ -61,7 +61,7 @@ import { BLOCKED_WRITE_ERROR } from "../write-intercept.ts";
 describe("#2883: isToolInvocationError classification", () => {
   test("detects JSON validation failure pattern", () => {
     assert.equal(
-      isToolInvocationError("Validation failed for tool gsd_complete_slice: Expected ',' or '}' in JSON"),
+      isToolInvocationError("Validation failed for tool gwd_complete_slice: Expected ',' or '}' in JSON"),
       true,
     );
   });
@@ -96,7 +96,7 @@ describe("#2883: isToolInvocationError classification", () => {
 
   test("detects 'Validation failed for tool' prefix", () => {
     assert.equal(
-      isToolInvocationError("Validation failed for tool gsd_slice_complete"),
+      isToolInvocationError("Validation failed for tool gwd_slice_complete"),
       true,
     );
   });

@@ -1,4 +1,4 @@
-// GSD2 — Tests for gsd_milestone_status read-only query tool
+// GSD2 — Tests for gwd_milestone_status read-only query tool
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -76,15 +76,15 @@ function seedTask(milestoneId: string, sliceId: string, taskId: string, status: 
 
 // ─── Registration ─────────────────────────────────────────────────────────────
 
-test("registerQueryTools registers gsd_milestone_status tool", () => {
+test("registerQueryTools registers gwd_milestone_status tool", () => {
   const pi = makeMockPi();
   registerQueryTools(pi);
   const names = pi.tools.map((t: { name: string }) => t.name);
-  assert.ok(names.includes("gsd_milestone_status"), "Should register gsd_milestone_status");
-  assert.ok(names.includes("gsd_checkpoint_db"), "Should register gsd_checkpoint_db");
+  assert.ok(names.includes("gwd_milestone_status"), "Should register gwd_milestone_status");
+  assert.ok(names.includes("gwd_checkpoint_db"), "Should register gwd_checkpoint_db");
 });
 
-test("gsd_milestone_status has promptGuidelines mentioning prohibited alternatives", () => {
+test("gwd_milestone_status has promptGuidelines mentioning prohibited alternatives", () => {
   const pi = makeMockPi();
   registerQueryTools(pi);
   const tool = pi.tools[0];
@@ -96,7 +96,7 @@ test("gsd_milestone_status has promptGuidelines mentioning prohibited alternativ
 
 // ─── Happy path: milestone with slices and tasks ──────────────────────────────
 
-test("gsd_milestone_status returns milestone metadata and slice statuses", async () => {
+test("gwd_milestone_status returns milestone metadata and slice statuses", async () => {
   const base = makeTmpBase();
   try {
     openTestDb(base);
@@ -138,7 +138,7 @@ test("gsd_milestone_status returns milestone metadata and slice statuses", async
 
 // ─── Milestone with no slices ─────────────────────────────────────────────────
 
-test("gsd_milestone_status returns empty slices array for milestone with no slices", async () => {
+test("gwd_milestone_status returns empty slices array for milestone with no slices", async () => {
   const base = makeTmpBase();
   try {
     openTestDb(base);
@@ -162,7 +162,7 @@ test("gsd_milestone_status returns empty slices array for milestone with no slic
 
 // ─── Missing milestone ────────────────────────────────────────────────────────
 
-test("gsd_milestone_status returns not-found for missing milestone", async () => {
+test("gwd_milestone_status returns not-found for missing milestone", async () => {
   const base = makeTmpBase();
   try {
     openTestDb(base);
@@ -182,7 +182,7 @@ test("gsd_milestone_status returns not-found for missing milestone", async () =>
 
 // ─── DB unavailable ───────────────────────────────────────────────────────────
 
-test("gsd_milestone_status handles missing DB gracefully", async () => {
+test("gwd_milestone_status handles missing DB gracefully", async () => {
   // Create a directory without .gwd/ to ensure ensureDbOpen has nothing to open
   const base = join(tmpdir(), `gsd-no-db-${randomUUID()}`);
   mkdirSync(base, { recursive: true });
