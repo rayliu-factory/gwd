@@ -1,18 +1,18 @@
 {
-  "name": "gsd-2",
-  "displayName": "GSD-2",
-  "description": "VS Code integration for the GSD-2 coding agent — sidebar dashboard, @gsd chat participant, activity feed, conversation history, code lens, session forking, slash command completion, workflow controls, and 33 commands",
+  "name": "gwd",
+  "displayName": "GWD",
+  "description": "VS Code integration for the GWD coding agent",
   "publisher": "FluxLabs",
-  "version": "0.3.0",
+  "version": "0.0.1",
   "icon": "logo.jpg",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gwd-build/gwd-2"
+    "url": "https://github.com/rayliu-factory/gwd.git"
   },
-  "homepage": "https://github.com/gwd-build/gwd-2/blob/main/vscode-extension/README.md",
+  "homepage": "https://github.com/rayliu-factory/gwd#readme",
   "bugs": {
-    "url": "https://github.com/gwd-build/gwd-2/issues"
+    "url": "https://github.com/rayliu-factory/gwd/issues"
   },
   "keywords": [
     "ai",
@@ -29,7 +29,9 @@
     "color": "#1a1a2e",
     "theme": "dark"
   },
-  "extensionKind": ["workspace"],
+  "extensionKind": [
+    "workspace"
+  ],
   "engines": {
     "vscode": "^1.95.0"
   },
@@ -394,7 +396,11 @@
         "gsd.approvalMode": {
           "type": "string",
           "default": "auto-approve",
-          "enum": ["auto-approve", "ask", "plan-only"],
+          "enum": [
+            "auto-approve",
+            "ask",
+            "plan-only"
+          ],
           "enumDescriptions": [
             "Agent runs freely without prompts",
             "Prompt before file changes and commands",

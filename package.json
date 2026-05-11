@@ -1,6 +1,6 @@
 {
   "name": "gwd-pi",
-  "version": "2.81.0",
+  "version": "0.0.1",
   "description": "GWD — Get Work Done coding agent",
   "license": "MIT",
   "repository": {
@@ -154,11 +154,11 @@
   },
   "optionalDependencies": {
     "@anthropic-ai/claude-agent-sdk": "0.2.83",
-    "@gwd-build/engine-darwin-arm64": ">=2.10.2",
-    "@gwd-build/engine-darwin-x64": ">=2.10.2",
-    "@gwd-build/engine-linux-arm64-gnu": ">=2.10.2",
-    "@gwd-build/engine-linux-x64-gnu": ">=2.10.2",
-    "@gwd-build/engine-win32-x64-msvc": ">=2.10.2",
+    "@gwd-build/engine-darwin-arm64": "0.0.1",
+    "@gwd-build/engine-darwin-x64": "0.0.1",
+    "@gwd-build/engine-linux-arm64-gnu": "0.0.1",
+    "@gwd-build/engine-linux-x64-gnu": "0.0.1",
+    "@gwd-build/engine-win32-x64-msvc": "0.0.1",
     "fsevents": "~2.3.3",
     "koffi": "^2.9.0",
     "sharp": "^0.34.5"

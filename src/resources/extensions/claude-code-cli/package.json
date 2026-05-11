@@ -1,7 +1,7 @@
 {
   "name": "@gwd/claude-code-cli",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.1",
   "type": "module",
   "pi": {
     "extensions": [

@@ -1,6 +1,6 @@
 {
   "name": "@gwd-build/engine-linux-arm64-gnu",
-  "version": "2.81.0",
+  "version": "0.0.1",
   "description": "GWD native engine binary for Linux ARM64 (glibc)",
   "os": [
     "linux"
@@ -15,6 +15,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gwd-build/gwd-2.git"
+    "url": "https://github.com/rayliu-factory/gwd.git"
   }
 }

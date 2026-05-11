@@ -1,7 +1,7 @@
 {
-  "name": "pi-extension-gsd",
+  "name": "pi-extension-gwd",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.1",
   "type": "module",
   "pi": {
     "extensions": [

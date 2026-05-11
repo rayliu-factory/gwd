@@ -1,11 +1,11 @@
 {
   "name": "@gwd-build/daemon",
-  "version": "2.81.0",
+  "version": "0.0.1",
   "description": "GWD daemon - background process for project monitoring and Discord integration",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gwd-build/gwd-2.git",
+    "url": "https://github.com/rayliu-factory/gwd.git",
     "directory": "packages/daemon"
   },
   "publishConfig": {
@@ -29,8 +29,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.52.0",
-    "@gwd-build/contracts": "^2.80.0",
-    "@gwd-build/rpc-client": "^2.81.0",
+    "@gwd-build/contracts": "^0.0.1",
+    "@gwd-build/rpc-client": "^0.0.1",
     "discord.js": "^14.25.1",
     "yaml": "^2.8.0",
     "zod": "^3.24.0"

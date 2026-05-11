@@ -1,6 +1,6 @@
 {
   "name": "@gwd-build/mcp-server",
-  "version": "2.81.0",
+  "version": "0.0.1",
   "description": "MCP server exposing GWD orchestration tools for Claude Code, Cursor, and other MCP clients",
   "license": "MIT",
   "gwd": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gwd-build/gwd-2.git",
+    "url": "https://github.com/rayliu-factory/gwd.git",
     "directory": "packages/mcp-server"
   },
   "publishConfig": {
@@ -34,8 +34,8 @@
     "test": "npm run build:test && node --test dist/mcp-server.test.js dist/remote-questions.test.js"
   },
   "dependencies": {
-    "@gwd-build/contracts": "^2.80.0",
-    "@gwd-build/rpc-client": "^2.81.0",
+    "@gwd-build/contracts": "^0.0.1",
+    "@gwd-build/rpc-client": "^0.0.1",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "zod": "^4.0.0"
   },
