@@ -20,10 +20,10 @@ mkdirSync(projectA);
 mkdirSync(join(projectA, ".git"));
 writeFileSync(join(projectA, "package.json"), "{}");
 
-// project-b: empty-gsd (.gsd folder, no milestones)
+// project-b: empty-gsd (.gwd folder, no milestones)
 const projectB = join(tempRoot, "project-b");
 mkdirSync(projectB);
-mkdirSync(join(projectB, ".gsd"));
+mkdirSync(join(projectB, ".gwd"));
 
 // project-c: brownfield (Cargo.toml)
 const projectC = join(tempRoot, "project-c");

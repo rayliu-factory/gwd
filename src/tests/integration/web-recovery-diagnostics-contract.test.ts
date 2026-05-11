@@ -105,7 +105,7 @@ function makeRecoveryFixture(): { projectCwd: string; sessionsDir: string; clean
   const root = mkdtempSync(join(tmpdir(), "gsd-recovery-contract-"))
   const projectCwd = join(root, "project")
   const sessionsDir = join(root, "sessions")
-  const milestoneDir = join(projectCwd, ".gsd", "milestones", "M001")
+  const milestoneDir = join(projectCwd, ".gwd", "milestones", "M001")
   const sliceDir = join(milestoneDir, "slices", "S01")
   const tasksDir = join(sliceDir, "tasks")
 

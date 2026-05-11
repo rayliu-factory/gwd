@@ -24,8 +24,8 @@ export async function collectUndoInfo(projectCwdOverride?: string): Promise<Undo
   const config = resolveBridgeRuntimeConfig(undefined, projectCwdOverride)
   const { projectCwd } = config
 
-  const gsdDir = join(projectCwd, ".gsd")
-  const completedPath = join(gsdDir, "completed-units.json")
+  const gwdDir = join(projectCwd, ".gwd")
+  const completedPath = join(gwdDir, "completed-units.json")
 
   const empty: UndoInfo = {
     lastUnitType: null,
@@ -52,7 +52,7 @@ export async function collectUndoInfo(projectCwdOverride?: string): Promise<Undo
   const unitKey = last.key ?? (unitType && unitId ? `${unitType}:${unitId}` : null)
 
   // Scan activity log for associated commits
-  const activityDir = join(gsdDir, "activity")
+  const activityDir = join(gwdDir, "activity")
   let commits: string[] = []
   if (unitType && unitId && existsSync(activityDir)) {
     try {

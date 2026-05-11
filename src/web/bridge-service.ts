@@ -518,7 +518,7 @@ export function detectMonorepo(dirPath: string, checkExists?: (path: string) => 
 export function detectProjectKind(projectCwd: string): ProjectDetection {
   const checkExists = getBridgeDeps().existsSync ?? existsSync;
 
-  const hasGsdFolder = checkExists(join(projectCwd, ".gsd"));
+  const hasGsdFolder = checkExists(join(projectCwd, ".gwd"));
   const hasPlanningFolder = checkExists(join(projectCwd, ".planning"));
   const hasGitRepo = checkExists(join(projectCwd, ".git"));
   const hasPackageJson = checkExists(join(projectCwd, "package.json"));
@@ -552,7 +552,7 @@ export function detectProjectKind(projectCwd: string): ProjectDetection {
 
   if (hasGsdFolder) {
     // Check if milestones exist
-    const milestonesDir = join(projectCwd, ".gsd", "milestones");
+    const milestonesDir = join(projectCwd, ".gwd", "milestones");
     let hasMilestones = false;
     try {
       const dirs = readdirSync(milestonesDir, { withFileTypes: true });

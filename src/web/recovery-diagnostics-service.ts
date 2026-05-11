@@ -486,7 +486,7 @@ async function collectRecoveryDiagnosticsChildPayload(
           GWD_RECOVERY_UNIT_TYPE: unit?.type ?? "execute-project",
           GWD_RECOVERY_UNIT_ID: unit?.id ?? "project",
           GWD_RECOVERY_SESSION_FILE: sessionFile ?? "",
-          GWD_RECOVERY_ACTIVITY_DIR: join(basePath, ".gsd", "activity"),
+          GWD_RECOVERY_ACTIVITY_DIR: join(basePath, ".gwd", "activity"),
           GWD_RECOVERY_DOCTOR_MODULE: doctorModulePath,
           GWD_RECOVERY_FORENSICS_MODULE: sessionForensicsModulePath,
         },
