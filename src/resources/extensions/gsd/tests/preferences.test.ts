@@ -941,6 +941,35 @@ test("explicit base path preference loading survives a deleted cwd (#4498)", (t)
   assert.equal(getIsolationMode(tempProject), "worktree");
 });
 
+test("loadEffectiveGSDPreferences preserves context_window_override through token-profile defaults", (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-context-override-project-"));
+  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-context-override-home-"));
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  writeFileSync(
+    join(tempProject, ".gsd", "PREFERENCES.md"),
+    "---\ntoken_profile: burn-max\ncontext_window_override: 131072\n---\n",
+    "utf-8",
+  );
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  const loaded = loadEffectiveGSDPreferences(tempProject);
+  assert.equal(loaded?.preferences.token_profile, "burn-max");
+  assert.equal(loaded?.preferences.dynamic_routing?.enabled, false);
+  assert.equal(loaded?.preferences.context_window_override, 131_072);
+});
+
 test("uppercase PREFERENCES.md wins over legacy lowercase preferences.md", () => {
   const originalCwd = process.cwd();
   const originalGsdHome = process.env.GWD_HOME;

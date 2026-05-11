@@ -13,7 +13,7 @@ import {
 } from "../guided-flow.js";
 import { clearPathCache } from "../paths.js";
 import { getAutoDashboardData, getAutoModeStartModel, isAutoActive, pauseAuto, setCurrentDispatchedModelId } from "../auto.js";
-import { getNextFallbackModel, resolveModelWithFallbacksForUnit } from "../preferences.js";
+import { getNextFallbackModel, loadEffectiveGSDPreferences, resolveModelWithFallbacksForUnit } from "../preferences.js";
 import { pauseAutoForProviderError } from "../provider-error-pause.js";
 import {
   isSessionSwitchAbortGraceActive,
@@ -24,6 +24,7 @@ import {
 import { shouldIgnoreAgentEndForActiveUnit } from "../auto/unit-runner-events.js";
 import { resolveModelId } from "../auto-model-selection.js";
 import {
+  applyOllamaAppleSiliconContextOverride,
   OLLAMA_QWEN36_27B_MODEL,
   isOllamaAppleSiliconResourceFailure,
   suppressOllamaAppleSiliconModelForRun,
@@ -361,10 +362,12 @@ export async function handleAgentEnd(
         "ollama",
       );
       if (fallback) {
-        const ok = await pi.setModel(fallback, { persist: false });
+        const prefs = loadEffectiveGSDPreferences(resolveAgentEndBasePath())?.preferences;
+        const fallbackToApply = applyOllamaAppleSiliconContextOverride(fallback, prefs);
+        const ok = await pi.setModel(fallbackToApply, { persist: false });
         if (ok) {
           suppressOllamaAppleSiliconModelForRun(currentProvider, currentId);
-          setCurrentDispatchedModelId({ provider: fallback.provider, id: fallback.id });
+          setCurrentDispatchedModelId({ provider: fallbackToApply.provider, id: fallbackToApply.id });
           ctx.ui.notify(
             "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 hit local resource limits; retrying on qwen3.6:27b-coding-nvfp4 and suppressing 35B for this run.",
             "warning",

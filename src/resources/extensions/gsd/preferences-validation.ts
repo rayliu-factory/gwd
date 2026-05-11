@@ -375,6 +375,18 @@ export function validatePreferences(preferences: GSDPreferences): {
     }
   }
 
+  // ─── Context Window Override ────────────────────────────────────────
+  if (preferences.context_window_override !== undefined) {
+    const raw = preferences.context_window_override;
+    if (typeof raw === "number" && Number.isFinite(raw)) {
+      validated.context_window_override = raw;
+    } else if (typeof raw === "string" && Number.isFinite(Number(raw))) {
+      validated.context_window_override = Number(raw);
+    } else {
+      errors.push("context_window_override must be a finite number");
+    }
+  }
+
   // ─── Models ─────────────────────────────────────────────────────────
   if (preferences.models !== undefined) {
     if (preferences.models && typeof preferences.models === "object") {

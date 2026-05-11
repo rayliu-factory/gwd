@@ -22,9 +22,7 @@ import { isModelBlocked } from "./blocked-models.js";
 import { getRequiredWorkflowToolsForAutoUnit } from "./workflow-mcp.js";
 import {
   adjustOllamaAppleSiliconFallbacks,
-  OLLAMA_PROVIDER,
-  OLLAMA_QWEN36_27B_NVFP4,
-  OLLAMA_QWEN36_35B_A3B_NVFP4,
+  applyOllamaAppleSiliconContextOverride,
   resolveOllamaAppleSiliconPreset,
 } from "./ollama-apple-silicon-profile.js";
 
@@ -123,28 +121,6 @@ function reapplyThinkingLevel(
 ): void {
   if (!level) return;
   pi.setThinkingLevel(level);
-}
-
-function isOllamaAppleSiliconQwen(model: Pick<Model<Api>, "provider" | "id">): boolean {
-  return model.provider === OLLAMA_PROVIDER &&
-    (model.id === OLLAMA_QWEN36_27B_NVFP4 || model.id === OLLAMA_QWEN36_35B_A3B_NVFP4);
-}
-
-function applyOllamaAppleContextOverride(model: Model<Api>, prefs: GSDPreferences | undefined): Model<Api> {
-  const contextWindow = prefs?.context_window_override;
-  if (contextWindow === undefined || contextWindow <= 0 || !Number.isFinite(contextWindow)) {
-    return model;
-  }
-  if (!isOllamaAppleSiliconQwen(model)) return model;
-
-  return {
-    ...model,
-    contextWindow,
-    providerOptions: {
-      ...(model.providerOptions ?? {}),
-      num_ctx: contextWindow,
-    },
-  };
 }
 
 export function resolvePreferredModelConfig(
@@ -572,7 +548,7 @@ export async function selectAndApplyModel(
         }
       }
 
-      const modelToApply = applyOllamaAppleContextOverride(model, prefs);
+      const modelToApply = applyOllamaAppleSiliconContextOverride(model, prefs);
       const ok = await pi.setModel(modelToApply, { persist: false });
       if (ok) {
         appliedModel = modelToApply;
@@ -645,14 +621,14 @@ export async function selectAndApplyModel(
         m => m.provider === autoModeStartModel.provider && m.id === autoModeStartModel.id,
       );
       if (startModel) {
-        const startModelToApply = applyOllamaAppleContextOverride(startModel, prefs);
+        const startModelToApply = applyOllamaAppleSiliconContextOverride(startModel, prefs);
         const ok = await pi.setModel(startModelToApply, { persist: false });
         if (!ok) {
           const byId = availableModels.find(
             m => m.id === autoModeStartModel.id && !isModelBlocked(basePath, m.provider, m.id),
           );
           if (byId) {
-            const fallbackModelToApply = applyOllamaAppleContextOverride(byId, prefs);
+            const fallbackModelToApply = applyOllamaAppleSiliconContextOverride(byId, prefs);
             const fallbackOk = await pi.setModel(fallbackModelToApply, { persist: false });
             if (fallbackOk) {
               appliedModel = fallbackModelToApply;

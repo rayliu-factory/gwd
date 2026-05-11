@@ -10,6 +10,10 @@ export const OLLAMA_QWEN36_27B_MODEL = `${OLLAMA_PROVIDER}/${OLLAMA_QWEN36_27B_N
 export const OLLAMA_QWEN36_35B_MODEL = `${OLLAMA_PROVIDER}/${OLLAMA_QWEN36_35B_A3B_NVFP4}`;
 
 type ModelLike = { provider: string; id: string };
+type OllamaAppleSiliconModelLike = ModelLike & {
+  contextWindow?: number;
+  providerOptions?: Record<string, unknown>;
+};
 
 export interface OllamaAppleSiliconPreset {
   modelConfig: PreferredModelConfig;
@@ -39,6 +43,31 @@ function hasModel(models: ModelLike[], id: string): boolean {
 
 function isOllamaSession(input: OllamaAppleSiliconPresetInput): boolean {
   return input.currentProvider === OLLAMA_PROVIDER || input.autoModeStartModel?.provider === OLLAMA_PROVIDER;
+}
+
+function isOllamaAppleSiliconQwen(model: ModelLike): boolean {
+  return model.provider === OLLAMA_PROVIDER &&
+    (model.id === OLLAMA_QWEN36_27B_NVFP4 || model.id === OLLAMA_QWEN36_35B_A3B_NVFP4);
+}
+
+export function applyOllamaAppleSiliconContextOverride<T extends OllamaAppleSiliconModelLike>(
+  model: T,
+  prefs: GSDPreferences | undefined,
+): T {
+  const contextWindow = prefs?.context_window_override;
+  if (contextWindow === undefined || contextWindow <= 0 || !Number.isFinite(contextWindow)) {
+    return model;
+  }
+  if (!isOllamaAppleSiliconQwen(model)) return model;
+
+  return {
+    ...model,
+    contextWindow,
+    providerOptions: {
+      ...(model.providerOptions ?? {}),
+      num_ctx: contextWindow,
+    },
+  };
 }
 
 function hasRoutingOverride(prefs: GSDPreferences | undefined): boolean {

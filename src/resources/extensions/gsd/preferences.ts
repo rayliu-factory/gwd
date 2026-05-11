@@ -389,6 +389,7 @@ function mergePreferences(base: GSDPreferences, override: GSDPreferences): GSDPr
     budget_ceiling: override.budget_ceiling ?? base.budget_ceiling,
     budget_enforcement: override.budget_enforcement ?? base.budget_enforcement,
     context_pause_threshold: override.context_pause_threshold ?? base.context_pause_threshold,
+    context_window_override: override.context_window_override ?? base.context_window_override,
     notifications: (base.notifications || override.notifications)
       ? { ...(base.notifications ?? {}), ...(override.notifications ?? {}) }
       : undefined,

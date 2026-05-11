@@ -7,6 +7,9 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { classifyError, isTransient, isTransientNetworkError } from "../error-classifier.ts";
 import { pauseAutoForProviderError } from "../provider-error-pause.ts";
 import { resumeAutoAfterProviderDelay } from "../bootstrap/provider-error-resume.ts";
@@ -54,7 +57,13 @@ function resolveOllamaAppleSiliconHeavyTier(): string | undefined {
 }
 
 function makeOllama35BResourceFailureHarness(input: {
-  availableModels?: Array<{ provider: string; id: string; api?: string }>;
+  availableModels?: Array<{
+    provider: string;
+    id: string;
+    api?: string;
+    contextWindow?: number;
+    providerOptions?: Record<string, unknown>;
+  }>;
   setModelResult: boolean;
 }) {
   const notifications: Array<{ message: string; level: string }> = [];
@@ -145,6 +154,52 @@ test("agent-end recovery switches Ollama Apple Silicon 35B resource failures to 
   } finally {
     cleanupOllamaAppleSiliconAgentEndTest();
   }
+});
+
+test("agent-end recovery applies context_window_override to Ollama Apple Silicon fallback", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGsdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gsd-ollama-agent-context-project-"));
+  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-ollama-agent-context-home-"));
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGsdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGsdHome, { recursive: true, force: true });
+    cleanupOllamaAppleSiliconAgentEndTest();
+  });
+
+  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  writeFileSync(
+    join(tempProject, ".gsd", "PREFERENCES.md"),
+    "---\ncontext_window_override: 131072\n---\n",
+    "utf-8",
+  );
+  process.env.GWD_HOME = tempGsdHome;
+  process.chdir(tempProject);
+
+  cleanupOllamaAppleSiliconAgentEndTest();
+  _setAutoActiveForTest(true);
+  const fallbackModel = {
+    provider: "ollama",
+    id: OLLAMA_QWEN36_27B_NVFP4,
+    api: "ollama-chat",
+    contextWindow: 65_536,
+    providerOptions: { num_ctx: 65_536, keep_alive: "0" },
+  };
+  const harness = makeOllama35BResourceFailureHarness({
+    availableModels: [fallbackModel, ollama35BModel],
+    setModelResult: true,
+  });
+
+  await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+  const applied = harness.setModelCalls[0]?.model as typeof fallbackModel | undefined;
+  assert.equal(applied?.contextWindow, 131_072);
+  assert.equal(applied?.providerOptions?.num_ctx, 131_072);
+  assert.equal(applied?.providerOptions?.keep_alive, "0");
 });
 
 test("agent-end recovery does not suppress Ollama Apple Silicon 35B when switching to 27B fails", async () => {
