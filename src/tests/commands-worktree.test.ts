@@ -1,18 +1,18 @@
-// GSD-2 — Unit tests for /gsd worktree formatter and dispatcher
+// GWD — Unit tests for /gwd worktree formatter and dispatcher
 import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
   formatWorktreeList,
   type WorktreeStatus,
-} from "../../dist/resources/extensions/gsd/commands-worktree.js";
+} from "../../dist/resources/extensions/gwd/commands-worktree.js";
 
 function mkStatus(over: Partial<WorktreeStatus>): WorktreeStatus {
   const name = over.name ?? "feat-x";
   return {
     name,
-    path: `/repo/.gsd/worktrees/${name}`,
-    branch: `gsd/${name}`,
+    path: `/repo/.gwd/worktrees/${name}`,
+    branch: `gwd/${name}`,
     exists: true,
     filesChanged: 0,
     linesAdded: 0,
@@ -26,14 +26,14 @@ function mkStatus(over: Partial<WorktreeStatus>): WorktreeStatus {
 test("empty list shows hint to create one", () => {
   const out = formatWorktreeList([]);
   assert.match(out, /No worktrees\./);
-  assert.match(out, /gsd -w/);
+  assert.match(out, /gwd -w/);
 });
 
 test("clean worktree shows (clean) badge and no diff line", () => {
   const out = formatWorktreeList([mkStatus({ name: "alpha" })]);
   assert.match(out, /alpha \(clean\)/);
-  assert.match(out, /branch\s+gsd\/alpha/);
-  assert.match(out, /path\s+\/repo\/\.gsd/);
+  assert.match(out, /branch\s+gwd\/alpha/);
+  assert.match(out, /path\s+\/repo\/\.gwd/);
   assert.doesNotMatch(out, /diff\s+/);
 });
 

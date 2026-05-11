@@ -13,7 +13,7 @@ import {
 // ---------------------------------------------------------------------------
 
 test("isUnderNodeModules returns false for paths outside node_modules", () => {
-  assert.equal(isUnderNodeModules("/home/user/projects/gsd"), false)
+  assert.equal(isUnderNodeModules("/home/user/projects/gwd"), false)
 })
 
 test("isUnderNodeModules returns true for Unix paths under node_modules/", () => {
@@ -32,7 +32,7 @@ test("isUnderNodeModules returns true for Windows paths under node_modules/", ()
 
 test("isUnderNodeModules returns false for substring match without trailing slash", () => {
   assert.equal(
-    isUnderNodeModules("/home/user/my_node_modules_backup/gsd"),
+    isUnderNodeModules("/home/user/my_node_modules_backup/gwd"),
     false,
   )
 })
@@ -42,25 +42,25 @@ test("isUnderNodeModules returns false for substring match without trailing slas
 // ---------------------------------------------------------------------------
 
 test("resolveSubprocessModule returns source .ts path when NOT under node_modules", () => {
-  const packageRoot = "/home/user/projects/gsd"
+  const packageRoot = "/home/user/projects/gwd"
   const result = resolveSubprocessModule(
     packageRoot,
-    "resources/extensions/gsd/workspace-index.ts",
+    "resources/extensions/gwd/workspace-index.ts",
     // existsSync not needed — should return src path without checking dist
   )
 
   assert.deepEqual(result, {
-    modulePath: join(packageRoot, "src", "resources/extensions/gsd/workspace-index.ts"),
+    modulePath: join(packageRoot, "src", "resources/extensions/gwd/workspace-index.ts"),
     useCompiledJs: false,
   })
 })
 
 test("resolveSubprocessModule returns compiled .js path when under node_modules and dist file exists", () => {
   const packageRoot = "/usr/lib/node_modules/gwd-pi"
-  const distPath = join(packageRoot, "dist", "resources/extensions/gsd/workspace-index.js")
+  const distPath = join(packageRoot, "dist", "resources/extensions/gwd/workspace-index.js")
   const result = resolveSubprocessModule(
     packageRoot,
-    "resources/extensions/gsd/workspace-index.ts",
+    "resources/extensions/gwd/workspace-index.ts",
     (p: string) => p === distPath,
   )
 
@@ -74,22 +74,22 @@ test("resolveSubprocessModule falls back to source .ts when under node_modules b
   const packageRoot = "/usr/lib/node_modules/gwd-pi"
   const result = resolveSubprocessModule(
     packageRoot,
-    "resources/extensions/gsd/workspace-index.ts",
+    "resources/extensions/gwd/workspace-index.ts",
     () => false, // dist file does not exist
   )
 
   assert.deepEqual(result, {
-    modulePath: join(packageRoot, "src", "resources/extensions/gsd/workspace-index.ts"),
+    modulePath: join(packageRoot, "src", "resources/extensions/gwd/workspace-index.ts"),
     useCompiledJs: false,
   })
 })
 
 test("resolveSubprocessModule handles Windows paths under node_modules", () => {
   const packageRoot = "C:\\Users\\dev\\AppData\\node_modules\\gwd-pi"
-  const distPath = join(packageRoot, "dist", "resources/extensions/gsd/auto.js")
+  const distPath = join(packageRoot, "dist", "resources/extensions/gwd/auto.js")
   const result = resolveSubprocessModule(
     packageRoot,
-    "resources/extensions/gsd/auto.ts",
+    "resources/extensions/gwd/auto.ts",
     (p: string) => p === distPath,
   )
 
@@ -104,13 +104,13 @@ test("resolveSubprocessModule strips .ts extension when building dist .js path",
   let checkedPath = ""
   resolveSubprocessModule(
     packageRoot,
-    "resources/extensions/gsd/doctor.ts",
+    "resources/extensions/gwd/doctor.ts",
     (p: string) => { checkedPath = p; return true },
   )
 
   assert.equal(
     checkedPath,
-    join(packageRoot, "dist", "resources/extensions/gsd/doctor.js"),
+    join(packageRoot, "dist", "resources/extensions/gwd/doctor.js"),
     "should check for .js file in dist/, not .ts",
   )
 })
@@ -124,7 +124,7 @@ test("buildSubprocessPrefixArgs omits TS loaders when compiled JS was selected",
     buildSubprocessPrefixArgs(
       "/usr/lib/node_modules/gwd-pi",
       {
-        modulePath: "/usr/lib/node_modules/gwd-pi/dist/resources/extensions/gsd/workspace-index.js",
+        modulePath: "/usr/lib/node_modules/gwd-pi/dist/resources/extensions/gwd/workspace-index.js",
         useCompiledJs: true,
       },
       "file:///loader.mjs",
@@ -135,9 +135,9 @@ test("buildSubprocessPrefixArgs omits TS loaders when compiled JS was selected",
 
 test("buildSubprocessPrefixArgs keeps TS loader path when source TS was selected", () => {
   const args = buildSubprocessPrefixArgs(
-    "/home/user/projects/gsd",
+    "/home/user/projects/gwd",
     {
-      modulePath: "/home/user/projects/gsd/src/resources/extensions/gsd/workspace-index.ts",
+      modulePath: "/home/user/projects/gwd/src/resources/extensions/gwd/workspace-index.ts",
       useCompiledJs: false,
     },
     "file:///loader.mjs",

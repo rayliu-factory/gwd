@@ -22,12 +22,12 @@ If `Ctrl+Alt` shortcuts trigger the wrong action (e.g., `Ctrl+Alt+G` opens exter
 
 ## cmux Integration
 
-If you use cmux (terminal multiplexer), GSD can integrate with it:
+If you use cmux (terminal multiplexer), GWD can integrate with it:
 
 | Command | Description |
 |---------|-------------|
-| `/gsd cmux status` | Show cmux detection and capabilities |
-| `/gsd cmux on` / `off` | Enable/disable integration |
-| `/gsd cmux notifications on/off` | Toggle desktop notifications |
-| `/gsd cmux sidebar on/off` | Toggle sidebar metadata |
-| `/gsd cmux splits on/off` | Toggle visual subagent splits |
+| `/gwd cmux status` | Show cmux detection and capabilities |
+| `/gwd cmux on` / `off` | Enable/disable integration |
+| `/gwd cmux notifications on/off` | Toggle desktop notifications |
+| `/gwd cmux sidebar on/off` | Toggle sidebar metadata |
+| `/gwd cmux splits on/off` | Toggle visual subagent splits |

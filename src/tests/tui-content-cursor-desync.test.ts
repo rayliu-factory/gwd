@@ -1,4 +1,4 @@
-// GSD-2 + src/tests/tui-content-cursor-desync.test.ts - Regression coverage for TUI hardware cursor baselines.
+// GWD + src/tests/tui-content-cursor-desync.test.ts - Regression coverage for TUI hardware cursor baselines.
 
 /**
  * Regression test for #3764: TUI input clears and jumps up after PR #3744.
@@ -104,7 +104,7 @@ describe("TUI cursor tracking regression (#3764)", () => {
   });
 
   it("handles editor-to-selector swap without cursor corruption", () => {
-    // Simulates /gsd prefs: editor with CURSOR_MARKER is replaced by
+    // Simulates /gwd prefs: editor with CURSOR_MARKER is replaced by
     // a selector component (no CURSOR_MARKER) that has different line count.
     const terminal = new MockTTYTerminal();
     const tui = new TUI(terminal, false);
@@ -229,7 +229,7 @@ describe("TUI cursor tracking regression (#3764)", () => {
   });
 
   it("handles input component swap (prefs wizard text input)", () => {
-    // Simulates /gsd prefs input step: selector replaced by text input with cursor
+    // Simulates /gwd prefs input step: selector replaced by text input with cursor
     const terminal = new MockTTYTerminal();
     const tui = new TUI(terminal, false);
 

@@ -1,0 +1,56 @@
+// Canonical GWD shortcut definitions used by registration, help text, and overlays.
+
+import { formatShortcut } from "./files.js";
+
+export type GWDShortcutId = "dashboard" | "notifications" | "parallel";
+
+type GWDShortcutDef = {
+  key: "g" | "n" | "p";
+  action: string;
+  command: string;
+  /** Whether the Ctrl+Shift fallback is registered (false when it conflicts with an app keybinding). */
+  hasFallback: boolean;
+};
+
+export const GWD_SHORTCUTS: Record<GWDShortcutId, GWDShortcutDef> = {
+  dashboard: {
+    key: "g",
+    action: "Open GWD dashboard",
+    command: "/gwd status",
+    hasFallback: true,
+  },
+  notifications: {
+    key: "n",
+    action: "Open notification history",
+    command: "/gwd notifications",
+    hasFallback: true,
+  },
+  parallel: {
+    key: "p",
+    action: "Open parallel worker monitor",
+    command: "/gwd parallel watch",
+    hasFallback: false, // Ctrl+Shift+P conflicts with cycleModelBackward
+  },
+};
+
+function combo(prefix: "Ctrl+Alt+" | "Ctrl+Shift+", key: string): string {
+  return `${prefix}${key.toUpperCase()}`;
+}
+
+export function primaryShortcutCombo(id: GWDShortcutId): string {
+  return combo("Ctrl+Alt+", GWD_SHORTCUTS[id].key);
+}
+
+export function fallbackShortcutCombo(id: GWDShortcutId): string {
+  return combo("Ctrl+Shift+", GWD_SHORTCUTS[id].key);
+}
+
+export function shortcutPair(id: GWDShortcutId, formatter: (combo: string) => string = (combo) => combo): string {
+  const primary = formatter(primaryShortcutCombo(id));
+  if (!GWD_SHORTCUTS[id].hasFallback) return primary;
+  return `${primary} / ${formatter(fallbackShortcutCombo(id))}`;
+}
+
+export function formattedShortcutPair(id: GWDShortcutId): string {
+  return shortcutPair(id, formatShortcut);
+}

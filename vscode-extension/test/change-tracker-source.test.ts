@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD
 // File Purpose: VS Code change-tracker helper behavior tests.
 
 import test from "node:test";
@@ -55,7 +55,7 @@ test("change tracker models new files as absent snapshots", () => {
 });
 
 test("checkpoints capture current tracked file contents, not original session contents", () => {
-	const root = mkdtempSync(join(tmpdir(), "gsd-vscode-change-tracker-"));
+	const root = mkdtempSync(join(tmpdir(), "gwd-vscode-change-tracker-"));
 	const filePath = join(root, "tracked.ts");
 
 	try {

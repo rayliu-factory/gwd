@@ -8,7 +8,7 @@ Turn a pile of outdated packages into a series of small, verifiable upgrades wit
 </objective>
 
 <context>
-GWD-2 ships a `/gwd start dep-upgrade` workflow template (`src/resources/extensions/gsd/workflow-templates/dep-upgrade.md`) that structures the phases: assess → upgrade → fix breaks → verify. This skill is the execution-level detail inside the upgrade phase — how to batch, how to verify, how to recover from a breaking upgrade without losing the good ones.
+GWD ships a `/gwd start dep-upgrade` workflow template (`src/resources/extensions/gwd/workflow-templates/dep-upgrade.md`) that structures the phases: assess → upgrade → fix breaks → verify. This skill is the execution-level detail inside the upgrade phase — how to batch, how to verify, how to recover from a breaking upgrade without losing the good ones.
 
 Invocation points:
 - `/gwd start dep-upgrade` workflow is running
@@ -131,7 +131,7 @@ After all batches, produce a rollup:
 - <CVE> still open — not exploitable in our usage (see comment in package.json)
 ```
 
-Append to `.gsd/KNOWLEDGE.md` any non-obvious gotcha from the upgrade (API changes that tripped you up, migration rituals for this codebase).
+Append to `.gwd/KNOWLEDGE.md` any non-obvious gotcha from the upgrade (API changes that tripped you up, migration rituals for this codebase).
 
 </process>
 

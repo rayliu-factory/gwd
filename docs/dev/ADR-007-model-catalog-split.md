@@ -3,7 +3,7 @@
 **Status:** Proposed
 **Date:** 2026-04-03
 **Deciders:** Jeremy McSpadden
-**Related:** ADR-004 (capability-aware model routing), [ADR-005](https://github.com/gsd-build/gsd-2/issues/2790), [ADR-006](https://github.com/gsd-build/gsd-2/issues/2995), `packages/pi-ai/src/providers/`, `packages/pi-ai/src/models.ts`
+**Related:** ADR-004 (capability-aware model routing), [ADR-005](https://github.com/rayliu-factory/gwd/issues/2790), [ADR-006](https://github.com/rayliu-factory/gwd/issues/2995), `packages/pi-ai/src/providers/`, `packages/pi-ai/src/models.ts`
 
 ## Context
 
@@ -114,7 +114,7 @@ packages/pi-ai/src/models/
 
 ```typescript
 // models/index.ts
-// GSD-2 — Model registry (split by provider for maintainability)
+// GWD — Model registry (split by provider for maintainability)
 
 import { ANTHROPIC_MODELS } from "./generated/anthropic.js";
 import { OPENAI_MODELS } from "./generated/openai.js";
@@ -243,7 +243,7 @@ Make all providers load on-demand via async dynamic imports, generalizing the Be
 
 ### 2. Plugin architecture with separate npm packages
 
-Move each provider to its own package (`@gsd/provider-anthropic`, etc.). Maximum isolation but dramatically more complex build/release/versioning. Overkill for a monorepo where all providers ship together.
+Move each provider to its own package (`@gwd/provider-anthropic`, etc.). Maximum isolation but dramatically more complex build/release/versioning. Overkill for a monorepo where all providers ship together.
 
 ### 3. Do nothing
 

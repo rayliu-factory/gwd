@@ -1,6 +1,6 @@
 # GitHub Sync
 
-GSD can auto-sync milestones, slices, and tasks to GitHub Issues, PRs, and Milestones.
+GWD can auto-sync milestones, slices, and tasks to GitHub Issues, PRs, and Milestones.
 
 ## Setup
 
@@ -14,14 +14,14 @@ GSD can auto-sync milestones, slices, and tasks to GitHub Issues, PRs, and Miles
    github:
      enabled: true
      repo: "owner/repo"              # auto-detected from git remote if omitted
-     labels: [gsd, auto-generated]   # labels for created items
+     labels: [gwd, auto-generated]   # labels for created items
    ```
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `/github-sync bootstrap` | Initial setup — creates GitHub Milestones, Issues, and draft PRs from current `.gsd/` state |
+| `/github-sync bootstrap` | Initial setup — creates GitHub Milestones, Issues, and draft PRs from current `.gwd/` state |
 | `/github-sync status` | Show sync mapping counts (milestones, slices, tasks) |
 
 ## How It Works
@@ -31,7 +31,7 @@ GSD can auto-sync milestones, slices, and tasks to GitHub Issues, PRs, and Miles
 - Tasks → GitHub Issue checklists
 - Completed slices → Draft PRs
 
-Sync mapping is persisted in `.gsd/.github-sync.json`. The sync is rate-limit aware — it skips when the GitHub API rate limit is low.
+Sync mapping is persisted in `.gwd/.github-sync.json`. The sync is rate-limit aware — it skips when the GitHub API rate limit is low.
 
 ## Configuration
 
@@ -39,6 +39,6 @@ Sync mapping is persisted in `.gsd/.github-sync.json`. The sync is rate-limit aw
 github:
   enabled: true
   repo: "owner/repo"
-  labels: [gsd, auto-generated]
+  labels: [gwd, auto-generated]
   project: "Project ID"           # optional: GitHub Project board
 ```

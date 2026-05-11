@@ -2,14 +2,14 @@
 
 ## Overview
 
-GSD 2 uses a three-stage promotion pipeline that automatically moves merged PRs through **Dev → Test → Prod** environments using npm dist-tags.
+GWD uses a three-stage promotion pipeline that automatically moves merged PRs through **Dev → Test → Prod** environments using npm dist-tags.
 
 ```
 PR merged to main
         │
         ▼
    ┌─────────┐    ci.yml passes (build, test, typecheck)
-   │   DEV   │    → publishes gsd-pi@<version>-dev.<sha> with @dev tag
+   │   DEV   │    → publishes gwd-pi@<version>-dev.<sha> with @dev tag
    └────┬────┘
         ▼ (automatic if green)
    ┌─────────┐    CLI smoke tests + LLM fixture replay
@@ -29,32 +29,32 @@ Every merged PR is immediately installable:
 
 ```bash
 # Latest dev build (bleeding edge, every merged PR)
-npx gsd-pi@dev
+npx gwd-pi@dev
 
 # Test candidate (passed smoke + fixture tests)
-npx gsd-pi@next
+npx gwd-pi@next
 
 # Stable production release
-npx gsd-pi@latest    # or just: npx gsd-pi
+npx gwd-pi@latest    # or just: npx gwd-pi
 ```
 
 ### Using Docker
 
 ```bash
 # Test candidate
-docker run --rm -v $(pwd):/workspace ghcr.io/gsd-build/gsd-pi:next --version
+docker run --rm -v $(pwd):/workspace ghcr.io/rayliu-factory/gwd-pi:next --version
 
 # Stable
-docker run --rm -v $(pwd):/workspace ghcr.io/gsd-build/gsd-pi:latest --version
+docker run --rm -v $(pwd):/workspace ghcr.io/rayliu-factory/gwd-pi:latest --version
 ```
 
 ### Checking if a Fix Landed
 
 1. Find the PR's merge commit SHA (first 7 chars)
-2. Check if it's in `@dev`: `npm view gsd-pi@dev version`
+2. Check if it's in `@dev`: `npm view gwd-pi@dev version`
    - If the version ends in `-dev.<your-sha>`, your PR is in dev
-3. Check if it promoted to `@next`: `npm view gsd-pi@next version`
-4. Check if it's in production: `npm view gsd-pi@latest version`
+3. Check if it promoted to `@next`: `npm view gwd-pi@next version`
+4. Check if it's in production: `npm view gwd-pi@latest version`
 
 ## For Maintainers
 
@@ -82,7 +82,7 @@ touch build, runtime, test, package, web, native, Docker, or TypeScript config
 paths skip the build/test matrix.
 
 - **Skipped:** `build`, `integration-tests`, `e2e`, `docker-e2e`, and `windows-portability`
-- **Still runs:** `lint` (secret scanning, `.gsd/` check), `docs-check` (prompt injection scan)
+- **Still runs:** `lint` (secret scanning, `.gwd/` check), `docs-check` (prompt injection scan)
 
 This saves CI minutes on documentation and metadata-only PRs while still
 enforcing security checks.
@@ -129,12 +129,12 @@ If a broken version reaches production:
 
 ```bash
 # Roll back npm
-npm dist-tag add gsd-pi@<previous-good-version> latest
+npm dist-tag add gwd-pi@<previous-good-version> latest
 
 # Roll back Docker
-docker pull ghcr.io/gsd-build/gsd-pi:<previous-good-version>
-docker tag ghcr.io/gsd-build/gsd-pi:<previous-good-version> ghcr.io/gsd-build/gsd-pi:latest
-docker push ghcr.io/gsd-build/gsd-pi:latest
+docker pull ghcr.io/rayliu-factory/gwd-pi:<previous-good-version>
+docker tag ghcr.io/rayliu-factory/gwd-pi:<previous-good-version> ghcr.io/rayliu-factory/gwd-pi:latest
+docker push ghcr.io/rayliu-factory/gwd-pi:latest
 ```
 
 For `@dev` or `@next` rollbacks, the next successful merge will overwrite the tag automatically.
@@ -150,14 +150,14 @@ For `@dev` or `@next` rollbacks, the next successful merge will overwrite the ta
 | Secret: `ANTHROPIC_API_KEY` | Prod environment only |
 | Secret: `OPENAI_API_KEY` | Prod environment only |
 | Variable: `RUN_LIVE_TESTS` | `false` (set to `true` to enable live LLM tests) |
-| GHCR | Enabled for the `gsd-build` org |
+| GHCR | Enabled for the `rayliu-factory` org |
 
 ### Docker Images
 
 | Image | Base | Purpose | Tags |
 |-------|------|---------|------|
-| `ghcr.io/gsd-build/gsd-ci-builder` | `node:24-bookworm` | CI build environment with Rust toolchain | `:latest`, `:<date>` |
-| `ghcr.io/gsd-build/gsd-pi` | `node:24-slim` | User-facing runtime | `:latest`, `:next`, `:v<version>` |
+| `ghcr.io/rayliu-factory/gwd-ci-builder` | `node:24-bookworm` | CI build environment with Rust toolchain | `:latest`, `:<date>` |
+| `ghcr.io/rayliu-factory/gwd-pi` | `node:24-slim` | User-facing runtime | `:latest`, `:next`, `:v<version>` |
 
 The CI builder image is rebuilt automatically when the `Dockerfile` changes. It eliminates ~3-5 min of toolchain setup per CI run.
 
@@ -175,7 +175,7 @@ npm run test:fixtures
 
 ```bash
 # Set your API key, then record
-GSD_FIXTURE_MODE=record GSD_FIXTURE_DIR=./tests/fixtures/recordings \
+GWD_FIXTURE_MODE=record GWD_FIXTURE_DIR=./tests/fixtures/recordings \
   node --experimental-strip-types tests/fixtures/record.ts
 ```
 

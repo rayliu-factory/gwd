@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Unit tests for stale-aware dist-test compile cache decisions.
 
 import assert from 'node:assert/strict';

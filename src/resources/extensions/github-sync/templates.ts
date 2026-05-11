@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Markdown formatters for GitHub sync issues, PR bodies, and comments.
 
 /**
@@ -9,7 +9,7 @@
  * for the `gh` CLI body parameters.
  */
 
-import { buildPrEvidence } from "../gsd/pr-evidence.js";
+import { buildPrEvidence } from "../gwd/pr-evidence.js";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 

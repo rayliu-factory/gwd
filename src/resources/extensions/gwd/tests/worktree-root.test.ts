@@ -1,0 +1,69 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+import { resolveWorktreeProjectRoot } from "../worktree-root.ts";
+
+test("resolveWorktreeProjectRoot: explicit non-worktree cwd beats stale GWD_PROJECT_ROOT", (t) => {
+  const previous = process.env.GWD_PROJECT_ROOT;
+  const dir = mkdtempSync(join(tmpdir(), "gwd-root-"));
+  const projectDir = join(dir, "project");
+  mkdirSync(projectDir);
+  process.env.GWD_PROJECT_ROOT = "/Users/example";
+
+  t.after(() => {
+    if (previous === undefined) {
+      delete process.env.GWD_PROJECT_ROOT;
+    } else {
+      process.env.GWD_PROJECT_ROOT = previous;
+    }
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  assert.equal(resolveWorktreeProjectRoot(projectDir), projectDir);
+});
+
+test("resolveWorktreeProjectRoot: external GWD home is not treated as a project root", (t) => {
+  const previous = process.env.GWD_HOME;
+  const dir = mkdtempSync(join(tmpdir(), "gwd-root-"));
+  const fakeHome = join(dir, "home");
+  const projectDir = join(fakeHome, "work", "project");
+  mkdirSync(join(fakeHome, ".gwd"), { recursive: true });
+  mkdirSync(join(fakeHome, ".git"), { recursive: true });
+  writeFileSync(join(fakeHome, ".gwd", "PREFERENCES.md"), "---\n---\n", "utf-8");
+  mkdirSync(projectDir, { recursive: true });
+  process.env.GWD_HOME = join(fakeHome, ".gwd");
+
+  t.after(() => {
+    if (previous === undefined) {
+      delete process.env.GWD_HOME;
+    } else {
+      process.env.GWD_HOME = previous;
+    }
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  assert.equal(resolveWorktreeProjectRoot(projectDir), projectDir);
+});
+
+test("resolveWorktreeProjectRoot: GWD_PROJECT_ROOT still anchors auto-worktree paths", (t) => {
+  const previous = process.env.GWD_PROJECT_ROOT;
+  const dir = mkdtempSync(join(tmpdir(), "gwd-root-"));
+  const projectDir = join(dir, "project");
+  const worktreeDir = join(projectDir, ".gwd", "worktrees", "M001");
+  mkdirSync(worktreeDir, { recursive: true });
+  process.env.GWD_PROJECT_ROOT = projectDir;
+
+  t.after(() => {
+    if (previous === undefined) {
+      delete process.env.GWD_PROJECT_ROOT;
+    } else {
+      process.env.GWD_PROJECT_ROOT = previous;
+    }
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  assert.equal(resolveWorktreeProjectRoot(worktreeDir), projectDir);
+});

@@ -1,7 +1,7 @@
 /**
  * Regression tests for #4406 — remote-channel answers must be normalized to
  * the RoundResult shape { selected, notes } so the depth-verification gate
- * hook in gsd/bootstrap/register-hooks.ts recognizes them. Before the fix,
+ * hook in gwd/bootstrap/register-hooks.ts recognizes them. Before the fix,
  * Telegram/Slack/Discord answers arrived as { answers: string[], user_note }
  * and `answer.selected` was always undefined, leaving the gate locked.
  */
@@ -11,7 +11,7 @@ import assert from "node:assert/strict";
 
 import { toRoundResultResponse } from "../manager.ts";
 import type { RemoteAnswer } from "../types.ts";
-import { isDepthConfirmationAnswer } from "../../gsd/bootstrap/write-gate.ts";
+import { isDepthConfirmationAnswer } from "../../gwd/bootstrap/write-gate.ts";
 
 const STANDARD_OPTIONS = [
   { label: "Yes, you got it (Recommended)" },

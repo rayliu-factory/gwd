@@ -1,6 +1,6 @@
 # Hooks
 
-Hooks let you run shell commands at specific points in GSD's lifecycle without
+Hooks let you run shell commands at specific points in GWD's lifecycle without
 writing a TypeScript extension. They're configured under the `hooks` key in
 `settings.json`.
 
@@ -18,13 +18,13 @@ Add a `hooks` object to your global settings at `~/.pi/agent/settings.json`:
       { "match": { "tool": ["edit", "write"] }, "command": "prettier --write" }
     ],
     "Stop": [
-      { "command": "notify-send 'GSD is done'" }
+      { "command": "notify-send 'GWD is done'" }
     ]
   }
 }
 ```
 
-Each hook is a shell command. GSD pipes the event payload to the command's
+Each hook is a shell command. GWD pipes the event payload to the command's
 stdin as JSON. The command may reply with a JSON object on stdout to modify
 the pending action (see **Control protocol** below).
 
@@ -38,7 +38,7 @@ the pending action (see **Control protocol** below).
 | `blocking`| `boolean`| `true`  | When `true`, a non-zero exit vetoes the pending action |
 | `env`     | object   | —       | Extra environment variables |
 
-The child process also receives `GSD_HOOK_EVENT` and `GSD_HOOK_SCOPE` env vars.
+The child process also receives `GWD_HOOK_EVENT` and `GWD_HOOK_SCOPE` env vars.
 
 ## Available hooks
 
@@ -138,7 +138,7 @@ global settings are under the user's direct control.
 {
   "hooks": {
     "Stop": [
-      { "command": "terminal-notifier -title GSD -message 'Agent stopped'" }
+      { "command": "terminal-notifier -title GWD -message 'Agent stopped'" }
     ]
   }
 }
@@ -149,4 +149,4 @@ global settings are under the user's direct control.
 Hook names and the JSON stdin/stdout protocol mirror Claude Code's hooks, so
 most existing Claude Code hook commands work unchanged. The one-to-one event
 mapping lets you copy a Claude Code `settings.json` hooks block and drop it
-into GSD with no modifications.
+into GWD with no modifications.

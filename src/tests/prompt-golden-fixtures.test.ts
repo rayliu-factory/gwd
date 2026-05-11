@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Characterization tests for representative GSD prompt fixture metrics.
+// Project/App: GWD
+// File Purpose: Characterization tests for representative GWD prompt fixture metrics.
 
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -83,25 +83,25 @@ function promptMetric(prompt: string): { chars: number; bytes: number; lines: nu
 }
 
 async function loadPromptBuilders(base: string): Promise<{
-  buildCompleteSlicePrompt: typeof import("../resources/extensions/gsd/auto-prompts.ts").buildCompleteSlicePrompt;
-  buildExecuteTaskPrompt: typeof import("../resources/extensions/gsd/auto-prompts.ts").buildExecuteTaskPrompt;
-  buildPlanSlicePrompt: typeof import("../resources/extensions/gsd/auto-prompts.ts").buildPlanSlicePrompt;
-  invalidateAllCaches: typeof import("../resources/extensions/gsd/cache.ts").invalidateAllCaches;
+  buildCompleteSlicePrompt: typeof import("../resources/extensions/gwd/auto-prompts.ts").buildCompleteSlicePrompt;
+  buildExecuteTaskPrompt: typeof import("../resources/extensions/gwd/auto-prompts.ts").buildExecuteTaskPrompt;
+  buildPlanSlicePrompt: typeof import("../resources/extensions/gwd/auto-prompts.ts").buildPlanSlicePrompt;
+  invalidateAllCaches: typeof import("../resources/extensions/gwd/cache.ts").invalidateAllCaches;
 }> {
-  process.env.GWD_HOME = join(base, ".test-gsd-home");
-  const prompts = await import("../resources/extensions/gsd/auto-prompts.ts");
-  const cache = await import("../resources/extensions/gsd/cache.ts");
+  process.env.GWD_HOME = join(base, ".test-gwd-home");
+  const prompts = await import("../resources/extensions/gwd/auto-prompts.ts");
+  const cache = await import("../resources/extensions/gwd/cache.ts");
   return { ...prompts, invalidateAllCaches: cache.invalidateAllCaches };
 }
 
 function makePromptFixtureRoot(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-prompt-golden-"));
-  const sliceDir = join(base, ".gsd", "milestones", "M001", "slices", "S01");
+  const base = mkdtempSync(join(tmpdir(), "gwd-prompt-golden-"));
+  const sliceDir = join(base, ".gwd", "milestones", "M001", "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
   mkdirSync(tasksDir, { recursive: true });
 
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"),
+    join(base, ".gwd", "milestones", "M001", "M001-ROADMAP.md"),
     [
       "# M001 Roadmap",
       "",

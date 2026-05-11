@@ -47,6 +47,7 @@ const activeOldNamespacePatterns = [
   new RegExp(`${upperOld}_`),
   new RegExp(`\\.${lowerOld}`),
   new RegExp(`\\/${lowerOld}`),
+  new RegExp(`${lowerOld}_`),
   new RegExp(`@${lowerOld}`),
   new RegExp(`${lowerOld}-pi`),
   new RegExp(`${lowerOld}-build`),
@@ -55,12 +56,16 @@ const activeOldNamespacePatterns = [
   new RegExp(`${pascalOld}[A-Z]`),
   new RegExp(`\\b${upperOld}\\b`),
   new RegExp(phraseOld),
+  /gwd-build\/gwd-2/,
+  /github\.com\/gwd-build\/gwd-2/,
 ];
 
 const historicalAllowlist = [
   /^CHANGELOG\.md$/,
   /^docs\/dev\/superpowers\/specs\/2026-05-10-gwd-namespace-hard-cutover-design\.md$/,
   /^docs\/dev\/superpowers\/plans\/2026-05-10-gwd-namespace-hard-cutover\.md$/,
+  /^docs\/dev\/superpowers\/specs\/2026-05-12-gwd-independent-initial-release-cutover-design\.md$/,
+  /^docs\/dev\/superpowers\/plans\/2026-05-12-gwd-independent-initial-release-cutover\.md$/,
   /^docs\/dev\/superpowers\/specs\/2026-03-17-cicd-pipeline-design\.md$/,
   /^docs\/dev\/superpowers\/plans\/2026-03-17-cicd-pipeline\.md$/,
 ];

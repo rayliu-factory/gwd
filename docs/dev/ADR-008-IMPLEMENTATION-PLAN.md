@@ -1,22 +1,22 @@
 # ADR-008 Implementation Plan
 
-**Related ADR:** [ADR-008-gsd-tools-over-mcp-for-provider-parity.md](/Users/jeremymcspadden/Github/gsd-2/docs/ADR-008-gsd-tools-over-mcp-for-provider-parity.md)
+**Related ADR:** [ADR-008-gwd-tools-over-mcp-for-provider-parity.md](./ADR-008-gwd-tools-over-mcp-for-provider-parity.md)
 **Status:** Draft
 **Date:** 2026-04-09
 
 ## Objective
 
-Implement the ADR-008 decision by exposing the core GSD workflow tool contract over MCP, then wiring MCP-backed access into provider paths that cannot use the native in-process GSD tool registry directly.
+Implement the ADR-008 decision by exposing the core GWD workflow tool contract over MCP, then wiring MCP-backed access into provider paths that cannot use the native in-process GWD tool registry directly.
 
 The first usable outcome is:
 
-- a Claude Code-backed execution session can complete a task using canonical GSD tools
+- a Claude Code-backed execution session can complete a task using canonical GWD tools
 - no manual summary-writing fallback is needed
 - native provider behavior remains unchanged
 
 ## Non-Goals
 
-- Replacing native in-process GSD tools with MCP
+- Replacing native in-process GWD tools with MCP
 - Exporting every historical alias in the first rollout
 - Reworking the entire session-oriented MCP server before proving the workflow-tool surface
 - Supporting every provider path before Claude Code is working end-to-end
@@ -25,7 +25,7 @@ The first usable outcome is:
 
 - Native and MCP tool paths must share business logic
 - MCP must not bypass write-gate or discussion-gate protections
-- Canonical GSD state transitions must remain DB-backed
+- Canonical GWD state transitions must remain DB-backed
 - Provider capability mismatches must fail early, not degrade silently
 
 ## Workstreams
@@ -36,9 +36,9 @@ Goal: separate business logic from transport registration.
 
 Targets:
 
-- `src/resources/extensions/gsd/bootstrap/db-tools.ts`
-- `src/resources/extensions/gsd/bootstrap/query-tools.ts`
-- `src/resources/extensions/gsd/tools/complete-task.ts`
+- `src/resources/extensions/gwd/bootstrap/db-tools.ts`
+- `src/resources/extensions/gwd/bootstrap/query-tools.ts`
+- `src/resources/extensions/gwd/tools/complete-task.ts`
 - sibling modules used by planning/summary/validation tools
 
 Deliverables:
@@ -54,23 +54,23 @@ Exit criteria:
 
 ### 2. Workflow-Tool MCP Surface
 
-Goal: add an MCP server surface for real GSD workflow tools, distinct from the current session/read API.
+Goal: add an MCP server surface for real GWD workflow tools, distinct from the current session/read API.
 
 Preferred first-cut tool set:
 
-- `gsd_summary_save`
-- `gsd_decision_save`
-- `gsd_plan_milestone`
-- `gsd_plan_slice`
-- `gsd_plan_task`
-- `gsd_task_complete`
-- `gsd_slice_complete`
-- `gsd_complete_milestone`
-- `gsd_validate_milestone`
-- `gsd_replan_slice`
-- `gsd_reassess_roadmap`
-- `gsd_save_gate_result`
-- `gsd_milestone_status`
+- `gwd_summary_save`
+- `gwd_decision_save`
+- `gwd_plan_milestone`
+- `gwd_plan_slice`
+- `gwd_plan_task`
+- `gwd_task_complete`
+- `gwd_slice_complete`
+- `gwd_complete_milestone`
+- `gwd_validate_milestone`
+- `gwd_replan_slice`
+- `gwd_reassess_roadmap`
+- `gwd_save_gate_result`
+- `gwd_milestone_status`
 
 Likely files:
 
@@ -80,7 +80,7 @@ Likely files:
 
 Decisions to make during implementation:
 
-- extend existing MCP package vs create `packages/mcp-gsd-tools-server`
+- extend existing MCP package vs create `packages/mcp-gwd-tools-server`
 - canonical names only vs selected alias export
 - single combined server vs separate “session” and “workflow” server modes
 
@@ -95,7 +95,7 @@ Goal: ensure MCP mutations enforce the same rules as native tool calls.
 
 Targets:
 
-- `src/resources/extensions/gsd/bootstrap/write-gate.ts`
+- `src/resources/extensions/gwd/bootstrap/write-gate.ts`
 - any current tool-call gating hooks tied to native runtime only
 - MCP wrapper layer before shared handler invocation
 
@@ -113,7 +113,7 @@ Exit criteria:
 
 ### 4. Claude Code Provider Integration
 
-Goal: attach the GSD workflow-tool MCP surface to Claude Code sessions.
+Goal: attach the GWD workflow-tool MCP surface to Claude Code sessions.
 
 Targets:
 
@@ -122,14 +122,14 @@ Targets:
 
 Expected work:
 
-- build a GSD-managed `mcpServers` config for the Claude SDK session
-- attach the workflow MCP server only when the session requires GSD tools
+- build a GWD-managed `mcpServers` config for the Claude SDK session
+- attach the workflow MCP server only when the session requires GWD tools
 - keep current Claude Code streaming behavior intact
 
 Exit criteria:
 
-- Claude Code session can discover the GSD workflow MCP tools
-- task execution path can call `gsd_task_complete` successfully
+- Claude Code session can discover the GWD workflow MCP tools
+- task execution path can call `gwd_task_complete` successfully
 
 ### 5. Capability Detection and Failure Path
 
@@ -137,14 +137,14 @@ Goal: refuse to start tool-dependent workflows when required capabilities are un
 
 Targets:
 
-- GSD dispatch / auto-mode preflight
+- GWD dispatch / auto-mode preflight
 - provider selection and routing checks
 - user-facing compatibility errors
 
 Required behavior:
 
-- if native GSD tools are available, proceed
-- else if GSD workflow MCP tools are available, proceed
+- if native GWD tools are available, proceed
+- else if GWD workflow MCP tools are available, proceed
 - else fail fast with a precise message
 
 Exit criteria:
@@ -158,13 +158,13 @@ Goal: keep the workflow contract strict while removing transport assumptions fro
 
 Targets:
 
-- `src/resources/extensions/gsd/prompts/execute-task.md`
+- `src/resources/extensions/gwd/prompts/execute-task.md`
 - related planning/discuss prompts that reference tool availability
 - provider and MCP docs
 
 Rules:
 
-- prompts should keep requiring canonical GSD completion/planning tools
+- prompts should keep requiring canonical GWD completion/planning tools
 - prompts should not imply “native in-process tool only”
 - docs should explain native vs MCP-backed fulfillment paths
 
@@ -179,7 +179,7 @@ Exit criteria:
 
 Scope:
 
-- extract shared logic for `gsd_summary_save`, `gsd_task_complete`, and `gsd_milestone_status`
+- extract shared logic for `gwd_summary_save`, `gwd_task_complete`, and `gwd_milestone_status`
 - prove native wrappers still work
 
 Why first:
@@ -212,7 +212,7 @@ Scope:
 
 Verification:
 
-- Claude Code can call `gsd_task_complete`
+- Claude Code can call `gwd_task_complete`
 - summary file, DB state, and plan checkbox update correctly
 
 ## Phase 4: Expand to Full Minimum Workflow Set
@@ -251,16 +251,16 @@ Verification:
 
 High-probability files for the first implementation:
 
-- `src/resources/extensions/gsd/bootstrap/db-tools.ts`
-- `src/resources/extensions/gsd/bootstrap/query-tools.ts`
-- `src/resources/extensions/gsd/bootstrap/write-gate.ts`
-- `src/resources/extensions/gsd/tools/complete-task.ts`
+- `src/resources/extensions/gwd/bootstrap/db-tools.ts`
+- `src/resources/extensions/gwd/bootstrap/query-tools.ts`
+- `src/resources/extensions/gwd/bootstrap/write-gate.ts`
+- `src/resources/extensions/gwd/tools/complete-task.ts`
 - `src/resources/extensions/claude-code-cli/stream-adapter.ts`
 - `src/resources/extensions/claude-code-cli/index.ts`
 - `packages/mcp-server/src/server.ts`
 - `packages/mcp-server/src/session-manager.ts`
 - `packages/mcp-server/README.md`
-- `src/resources/extensions/gsd/prompts/execute-task.md`
+- `src/resources/extensions/gwd/prompts/execute-task.md`
 
 ## Testing Strategy
 
@@ -278,7 +278,7 @@ High-probability files for the first implementation:
 
 ### End-to-End
 
-- plan or execute a small fixture task and complete it through canonical GSD tools
+- plan or execute a small fixture task and complete it through canonical GWD tools
 - confirm DB row, rendered summary, and plan state stay in sync
 
 ## Risks
@@ -319,7 +319,7 @@ Mitigation:
 
 ADR-008 is considered implemented when:
 
-1. Claude Code-backed execution can use canonical GSD workflow tools over MCP.
+1. Claude Code-backed execution can use canonical GWD workflow tools over MCP.
 2. Native provider behavior remains intact.
 3. Shared handlers back both native and MCP invocation.
 4. Gating and state integrity protections apply equally to MCP mutations.
@@ -329,7 +329,7 @@ ADR-008 is considered implemented when:
 
 Start with a narrow spike:
 
-1. Extract shared handlers for `gsd_summary_save`, `gsd_task_complete`, and `gsd_milestone_status`.
+1. Extract shared handlers for `gwd_summary_save`, `gwd_task_complete`, and `gwd_milestone_status`.
 2. Expose those tools through a minimal workflow MCP server.
 3. Attach that MCP server to Claude Code sessions.
 4. Prove end-to-end task completion on a fixture project.

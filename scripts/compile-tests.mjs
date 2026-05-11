@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Project/App: GSD-2
+ * Project/App: GWD-2
  * File Purpose: Compile source and test files into reusable dist-test artifacts.
  *
  * Compile all TypeScript source + test files to dist-test/ using esbuild.
@@ -346,8 +346,8 @@ async function main() {
   const { rm } = await import('node:fs/promises');
   const testDirsToClean = [
     [join(DIST_TEST_DIR, 'src', 'tests'), join(ROOT, 'src', 'tests')],
-    [join(DIST_TEST_DIR, 'src', 'resources', 'extensions', 'gsd', 'tests'),
-     join(ROOT, 'src', 'resources', 'extensions', 'gsd', 'tests')],
+    [join(DIST_TEST_DIR, 'src', 'resources', 'extensions', 'gwd', 'tests'),
+     join(ROOT, 'src', 'resources', 'extensions', 'gwd', 'tests')],
   ];
   let staleCleaned = 0;
   for (const [distDir, srcDir] of testDirsToClean) {
@@ -371,7 +371,7 @@ async function main() {
   }
 
   // Ensure dist-test/node_modules exists so resource-loader.ts (which computes
-  // packageRoot from import.meta.url) resolves gsdNodeModules to a real path.
+  // packageRoot from import.meta.url) resolves gwdNodeModules to a real path.
   // Without this, initResources creates dangling symlinks in test environments.
   const distNodeModules = join(DIST_TEST_DIR, 'node_modules');
   if (!existsSync(distNodeModules)) {

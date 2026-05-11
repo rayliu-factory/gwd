@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { GsdClient, AgentEvent } from "./gsd-client.js";
+import type { GwdClient, AgentEvent } from "./gwd-client.js";
 import {
 	captureCurrentSnapshots,
 	captureOriginalContent,
@@ -28,11 +28,11 @@ export interface Checkpoint {
 }
 
 /**
- * Tracks file changes made by the GSD agent. Stores original file content
+ * Tracks file changes made by the GWD agent. Stores original file content
  * before the agent modifies it, enabling diff views, SCM integration,
  * and checkpoint/rollback functionality.
  */
-export class GsdChangeTracker implements vscode.Disposable {
+export class GwdChangeTracker implements vscode.Disposable {
 	/** file path → original content (before first agent modification this session) */
 	private originals = new Map<string, string | null>();
 	/** Set of file paths modified in the current agent turn */
@@ -55,7 +55,7 @@ export class GsdChangeTracker implements vscode.Disposable {
 	private disposables: vscode.Disposable[] = [];
 
 	constructor(
-		private readonly client: GsdClient,
+		private readonly client: GwdClient,
 		private readonly workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? process.cwd(),
 	) {
 		this.disposables.push(this._onDidChange, this._onCheckpointChange);

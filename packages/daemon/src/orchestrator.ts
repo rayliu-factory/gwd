@@ -84,7 +84,7 @@ Response guidelines:
 const TOOLS: Tool[] = [
   {
     name: 'list_projects',
-    description: 'List all detected projects across configured scan roots. Returns project names, paths, and detected markers (git, node, gsd, etc.).',
+    description: 'List all detected projects across configured scan roots. Returns project names, paths, and detected markers (git, node, gwd, etc.).',
     input_schema: {
       type: 'object' as const,
       properties: {},

@@ -5,14 +5,14 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 
 /**
- * Regression test for gwd-build/gwd-2 #4787.
+ * Regression test for rayliu-factory/gwd #4787.
  *
  * Background: `computeResourceFingerprint` previously hashed the relative
  * file path + file size only. Same-byte-length edits to bundled prompt
  * templates (e.g. the #4570 retry-cap fix to parallel-research-slices.md)
  * slipped through the fingerprint gate in `initResources`, so existing
  * installs silently kept serving the stale cached copy from
- * `~/.gwd/agent/extensions/gsd/prompts/`.
+ * `~/.gwd/agent/extensions/gwd/prompts/`.
  *
  * The fix hashes file CONTENTS (sha256) instead of just size — any edit,
  * regardless of length, produces a different fingerprint and triggers a
@@ -22,7 +22,7 @@ import { tmpdir } from "node:os";
 test("computeResourceFingerprint detects same-size content edits (#4787)", async (t) => {
   const { computeResourceFingerprint } = await import("../resource-loader.ts");
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-fingerprint-content-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-fingerprint-content-"));
   t.after(() => { rmSync(tmp, { recursive: true, force: true }); });
 
   const dirA = join(tmp, "bundled-a");
@@ -53,7 +53,7 @@ test("computeResourceFingerprint detects same-size content edits (#4787)", async
 test("syncResourceDir overwrites same-size stale content on refresh (#4787)", async (t) => {
   const { syncResourceDir } = await import("../resource-loader.ts");
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-sync-samesize-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-sync-samesize-"));
   t.after(() => { rmSync(tmp, { recursive: true, force: true }); });
 
   const bundled = join(tmp, "bundled", "prompts");

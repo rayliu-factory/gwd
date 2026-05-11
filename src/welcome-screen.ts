@@ -14,17 +14,17 @@ import stripAnsi from 'strip-ansi'
 import { GWD_LOGO } from './logo.js'
 import { PRODUCT_FULL_NAME } from './namespace.js'
 
-interface GsdState {
+interface GwdState {
   milestone?: string
   phase?: string
   slice?: string
   nextAction?: string
 }
 
-function readGsdState(): GsdState | undefined {
+function readGwdState(): GwdState | undefined {
   try {
-    const raw = readFileSync(join(process.cwd(), '.gsd', 'STATE.md'), 'utf-8')
-    const state: GsdState = {}
+    const raw = readFileSync(join(process.cwd(), '.gwd', 'STATE.md'), 'utf-8')
+    const state: GwdState = {}
     const milestone = raw.match(/^\*\*Active Milestone:\*\*\s*(.+)$/m)
     if (milestone) state.milestone = milestone[1].trim()
     const slice = raw.match(/^\*\*Active Slice:\*\*\s*(.+)$/m)
@@ -46,7 +46,7 @@ function readGsdState(): GsdState | undefined {
 function countMcpServers(): number {
   const configPaths = [
     join(process.cwd(), '.mcp.json'),
-    join(process.cwd(), '.gsd', 'mcp.json'),
+    join(process.cwd(), '.gwd', 'mcp.json'),
   ]
   const seen = new Set<string>()
   for (const p of configPaths) {
@@ -134,7 +134,7 @@ export function buildWelcomeScreenLines(opts: WelcomeScreenOptions): string[] {
   // "Welcome back" context lines — GWD state if available, else hint.
   // Intentionally avoids data already shown in the footer (model, provider,
   // pwd, branch).
-  const state = readGsdState()
+  const state = readGwdState()
   let line1 = ''
   let line2 = ''
   if (state?.milestone) {

@@ -579,9 +579,9 @@ export class ModelRegistry {
 	 */
 	getProviderAuthMode(provider: string): ProviderAuthMode {
 		// E2E-test-only: the fake provider is keyless. Sentinel is project-
-		// internal ("gsd-fake") so it cannot collide with a real provider.
+		// internal ("gwd-fake") so it cannot collide with a real provider.
 		// See packages/pi-ai/src/providers/fake.ts.
-		if (provider === "gsd-fake") return "none";
+		if (provider === "gwd-fake") return "none";
 		const config = this.registeredProviders.get(provider);
 		if (!config) return "apiKey";
 		if (config.authMode) return config.authMode;

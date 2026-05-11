@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import type { GsdClient } from "./gsd-client.js";
+import type { GwdClient } from "./gwd-client.js";
 
 interface ContentBlock {
 	type: string;
@@ -17,31 +17,31 @@ interface ConversationMessage {
 
 /**
  * Webview panel that displays the full conversation history for the
- * current GSD session using the get_messages RPC call. Shows tool calls,
+ * current GWD session using the get_messages RPC call. Shows tool calls,
  * thinking blocks, search/filter, and fork-from-here actions.
  */
-export class GsdConversationHistoryPanel implements vscode.Disposable {
-	private static currentPanel: GsdConversationHistoryPanel | undefined;
+export class GwdConversationHistoryPanel implements vscode.Disposable {
+	private static currentPanel: GwdConversationHistoryPanel | undefined;
 
 	private readonly panel: vscode.WebviewPanel;
-	private readonly client: GsdClient;
+	private readonly client: GwdClient;
 	private disposables: vscode.Disposable[] = [];
 
 	static createOrShow(
 		extensionUri: vscode.Uri,
-		client: GsdClient,
-	): GsdConversationHistoryPanel {
+		client: GwdClient,
+	): GwdConversationHistoryPanel {
 		const column = vscode.window.activeTextEditor?.viewColumn ?? vscode.ViewColumn.One;
 
-		if (GsdConversationHistoryPanel.currentPanel) {
-			GsdConversationHistoryPanel.currentPanel.panel.reveal(column);
-			void GsdConversationHistoryPanel.currentPanel.refresh();
-			return GsdConversationHistoryPanel.currentPanel;
+		if (GwdConversationHistoryPanel.currentPanel) {
+			GwdConversationHistoryPanel.currentPanel.panel.reveal(column);
+			void GwdConversationHistoryPanel.currentPanel.refresh();
+			return GwdConversationHistoryPanel.currentPanel;
 		}
 
 		const panel = vscode.window.createWebviewPanel(
-			"gsd-history",
-			"GSD Conversation History",
+			"gwd-history",
+			"GWD Conversation History",
 			column,
 			{
 				enableScripts: true,
@@ -49,19 +49,19 @@ export class GsdConversationHistoryPanel implements vscode.Disposable {
 			},
 		);
 
-		GsdConversationHistoryPanel.currentPanel = new GsdConversationHistoryPanel(
+		GwdConversationHistoryPanel.currentPanel = new GwdConversationHistoryPanel(
 			panel,
 			extensionUri,
 			client,
 		);
-		void GsdConversationHistoryPanel.currentPanel.refresh();
-		return GsdConversationHistoryPanel.currentPanel;
+		void GwdConversationHistoryPanel.currentPanel.refresh();
+		return GwdConversationHistoryPanel.currentPanel;
 	}
 
 	private constructor(
 		panel: vscode.WebviewPanel,
 		_extensionUri: vscode.Uri,
-		client: GsdClient,
+		client: GwdClient,
 	) {
 		this.panel = panel;
 		this.client = client;
@@ -91,7 +91,7 @@ export class GsdConversationHistoryPanel implements vscode.Disposable {
 
 	async refresh(): Promise<void> {
 		if (!this.client.isConnected) {
-			this.panel.webview.html = this.getHtml([], "Not connected to GSD agent.");
+			this.panel.webview.html = this.getHtml([], "Not connected to GWD agent.");
 			return;
 		}
 
@@ -105,7 +105,7 @@ export class GsdConversationHistoryPanel implements vscode.Disposable {
 	}
 
 	dispose(): void {
-		GsdConversationHistoryPanel.currentPanel = undefined;
+		GwdConversationHistoryPanel.currentPanel = undefined;
 		this.panel.dispose();
 		for (const d of this.disposables) {
 			d.dispose();
@@ -127,7 +127,7 @@ export class GsdConversationHistoryPanel implements vscode.Disposable {
 
 				return `<div class="message ${isUser ? "user" : "assistant"}" id="${entryId}">
 				<div class="role-row">
-					<span class="role">${isUser ? "You" : "GSD"}</span>
+					<span class="role">${isUser ? "You" : "GWD"}</span>
 					${forkBtn}
 				</div>
 				<div class="content">${blocks}</div>

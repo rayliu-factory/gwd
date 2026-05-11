@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 
 import {
-  resolveBundledGsdExtensionModule,
+  resolveBundledGwdExtensionModule,
   resolveBundledResourcesDirFromPackageRoot,
 } from "../bundled-resource-path.ts";
 
@@ -30,7 +30,7 @@ test("complete dist/resources is selected when expected roots exist", () => {
   assert.equal(result, join(pkg, "dist", "resources"));
 });
 
-test("GSD extension module resolution falls back to source when dist module is missing", () => {
+test("GWD extension module resolution falls back to source when dist module is missing", () => {
   const pkg = "/pkg";
   const fakeImportUrl = `file://${join(pkg, "src", "worktree-cli.ts")}`;
   const existing = new Set([
@@ -38,29 +38,29 @@ test("GSD extension module resolution falls back to source when dist module is m
     join(pkg, "dist", "resources", "extensions"),
   ]);
 
-  const result = resolveBundledGsdExtensionModule(
+  const result = resolveBundledGwdExtensionModule(
     fakeImportUrl,
     "worktree-root.ts",
     (p) => existing.has(p),
   );
 
-  assert.equal(result, join(pkg, "src", "resources", "extensions", "gsd", "worktree-root.ts"));
+  assert.equal(result, join(pkg, "src", "resources", "extensions", "gwd", "worktree-root.ts"));
 });
 
-test("GSD extension module resolution uses compiled dist module when available", () => {
+test("GWD extension module resolution uses compiled dist module when available", () => {
   const pkg = "/pkg";
   const fakeImportUrl = `file://${join(pkg, "src", "worktree-cli.ts")}`;
   const existing = new Set([
     join(pkg, "dist", "resources", "agents"),
     join(pkg, "dist", "resources", "extensions"),
-    join(pkg, "dist", "resources", "extensions", "gsd", "worktree-manager.js"),
+    join(pkg, "dist", "resources", "extensions", "gwd", "worktree-manager.js"),
   ]);
 
-  const result = resolveBundledGsdExtensionModule(
+  const result = resolveBundledGwdExtensionModule(
     fakeImportUrl,
     "worktree-manager.ts",
     (p) => existing.has(p),
   );
 
-  assert.equal(result, join(pkg, "dist", "resources", "extensions", "gsd", "worktree-manager.js"));
+  assert.equal(result, join(pkg, "dist", "resources", "extensions", "gwd", "worktree-manager.js"));
 });

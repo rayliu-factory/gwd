@@ -1,26 +1,26 @@
-// Project/App: GSD-2
-// File Purpose: VS Code extension activation and command registration for GSD.
+// Project/App: GWD
+// File Purpose: VS Code extension activation and command registration for GWD.
 
 import * as vscode from "vscode";
 import { pickTrustedConfigurationValue } from "./trusted-config.js";
-import { GsdClient, ThinkingLevel } from "./gsd-client.js";
+import { GwdClient, ThinkingLevel } from "./gwd-client.js";
 import { registerChatParticipant } from "./chat-participant.js";
-import { GsdSidebarProvider } from "./sidebar.js";
-import { GsdFileDecorationProvider } from "./file-decorations.js";
-import { GsdBashTerminal } from "./bash-terminal.js";
-import { GsdSessionTreeProvider } from "./session-tree.js";
-import { GsdConversationHistoryPanel } from "./conversation-history.js";
-import { GsdSlashCompletionProvider } from "./slash-completion.js";
-import { GsdCodeLensProvider } from "./code-lens.js";
-import { GsdActivityFeedProvider } from "./activity-feed.js";
-import { GsdChangeTracker } from "./change-tracker.js";
-import { GsdScmProvider } from "./scm-provider.js";
-import { GsdDiagnosticBridge } from "./diagnostics.js";
-import { GsdLineDecorationManager } from "./line-decorations.js";
-import { GsdGitIntegration } from "./git-integration.js";
-import { GsdPermissionManager } from "./permissions.js";
-import { GsdPlanViewerProvider } from "./plan-viewer.js";
-import { GsdCheckpointProvider } from "./checkpoints.js";
+import { GwdSidebarProvider } from "./sidebar.js";
+import { GwdFileDecorationProvider } from "./file-decorations.js";
+import { GwdBashTerminal } from "./bash-terminal.js";
+import { GwdSessionTreeProvider } from "./session-tree.js";
+import { GwdConversationHistoryPanel } from "./conversation-history.js";
+import { GwdSlashCompletionProvider } from "./slash-completion.js";
+import { GwdCodeLensProvider } from "./code-lens.js";
+import { GwdActivityFeedProvider } from "./activity-feed.js";
+import { GwdChangeTracker } from "./change-tracker.js";
+import { GwdScmProvider } from "./scm-provider.js";
+import { GwdDiagnosticBridge } from "./diagnostics.js";
+import { GwdLineDecorationManager } from "./line-decorations.js";
+import { GwdGitIntegration } from "./git-integration.js";
+import { GwdPermissionManager } from "./permissions.js";
+import { GwdPlanViewerProvider } from "./plan-viewer.js";
+import { GwdCheckpointProvider } from "./checkpoints.js";
 import {
 	formatSessionStatsLines,
 	getBashExitCode,
@@ -29,35 +29,35 @@ import {
 	getSessionTotalTokens,
 } from "./rpc-display.js";
 
-let client: GsdClient | undefined;
-let sidebarProvider: GsdSidebarProvider | undefined;
-let fileDecorations: GsdFileDecorationProvider | undefined;
-let sessionTreeProvider: GsdSessionTreeProvider | undefined;
-let activityFeedProvider: GsdActivityFeedProvider | undefined;
-let planViewerProvider: GsdPlanViewerProvider | undefined;
-let checkpointProvider: GsdCheckpointProvider | undefined;
-let changeTracker: GsdChangeTracker | undefined;
-let scmProvider: GsdScmProvider | undefined;
-let diagnosticBridge: GsdDiagnosticBridge | undefined;
-let lineDecorations: GsdLineDecorationManager | undefined;
-let gitIntegration: GsdGitIntegration | undefined;
-let permissionManager: GsdPermissionManager | undefined;
+let client: GwdClient | undefined;
+let sidebarProvider: GwdSidebarProvider | undefined;
+let fileDecorations: GwdFileDecorationProvider | undefined;
+let sessionTreeProvider: GwdSessionTreeProvider | undefined;
+let activityFeedProvider: GwdActivityFeedProvider | undefined;
+let planViewerProvider: GwdPlanViewerProvider | undefined;
+let checkpointProvider: GwdCheckpointProvider | undefined;
+let changeTracker: GwdChangeTracker | undefined;
+let scmProvider: GwdScmProvider | undefined;
+let diagnosticBridge: GwdDiagnosticBridge | undefined;
+let lineDecorations: GwdLineDecorationManager | undefined;
+let gitIntegration: GwdGitIntegration | undefined;
+let permissionManager: GwdPermissionManager | undefined;
 
 function getTrustedConfigurationValue<T>(section: string, key: string, fallback: T): T {
 	const config = vscode.workspace.getConfiguration(section);
 	return pickTrustedConfigurationValue(config.inspect<T>(key), fallback);
 }
 
-export function resolveTrustedGsdStartupConfig(): { binaryPath: string; autoStart: boolean } {
+export function resolveTrustedGwdStartupConfig(): { binaryPath: string; autoStart: boolean } {
 	return {
-		binaryPath: getTrustedConfigurationValue("gsd", "binaryPath", "gsd"),
-		autoStart: getTrustedConfigurationValue("gsd", "autoStart", false),
+		binaryPath: getTrustedConfigurationValue("gwd", "binaryPath", "gwd"),
+		autoStart: getTrustedConfigurationValue("gwd", "autoStart", false),
 	};
 }
 
 function requireConnected(): boolean {
 	if (!client?.isConnected) {
-		vscode.window.showWarningMessage("GSD agent is not running.");
+		vscode.window.showWarningMessage("GWD agent is not running.");
 		return false;
 	}
 	return true;
@@ -69,16 +69,16 @@ function handleError(err: unknown, context: string): void {
 }
 
 export function activate(context: vscode.ExtensionContext): void {
-	const startupConfig = resolveTrustedGsdStartupConfig();
-	const config = vscode.workspace.getConfiguration("gsd");
+	const startupConfig = resolveTrustedGwdStartupConfig();
+	const config = vscode.workspace.getConfiguration("gwd");
 	const binaryPath = startupConfig.binaryPath;
 	const cwd = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? process.cwd();
 
-	client = new GsdClient(binaryPath, cwd);
+	client = new GwdClient(binaryPath, cwd);
 	context.subscriptions.push(client);
 
 	// Log stderr to an output channel
-	const outputChannel = vscode.window.createOutputChannel("GSD-2 Agent");
+	const outputChannel = vscode.window.createOutputChannel("GWD Agent");
 	context.subscriptions.push(outputChannel);
 
 	client.onError((msg) => {
@@ -88,16 +88,16 @@ export function activate(context: vscode.ExtensionContext): void {
 	// -- Persistent status bar item ----------------------------------------
 
 	const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
-	statusBarItem.command = "workbench.view.extension.gsd";
-	statusBarItem.text = "$(hubot) GSD";
-	statusBarItem.tooltip = "GSD Agent — click to open";
+	statusBarItem.command = "workbench.view.extension.gwd";
+	statusBarItem.text = "$(hubot) GWD";
+	statusBarItem.tooltip = "GWD Agent — click to open";
 	statusBarItem.show();
 	context.subscriptions.push(statusBarItem);
 
 	async function refreshStatusBar(): Promise<void> {
 		if (!client?.isConnected) {
-			statusBarItem.text = "$(hubot) GSD";
-			statusBarItem.tooltip = "GSD: Disconnected";
+			statusBarItem.text = "$(hubot) GWD";
+			statusBarItem.tooltip = "GWD: Disconnected";
 			return;
 		}
 		try {
@@ -109,10 +109,10 @@ export function activate(context: vscode.ExtensionContext): void {
 			const cost = getSessionCost(stats);
 			const costPart = cost > 0 ? ` | $${cost.toFixed(4)}` : "";
 			const streamPart = state?.isStreaming ? " $(sync~spin)" : "";
-			statusBarItem.text = `$(hubot) GSD${modelId ? ` | ${modelId}` : ""}${costPart}${streamPart}`;
+			statusBarItem.text = `$(hubot) GWD${modelId ? ` | ${modelId}` : ""}${costPart}${streamPart}`;
 			statusBarItem.tooltip = state?.model
-				? `GSD: Connected — ${state.model.provider}/${state.model.id}`
-				: "GSD: Connected";
+				? `GWD: Connected — ${state.model.provider}/${state.model.id}`
+				: "GWD: Connected";
 		} catch {
 			// ignore fetch errors
 		}
@@ -124,25 +124,25 @@ export function activate(context: vscode.ExtensionContext): void {
 	client.onConnectionChange(async (connected) => {
 		await refreshStatusBar();
 		if (connected) {
-			vscode.window.setStatusBarMessage("$(hubot) GSD connected", 3000);
+			vscode.window.setStatusBarMessage("$(hubot) GWD connected", 3000);
 		} else {
-			vscode.window.setStatusBarMessage("$(hubot) GSD disconnected", 3000);
+			vscode.window.setStatusBarMessage("$(hubot) GWD disconnected", 3000);
 		}
 	});
 
 	// -- Sidebar -----------------------------------------------------------
 
-	sidebarProvider = new GsdSidebarProvider(context.extensionUri, client);
+	sidebarProvider = new GwdSidebarProvider(context.extensionUri, client);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(
-			GsdSidebarProvider.viewId,
+			GwdSidebarProvider.viewId,
 			sidebarProvider,
 		),
 	);
 
 	// -- File decorations --------------------------------------------------
 
-	fileDecorations = new GsdFileDecorationProvider(client);
+	fileDecorations = new GwdFileDecorationProvider(client);
 	context.subscriptions.push(
 		fileDecorations,
 		vscode.window.registerFileDecorationProvider(fileDecorations),
@@ -150,65 +150,65 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// -- Bash terminal -----------------------------------------------------
 
-	const bashTerminal = new GsdBashTerminal(client);
+	const bashTerminal = new GwdBashTerminal(client);
 	context.subscriptions.push(bashTerminal);
 
 	// -- Session tree view -------------------------------------------------
 
-	sessionTreeProvider = new GsdSessionTreeProvider(client);
+	sessionTreeProvider = new GwdSessionTreeProvider(client);
 	context.subscriptions.push(
 		sessionTreeProvider,
-		vscode.window.registerTreeDataProvider(GsdSessionTreeProvider.viewId, sessionTreeProvider),
+		vscode.window.registerTreeDataProvider(GwdSessionTreeProvider.viewId, sessionTreeProvider),
 	);
 
 	// -- Activity feed -----------------------------------------------------
 
-	activityFeedProvider = new GsdActivityFeedProvider(client);
+	activityFeedProvider = new GwdActivityFeedProvider(client);
 	context.subscriptions.push(
 		activityFeedProvider,
-		vscode.window.registerTreeDataProvider(GsdActivityFeedProvider.viewId, activityFeedProvider),
+		vscode.window.registerTreeDataProvider(GwdActivityFeedProvider.viewId, activityFeedProvider),
 	);
 
 	// -- Plan view ----------------------------------------------------------
 
-	planViewerProvider = new GsdPlanViewerProvider(client);
+	planViewerProvider = new GwdPlanViewerProvider(client);
 	context.subscriptions.push(
 		planViewerProvider,
-		vscode.window.registerTreeDataProvider(GsdPlanViewerProvider.viewId, planViewerProvider),
+		vscode.window.registerTreeDataProvider(GwdPlanViewerProvider.viewId, planViewerProvider),
 	);
 
 	// -- Change tracker & SCM provider -------------------------------------
 
-	changeTracker = new GsdChangeTracker(client, cwd);
+	changeTracker = new GwdChangeTracker(client, cwd);
 	context.subscriptions.push(changeTracker);
 
-	checkpointProvider = new GsdCheckpointProvider(changeTracker);
+	checkpointProvider = new GwdCheckpointProvider(changeTracker);
 	context.subscriptions.push(
 		checkpointProvider,
-		vscode.window.registerTreeDataProvider(GsdCheckpointProvider.viewId, checkpointProvider),
+		vscode.window.registerTreeDataProvider(GwdCheckpointProvider.viewId, checkpointProvider),
 	);
 
-	scmProvider = new GsdScmProvider(changeTracker, cwd);
+	scmProvider = new GwdScmProvider(changeTracker, cwd);
 	context.subscriptions.push(scmProvider);
 
 	// -- Diagnostics -------------------------------------------------------
 
-	diagnosticBridge = new GsdDiagnosticBridge(client);
+	diagnosticBridge = new GwdDiagnosticBridge(client);
 	context.subscriptions.push(diagnosticBridge);
 
 	// -- Line-level decorations --------------------------------------------
 
-	lineDecorations = new GsdLineDecorationManager(changeTracker!);
+	lineDecorations = new GwdLineDecorationManager(changeTracker!);
 	context.subscriptions.push(lineDecorations);
 
 	// -- Git integration ---------------------------------------------------
 
-	gitIntegration = new GsdGitIntegration(changeTracker!, cwd);
+	gitIntegration = new GwdGitIntegration(changeTracker!, cwd);
 	context.subscriptions.push(gitIntegration);
 
 	// -- Permissions -------------------------------------------------------
 
-	permissionManager = new GsdPermissionManager(client);
+	permissionManager = new GwdPermissionManager(client);
 	context.subscriptions.push(permissionManager);
 
 	// -- Progress notifications --------------------------------------------
@@ -216,14 +216,14 @@ export function activate(context: vscode.ExtensionContext): void {
 	let currentProgress: { resolve: () => void } | undefined;
 
 	client.onEvent((evt) => {
-		const showProgress = vscode.workspace.getConfiguration("gsd").get<boolean>("showProgressNotifications", true);
+		const showProgress = vscode.workspace.getConfiguration("gwd").get<boolean>("showProgressNotifications", true);
 		if (!showProgress) return;
 
 		if (evt.type === "agent_start" && !currentProgress) {
 			vscode.window.withProgress(
 				{
 					location: vscode.ProgressLocation.Notification,
-					title: "GSD Agent",
+					title: "GWD Agent",
 					cancellable: true,
 				},
 				(progress, token) => {
@@ -263,7 +263,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	let lastContextWarning = 0;
 	client.onEvent(async (evt) => {
 		if (evt.type !== "message_end") return;
-		const showWarning = vscode.workspace.getConfiguration("gsd").get<boolean>("showContextWarning", true);
+		const showWarning = vscode.workspace.getConfiguration("gwd").get<boolean>("showContextWarning", true);
 		if (!showWarning) return;
 
 		// Throttle: at most once per 60 seconds
@@ -278,7 +278,7 @@ export function activate(context: vscode.ExtensionContext): void {
 			const totalTokens = getSessionTotalTokens(stats);
 			if (contextWindow <= 0) return;
 
-			const threshold = vscode.workspace.getConfiguration("gsd").get<number>("contextWarningThreshold", 80);
+			const threshold = vscode.workspace.getConfiguration("gwd").get<number>("contextWarningThreshold", 80);
 			const pct = Math.round((totalTokens / contextWindow) * 100);
 			if (pct >= threshold) {
 				lastContextWarning = Date.now();
@@ -287,7 +287,7 @@ export function activate(context: vscode.ExtensionContext): void {
 					"Compact Now",
 				);
 				if (action === "Compact Now") {
-					await vscode.commands.executeCommand("gsd.compact");
+					await vscode.commands.executeCommand("gwd.compact");
 				}
 			}
 		} catch {
@@ -301,11 +301,11 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// -- Conversation history panel ----------------------------------------
 
-	// (panel is created on demand via gsd.showHistory command)
+	// (panel is created on demand via gwd.showHistory command)
 
 	// -- Slash command completion ------------------------------------------
 
-	const slashCompletion = new GsdSlashCompletionProvider(client);
+	const slashCompletion = new GwdSlashCompletionProvider(client);
 	context.subscriptions.push(
 		slashCompletion,
 		vscode.languages.registerCompletionItemProvider(
@@ -322,9 +322,9 @@ export function activate(context: vscode.ExtensionContext): void {
 		),
 	);
 
-	// -- Code lens "Ask GSD" -----------------------------------------------
+	// -- Code lens "Ask GWD" -----------------------------------------------
 
-	const codeLensProvider = new GsdCodeLensProvider(client);
+	const codeLensProvider = new GwdCodeLensProvider(client);
 	context.subscriptions.push(
 		codeLensProvider,
 		vscode.languages.registerCodeLensProvider(
@@ -345,40 +345,40 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Start
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.start", async () => {
+		vscode.commands.registerCommand("gwd.start", async () => {
 			try {
 				await client!.start();
 				// Apply auto-compaction setting
-				const autoCompaction = vscode.workspace.getConfiguration("gsd").get<boolean>("autoCompaction", true);
+				const autoCompaction = vscode.workspace.getConfiguration("gwd").get<boolean>("autoCompaction", true);
 				await client!.setAutoCompaction(autoCompaction).catch(() => {});
 				sidebarProvider?.refresh();
 				refreshStatusBar();
-				vscode.window.showInformationMessage("GSD agent started.");
+				vscode.window.showInformationMessage("GWD agent started.");
 			} catch (err) {
-				handleError(err, "Failed to start GSD");
+				handleError(err, "Failed to start GWD");
 			}
 		}),
 	);
 
 	// Stop
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.stop", async () => {
+		vscode.commands.registerCommand("gwd.stop", async () => {
 			await client!.stop();
 			sidebarProvider?.refresh();
-			vscode.window.showInformationMessage("GSD agent stopped.");
+			vscode.window.showInformationMessage("GWD agent stopped.");
 		}),
 	);
 
 	// New Session
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.newSession", async () => {
+		vscode.commands.registerCommand("gwd.newSession", async () => {
 			if (!requireConnected()) return;
 			try {
 				await client!.newSession();
 				sidebarProvider?.refresh();
 				sessionTreeProvider?.refresh();
 				fileDecorations?.clear();
-				vscode.window.showInformationMessage("New GSD session started.");
+				vscode.window.showInformationMessage("New GWD session started.");
 			} catch (err) {
 				handleError(err, "Failed to start new session");
 			}
@@ -387,10 +387,10 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Send Message
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.sendMessage", async () => {
+		vscode.commands.registerCommand("gwd.sendMessage", async () => {
 			if (!requireConnected()) return;
 			const message = await vscode.window.showInputBox({
-				prompt: "Enter message for GSD",
+				prompt: "Enter message for GWD",
 				placeHolder: "What should I do?",
 			});
 			if (!message) return;
@@ -404,7 +404,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Abort
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.abort", async () => {
+		vscode.commands.registerCommand("gwd.abort", async () => {
 			if (!requireConnected()) return;
 			try {
 				await client!.abort();
@@ -417,7 +417,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Cycle Model
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.cycleModel", async () => {
+		vscode.commands.registerCommand("gwd.cycleModel", async () => {
 			if (!requireConnected()) return;
 			try {
 				const result = await client!.cycleModel();
@@ -437,7 +437,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Switch Model (QuickPick)
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.switchModel", async () => {
+		vscode.commands.registerCommand("gwd.switchModel", async () => {
 			if (!requireConnected()) return;
 			try {
 				const models = await client!.getAvailableModels();
@@ -466,7 +466,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Cycle Thinking Level
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.cycleThinking", async () => {
+		vscode.commands.registerCommand("gwd.cycleThinking", async () => {
 			if (!requireConnected()) return;
 			try {
 				const result = await client!.cycleThinkingLevel();
@@ -484,7 +484,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Set Thinking Level (QuickPick)
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.setThinking", async () => {
+		vscode.commands.registerCommand("gwd.setThinking", async () => {
 			if (!requireConnected()) return;
 			const levels: ThinkingLevel[] = ["off", "low", "medium", "high"];
 			const selected = await vscode.window.showQuickPick(levels, {
@@ -503,7 +503,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Compact Context
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.compact", async () => {
+		vscode.commands.registerCommand("gwd.compact", async () => {
 			if (!requireConnected()) return;
 			try {
 				await client!.compact();
@@ -517,11 +517,11 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Export HTML
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.exportHtml", async () => {
+		vscode.commands.registerCommand("gwd.exportHtml", async () => {
 			if (!requireConnected()) return;
 			try {
 				const saveUri = await vscode.window.showSaveDialog({
-					defaultUri: vscode.Uri.file("gsd-conversation.html"),
+					defaultUri: vscode.Uri.file("gwd-conversation.html"),
 					filters: { "HTML Files": ["html"] },
 				});
 				const outputPath = saveUri?.fsPath;
@@ -535,7 +535,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Session Stats
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.sessionStats", async () => {
+		vscode.commands.registerCommand("gwd.sessionStats", async () => {
 			if (!requireConnected()) return;
 			try {
 				const stats = await client!.getSessionStats();
@@ -552,7 +552,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Run Bash Command
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.runBash", async () => {
+		vscode.commands.registerCommand("gwd.runBash", async () => {
 			if (!requireConnected()) return;
 			const command = await vscode.window.showInputBox({
 				prompt: "Enter bash command to execute",
@@ -580,7 +580,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Steer Agent
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.steer", async () => {
+		vscode.commands.registerCommand("gwd.steer", async () => {
 			if (!requireConnected()) return;
 			const message = await vscode.window.showInputBox({
 				prompt: "Enter steering message (interrupts current operation)",
@@ -597,7 +597,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// List Available Commands
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.listCommands", async () => {
+		vscode.commands.registerCommand("gwd.listCommands", async () => {
 			if (!requireConnected()) return;
 			try {
 				const commands = await client!.getCommands();
@@ -625,7 +625,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Switch Session
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.switchSession", async (sessionFile?: string) => {
+		vscode.commands.registerCommand("gwd.switchSession", async (sessionFile?: string) => {
 			if (!requireConnected()) return;
 			const file = sessionFile ?? await (async () => {
 				const input = await vscode.window.showInputBox({
@@ -648,30 +648,30 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Refresh Sessions
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.refreshSessions", () => {
+		vscode.commands.registerCommand("gwd.refreshSessions", () => {
 			sessionTreeProvider?.refresh();
 		}),
 	);
 
 	// Show Conversation History
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.showHistory", () => {
+		vscode.commands.registerCommand("gwd.showHistory", () => {
 			if (!requireConnected()) return;
-			GsdConversationHistoryPanel.createOrShow(context.extensionUri, client!);
+			GwdConversationHistoryPanel.createOrShow(context.extensionUri, client!);
 		}),
 	);
 
 	// Ask About Symbol (triggered by code lens)
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
-			"gsd.askAboutSymbol",
+			"gwd.askAboutSymbol",
 			async (symbolName: string, fileName: string, lineNumber: number) => {
 				if (!requireConnected()) return;
 				try {
 					const prompt = `Explain the \`${symbolName}\` function/class in ${fileName} (line ${lineNumber}). Be concise.`;
 					await client!.sendPrompt(prompt);
 				} catch (err) {
-					handleError(err, "Failed to send Ask GSD request");
+					handleError(err, "Failed to send Ask GWD request");
 				}
 			},
 		),
@@ -679,21 +679,21 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Clear File Decorations
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.clearFileDecorations", () => {
+		vscode.commands.registerCommand("gwd.clearFileDecorations", () => {
 			fileDecorations?.clear();
 		}),
 	);
 
 	// Clear Activity Feed
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.clearActivity", () => {
+		vscode.commands.registerCommand("gwd.clearActivity", () => {
 			activityFeedProvider?.clear();
 		}),
 	);
 
 	// Fork Session
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.forkSession", async () => {
+		vscode.commands.registerCommand("gwd.forkSession", async () => {
 			if (!requireConnected()) return;
 			try {
 				const messages = await client!.getForkMessages();
@@ -724,7 +724,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Toggle Steering Mode
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.toggleSteeringMode", async () => {
+		vscode.commands.registerCommand("gwd.toggleSteeringMode", async () => {
 			if (!requireConnected()) return;
 			try {
 				const state = await client!.getState();
@@ -740,7 +740,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Toggle Follow-Up Mode
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.toggleFollowUpMode", async () => {
+		vscode.commands.registerCommand("gwd.toggleFollowUpMode", async () => {
 			if (!requireConnected()) return;
 			try {
 				const state = await client!.getState();
@@ -757,7 +757,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	// Refactor Symbol (code lens)
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
-			"gsd.refactorSymbol",
+			"gwd.refactorSymbol",
 			async (symbolName: string, fileName: string, lineNumber: number) => {
 				if (!requireConnected()) return;
 				try {
@@ -772,7 +772,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	// Find Bugs in Symbol (code lens)
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
-			"gsd.findBugsSymbol",
+			"gwd.findBugsSymbol",
 			async (symbolName: string, fileName: string, lineNumber: number) => {
 				if (!requireConnected()) return;
 				try {
@@ -787,7 +787,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	// Generate Tests for Symbol (code lens)
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
-			"gsd.generateTestsSymbol",
+			"gwd.generateTestsSymbol",
 			async (symbolName: string, fileName: string, lineNumber: number) => {
 				if (!requireConnected()) return;
 				try {
@@ -801,7 +801,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Toggle Auto-Retry
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.toggleAutoRetry", async () => {
+		vscode.commands.registerCommand("gwd.toggleAutoRetry", async () => {
 			if (!requireConnected()) return;
 			try {
 				const next = !client!.autoRetryEnabled;
@@ -816,7 +816,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Abort Retry
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.abortRetry", async () => {
+		vscode.commands.registerCommand("gwd.abortRetry", async () => {
 			if (!requireConnected()) return;
 			try {
 				await client!.abortRetry();
@@ -829,7 +829,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Set Session Name
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.setSessionName", async () => {
+		vscode.commands.registerCommand("gwd.setSessionName", async () => {
 			if (!requireConnected()) return;
 			const name = await vscode.window.showInputBox({
 				prompt: "Enter a name for this session",
@@ -848,7 +848,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	// Copy Last Response
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.copyLastResponse", async () => {
+		vscode.commands.registerCommand("gwd.copyLastResponse", async () => {
 			if (!requireConnected()) return;
 			try {
 				const text = await client!.getLastAssistantText();
@@ -867,14 +867,14 @@ export function activate(context: vscode.ExtensionContext): void {
 	// -- SCM commands -------------------------------------------------------
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.acceptAllChanges", () => {
+		vscode.commands.registerCommand("gwd.acceptAllChanges", () => {
 			changeTracker?.acceptAll();
 			vscode.window.showInformationMessage("All agent changes accepted.");
 		}),
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.discardAllChanges", async () => {
+		vscode.commands.registerCommand("gwd.discardAllChanges", async () => {
 			if (!changeTracker?.hasChanges) {
 				vscode.window.showInformationMessage("No agent changes to discard.");
 				return;
@@ -892,7 +892,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.discardFileChanges", async (resourceState: vscode.SourceControlResourceState) => {
+		vscode.commands.registerCommand("gwd.discardFileChanges", async (resourceState: vscode.SourceControlResourceState) => {
 			if (!changeTracker || !resourceState?.resourceUri) return;
 			const filePath = resourceState.resourceUri.fsPath;
 			const success = await changeTracker.discardFile(filePath);
@@ -903,7 +903,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.acceptFileChanges", (resourceState: vscode.SourceControlResourceState) => {
+		vscode.commands.registerCommand("gwd.acceptFileChanges", (resourceState: vscode.SourceControlResourceState) => {
 			if (!changeTracker || !resourceState?.resourceUri) return;
 			changeTracker.acceptFile(resourceState.resourceUri.fsPath);
 		}),
@@ -912,7 +912,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	// -- Checkpoint commands ------------------------------------------------
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.restoreCheckpoint", async (checkpointId: number) => {
+		vscode.commands.registerCommand("gwd.restoreCheckpoint", async (checkpointId: number) => {
 			if (!changeTracker) return;
 			const checkpoint = changeTracker.checkpoints.find((c) => c.id === checkpointId);
 			if (!checkpoint) return;
@@ -932,7 +932,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	// -- Diagnostic commands ------------------------------------------------
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.fixProblemsInFile", async () => {
+		vscode.commands.registerCommand("gwd.fixProblemsInFile", async () => {
 			if (!requireConnected()) return;
 			try {
 				await diagnosticBridge!.fixProblemsInFile();
@@ -943,7 +943,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.fixAllProblems", async () => {
+		vscode.commands.registerCommand("gwd.fixAllProblems", async () => {
 			if (!requireConnected()) return;
 			try {
 				await diagnosticBridge!.fixAllProblems();
@@ -954,13 +954,13 @@ export function activate(context: vscode.ExtensionContext): void {
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.clearDiagnostics", () => {
+		vscode.commands.registerCommand("gwd.clearDiagnostics", () => {
 			diagnosticBridge?.clearFindings();
 		}),
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.clearPlan", () => {
+		vscode.commands.registerCommand("gwd.clearPlan", () => {
 			planViewerProvider?.clear();
 		}),
 	);
@@ -968,13 +968,13 @@ export function activate(context: vscode.ExtensionContext): void {
 	// -- Permission commands ------------------------------------------------
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.cycleApprovalMode", () => {
+		vscode.commands.registerCommand("gwd.cycleApprovalMode", () => {
 			permissionManager?.cycleMode();
 		}),
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.selectApprovalMode", () => {
+		vscode.commands.registerCommand("gwd.selectApprovalMode", () => {
 			permissionManager?.selectMode();
 		}),
 	);
@@ -982,19 +982,19 @@ export function activate(context: vscode.ExtensionContext): void {
 	// -- Git commands -------------------------------------------------------
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.commitAgentChanges", () => {
+		vscode.commands.registerCommand("gwd.commitAgentChanges", () => {
 			gitIntegration?.commitAgentChanges();
 		}),
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.createAgentBranch", () => {
+		vscode.commands.registerCommand("gwd.createAgentBranch", () => {
 			gitIntegration?.createAgentBranch();
 		}),
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("gsd.showAgentDiff", () => {
+		vscode.commands.registerCommand("gwd.showAgentDiff", () => {
 			gitIntegration?.showAgentDiff();
 		}),
 	);
@@ -1002,7 +1002,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	// -- Auto-start ---------------------------------------------------------
 
 	if (startupConfig.autoStart) {
-		vscode.commands.executeCommand("gsd.start");
+		vscode.commands.executeCommand("gwd.start");
 	}
 }
 

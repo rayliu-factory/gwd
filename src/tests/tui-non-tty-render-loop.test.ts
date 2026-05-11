@@ -1,12 +1,12 @@
 /**
  * Test: RPC bridge TUI render loop must not burn CPU on non-TTY stdout.
  *
- * When gsd is spawned as an RPC bridge child process, stdout is a pipe
+ * When gwd is spawned as an RPC bridge child process, stdout is a pipe
  * (process.stdout.isTTY === undefined). The TUI render loop must not
  * start in that scenario — otherwise it runs at ~4,600 renders/second
  * consuming 500%+ CPU doing nothing useful.
  *
- * Regression test for: https://github.com/gwd-build/gwd-2/issues/3095
+ * Regression test for: https://github.com/rayliu-factory/gwd/issues/3095
  */
 import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert/strict";

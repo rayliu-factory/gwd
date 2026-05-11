@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD
 // File Purpose: Tests for the long-running refactor baseline metrics harness.
 
 import assert from "node:assert/strict";
@@ -60,11 +60,11 @@ test("parseCommandSpec rejects unlabeled commands", () => {
 test("collectPromptMetrics reports prompt file size and hash data", async () => {
   const root = await makeFixtureRoot();
   await writeFile(
-    join(root, "src/resources/extensions/gsd/prompts/execute-task.md"),
+    join(root, "src/resources/extensions/gwd/prompts/execute-task.md"),
     "Run the task.\nVerify the result.\n",
   );
   await writeFile(
-    join(root, "src/resources/extensions/gsd/prompts/plan-slice.md"),
+    join(root, "src/resources/extensions/gwd/prompts/plan-slice.md"),
     "Plan carefully.\n",
   );
 
@@ -72,7 +72,7 @@ test("collectPromptMetrics reports prompt file size and hash data", async () => 
 
   assert.equal(metrics.fileCount, 2);
   assert.equal(metrics.totalChars, "Run the task.\nVerify the result.\nPlan carefully.\n".length);
-  assert.equal(metrics.largestFiles[0].path, "src/resources/extensions/gsd/prompts/execute-task.md");
+  assert.equal(metrics.largestFiles[0].path, "src/resources/extensions/gwd/prompts/execute-task.md");
   assert.match(metrics.files[0].sha256, /^[a-f0-9]{64}$/);
 });
 
@@ -91,7 +91,7 @@ test("collectBaseline returns the phase-zero report shape", async () => {
   const root = await makeFixtureRoot();
   await writeFile(join(root, "CONTRIBUTING.md"), "# Contributing\n");
   await writeFile(join(root, "VISION.md"), "# Vision\n");
-  await writeFile(join(root, "src/resources/extensions/gsd/prompts/system.md"), "System prompt\n");
+  await writeFile(join(root, "src/resources/extensions/gwd/prompts/system.md"), "System prompt\n");
   await writeContractsSurfaceFixtures(root);
   await writeProcessMetricFixtures(root);
   await writeFile(join(root, "src/tests/fixtures/contracts-golden-fixtures.ts"), "export const fixtures = [];\n");
@@ -259,8 +259,8 @@ test("collectProcessMetrics reports Phase 7 process dashboard fields", async () 
   assert.equal(metrics.prGeneratorConsumers, 3);
   assert.deepEqual(metrics.prGeneratorConsumerFiles, [
     "src/resources/extensions/github-sync/templates.ts",
-    "src/resources/extensions/gsd/auto-worktree.ts",
-    "src/resources/extensions/gsd/commands-ship.ts",
+    "src/resources/extensions/gwd/auto-worktree.ts",
+    "src/resources/extensions/gwd/commands-ship.ts",
   ]);
   assert.equal(metrics.prBodiesMissingIssue, 0);
   assert.equal(metrics.prBodiesMissingTests, 0);
@@ -346,17 +346,17 @@ test("hasProcessDocConflict flags obsolete state-authority language", () => {
   assert.equal(hasProcessDocConflict("DB is authoritative; markdown is a projection."), false);
   assert.equal(hasProcessDocConflict("Markdown files are the authoritative runtime state."), true);
   assert.equal(hasProcessDocConflict("The filesystem-authoritative model owns status."), true);
-  assert.equal(hasProcessDocConflict(".gsd/ROADMAP.md is the source of truth."), true);
+  assert.equal(hasProcessDocConflict(".gwd/ROADMAP.md is the source of truth."), true);
 });
 
 test("renderSummary includes key sections for human inspection", async () => {
   const root = await makeFixtureRoot();
-  await writeFile(join(root, "src/resources/extensions/gsd/prompts/system.md"), "System prompt\n");
+  await writeFile(join(root, "src/resources/extensions/gwd/prompts/system.md"), "System prompt\n");
 
   const report = await collectBaseline(root);
   const summary = renderSummary(report);
 
-  assert.match(summary, /GSD-2 Refactor Baseline/);
+  assert.match(summary, /GWD Refactor Baseline/);
   assert.match(summary, /Schema version: 1/);
   assert.match(summary, /Prompt metrics/);
   assert.match(summary, /dist-test metrics/);
@@ -369,7 +369,7 @@ test("renderSummary includes key sections for human inspection", async () => {
 
 test("renderSummary includes comparison deltas when present", async () => {
   const root = await makeFixtureRoot();
-  await writeFile(join(root, "src/resources/extensions/gsd/prompts/system.md"), "System prompt\n");
+  await writeFile(join(root, "src/resources/extensions/gwd/prompts/system.md"), "System prompt\n");
 
   const report = await collectBaseline(root);
   report.comparison = compareReports(
@@ -392,35 +392,35 @@ test("writeJsonFile creates parent directories and writes parseable JSON", async
 });
 
 async function makeFixtureRoot(): Promise<string> {
-  const root = await mkdtemp(join(tmpdir(), "gsd-refactor-baseline-"));
-  await mkdir(join(root, "src/resources/extensions/gsd/prompts"), { recursive: true });
+  const root = await mkdtemp(join(tmpdir(), "gwd-refactor-baseline-"));
+  await mkdir(join(root, "src/resources/extensions/gwd/prompts"), { recursive: true });
   await mkdir(join(root, "src/tests/fixtures"), { recursive: true });
   return root;
 }
 
 async function writeProcessMetricFixtures(root: string): Promise<void> {
   await mkdir(join(root, "src/resources/extensions/github-sync"), { recursive: true });
-  await mkdir(join(root, "src/resources/extensions/gsd"), { recursive: true });
-  await mkdir(join(root, "src/resources/extensions/gsd/docs"), { recursive: true });
+  await mkdir(join(root, "src/resources/extensions/gwd"), { recursive: true });
+  await mkdir(join(root, "src/resources/extensions/gwd/docs"), { recursive: true });
   await mkdir(join(root, "docs/dev"), { recursive: true });
   await writeFile(
-    join(root, "src/resources/extensions/gsd/pr-evidence.ts"),
+    join(root, "src/resources/extensions/gwd/pr-evidence.ts"),
     'export function buildPrEvidence() { return "## Linked Issue\\n## Tests Run"; }\n',
   );
   await writeFile(
-    join(root, "src/resources/extensions/gsd/commands-ship.ts"),
+    join(root, "src/resources/extensions/gwd/commands-ship.ts"),
     'import { buildPrEvidence } from "./pr-evidence.js"; buildPrEvidence(); ghCreatePR();\n',
   );
   await writeFile(
-    join(root, "src/resources/extensions/gsd/auto-worktree.ts"),
+    join(root, "src/resources/extensions/gwd/auto-worktree.ts"),
     'import { buildPrEvidence } from "./pr-evidence.js"; buildPrEvidence(); createDraftPR();\n',
   );
   await writeFile(
     join(root, "src/resources/extensions/github-sync/templates.ts"),
-    'import { buildPrEvidence } from "../gsd/pr-evidence.js"; buildPrEvidence(); ghCreatePR();\n',
+    'import { buildPrEvidence } from "../gwd/pr-evidence.js"; buildPrEvidence(); ghCreatePR();\n',
   );
   await writeFile(
-    join(root, "src/resources/extensions/gsd/docs/state.md"),
+    join(root, "src/resources/extensions/gwd/docs/state.md"),
     "DB is authoritative. Markdown is a projection for humans.\n",
   );
 }
@@ -431,8 +431,8 @@ async function writeContractsSurfaceFixtures(root: string): Promise<void> {
     "packages/rpc-client/src/rpc-types.ts",
     "packages/mcp-server/src/types.ts",
     "src/web/bridge-service.ts",
-    "web/lib/gsd-workspace-store.tsx",
-    "vscode-extension/src/gsd-client.ts",
+    "web/lib/gwd-workspace-store.tsx",
+    "vscode-extension/src/gwd-client.ts",
   ];
   for (const file of files) {
     await mkdir(dirname(join(root, file)), { recursive: true });

@@ -3,16 +3,16 @@ title: "Configuration"
 description: "Preferences, model selection, MCP servers, hooks, and all settings."
 ---
 
-GSD preferences live in `~/.gsd/PREFERENCES.md` (global) or `.gsd/PREFERENCES.md` (project-local). Manage interactively with `/gsd prefs`.
+GWD preferences live in `~/.gwd/PREFERENCES.md` (global) or `.gwd/PREFERENCES.md` (project-local). Manage interactively with `/gwd prefs`.
 
 ## Preferences commands
 
 | Command | Description |
 |---------|-------------|
-| `/gsd prefs` | Open the global preferences wizard |
-| `/gsd prefs global` | Global preferences wizard |
-| `/gsd prefs project` | Project preferences wizard |
-| `/gsd prefs status` | Show current files, merged values, and skill status |
+| `/gwd prefs` | Open the global preferences wizard |
+| `/gwd prefs global` | Global preferences wizard |
+| `/gwd prefs project` | Project preferences wizard |
+| `/gwd prefs status` | Show current files, merged values, and skill status |
 
 ## Preferences file format
 
@@ -46,8 +46,8 @@ planning_depth: deep
 
 | Scope | Path | Applies to |
 |-------|------|-----------|
-| Global | `~/.gsd/PREFERENCES.md` | All projects |
-| Project | `.gsd/PREFERENCES.md` | Current project only |
+| Global | `~/.gwd/PREFERENCES.md` | All projects |
+| Project | `.gwd/PREFERENCES.md` | Current project only |
 
 **Merge behavior:**
 - **Scalar fields** — project wins if defined
@@ -56,7 +56,7 @@ planning_depth: deep
 
 ## Global API keys
 
-Tool API keys are stored globally in `~/.gsd/agent/auth.json`. Set them once with `/gsd config`.
+Tool API keys are stored globally in `~/.gwd/agent/auth.json`. Set them once with `/gwd config`.
 
 | Tool | Environment variable | Purpose |
 |------|---------------------|---------|
@@ -68,10 +68,10 @@ Anthropic models have built-in web search — no extra keys needed.
 
 ## MCP servers
 
-GSD connects to external MCP servers configured in project files:
+GWD connects to external MCP servers configured in project files:
 
 - `.mcp.json` — repo-shared config
-- `.gsd/mcp.json` — local-only config
+- `.gwd/mcp.json` — local-only config
 
 <Tabs>
   <Tab title="stdio server">
@@ -103,9 +103,9 @@ GSD connects to external MCP servers configured in project files:
   </Tab>
 </Tabs>
 
-Verify from a GSD session: `mcp_servers` → `mcp_discover` → `mcp_call`.
+Verify from a GWD session: `mcp_servers` → `mcp_discover` → `mcp_call`.
 
-`secure_env_collect` will not set MCP server runtime variables such as `GSD_WORKFLOW_EXECUTORS_MODULE`, `GSD_WORKFLOW_PROJECT_ROOT`, `GSD_CLI_PATH`, `NODE_OPTIONS`, `NODE_PATH`, or `PATH`; configure those in the operator environment or MCP config. Local dotenv writes are hydrated into the current MCP server process, while Vercel and Convex pushes are remote-only and are not added to `process.env`.
+`secure_env_collect` will not set MCP server runtime variables such as `GWD_WORKFLOW_EXECUTORS_MODULE`, `GWD_WORKFLOW_PROJECT_ROOT`, `GWD_CLI_PATH`, `NODE_OPTIONS`, `NODE_PATH`, or `PATH`; configure those in the operator environment or MCP config. Local dotenv writes are hydrated into the current MCP server process, while Vercel and Convex pushes are remote-only and are not added to `process.env`.
 
 ## Models
 
@@ -126,7 +126,7 @@ models:
 
 **Phases:** `research`, `planning`, `execution`, `execution_simple`, `completion`, `subagent`
 
-When a model fails to switch, GSD automatically tries the next model in the `fallbacks` list.
+When a model fails to switch, GWD automatically tries the next model in the `fallbacks` list.
 
 For custom providers (Ollama, vLLM, LM Studio), see [custom models](/guides/custom-models).
 
@@ -147,9 +147,9 @@ planning_depth: deep
 | Value | Behavior |
 |-------|----------|
 | `light` | Default. Uses the normal milestone discussion flow. |
-| `deep` | Runs workflow preferences, `.gsd/PROJECT.md`, `.gsd/REQUIREMENTS.md`, a research decision, and optional project research before milestone planning. |
+| `deep` | Runs workflow preferences, `.gwd/PROJECT.md`, `.gwd/REQUIREMENTS.md`, a research decision, and optional project research before milestone planning. |
 
-Enable deep mode with `/gsd new-project --deep`, `/gsd new-milestone --deep`, or by adding the setting to `.gsd/PREFERENCES.md`. The research decision is recorded in `.gsd/runtime/research-decision.json`; choosing research writes `.gsd/research/STACK.md`, `FEATURES.md`, `ARCHITECTURE.md`, and `PITFALLS.md`.
+Enable deep mode with `/gwd new-project --deep`, `/gwd new-milestone --deep`, or by adding the setting to `.gwd/PREFERENCES.md`. The research decision is recorded in `.gwd/runtime/research-decision.json`; choosing research writes `.gwd/research/STACK.md`, `FEATURES.md`, `ARCHITECTURE.md`, and `PITFALLS.md`.
 
 ### `budget_ceiling`
 
@@ -180,7 +180,7 @@ reactive_execution:
   enabled: false    # opt out
 ```
 
-When omitted, GSD uses the default-on threshold of three ready tasks. Set `enabled: true` explicitly to use the lower two-ready-task threshold. Optional fields: `max_parallel` (default `2`, range `1`-`8`), `isolation_mode: same-tree`, and `subagent_model`.
+When omitted, GWD uses the default-on threshold of three ready tasks. Set `enabled: true` explicitly to use the lower two-ready-task threshold. Optional fields: `max_parallel` (default `2`, range `1`-`8`), `isolation_mode: same-tree`, and `subagent_model`.
 
 ### `skill_discovery`
 
@@ -270,10 +270,10 @@ See [parallel orchestration](/guides/parallel-orchestration).
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `GSD_HOME` | `~/.gsd` | Global GSD directory |
-| `GSD_PROJECT_ID` | (auto-hash) | Override project identity hash |
-| `GSD_STATE_DIR` | `$GSD_HOME` | Per-project state root |
-| `GSD_CODING_AGENT_DIR` | `$GSD_HOME/agent` | Agent directory |
+| `GWD_HOME` | `~/.gwd` | Global GWD directory |
+| `GWD_PROJECT_ID` | (auto-hash) | Override project identity hash |
+| `GWD_STATE_DIR` | `$GWD_HOME` | Per-project state root |
+| `GWD_CODING_AGENT_DIR` | `$GWD_HOME/agent` | Agent directory |
 
 ## Full example
 

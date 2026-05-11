@@ -1,4 +1,4 @@
-// GSD2 — Regression test: auto-mode resume resolves resource-loader.js from deployed path (#3949)
+// GWD2 — Regression test: auto-mode resume resolves resource-loader.js from deployed path (#3949)
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -11,7 +11,7 @@ import { applyLoaderCliEntrypointEnv, resolveLoaderCliEntrypoint } from "../load
 const devCli = await import("../../scripts/dev-cli-helpers.mjs");
 
 test("source dev CLI remains the child-process GWD_BIN_PATH", (t) => {
-  const root = mkdtempSync(join(tmpdir(), "gsd-loader-entrypoint-"));
+  const root = mkdtempSync(join(tmpdir(), "gwd-loader-entrypoint-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
 
   const invokedLoader = join(root, "src", "loader.ts");
@@ -20,22 +20,22 @@ test("source dev CLI remains the child-process GWD_BIN_PATH", (t) => {
   writeFileSync(devCliPath, "#!/usr/bin/env node\n");
 
   assert.equal(
-    resolveLoaderCliEntrypoint({ gsdRoot: root, invokedBinPath: invokedLoader, existsSync }),
+    resolveLoaderCliEntrypoint({ gwdRoot: root, invokedBinPath: invokedLoader, existsSync }),
     resolve(devCliPath),
   );
 });
 
 test("explicit CLI path overrides the invoked source loader path", () => {
-  const env = { GWD_CLI_PATH: "/custom/gsd" } as NodeJS.ProcessEnv;
+  const env = { GWD_CLI_PATH: "/custom/gwd" } as NodeJS.ProcessEnv;
   const resolved = applyLoaderCliEntrypointEnv(env, {
-    gsdRoot: "/repo",
+    gwdRoot: "/repo",
     invokedBinPath: "/repo/src/loader.ts",
     existsSync: () => true,
   });
 
-  assert.equal(resolved, resolve("/custom/gsd"));
-  assert.equal(env.GWD_BIN_PATH, resolve("/custom/gsd"));
-  assert.equal(env.GWD_CLI_PATH, "/custom/gsd");
+  assert.equal(resolved, resolve("/custom/gwd"));
+  assert.equal(env.GWD_BIN_PATH, resolve("/custom/gwd"));
+  assert.equal(env.GWD_CLI_PATH, "/custom/gwd");
 });
 
 test("dev CLI wrapper passes itself as every child-process CLI entrypoint", () => {
@@ -47,13 +47,13 @@ test("dev CLI wrapper passes itself as every child-process CLI entrypoint", () =
 
   assert.deepEqual(
     devCli.buildDevCliSpawnArgs({
-      resolveTsPath: "/repo/src/resources/extensions/gsd/tests/resolve-ts.mjs",
+      resolveTsPath: "/repo/src/resources/extensions/gwd/tests/resolve-ts.mjs",
       srcLoaderPath: "/repo/src/loader.ts",
       argv: ["--web"],
     }),
     [
       "--import",
-      "/repo/src/resources/extensions/gsd/tests/resolve-ts.mjs",
+      "/repo/src/resources/extensions/gwd/tests/resolve-ts.mjs",
       "--experimental-strip-types",
       "/repo/src/loader.ts",
       "--web",

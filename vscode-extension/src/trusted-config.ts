@@ -1,7 +1,7 @@
 /**
  * Trust-boundary helper for VS Code startup configuration. A workspace can
  * be supplied by an untrusted repository (`.code-workspace` or
- * `.vscode/settings.json`); when the GSD extension auto-activates we must
+ * `.vscode/settings.json`); when the GWD extension auto-activates we must
  * NOT honor those values for sensitive options like `binaryPath` or
  * `autoStart`. Only `globalValue` (user settings) and `defaultValue`
  * (extension manifest) are trusted.

@@ -5,9 +5,9 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 
-const resolveTsPath = join(process.cwd(), "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+const resolveTsPath = join(process.cwd(), "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 
-function runOnboardingFlow(gsdHome: string, answers: string[]): void {
+function runOnboardingFlow(gwdHome: string, answers: string[]): void {
   execFileSync(
     process.execPath,
     [
@@ -42,26 +42,26 @@ function runOnboardingFlow(gsdHome: string, answers: string[]): void {
         if (!configured) throw new Error("onboarding flow did not complete");
       `,
     ],
-    { env: { ...process.env, GWD_HOME: gsdHome }, stdio: "pipe" },
+    { env: { ...process.env, GWD_HOME: gwdHome }, stdio: "pipe" },
   )
 }
 
 test("onboarding persists defaultProvider for OAuth flow", (t) => {
-  const gsdHome = mkdtempSync(join(tmpdir(), "gsd-onboarding-oauth-"))
-  t.after(() => rmSync(gsdHome, { recursive: true, force: true }))
+  const gwdHome = mkdtempSync(join(tmpdir(), "gwd-onboarding-oauth-"))
+  t.after(() => rmSync(gwdHome, { recursive: true, force: true }))
 
-  runOnboardingFlow(gsdHome, ["browser", "openai-codex"])
+  runOnboardingFlow(gwdHome, ["browser", "openai-codex"])
 
-  const settings = JSON.parse(readFileSync(join(gsdHome, "agent", "settings.json"), "utf-8"))
+  const settings = JSON.parse(readFileSync(join(gwdHome, "agent", "settings.json"), "utf-8"))
   assert.equal(settings.defaultProvider, "openai-codex")
 })
 
 test("onboarding persists defaultProvider for API-key flow", (t) => {
-  const gsdHome = mkdtempSync(join(tmpdir(), "gsd-onboarding-api-key-"))
-  t.after(() => rmSync(gsdHome, { recursive: true, force: true }))
+  const gwdHome = mkdtempSync(join(tmpdir(), "gwd-onboarding-api-key-"))
+  t.after(() => rmSync(gwdHome, { recursive: true, force: true }))
 
-  runOnboardingFlow(gsdHome, ["api-key", "openai", "sk-test"])
+  runOnboardingFlow(gwdHome, ["api-key", "openai", "sk-test"])
 
-  const settings = JSON.parse(readFileSync(join(gsdHome, "agent", "settings.json"), "utf-8"))
+  const settings = JSON.parse(readFileSync(join(gwdHome, "agent", "settings.json"), "utf-8"))
   assert.equal(settings.defaultProvider, "openai")
 })

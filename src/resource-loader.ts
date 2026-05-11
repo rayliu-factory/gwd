@@ -21,9 +21,9 @@ function loadPiCodingAgentModule(): Promise<PiCodingAgentModule> {
 // Resolve resources directory — prefer dist/resources/ (stable, set at build time)
 // over src/resources/ (live working tree, changes with git branch).
 //
-// Why this matters: with `npm link`, src/resources/ points into the gsd-2 repo's
+// Why this matters: with `npm link`, src/resources/ points into the gwd-2 repo's
 // working tree. Switching branches there changes src/resources/ for ALL projects
-// that use gsd — causing stale/broken extensions to be synced to ~/.gwd/agent/.
+// that use gwd — causing stale/broken extensions to be synced to ~/.gwd/agent/.
 // dist/resources/ is populated by the build step (`npm run copy-resources`) and
 // reflects the built state, not the currently checked-out branch.
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -33,19 +33,19 @@ const resourceVersionManifestName = 'managed-resources.json'
 const resourceFingerprintFileName = '.managed-resources-content-hash'
 
 interface ManagedResourceManifest {
-  gsdVersion: string
+  gwdVersion: string
   syncedAt?: number
   /** Content fingerprint of bundled resources — detects same-version content changes. */
   contentHash?: string
   /**
-   * Root-level files installed in extensions/ by this GSD version.
+   * Root-level files installed in extensions/ by this GWD version.
    * Used on the next upgrade to detect and prune files that were removed or
    * moved into a subdirectory, preventing orphaned non-extension files from
    * causing extension load errors.
    */
   installedExtensionRootFiles?: string[]
   /**
-   * Subdirectory extension names installed in extensions/ by this GSD version.
+   * Subdirectory extension names installed in extensions/ by this GWD version.
    * Used on the next upgrade to detect and prune subdirectory extensions that
    * were removed from the bundle.
    */
@@ -67,7 +67,7 @@ function getManagedResourceManifestPath(agentDir: string): string {
   return join(agentDir, resourceVersionManifestName)
 }
 
-function getBundledGsdVersion(): string {
+function getBundledGwdVersion(): string {
   // Prefer GWD_VERSION env var (set once by loader.ts) to avoid re-reading package.json.
   const envVersion = process.env[GWD_VERSION_ENV]
   if (envVersion && envVersion !== '0.0.0') {
@@ -109,7 +109,7 @@ function writeManagedResourceManifest(agentDir: string): void {
   } catch { /* non-fatal */ }
 
   const manifest: ManagedResourceManifest = {
-    gsdVersion: getBundledGsdVersion(),
+    gwdVersion: getBundledGwdVersion(),
     syncedAt: Date.now(),
     contentHash: getCurrentResourceFingerprint(),
     installedExtensionRootFiles,
@@ -121,7 +121,7 @@ function writeManagedResourceManifest(agentDir: string): void {
 export function readManagedResourceVersion(agentDir: string): string | null {
   try {
     const manifest = JSON.parse(readFileSync(getManagedResourceManifestPath(agentDir), 'utf-8')) as ManagedResourceManifest
-    return typeof manifest?.gsdVersion === 'string' ? manifest.gsdVersion : null
+    return typeof manifest?.gwdVersion === 'string' ? manifest.gwdVersion : null
   } catch {
     return null
   }
@@ -324,7 +324,7 @@ function copyDirRecursive(src: string, dest: string): void {
 }
 
 /**
- * Creates (or updates) a symlink at agentDir/node_modules pointing to GSD's
+ * Creates (or updates) a symlink at agentDir/node_modules pointing to GWD's
  * own node_modules directory.
  *
  * Native ESM `import()` ignores NODE_PATH — it resolves packages by walking
@@ -477,14 +477,14 @@ export function mergedFingerprint(hoisted: string, internal: string): string {
 }
 
 /**
- * Prune root-level extension files that were installed by a previous GSD version
+ * Prune root-level extension files that were installed by a previous GWD version
  * but have since been removed or relocated to a subdirectory.
  *
  * Two strategies:
  * 1. Manifest-based (preferred): the manifest records which root files were installed
  *    last time; any that are no longer in the current bundle are deleted.
  * 2. Known-stale fallback: for upgrades from versions before manifest tracking,
- *    explicitly delete files known to have been moved (e.g. env-utils.js → gsd/).
+ *    explicitly delete files known to have been moved (e.g. env-utils.js → gwd/).
  */
 function pruneRemovedBundledExtensions(
   manifest: ManagedResourceManifest | null,
@@ -545,7 +545,7 @@ function pruneRemovedBundledExtensions(
   // Always remove known stale files regardless of manifest state.
   // These were installed by pre-manifest versions so they may not appear in
   // installedExtensionRootFiles even when a manifest exists.
-  // env-utils.js was moved from extensions/ root → gsd/ in v2.39.x (#1634)
+  // env-utils.js was moved from extensions/ root → gwd/ in v2.39.x (#1634)
   removeFileIfStale('env-utils.js')
 }
 
@@ -561,8 +561,8 @@ function pruneRemovedBundledExtensions(
  * industry-standard Agent Skills ecosystem directory.
  *
  * Skips the copy when the managed-resources.json version matches the current
- * GSD version, avoiding ~128ms of synchronous cpSync on every startup.
- * After `npm update -g @glittercowboy/gsd`, versions will differ and the
+ * GWD version, avoiding ~128ms of synchronous cpSync on every startup.
+ * After `npm update -g @glittercowboy/gwd`, versions will differ and the
  * copy runs once to land the new resources.
  *
  * Inspectable: `ls ~/.gwd/agent/extensions/`
@@ -570,7 +570,7 @@ function pruneRemovedBundledExtensions(
 export function initResources(agentDir: string, skillsDir: string = join(homedir(), '.agents', 'skills')): void {
   mkdirSync(agentDir, { recursive: true })
 
-  const currentVersion = getBundledGsdVersion()
+  const currentVersion = getBundledGwdVersion()
   const manifest = readManagedResourceManifest(agentDir)
   const extensionsDir = join(agentDir, 'extensions')
 
@@ -581,9 +581,9 @@ export function initResources(agentDir: string, skillsDir: string = join(homedir
   pruneRemovedBundledExtensions(manifest, agentDir)
   pruneStaleSiblingFiles(bundledExtensionsDir, extensionsDir)
 
-  // Ensure ~/.gwd/agent/node_modules symlinks to GSD's node_modules on EVERY
+  // Ensure ~/.gwd/agent/node_modules symlinks to GWD's node_modules on EVERY
   // launch, not just during resource syncs. A stale/broken symlink makes ALL
-  // extensions fail to resolve @gwd/* packages, rendering GSD non-functional.
+  // extensions fail to resolve @gwd/* packages, rendering GWD non-functional.
   ensureNodeModulesSymlink(agentDir)
 
   // Migrate legacy skills on every launch (not gated by manifest) so that
@@ -593,7 +593,7 @@ export function initResources(agentDir: string, skillsDir: string = join(homedir
   // Skip the full copy when both version AND content fingerprint match.
   // Version-only checks miss same-version content changes (npm link dev workflow,
   // hotfixes within a release). The content hash catches those at ~1ms cost.
-  if (manifest && manifest.gsdVersion === currentVersion) {
+  if (manifest && manifest.gwdVersion === currentVersion) {
     // Version matches — check content fingerprint for same-version staleness.
     const currentHash = getCurrentResourceFingerprint()
     const hasStaleExtensionFiles = hasStaleCompiledExtensionSiblings(extensionsDir, bundledExtensionsDir)
@@ -632,7 +632,7 @@ export function initResources(agentDir: string, skillsDir: string = join(homedir
  * The migration is conservative:
  *  - Only skill directories containing a SKILL.md are considered.
  *  - Copies, does not move — the old directory stays intact so downgrading
- *    to a pre-migration GSD version still works.
+ *    to a pre-migration GWD version still works.
  *  - Collision-safe — if a skill name already exists in the target, the
  *    existing ecosystem skill wins (user may have already installed a newer
  *    version via skills.sh).
@@ -647,7 +647,7 @@ function migrateSkillsToEcosystemDir(agentDir: string): void {
   if (!existsSync(legacyDir)) return
 
   // Atomic marker check — 'wx' fails if file already exists, preventing races
-  // when two GSD processes start simultaneously.
+  // when two GWD processes start simultaneously.
   let markerFd: number
   try {
     markerFd = openSync(markerPath, 'wx')
@@ -811,7 +811,7 @@ export async function buildResourceLoader(
     additionalExtensionPaths,
     bundledExtensionKeys: bundledKeys,
     extensionPathsTransform: (paths: string[]) => {
-      // 1. Filter community extensions through the GSD registry
+      // 1. Filter community extensions through the GWD registry
       const filteredPaths = paths.filter((entryPath) => {
         const manifest = readManifestFromEntryPath(entryPath)
         if (!manifest) return true // no manifest = always load

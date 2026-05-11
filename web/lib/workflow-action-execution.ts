@@ -1,11 +1,11 @@
-import type { WorkspaceTerminalLine } from "./gsd-workspace-store"
+import type { WorkspaceTerminalLine } from "./gwd-workspace-store"
 import { getUserMode } from "./use-user-mode"
 
-export type GSDViewName = "dashboard" | "power" | "chat" | "roadmap" | "files" | "activity" | "visualize"
+export type GWDViewName = "dashboard" | "power" | "chat" | "roadmap" | "files" | "activity" | "visualize"
 
-export function navigateToGSDView(view: GSDViewName): void {
+export function navigateToGWDView(view: GWDViewName): void {
   if (typeof window === "undefined") return
-  window.dispatchEvent(new CustomEvent("gsd:navigate-view", { detail: { view } }))
+  window.dispatchEvent(new CustomEvent("gwd:navigate-view", { detail: { view } }))
 }
 
 /**
@@ -26,7 +26,7 @@ export function executeWorkflowActionInPowerMode({
     console.error("[workflow-action] dispatch failed:", error)
   })
   const mode = getUserMode()
-  navigateToGSDView(mode === "vibe-coder" ? "chat" : "power")
+  navigateToGWDView(mode === "vibe-coder" ? "chat" : "power")
 }
 
 export function derivePendingWorkflowCommandLabel({

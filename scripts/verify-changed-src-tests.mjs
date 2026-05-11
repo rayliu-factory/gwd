@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Run focused source tests for changed src files.
 
 import { existsSync } from 'node:fs';
@@ -78,7 +78,7 @@ export function selectChangedSrcTests(changedFiles, exists = existsSync) {
 export function buildNodeTestArgs(testFiles) {
   return [
     '--import',
-    './src/resources/extensions/gsd/tests/resolve-ts.mjs',
+    './src/resources/extensions/gwd/tests/resolve-ts.mjs',
     '--experimental-strip-types',
     '--test',
     ...testFiles,

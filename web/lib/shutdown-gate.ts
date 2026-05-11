@@ -1,4 +1,4 @@
-// GWD-2 Web — Shutdown gate: defers process.exit() and drains active SSE streams
+// GWD Web — Shutdown gate: defers process.exit() and drains active SSE streams
 /**
  * Shutdown gate — defers process.exit() so that page refreshes (which fire
  * `pagehide` then immediately re-boot) don't kill the server.
@@ -31,7 +31,7 @@
 // stream registrations when this module is re-evaluated during development.
 declare global {
   // eslint-disable-next-line no-var
-  var __gsdShutdownGate:
+  var __gwdShutdownGate:
     | {
         shutdownTimer: ReturnType<typeof setTimeout> | null;
         activeStreams: Set<() => void>;
@@ -41,8 +41,8 @@ declare global {
     | undefined;
 }
 
-if (!globalThis.__gsdShutdownGate) {
-  globalThis.__gsdShutdownGate = {
+if (!globalThis.__gwdShutdownGate) {
+  globalThis.__gwdShutdownGate = {
     shutdownTimer: null,
     activeStreams: new Set(),
     lastBootAt: 0,
@@ -50,7 +50,7 @@ if (!globalThis.__gsdShutdownGate) {
   };
 }
 
-const gate = globalThis.__gsdShutdownGate;
+const gate = globalThis.__gwdShutdownGate;
 gate.handlersRegistered ??= false;
 
 const SHUTDOWN_DELAY_MS = 3_000;

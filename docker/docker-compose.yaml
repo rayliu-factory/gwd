@@ -1,16 +1,16 @@
 services:
-  gsd:
+  gwd:
     build:
       context: .
       dockerfile: Dockerfile.sandbox
       args:
-        GSD_VERSION: latest
-    container_name: gsd-sandbox
+        GWD_VERSION: latest
+    container_name: gwd-sandbox
     ports:
       - "3000:3000"
     volumes:
       - ../:/workspace
-      - gsd-state:/home/gsd/.gsd
+      - gwd-state:/home/gwd/.gwd
     env_file:
       - .env
     environment:
@@ -19,5 +19,5 @@ services:
     tty: true
 
 volumes:
-  gsd-state:
+  gwd-state:
     driver: local

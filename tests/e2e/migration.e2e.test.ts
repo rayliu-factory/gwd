@@ -1,8 +1,8 @@
 /**
- * GSD-2 schema migration smoke (forward only).
+ * GWD schema migration smoke (forward only).
  *
- * Seeds a `.gsd/gsd.db` SQLite file at an older `schema_version` and runs
- * the **real built `gsd` binary** (`gsd headless query`, no LLM required)
+ * Seeds a `.gwd/gwd.db` SQLite file at an older `schema_version` and runs
+ * the **real built `gwd` binary** (`gwd headless query`, no LLM required)
  * against it. Asserts that:
  *
  *   1. The CLI exits cleanly (so the migration didn't crash on start).
@@ -10,12 +10,12 @@
  *      SCHEMA_VERSION.
  *
  * This is a complement to the unit tests in
- * `src/resources/extensions/gsd/tests/schema-v*-sequence.test.ts` — they
+ * `src/resources/extensions/gwd/tests/schema-v*-sequence.test.ts` — they
  * test the migration code in-process; this exercises the same code path
  * **through the shipped binary** so a bad build or missing dist asset
  * would surface here, not at user install time.
  *
- * Forward-only by design: gsd-db.ts has no down-migrations to test, and
+ * Forward-only by design: gwd-db.ts has no down-migrations to test, and
  * tests for non-existent behavior create false confidence (peer review).
  *
  * Skip path: if `node:sqlite` is not loadable in this Node build, the
@@ -27,7 +27,7 @@ import assert from "node:assert/strict";
 import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
-import { createTmpProject, gsdSync } from "./_shared/index.ts";
+import { createTmpProject, gwdSync } from "./_shared/index.ts";
 
 interface SqliteDb {
 	// Method names match node:sqlite's API surface.
@@ -54,9 +54,9 @@ async function tryLoadSqlite(): Promise<{ ok: true; mod: SqliteModule } | { ok: 
 }
 
 /**
- * Seed a `.gsd/gsd.db` at schema_version = 20.
+ * Seed a `.gwd/gwd.db` at schema_version = 20.
  * Mirrors the seed logic from
- * src/resources/extensions/gsd/tests/schema-v21-sequence.test.ts so the
+ * src/resources/extensions/gwd/tests/schema-v21-sequence.test.ts so the
  * forward-migration path from a known stale point is exercised.
  *
  * The migration code is permissive about extra/missing tables — the
@@ -108,20 +108,20 @@ describe("schema migration smoke (forward only)", () => {
 		const project = createTmpProject({ git: true });
 		t.after(project.cleanup);
 
-		const gsdDir = join(project.dir, ".gsd");
-		mkdirSync(gsdDir, { recursive: true });
-		mkdirSync(join(gsdDir, "milestones"), { recursive: true });
+		const gwdDir = join(project.dir, ".gwd");
+		mkdirSync(gwdDir, { recursive: true });
+		mkdirSync(join(gwdDir, "milestones"), { recursive: true });
 
-		const dbPath = join(gsdDir, "gsd.db");
+		const dbPath = join(gwdDir, "gwd.db");
 		seedV20Db(sqliteLoaded.mod, dbPath);
 
-		// Sanity: the seeded DB really is v20 before we hand it to gsd.
+		// Sanity: the seeded DB really is v20 before we hand it to gwd.
 		const before = readSchemaVersion(sqliteLoaded.mod, dbPath);
 		assert.equal(before, 20, `seed step failed — expected v20 before run, got ${before}`);
 
 		// Run a no-LLM probe that opens the DB. The mere act of running it
 		// triggers initSchema/migrateSchema in the binary's compiled code.
-		const result = gsdSync(["headless", "query"], {
+		const result = gwdSync(["headless", "query"], {
 			cwd: project.dir,
 			timeoutMs: 30_000,
 		});
@@ -129,7 +129,7 @@ describe("schema migration smoke (forward only)", () => {
 		assert.equal(
 			result.code,
 			0,
-			`expected exit 0 from \`gsd headless query\`, got ${result.code}.\nstderr: ${result.stderrClean.slice(0, 800)}`,
+			`expected exit 0 from \`gwd headless query\`, got ${result.code}.\nstderr: ${result.stderrClean.slice(0, 800)}`,
 		);
 
 		const after = readSchemaVersion(sqliteLoaded.mod, dbPath);

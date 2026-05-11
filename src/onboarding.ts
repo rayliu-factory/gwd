@@ -23,8 +23,8 @@ import {
   markStepCompleted,
   markStepSkipped,
   isOnboardingComplete,
-} from './resources/extensions/gsd/onboarding-state.js'
-import { getLlmProviderIds } from './resources/extensions/gsd/setup-catalog.js'
+} from './resources/extensions/gwd/onboarding-state.js'
+import { getLlmProviderIds } from './resources/extensions/gwd/setup-catalog.js'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

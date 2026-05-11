@@ -1,8 +1,8 @@
-# Contributing to GSD-2
+# Contributing to GWD
 
-We're glad you're here. GSD-2 is an open project and contributions are welcome across the entire codebase. We hold a high bar for what gets merged — not to be gatekeepers, but because every change ships to real users and stability matters.
+We're glad you're here. GWD is an open project and contributions are welcome across the entire codebase. We hold a high bar for what gets merged — not to be gatekeepers, but because every change ships to real users and stability matters.
 
-Read [VISION.md](VISION.md) before contributing. It defines what GSD-2 is, what it isn't, and what we won't accept.
+Read [VISION.md](VISION.md) before contributing. It defines what GWD is, what it isn't, and what we won't accept.
 
 ## Before you start
 
@@ -13,7 +13,7 @@ Read [VISION.md](VISION.md) before contributing. It defines what GSD-2 is, what 
 
 ### First-time contributors
 
-We are not a fan of drive-by first-time contributions. If this is your first PR to GSD-2, you **must** open an issue first describing the problem or feature, wait for a maintainer response, and link the issue in your PR. First-time PRs that show up with no prior issue will be closed without review. This is not optional — it exists because triaging unsolicited code from unknown contributors is more expensive than the contribution is worth.
+We are not a fan of drive-by first-time contributions. If this is your first PR to GWD, you **must** open an issue first describing the problem or feature, wait for a maintainer response, and link the issue in your PR. First-time PRs that show up with no prior issue will be closed without review. This is not optional — it exists because triaging unsolicited code from unknown contributors is more expensive than the contribution is worth.
 
 Once you have one merged PR, this requirement no longer applies to you.
 
@@ -26,7 +26,7 @@ npm ci                              # Install dependencies — MUST run first
 npm run secret-scan:install-hook    # Install git hooks — run once
 ```
 
-`npm ci` creates workspace symlinks in `node_modules/@gsd/*` and `node_modules/@gsd-build/*` pointing to `packages/`. These are required for builds and tests to resolve packages correctly.
+`npm ci` creates workspace symlinks in `node_modules/@gwd/*` and `node_modules/@gwd-build/*` pointing to `packages/`. These are required for builds and tests to resolve packages correctly.
 
 Run `npm run secret-scan:install-hook` once after cloning. It installs a pre-commit hook that blocks commits containing hardcoded secrets or credentials. Conventional Commits format is validated by CI on push.
 
@@ -37,7 +37,7 @@ npm run build    # Build
 npm test         # Run tests
 ```
 
-If `npm run build` fails after running tests (e.g. `Cannot find module '@gsd/*'` errors), run `npm ci` first to restore workspace symlinks, then try again.
+If `npm run build` fails after running tests (e.g. `Cannot find module '@gwd/*'` errors), run `npm ci` first to restore workspace symlinks, then try again.
 
 ### Before pushing
 
@@ -45,11 +45,11 @@ If `npm run build` fails after running tests (e.g. `Cannot find module '@gsd/*'`
 npm run verify:pr    # Local preflight: build:core → typecheck:extensions → test:unit
 ```
 
-If `verify:pr` fails after running tests (e.g. `Cannot find module '@gsd/*'` errors), run `npm ci` first to restore workspace symlinks, then try again.
+If `verify:pr` fails after running tests (e.g. `Cannot find module '@gwd/*'` errors), run `npm ci` first to restore workspace symlinks, then try again.
 
 ### Cross-platform note
 
-GSD-2 runs on macOS, Linux, and Windows:
+GWD runs on macOS, Linux, and Windows:
 
 - **Git hooks** are executed by Git's bundled shell, so they work from any terminal (CMD, PowerShell, Git Bash).
 - **Shell scripts** in `scripts/` use `#!/usr/bin/env bash`. On Windows, Git may convert these to CRLF line endings, which breaks the shebang. If you hit shebang errors when running lint scripts locally, create a `.gitattributes` file in the repo root with `*.sh text eol=lf` to force LF checkout. Do not commit this file.
@@ -93,12 +93,12 @@ git rebase origin/main
 
 CI must pass before your PR will be reviewed. Run `npm run verify:pr` locally before pushing to catch issues early.
 
-## Working with GSD (team workflow)
+## Working with GWD (team workflow)
 
-GSD uses worktree-based isolation for multi-developer work. If you're contributing with GSD running, enable team mode in your project preferences:
+GWD uses worktree-based isolation for multi-developer work. If you're contributing with GWD running, enable team mode in your project preferences:
 
 ```yaml
-# .gsd/PREFERENCES.md
+# .gwd/PREFERENCES.md
 ---
 version: 1
 mode: team
@@ -107,7 +107,7 @@ mode: team
 
 This enables unique milestone IDs, branch pushing, and pre-merge checks — preventing milestone ID collisions when multiple contributors run auto-mode simultaneously. Each developer gets their own isolated worktree; squash merges to `main` happen independently.
 
-For full details see [docs/working-in-teams.md](docs/working-in-teams.md) and [docs/git-strategy.md](docs/git-strategy.md).
+For full details see [Working in Teams](docs/user-docs/working-in-teams.md) and [Git Strategy](docs/user-docs/git-strategy.md).
 
 ## Opening a pull request
 
@@ -184,15 +184,15 @@ See [VISION.md](VISION.md) for the full list of what we won't accept.
 
 ## Extension contributions
 
-GSD is extension-first. If your feature can be an extension, build it as an extension. See [docs/extension-sdk/](docs/extension-sdk/) for the authoritative guide.
+GWD is extension-first. If your feature can be an extension, build it as an extension. See [docs/extension-sdk/](docs/extension-sdk/) for the authoritative guide.
 
 ### Extension tiers
 
-| Tier | Ships with GSD | Can be disabled | Review bar |
+| Tier | Ships with GWD | Can be disabled | Review bar |
 |------|---------------|-----------------|------------|
-| **core** | Yes | No | RFC required. Reserved for foundational systems (GSD workflow, built-in tools). |
-| **bundled** | Yes | Yes | Standard PR review. Default for new features shipped with GSD. |
-| **community** | No | Yes | User-installed. No review needed — lives in `~/.gsd/agent/extensions/` or `.gsd/extensions/`. |
+| **core** | Yes | No | RFC required. Reserved for foundational systems (GWD workflow, built-in tools). |
+| **bundled** | Yes | Yes | Standard PR review. Default for new features shipped with GWD. |
+| **community** | No | Yes | User-installed. No review needed — lives in `~/.gwd/agent/extensions/` or `.gwd/extensions/`. |
 
 ### Required for bundled extension PRs
 
@@ -200,11 +200,11 @@ GSD is extension-first. If your feature can be an extension, build it as an exte
 2. **Tests** — at minimum, test tool registration, command handling, and any event hooks. See [Testing](docs/extension-sdk/testing.md).
 3. **State reconstruction** — if your extension has stateful tools, handle `session_start`, `session_switch`, and `session_tree` events. See [Building Extensions](docs/extension-sdk/building-extensions.md#state-management).
 4. **`provides` must be accurate** — every tool, command, hook, and shortcut your extension registers must be listed in the manifest.
-5. **Use `@gsd/pi-coding-agent`** for types, `@sinclair/typebox` for schemas, `@gsd/pi-tui` for UI. Do not import from `@mariozechner/*` (legacy).
+5. **Use `@gwd/pi-coding-agent`** for types, `@sinclair/typebox` for schemas, `@gwd/pi-tui` for UI. Do not import from `@mariozechner/*` (legacy).
 
 ### Promoting community → bundled
 
-If you've built a community extension that should ship with GSD:
+If you've built a community extension that should ship with GWD:
 
 1. Open an issue describing the extension and why it should be bundled.
 2. Move the source into `src/resources/extensions/<name>/`.
@@ -223,7 +223,7 @@ The codebase is organized into these areas. All are open to contributions:
 | Agent core        | `packages/pi-agent-core`        | Agent orchestration — RFC required for changes |
 | Coding agent      | `packages/pi-coding-agent`      | The main coding agent                          |
 | MCP server        | `packages/mcp-server`           | Project state tools and MCP protocol           |
-| GSD extension     | `src/resources/extensions/gsd/` | GSD workflow — RFC required for auto-mode      |
+| GWD extension     | `src/resources/extensions/gwd/` | GWD workflow — RFC required for auto-mode      |
 | Other extensions  | `src/resources/extensions/`     | Browser, search, voice, MCP client, etc.       |
 | Native engine     | `native/`                       | Rust N-API modules (grep, git, AST, etc.)      |
 | VS Code extension | `vscode-extension/`             | Chat participant, sidebar, RPC integration     |

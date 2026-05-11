@@ -1,7 +1,7 @@
 /**
  * Extension loading performance test
  *
- * Regression test for https://github.com/gwd-build/gwd-2/issues/2108
+ * Regression test for https://github.com/rayliu-factory/gwd/issues/2108
  *
  * Verifies that loading multiple extensions sharing common dependencies
  * does NOT re-compile those dependencies for each extension. The jiti
@@ -32,7 +32,7 @@ test("loadExtensions shares module cache across extensions (perf regression #210
   const { loadExtensions } = await import(loaderPath);
 
   // Create a temp directory with two extensions that import a shared helper
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-perf-test-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-perf-test-"));
 
   try {
     // Shared helper module

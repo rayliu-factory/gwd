@@ -135,7 +135,7 @@ test("npm pack produces tarball with required files", async (t) => {
   assert.ok(files.some(f => f.includes("dist/wizard.js")), "tarball contains dist/wizard.js");
   assert.ok(files.some(f => f.includes("dist/resource-loader.js")), "tarball contains dist/resource-loader.js");
   assert.ok(files.some(f => f.includes("pkg/package.json")), "tarball contains pkg/package.json");
-  assert.ok(files.some(f => f.includes("src/resources/extensions/gsd/index.ts")), "tarball contains bundled gsd extension");
+  assert.ok(files.some(f => f.includes("src/resources/extensions/gwd/index.ts")), "tarball contains bundled gwd extension");
   assert.ok(files.some(f => f.includes("scripts/postinstall.js")), "tarball contains postinstall script");
 
   // pkg/package.json must have piConfig
@@ -174,17 +174,17 @@ test("tarball installs and gwd binary resolves", async (t) => {
   }
 
   // Verify bundled resources are present
-  const installedGsdExt = join(
+  const installedGwdExt = join(
     sandbox.installPrefix,
     "node_modules",
     "gwd-pi",
     "src",
     "resources",
     "extensions",
-    "gsd",
+    "gwd",
     "index.ts",
   );
-  assert.ok(existsSync(installedGsdExt), "bundled gsd extension present in installed package");
+  assert.ok(existsSync(installedGwdExt), "bundled gwd extension present in installed package");
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -251,7 +251,7 @@ test("gwd exits early with a clear message when synced resources are newer than 
   mkdirSync(fakeAgentDir, { recursive: true });
   writeFileSync(
     join(fakeAgentDir, "managed-resources.json"),
-    JSON.stringify({ gsdVersion: "999.0.0" }),
+    JSON.stringify({ gwdVersion: "999.0.0" }),
   );
 
   t.after(() => { rmSync(fakeHome, { recursive: true, force: true }); });

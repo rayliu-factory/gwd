@@ -1,6 +1,6 @@
 # 成本管理
 
-GSD 会跟踪自动模式中每个派发工作单元的 Token 使用量和成本。这些数据会驱动仪表板、预算约束以及成本预测。
+GWD 会跟踪自动模式中每个派发工作单元的 Token 使用量和成本。这些数据会驱动仪表板、预算约束以及成本预测。
 
 ## 成本跟踪
 
@@ -12,11 +12,11 @@ GSD 会跟踪自动模式中每个派发工作单元的 Token 使用量和成本
 - **工具调用数**：工具调用次数
 - **消息数量**：assistant 与 user 消息数
 
-数据保存在 `.gsd/metrics.json` 中，并且可跨会话持续存在。
+数据保存在 `.gwd/metrics.json` 中，并且可跨会话持续存在。
 
 ### 查看成本
 
-**仪表板**：按 `Ctrl+Alt+G` 或执行 `/gsd status` 可查看实时成本拆分。
+**仪表板**：按 `Ctrl+Alt+G` 或执行 `/gwd status` 可查看实时成本拆分。
 
 **可用聚合维度：**
 
@@ -52,7 +52,7 @@ budget_enforcement: pause    # 设置 ceiling 后的默认值
 
 ## 成本预测
 
-当至少完成两个 slices 后，GSD 会预测剩余成本：
+当至少完成两个 slices 后，GWD 会预测剩余成本：
 
 ```
 Projected remaining: $12.40 ($6.20/slice avg × 2 remaining)
@@ -86,9 +86,9 @@ Projected remaining: $12.40 ($6.20/slice avg × 2 remaining)
 ## 建议
 
 - 先用 `balanced` 配置，并设置一个较宽松的 `budget_ceiling` 来建立成本基线
-- 完成几个 slices 后查看 `/gsd status`，确认每个 slice 的平均成本
+- 完成几个 slices 后查看 `/gwd status`，确认每个 slice 的平均成本
 - 对于已知流程、重复性高的工作，切换到 `budget` 配置
 - 只有在做架构决策时才建议使用 `quality`
 - 可以通过按阶段选模型，只在 planning 使用 Opus，而在 execution 保持 Sonnet
 - 开启 `dynamic_routing`，让简单 task 自动下沉到更便宜的模型，详见 [动态模型路由](./dynamic-model-routing.md)
-- 使用 `/gsd visualize` 的 Metrics 标签页查看预算具体花在了哪里
+- 使用 `/gwd visualize` 的 Metrics 标签页查看预算具体花在了哪里

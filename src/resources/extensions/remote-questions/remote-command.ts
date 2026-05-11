@@ -7,11 +7,11 @@ import { AuthStorage } from "@gwd/pi-coding-agent";
 import { Editor, type EditorTheme, Key, matchesKey, truncateToWidth } from "@gwd/pi-tui";
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { getGlobalGSDPreferencesPath, loadEffectiveGSDPreferences } from "../gsd/preferences.js";
+import { getGlobalGWDPreferencesPath, loadEffectiveGWDPreferences } from "../gwd/preferences.js";
 import { getRemoteConfigStatus, isValidChannelId, resolveRemoteConfig } from "./config.js";
 import { maskEditorLine, sanitizeError } from "../shared/mod.js";
 import { getLatestPromptSummary } from "./status.js";
-import { gsdHome } from "../gsd/gsd-home.js";
+import { gwdHome } from "../gwd/gwd-home.js";
 
 export async function handleRemote(
   subcommand: string,
@@ -203,7 +203,7 @@ async function handleRemoteStatus(ctx: ExtensionCommandContext): Promise<void> {
 }
 
 async function handleDisconnect(ctx: ExtensionCommandContext): Promise<void> {
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveGWDPreferences();
   const channel = prefs?.preferences.remote_questions?.channel;
   if (!channel) return void ctx.ui.notify("No remote channel configured — nothing to disconnect.", "info");
 
@@ -301,7 +301,7 @@ async function promptSlackChannelId(ctx: ExtensionCommandContext): Promise<strin
 }
 
 function getAuthStorage(): AuthStorage {
-  const authPath = join(gsdHome(), "agent", "auth.json");
+  const authPath = join(gwdHome(), "agent", "auth.json");
   mkdirSync(dirname(authPath), { recursive: true });
   return AuthStorage.create(authPath);
 }
@@ -317,7 +317,7 @@ function removeProviderToken(provider: string): void {
 }
 
 export function saveRemoteQuestionsConfig(channel: "slack" | "discord" | "telegram", channelId: string): void {
-  const prefsPath = getGlobalGSDPreferencesPath();
+  const prefsPath = getGlobalGWDPreferencesPath();
   const block = [
     "remote_questions:",
     `  channel: ${channel}`,
@@ -344,7 +344,7 @@ export function saveRemoteQuestionsConfig(channel: "slack" | "discord" | "telegr
 }
 
 function removeRemoteQuestionsConfig(): void {
-  const prefsPath = getGlobalGSDPreferencesPath();
+  const prefsPath = getGlobalGWDPreferencesPath();
   if (!existsSync(prefsPath)) return;
   const content = readFileSync(prefsPath, "utf-8");
   const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);

@@ -66,10 +66,10 @@ function attachJsonLineReader(stream: PassThrough, onLine: (line: string) => voi
 }
 
 function makeWorkspaceFixture(): { projectCwd: string; sessionsDir: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-onboarding-integration-"));
+  const root = mkdtempSync(join(tmpdir(), "gwd-web-onboarding-integration-"));
   const projectCwd = join(root, "project");
   const sessionsDir = join(root, "sessions");
-  const milestoneDir = join(projectCwd, ".gsd", "milestones", "M001");
+  const milestoneDir = join(projectCwd, ".gwd", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S02");
   const tasksDir = join(sliceDir, "tasks");
 
@@ -181,20 +181,20 @@ function fakeWorkspaceIndex() {
       {
         id: "M001",
         title: "Demo Milestone",
-        roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+        roadmapPath: ".gwd/milestones/M001/M001-ROADMAP.md",
         slices: [
           {
             id: "S02",
             title: "First-run setup wizard",
             done: false,
-            planPath: ".gsd/milestones/M001/slices/S02/S02-PLAN.md",
-            tasksDir: ".gsd/milestones/M001/slices/S02/tasks",
+            planPath: ".gwd/milestones/M001/slices/S02/S02-PLAN.md",
+            tasksDir: ".gwd/milestones/M001/slices/S02/tasks",
             tasks: [
               {
                 id: "T02",
                 title: "Enforce the gate and refresh bridge auth after successful setup",
                 done: false,
-                planPath: ".gsd/milestones/M001/slices/S02/tasks/T02-PLAN.md",
+                planPath: ".gwd/milestones/M001/slices/S02/tasks/T02-PLAN.md",
               },
             ],
           },
@@ -476,7 +476,7 @@ test("fresh gwd --web browser onboarding stays locked on failed validation and u
     return
   }
 
-  const tempRoot = mkdtempSync(join(tmpdir(), "gsd-web-onboarding-runtime-"))
+  const tempRoot = mkdtempSync(join(tmpdir(), "gwd-web-onboarding-runtime-"))
   const tempHome = join(tempRoot, "home")
   const browserLogPath = join(tempRoot, "browser-open.log")
   let port: number | null = null

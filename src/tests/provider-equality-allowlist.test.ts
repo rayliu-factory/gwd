@@ -1,6 +1,6 @@
-// Project/App: GSD-2
+// Project/App: GWD
 // File Purpose: Provider equality guardrail tests for ADR-012.
-// gsd-2: provider-equality guardrail test (ADR-012)
+// gwd: provider-equality guardrail test (ADR-012)
 //
 // Purpose: prevent regressions of bug class #4478 — gating API-shape-dependent
 // behavior on `model.provider === "<transport>"` instead of `model.api`.
@@ -84,7 +84,7 @@ const ALLOWED_FILES: Record<string, string> = {
 
   // Model-registry canonical-provider tiebreakers (prefer plain `anthropic` /
   // `claude-code` when multiple transports serve the same model).
-  "src/resources/extensions/gsd/auto-model-selection.ts":
+  "src/resources/extensions/gwd/auto-model-selection.ts":
     "canonical-provider tiebreakers (ADR-012)",
   "src/provider-migrations.ts":
     "transport-specific default-provider migration target (ADR-012)",

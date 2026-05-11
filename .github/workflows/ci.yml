@@ -71,7 +71,7 @@ jobs:
 
           is_windows_e2e_file() {
             case "$1" in
-              tests/e2e/*|src/loader*|src/rtk*|src/native*|src/resources/extensions/gsd/gsd-db*|src/resources/extensions/gsd/extension-host*|src/resources/extensions/gsd/auto-worktree*|src/resources/extensions/gsd/workflow-mcp*|packages/pi-coding-agent/*|packages/pi-ai/*|packages/pi-agent-core/*|packages/native/*|packages/mcp-server/*|packages/rpc-client/*|native/*|package.json|package-lock.json|tsconfig*.json) return 0 ;;
+              tests/e2e/*|src/loader*|src/rtk*|src/native*|src/resources/extensions/gwd/gwd-db*|src/resources/extensions/gwd/extension-host*|src/resources/extensions/gwd/auto-worktree*|src/resources/extensions/gwd/workflow-mcp*|packages/pi-coding-agent/*|packages/pi-ai/*|packages/pi-agent-core/*|packages/native/*|packages/mcp-server/*|packages/rpc-client/*|native/*|package.json|package-lock.json|tsconfig*.json) return 0 ;;
               packages/*/tsconfig.json) return 0 ;;
               *) return 1 ;;
             esac
@@ -426,10 +426,10 @@ jobs:
       - name: Run Windows portability tests
         if: needs.detect-changes.outputs.portability-changed == 'true'
         run: >-
-          node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs
+          node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs
           --experimental-strip-types --test
           src/tests/windows-portability.test.ts
-          src/resources/extensions/gsd/tests/validate-directory.test.ts
+          src/resources/extensions/gwd/tests/validate-directory.test.ts
           src/tests/integration/web-mode-windows-hide.test.ts
 
       - name: Run Windows e2e smoke suite (non-blocking)

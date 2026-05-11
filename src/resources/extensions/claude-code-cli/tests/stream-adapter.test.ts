@@ -1,4 +1,4 @@
-// GSD2 - Claude Code stream adapter regression tests
+// GWD2 - Claude Code stream adapter regression tests
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
@@ -674,7 +674,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 	});
 
 	test("buildSdkOptions prefers explicit cwd over process cwd for local SDK execution", () => {
-		const explicitCwd = "/tmp/gsd-session-root";
+		const explicitCwd = "/tmp/gwd-session-root";
 		const options = buildSdkOptions("claude-sonnet-4-20250514", "hello world", undefined, { cwd: explicitCwd });
 		assert.equal(options.cwd, explicitCwd);
 	});
@@ -695,8 +695,8 @@ describe("stream-adapter — session persistence (#2859)", () => {
 
 			const options = buildSdkOptions("claude-sonnet-4-20250514", "hello world", undefined, { cwd: explicitCwd });
 			const mcpServers = options.mcpServers as Record<string, any>;
-			assert.equal(mcpServers["gsd-workflow"].cwd, explicitCwd);
-			assert.equal(mcpServers["gsd-workflow"].env.GWD_WORKFLOW_PROJECT_ROOT, explicitCwd);
+			assert.equal(mcpServers["gwd-workflow"].cwd, explicitCwd);
+			assert.equal(mcpServers["gwd-workflow"].env.GWD_WORKFLOW_PROJECT_ROOT, explicitCwd);
 		} finally {
 			restore();
 			rmSync(explicitCwd, { recursive: true, force: true });
@@ -833,21 +833,21 @@ describe("stream-adapter — session persistence (#2859)", () => {
 	test("buildSdkOptions prefers workflow MCP question tools over native AskUserQuestion", () => {
 		const restore = setWorkflowMcpEnv({
 			GWD_WORKFLOW_MCP_COMMAND: "node",
-			GWD_WORKFLOW_MCP_NAME: "gsd-workflow",
+			GWD_WORKFLOW_MCP_NAME: "gwd-workflow",
 			GWD_WORKFLOW_MCP_ARGS: JSON.stringify(["packages/mcp-server/dist/cli.js"]),
-			GWD_WORKFLOW_MCP_ENV: JSON.stringify({ GWD_CLI_PATH: "/tmp/gsd" }),
+			GWD_WORKFLOW_MCP_ENV: JSON.stringify({ GWD_CLI_PATH: "/tmp/gwd" }),
 			GWD_WORKFLOW_MCP_CWD: "/tmp/project",
 		});
 		try {
 
 			const options = buildSdkOptions("claude-sonnet-4-20250514", "test");
 			const mcpServers = options.mcpServers as Record<string, any>;
-			assert.ok(mcpServers?.["gsd-workflow"], "expected gsd-workflow server config");
-			const srv = mcpServers["gsd-workflow"];
+			assert.ok(mcpServers?.["gwd-workflow"], "expected gwd-workflow server config");
+			const srv = mcpServers["gwd-workflow"];
 			assert.equal(srv.command, "node");
 			assert.deepEqual(srv.args, ["packages/mcp-server/dist/cli.js"]);
 			assert.equal(srv.cwd, "/tmp/project");
-			assert.equal(srv.env.GWD_CLI_PATH, "/tmp/gsd");
+			assert.equal(srv.env.GWD_CLI_PATH, "/tmp/gwd");
 			assert.equal(srv.env.GWD_PERSIST_WRITE_GATE_STATE, "1");
 			assert.equal(srv.env.GWD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
 			assert.deepEqual(options.disallowedTools, ["AskUserQuestion"]);
@@ -861,7 +861,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 				"Agent",
 				"WebFetch",
 				"WebSearch",
-				"mcp__gsd-workflow__*",
+				"mcp__gwd-workflow__*",
 			]);
 		} finally {
 			restore();
@@ -873,7 +873,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			GWD_WORKFLOW_MCP_COMMAND: "node",
 			GWD_WORKFLOW_MCP_NAME: "custom-workflow",
 			GWD_WORKFLOW_MCP_ARGS: JSON.stringify(["packages/mcp-server/dist/cli.js"]),
-			GWD_WORKFLOW_MCP_ENV: JSON.stringify({ GWD_CLI_PATH: "/tmp/gsd" }),
+			GWD_WORKFLOW_MCP_ENV: JSON.stringify({ GWD_CLI_PATH: "/tmp/gwd" }),
 			GWD_WORKFLOW_MCP_CWD: "/tmp/project",
 		});
 		try {
@@ -922,7 +922,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			// Either outcome is valid — the key invariant is no crash.
 			const mcpServers = (options as any).mcpServers;
 			if (mcpServers) {
-				assert.ok(mcpServers["gsd-workflow"], "if present, must be gsd-workflow");
+				assert.ok(mcpServers["gwd-workflow"], "if present, must be gwd-workflow");
 				assert.deepEqual((options as any).disallowedTools, ["AskUserQuestion"]);
 			} else {
 				assert.deepEqual((options as any).disallowedTools, []);
@@ -946,7 +946,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			delete process.env.GWD_WORKFLOW_MCP_ARGS;
 			delete process.env.GWD_WORKFLOW_MCP_ENV;
 			delete process.env.GWD_WORKFLOW_MCP_CWD;
-			process.env.GWD_CLI_PATH = "/tmp/gsd";
+			process.env.GWD_CLI_PATH = "/tmp/gwd";
 
 			const distDir = join(repoDir, "packages", "mcp-server", "dist");
 			mkdirSync(distDir, { recursive: true });
@@ -956,12 +956,12 @@ describe("stream-adapter — session persistence (#2859)", () => {
 
 			const options = buildSdkOptions("claude-sonnet-4-20250514", "test");
 			const mcpServers = options.mcpServers as Record<string, any>;
-			assert.ok(mcpServers?.["gsd-workflow"], "expected gsd-workflow server config");
-			const srv = mcpServers["gsd-workflow"];
+			assert.ok(mcpServers?.["gwd-workflow"], "expected gwd-workflow server config");
+			const srv = mcpServers["gwd-workflow"];
 			assert.equal(srv.command, process.execPath);
 			assert.deepEqual(srv.args, [realpathSync(resolve(repoDir, "packages", "mcp-server", "dist", "cli.js"))]);
 			assert.equal(srv.cwd, resolvedRepoDir);
-			assert.equal(srv.env.GWD_CLI_PATH, "/tmp/gsd");
+			assert.equal(srv.env.GWD_CLI_PATH, "/tmp/gwd");
 			assert.equal(srv.env.GWD_PERSIST_WRITE_GATE_STATE, "1");
 			assert.equal(srv.env.GWD_WORKFLOW_PROJECT_ROOT, resolvedRepoDir);
 			assert.deepEqual(options.disallowedTools, ["AskUserQuestion"]);
@@ -997,7 +997,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 
 describe("stream-adapter — MCP elicitation bridge", () => {
 	const askUserQuestionsRequest = {
-		serverName: "gsd-workflow",
+		serverName: "gwd-workflow",
 		message: "Please answer the following question(s).",
 		mode: "form" as const,
 		requestedSchema: {
@@ -1139,7 +1139,7 @@ describe("stream-adapter — MCP elicitation bridge", () => {
 
 	test("parseTextInputElicitation recognizes secure free-text MCP forms", () => {
 		const request = {
-			serverName: "gsd-workflow",
+			serverName: "gwd-workflow",
 			message: "Enter values for environment variables.",
 			mode: "form" as const,
 			requestedSchema: {
@@ -1180,7 +1180,7 @@ describe("stream-adapter — MCP elicitation bridge", () => {
 
 	test("parseTextInputElicitation accepts legacy keys schema and skips unsupported fields", () => {
 		const request = {
-			serverName: "gsd-workflow",
+			serverName: "gwd-workflow",
 			message: "Enter secure values",
 			mode: "form" as const,
 			requestedSchema: {
@@ -1213,7 +1213,7 @@ describe("stream-adapter — MCP elicitation bridge", () => {
 
 	test("createClaudeCodeElicitationHandler collects secure_env_collect fields through input dialogs", async () => {
 		const secureRequest = {
-			serverName: "gsd-workflow",
+			serverName: "gwd-workflow",
 			message: "Enter values for environment variables.",
 			mode: "form" as const,
 			requestedSchema: {
@@ -1491,7 +1491,7 @@ describe("stream-adapter — canUseTool handler", () => {
 	// Returns a cleanup function that restores cwd and removes the temp dir.
 	// biome-ignore lint/suspicious/noExplicitAny: test-only monkey-patch
 	function withIsolatedCwd(): () => void {
-		const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-canusetool-")));
+		const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-canusetool-")));
 		const orig = process.cwd;
 		process.cwd = () => dir;
 		return () => {
@@ -1991,7 +1991,7 @@ describe("buildBashPermissionPattern", () => {
 
 	test("chained commands — extracts pattern from the meaningful segment", () => {
 		assert.equal(buildBashPermissionPattern("cd /foo && gh pr list --limit 5"), "Bash(gh pr list:*)");
-		assert.equal(buildBashPermissionPattern("cd C:/Users/djeff/repos/gsd-2 && gh pr list --limit 5"), "Bash(gh pr list:*)");
+		assert.equal(buildBashPermissionPattern("cd C:/Users/djeff/repos/gwd-2 && gh pr list --limit 5"), "Bash(gh pr list:*)");
 		assert.equal(buildBashPermissionPattern("cd /tmp && git push origin main"), "Bash(git push:*)");
 		assert.equal(buildBashPermissionPattern("export FOO=1 && npm install lodash"), "Bash(npm install:*)");
 		assert.equal(buildBashPermissionPattern("mkdir -p out; docker ps -a"), "Bash(docker ps:*)");
@@ -2000,7 +2000,7 @@ describe("buildBashPermissionPattern", () => {
 
 	test("skips trailing || true / || : error suppressors", () => {
 		assert.equal(
-			buildBashPermissionPattern("cd C:/Users/djeff/repos/gsd-2 && gh pr create --dry-run --title \"test\" --body \"test\" 2>&1 || true"),
+			buildBashPermissionPattern("cd C:/Users/djeff/repos/gwd-2 && gh pr create --dry-run --title \"test\" --body \"test\" 2>&1 || true"),
 			"Bash(gh pr create:*)",
 		);
 		assert.equal(buildBashPermissionPattern("gh pr list || true"), "Bash(gh pr list:*)");
@@ -2125,7 +2125,7 @@ describe("bashCommandMatchesSavedRules — compound command bypass", () => {
 	}
 
 	test("matches cd-prefixed compound command against saved prefix rule", () => {
-		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rules-")));
+		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rules-")));
 		try {
 			setupSettings(["Bash(gh pr list:*)"]);
 			setCwd(tempDir);
@@ -2140,7 +2140,7 @@ describe("bashCommandMatchesSavedRules — compound command bypass", () => {
 	});
 
 	test("matches cd-prefixed compound command with exact subcommand", () => {
-		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rules-")));
+		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rules-")));
 		try {
 			setupSettings(["Bash(gh pr list:*)"]);
 			setCwd(tempDir);
@@ -2155,7 +2155,7 @@ describe("bashCommandMatchesSavedRules — compound command bypass", () => {
 	});
 
 	test("rejects when leading segment is not cd", () => {
-		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rules-")));
+		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rules-")));
 		try {
 			setupSettings(["Bash(gh pr list:*)"]);
 			setCwd(tempDir);
@@ -2171,7 +2171,7 @@ describe("bashCommandMatchesSavedRules — compound command bypass", () => {
 	});
 
 	test("rejects when meaningful segment does not match any rule", () => {
-		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rules-")));
+		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rules-")));
 		try {
 			setupSettings(["Bash(gh pr list:*)"]);
 			setCwd(tempDir);
@@ -2186,7 +2186,7 @@ describe("bashCommandMatchesSavedRules — compound command bypass", () => {
 	});
 
 	test("matches simple (non-compound) commands against on-disk rules", () => {
-		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rules-")));
+		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rules-")));
 		try {
 			setupSettings(["Bash(gh pr list:*)"]);
 			setCwd(tempDir);
@@ -2201,7 +2201,7 @@ describe("bashCommandMatchesSavedRules — compound command bypass", () => {
 	});
 
 	test("returns false for simple commands with no matching rule", () => {
-		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rules-")));
+		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rules-")));
 		try {
 			setupSettings(["Bash(gh pr list:*)"]);
 			setCwd(tempDir);
@@ -2213,7 +2213,7 @@ describe("bashCommandMatchesSavedRules — compound command bypass", () => {
 	});
 
 	test("returns false when no settings file exists", () => {
-		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rules-")));
+		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rules-")));
 		try {
 			// No .claude/settings.local.json created
 			setCwd(tempDir);
@@ -2228,7 +2228,7 @@ describe("bashCommandMatchesSavedRules — compound command bypass", () => {
 	});
 
 	test("matches exact rule (non-prefix)", () => {
-		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rules-")));
+		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rules-")));
 		try {
 			setupSettings(["Bash(ping -n 4 localhost)"]);
 			setCwd(tempDir);
@@ -2243,7 +2243,7 @@ describe("bashCommandMatchesSavedRules — compound command bypass", () => {
 	});
 
 	test("handles multiple cd segments before the meaningful command", () => {
-		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rules-")));
+		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rules-")));
 		try {
 			setupSettings(["Bash(npm install:*)"]);
 			setCwd(tempDir);
@@ -2258,12 +2258,12 @@ describe("bashCommandMatchesSavedRules — compound command bypass", () => {
 	});
 
 	test("matches compound command with trailing || true suppressor", () => {
-		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rules-")));
+		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rules-")));
 		try {
 			setupSettings(["Bash(gh pr create:*)"]);
 			setCwd(tempDir);
 			assert.equal(
-				bashCommandMatchesSavedRules('cd C:/Users/djeff/repos/gsd-2 && gh pr create --dry-run --title "test" --body "test" 2>&1 || true'),
+				bashCommandMatchesSavedRules('cd C:/Users/djeff/repos/gwd-2 && gh pr create --dry-run --title "test" --body "test" 2>&1 || true'),
 				true,
 			);
 			assert.equal(
@@ -2281,7 +2281,7 @@ describe("bashCommandMatchesSavedRules — compound command bypass", () => {
 	});
 
 	test("reads rules from settings.json as well as settings.local.json", () => {
-		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rules-")));
+		tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rules-")));
 		try {
 			const claudeDir = join(tempDir, ".claude");
 			mkdirSync(claudeDir, { recursive: true });

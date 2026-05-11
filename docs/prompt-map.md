@@ -1,4 +1,4 @@
-# GSD-2 Prompt System Map
+# GWD Prompt System Map
 
 > Complete dependency graph of all prompts, how they're loaded, assembled, dispatched, and how they chain into each other.
 
@@ -7,10 +7,10 @@
 ## 1. Pipeline Overview
 
 ```
-User / gsd auto
+User / gwd auto
       │
       ▼
- auto.ts  ──── reads STATE.md ──► GSDState
+ auto.ts  ──── reads STATE.md ──► GWDState
       │
       ▼
  auto-dispatch.ts
@@ -31,7 +31,7 @@ User / gsd auto
  Pi SDK session.run(prompt)
       │
       ▼
- LLM executes → calls gsd_* tools → writes artifacts → STATE.md updated
+ LLM executes → calls gwd_* tools → writes artifacts → STATE.md updated
       │
       ▼
  Loop back to auto.ts
@@ -49,7 +49,7 @@ User / gsd auto
 | `prompt-cache-optimizer.ts` | Tracks cache hit/miss rates per prompt; adjusts section ordering hints over time. |
 
 **Template resolution priority** (highest wins):
-1. `~/.agents/gsd/prompts/` (user-local, written by `initResources()`)
+1. `~/.agents/gwd/prompts/` (user-local, written by `initResources()`)
 2. Module-relative `prompts/` (npm package fallback)
 
 ---
@@ -103,7 +103,7 @@ Budget enforcement: `context-budget.ts` computes `preambleBudgetChars`, `summary
 | Prompt | Purpose | Reads | Writes |
 |--------|---------|-------|--------|
 | `system.md` | Hard rules, isolation model, naming conventions, skills table, execution heuristics. Bundled into every prompt as preamble. | — | — |
-| `heal-skill.md` | Post-unit skill drift analysis. Never edits skill files directly. | Skill activation block | `.gsd/skill-review-queue.md` |
+| `heal-skill.md` | Post-unit skill drift analysis. Never edits skill files directly. | Skill activation block | `.gwd/skill-review-queue.md` |
 
 ### 5b. Project Setup Flow (runs once, sequentially)
 
@@ -125,9 +125,9 @@ guided-research-project  (deep mode only — 4 parallel subagents)
 
 | Prompt | Purpose | Key Tools Called |
 |--------|---------|-----------------|
-| `guided-workflow-preferences.md` | Write `.gsd/PREFERENCES.md` with defaults; pre-seeds `research-decision.json`. No user questions. | — |
-| `guided-discuss-project.md` | Interview-style project scoping. Classifies project shape (tiny/small/medium/large). | `ask_user_questions`, `gsd_summary_save(PROJECT)` |
-| `guided-discuss-requirements.md` | Interview-style requirements capture. | `ask_user_questions`, `gsd_requirement_save`, `gsd_summary_save(REQUIREMENTS)` |
+| `guided-workflow-preferences.md` | Write `.gwd/PREFERENCES.md` with defaults; pre-seeds `research-decision.json`. No user questions. | — |
+| `guided-discuss-project.md` | Interview-style project scoping. Classifies project shape (tiny/small/medium/large). | `ask_user_questions`, `gwd_summary_save(PROJECT)` |
+| `guided-discuss-requirements.md` | Interview-style requirements capture. | `ask_user_questions`, `gwd_requirement_save`, `gwd_summary_save(REQUIREMENTS)` |
 | `guided-research-decision.md` | Single fixed-question gate: opt into deep research or proceed lean. | `ask_user_questions` → writes `runtime/research-decision.json` |
 | `guided-research-project.md` | Spawns 4 parallel scout subagents (stack, features, architecture, pitfalls). Headless. | `subagent` × 4 |
 
@@ -151,17 +151,17 @@ plan-slice  (per slice, sequential)
 
 | Prompt | Purpose | Key Tools Called |
 |--------|---------|-----------------|
-| `discuss.md` | Interactive milestone discussion. Layered Q&A: Scope → Architecture → Error States → Quality Bar. | `ask_user_questions`, `gsd_summary_save(CONTEXT)` |
-| `guided-discuss-milestone.md` | Same as discuss.md but interview-driven, with draft saves. | `ask_user_questions`, `gsd_summary_save(CONTEXT)` |
-| `discuss-headless.md` | Create milestone CONTEXT from spec with no user interaction. | `gsd_plan_milestone`, `gsd_decision_save` |
-| `research-milestone.md` | Strategic research before planning. Narrates findings. | `gsd_summary_save(RESEARCH)` |
-| `plan-milestone.md` | Decompose milestone into slices. Plans first slice inline if single-slice. | `gsd_plan_milestone`, `gsd_decision_save` |
+| `discuss.md` | Interactive milestone discussion. Layered Q&A: Scope → Architecture → Error States → Quality Bar. | `ask_user_questions`, `gwd_summary_save(CONTEXT)` |
+| `guided-discuss-milestone.md` | Same as discuss.md but interview-driven, with draft saves. | `ask_user_questions`, `gwd_summary_save(CONTEXT)` |
+| `discuss-headless.md` | Create milestone CONTEXT from spec with no user interaction. | `gwd_plan_milestone`, `gwd_decision_save` |
+| `research-milestone.md` | Strategic research before planning. Narrates findings. | `gwd_summary_save(RESEARCH)` |
+| `plan-milestone.md` | Decompose milestone into slices. Plans first slice inline if single-slice. | `gwd_plan_milestone`, `gwd_decision_save` |
 | `parallel-research-slices.md` | Spawn one scout subagent per slice simultaneously. Retries once on failure. | `subagent` × N |
-| `plan-slice.md` | Decompose single slice into tasks. Progressive planning: sketches for S02+. | `memory_query`, `gsd_plan_slice` |
-| `refine-slice.md` | Expand sketched slice plan into full task breakdown. | `gsd_plan_slice` |
-| `guided-discuss-slice.md` | Interview-driven slice scoping. | `ask_user_questions`, `gsd_summary_save(CONTEXT)` |
-| `guided-research-slice.md` | Scout a slice. | `memory_query`, `gsd_summary_save(RESEARCH)` |
-| `research-slice.md` | Research a slice (non-guided, auto-mode). | `memory_query`, `gsd_summary_save(RESEARCH)` |
+| `plan-slice.md` | Decompose single slice into tasks. Progressive planning: sketches for S02+. | `memory_query`, `gwd_plan_slice` |
+| `refine-slice.md` | Expand sketched slice plan into full task breakdown. | `gwd_plan_slice` |
+| `guided-discuss-slice.md` | Interview-driven slice scoping. | `ask_user_questions`, `gwd_summary_save(CONTEXT)` |
+| `guided-research-slice.md` | Scout a slice. | `memory_query`, `gwd_summary_save(RESEARCH)` |
+| `research-slice.md` | Research a slice (non-guided, auto-mode). | `memory_query`, `gwd_summary_save(RESEARCH)` |
 
 ### 5d. Execution Flow
 
@@ -176,9 +176,9 @@ guided-resume-task  (if task was interrupted)
 
 | Prompt | Purpose | Key Tools Called |
 |--------|---------|-----------------|
-| `execute-task.md` | Execute a single task. Inlines full context stack. | `memory_query`, `gsd_task_complete` |
+| `execute-task.md` | Execute a single task. Inlines full context stack. | `memory_query`, `gwd_task_complete` |
 | `reactive-execute.md` | Dispatch all ready tasks in parallel subagents. Records failures only when no summary left. | `subagent` × N |
-| `guided-resume-task.md` | Resume interrupted task. Reads `{{sliceId}}-CONTINUE.md` for continuation context. | `gsd_task_complete` |
+| `guided-resume-task.md` | Resume interrupted task. Reads `{{sliceId}}-CONTINUE.md` for continuation context. | `gwd_task_complete` |
 | `quick-task.md` | Lightweight task outside milestone structure. No DB tools. | writes `{{summaryPath}}` directly |
 
 ### 5e. Quality Gates
@@ -195,9 +195,9 @@ run-uat  (user acceptance tests)
 
 | Prompt | Purpose | Key Tools Called |
 |--------|---------|-----------------|
-| `gate-evaluate.md` | Spawn one subagent per quality gate in parallel. Verifies `gsd_save_gate_result` called. | `subagent` × N |
-| `validate-milestone.md` | 3 parallel reviewers: (A) requirements, (B) integration, (C) acceptance. | `subagent` × 3, `gsd_validate_milestone` |
-| `run-uat.md` | Execute UAT. Modes: artifact-driven, runtime, browser, human-experience. | `gsd_summary_save(ASSESSMENT)` |
+| `gate-evaluate.md` | Spawn one subagent per quality gate in parallel. Verifies `gwd_save_gate_result` called. | `subagent` × N |
+| `validate-milestone.md` | 3 parallel reviewers: (A) requirements, (B) integration, (C) acceptance. | `subagent` × 3, `gwd_validate_milestone` |
+| `run-uat.md` | Execute UAT. Modes: artifact-driven, runtime, browser, human-experience. | `gwd_summary_save(ASSESSMENT)` |
 
 ### 5f. Completion Flow
 
@@ -213,27 +213,27 @@ complete-milestone
 
 | Prompt | Purpose | Key Tools Called |
 |--------|---------|-----------------|
-| `complete-slice.md` | Close slice after tasks pass. Compress summary. | `gsd_slice_complete`, `gsd_requirement_update` |
-| `reassess-roadmap.md` | Review roadmap post-slice. Validates success-criterion coverage. | `gsd_reassess_roadmap`, `gsd_requirement_update` |
-| `complete-milestone.md` | Close milestone. Persist to DB. | `gsd_complete_milestone`, `gsd_requirement_update`, `capture_thought` |
+| `complete-slice.md` | Close slice after tasks pass. Compress summary. | `gwd_slice_complete`, `gwd_requirement_update` |
+| `reassess-roadmap.md` | Review roadmap post-slice. Validates success-criterion coverage. | `gwd_reassess_roadmap`, `gwd_requirement_update` |
+| `complete-milestone.md` | Close milestone. Persist to DB. | `gwd_complete_milestone`, `gwd_requirement_update`, `capture_thought` |
 
 ### 5g. Maintenance & Repair
 
 | Prompt | Purpose | Key Tools Called |
 |--------|---------|-----------------|
-| `replan-slice.md` | Replan after blocker discovered mid-slice. Preserves completed tasks. | `gsd_replan_slice` |
-| `rethink.md` | Reorder, park, unpark, skip, or discard milestones. | `gsd_skip_slice`, writes `QUEUE-ORDER.json` |
+| `replan-slice.md` | Replan after blocker discovered mid-slice. Preserves completed tasks. | `gwd_replan_slice` |
+| `rethink.md` | Reorder, park, unpark, skip, or discard milestones. | `gwd_skip_slice`, writes `QUEUE-ORDER.json` |
 | `reassess-roadmap.md` | *(see Completion Flow above)* | — |
 | `rewrite-docs.md` | Apply OVERRIDES.md changes across all planning docs. | — |
-| `review-migration.md` | Audit `.planning → .gsd` migration correctness. | `deriveState` |
-| `doctor-heal.md` | Repair broken GSD artifacts (summaries, UAT, CONTEXT). | — |
+| `review-migration.md` | Audit `.planning → .gwd` migration correctness. | `deriveState` |
+| `doctor-heal.md` | Repair broken GWD artifacts (summaries, UAT, CONTEXT). | — |
 | `scan.md` | Codebase scan → STACK.md, INTEGRATIONS.md, ARCHITECTURE.md. No tool calls. | writes `{{outputDir}}` |
-| `forensics.md` | Debug GSD engine failures. Map failures to source files. | reads activity logs, journal, metrics |
+| `forensics.md` | Debug GWD engine failures. Map failures to source files. | reads activity logs, journal, metrics |
 | `debug-diagnose.md` | Root-cause analysis for reported bugs. | `capture_thought`, `memory_query` |
 | `debug-session-manager.md` | Manage debug session with checkpoint protocol. Structured return headers. | — |
 | `add-tests.md` | Generate tests for completed slices. | skill activation |
 | `triage-captures.md` | Classify user thoughts captured with `capture_thought`. | `ask_user_questions`, updates `CAPTURES.md` |
-| `queue.md` | Add future milestones to queue. | `gsd_milestone_generate_id`, `gsd_summary_save(CONTEXT)`, updates `QUEUE.md` |
+| `queue.md` | Add future milestones to queue. | `gwd_milestone_generate_id`, `gwd_summary_save(CONTEXT)`, updates `QUEUE.md` |
 
 ### 5h. Workflow Execution (one-off workflows, not milestone-driven)
 
@@ -350,32 +350,32 @@ any prompt ─────[failure]──────► forensics / debug-diagn
 ```
 Phase                   Artifact Written
 ─────────────────────────────────────────────────────
-guided-workflow-preferences  →  .gsd/PREFERENCES.md
-guided-discuss-project       →  .gsd/PROJECT.md
-guided-discuss-requirements  →  .gsd/REQUIREMENTS.md
-guided-research-decision     →  .gsd/runtime/research-decision.json
-guided-research-project      →  .gsd/milestones/M##/M##-RESEARCH.md (×4 aspects)
+guided-workflow-preferences  →  .gwd/PREFERENCES.md
+guided-discuss-project       →  .gwd/PROJECT.md
+guided-discuss-requirements  →  .gwd/REQUIREMENTS.md
+guided-research-decision     →  .gwd/runtime/research-decision.json
+guided-research-project      →  .gwd/milestones/M##/M##-RESEARCH.md (×4 aspects)
 
-discuss / guided-discuss-milestone  →  .gsd/milestones/M##/M##-CONTEXT.md
-research-milestone           →  .gsd/milestones/M##/M##-RESEARCH.md
-plan-milestone               →  .gsd/milestones/M##/M##-ROADMAP.md
-                                 .gsd/milestones/M##/slices/S##/S##-PLAN.md (sketches)
+discuss / guided-discuss-milestone  →  .gwd/milestones/M##/M##-CONTEXT.md
+research-milestone           →  .gwd/milestones/M##/M##-RESEARCH.md
+plan-milestone               →  .gwd/milestones/M##/M##-ROADMAP.md
+                                 .gwd/milestones/M##/slices/S##/S##-PLAN.md (sketches)
 
-research-slice               →  .gsd/milestones/M##/slices/S##/S##-RESEARCH.md
-guided-discuss-slice         →  .gsd/milestones/M##/slices/S##/S##-CONTEXT.md
-plan-slice / refine-slice    →  .gsd/milestones/M##/slices/S##/S##-PLAN.md
-                                 .gsd/milestones/M##/slices/S##/tasks/T##-PLAN.md
+research-slice               →  .gwd/milestones/M##/slices/S##/S##-RESEARCH.md
+guided-discuss-slice         →  .gwd/milestones/M##/slices/S##/S##-CONTEXT.md
+plan-slice / refine-slice    →  .gwd/milestones/M##/slices/S##/S##-PLAN.md
+                                 .gwd/milestones/M##/slices/S##/tasks/T##-PLAN.md
 
-execute-task                 →  .gsd/milestones/M##/slices/S##/tasks/T##-SUMMARY.md
+execute-task                 →  .gwd/milestones/M##/slices/S##/tasks/T##-SUMMARY.md
 gate-evaluate                →  gate results (DB + artifact)
-run-uat                      →  .gsd/milestones/M##/slices/S##/S##-ASSESSMENT.md
-complete-slice               →  .gsd/milestones/M##/slices/S##/S##-SUMMARY.md
+run-uat                      →  .gwd/milestones/M##/slices/S##/S##-ASSESSMENT.md
+complete-slice               →  .gwd/milestones/M##/slices/S##/S##-SUMMARY.md
 reassess-roadmap             →  updates M##-ROADMAP.md (slice statuses)
 validate-milestone           →  validation verdict (DB)
-complete-milestone           →  .gsd/milestones/M##/M##-SUMMARY.md
+complete-milestone           →  .gwd/milestones/M##/M##-SUMMARY.md
 
-triage-captures              →  .gsd/CAPTURES.md (classification metadata)
-queue                        →  .gsd/QUEUE.md, updates PROJECT.md
+triage-captures              →  .gwd/CAPTURES.md (classification metadata)
+queue                        →  .gwd/QUEUE.md, updates PROJECT.md
 scan                         →  {{outputDir}}/STACK.md, INTEGRATIONS.md, ARCHITECTURE.md
 rewrite-docs                 →  DECISIONS.md, task plans, REQUIREMENTS.md, PROJECT.md
 ```
@@ -407,19 +407,19 @@ LLM sees: "load these skill files and follow their rules for this unit"
 
 | Tool | Persists To |
 |------|------------|
-| `gsd_plan_milestone` | milestones table, slices table |
-| `gsd_plan_slice` | slices table, tasks table |
-| `gsd_task_complete` | tasks table, T##-SUMMARY.md |
-| `gsd_slice_complete` | slices table, S##-SUMMARY.md |
-| `gsd_complete_milestone` | milestones table, M##-SUMMARY.md |
-| `gsd_validate_milestone` | milestones table (validation verdict) |
-| `gsd_reassess_roadmap` | slices table (reorder, add, remove) |
-| `gsd_replan_slice` | tasks table (replace incomplete tasks) |
-| `gsd_skip_slice` | slices table (status = skipped) |
-| `gsd_requirement_save` | requirements table |
-| `gsd_requirement_update` | requirements table |
-| `gsd_summary_save` | artifact files + DB reference |
-| `gsd_decision_save` | DECISIONS.md + DB |
+| `gwd_plan_milestone` | milestones table, slices table |
+| `gwd_plan_slice` | slices table, tasks table |
+| `gwd_task_complete` | tasks table, T##-SUMMARY.md |
+| `gwd_slice_complete` | slices table, S##-SUMMARY.md |
+| `gwd_complete_milestone` | milestones table, M##-SUMMARY.md |
+| `gwd_validate_milestone` | milestones table (validation verdict) |
+| `gwd_reassess_roadmap` | slices table (reorder, add, remove) |
+| `gwd_replan_slice` | tasks table (replace incomplete tasks) |
+| `gwd_skip_slice` | slices table (status = skipped) |
+| `gwd_requirement_save` | requirements table |
+| `gwd_requirement_update` | requirements table |
+| `gwd_summary_save` | artifact files + DB reference |
+| `gwd_decision_save` | DECISIONS.md + DB |
 | `capture_thought` | KNOWLEDGE.md (patterns, gotchas, arch) |
 | `memory_query` | READ — queries KNOWLEDGE.md + summaries |
 | `ask_user_questions` | blocks until user responds; no DB write |
@@ -476,5 +476,5 @@ Priority  Rule                                          Fires When
 - **Dashed →** = "reads from" 
 - **×N** = spawns N parallel subagents each running that prompt
 - **[gate]** = requires explicit user confirmation before proceeding
-- **DB** = persists to `gsd.db` via a `gsd_*` tool call
+- **DB** = persists to `gwd.db` via a `gwd_*` tool call
 - **Headless** = no `ask_user_questions` calls; autonomous judgment

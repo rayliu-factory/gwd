@@ -120,7 +120,7 @@ export interface OnboardingBridgeAuthRefreshState {
 /**
  * CLI-side onboarding completion record exposed to the web client.
  *
- * Mirrors the JSON written by `src/resources/extensions/gsd/onboarding-state.ts`.
+ * Mirrors the JSON written by `src/resources/extensions/gwd/onboarding-state.ts`.
  * Read-only metadata: lets the web UI render "setup complete (date)" indicators
  * and offer a "re-run setup" affordance. Does NOT influence the `locked` flag —
  * lock semantics still depend on whether a required provider is configured.
@@ -228,12 +228,12 @@ const OPTIONAL_SECTION_CATALOG: OptionalSectionCatalogEntry[] = [
 
 /**
  * ExternalCli providers authenticate through a local CLI tool rather than
- * storing credentials in GSD. They are always treated as "configured" by the
+ * storing credentials in GWD. They are always treated as "configured" by the
  * onboarding service — if the binary is missing, inference will fail at
  * runtime (the correct place to surface that error).
  *
  * **Sync requirement:** This set must stay in sync with `CLI_AUTH_PROVIDERS`
- * in `src/resources/extensions/gsd/doctor-providers.ts`. If a new ExternalCli
+ * in `src/resources/extensions/gwd/doctor-providers.ts`. If a new ExternalCli
  * provider is added to one set but not the other, onboarding will silently
  * mis-classify it (treating it as unconfigured or vice-versa).
  */
@@ -307,7 +307,7 @@ function resolveCredentialSource(
   isExternalCliProviderFn: (id: string) => boolean,
 ): OnboardingCredentialSource | null {
   // ExternalCli providers authenticate through a local CLI — no credentials
-  // are stored in GSD. Treat them as always configured.
+  // are stored in GWD. Treat them as always configured.
   if (isExternalCliProviderFn(providerId)) {
     return "external_cli";
   }
@@ -470,7 +470,7 @@ async function defaultValidateApiKey(
     case "openrouter":
       return await validateBearerRequest(fetchImpl, providerId, "https://openrouter.ai/api/v1/models", apiKey, {
         "HTTP-Referer": "https://localhost",
-        "X-Title": "GSD onboarding",
+        "X-Title": "GWD onboarding",
       });
     case "mistral":
       return await validateBearerRequest(fetchImpl, providerId, "https://api.mistral.ai/v1/models", apiKey);
@@ -820,7 +820,7 @@ export class OnboardingService {
     let completionRecord: OnboardingCompletionRecord | null = null;
     try {
       const { readOnboardingRecord, isOnboardingComplete } = await import(
-        "../resources/extensions/gsd/onboarding-state.js"
+        "../resources/extensions/gwd/onboarding-state.js"
       );
       const r = readOnboardingRecord();
       completionRecord = {

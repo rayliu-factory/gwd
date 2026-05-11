@@ -10,7 +10,7 @@ import type { SettingsData } from "../../web/lib/settings-types.ts"
 const SETTINGS_MAX_BUFFER = 2 * 1024 * 1024
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 }
 
 /**
@@ -27,11 +27,11 @@ export async function collectSettingsData(projectCwdOverride?: string): Promise<
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const prefsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/preferences.ts")
-  const routerResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/model-router.ts")
-  const budgetResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/context-budget.ts")
-  const historyResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/routing-history.ts")
-  const metricsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/metrics.ts")
+  const prefsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/preferences.ts")
+  const routerResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/model-router.ts")
+  const budgetResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/context-budget.ts")
+  const historyResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/routing-history.ts")
+  const metricsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/metrics.ts")
 
   const prefsPath = prefsResolution.modulePath
   const routerPath = routerResolution.modulePath
@@ -69,7 +69,7 @@ export async function collectSettingsData(projectCwdOverride?: string): Promise<
     'const metricsMod = await import(pathToFileURL(process.env.GWD_SETTINGS_METRICS_MODULE).href);',
 
     // 1. Effective preferences (may be null if no preferences files exist)
-    'const loaded = prefsMod.loadEffectiveGSDPreferences();',
+    'const loaded = prefsMod.loadEffectiveGWDPreferences();',
     'let preferences = null;',
     'if (loaded) {',
     '  const p = loaded.preferences;',

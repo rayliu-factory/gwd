@@ -1,5 +1,5 @@
 /**
- * GSD-2 fake model — paired with the fake LLM provider for e2e tests.
+ * GWD fake model — paired with the fake LLM provider for e2e tests.
  *
  * Only registered when `GWD_FAKE_LLM_TRANSCRIPT` env var is set, via the
  * conditional branch in models/index.ts. The model is invisible to normal
@@ -8,15 +8,15 @@
 
 import type { Model } from "../types.js";
 
-export const FAKE_PROVIDER = "gsd-fake" as const;
-export const FAKE_MODEL_ID = "gsd-fake-model" as const;
+export const FAKE_PROVIDER = "gwd-fake" as const;
+export const FAKE_MODEL_ID = "gwd-fake-model" as const;
 
 export const FAKE_MODEL: Model<"fake"> = {
 	id: FAKE_MODEL_ID,
-	name: "GSD Fake (e2e replay)",
+	name: "GWD Fake (e2e replay)",
 	api: "fake",
 	provider: FAKE_PROVIDER,
-	baseUrl: "https://fake.gsd.local/v1",
+	baseUrl: "https://fake.gwd.local/v1",
 	reasoning: false,
 	input: ["text"],
 	cost: {

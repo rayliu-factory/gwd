@@ -2,7 +2,7 @@
 
 ## Domain glossary
 
-- **Auto Orchestration**: runtime coordination of GSD auto-mode units from start to completion, including dispatch, recovery, and stop/resume behavior.
+- **Auto Orchestration**: runtime coordination of GWD auto-mode units from start to completion, including dispatch, recovery, and stop/resume behavior.
 - **Unit**: the smallest executable workflow step (e.g., plan slice, execute task, complete slice).
 - **Unit progression**: movement from one Unit to the next under orchestration rules.
 - **Dispatch decision**: selection of the next Unit plus rationale and preconditions.
@@ -53,7 +53,7 @@ See `docs/dev/ADR-015-runtime-invariant-modules.md`.
 
 Dispatch remains responsible for selecting the next Unit from reconciled state. It should not own DB/disk repair, tool-policy compilation, or worktree root preparation.
 
-- Worktree Safety should fail closed for source-writing Units under worktree isolation. A Unit whose Tool Contract permits writes outside `.gsd/**` must run in a proven milestone worktree root; it must not silently degrade to project-root source writes when the worktree is missing, empty, unregistered, on the wrong branch, or no longer lease-owned. Planning-only Units may continue to write `.gsd/**` artifacts at the project root.
+- Worktree Safety should fail closed for source-writing Units under worktree isolation. A Unit whose Tool Contract permits writes outside `.gwd/**` must run in a proven milestone worktree root; it must not silently degrade to project-root source writes when the worktree is missing, empty, unregistered, on the wrong branch, or no longer lease-owned. Planning-only Units may continue to write `.gwd/**` artifacts at the project root.
 
 ## Current implementation snapshot (phase 1)
 
@@ -85,7 +85,7 @@ Recent triage showed repeated failures concentrated in orchestration state coher
 - Terminal guardrails are bypassed in side branches (e.g., complete-milestone placeholder behavior)
 
 - **Tool contract mismatches**
-- Prompt/tool/schema drift causes repeated invalid calls (`gsd_exec` runtime enums, closeout prompts vs policy constraints)
+- Prompt/tool/schema drift causes repeated invalid calls (`gwd_exec` runtime enums, closeout prompts vs policy constraints)
 - Tool availability/surface inconsistencies under session boot/registration timing
 - Validation happens too late (pre-exec catches issues that planner tools should reject upfront)
 
@@ -127,7 +127,7 @@ Recent triage showed repeated failures concentrated in orchestration state coher
 
 #### State Reconciliation module
 
-- Files: `state.ts`, `gsd-db.ts`, `db-writer.ts`, `md-importer.ts`, `auto-recovery.ts`, PROJECT/ROADMAP parsers
+- Files: `state.ts`, `gwd-db.ts`, `db-writer.ts`, `md-importer.ts`, `auto-recovery.ts`, PROJECT/ROADMAP parsers
 - Problem: DB rows, markdown projections, and cached state are reconciled opportunistically. Helpers such as sketch-flag repair exist but are not wired into the state path, so bugs reappear as wrong Dispatch decisions.
 - Refactor target: expose one pre-dispatch reconciliation Interface, e.g. `reconcileBeforeDispatch(basePath)`, that refreshes DB reads, repairs known projection drift, returns blocking inconsistencies, and invalidates derived-state caches.
 - Leverage: Dispatch and recovery callers stop needing to know each artifact-specific repair rule.
@@ -137,11 +137,11 @@ Recent triage showed repeated failures concentrated in orchestration state coher
 #### Worktree Safety module
 
 - Files: `worktree-resolver.ts`, `auto/phases.ts`, `auto-worktree.ts`, `worktree-manager.ts`, parallel and slice-parallel orchestrators, git helpers
-- Problem: worktree validity is checked in scattered, unit-specific places. Some paths build a worktree path string without proving it is registered, has `.git`, owns the lease, and matches `GSD_PROJECT_ROOT`.
+- Problem: worktree validity is checked in scattered, unit-specific places. Some paths build a worktree path string without proving it is registered, has `.git`, owns the lease, and matches `GWD_PROJECT_ROOT`.
 - Refactor target: expose one Interface for source-writing Units, e.g. `prepareUnitRoot(unitType, unitId)`, that returns a valid root or a typed `worktree-invalid` Recovery decision.
 - Leverage: every source-writing Unit receives the same root validation, lease fencing, and failure classification.
 - Locality: ghost worktree, missing `.git`, stale worktree, branch/HEAD mismatch, and worktree cleanup logic are reviewed in one module.
-- Test focus: invalid root, missing `.git`, stale path-only fallback, branch mismatch, and `GSD_PROJECT_ROOT` cases.
+- Test focus: invalid root, missing `.git`, stale path-only fallback, branch mismatch, and `GWD_PROJECT_ROOT` cases.
 
 #### Recovery Classification module
 

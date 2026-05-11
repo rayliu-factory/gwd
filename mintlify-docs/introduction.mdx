@@ -1,11 +1,11 @@
 ---
-title: "GSD — Get Shit Done"
+title: "GWD — Get Work Done"
 description: "An autonomous coding agent that researches, plans, executes, and commits code while you focus on what matters."
 ---
 
-GSD is an autonomous coding agent. Describe what you want built, run `/gsd auto`, and walk away. Come back to working software with clean git history.
+GWD is an autonomous coding agent. Describe what you want built, run `/gwd auto`, and walk away. Come back to working software with clean git history.
 
-## What GSD does
+## What GWD does
 
 <CardGroup cols={2}>
   <Card title="Autonomous execution" icon="robot">
@@ -24,7 +24,7 @@ GSD is an autonomous coding agent. Describe what you want built, run `/gsd auto`
 
 ## How it works
 
-GSD organizes work into a hierarchy:
+GWD organizes work into a hierarchy:
 
 ```
 Milestone  →  a shippable version (4-10 slices)
@@ -48,19 +48,19 @@ Every phase gets a fresh context window with pre-loaded context — no accumulat
 
 <Tabs>
   <Tab title="Step mode">
-    Type `/gsd` inside a session. GSD executes one unit at a time, pausing between each so you can review.
+    Type `/gwd` inside a session. GWD executes one unit at a time, pausing between each so you can review.
 
     ```bash
-    gsd
-    /gsd
+    gwd
+    /gwd
     ```
   </Tab>
   <Tab title="Auto mode">
-    Type `/gsd auto` and walk away. GSD autonomously researches, plans, executes, verifies, and commits until the milestone is complete.
+    Type `/gwd auto` and walk away. GWD autonomously researches, plans, executes, verifies, and commits until the milestone is complete.
 
     ```bash
-    gsd
-    /gsd auto
+    gwd
+    /gwd auto
     ```
   </Tab>
 </Tabs>
@@ -70,23 +70,23 @@ The recommended workflow: auto mode in one terminal, steering from another.
 **Terminal 1 — let it build:**
 
 ```bash
-gsd
-/gsd auto
+gwd
+/gwd auto
 ```
 
 **Terminal 2 — steer while it works:**
 
 ```bash
-gsd
-/gsd discuss    # talk through architecture decisions
-/gsd status     # check progress
-/gsd capture    # fire-and-forget thoughts
+gwd
+/gwd discuss    # talk through architecture decisions
+/gwd status     # check progress
+/gwd capture    # fire-and-forget thoughts
 ```
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Install GSD" icon="download" href="/getting-started">
+  <Card title="Install GWD" icon="download" href="/getting-started">
     Get up and running in under a minute.
   </Card>
   <Card title="Auto mode deep dive" icon="circle-play" href="/guides/auto-mode">

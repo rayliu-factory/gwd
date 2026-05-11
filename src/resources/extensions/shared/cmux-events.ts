@@ -1,9 +1,9 @@
-// GSD-2 — Shared cmux event channel contracts
+// GWD-2 — Shared cmux event channel contracts
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 /**
- * Neutral event channel module for gsd<->cmux IPC.
- * Both gsd and cmux import from here — neither imports the other directly.
+ * Neutral event channel module for gwd<->cmux IPC.
+ * Both gwd and cmux import from here — neither imports the other directly.
  * Per ADR-006 Phase 0: event-based decoupling.
  */
 
@@ -13,7 +13,7 @@ export const CMUX_CHANNELS = {
   LIFECYCLE: "cmux:lifecycle",
 } as const;
 
-/** Migrated from cmux/index.ts (D-07) — shared by both gsd and cmux. */
+/** Migrated from cmux/index.ts (D-07) — shared by both gwd and cmux. */
 export type CmuxLogLevel = "info" | "progress" | "success" | "warning" | "error";
 
 // ── Structural types (D-05): cmux defines only what it needs ──

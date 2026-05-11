@@ -14,7 +14,7 @@ src/**/*.d.ts.map
 repowise.db
 repowise.db-*
 
-# ── GSD project state (development-only, lives in worktree branches) ──
+# ── GWD project state (development-only, lives in worktree branches) ──
 package-lock.json
 .claude/
 RELEASE-GUIDE.md
@@ -58,12 +58,12 @@ packages/*/node_modules/
 preflight-script.ts
 .worktrees/
 
-# ── GSD baseline (auto-generated) ──
+# ── GWD baseline (auto-generated) ──
 dist/
 !/pkg/dist/modes/
 !/pkg/dist/core/export-html/
 .bg_shell
-.gsd*.tgz
+.gwd*.tgz
 .artifacts/
 AGENTS.md
 .bg-shell/
@@ -73,15 +73,15 @@ TODOS.md
 docs/coherence-audit/
 .plans/
 
-# ── GSD project state (per-worktree, never committed) ──
-.gsd/
+# ── GWD project state (per-worktree, never committed) ──
+.gwd/
 
 # ── Stale lock files (npm is canonical) ──
 pnpm-lock.yaml
 bun.lock
 
-# ── GSD baseline (auto-generated) ──
-.gsd
+# ── GWD baseline (auto-generated) ──
+.gwd
 
-# ── GSD baseline (auto-generated) ──
-.gsd-id
+# ── GWD baseline (auto-generated) ──
+.gwd-id

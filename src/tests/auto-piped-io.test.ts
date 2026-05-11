@@ -1,7 +1,7 @@
 /**
  * Tests for auto-mode piped I/O detection (#2732).
  *
- * When `gsd auto` is run with piped stdout (e.g. `gsd auto | cat`),
+ * When `gwd auto` is run with piped stdout (e.g. `gwd auto | cat`),
  * the CLI should detect the non-TTY stdout and redirect to headless
  * mode instead of hanging in interactive mode trying to set up a TUI
  * on a non-terminal output stream.
@@ -110,9 +110,9 @@ test("does NOT identify undefined as explicit subcommand", () => {
   assert.ok(!isExplicitSubcommand(undefined));
 });
 
-// ─── End-to-end scenario: gsd auto | cat ──────────────────────────────────
+// ─── End-to-end scenario: gwd auto | cat ──────────────────────────────────
 
-test("scenario: 'gsd auto 2>&1 | cat' — should redirect to headless", () => {
+test("scenario: 'gwd auto 2>&1 | cat' — should redirect to headless", () => {
   // Simulates: subcommand = "auto", stdin is TTY, stdout is piped
   const subcommand = "auto";
   const stdinIsTTY = true;
@@ -125,7 +125,7 @@ test("scenario: 'gsd auto 2>&1 | cat' — should redirect to headless", () => {
   assert.ok(shouldRedirectAutoToHeadless(subcommand, stdinIsTTY, stdoutIsTTY));
 });
 
-test("scenario: 'gsd auto > /tmp/output.txt' — should redirect to headless", () => {
+test("scenario: 'gwd auto > /tmp/output.txt' — should redirect to headless", () => {
   const subcommand = "auto";
   const stdinIsTTY = true;
   const stdoutIsTTY = false;
@@ -134,7 +134,7 @@ test("scenario: 'gsd auto > /tmp/output.txt' — should redirect to headless", (
   assert.ok(shouldRedirectAutoToHeadless(subcommand, stdinIsTTY, stdoutIsTTY));
 });
 
-test("scenario: 'gsd auto' in terminal — normal interactive mode", () => {
+test("scenario: 'gwd auto' in terminal — normal interactive mode", () => {
   const subcommand = "auto";
   const stdinIsTTY = true;
   const stdoutIsTTY = true;
@@ -143,7 +143,7 @@ test("scenario: 'gsd auto' in terminal — normal interactive mode", () => {
   assert.ok(!shouldRedirectAutoToHeadless(subcommand, stdinIsTTY, stdoutIsTTY));
 });
 
-test("scenario: 'echo msg | gsd auto' — stdin piped, should redirect", () => {
+test("scenario: 'echo msg | gwd auto' — stdin piped, should redirect", () => {
   const subcommand = "auto";
   const stdinIsTTY = false;
   const stdoutIsTTY = true; // stdout is TTY even though stdin is piped
@@ -153,7 +153,7 @@ test("scenario: 'echo msg | gsd auto' — stdin piped, should redirect", () => {
   assert.ok(shouldRedirectAutoToHeadless(subcommand, stdinIsTTY, stdoutIsTTY));
 });
 
-test("scenario: 'echo msg | gsd auto | cat' — both piped", () => {
+test("scenario: 'echo msg | gwd auto | cat' — both piped", () => {
   const subcommand = "auto";
   const stdinIsTTY = false;
   const stdoutIsTTY = false;

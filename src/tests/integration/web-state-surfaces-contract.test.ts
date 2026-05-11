@@ -6,7 +6,7 @@ import { join } from "node:path";
 
 // ─── Imports ──────────────────────────────────────────────────────────
 const workspaceIndex = await import(
-  "../../resources/extensions/gsd/workspace-index.ts"
+  "../../resources/extensions/gwd/workspace-index.ts"
 );
 const filesRoute = await import("../../../web/app/api/files/route.ts");
 
@@ -14,32 +14,32 @@ const filesRoute = await import("../../../web/app/api/files/route.ts");
 const workspaceStatus = await import("../../../web/lib/workspace-status.ts");
 const commandSurface = await import("../../../web/lib/command-surface-contract.ts");
 const {
-  GSDWorkspaceStore,
+  GWDWorkspaceStore,
   getLiveAutoDashboard,
   getLiveResumableSessions,
   getLiveWorkspaceIndex,
-} = await import("../../../web/lib/gsd-workspace-store.tsx");
+} = await import("../../../web/lib/gwd-workspace-store.tsx");
 const { executeWorkflowActionInPowerMode } = await import("../../../web/lib/workflow-action-execution.ts");
 
 // ─── Helpers ──────────────────────────────────────────────────────────
-function makeGsdFixture(): { root: string; gsdDir: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), "gsd-state-surfaces-"));
-  const gsdDir = join(root, ".gsd");
-  mkdirSync(gsdDir, { recursive: true });
+function makeGwdFixture(): { root: string; gwdDir: string; cleanup: () => void } {
+  const root = mkdtempSync(join(tmpdir(), "gwd-state-surfaces-"));
+  const gwdDir = join(root, ".gwd");
+  mkdirSync(gwdDir, { recursive: true });
   return {
     root,
-    gsdDir,
+    gwdDir,
     cleanup: () => rmSync(root, { recursive: true, force: true }),
   };
 }
 
 // ─── Group 1: Workspace index — risk/depends/demo fields ─────────────
 test("indexWorkspace extracts risk, depends, and demo from roadmap", async (t) => {
-  const { root, gsdDir, cleanup } = makeGsdFixture();
+  const { root, gwdDir, cleanup } = makeGwdFixture();
 
   t.after(() => { cleanup(); });
 
-  const milestoneDir = join(gsdDir, "milestones", "M001");
+  const milestoneDir = join(gwdDir, "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
   mkdirSync(tasksDir, { recursive: true });
@@ -88,11 +88,11 @@ test("indexWorkspace extracts risk, depends, and demo from roadmap", async (t) =
 });
 
 test("indexWorkspace handles slices without risk/depends/demo", async (t) => {
-  const { root, gsdDir, cleanup } = makeGsdFixture();
+  const { root, gwdDir, cleanup } = makeGwdFixture();
 
   t.after(() => { cleanup(); });
 
-  const milestoneDir = join(gsdDir, "milestones", "M001");
+  const milestoneDir = join(gwdDir, "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   mkdirSync(join(sliceDir, "tasks"), { recursive: true });
 
@@ -199,8 +199,8 @@ test("getTaskStatus returns correct statuses", () => {
 });
 
 // ─── Group 3: Files API — tree listing ───────────────────────────────
-test("files API returns tree listing of .gsd/ directory", async (t) => {
-  const { root, gsdDir, cleanup } = makeGsdFixture();
+test("files API returns tree listing of .gwd/ directory", async (t) => {
+  const { root, gwdDir, cleanup } = makeGwdFixture();
   const origEnv = process.env.GWD_WEB_PROJECT_CWD;
 
   t.after(() => {
@@ -211,9 +211,9 @@ test("files API returns tree listing of .gsd/ directory", async (t) => {
   process.env.GWD_WEB_PROJECT_CWD = root;
 
   // Create some files
-  writeFileSync(join(gsdDir, "STATE.md"), "# State\nactive");
-  writeFileSync(join(gsdDir, "PROJECT.md"), "# Project");
-  const msDir = join(gsdDir, "milestones", "M001");
+  writeFileSync(join(gwdDir, "STATE.md"), "# State\nactive");
+  writeFileSync(join(gwdDir, "PROJECT.md"), "# Project");
+  const msDir = join(gwdDir, "milestones", "M001");
   mkdirSync(msDir, { recursive: true });
   writeFileSync(join(msDir, "M001-ROADMAP.md"), "# Roadmap");
 
@@ -240,7 +240,7 @@ test("files API returns tree listing of .gsd/ directory", async (t) => {
 
 // ─── Group 4: Files API — file content ───────────────────────────────
 test("files API returns file content for valid path", async (t) => {
-  const { root, gsdDir, cleanup } = makeGsdFixture();
+  const { root, gwdDir, cleanup } = makeGwdFixture();
   const origEnv = process.env.GWD_WEB_PROJECT_CWD;
 
   t.after(() => {
@@ -251,7 +251,7 @@ test("files API returns file content for valid path", async (t) => {
   process.env.GWD_WEB_PROJECT_CWD = root;
 
   const fileContent = "# State\n\nCurrent milestone: M001";
-  writeFileSync(join(gsdDir, "STATE.md"), fileContent);
+  writeFileSync(join(gwdDir, "STATE.md"), fileContent);
 
   const request = new Request("http://localhost:3000/api/files?path=STATE.md");
   const response = await filesRoute.GET(request);
@@ -262,7 +262,7 @@ test("files API returns file content for valid path", async (t) => {
 });
 
 test("files API returns content for nested files", async (t) => {
-  const { root, gsdDir, cleanup } = makeGsdFixture();
+  const { root, gwdDir, cleanup } = makeGwdFixture();
   const origEnv = process.env.GWD_WEB_PROJECT_CWD;
 
   t.after(() => {
@@ -272,7 +272,7 @@ test("files API returns content for nested files", async (t) => {
 
   process.env.GWD_WEB_PROJECT_CWD = root;
 
-  const msDir = join(gsdDir, "milestones", "M001");
+  const msDir = join(gwdDir, "milestones", "M001");
   mkdirSync(msDir, { recursive: true });
   writeFileSync(join(msDir, "M001-ROADMAP.md"), "# Roadmap content");
 
@@ -288,7 +288,7 @@ test("files API returns content for nested files", async (t) => {
 
 // ─── Group 5: Files API — security: path traversal rejection ─────────
 test("files API rejects path traversal with ../", async (t) => {
-  const { root, cleanup } = makeGsdFixture();
+  const { root, cleanup } = makeGwdFixture();
   const origEnv = process.env.GWD_WEB_PROJECT_CWD;
 
   t.after(() => {
@@ -309,7 +309,7 @@ test("files API rejects path traversal with ../", async (t) => {
 });
 
 test("files API rejects absolute paths", async (t) => {
-  const { root, cleanup } = makeGsdFixture();
+  const { root, cleanup } = makeGwdFixture();
   const origEnv = process.env.GWD_WEB_PROJECT_CWD;
 
   t.after(() => {
@@ -330,7 +330,7 @@ test("files API rejects absolute paths", async (t) => {
 });
 
 test("files API returns 404 for missing files", async (t) => {
-  const { root, cleanup } = makeGsdFixture();
+  const { root, cleanup } = makeGwdFixture();
   const origEnv = process.env.GWD_WEB_PROJECT_CWD;
 
   t.after(() => {
@@ -350,8 +350,8 @@ test("files API returns 404 for missing files", async (t) => {
   assert.ok(data.error);
 });
 
-test("files API returns empty tree when .gsd/ does not exist", async (t) => {
-  const root = mkdtempSync(join(tmpdir(), "gsd-state-surfaces-empty-"));
+test("files API returns empty tree when .gwd/ does not exist", async (t) => {
+  const root = mkdtempSync(join(tmpdir(), "gwd-state-surfaces-empty-"));
   const origEnv = process.env.GWD_WEB_PROJECT_CWD;
 
   t.after(() => {
@@ -372,12 +372,12 @@ test("files API returns empty tree when .gsd/ does not exist", async (t) => {
 // ─── Group 6: Store-backed browser state surfaces ───────────────────
 
 test("workspace store keeps extension status, widgets, title overrides, and editor prefills stateful", () => {
-  const store = new GSDWorkspaceStore("/tmp/project") as any;
+  const store = new GWDWorkspaceStore("/tmp/project") as any;
   store.patchState({
     statusTexts: { health: "All systems ready" },
     widgetContents: { health: { lines: ["ok"], placement: "belowEditor" } },
     titleOverride: "Release hardening",
-    editorTextBuffer: "/gsd status",
+    editorTextBuffer: "/gwd status",
     activeToolExecution: {
       id: "tool-1",
       name: "Bash",
@@ -386,7 +386,7 @@ test("workspace store keeps extension status, widgets, title overrides, and edit
     },
   });
 
-  assert.equal(store.consumeEditorTextBuffer(), "/gsd status");
+  assert.equal(store.consumeEditorTextBuffer(), "/gwd status");
   assert.equal(store.consumeEditorTextBuffer(), null);
 
   const snapshot = store.getSnapshot();
@@ -398,7 +398,7 @@ test("workspace store keeps extension status, widgets, title overrides, and edit
 });
 
 test("live browser selectors prefer targeted live refresh data over boot seed data", () => {
-  const store = new GSDWorkspaceStore("/tmp/project") as any;
+  const store = new GWDWorkspaceStore("/tmp/project") as any;
   const snapshot = store.getSnapshot();
   const workspace = {
     milestones: [{ id: "M001", title: "Live milestone", slices: [] }],

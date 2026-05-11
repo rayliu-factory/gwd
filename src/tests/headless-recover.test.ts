@@ -4,7 +4,7 @@
 // `gwd headless recover` available to non-TTY callers (CI, automation, the
 // live-regression suite). The headless dispatcher previously had no
 // `recover` case — the only path was the interactive slash-command
-// (`/gsd recover`), which is gated behind a TTY check (src/cli.ts
+// (`/gwd recover`), which is gated behind a TTY check (src/cli.ts
 // printNonTtyErrorAndExit) and rejected piped invocations.
 //
 // The headless wiring composes ensureDbOpen + clearEngineHierarchy +
@@ -24,7 +24,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-import { ensureDbOpen } from "../resources/extensions/gsd/bootstrap/dynamic-tools.ts";
+import { ensureDbOpen } from "../resources/extensions/gwd/bootstrap/dynamic-tools.ts";
 import {
   isDbAvailable,
   closeDatabase,
@@ -34,13 +34,13 @@ import {
   getMilestoneSlices,
   getSliceTasks,
   insertGateRow,
-} from "../resources/extensions/gsd/gsd-db.ts";
-import { migrateHierarchyToDb } from "../resources/extensions/gsd/md-importer.ts";
-import { invalidateStateCache } from "../resources/extensions/gsd/state.ts";
+} from "../resources/extensions/gwd/gwd-db.ts";
+import { migrateHierarchyToDb } from "../resources/extensions/gwd/md-importer.ts";
+import { invalidateStateCache } from "../resources/extensions/gwd/state.ts";
 
 function makeMarkdownFixture(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-headless-recover-"));
-  const mDir = join(base, ".gsd", "milestones", "M001");
+  const base = mkdtempSync(join(tmpdir(), "gwd-headless-recover-"));
+  const mDir = join(base, ".gwd", "milestones", "M001");
   const sDir = join(mDir, "slices", "S01");
   mkdirSync(join(sDir, "tasks"), { recursive: true });
 
@@ -83,7 +83,7 @@ test("headless recover: imports markdown hierarchy into authoritative DB", async
   });
 
   const opened = await ensureDbOpen(base);
-  assert.ok(opened, "ensureDbOpen should succeed when .gsd/ exists");
+  assert.ok(opened, "ensureDbOpen should succeed when .gwd/ exists");
   assert.ok(isDbAvailable(), "DB should be open after ensureDbOpen");
 
   const counts = transaction(() => {

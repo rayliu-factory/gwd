@@ -64,10 +64,10 @@ function attachJsonLineReader(stream: PassThrough, onLine: (line: string) => voi
 }
 
 function makeWorkspaceFixture(): { projectCwd: string; sessionsDir: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-assembled-"));
+  const root = mkdtempSync(join(tmpdir(), "gwd-web-assembled-"));
   const projectCwd = join(root, "project");
   const sessionsDir = join(root, "sessions");
-  const milestoneDir = join(projectCwd, ".gsd", "milestones", "M001");
+  const milestoneDir = join(projectCwd, ".gwd", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
 
@@ -136,15 +136,15 @@ function fakeWorkspaceIndex() {
       {
         id: "M001",
         title: "Demo",
-        roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+        roadmapPath: ".gwd/milestones/M001/M001-ROADMAP.md",
         slices: [
           {
             id: "S01",
             title: "Demo",
             done: false,
-            planPath: ".gsd/milestones/M001/slices/S01/S01-PLAN.md",
-            tasksDir: ".gsd/milestones/M001/slices/S01/tasks",
-            tasks: [{ id: "T01", title: "Work", done: false, planPath: ".gsd/milestones/M001/slices/S01/tasks/T01-PLAN.md" }],
+            planPath: ".gwd/milestones/M001/slices/S01/S01-PLAN.md",
+            tasksDir: ".gwd/milestones/M001/slices/S01/tasks",
+            tasks: [{ id: "T01", title: "Work", done: false, planPath: ".gwd/milestones/M001/slices/S01/tasks/T01-PLAN.md" }],
           },
         ],
       },
@@ -896,7 +896,7 @@ test("assembled recovery route exposes actionable browser diagnostics without ra
   assert.doesNotMatch(JSON.stringify(payload), /sk-assembled-recovery-secret-0001|sk-assembled-auth-secret-0002/);
 });
 
-test("assembled slash-command behavior keeps built-ins safe while preserving GSD prompt commands", async (t) => {
+test("assembled slash-command behavior keeps built-ins safe while preserving GWD prompt commands", async (t) => {
   const fixture = makeWorkspaceFixture();
   const sessionPath = createSessionFile(fixture.projectCwd, fixture.sessionsDir, "sess-slash", "Slash Session");
   const bridgeCommands: any[] = [];
@@ -1024,16 +1024,16 @@ test("assembled slash-command behavior keeps built-ins safe while preserving GSD
   assert.equal(builtInReject.status, null);
 
   // /gwd status is now a browser surface (S02), verify that
-  const gsdSurface = await submitBrowserInput("/gwd status");
-  assert.equal(gsdSurface.outcome.kind, "surface");
-  assert.equal(gsdSurface.outcome.surface, "gsd-status");
-  assert.equal(gsdSurface.status, null);
+  const gwdSurface = await submitBrowserInput("/gwd status");
+  assert.equal(gwdSurface.outcome.kind, "surface");
+  assert.equal(gwdSurface.outcome.surface, "gwd-status");
+  assert.equal(gwdSurface.status, null);
 
   // /gwd auto is a passthrough subcommand — reaches the bridge as a prompt
-  const gsdPrompt = await submitBrowserInput("/gwd auto");
-  assert.equal(gsdPrompt.outcome.kind, "prompt");
-  assert.equal(gsdPrompt.status, 200);
-  assert.equal(gsdPrompt.body.command, "prompt");
+  const gwdPrompt = await submitBrowserInput("/gwd auto");
+  assert.equal(gwdPrompt.outcome.kind, "prompt");
+  assert.equal(gwdPrompt.status, 200);
+  assert.equal(gwdPrompt.body.command, "prompt");
 
   const sentTypes = bridgeCommands.map((command) => command.type);
   assert.deepEqual(
@@ -1042,5 +1042,5 @@ test("assembled slash-command behavior keeps built-ins safe while preserving GSD
     "only browser-executable slash commands should reach the live bridge; built-in surfaces/rejects must stay out of prompt text",
   );
   const promptCommand = bridgeCommands.find((command) => command.type === "prompt");
-  assert.equal(promptCommand?.message, "/gwd auto", "GSD passthrough commands must stay on the extension prompt path");
+  assert.equal(promptCommand?.message, "/gwd auto", "GWD passthrough commands must stay on the extension prompt path");
 });

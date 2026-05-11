@@ -1,0 +1,62 @@
+// Project/App: GWD-2
+// File Purpose: Verifies the execution prompt renders compact required guidance.
+
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+test("execute-task prompt renders compact execution and completion gates", async (t) => {
+  const previousGwdHome = process.env.GWD_HOME;
+  const providedGwdHome = process.env.GWD_TEST_HOME;
+  const isolatedHome = providedGwdHome ?? mkdtempSync(join(tmpdir(), "gwd-execute-task-render-"));
+  const fixtureRoot = process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd();
+  process.env.GWD_HOME = isolatedHome;
+  t.after(() => {
+    if (previousGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGwdHome;
+    if (!providedGwdHome) rmSync(isolatedHome, { recursive: true, force: true });
+  });
+
+  const { loadPrompt } = await import(`../prompt-loader.ts?test=${Date.now()}`);
+  const prompt = loadPrompt("execute-task", {
+    taskId: "T01",
+    taskTitle: "Implement compact prompts",
+    sliceId: "S01",
+    sliceTitle: "Prompt reduction",
+    milestoneId: "M001",
+    workingDirectory: fixtureRoot,
+    overridesSection: "",
+    runtimeContext: "Runtime context.",
+    phaseAnchorSection: "",
+    resumeSection: "",
+    carryForwardSection: "",
+    taskPlanInline: "## Task Plan\n\n1. Edit prompt.",
+    slicePlanExcerpt: "## Slice Plan\n\nReduce prompt size.",
+    gatesToClose: "- Gate: prompt markers retained.",
+    planPath: ".gwd/milestones/M001/slices/S01/S01-PLAN.md",
+    taskPlanPath: ".gwd/milestones/M001/slices/S01/tasks/T01-PLAN.md",
+    priorTaskLines: "- None",
+    skillActivation: "Load relevant skills.",
+    inlinedTemplates: "### Output Template: Task Summary\nSource: `templates/task-summary.md`",
+    templatesDir: join(fixtureRoot, "templates"),
+    taskSummaryTemplatePath: "C:\\Users\\Test\\.gwd\\agent\\extensions\\gwd\\templates\\task-summary.md",
+    verificationBudget: "~10K chars",
+    taskSummaryPath: ".gwd/milestones/M001/slices/S01/tasks/T01-SUMMARY.md",
+  });
+
+  assert.match(prompt, /You execute\./);
+  assert.match(prompt, /Call `memory_query`.*only when no injected memory block exists/s);
+  assert.match(prompt, /Before any `Write` that creates an artifact or output file/);
+  assert.match(prompt, /Build real behavior/);
+  assert.match(prompt, /Background process rule/);
+  assert.match(prompt, /blocker_discovered: true/);
+  assert.match(prompt, /Use the inlined Task Summary template below/);
+  assert.match(prompt, /Read `C:\\Users\\Test\\.gwd\\agent\\extensions\\gwd\\templates\\task-summary\.md` only if the inlined template is absent or visibly truncated/);
+  assert.match(prompt, /### Output Template: Task Summary/);
+  assert.doesNotMatch(prompt, /\{\{templatesDir\}\}\/task-summary\.md/);
+  assert.match(prompt, /Call `gwd_task_complete`/);
+  assert.match(prompt, /Do not run git commands/);
+  assert.doesNotMatch(prompt, /\{\{[a-zA-Z][a-zA-Z0-9_]*\}\}/);
+});

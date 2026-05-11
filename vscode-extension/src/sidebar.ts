@@ -1,8 +1,8 @@
-// Project/App: GSD-2
-// File Purpose: VS Code sidebar webview provider for GSD agent controls and status.
+// Project/App: GWD
+// File Purpose: VS Code sidebar webview provider for GWD agent controls and status.
 
 import * as vscode from "vscode";
-import type { GsdClient, SessionStats, ThinkingLevel } from "./gsd-client.js";
+import type { GwdClient, SessionStats, ThinkingLevel } from "./gwd-client.js";
 import {
 	getContextUsageDisplay,
 	getSessionCacheReadTokens,
@@ -16,7 +16,7 @@ import {
 
 /**
  * Send a message through VS Code's Chat panel so the user sees the response.
- * Opens the Chat panel and pre-fills the @gsd participant with the message.
+ * Opens the Chat panel and pre-fills the @gwd participant with the message.
  */
 async function sendViaChat(message: string): Promise<void> {
 	await vscode.commands.executeCommand("workbench.action.chat.open", { query: message });
@@ -27,8 +27,8 @@ async function sendViaChat(message: string): Promise<void> {
  * Designed for information density without clutter — collapsible sections,
  * hidden empty data, and consolidated action buttons.
  */
-export class GsdSidebarProvider implements vscode.WebviewViewProvider {
-	public static readonly viewId = "gsd-sidebar";
+export class GwdSidebarProvider implements vscode.WebviewViewProvider {
+	public static readonly viewId = "gwd-sidebar";
 
 	private view?: vscode.WebviewView;
 	private disposables: vscode.Disposable[] = [];
@@ -36,7 +36,7 @@ export class GsdSidebarProvider implements vscode.WebviewViewProvider {
 
 	constructor(
 		private readonly extensionUri: vscode.Uri,
-		private readonly client: GsdClient,
+		private readonly client: GwdClient,
 	) {
 		this.disposables.push(
 			client.onConnectionChange(() => this.refresh()),
@@ -71,40 +71,40 @@ export class GsdSidebarProvider implements vscode.WebviewViewProvider {
 		webviewView.webview.onDidReceiveMessage(async (msg: { command: string; value?: string }) => {
 			switch (msg.command) {
 				case "start":
-					await vscode.commands.executeCommand("gsd.start");
+					await vscode.commands.executeCommand("gwd.start");
 					break;
 				case "stop":
-					await vscode.commands.executeCommand("gsd.stop");
+					await vscode.commands.executeCommand("gwd.stop");
 					break;
 				case "newSession":
-					await vscode.commands.executeCommand("gsd.newSession");
+					await vscode.commands.executeCommand("gwd.newSession");
 					break;
 				case "cycleModel":
-					await vscode.commands.executeCommand("gsd.cycleModel");
+					await vscode.commands.executeCommand("gwd.cycleModel");
 					break;
 				case "cycleThinking":
-					await vscode.commands.executeCommand("gsd.cycleThinking");
+					await vscode.commands.executeCommand("gwd.cycleThinking");
 					break;
 				case "switchModel":
-					await vscode.commands.executeCommand("gsd.switchModel");
+					await vscode.commands.executeCommand("gwd.switchModel");
 					break;
 				case "setThinking":
-					await vscode.commands.executeCommand("gsd.setThinking");
+					await vscode.commands.executeCommand("gwd.setThinking");
 					break;
 				case "compact":
-					await vscode.commands.executeCommand("gsd.compact");
+					await vscode.commands.executeCommand("gwd.compact");
 					break;
 				case "abort":
-					await vscode.commands.executeCommand("gsd.abort");
+					await vscode.commands.executeCommand("gwd.abort");
 					break;
 				case "exportHtml":
-					await vscode.commands.executeCommand("gsd.exportHtml");
+					await vscode.commands.executeCommand("gwd.exportHtml");
 					break;
 				case "sessionStats":
-					await vscode.commands.executeCommand("gsd.sessionStats");
+					await vscode.commands.executeCommand("gwd.sessionStats");
 					break;
 				case "listCommands":
-					await vscode.commands.executeCommand("gsd.listCommands");
+					await vscode.commands.executeCommand("gwd.listCommands");
 					break;
 				case "toggleAutoCompaction":
 					if (this.client.isConnected) {
@@ -122,16 +122,16 @@ export class GsdSidebarProvider implements vscode.WebviewViewProvider {
 					}
 					break;
 				case "setSessionName":
-					await vscode.commands.executeCommand("gsd.setSessionName");
+					await vscode.commands.executeCommand("gwd.setSessionName");
 					break;
 				case "copyLastResponse":
-					await vscode.commands.executeCommand("gsd.copyLastResponse");
+					await vscode.commands.executeCommand("gwd.copyLastResponse");
 					break;
 				case "autoMode":
-					await sendViaChat("@gsd /gsd auto");
+					await sendViaChat("@gwd /gwd auto");
 					break;
 				case "nextUnit":
-					await sendViaChat("@gsd /gsd next");
+					await sendViaChat("@gwd /gwd next");
 					break;
 				case "quickTask": {
 					const quickInput = await vscode.window.showInputBox({
@@ -139,7 +139,7 @@ export class GsdSidebarProvider implements vscode.WebviewViewProvider {
 						placeHolder: "e.g. fix the typo in README",
 					});
 					if (quickInput) {
-						await sendViaChat(`@gsd /gsd quick ${quickInput}`);
+						await sendViaChat(`@gwd /gwd quick ${quickInput}`);
 					}
 					break;
 				}
@@ -149,33 +149,33 @@ export class GsdSidebarProvider implements vscode.WebviewViewProvider {
 						placeHolder: "e.g. we should also handle the edge case for...",
 					});
 					if (thought) {
-						await sendViaChat(`@gsd /gsd capture ${thought}`);
+						await sendViaChat(`@gwd /gwd capture ${thought}`);
 					}
 					break;
 				}
 				case "status":
-					await sendViaChat("@gsd /gsd status");
+					await sendViaChat("@gwd /gwd status");
 					break;
 				case "forkSession":
-					await vscode.commands.executeCommand("gsd.forkSession");
+					await vscode.commands.executeCommand("gwd.forkSession");
 					break;
 				case "toggleSteeringMode":
-					await vscode.commands.executeCommand("gsd.toggleSteeringMode");
+					await vscode.commands.executeCommand("gwd.toggleSteeringMode");
 					break;
 				case "toggleFollowUpMode":
-					await vscode.commands.executeCommand("gsd.toggleFollowUpMode");
+					await vscode.commands.executeCommand("gwd.toggleFollowUpMode");
 					break;
 					case "showHistory":
-						await vscode.commands.executeCommand("gsd.showHistory");
+						await vscode.commands.executeCommand("gwd.showHistory");
 						break;
 					case "fixProblemsInFile":
-						await vscode.commands.executeCommand("gsd.fixProblemsInFile");
+						await vscode.commands.executeCommand("gwd.fixProblemsInFile");
 						break;
 					case "selectApprovalMode":
-						await vscode.commands.executeCommand("gsd.selectApprovalMode");
+						await vscode.commands.executeCommand("gwd.selectApprovalMode");
 						break;
 					default:
-						vscode.window.showWarningMessage(`Unknown GSD sidebar command: ${msg.command}`);
+						vscode.window.showWarningMessage(`Unknown GWD sidebar command: ${msg.command}`);
 						break;
 				}
 			});

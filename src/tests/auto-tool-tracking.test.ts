@@ -6,7 +6,7 @@ import {
   getOldestInFlightToolAgeMs,
   getInFlightToolCount,
   clearInFlightTools,
-} from "../resources/extensions/gsd/auto-tool-tracking.js";
+} from "../resources/extensions/gwd/auto-tool-tracking.js";
 
 describe("auto-tool-tracking", () => {
   beforeEach(() => {

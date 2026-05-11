@@ -1,11 +1,11 @@
 # Troubleshooting
 
-## `/gsd doctor`
+## `/gwd doctor`
 
-The built-in diagnostic tool validates `.gsd/` integrity:
+The built-in diagnostic tool validates `.gwd/` integrity:
 
 ```
-/gsd doctor
+/gwd doctor
 ```
 
 It checks file structure, roadmap ↔ slice ↔ task consistency, completion state, git health, stale locks, orphaned records, and disk-only milestone stubs.
@@ -16,15 +16,15 @@ It checks file structure, roadmap ↔ slice ↔ task consistency, completion sta
 
 The same unit dispatches repeatedly.
 
-**Fix:** Run `/gsd doctor` to repair state, then `/gsd auto`. If it persists, check that the expected artifact file exists on disk.
+**Fix:** Run `/gwd doctor` to repair state, then `/gwd auto`. If it persists, check that the expected artifact file exists on disk.
 
 ### Auto mode stops with "Loop detected"
 
 A unit failed to produce its expected artifact twice.
 
-**Fix:** Check the task plan for clarity. Refine it manually, then `/gsd auto`.
+**Fix:** Check the task plan for clarity. Refine it manually, then `/gwd auto`.
 
-### `command not found: gsd` after install
+### `command not found: gwd` after install
 
 npm's global bin directory isn't in `$PATH`.
 
@@ -39,7 +39,7 @@ source ~/.zshrc
 **Common causes:**
 - **Homebrew Node** — `/opt/homebrew/bin` missing from PATH
 - **Version manager (nvm, fnm, mise)** — global bin is version-specific
-- **oh-my-zsh** — `gitfast` plugin aliases `gsd` to `git svn dcommit`; check with `alias gsd`
+- **oh-my-zsh** — `gitfast` plugin aliases `gwd` to `git svn dcommit`; check with `alias gwd`
 
 ### Provider errors during auto mode
 
@@ -63,32 +63,32 @@ models:
 
 Auto mode pauses with "Budget ceiling reached."
 
-**Fix:** Increase `budget_ceiling` in preferences, or switch to `budget` token profile, then `/gsd auto`.
+**Fix:** Increase `budget_ceiling` in preferences, or switch to `budget` token profile, then `/gwd auto`.
 
 ### Stale lock file
 
 Auto mode won't start, says another session is running.
 
-**Fix:** GSD auto-detects stale locks (dead PID = auto cleanup). If automatic recovery fails:
+**Fix:** GWD auto-detects stale locks (dead PID = auto cleanup). If automatic recovery fails:
 
 ```bash
-rm -f .gsd/auto.lock
-rm -rf "$(dirname .gsd)/.gsd.lock"
+rm -f .gwd/auto.lock
+rm -rf "$(dirname .gwd)/.gwd.lock"
 ```
 
 ### Git merge conflicts
 
-Worktree merge fails on `.gsd/` files.
+Worktree merge fails on `.gwd/` files.
 
-**Fix:** `.gsd/` conflicts are auto-resolved. Code conflicts get an AI fix attempt; if that fails, resolve manually.
+**Fix:** `.gwd/` conflicts are auto-resolved. Code conflicts get an AI fix attempt; if that fails, resolve manually.
 
 ### Work stranded in a worktree after an interrupted session
 
-Auto mode was paused, stopped, or crashed mid-milestone, and the work is still on the `milestone/<MID>` branch in `.gsd/worktrees/<MID>/` — never merged back to main. Next session reports the milestone as incomplete or behaving inconsistently.
+Auto mode was paused, stopped, or crashed mid-milestone, and the work is still on the `milestone/<MID>` branch in `.gwd/worktrees/<MID>/` — never merged back to main. Next session reports the milestone as incomplete or behaving inconsistently.
 
-**Fix:** As of GSD 2.78, `/gsd auto` bootstrap automatically detects this condition and surfaces a warning naming the branch, commit count, and worktree location. Run `/gsd auto` to re-enter the worktree and resume; or merge `milestone/<MID>` into main manually if abandoning.
+**Fix:** As of GWD.78, `/gwd auto` bootstrap automatically detects this condition and surfaces a warning naming the branch, commit count, and worktree location. Run `/gwd auto` to re-enter the worktree and resume; or merge `milestone/<MID>` into main manually if abandoning.
 
-**Diagnose:** Run `/gsd forensics` and look at the **Worktree Telemetry** section:
+**Diagnose:** Run `/gwd forensics` and look at the **Worktree Telemetry** section:
 - `Orphans detected > 0` with reason `in-progress-unmerged` confirms the condition
 - `Unmerged exits > 0` on the producer side confirms which exit type caused it
 
@@ -96,9 +96,9 @@ Auto mode was paused, stopped, or crashed mid-milestone, and the work is still o
 
 ### `orphan_milestone_dir` doctor warning
 
-`/gsd doctor` can report `orphan_milestone_dir` when `.gsd/milestones/<MID>/` exists on disk but has no DB row, no matching `.gsd/worktrees/<MID>/` worktree, and no milestone content files. This is a disk-only stub, not stranded work, and it can skew future milestone ID generation.
+`/gwd doctor` can report `orphan_milestone_dir` when `.gwd/milestones/<MID>/` exists on disk but has no DB row, no matching `.gwd/worktrees/<MID>/` worktree, and no milestone content files. This is a disk-only stub, not stranded work, and it can skew future milestone ID generation.
 
-**Fix:** Run `/gsd doctor fix` to remove the orphan stub directory automatically. The fix only removes these empty disk-only milestone stubs; populated milestone directories and in-flight worktree-only milestones are preserved.
+**Fix:** Run `/gwd doctor fix` to remove the orphan stub directory automatically. The fix only removes these empty disk-only milestone stubs; populated milestone directories and in-flight worktree-only milestones are preserved.
 
 ### Notifications not appearing on macOS
 
@@ -114,11 +114,11 @@ See [Notifications](../configuration/notifications.md) for details.
 
 ### No servers configured
 
-**Fix:** Add server to `.mcp.json` or `.gsd/mcp.json`, verify JSON is valid, run `mcp_servers(refresh=true)`.
+**Fix:** Add server to `.mcp.json` or `.gwd/mcp.json`, verify JSON is valid, run `mcp_servers(refresh=true)`.
 
 ### Server discovery times out
 
-**Fix:** Run the configured command outside GSD to confirm it starts. Check that backend services are reachable.
+**Fix:** Run the configured command outside GWD to confirm it starts. Check that backend services are reachable.
 
 ### Server connection closed immediately
 
@@ -129,22 +129,22 @@ See [Notifications](../configuration/notifications.md) for details.
 ### Reset auto mode state
 
 ```bash
-rm .gsd/auto.lock
-rm .gsd/completed-units.json
+rm .gwd/auto.lock
+rm .gwd/completed-units.json
 ```
 
-Then `/gsd auto` to restart from current state.
+Then `/gwd auto` to restart from current state.
 
 ### Reset routing history
 
 ```bash
-rm .gsd/routing-history.json
+rm .gwd/routing-history.json
 ```
 
 ### Refresh rendered state
 
 ```
-/gsd doctor
+/gwd doctor
 ```
 
 Checks the authoritative database, refreshes `STATE.md` from derived database state, and fixes projection or runtime-file inconsistencies.
@@ -154,17 +154,17 @@ Checks the authoritative database, refreshes `STATE.md` from derived database st
 Use this only when the database is missing, damaged, or known to be stale but the rendered milestone, slice, and task markdown on disk is the best available source:
 
 ```
-/gsd recover
+/gwd recover
 ```
 
-`/gsd recover` clears and reconstructs the database hierarchy tables from markdown, then derives state again to verify the result. Normal runtime does not silently import markdown projections, and worktree markdown is not synced back as authoritative state.
+`/gwd recover` clears and reconstructs the database hierarchy tables from markdown, then derives state again to verify the result. Normal runtime does not silently import markdown projections, and worktree markdown is not synced back as authoritative state.
 
 ## Getting Help
 
-- **GitHub Issues:** [github.com/gsd-build/GSD-2/issues](https://github.com/gsd-build/GSD-2/issues)
-- **Dashboard:** `Ctrl+Alt+G` or `/gsd status`
-- **Forensics:** `/gsd forensics` for post-mortem analysis
-- **Session logs:** `.gsd/activity/` contains JSONL session dumps
+- **GitHub Issues:** [github.com/rayliu-factory/gwd/issues](https://github.com/rayliu-factory/gwd/issues)
+- **Dashboard:** `Ctrl+Alt+G` or `/gwd status`
+- **Forensics:** `/gwd forensics` for post-mortem analysis
+- **Session logs:** `.gwd/activity/` contains JSONL session dumps
 
 ## Platform-Specific Issues
 
@@ -176,4 +176,4 @@ Use this only when the database is missing, damaged, or known to be stale but th
 
 - LSP ENOENT on MSYS2/Git Bash → Fixed in v2.29+, upgrade
 - EBUSY errors during builds → Close browser extension, or change output directory
-- Transient EBUSY/EPERM on `.gsd/` files → Retry; close file-locking tools if persistent
+- Transient EBUSY/EPERM on `.gwd/` files → Retry; close file-locking tools if persistent

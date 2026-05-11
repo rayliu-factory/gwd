@@ -41,15 +41,15 @@ Answer briefly:
 
 Before writing `continue.md`:
 
-- **Any task that's actually done?** Use `gsd_task_complete` (or the equivalent tool) to toggle state. Do NOT edit checkboxes by hand. This triggers `STATE.md` rebuild and `T##-SUMMARY.md` generation.
-- **Any slice-level decisions worth preserving?** Append to `S##-CONTEXT.md` if the slice has one, or `.gsd/DECISIONS.md` if the decision was project-wide.
-- **Any patterns or traps future agents should know about?** Append a single line to `.gsd/KNOWLEDGE.md`.
+- **Any task that's actually done?** Use `gwd_task_complete` (or the equivalent tool) to toggle state. Do NOT edit checkboxes by hand. This triggers `STATE.md` rebuild and `T##-SUMMARY.md` generation.
+- **Any slice-level decisions worth preserving?** Append to `S##-CONTEXT.md` if the slice has one, or `.gwd/DECISIONS.md` if the decision was project-wide.
+- **Any patterns or traps future agents should know about?** Append a single line to `.gwd/KNOWLEDGE.md`.
 
 This shrinks what `continue.md` has to carry.
 
 ## Step 3: Write continue.md
 
-Create `.gsd/milestones/<MID>/slices/<SID>/continue.md` with the following shape. Keep it tight — one screenful max.
+Create `.gwd/milestones/<MID>/slices/<SID>/continue.md` with the following shape. Keep it tight — one screenful max.
 
 ```markdown
 # Continue — S02 / T03
@@ -113,7 +113,7 @@ If any answer is no, the handoff is incomplete. Fix it before stopping.
 
 - [ ] `continue.md` exists in the active slice directory.
 - [ ] The "Next action" is concrete and executable without this session's context.
-- [ ] Completed tasks were marked done via `gsd_*` tools, not by hand-edited checkboxes.
+- [ ] Completed tasks were marked done via `gwd_*` tools, not by hand-edited checkboxes.
 - [ ] `KNOWLEDGE.md` and `DECISIONS.md` have been updated if anything notable was learned.
 - [ ] Background processes are not orphaned.
 - [ ] A cold-read of `STATE.md` + `continue.md` + latest summary would produce the right next action.

@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD
 // File Purpose: Tests for canonical RPC contract constants exported by the contracts package.
 
 import assert from "node:assert/strict";
@@ -60,11 +60,11 @@ test("mcp pending blocker preserves secure input payloads", () => {
 });
 
 test("workflow tool contracts expose canonical names without compatibility aliases", () => {
-	assert.ok(WORKFLOW_TOOL_NAMES.includes("gsd_task_complete"));
-	assert.ok(!WORKFLOW_TOOL_NAMES.includes("gsd_complete_task"));
-	assert.ok(WORKFLOW_TOOL_NAMES.includes("gsd_plan_milestone"));
+	assert.ok(WORKFLOW_TOOL_NAMES.includes("gwd_task_complete"));
+	assert.ok(!WORKFLOW_TOOL_NAMES.includes("gwd_complete_task"));
+	assert.ok(WORKFLOW_TOOL_NAMES.includes("gwd_plan_milestone"));
 
-	const taskComplete = WORKFLOW_TOOL_CONTRACTS.find((tool) => tool.canonicalName === "gsd_task_complete");
+	const taskComplete = WORKFLOW_TOOL_CONTRACTS.find((tool) => tool.canonicalName === "gwd_task_complete");
 	assert.ok(taskComplete);
 	assert.deepEqual([...taskComplete.aliases], []);
 	assert.equal(taskComplete.writePolicy, "write");

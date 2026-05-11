@@ -7,12 +7,12 @@ import { randomUUID } from "node:crypto";
 
 import { symlinkSync, realpathSync } from "node:fs";
 
-import { _getAdapter, closeDatabase } from "../../../src/resources/extensions/gsd/gsd-db.ts";
+import { _getAdapter, closeDatabase } from "../../../src/resources/extensions/gwd/gwd-db.ts";
 import { _buildImportCandidates, registerWorkflowTools, WORKFLOW_TOOL_NAMES, validateProjectDir } from "./workflow-tools.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-mcp-workflow-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  const base = join(tmpdir(), `gwd-mcp-workflow-${randomUUID()}`);
+  mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
@@ -33,9 +33,9 @@ function writeWriteGateSnapshot(
   base: string,
   snapshot: { verifiedDepthMilestones?: string[]; activeQueuePhase?: boolean; pendingGateId?: string | null },
 ): void {
-  mkdirSync(join(base, ".gsd", "runtime"), { recursive: true });
+  mkdirSync(join(base, ".gwd", "runtime"), { recursive: true });
   writeFileSync(
-    join(base, ".gsd", "runtime", "write-gate-state.json"),
+    join(base, ".gwd", "runtime", "write-gate-state.json"),
     JSON.stringify(
       {
         verifiedDepthMilestones: snapshot.verifiedDepthMilestones ?? [],
@@ -87,7 +87,7 @@ function cacheBustedWorkflowToolsImport(tag: string): string {
   return `./workflow-tools.${extension}?${tag}=${randomUUID()}`;
 }
 
-describe("workflow MCP tools", () => {
+describe("workflow MCP tools", { concurrency: false }, () => {
   it("registers the full headless-safe workflow tool surface", () => {
     const server = makeMockServer();
     registerWorkflowTools(server as any);
@@ -98,22 +98,22 @@ describe("workflow MCP tools", () => {
 
   it("prefers source TypeScript before compiled dist fallbacks", () => {
     assert.deepEqual(
-      _buildImportCandidates("../../../src/resources/extensions/gsd/tools/workflow-tool-executors.js"),
+      _buildImportCandidates("../../../src/resources/extensions/gwd/tools/workflow-tool-executors.js"),
       [
-        "../../../src/resources/extensions/gsd/tools/workflow-tool-executors.ts",
-        "../../../src/resources/extensions/gsd/tools/workflow-tool-executors.js",
-        "../../../dist/resources/extensions/gsd/tools/workflow-tool-executors.ts",
-        "../../../dist/resources/extensions/gsd/tools/workflow-tool-executors.js",
+        "../../../src/resources/extensions/gwd/tools/workflow-tool-executors.ts",
+        "../../../src/resources/extensions/gwd/tools/workflow-tool-executors.js",
+        "../../../dist/resources/extensions/gwd/tools/workflow-tool-executors.ts",
+        "../../../dist/resources/extensions/gwd/tools/workflow-tool-executors.js",
       ],
     );
   });
 
-  it("gsd_summary_save writes artifact through the shared executor", async () => {
+  it("gwd_summary_save writes artifact through the shared executor", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_summary_save");
+      const tool = server.tools.find((t) => t.name === "gwd_summary_save");
       assert.ok(tool, "summary tool should be registered");
       const originalCwd = process.cwd();
 
@@ -129,7 +129,7 @@ describe("workflow MCP tools", () => {
       assert.match(text, /Saved SUMMARY artifact/);
       assert.equal(process.cwd(), originalCwd, "workflow MCP tools should not mutate process.cwd");
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md")),
+        existsSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md")),
         "summary file should exist on disk",
       );
     } finally {
@@ -137,13 +137,13 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_exec runs by default, preserves cwd, and returns structured metadata", async () => {
+  it("gwd_exec runs by default, preserves cwd, and returns structured metadata", async () => {
     const base = makeTmpBase();
     const originalCwd = process.cwd();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_exec");
+      const tool = server.tools.find((t) => t.name === "gwd_exec");
       assert.ok(tool, "exec tool should be registered");
 
       const result = await tool!.handler({
@@ -156,10 +156,10 @@ describe("workflow MCP tools", () => {
       const record = result as any;
       assert.equal(record.isError, false);
       assert.match(record.content[0].text as string, /context mode default on/);
-      assert.equal(record.structuredContent.operation, "gsd_exec");
+      assert.equal(record.structuredContent.operation, "gwd_exec");
       assert.equal(record.structuredContent.runtime, "node");
       assert.ok(existsSync(record.structuredContent.stdout_path), "stdout should be persisted");
-      assert.equal(process.cwd(), originalCwd, "gsd_exec must not mutate process.cwd");
+      assert.equal(process.cwd(), originalCwd, "gwd_exec must not mutate process.cwd");
       assert.match(
         readFileSync(record.structuredContent.stdout_path, "utf-8"),
         new RegExp(base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
@@ -170,17 +170,17 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_exec returns an MCP error when context mode is disabled", async () => {
+  it("gwd_exec returns an MCP error when context mode is disabled", async () => {
     const base = makeTmpBase();
     try {
       writeFileSync(
-        join(base, ".gsd", "PREFERENCES.md"),
+        join(base, ".gwd", "PREFERENCES.md"),
         "---\ncontext_mode:\n  enabled: false\n---\n",
         "utf-8",
       );
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_exec");
+      const tool = server.tools.find((t) => t.name === "gwd_exec");
       assert.ok(tool, "exec tool should be registered");
 
       const result = await tool!.handler({
@@ -196,13 +196,13 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_exec is blocked by the MCP discussion-gate write gate", async () => {
+  it("gwd_exec is blocked by the MCP discussion-gate write gate", async () => {
     const base = makeTmpBase();
     try {
       writeWriteGateSnapshot(base, { pendingGateId: "depth_verification_M001_confirm" });
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_exec");
+      const tool = server.tools.find((t) => t.name === "gwd_exec");
       assert.ok(tool, "exec tool should be registered");
 
       const result = await tool!.handler({
@@ -217,13 +217,13 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_exec_search finds a prior gsd_exec run", async () => {
+  it("gwd_exec_search finds a prior gwd_exec run", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const execTool = server.tools.find((t) => t.name === "gsd_exec");
-      const searchTool = server.tools.find((t) => t.name === "gsd_exec_search");
+      const execTool = server.tools.find((t) => t.name === "gwd_exec");
+      const searchTool = server.tools.find((t) => t.name === "gwd_exec_search");
       assert.ok(execTool, "exec tool should be registered");
       assert.ok(searchTool, "exec search tool should be registered");
 
@@ -240,25 +240,25 @@ describe("workflow MCP tools", () => {
       });
 
       assert.match((result as any).content[0].text as string, /find-me-later/);
-      assert.equal((result as any).structuredContent.operation, "gsd_exec_search");
+      assert.equal((result as any).structuredContent.operation, "gwd_exec_search");
       assert.equal((result as any).structuredContent.matches, 1);
-      assert.match((result as any).structuredContent.results[0].stdout_path, /\.gsd[\\/]exec[\\/].*\.stdout$/);
+      assert.match((result as any).structuredContent.results[0].stdout_path, /\.gwd[\\/]exec[\\/].*\.stdout$/);
     } finally {
       cleanup(base);
     }
   });
 
-  it("gsd_exec_search returns an MCP error when context mode is disabled", async () => {
+  it("gwd_exec_search returns an MCP error when context mode is disabled", async () => {
     const base = makeTmpBase();
     try {
       writeFileSync(
-        join(base, ".gsd", "PREFERENCES.md"),
+        join(base, ".gwd", "PREFERENCES.md"),
         "---\ncontext_mode:\n  enabled: false\n---\n",
         "utf-8",
       );
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_exec_search");
+      const tool = server.tools.find((t) => t.name === "gwd_exec_search");
       assert.ok(tool, "exec search tool should be registered");
 
       const result = await tool!.handler({ projectDir: base, query: "anything" });
@@ -270,24 +270,24 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_resume reads the context snapshot", async () => {
+  it("gwd_resume reads the context snapshot", async () => {
     const base = makeTmpBase();
     try {
       writeFileSync(
-        join(base, ".gsd", "last-snapshot.md"),
+        join(base, ".gwd", "last-snapshot.md"),
         "# GWD context snapshot\n\nResume from here.\n",
         "utf-8",
       );
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_resume");
+      const tool = server.tools.find((t) => t.name === "gwd_resume");
       assert.ok(tool, "resume tool should be registered");
 
       const result = await tool!.handler({ projectDir: base });
 
       assert.match((result as any).content[0].text as string, /Resume from here/);
       assert.deepEqual((result as any).structuredContent, {
-        operation: "gsd_resume",
+        operation: "gwd_resume",
         found: true,
         bytes: Buffer.byteLength("# GWD context snapshot\n\nResume from here.\n", "utf-8"),
       });
@@ -296,18 +296,18 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_resume returns an MCP error when context mode is disabled", async () => {
+  it("gwd_resume returns an MCP error when context mode is disabled", async () => {
     const base = makeTmpBase();
     try {
       writeFileSync(
-        join(base, ".gsd", "PREFERENCES.md"),
+        join(base, ".gwd", "PREFERENCES.md"),
         "---\ncontext_mode:\n  enabled: false\n---\n",
         "utf-8",
       );
-      writeFileSync(join(base, ".gsd", "last-snapshot.md"), "# GWD context snapshot\n\nHidden.\n", "utf-8");
+      writeFileSync(join(base, ".gwd", "last-snapshot.md"), "# GWD context snapshot\n\nHidden.\n", "utf-8");
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_resume");
+      const tool = server.tools.find((t) => t.name === "gwd_resume");
       assert.ok(tool, "resume tool should be registered");
 
       const result = await tool!.handler({ projectDir: base });
@@ -319,12 +319,12 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_summary_save supports root-level PROJECT artifacts without milestone_id", async () => {
+  it("gwd_summary_save supports root-level PROJECT artifacts without milestone_id", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_summary_save");
+      const tool = server.tools.find((t) => t.name === "gwd_summary_save");
       assert.ok(tool, "summary tool should be registered");
 
       const milestoneParam = tool!.params.milestone_id as { isOptional?: () => boolean };
@@ -354,11 +354,11 @@ describe("workflow MCP tools", () => {
       const text = (result as any).content[0].text as string;
       assert.match(text, /Saved PROJECT artifact/);
       assert.ok(
-        existsSync(join(base, ".gsd", "PROJECT.md")),
+        existsSync(join(base, ".gwd", "PROJECT.md")),
         "root project artifact should exist on disk",
       );
       assert.equal(
-        readFileSync(join(base, ".gsd", "PROJECT.md"), "utf-8"),
+        readFileSync(join(base, ".gwd", "PROJECT.md"), "utf-8"),
         projectFixture,
       );
     } finally {
@@ -366,12 +366,12 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_summary_save rejects milestone-scoped artifacts without milestone_id", async () => {
+  it("gwd_summary_save rejects milestone-scoped artifacts without milestone_id", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_summary_save");
+      const tool = server.tools.find((t) => t.name === "gwd_summary_save");
       assert.ok(tool, "summary tool should be registered");
 
       const result = await tool!.handler({
@@ -390,13 +390,13 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_summary_save renders root REQUIREMENTS from DB rows, not provided markdown", async () => {
+  it("gwd_summary_save renders root REQUIREMENTS from DB rows, not provided markdown", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const requirementTool = server.tools.find((t) => t.name === "gsd_requirement_save");
-      const summaryTool = server.tools.find((t) => t.name === "gsd_summary_save");
+      const requirementTool = server.tools.find((t) => t.name === "gwd_requirement_save");
+      const summaryTool = server.tools.find((t) => t.name === "gwd_summary_save");
       assert.ok(requirementTool, "requirement tool should be registered");
       assert.ok(summaryTool, "summary tool should be registered");
 
@@ -421,7 +421,7 @@ describe("workflow MCP tools", () => {
       const text = (result as any).content[0].text as string;
       assert.match(text, /Saved REQUIREMENTS artifact/);
 
-      const requirementsPath = join(base, ".gsd", "REQUIREMENTS.md");
+      const requirementsPath = join(base, ".gwd", "REQUIREMENTS.md");
       const markdown = readFileSync(requirementsPath, "utf-8");
       assert.match(markdown, /MCP user can add a task/);
       assert.doesNotMatch(markdown, /R999|Wrong markdown source|This content must not become canonical/);
@@ -448,7 +448,7 @@ describe("workflow MCP tools", () => {
       process.env.GWD_WORKFLOW_PROJECT_ROOT = base;
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_summary_save");
+      const tool = server.tools.find((t) => t.name === "gwd_summary_save");
       assert.ok(tool, "summary tool should be registered");
 
       const result = await tool!.handler({
@@ -481,7 +481,7 @@ describe("workflow MCP tools", () => {
       );
       const server = makeMockServer();
       freshRegisterWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_summary_save");
+      const tool = server.tools.find((t) => t.name === "gwd_summary_save");
       assert.ok(tool, "summary tool should be registered");
 
       const result = await tool!.handler({
@@ -509,16 +509,16 @@ describe("workflow MCP tools", () => {
   it("blocks workflow mutation tools while a discussion gate is pending", async () => {
     const base = makeTmpBase();
     try {
-      mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
+      mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
       writeFileSync(
-        join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
+        join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
         "# S01\n\n- [ ] **T01: Demo** `est:5m`\n",
       );
       writeWriteGateSnapshot(base, { pendingGateId: "depth_verification_M001_confirm" });
 
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
+      const taskTool = server.tools.find((t) => t.name === "gwd_task_complete");
       assert.ok(taskTool, "task tool should be registered");
 
       const result = await taskTool!.handler({
@@ -539,16 +539,16 @@ describe("workflow MCP tools", () => {
   it("blocks workflow mutation tools during queue mode", async () => {
     const base = makeTmpBase();
     try {
-      mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
+      mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
       writeFileSync(
-        join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
+        join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
         "# S01\n\n- [ ] **T01: Demo** `est:5m`\n",
       );
       writeWriteGateSnapshot(base, { activeQueuePhase: true });
 
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
+      const taskTool = server.tools.find((t) => t.name === "gwd_task_complete");
       assert.ok(taskTool, "task tool should be registered");
 
       const result = await taskTool!.handler({
@@ -560,25 +560,25 @@ describe("workflow MCP tools", () => {
         narrative: "Did the work",
         verification: "npm test",
       });
-      assertToolError(result, /planning tool .* not executes work|Cannot gsd_task_complete|Unknown tools are not permitted during queue mode/);
+      assertToolError(result, /planning tool .* not executes work|Cannot gwd_task_complete|Unknown tools are not permitted during queue mode/);
     } finally {
       cleanup(base);
     }
   });
 
-  it("gsd_task_complete and gsd_milestone_status work end-to-end", async () => {
+  it("gwd_task_complete and gwd_milestone_status work end-to-end", async () => {
     const base = makeTmpBase();
     try {
-      mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
+      mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
       writeFileSync(
-        join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
+        join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
         "# S01\n\n- [ ] **T01: Demo** `est:5m`\n",
       );
 
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
-      const statusTool = server.tools.find((t) => t.name === "gsd_milestone_status");
+      const taskTool = server.tools.find((t) => t.name === "gwd_task_complete");
+      const statusTool = server.tools.find((t) => t.name === "gwd_milestone_status");
       assert.ok(taskTool, "task tool should be registered");
       assert.ok(statusTool, "status tool should be registered");
 
@@ -594,7 +594,7 @@ describe("workflow MCP tools", () => {
 
       assert.match((taskResult as any).content[0].text as string, /Completed task T01/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md")),
+        existsSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md")),
         "task summary should be written to disk",
       );
 
@@ -611,14 +611,14 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("#4477 gsd_task_complete forwards every schema field to the executor (regression for destructure-rebuild bug class)", async () => {
+  it("#4477 gwd_task_complete forwards every schema field to the executor (regression for destructure-rebuild bug class)", async () => {
     // Locks in the class-fix from PR #4477 review: handleTaskComplete previously
     // destructured args into a hand-listed set of fields and rebuilt the call
     // payload, which silently dropped ADR-011's `escalation` field (and any
     // future schema field added without updating the rebuild). The fix passes
     // `args` through directly, matching the spread pattern of sibling
     // handlers. This test verifies the contract by injecting a mock executor
-    // module that captures the args, calling gsd_task_complete with an
+    // module that captures the args, calling gwd_task_complete with an
     // `escalation` payload, and asserting the field reached the executor.
     const base = makeTmpBase();
     const capturePath = join(base, "captured-args.json");
@@ -668,7 +668,7 @@ export const executeTaskComplete = async (params, projectDir) => {
       );
       const server = makeMockServer();
       freshRegisterWorkflowTools(server as any);
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
+      const taskTool = server.tools.find((t) => t.name === "gwd_task_complete");
       assert.ok(taskTool, "task tool should be registered");
 
       // Mirrors the ADR-011 escalation schema: question + 2-4 options
@@ -741,13 +741,13 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_plan_milestone and gsd_plan_slice work end-to-end", async () => {
+  it("gwd_plan_milestone and gwd_plan_slice work end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
+      const milestoneTool = server.tools.find((t) => t.name === "gwd_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "gwd_plan_slice");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
 
@@ -784,7 +784,7 @@ export const executeTaskComplete = async (params, projectDir) => {
             title: "Add planning bridge",
             description: "Implement the shared executor path.",
             estimate: "15m",
-            files: ["src/resources/extensions/gsd/tools/workflow-tool-executors.ts"],
+            files: ["src/resources/extensions/gwd/tools/workflow-tool-executors.ts"],
             verify: "node --test",
             inputs: ["ROADMAP.md"],
             expectedOutput: ["S01-PLAN.md", "T01-PLAN.md"],
@@ -793,11 +793,11 @@ export const executeTaskComplete = async (params, projectDir) => {
       });
       assert.match((sliceResult as any).content[0].text as string, /Planned slice S01/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md")),
+        existsSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "S01-PLAN.md")),
         "slice plan should exist on disk",
       );
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md")),
+        existsSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md")),
         "task plan should exist on disk",
       );
     } finally {
@@ -819,7 +819,7 @@ export const executeTaskComplete = async (params, projectDir) => {
       };
 
       // Empty sliceId top-level
-      await expectRejection("gsd_plan_slice", {
+      await expectRejection("gwd_plan_slice", {
         projectDir: base,
         milestoneId: "M001",
         sliceId: "",
@@ -828,7 +828,7 @@ export const executeTaskComplete = async (params, projectDir) => {
       }, "sliceId");
 
       // Empty task verify inside tasks array
-      await expectRejection("gsd_plan_slice", {
+      await expectRejection("gwd_plan_slice", {
         projectDir: base,
         milestoneId: "M001",
         sliceId: "S01",
@@ -848,7 +848,7 @@ export const executeTaskComplete = async (params, projectDir) => {
       }, "verify");
 
       // Empty element inside files[] array
-      await expectRejection("gsd_plan_slice", {
+      await expectRejection("gwd_plan_slice", {
         projectDir: base,
         milestoneId: "M001",
         sliceId: "S01",
@@ -867,8 +867,8 @@ export const executeTaskComplete = async (params, projectDir) => {
         ],
       }, "files");
 
-      // Empty milestoneId on gsd_plan_task
-      await expectRejection("gsd_plan_task", {
+      // Empty milestoneId on gwd_plan_task
+      await expectRejection("gwd_plan_task", {
         projectDir: base,
         milestoneId: "",
         sliceId: "S01",
@@ -883,7 +883,7 @@ export const executeTaskComplete = async (params, projectDir) => {
       }, "milestoneId");
 
       // Empty observabilityImpact explicitly rejected (optional-but-non-empty)
-      await expectRejection("gsd_plan_task", {
+      await expectRejection("gwd_plan_task", {
         projectDir: base,
         milestoneId: "M001",
         sliceId: "S01",
@@ -898,8 +898,8 @@ export const executeTaskComplete = async (params, projectDir) => {
         observabilityImpact: "   ",
       }, "observabilityImpact");
 
-      // Empty assessment on gsd_reassess_roadmap
-      await expectRejection("gsd_reassess_roadmap", {
+      // Empty assessment on gwd_reassess_roadmap
+      await expectRejection("gwd_reassess_roadmap", {
         projectDir: base,
         milestoneId: "M001",
         completedSliceId: "S01",
@@ -908,8 +908,8 @@ export const executeTaskComplete = async (params, projectDir) => {
         sliceChanges: { modified: [], added: [], removed: [] },
       }, "assessment");
 
-      // Empty keyRisks[i].risk on gsd_plan_milestone top-level arrays
-      await expectRejection("gsd_plan_milestone", {
+      // Empty keyRisks[i].risk on gwd_plan_milestone top-level arrays
+      await expectRejection("gwd_plan_milestone", {
         projectDir: base,
         milestoneId: "M001",
         title: "T",
@@ -918,8 +918,8 @@ export const executeTaskComplete = async (params, projectDir) => {
         keyRisks: [{ risk: "", whyItMatters: "because." }],
       }, "risk");
 
-      // Empty blockerDescription on gsd_replan_slice
-      await expectRejection("gsd_replan_slice", {
+      // Empty blockerDescription on gwd_replan_slice
+      await expectRejection("gwd_replan_slice", {
         projectDir: base,
         milestoneId: "M001",
         sliceId: "S01",
@@ -930,8 +930,8 @@ export const executeTaskComplete = async (params, projectDir) => {
         removedTaskIds: [],
       }, "blockerDescription");
 
-      // Empty milestoneId on gsd_task_complete
-      await expectRejection("gsd_task_complete", {
+      // Empty milestoneId on gwd_task_complete
+      await expectRejection("gwd_task_complete", {
         projectDir: base,
         taskId: "T01",
         sliceId: "S01",
@@ -945,12 +945,12 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_plan_milestone rejects empty slice fields up front with all violations", async () => {
+  it("gwd_plan_milestone rejects empty slice fields up front with all violations", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
+      const milestoneTool = server.tools.find((t) => t.name === "gwd_plan_milestone");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
 
       const result = await milestoneTool!.handler({
@@ -985,7 +985,7 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_plan_milestone rejects a full slice with missing heavy fields via a behavioral round-trip", async () => {
+  it("gwd_plan_milestone rejects a full slice with missing heavy fields via a behavioral round-trip", async () => {
     // Behavioral guard for the full-vs-sketch conditional. The original
     // regression (invisible "required unless isSketch" requirement) is
     // surfaced to users through two distinct runtime channels:
@@ -1001,7 +1001,7 @@ export const executeTaskComplete = async (params, projectDir) => {
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
+      const milestoneTool = server.tools.find((t) => t.name === "gwd_plan_milestone");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
 
       // Arm 1: full slice (isSketch omitted) with the heavy fields missing
@@ -1064,12 +1064,12 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_plan_milestone requires sketchScope when isSketch=true and skips heavy fields", async () => {
+  it("gwd_plan_milestone requires sketchScope when isSketch=true and skips heavy fields", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
+      const milestoneTool = server.tools.find((t) => t.name === "gwd_plan_milestone");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
 
       const emptySketchResult = await milestoneTool!.handler({
@@ -1116,12 +1116,12 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_requirement_save opens the DB before inline requirement writes", async () => {
+  it("gwd_requirement_save opens the DB before inline requirement writes", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const requirementTool = server.tools.find((t) => t.name === "gsd_requirement_save");
+      const requirementTool = server.tools.find((t) => t.name === "gwd_requirement_save");
       assert.ok(requirementTool, "requirement tool should be registered");
 
       closeDatabase();
@@ -1138,7 +1138,7 @@ export const executeTaskComplete = async (params, projectDir) => {
       });
 
       assert.match((result as any).content[0].text as string, /Saved requirement R\d+/);
-      assert.ok(existsSync(join(base, ".gsd", "REQUIREMENTS.md")), "REQUIREMENTS.md should be written to disk");
+      assert.ok(existsSync(join(base, ".gwd", "REQUIREMENTS.md")), "REQUIREMENTS.md should be written to disk");
       const row = _getAdapter()!
         .prepare("SELECT id, class, description FROM requirements WHERE description = ?")
         .get("Inline MCP requirement save regression") as Record<string, unknown> | undefined;
@@ -1149,17 +1149,17 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_milestone_generate_id skips DB-only queued milestone rows", async () => {
+  it("gwd_milestone_generate_id skips DB-only queued milestone rows", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_milestone_generate_id");
+      const tool = server.tools.find((t) => t.name === "gwd_milestone_generate_id");
       assert.ok(tool, "milestone ID tool should be registered");
 
       const first = await tool!.handler({ projectDir: base });
       assert.equal((first as any).content[0].text, "M001");
-      assert.ok(!existsSync(join(base, ".gsd", "milestones", "M001")), "ID generation should not create a milestone dir");
+      assert.ok(!existsSync(join(base, ".gwd", "milestones", "M001")), "ID generation should not create a milestone dir");
 
       closeDatabase();
 
@@ -1175,14 +1175,14 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_plan_task reopens the DB before inline task planning writes", async () => {
+  it("gwd_plan_task reopens the DB before inline task planning writes", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
-      const taskTool = server.tools.find((t) => t.name === "gsd_plan_task");
+      const milestoneTool = server.tools.find((t) => t.name === "gwd_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "gwd_plan_slice");
+      const taskTool = server.tools.find((t) => t.name === "gwd_plan_task");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task planning tool should be registered");
@@ -1198,7 +1198,7 @@ export const executeTaskComplete = async (params, projectDir) => {
             title: "Inline task planning",
             risk: "medium",
             depends: [],
-            demo: "Inline gsd_plan_task reopens the DB after it was closed.",
+            demo: "Inline gwd_plan_task reopens the DB after it was closed.",
             goal: "Preserve MCP task planning after the DB adapter is closed.",
             successCriteria: "The second task plan persists after a closed DB is reopened.",
             proofLevel: "integration",
@@ -1244,7 +1244,7 @@ export const executeTaskComplete = async (params, projectDir) => {
 
       assert.match((result as any).content[0].text as string, /Planned task T11/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M010", "slices", "S10", "tasks", "T11-PLAN.md")),
+        existsSync(join(base, ".gwd", "milestones", "M010", "slices", "S10", "tasks", "T11-PLAN.md")),
         "T11 plan should be written after reopening the DB",
       );
     } finally {
@@ -1252,15 +1252,15 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_replan_slice works end-to-end", async () => {
+  it("gwd_replan_slice works end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
-      const canonicalTool = server.tools.find((t) => t.name === "gsd_replan_slice");
+      const milestoneTool = server.tools.find((t) => t.name === "gwd_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "gwd_plan_slice");
+      const taskTool = server.tools.find((t) => t.name === "gwd_task_complete");
+      const canonicalTool = server.tools.find((t) => t.name === "gwd_replan_slice");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");
@@ -1358,11 +1358,11 @@ export const executeTaskComplete = async (params, projectDir) => {
       assert.match((canonicalResult as any).content[0].text as string, /Replanned slice S09/);
 
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M099", "slices", "S09", "S09-REPLAN.md")),
+        existsSync(join(base, ".gwd", "milestones", "M099", "slices", "S09", "S09-REPLAN.md")),
         "replan artifact should exist on disk",
       );
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M099", "slices", "S09", "S09-PLAN.md")),
+        existsSync(join(base, ".gwd", "milestones", "M099", "slices", "S09", "S09-PLAN.md")),
         "updated plan should exist on disk",
       );
       const remediationTask = _getAdapter()!.prepare(
@@ -1374,15 +1374,15 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_slice_complete works end-to-end", async () => {
+  it("gwd_slice_complete works end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
-      const canonicalTool = server.tools.find((t) => t.name === "gsd_slice_complete");
+      const milestoneTool = server.tools.find((t) => t.name === "gwd_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "gwd_plan_slice");
+      const taskTool = server.tools.find((t) => t.name === "gwd_task_complete");
+      const canonicalTool = server.tools.find((t) => t.name === "gwd_slice_complete");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");
@@ -1449,11 +1449,11 @@ export const executeTaskComplete = async (params, projectDir) => {
       assert.match((canonicalResult as any).content[0].text as string, /Completed slice S03/);
 
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M003", "slices", "S03", "S03-SUMMARY.md")),
+        existsSync(join(base, ".gwd", "milestones", "M003", "slices", "S03", "S03-SUMMARY.md")),
         "canonical tool should write slice summary to disk",
       );
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M003", "slices", "S03", "S03-UAT.md")),
+        existsSync(join(base, ".gwd", "milestones", "M003", "slices", "S03", "S03-UAT.md")),
         "canonical tool should write slice UAT to disk",
       );
     } finally {
@@ -1461,17 +1461,17 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_validate_milestone and gsd_complete_milestone work end-to-end", async () => {
+  it("gwd_validate_milestone and gwd_complete_milestone work end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
-      const completeSliceTool = server.tools.find((t) => t.name === "gsd_slice_complete");
-      const validateTool = server.tools.find((t) => t.name === "gsd_validate_milestone");
-      const completeMilestoneTool = server.tools.find((t) => t.name === "gsd_complete_milestone");
+      const milestoneTool = server.tools.find((t) => t.name === "gwd_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "gwd_plan_slice");
+      const taskTool = server.tools.find((t) => t.name === "gwd_task_complete");
+      const completeSliceTool = server.tools.find((t) => t.name === "gwd_slice_complete");
+      const validateTool = server.tools.find((t) => t.name === "gwd_validate_milestone");
+      const completeMilestoneTool = server.tools.find((t) => t.name === "gwd_complete_milestone");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");
@@ -1560,11 +1560,11 @@ export const executeTaskComplete = async (params, projectDir) => {
       });
       assert.match((completionResult as any).content[0].text as string, /Completed milestone M005/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M005", "M005-VALIDATION.md")),
+        existsSync(join(base, ".gwd", "milestones", "M005", "M005-VALIDATION.md")),
         "validation artifact should exist on disk",
       );
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M005", "M005-SUMMARY.md")),
+        existsSync(join(base, ".gwd", "milestones", "M005", "M005-SUMMARY.md")),
         "milestone summary should exist on disk",
       );
     } finally {
@@ -1572,17 +1572,17 @@ export const executeTaskComplete = async (params, projectDir) => {
     }
   });
 
-  it("gsd_reassess_roadmap and gsd_save_gate_result work end-to-end", async () => {
+  it("gwd_reassess_roadmap and gwd_save_gate_result work end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
-      const completeSliceTool = server.tools.find((t) => t.name === "gsd_slice_complete");
-      const reassessTool = server.tools.find((t) => t.name === "gsd_reassess_roadmap");
-      const gateTool = server.tools.find((t) => t.name === "gsd_save_gate_result");
+      const milestoneTool = server.tools.find((t) => t.name === "gwd_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "gwd_plan_slice");
+      const taskTool = server.tools.find((t) => t.name === "gwd_task_complete");
+      const completeSliceTool = server.tools.find((t) => t.name === "gwd_slice_complete");
+      const reassessTool = server.tools.find((t) => t.name === "gwd_reassess_roadmap");
+      const gateTool = server.tools.find((t) => t.name === "gwd_save_gate_result");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");
@@ -1724,11 +1724,11 @@ export const executeTaskComplete = async (params, projectDir) => {
       assert.match((reassessResult as any).content[0].text as string, /Reassessed roadmap for milestone M006 after S06/);
 
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M006", "slices", "S06", "S06-ASSESSMENT.md")),
+        existsSync(join(base, ".gwd", "milestones", "M006", "slices", "S06", "S06-ASSESSMENT.md")),
         "assessment artifact should exist on disk",
       );
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M006", "M006-ROADMAP.md")),
+        existsSync(join(base, ".gwd", "milestones", "M006", "M006-ROADMAP.md")),
         "roadmap artifact should exist on disk",
       );
     } finally {
@@ -1845,13 +1845,13 @@ describe("validateProjectDir", () => {
     }
   });
 
-  it("accepts a worktree under the allowed root external .gsd state target", () => {
+  it("accepts a worktree under the allowed root external .gwd state target", () => {
     const allowedRoot = makeTmpBase();
     const externalState = makeTmpBase();
     const worktree = join(externalState, "worktrees", "M001");
     mkdirSync(worktree, { recursive: true });
-    rmSync(join(allowedRoot, ".gsd"), { recursive: true, force: true });
-    symlinkSync(externalState, join(allowedRoot, ".gsd"), "dir");
+    rmSync(join(allowedRoot, ".gwd"), { recursive: true, force: true });
+    symlinkSync(externalState, join(allowedRoot, ".gwd"), "dir");
 
     const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {
@@ -1875,8 +1875,8 @@ describe("validateProjectDir", () => {
     const sibling = `${externalState}-sibling`;
     const siblingWorktree = join(sibling, "worktrees", "M001");
     mkdirSync(siblingWorktree, { recursive: true });
-    rmSync(join(allowedRoot, ".gsd"), { recursive: true, force: true });
-    symlinkSync(externalState, join(allowedRoot, ".gsd"), "dir");
+    rmSync(join(allowedRoot, ".gwd"), { recursive: true, force: true });
+    symlinkSync(externalState, join(allowedRoot, ".gwd"), "dir");
 
     const prevRoot = process.env.GWD_WORKFLOW_PROJECT_ROOT;
     try {

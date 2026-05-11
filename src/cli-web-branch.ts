@@ -26,7 +26,7 @@ export interface CliFlags {
   /** Additional allowed origins for CORS: `--allowed-origins http://192.168.1.10:8080` */
   webAllowedOrigins?: string[]
 
-  /** Set by `gsd sessions` when the user picks a specific session to resume */
+  /** Set by `gwd sessions` when the user picks a specific session to resume */
   _selectedSessionPath?: string
 }
 

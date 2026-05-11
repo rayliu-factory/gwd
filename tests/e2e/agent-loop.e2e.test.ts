@@ -1,7 +1,7 @@
 /**
- * GSD-2 agent-loop e2e tests.
+ * GWD agent-loop e2e tests.
  *
- * Drives the real `gsd` binary through scripted prompt → tool → response
+ * Drives the real `gwd` binary through scripted prompt → tool → response
  * cycles using the fake LLM provider (packages/pi-ai/src/providers/fake.ts).
  * Three vertical slices in this first cut, per peer review:
  *   T1 - simple text response (happy path)
@@ -44,7 +44,7 @@ describe("agent loop e2e (fake LLM)", () => {
 		const transcript = writeTranscript([
 			{
 				turn: 1,
-				expect: { modelId: "gsd-fake-model", lastUserText: "ping" },
+				expect: { modelId: "gwd-fake-model", lastUserText: "ping" },
 				emit: { kind: "text", text: "pong from fake" },
 			},
 		]);
@@ -84,7 +84,7 @@ describe("agent loop e2e (fake LLM)", () => {
 		const transcript = writeTranscript([
 			{
 				turn: 1,
-				expect: { modelId: "gsd-fake-model", lastUserText: "use a tool" },
+				expect: { modelId: "gwd-fake-model", lastUserText: "use a tool" },
 				emit: {
 					kind: "tool_use",
 					calls: [

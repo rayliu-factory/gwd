@@ -1,0 +1,298 @@
+import { describe, test, beforeEach, afterEach } from "node:test";
+import assert from "node:assert/strict";
+import { mkdirSync, mkdtempSync, rmSync, readFileSync, readdirSync, realpathSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import {
+  WorktreeLifecycle,
+  type WorktreeLifecycleDeps,
+  type NotifyCtx,
+} from "../worktree-lifecycle.js";
+import { WorktreeStateProjection } from "../worktree-state-projection.js";
+import { type TaskCommitContext } from "../worktree.js";
+
+// Test-local: LegacyTestDeps had three fields Lifecycle does not need
+// (shouldUseWorktreeIsolation, syncWorktreeStateBack, captureIntegrationBranch).
+// Permit them in test fixtures so existing override patterns keep working —
+// Lifecycle ignores the extras via structural typing.
+type LegacyTestDeps = WorktreeLifecycleDeps & {
+  shouldUseWorktreeIsolation?: () => boolean;
+  syncWorktreeStateBack?: (
+    mainBasePath: string,
+    worktreePath: string,
+    milestoneId: string,
+  ) => { synced: string[] };
+  captureIntegrationBranch?: (basePath: string, mid: string | undefined) => void;
+  autoCommitCurrentBranch?: (
+    basePath: string,
+    unitType: string,
+    unitId: string,
+    taskContext?: TaskCommitContext,
+  ) => string | null;
+  getCurrentBranch?: (basePath: string) => string;
+  checkoutBranch?: (basePath: string, branch: string) => void;
+  readFileSync?: (path: string, encoding: BufferEncoding) => string;
+};
+import { AutoSession } from "../auto/session.js";
+import type { JournalEntry } from "../journal.js";
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function makeSession(
+  overrides?: Partial<{ basePath: string; originalBasePath: string }>,
+): AutoSession {
+  const s = new AutoSession();
+  s.basePath = overrides?.basePath ?? "/project";
+  s.originalBasePath = overrides?.originalBasePath ?? "/project";
+  return s;
+}
+
+function makeDeps(
+  overrides?: Partial<LegacyTestDeps>,
+): LegacyTestDeps {
+  const deps: LegacyTestDeps = {
+    isInAutoWorktree: () => false,
+    shouldUseWorktreeIsolation: () => true,
+    getIsolationMode: () => "worktree",
+    mergeMilestoneToMain: () => ({ pushed: false, codeFilesChanged: true }),
+    syncWorktreeStateBack: () => ({ synced: [] }),
+    teardownAutoWorktree: () => {},
+    createAutoWorktree: (_basePath: string, milestoneId: string) =>
+      `/project/.gwd/worktrees/${milestoneId}`,
+    enterAutoWorktree: (_basePath: string, milestoneId: string) =>
+      `/project/.gwd/worktrees/${milestoneId}`,
+    getAutoWorktreePath: () => null,
+    autoCommitCurrentBranch: (
+      _basePath: string,
+      _unitType: string,
+      _unitId: string,
+      _taskContext?: TaskCommitContext,
+    ) => null,
+    getCurrentBranch: () => "main",
+    checkoutBranch: () => {},
+    autoWorktreeBranch: (milestoneId: string) => `milestone/${milestoneId}`,
+    resolveMilestoneFile: (_basePath: string, milestoneId: string) =>
+      `/project/.gwd/milestones/${milestoneId}/${milestoneId}-ROADMAP.md`,
+    readFileSync: () => "# Roadmap\n- [x] S01: Slice one\n",
+    GitServiceImpl: class {
+      constructor() {}
+    } as unknown as LegacyTestDeps["GitServiceImpl"],
+    loadEffectiveGWDPreferences: () => ({ preferences: { git: {} } }),
+    invalidateAllCaches: () => {},
+    captureIntegrationBranch: () => {},
+    enterBranchModeForMilestone: () => {},
+    worktreeProjection: new WorktreeStateProjection(),
+    ...overrides,
+  };
+  return deps;
+}
+
+function makeNotifyCtx(): NotifyCtx {
+  return {
+    notify: () => {},
+  };
+}
+
+/** Read all journal entries from a temp .gwd/journal directory. */
+function readJournalEntries(basePath: string): JournalEntry[] {
+  const journalDir = join(basePath, ".gwd", "journal");
+  try {
+    const files = readdirSync(journalDir).filter(f => f.endsWith(".jsonl")).sort();
+    const entries: JournalEntry[] = [];
+    for (const file of files) {
+      const raw = readFileSync(join(journalDir, file), "utf-8");
+      for (const line of raw.split("\n")) {
+        if (!line.trim()) continue;
+        entries.push(JSON.parse(line) as JournalEntry);
+      }
+    }
+    return entries;
+  } catch {
+    return [];
+  }
+}
+
+// ─── Tests ───────────────────────────────────────────────────────────────────
+
+describe("worktree journal events", () => {
+  let tmp: string;
+  const originalCwd = process.cwd();
+
+  beforeEach(() => {
+    tmp = mkdtempSync(join(tmpdir(), "wt-journal-"));
+  });
+  afterEach(() => {
+    // Restore cwd before cleanup — on Windows, rmSync fails with EPERM
+    // if the process cwd is inside the directory being deleted.
+    try { process.chdir(originalCwd); } catch { /* best-effort */ }
+    rmSync(tmp, { recursive: true, force: true });
+  });
+
+  test("enterMilestone emits worktree-enter on success (new worktree)", () => {
+    const s = makeSession({ basePath: tmp, originalBasePath: tmp });
+    const deps = makeDeps({ getAutoWorktreePath: () => null });
+    new WorktreeLifecycle(s, deps).enterMilestone("M001", makeNotifyCtx());
+
+    const entries = readJournalEntries(tmp);
+    const enter = entries.find(e => e.eventType === "worktree-enter");
+    assert.ok(enter, "worktree-enter event should be emitted");
+    assert.equal(enter!.data?.milestoneId, "M001");
+    assert.equal(enter!.data?.created, true);
+    assert.ok(enter!.data?.wtPath);
+  });
+
+  test("enterMilestone emits worktree-enter with created=false for existing worktree", () => {
+    const s = makeSession({ basePath: tmp, originalBasePath: tmp });
+    const deps = makeDeps({
+      getAutoWorktreePath: () => "/project/.gwd/worktrees/M001",
+    });
+    new WorktreeLifecycle(s, deps).enterMilestone("M001", makeNotifyCtx());
+
+    const entries = readJournalEntries(tmp);
+    const enter = entries.find(e => e.eventType === "worktree-enter");
+    assert.ok(enter, "worktree-enter event should be emitted");
+    assert.equal(enter!.data?.created, false);
+  });
+
+  test("enterMilestone emits worktree-skip when isolation disabled", () => {
+    const s = makeSession({ basePath: tmp, originalBasePath: tmp });
+    const deps = makeDeps({ shouldUseWorktreeIsolation: () => false, getIsolationMode: () => "none" });
+    new WorktreeLifecycle(s, deps).enterMilestone("M001", makeNotifyCtx());
+
+    const entries = readJournalEntries(tmp);
+    const skip = entries.find(e => e.eventType === "worktree-skip");
+    assert.ok(skip, "worktree-skip event should be emitted");
+    assert.equal(skip!.data?.milestoneId, "M001");
+    assert.equal(skip!.data?.reason, "isolation-disabled");
+  });
+
+  test("enterMilestone emits worktree-create-failed on error", () => {
+    const s = makeSession({ basePath: tmp, originalBasePath: tmp });
+    const deps = makeDeps({
+      getAutoWorktreePath: () => null,
+      createAutoWorktree: () => { throw new Error("disk full"); },
+    });
+    new WorktreeLifecycle(s, deps).enterMilestone("M001", makeNotifyCtx());
+
+    const entries = readJournalEntries(tmp);
+    const failed = entries.find(e => e.eventType === "worktree-create-failed");
+    assert.ok(failed, "worktree-create-failed event should be emitted");
+    assert.equal(failed!.data?.milestoneId, "M001");
+    assert.equal(failed!.data?.error, "disk full");
+    assert.equal(failed!.data?.fallback, "project-root");
+  });
+
+  test("mergeAndExit emits worktree-merge-start", () => {
+    const worktreePath = join(tmp, "worktree");
+    mkdirSync(worktreePath, { recursive: true });
+    const s = makeSession({
+      basePath: worktreePath,
+      originalBasePath: tmp,
+    });
+    const deps = makeDeps({
+      isInAutoWorktree: () => true,
+      getIsolationMode: () => "worktree",
+      mergeMilestoneToMain: () => {
+        assert.equal(
+          realpathSync(process.cwd()),
+          realpathSync(worktreePath),
+          "worktree-mode merge must keep the real worktree as cwd",
+        );
+        return { pushed: false, codeFilesChanged: true };
+      },
+    });
+    process.chdir(worktreePath);
+    new WorktreeLifecycle(s, deps).exitMilestone(
+      "M001",
+      { merge: true },
+      makeNotifyCtx(),
+    );
+
+    const entries = readJournalEntries(tmp);
+    const start = entries.find(e => e.eventType === "worktree-merge-start");
+    assert.ok(start, "worktree-merge-start event should be emitted");
+    assert.equal(start!.data?.milestoneId, "M001");
+    assert.equal(start!.data?.mode, "worktree");
+  });
+
+  test("exitMilestone returns real codeFilesChanged from merge", () => {
+    const worktreePath = join(tmp, "worktree");
+    mkdirSync(worktreePath, { recursive: true });
+    const s = makeSession({
+      basePath: worktreePath,
+      originalBasePath: tmp,
+    });
+    const deps = makeDeps({
+      isInAutoWorktree: () => true,
+      getIsolationMode: () => "worktree",
+      mergeMilestoneToMain: () => ({ pushed: false, codeFilesChanged: true }),
+    });
+    process.chdir(worktreePath);
+
+    const result = new WorktreeLifecycle(s, deps).exitMilestone(
+      "M001",
+      { merge: true },
+      makeNotifyCtx(),
+    );
+
+    assert.deepEqual(result, {
+      ok: true,
+      merged: true,
+      codeFilesChanged: true,
+    });
+  });
+
+  test("mergeAndExit emits worktree-merge-failed on error", () => {
+    const s = makeSession({
+      basePath: join(tmp, "worktree"),
+      originalBasePath: tmp,
+    });
+    const deps = makeDeps({
+      isInAutoWorktree: () => true,
+      getIsolationMode: () => "worktree",
+      mergeMilestoneToMain: () => { throw new Error("conflict in main"); },
+    });
+    // Since #4380, mergeAndExit re-throws all errors after emitting the journal
+    // event and restoring state. Lifecycle now wraps that throw in a typed
+    // ExitResult — failure surfaces as ok:false / cause.
+    const result = new WorktreeLifecycle(s, deps).exitMilestone(
+      "M001",
+      { merge: true },
+      makeNotifyCtx(),
+    );
+    assert.equal(result.ok, false);
+    if (!result.ok) {
+      assert.equal(result.reason, "teardown-failed");
+      assert.match(
+        result.cause instanceof Error
+          ? result.cause.message
+          : String(result.cause),
+        /conflict in main/,
+      );
+    }
+
+    const entries = readJournalEntries(tmp);
+    const failed = entries.find(e => e.eventType === "worktree-merge-failed");
+    assert.ok(failed, "worktree-merge-failed event should be emitted");
+    assert.equal(failed!.data?.milestoneId, "M001");
+    assert.equal(failed!.data?.error, "conflict in main");
+  });
+
+  test("journal entries have valid flowId, seq, and ts fields", () => {
+    const s = makeSession({ basePath: tmp, originalBasePath: tmp });
+    const deps = makeDeps({ shouldUseWorktreeIsolation: () => false });
+    new WorktreeLifecycle(s, deps).enterMilestone("M001", makeNotifyCtx());
+
+    const entries = readJournalEntries(tmp);
+    assert.ok(entries.length > 0, "at least one entry should exist");
+    const entry = entries[0];
+    assert.ok(entry.flowId, "flowId should be set");
+    assert.ok(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(entry.flowId),
+      "flowId should be a valid UUID",
+    );
+    assert.equal(entry.seq, 0);
+    assert.ok(entry.ts, "ts should be set");
+    assert.ok(!isNaN(Date.parse(entry.ts)), "ts should be a valid ISO date");
+  });
+});

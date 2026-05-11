@@ -116,13 +116,13 @@ const buildBuiltinKeybindings = (effectiveKeybindings: Required<KeybindingsConfi
 	return builtinKeybindings;
 };
 
-const PROTECTED_EXTENSION_COMMANDS = new Set(["gsd"]);
+const PROTECTED_EXTENSION_COMMANDS = new Set(["gwd"]);
 
 function isProtectedCommandOwner(commandName: string, extensionPath: string): boolean {
 	if (!PROTECTED_EXTENSION_COMMANDS.has(commandName)) return false;
 	const normalized = extensionPath.replace(/\\/g, "/");
-	return /\/extensions\/gsd\/(?:index\.[cm]?[jt]s|dist\/.*)$/.test(normalized)
-		|| /\/extensions\/gsd\/?$/.test(normalized);
+	return /\/extensions\/gwd\/(?:index\.[cm]?[jt]s|dist\/.*)$/.test(normalized)
+		|| /\/extensions\/gwd\/?$/.test(normalized);
 }
 
 /** Combined result from all before_agent_start handlers */

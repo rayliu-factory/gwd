@@ -1,6 +1,6 @@
 # Provider Setup
 
-Step-by-step setup instructions for every LLM provider GSD supports. If you ran the onboarding wizard (`gsd config`) and picked a provider, you may already be configured — check with `/model` inside a session.
+Step-by-step setup instructions for every LLM provider GWD supports. If you ran the onboarding wizard (`gwd config`) and picked a provider, you may already be configured — check with `/model` inside a session.
 
 ## Quick Reference
 
@@ -30,7 +30,7 @@ Step-by-step setup instructions for every LLM provider GSD supports. If you ran 
 **Option A — Browser sign-in (recommended):**
 
 ```bash
-gsd config
+gwd config
 # Choose "Sign in with your browser" → "Anthropic (Claude)"
 ```
 
@@ -48,7 +48,7 @@ export ANTHROPIC_API_KEY="sk-ant-..."
 export OPENAI_API_KEY="sk-..."
 ```
 
-Or run `gsd config` and choose "Paste an API key" then "OpenAI".
+Or run `gwd config` and choose "Paste an API key" then "OpenAI".
 
 ### Google Gemini
 
@@ -65,9 +65,9 @@ OpenRouter aggregates 200+ models from multiple providers behind a single API ke
    ```bash
    export OPENROUTER_API_KEY="sk-or-..."
    ```
-3. In GSD, type `/model` to select an OpenRouter model (prefixed with `openrouter/`)
+3. In GWD, type `/model` to select an OpenRouter model (prefixed with `openrouter/`)
 
-To add models not in the built-in list, add them to `~/.gsd/agent/models.json`. See [Custom Models](custom-models.md).
+To add models not in the built-in list, add them to `~/.gwd/agent/models.json`. See [Custom Models](custom-models.md).
 
 ### Groq
 
@@ -92,7 +92,7 @@ export MISTRAL_API_KEY="..."
 Uses OAuth — sign in through the browser:
 
 ```bash
-gsd config
+gwd config
 # Choose "Sign in with your browser" → "GitHub Copilot"
 ```
 
@@ -132,7 +132,7 @@ export AZURE_OPENAI_API_KEY="..."
 
 ## Local Providers
 
-Local providers run on your machine. They require a `models.json` configuration file at `~/.gsd/agent/models.json` because GSD needs to know the endpoint URL and available models.
+Local providers run on your machine. They require a `models.json` configuration file at `~/.gwd/agent/models.json` because GWD needs to know the endpoint URL and available models.
 
 The file reloads each time you open `/model` — no restart needed.
 
@@ -149,7 +149,7 @@ The file reloads each time you open `/model` — no restart needed.
    ollama pull llama3.1:8b
    ```
 
-3. Create `~/.gsd/agent/models.json`:
+3. Create `~/.gwd/agent/models.json`:
    ```json
    {
      "providers": {
@@ -169,13 +169,13 @@ The file reloads each time you open `/model` — no restart needed.
    }
    ```
 
-4. In GSD, type `/model` and select your Ollama model.
+4. In GWD, type `/model` and select your Ollama model.
 
 ### LM Studio
 
 1. Install [LM Studio](https://lmstudio.ai)
 2. Go to "Local Server" tab, load a model, click "Start Server" (default port 1234)
-3. Create `~/.gsd/agent/models.json`:
+3. Create `~/.gwd/agent/models.json`:
    ```json
    {
      "providers": {
@@ -240,21 +240,21 @@ The file reloads each time you open `/model` — no restart needed.
 
 ## Custom OpenAI-Compatible Endpoints
 
-Any server that implements the OpenAI Chat Completions API can work with GSD — proxies (LiteLLM, Portkey, Helicone), self-hosted inference, new providers.
+Any server that implements the OpenAI Chat Completions API can work with GWD — proxies (LiteLLM, Portkey, Helicone), self-hosted inference, new providers.
 
 **Quickest path:**
 
 ```bash
-gsd config
+gwd config
 # Choose "Paste an API key" → "Custom (OpenAI-compatible)"
 # Enter: base URL, API key, model ID
 ```
 
-This writes `~/.gsd/agent/models.json` for you. See [Custom Models](custom-models.md) for manual setup.
+This writes `~/.gwd/agent/models.json` for you. See [Custom Models](custom-models.md) for manual setup.
 
 ## Verifying Your Setup
 
-1. Launch GSD: `gsd`
+1. Launch GWD: `gwd`
 2. Check available models: `/model`
 3. Select your model from the picker
 4. Send a test message to confirm it responds
@@ -268,7 +268,7 @@ If the model doesn't appear, check:
 
 | Problem | Cause | Fix |
 |---------|-------|-----|
-| "Authentication failed" with valid key | Key not visible to GSD | Export in the same terminal, or save via `gsd config` |
+| "Authentication failed" with valid key | Key not visible to GWD | Export in the same terminal, or save via `gwd config` |
 | OpenRouter models not in `/model` | No API key set | Set `OPENROUTER_API_KEY` and restart |
 | Ollama returns empty responses | Server not running or model not pulled | Run `ollama serve` and `ollama pull <model>` |
 | LM Studio model ID mismatch | ID doesn't match server | Check LM Studio's server tab for the exact identifier |

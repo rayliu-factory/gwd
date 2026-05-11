@@ -11,7 +11,7 @@ const DOCTOR_MAX_BUFFER = 2 * 1024 * 1024
 const DOCTOR_MODULE_ENV = "GWD_DOCTOR_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 }
 
 function runDoctorChild(
@@ -63,7 +63,7 @@ export async function collectDoctorData(scope?: string, projectCwdOverride?: str
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/doctor.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/doctor.ts")
   const doctorModulePath = moduleResolution.modulePath
 
   if (!moduleResolution.useCompiledJs && (!existsSync(resolveTsLoader) || !existsSync(doctorModulePath))) {
@@ -80,7 +80,7 @@ export async function collectDoctorData(scope?: string, projectCwdOverride?: str
     `const mod = await import(pathToFileURL(process.env.${DOCTOR_MODULE_ENV}).href);`,
     'const basePath = process.env.GWD_DOCTOR_BASE;',
     'const scope = process.env.GWD_DOCTOR_SCOPE || undefined;',
-    'const report = await mod.runGSDDoctor(basePath, { fix: false, scope });',
+    'const report = await mod.runGWDDoctor(basePath, { fix: false, scope });',
     'const summary = mod.summarizeDoctorIssues(report.issues);',
     'const result = {',
     '  ok: report.ok,',
@@ -113,7 +113,7 @@ export async function applyDoctorFixes(scope?: string, projectCwdOverride?: stri
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/doctor.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/doctor.ts")
   const doctorModulePath = moduleResolution.modulePath
 
   if (!moduleResolution.useCompiledJs && (!existsSync(resolveTsLoader) || !existsSync(doctorModulePath))) {
@@ -130,7 +130,7 @@ export async function applyDoctorFixes(scope?: string, projectCwdOverride?: stri
     `const mod = await import(pathToFileURL(process.env.${DOCTOR_MODULE_ENV}).href);`,
     'const basePath = process.env.GWD_DOCTOR_BASE;',
     'const scope = process.env.GWD_DOCTOR_SCOPE || undefined;',
-    'const report = await mod.runGSDDoctor(basePath, { fix: true, scope });',
+    'const report = await mod.runGWDDoctor(basePath, { fix: true, scope });',
     'const result = {',
     '  ok: report.ok,',
     '  fixesApplied: report.fixesApplied,',

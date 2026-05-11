@@ -1,11 +1,11 @@
 # Custom Models
 
-Define custom models and providers in `~/.gsd/agent/models.json`. This lets you add models not in the default registry — self-hosted endpoints, fine-tuned models, proxies, or new provider releases.
+Define custom models and providers in `~/.gwd/agent/models.json`. This lets you add models not in the default registry — self-hosted endpoints, fine-tuned models, proxies, or new provider releases.
 
 ## File Location
 
-GSD looks for models.json at:
-1. `~/.gsd/agent/models.json` (primary)
+GWD looks for models.json at:
+1. `~/.gwd/agent/models.json` (primary)
 2. `~/.pi/agent/models.json` (fallback)
 
 The file reloads each time you open `/model` — no restart needed.
@@ -39,7 +39,7 @@ The file reloads each time you open `/model` — no restart needed.
 
 The `apiKey` field can be:
 
-- **An environment variable name**: `"OPENROUTER_API_KEY"` — GSD resolves it automatically
+- **An environment variable name**: `"OPENROUTER_API_KEY"` — GWD resolves it automatically
 - **A literal value**: `"sk-abc123..."` — used directly
 - **A dummy value**: `"not-needed"` — for local servers that don't require auth
 
@@ -124,8 +124,8 @@ Without this, cost shows $0.00 — which is the expected default for custom mode
 
 ## Community Extensions
 
-For providers not built into GSD, community extensions add full provider support:
+For providers not built into GWD, community extensions add full provider support:
 
 | Extension | Provider | Install |
 |-----------|----------|---------|
-| `pi-dashscope` | Alibaba DashScope (Qwen3, GLM-5, etc.) | `gsd install npm:pi-dashscope` |
+| `pi-dashscope` | Alibaba DashScope (Qwen3, GLM-5, etc.) | `gwd install npm:pi-dashscope` |

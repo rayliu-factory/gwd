@@ -1,29 +1,29 @@
 # Your First Project
 
-## Launch GSD
+## Launch GWD
 
 Open a terminal in any project directory (or an empty one) and run:
 
 ```bash
-gsd
+gwd
 ```
 
-GSD shows a welcome screen with your version, active model, and available tool keys.
+GWD shows a welcome screen with your version, active model, and available tool keys.
 
 ## Start a Discussion
 
-Type `/gsd` to enter step mode. GSD reads the state of your project directory and determines the next logical action:
+Type `/gwd` to enter step mode. GWD reads the state of your project directory and determines the next logical action:
 
-- **No `.gsd/` directory** — starts a discussion flow to capture your project vision
+- **No `.gwd/` directory** — starts a discussion flow to capture your project vision
 - **Milestone exists, no roadmap** — discuss or research the milestone
 - **Roadmap exists, slices pending** — plan the next slice or execute a task
 - **Mid-task** — resume where you left off
 
-For a new project, GSD will ask you to describe what you want to build. Talk through your vision — GSD captures requirements, architectural decisions, and scope.
+For a new project, GWD will ask you to describe what you want to build. Talk through your vision — GWD captures requirements, architectural decisions, and scope.
 
 ## The Project Hierarchy
 
-After discussion, GSD organizes your work into:
+After discussion, GWD organizes your work into:
 
 ```
 Milestone  →  a shippable version (4-10 slices)
@@ -35,13 +35,13 @@ The key rule: **a task must fit in one AI context window.** If it can't, it beco
 
 ## Run Auto Mode
 
-Once you have a milestone and roadmap, let GSD take the wheel:
+Once you have a milestone and roadmap, let GWD take the wheel:
 
 ```
-/gsd auto
+/gwd auto
 ```
 
-GSD autonomously:
+GWD autonomously:
 1. **Plans** each slice — scouts the codebase, researches docs, decomposes into tasks
 2. **Executes** each task — writes code in a fresh AI session
 3. **Completes** the slice — writes summaries, commits with meaningful messages
@@ -55,25 +55,25 @@ The recommended approach: auto mode in one terminal, steering from another.
 **Terminal 1 — let it build:**
 
 ```bash
-gsd
-/gsd auto
+gwd
+/gwd auto
 ```
 
 **Terminal 2 — steer while it works:**
 
 ```bash
-gsd
-/gsd discuss    # talk through architecture decisions
-/gsd status     # check progress
-/gsd queue      # queue the next milestone
-/gsd capture "add rate limiting to the API"  # fire-and-forget thought
+gwd
+/gwd discuss    # talk through architecture decisions
+/gwd status     # check progress
+/gwd queue      # queue the next milestone
+/gwd capture "add rate limiting to the API"  # fire-and-forget thought
 ```
 
-Both terminals read and write the same `.gsd/` files. Decisions in terminal 2 are picked up at the next phase boundary automatically.
+Both terminals read and write the same `.gwd/` files. Decisions in terminal 2 are picked up at the next phase boundary automatically.
 
 ## Check Progress
 
-Press `Ctrl+Alt+G` or type `/gsd status` to see the dashboard:
+Press `Ctrl+Alt+G` or type `/gwd status` to see the dashboard:
 
 - Current milestone, slice, and task
 - Elapsed time and phase
@@ -83,7 +83,7 @@ Press `Ctrl+Alt+G` or type `/gsd status` to see the dashboard:
 ## Resume a Session
 
 ```bash
-gsd --continue    # or gsd -c
+gwd --continue    # or gwd -c
 ```
 
 Resumes the most recent session for the current directory.
@@ -91,18 +91,18 @@ Resumes the most recent session for the current directory.
 To browse and pick from all saved sessions:
 
 ```bash
-gsd sessions
+gwd sessions
 ```
 
 Shows each session's date, message count, and preview so you can choose which to resume.
 
 ## What's on Disk
 
-GSD keeps authoritative runtime state in the project-root SQLite database and renders markdown projections into `.gsd/` inside your project:
+GWD keeps authoritative runtime state in the project-root SQLite database and renders markdown projections into `.gwd/` inside your project:
 
 ```
-.gsd/
-  gsd.db              — authoritative runtime database (local, gitignored)
+.gwd/
+  gwd.db              — authoritative runtime database (local, gitignored)
   PROJECT.md          — what the project is
   REQUIREMENTS.md     — requirement contract
   DECISIONS.md        — architectural decisions

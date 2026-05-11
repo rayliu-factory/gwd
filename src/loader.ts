@@ -14,25 +14,25 @@ import {
 // Fast-path: handle --version/-v and --help/-h before importing any heavy
 // dependencies. This avoids loading the entire pi-coding-agent barrel import
 // (~1s) just to print a version string.
-const gsdRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const gwdRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const args = process.argv.slice(2)
 const firstArg = args[0]
 
 // Read package.json once — reused for version, banner, and GWD_VERSION below
-let gsdVersion = '0.0.0'
+let gwdVersion = '0.0.0'
 try {
-  const pkg = JSON.parse(readFileSync(join(gsdRoot, 'package.json'), 'utf-8'))
-  gsdVersion = pkg.version || '0.0.0'
+  const pkg = JSON.parse(readFileSync(join(gwdRoot, 'package.json'), 'utf-8'))
+  gwdVersion = pkg.version || '0.0.0'
 } catch { /* ignore */ }
 
 if (firstArg === '--version' || firstArg === '-v') {
-  process.stdout.write(gsdVersion + '\n')
+  process.stdout.write(gwdVersion + '\n')
   process.exit(0)
 }
 
 if (firstArg === '--help' || firstArg === '-h') {
   const { printHelp } = await import('./help-text.js')
-  printHelp(gsdVersion)
+  printHelp(gwdVersion)
   process.exit(0)
 }
 
@@ -94,7 +94,7 @@ const pkgDir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'pkg')
 // MUST be set before any dynamic import of pi SDK fires — this is what config.js
 // reads to determine APP_NAME and CONFIG_DIR_NAME
 process.env.PI_PACKAGE_DIR = pkgDir
-process.env.PI_SKIP_VERSION_CHECK = '1'  // GSD runs its own update check in cli.ts — suppress pi's
+process.env.PI_SKIP_VERSION_CHECK = '1'  // GWD runs its own update check in cli.ts — suppress pi's
 process.title = CLI_COMMAND
 
 // Print branded banner on first launch (before ~/.gwd/ exists).
@@ -108,7 +108,7 @@ if (!existsSync(appRoot)) {
   process.stderr.write(
     renderLogo(colorCyan) +
     '\n' +
-    `  ${PRODUCT_FULL_NAME} ${dim}v${gsdVersion}${reset}\n` +
+    `  ${PRODUCT_FULL_NAME} ${dim}v${gwdVersion}${reset}\n` +
     `  ${green}Welcome.${reset} Setting up your environment...\n\n`
   )
   process.env.GWD_FIRST_RUN_BANNER = '1'
@@ -120,18 +120,18 @@ process.env.GWD_CODING_AGENT_DIR = agentDir
 // GWD_PKG_ROOT — absolute path to the gwd-pi package root. Used by deployed extensions
 // (e.g. auto.ts resume path) to import modules like resource-loader.js that live
 // in the package tree, not in the deployed ~/.gwd/agent/ tree.
-process.env.GWD_PKG_ROOT = gsdRoot
+process.env.GWD_PKG_ROOT = gwdRoot
 
 // RTK environment — make ~/.gwd/agent/bin visible to all child-process paths,
-// not just the bash tool, and force-disable RTK telemetry for GSD-managed use.
+// not just the bash tool, and force-disable RTK telemetry for GWD-managed use.
 applyRtkProcessEnv(process.env)
 
-// NODE_PATH — make gsd's own node_modules available to extensions loaded via jiti.
+// NODE_PATH — make gwd's own node_modules available to extensions loaded via jiti.
 // Without this, extensions (e.g. browser-tools) can't resolve dependencies like
-// `playwright` because jiti resolves modules from pi-coding-agent's location, not gsd's.
-// Prepending gsd's node_modules to NODE_PATH fixes this for all extensions.
-const gsdNodeModules = join(gsdRoot, 'node_modules')
-process.env.NODE_PATH = [gsdNodeModules, process.env.NODE_PATH]
+// `playwright` because jiti resolves modules from pi-coding-agent's location, not gwd's.
+// Prepending gwd's node_modules to NODE_PATH fixes this for all extensions.
+const gwdNodeModules = join(gwdRoot, 'node_modules')
+process.env.NODE_PATH = [gwdNodeModules, process.env.NODE_PATH]
   .filter(Boolean)
   .join(delimiter)
 // Force Node to re-evaluate module search paths with the updated NODE_PATH.
@@ -141,18 +141,18 @@ const { Module } = await import('module');
 (Module as any)._initPaths?.()
 
 // GWD_VERSION — expose package version so extensions can display it
-process.env[GWD_VERSION_ENV] = gsdVersion
+process.env[GWD_VERSION_ENV] = gwdVersion
 
 // GWD_BIN_PATH — absolute path to the CLI entrypoint, used by patched
-// subagent/parallel workers to spawn gsd instead of pi when dispatching
+// subagent/parallel workers to spawn gwd instead of pi when dispatching
 // workflow tasks. In source-dev mode this must remain scripts/dev-cli.js, not
 // src/loader.ts, because child processes need the --import resolve-ts wrapper.
-applyLoaderCliEntrypointEnv(process.env, { gsdRoot, invokedBinPath: process.argv[1] })
+applyLoaderCliEntrypointEnv(process.env, { gwdRoot, invokedBinPath: process.argv[1] })
 
-// GWD_WORKFLOW_PATH — absolute path to bundled GWD-WORKFLOW.md, used by patched gsd extension
+// GWD_WORKFLOW_PATH — absolute path to bundled GWD-WORKFLOW.md, used by patched gwd extension
 // when dispatching workflow prompts. Prefers dist/resources/ (stable, set at build time)
 // over src/resources/ (live working tree) — see resource-loader.ts for rationale.
-const resourcesDir = resolveBundledResourcesDirFromPackageRoot(gsdRoot)
+const resourcesDir = resolveBundledResourcesDirFromPackageRoot(gwdRoot)
 process.env.GWD_WORKFLOW_PATH = join(resourcesDir, 'GWD-WORKFLOW.md')
 
 // GWD_BUNDLED_EXTENSION_PATHS — dynamically discovered bundled extension entry points.
@@ -173,7 +173,7 @@ const discoveredExtensionPaths = discoverExtensionEntryPaths(bundledExtDir)
 process.env.GWD_BUNDLED_EXTENSION_PATHS = serializeBundledExtensionPaths(discoveredExtensionPaths)
 
 // Respect HTTP_PROXY / HTTPS_PROXY / NO_PROXY env vars for all outbound requests.
-// pi-coding-agent's cli.ts sets this, but GSD bypasses that entry point — so we
+// pi-coding-agent's cli.ts sets this, but GWD bypasses that entry point — so we
 // must set it here before any SDK clients are created.
 // Lazy-load undici (~200ms) only when proxy env vars are actually set.
 if (process.env.HTTP_PROXY || process.env.HTTPS_PROXY || process.env.http_proxy || process.env.https_proxy) {
@@ -192,7 +192,7 @@ if (process.env.HTTP_PROXY || process.env.HTTPS_PROXY || process.env.http_proxy 
 // read by scripts/link-workspace-packages.cjs and scripts/validate-pack.js.
 // Adding a new linkable package requires only setting `gwd.linkable` in its
 // package.json; there is no enumeration to keep in sync here.
-const packagesDir = join(gsdRoot, 'packages')
+const packagesDir = join(gwdRoot, 'packages')
 type WsPkg = { dir: string; scope: string; name: string }
 const wsPackages: WsPkg[] = []
 try {
@@ -214,7 +214,7 @@ try {
 
 try {
   for (const pkg of wsPackages) {
-    const scopeDir = join(gsdNodeModules, pkg.scope)
+    const scopeDir = join(gwdNodeModules, pkg.scope)
     if (!existsSync(scopeDir)) mkdirSync(scopeDir, { recursive: true })
     const target = join(scopeDir, pkg.name)
     const source = join(packagesDir, pkg.dir)
@@ -229,7 +229,7 @@ try {
   }
 } catch { /* non-fatal */ }
 
-const gwdScopeDir = join(gsdNodeModules, '@gwd')
+const gwdScopeDir = join(gwdNodeModules, '@gwd')
 
 // Validate critical workspace packages are resolvable. If still missing after the
 // symlink+copy attempts, emit a clear diagnostic instead of a cryptic
@@ -247,7 +247,7 @@ if (missingPackages.length > 0) {
     `Fix it by reinstalling:\n\n` +
     `  npm install -g ${PRODUCT_PACKAGE_NAME}@latest\n\n` +
     `If the issue persists, please open an issue at:\n` +
-    `  https://github.com/gwd-build/gwd-2/issues\n`
+    `  https://github.com/rayliu-factory/gwd/issues\n`
   )
   process.exit(1)
 }

@@ -1,7 +1,7 @@
 {
   "name": "@gwd/native",
-  "version": "2.81.0",
-  "description": "Native Rust bindings for GSD — high-performance native modules via N-API",
+  "version": "0.0.1",
+  "description": "Native Rust bindings for GWD — high-performance native modules via N-API",
   "type": "commonjs",
   "gwd": {
     "linkable": true,
@@ -65,9 +65,9 @@
       "types": "./dist/diff/index.d.ts",
       "default": "./dist/diff/index.js"
     },
-    "./gsd-parser": {
-      "types": "./dist/gsd-parser/index.d.ts",
-      "default": "./dist/gsd-parser/index.js"
+    "./gwd-parser": {
+      "types": "./dist/gwd-parser/index.d.ts",
+      "default": "./dist/gwd-parser/index.js"
     },
     "./highlight": {
       "types": "./dist/highlight/index.d.ts",

@@ -42,7 +42,7 @@ export function resolveBundledResource(
   return join(resolveBundledResourcesDir(importUrl), ...segments);
 }
 
-export function resolveBundledGsdExtensionModule(
+export function resolveBundledGwdExtensionModule(
   importUrl: string,
   moduleFile: string,
   fileExists: FileExists = existsSync,
@@ -50,13 +50,13 @@ export function resolveBundledGsdExtensionModule(
   const packageRoot = resolvePackageRoot(importUrl);
   const distResources = join(packageRoot, "dist", "resources");
   const jsFile = moduleFile.replace(/\.ts$/, ".js");
-  const distModule = join(distResources, "extensions", "gsd", jsFile);
+  const distModule = join(distResources, "extensions", "gwd", jsFile);
   if (hasCompleteBundledResources(distResources, fileExists) && fileExists(distModule)) {
     return distModule;
   }
 
   const tsFile = moduleFile.replace(/\.js$/, ".ts");
-  return join(packageRoot, "src", "resources", "extensions", "gsd", tsFile);
+  return join(packageRoot, "src", "resources", "extensions", "gwd", tsFile);
 }
 
 /**

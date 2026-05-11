@@ -1,9 +1,9 @@
-// Project/App: GWD-2
+// Project/App: GWD
 // File Purpose: Verifies web UI request fixtures conform to shared RPC contracts.
 
 import test from "node:test"
 import assert from "node:assert/strict"
-import type { ExtensionUiRequestEvent, PendingUiRequest } from "../gsd-workspace-store.tsx"
+import type { ExtensionUiRequestEvent, PendingUiRequest } from "../gwd-workspace-store.tsx"
 
 test("web pending UI request accepts canonical secure input payloads", () => {
   const request = {

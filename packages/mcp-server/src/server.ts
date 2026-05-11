@@ -1,9 +1,9 @@
 /**
  * MCP Server — registers GWD orchestration, project-state, and workflow tools.
  *
- * Session tools (6): gsd_execute, gsd_status, gsd_result, gsd_cancel, gsd_query, gsd_resolve_blocker
+ * Session tools (6): gwd_execute, gwd_status, gwd_result, gwd_cancel, gwd_query, gwd_resolve_blocker
  * Interactive tools (2): ask_user_questions, secure_env_collect via MCP form elicitation
- * Read-only tools (6): gsd_progress, gsd_roadmap, gsd_history, gsd_doctor, gsd_captures, gsd_knowledge
+ * Read-only tools (6): gwd_progress, gwd_roadmap, gwd_history, gwd_doctor, gwd_captures, gwd_knowledge
  * Workflow tools (29): headless-safe planning, metadata persistence, replanning, completion, validation, reassessment, gate result, status, and journal tools
  *
  * Uses dynamic imports for @modelcontextprotocol/sdk because TS Node16
@@ -26,7 +26,7 @@ import { readHistory } from './readers/metrics.js';
 import { readCaptures } from './readers/captures.js';
 import { readKnowledge } from './readers/knowledge.js';
 import { buildGraph, writeGraph, writeSnapshot, graphStatus, graphQuery, graphDiff } from './readers/graph.js';
-import { resolveGsdRoot, resolveMilestoneFile } from './readers/paths.js';
+import { resolveGwdRoot, resolveMilestoneFile } from './readers/paths.js';
 import { runDoctorLite } from './readers/doctor-lite.js';
 import { registerWorkflowTools, validateProjectDir } from './workflow-tools.js';
 import { applySecrets, checkExistingEnvKeys, detectDestination, resolveProjectEnvFilePath } from './env-writer.js';
@@ -167,7 +167,7 @@ function textContent(text: string): { content: Array<{ type: 'text'; text: strin
 }
 
 // ---------------------------------------------------------------------------
-// gsd_query filesystem reader
+// gwd_query filesystem reader
 // ---------------------------------------------------------------------------
 
 /**
@@ -195,7 +195,7 @@ function normalizeQuery(query: string | undefined): QueryCategory {
 }
 
 async function readProjectState(projectDir: string, query: string | undefined): Promise<Record<string, unknown>> {
-  const gsdDir = join(resolve(projectDir), '.gsd');
+  const gwdDir = join(resolve(projectDir), '.gwd');
   const category = normalizeQuery(query);
   const wanted = new Set<ProjectStateField>(QUERY_FIELDS[category]);
 
@@ -206,7 +206,7 @@ async function readProjectState(projectDir: string, query: string | undefined): 
 
   if (wanted.has('state')) {
     try {
-      result.state = await readFile(join(gsdDir, 'STATE.md'), 'utf-8');
+      result.state = await readFile(join(gwdDir, 'STATE.md'), 'utf-8');
     } catch {
       result.state = null;
     }
@@ -214,7 +214,7 @@ async function readProjectState(projectDir: string, query: string | undefined): 
 
   if (wanted.has('project')) {
     try {
-      result.project = await readFile(join(gsdDir, 'PROJECT.md'), 'utf-8');
+      result.project = await readFile(join(gwdDir, 'PROJECT.md'), 'utf-8');
     } catch {
       result.project = null;
     }
@@ -222,21 +222,21 @@ async function readProjectState(projectDir: string, query: string | undefined): 
 
   if (wanted.has('requirements')) {
     try {
-      result.requirements = await readFile(join(gsdDir, 'REQUIREMENTS.md'), 'utf-8');
+      result.requirements = await readFile(join(gwdDir, 'REQUIREMENTS.md'), 'utf-8');
     } catch {
       result.requirements = null;
     }
   }
 
   if (wanted.has('milestones')) {
-    const milestonesDir = join(gsdDir, 'milestones');
+    const milestonesDir = join(gwdDir, 'milestones');
     try {
       const entries = await readdir(milestonesDir, { withFileTypes: true });
       const milestones: Array<{ id: string; hasRoadmap: boolean; hasSummary: boolean }> = [];
       for (const entry of entries) {
         if (!entry.isDirectory()) continue;
-        const hasRoadmap = !!resolveMilestoneFile(gsdDir, entry.name, 'ROADMAP');
-        const hasSummary = !!resolveMilestoneFile(gsdDir, entry.name, 'SUMMARY');
+        const hasRoadmap = !!resolveMilestoneFile(gwdDir, entry.name, 'ROADMAP');
+        const hasSummary = !!resolveMilestoneFile(gwdDir, entry.name, 'SUMMARY');
         milestones.push({ id: entry.name, hasRoadmap, hasSummary });
       }
       result.milestones = milestones;
@@ -544,7 +544,7 @@ async function loadAskUserQuestionsWriteGateModule(): Promise<AskUserQuestionsWr
         const loaded = await import(specifier);
         return isAskUserQuestionsWriteGateModule(loaded) ? loaded : null;
       } catch (err) {
-        console.warn(`[gsd:mcp] ask_user_questions write-gate integration unavailable: ${formatErrorMessage(err)}`);
+        console.warn(`[gwd:mcp] ask_user_questions write-gate integration unavailable: ${formatErrorMessage(err)}`);
         return null;
       }
     })();
@@ -661,7 +661,7 @@ export async function askUserQuestionsHandler(
     } catch (err) {
       if (!isLocalElicitFallbackError(err)) throw err;
       localElicitError = err;
-      console.warn(`[gsd:mcp] ask_user_questions local elicitation unavailable; trying remote fallback: ${formatErrorMessage(err)}`);
+      console.warn(`[gwd:mcp] ask_user_questions local elicitation unavailable; trying remote fallback: ${formatErrorMessage(err)}`);
     }
 
     // Local cancelled / unavailable — fall back to the configured remote
@@ -886,15 +886,15 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_execute — start a new GWD auto-mode session.
+  // gwd_execute — start a new GWD auto-mode session.
   //
   // If the JSON-RPC request is aborted while the session is starting (or
   // immediately after), we cancel the session so we don't leak a background
   // RpcClient process. Once the session is running the caller should use
-  // `gsd_cancel` to stop it via sessionId.
+  // `gwd_cancel` to stop it via sessionId.
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_execute',
+    'gwd_execute',
     'Start a GWD auto-mode session for a project directory. Returns a sessionId for tracking.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
@@ -913,7 +913,7 @@ export async function createMcpServer(
         // newly-created session rather than leaving an orphaned process.
         if (extra?.signal?.aborted) {
           await sessionManager.cancelSession(sessionId).catch(() => { /* swallow */ });
-          return errorContent('gsd_execute aborted by client before returning');
+          return errorContent('gwd_execute aborted by client before returning');
         }
 
         return jsonContent({ sessionId, status: 'started' });
@@ -924,13 +924,13 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_status — poll session status
+  // gwd_status — poll session status
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_status',
+    'gwd_status',
     'Get the current status of a GWD session including progress, recent events, and pending blockers.',
     {
-      sessionId: z.string().describe('Session ID returned from gsd_execute'),
+      sessionId: z.string().describe('Session ID returned from gwd_execute'),
     },
     async (args: Record<string, unknown>) => {
       const { sessionId } = args as { sessionId: string };
@@ -968,13 +968,13 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_result — get accumulated session result
+  // gwd_result — get accumulated session result
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_result',
+    'gwd_result',
     'Get the result of a GWD session. Returns partial results if the session is still running.',
     {
-      sessionId: z.string().describe('Session ID returned from gsd_execute'),
+      sessionId: z.string().describe('Session ID returned from gwd_execute'),
     },
     async (args: Record<string, unknown>) => {
       const { sessionId } = args as { sessionId: string };
@@ -988,10 +988,10 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_cancel — cancel a running session
+  // gwd_cancel — cancel a running session
   //
   // Supports two lookup strategies:
-  //   1. sessionId  — the ID returned from gsd_execute (primary)
+  //   1. sessionId  — the ID returned from gwd_execute (primary)
   //   2. projectDir — absolute path to the project directory (fallback)
   //
   // The projectDir fallback handles interactive sessions (started via
@@ -999,10 +999,10 @@ export async function createMcpServer(
   // never registered with a sessionId in this server instance.
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_cancel',
-    'Cancel a running GWD session. Aborts the current operation and stops the process. Provide sessionId (from gsd_execute) or projectDir as a fallback for interactive/restarted sessions.',
+    'gwd_cancel',
+    'Cancel a running GWD session. Aborts the current operation and stops the process. Provide sessionId (from gwd_execute) or projectDir as a fallback for interactive/restarted sessions.',
     {
-      sessionId: z.string().optional().describe('Session ID returned from gsd_execute'),
+      sessionId: z.string().optional().describe('Session ID returned from gwd_execute'),
       projectDir: z.string().optional().describe('Absolute path to the project directory (fallback when sessionId is unavailable)'),
     },
     async (args: Record<string, unknown>) => {
@@ -1031,7 +1031,7 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_query — read project state from filesystem (no session needed).
+  // gwd_query — read project state from filesystem (no session needed).
   //
   // `query` is optional: when omitted the tool returns all fields (STATE.md,
   // PROJECT.md, requirements, milestone listing). Accepted narrow values:
@@ -1039,7 +1039,7 @@ export async function createMcpServer(
   // Unknown values fall back to "all" for forward-compatibility.
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_query',
+    'gwd_query',
     'Query GWD project state from the filesystem. By default returns STATE.md, PROJECT.md, requirements, and milestone listing. Pass `query` to narrow the response (accepted: "state"/"status", "project", "requirements", "milestones", "all"). Does not require an active session.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
@@ -1061,13 +1061,13 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_resolve_blocker — resolve a pending blocker
+  // gwd_resolve_blocker — resolve a pending blocker
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_resolve_blocker',
+    'gwd_resolve_blocker',
     'Resolve a pending blocker in a GWD session by sending a response to the UI request.',
     {
-      sessionId: z.string().describe('Session ID returned from gsd_execute'),
+      sessionId: z.string().describe('Session ID returned from gwd_execute'),
       response: z.string().describe('Response to send for the pending blocker'),
     },
     async (args: Record<string, unknown>) => {
@@ -1137,11 +1137,11 @@ export async function createMcpServer(
   // =======================================================================
 
   // -----------------------------------------------------------------------
-  // gsd_progress — structured project progress metrics
+  // gwd_progress — structured project progress metrics
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_progress',
-    'Get structured project progress: active milestone/slice/task, phase, completion counts, blockers, and next action. No session required — reads directly from .gsd/ on disk.',
+    'gwd_progress',
+    'Get structured project progress: active milestone/slice/task, phase, completion counts, blockers, and next action. No session required — reads directly from .gwd/ on disk.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
     },
@@ -1156,10 +1156,10 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_roadmap — milestone/slice/task structure with status
+  // gwd_roadmap — milestone/slice/task structure with status
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_roadmap',
+    'gwd_roadmap',
     'Get the full project roadmap structure: milestones with their slices, tasks, status, risk, and dependencies. Optionally filter to a single milestone. No session required.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
@@ -1176,10 +1176,10 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_history — execution history with cost/token metrics
+  // gwd_history — execution history with cost/token metrics
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_history',
+    'gwd_history',
     'Get execution history with cost, token usage, model, and duration per unit. Returns totals across all units. No session required.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
@@ -1196,11 +1196,11 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_doctor — lightweight structural health check
+  // gwd_doctor — lightweight structural health check
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_doctor',
-    'Run a lightweight structural health check on the .gsd/ directory. Checks for missing files, status inconsistencies, and orphaned state. No session required.',
+    'gwd_doctor',
+    'Run a lightweight structural health check on the .gwd/ directory. Checks for missing files, status inconsistencies, and orphaned state. No session required.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
       scope: z.string().optional().describe('Limit checks to a specific milestone (e.g. "M001")'),
@@ -1216,10 +1216,10 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_captures — pending captures and ideas
+  // gwd_captures — pending captures and ideas
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_captures',
+    'gwd_captures',
     'Get captured ideas and thoughts from CAPTURES.md with triage status. Filter by pending, actionable, or all. No session required.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
@@ -1236,10 +1236,10 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_knowledge — project knowledge base
+  // gwd_knowledge — project knowledge base
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_knowledge',
+    'gwd_knowledge',
     'Get the project knowledge base: rules, patterns, and lessons learned accumulated during development. No session required.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
@@ -1255,22 +1255,22 @@ export async function createMcpServer(
   );
 
   // -----------------------------------------------------------------------
-  // gsd_graph — knowledge graph for GWD projects
+  // gwd_graph — knowledge graph for GWD projects
   //
   // Modes:
-  //   build   Parse .gsd/ artifacts and write graph.json atomically.
+  //   build   Parse .gwd/ artifacts and write graph.json atomically.
   //   query   Search the graph for nodes matching a term (BFS, budget-trimmed).
   //   status  Check whether graph.json exists and whether it is stale (>24h).
   //   diff    Compare graph.json with the last build snapshot.
   // -----------------------------------------------------------------------
   server.tool(
-    'gsd_graph',
+    'gwd_graph',
     [
       'Manage the GWD project knowledge graph. No session required.',
       '',
       'Modes:',
-      '  build   Parse .gsd/ artifacts (STATE.md, milestone ROADMAPs, slice PLANs,',
-      '          KNOWLEDGE.md) and write .gsd/graphs/graph.json atomically.',
+      '  build   Parse .gwd/ artifacts (STATE.md, milestone ROADMAPs, slice PLANs,',
+      '          KNOWLEDGE.md) and write .gwd/graphs/graph.json atomically.',
       '  query   Search graph nodes by term (BFS from seed matches, budget-trimmed).',
       '          Returns matching nodes and reachable edges within the token budget.',
       '  status  Show whether graph.json exists, its age, node/edge counts, and',
@@ -1298,15 +1298,15 @@ export async function createMcpServer(
 
       try {
         const projectDir = validateProjectDir(rawProjectDir);
-        const gsdRoot = resolveGsdRoot(projectDir);
+        const gwdRoot = resolveGwdRoot(projectDir);
 
         switch (mode) {
           case 'build': {
             if (snapshot) {
-              await writeSnapshot(gsdRoot).catch(() => { /* best-effort */ });
+              await writeSnapshot(gwdRoot).catch(() => { /* best-effort */ });
             }
             const graph = await buildGraph(projectDir);
-            await writeGraph(gsdRoot, graph);
+            await writeGraph(gwdRoot, graph);
             return jsonContent({
               built: true,
               nodeCount: graph.nodes.length,

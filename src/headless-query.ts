@@ -18,14 +18,14 @@ import { createJiti } from '@mariozechner/jiti'
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
-import type { GSDState } from './resources/extensions/gsd/types.js'
-import { resolveBundledGsdExtensionModule } from './bundled-resource-path.js'
+import type { GWDState } from './resources/extensions/gwd/types.js'
+import { resolveBundledGwdExtensionModule } from './bundled-resource-path.js'
 
 const jiti = createJiti(fileURLToPath(import.meta.url), { interopDefault: true, debug: false })
 const { existsSync } = await import('node:fs')
 
 /**
- * Resolve the GSD extensions root for headless-query. Prefers the synced
+ * Resolve the GWD extensions root for headless-query. Prefers the synced
  * agent directory (so headless-query loads the same extension copy as
  * interactive/auto modes — #3471) and falls back to the bundled source
  * resource for source-tree dev workflows.
@@ -33,9 +33,9 @@ const { existsSync } = await import('node:fs')
  * Pure on the given inputs (env + fs probe + bundled resolver) so the
  * #3471 contract can be exercised in tests without spawning a subprocess.
  */
-export function resolveGsdAgentExtensionsDir(env: NodeJS.ProcessEnv = process.env): string {
+export function resolveGwdAgentExtensionsDir(env: NodeJS.ProcessEnv = process.env): string {
   const agentRoot = env.GWD_AGENT_DIR || join(env.GWD_HOME || join(homedir(), '.gwd'), 'agent')
-  return join(agentRoot, 'extensions', 'gsd')
+  return join(agentRoot, 'extensions', 'gwd')
 }
 
 /**
@@ -43,25 +43,39 @@ export function resolveGsdAgentExtensionsDir(env: NodeJS.ProcessEnv = process.en
  * sync directory (#3471) or fall back to bundled source. Returns the
  * agent dir alongside the decision so a caller can use it directly.
  */
+const headlessQueryExtensionModules = [
+  'state',
+  'auto-dispatch',
+  'session-status-io',
+  'preferences',
+  'auto-start',
+]
+
+function hasExtensionModule(agentDir: string, moduleName: string, fileExists: (path: string) => boolean): boolean {
+  return fileExists(join(agentDir, `${moduleName}.ts`)) || fileExists(join(agentDir, `${moduleName}.js`))
+}
+
 export function shouldUseAgentExtensionsDir(opts: {
   env?: NodeJS.ProcessEnv
   fileExists?: (path: string) => boolean
 }): { agentDir: string; useAgentDir: boolean } {
   const env = opts.env ?? process.env
   const fileExists = opts.fileExists ?? existsSync
-  const agentDir = resolveGsdAgentExtensionsDir(env)
+  const agentDir = resolveGwdAgentExtensionsDir(env)
   return {
     agentDir,
-    useAgentDir: fileExists(join(agentDir, 'state.ts')) || fileExists(join(agentDir, 'state.js')),
+    useAgentDir: headlessQueryExtensionModules.every((moduleName) =>
+      hasExtensionModule(agentDir, moduleName, fileExists),
+    ),
   }
 }
 
-const agentExtensionsDir = resolveGsdAgentExtensionsDir()
-const { useAgentDir } = shouldUseAgentExtensionsDir({ env: process.env })
-const gsdExtensionPath = (...segments: string[]) =>
-  useAgentDir
-    ? resolveAgentExtensionModule(agentExtensionsDir, segments)
-    : resolveBundledGsdExtensionModule(import.meta.url, segments.join('/'))
+const gwdExtensionPath = (...segments: string[]) => {
+  const { agentDir, useAgentDir } = shouldUseAgentExtensionsDir({ env: process.env })
+  return useAgentDir
+    ? resolveAgentExtensionModule(agentDir, segments)
+    : resolveBundledGwdExtensionModule(import.meta.url, segments.join('/'))
+}
 
 function resolveAgentExtensionModule(agentDir: string, segments: string[]): string {
   const requested = join(agentDir, ...segments)
@@ -74,24 +88,24 @@ function resolveAgentExtensionModule(agentDir: string, segments: string[]): stri
 }
 
 async function loadExtensionModules() {
-  const stateModule = await jiti.import(gsdExtensionPath('state.ts'), {}) as any
-  const dispatchModule = await jiti.import(gsdExtensionPath('auto-dispatch.ts'), {}) as any
-  const sessionModule = await jiti.import(gsdExtensionPath('session-status-io.ts'), {}) as any
-  const prefsModule = await jiti.import(gsdExtensionPath('preferences.ts'), {}) as any
-  const autoStartModule = await jiti.import(gsdExtensionPath('auto-start.ts'), {}) as any
+  const stateModule = await jiti.import(gwdExtensionPath('state.ts'), {}) as any
+  const dispatchModule = await jiti.import(gwdExtensionPath('auto-dispatch.ts'), {}) as any
+  const sessionModule = await jiti.import(gwdExtensionPath('session-status-io.ts'), {}) as any
+  const prefsModule = await jiti.import(gwdExtensionPath('preferences.ts'), {}) as any
+  const autoStartModule = await jiti.import(gwdExtensionPath('auto-start.ts'), {}) as any
   return {
     openProjectDbIfPresent: autoStartModule.openProjectDbIfPresent as (basePath: string) => Promise<void>,
-    deriveState: stateModule.deriveState as (basePath: string) => Promise<GSDState>,
+    deriveState: stateModule.deriveState as (basePath: string) => Promise<GWDState>,
     resolveDispatch: dispatchModule.resolveDispatch as (opts: any) => Promise<any>,
     readAllSessionStatuses: sessionModule.readAllSessionStatuses as (basePath: string) => any[],
-    loadEffectiveGSDPreferences: prefsModule.loadEffectiveGSDPreferences as () => any,
+    loadEffectiveGWDPreferences: prefsModule.loadEffectiveGWDPreferences as () => any,
   }
 }
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 export interface QuerySnapshot {
-  state: GSDState
+  state: GWDState
   next: {
     action: 'dispatch' | 'stop' | 'skip'
     unitType?: string
@@ -129,7 +143,7 @@ export async function runHeadlessQuery(
     deriveState,
     resolveDispatch,
     readAllSessionStatuses,
-    loadEffectiveGSDPreferences,
+    loadEffectiveGWDPreferences,
   } = modules
   await openProjectDbIfPresent(basePath)
   const state = await deriveState(basePath)
@@ -142,7 +156,7 @@ export async function runHeadlessQuery(
       reason: state.phase === 'complete' ? 'All milestones complete.' : state.nextAction,
     }
   } else {
-    const loaded = loadEffectiveGSDPreferences()
+    const loaded = loadEffectiveGWDPreferences()
     const dispatch = await resolveDispatch({
       basePath,
       mid: state.activeMilestone.id,

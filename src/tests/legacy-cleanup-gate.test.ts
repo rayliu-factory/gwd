@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD
 // File Purpose: Tests the Phase 8 legacy cleanup telemetry gate.
 
 import assert from "node:assert/strict";
@@ -52,7 +52,7 @@ test("evaluateLegacyCleanupGate blocks on nonzero or missing counters", () => {
 });
 
 test("readTelemetryReport parses persisted snapshot files", async () => {
-  const root = await mkdtemp(join(tmpdir(), "gsd-legacy-cleanup-gate-"));
+  const root = await mkdtemp(join(tmpdir(), "gwd-legacy-cleanup-gate-"));
   const path = join(root, "nested", "legacy-telemetry.json");
   await mkdir(join(root, "nested"), { recursive: true });
   const counters = Object.fromEntries(LEGACY_COUNTERS.map((counter: string) => [counter, 0]));

@@ -1,0 +1,36 @@
+// Project/App: GWD-2
+// File Purpose: Verifies the forensics prompt renders required investigation and issue-routing guidance.
+
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+test("forensics prompt renders compact investigation and issue routing guidance", async (t) => {
+  const previousGwdHome = process.env.GWD_HOME;
+  const providedGwdHome = process.env.GWD_TEST_HOME;
+  const isolatedHome = providedGwdHome ?? mkdtempSync(join(tmpdir(), "gwd-forensics-render-"));
+  process.env.GWD_HOME = isolatedHome;
+  t.after(() => {
+    if (previousGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGwdHome;
+    if (!providedGwdHome) rmSync(isolatedHome, { recursive: true, force: true });
+  });
+
+  const { loadPrompt } = await import(`../prompt-loader.ts?test=${Date.now()}`);
+  const prompt = loadPrompt("forensics", {
+    problemDescription: "Auto-mode repeats the same unit.",
+    forensicData: "stuck-detected event for execute-task/M001/S01/T01",
+    gwdSourceDir: process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd(),
+    dedupSection: "No duplicate issue found.",
+  });
+
+  assert.match(prompt, /Investigation Protocol/);
+  assert.match(prompt, /gwd_milestone_status/);
+  assert.match(prompt, /sqlite3 .gwd\/gwd.db/);
+  assert.match(prompt, /gh issue create --repo rayliu-factory\/gwd/);
+  assert.match(prompt, /Do NOT use the `github_issues` tool/);
+  assert.match(prompt, /Redaction Rules/);
+  assert.doesNotMatch(prompt, /\{\{[a-zA-Z][a-zA-Z0-9_]*\}\}/);
+});

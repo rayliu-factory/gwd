@@ -1,5 +1,5 @@
 /**
- * Unit tests for the gsd CLI package.
+ * Unit tests for the gwd CLI package.
  *
  * Tests the glue code that IS the product:
  * - app-paths resolve to ~/.gwd/
@@ -61,7 +61,7 @@ test("loader sets all 4 GWD_ env vars and PI_PACKAGE_DIR", async (t) => {
     process.env.GWD_BIN_PATH = process.argv[1];
     const resourcesDir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'resources');
     process.env.GWD_WORKFLOW_PATH = join(resourcesDir, 'GWD-WORKFLOW.md');
-    const exts = ['extensions/gsd/index.ts'].map(r => join(resourcesDir, r));
+    const exts = ['extensions/gwd/index.ts'].map(r => join(resourcesDir, r));
     process.env.GWD_BUNDLED_EXTENSION_PATHS = exts.join(delimiter);
 
     // Print for verification
@@ -73,7 +73,7 @@ test("loader sets all 4 GWD_ env vars and PI_PACKAGE_DIR", async (t) => {
     process.exit(0);
   `;
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-loader-test-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-loader-test-"));
   const scriptPath = join(tmp, "check-env.ts");
   writeFileSync(scriptPath, script);
 
@@ -108,7 +108,7 @@ test("loader sets all 4 GWD_ env vars and PI_PACKAGE_DIR", async (t) => {
   const rel = p.slice(bundledExtensionsDir.length + 1);
   return rel.split(/[\\/]/)[0].replace(/\.(?:ts|js)$/, "");
   });
-  for (const core of ["gsd", "bg-shell", "browser-tools", "subagent", "search-the-web"]) {
+  for (const core of ["gwd", "bg-shell", "browser-tools", "subagent", "search-the-web"]) {
   assert.ok(discoveredNames.includes(core), `core extension '${core}' is discoverable`);
   }
 
@@ -189,7 +189,7 @@ test("loader MIN_NODE_MAJOR matches package.json engines field exactly", async (
   );
 });
 
-test("gsd update bypasses the managed-resource-mismatch gate; non-update commands trigger it", async (t) => {
+test("gwd update bypasses the managed-resource-mismatch gate; non-update commands trigger it", async (t) => {
   // Real fixture: write an agentDir whose managed-resources.json claims a
   // version newer than the running binary. The mismatch gate
   // (getNewerManagedResourceVersion) must fire — proving the gate is "armed".
@@ -199,7 +199,7 @@ test("gsd update bypasses the managed-resource-mismatch gate; non-update command
   const { getNewerManagedResourceVersion } = await import("../resource-loader.ts");
   const { shouldBypassManagedResourceMismatchGate } = await import("../cli-policy.ts");
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-update-bypass-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-update-bypass-"));
   const fakeAgentDir = join(tmp, "agent");
   mkdirSync(fakeAgentDir, { recursive: true });
 
@@ -210,7 +210,7 @@ test("gsd update bypasses the managed-resource-mismatch gate; non-update command
   const currentVersion = "1.0.0";
   writeFileSync(
     join(fakeAgentDir, "managed-resources.json"),
-    JSON.stringify({ gsdVersion: futureVersion, syncedAt: Date.now() }),
+    JSON.stringify({ gwdVersion: futureVersion, syncedAt: Date.now() }),
   );
 
   // Gate is armed: returns the newer version (cli.ts would print mismatch + exit 1)
@@ -237,7 +237,7 @@ test("gsd update bypasses the managed-resource-mismatch gate; non-update command
 test("managed resource skew ignores dev/build suffixes on the same release line", async (t) => {
   const { getNewerManagedResourceVersion } = await import("../resource-loader.ts");
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-version-normalize-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-version-normalize-"));
   const fakeAgentDir = join(tmp, "agent");
   mkdirSync(fakeAgentDir, { recursive: true });
 
@@ -245,7 +245,7 @@ test("managed resource skew ignores dev/build suffixes on the same release line"
 
   writeFileSync(
     join(fakeAgentDir, "managed-resources.json"),
-    JSON.stringify({ gsdVersion: "2.78.1", syncedAt: Date.now() }),
+    JSON.stringify({ gwdVersion: "2.78.1", syncedAt: Date.now() }),
   );
 
   assert.strictEqual(
@@ -271,13 +271,13 @@ test("managed resource skew ignores dev/build suffixes on the same release line"
 
 test("initResources syncs extensions, agents, and skills to target dir", async (t) => {
   const { initResources, readManagedResourceVersion } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resources-test-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-resources-test-"));
   const fakeAgentDir = join(tmp, "agent");
 
   initResources(fakeAgentDir);
 
   // Extensions synced
-  assertExtensionIndexExists(fakeAgentDir, "gsd");
+  assertExtensionIndexExists(fakeAgentDir, "gwd");
   assertExtensionIndexExists(fakeAgentDir, "browser-tools");
   assertExtensionIndexExists(fakeAgentDir, "search-the-web");
   assertExtensionIndexExists(fakeAgentDir, "context7");
@@ -294,12 +294,12 @@ test("initResources syncs extensions, agents, and skills to target dir", async (
 
   // Idempotent: run again, no crash
   initResources(fakeAgentDir);
-  assertExtensionIndexExists(fakeAgentDir, "gsd");
+  assertExtensionIndexExists(fakeAgentDir, "gwd");
 });
 
 test("initResources skips copy when managed version matches current version", async (t) => {
   const { initResources, readManagedResourceVersion } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resources-skip-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-resources-skip-"));
   const fakeAgentDir = join(tmp, "agent");
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
@@ -309,7 +309,7 @@ test("initResources skips copy when managed version matches current version", as
   assert.ok(version, "manifest written after first sync");
 
   // Add a marker file to detect whether sync runs again
-  const markerPath = join(fakeAgentDir, "extensions", "gsd", "_marker.txt");
+  const markerPath = join(fakeAgentDir, "extensions", "gwd", "_marker.txt");
   writeFileSync(markerPath, "test-marker");
 
   // Second run: version matches — should skip, marker survives
@@ -318,7 +318,7 @@ test("initResources skips copy when managed version matches current version", as
 
   // Simulate version mismatch by writing older version to manifest
   const manifestPath = join(fakeAgentDir, "managed-resources.json");
-  writeFileSync(manifestPath, JSON.stringify({ gsdVersion: "0.0.1", syncedAt: Date.now() }));
+  writeFileSync(manifestPath, JSON.stringify({ gwdVersion: "0.0.1", syncedAt: Date.now() }));
 
   // Third run: version mismatch — full sync, marker removed
   initResources(fakeAgentDir);
@@ -337,7 +337,7 @@ test("loadStoredEnvKeys hydrates process.env from auth.json", async (t) => {
   const { loadStoredEnvKeys } = await import("../wizard.ts");
   const { AuthStorage } = await import("@gwd/pi-coding-agent");
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-wizard-test-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-wizard-test-"));
   const authPath = join(tmp, "auth.json");
   writeFileSync(authPath, JSON.stringify({
     brave: { type: "api_key", key: "test-brave-key" },
@@ -386,7 +386,7 @@ test("loadStoredEnvKeys does not overwrite existing env vars", async (t) => {
   const { loadStoredEnvKeys } = await import("../wizard.ts");
   const { AuthStorage } = await import("@gwd/pi-coding-agent");
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-wizard-nooverwrite-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-wizard-nooverwrite-"));
   const authPath = join(tmp, "auth.json");
   writeFileSync(authPath, JSON.stringify({
     brave: { type: "api_key", key: "stored-key" },
@@ -409,18 +409,18 @@ test("loadStoredEnvKeys does not overwrite existing env vars", async (t) => {
 // 6. State derivation — Gap 2
 // ═══════════════════════════════════════════════════════════════════════════
 
-test("deriveState returns pre-planning phase for empty .gsd/ directory", async (t) => {
-  const { deriveState } = await import("../resources/extensions/gsd/state.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-state-smoke-"));
+test("deriveState returns pre-planning phase for empty .gwd/ directory", async (t) => {
+  const { deriveState } = await import("../resources/extensions/gwd/state.ts");
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-state-smoke-"));
 
-  // Create minimal .gsd/ structure with no milestones
-  mkdirSync(join(tmp, ".gsd"), { recursive: true });
+  // Create minimal .gwd/ structure with no milestones
+  mkdirSync(join(tmp, ".gwd"), { recursive: true });
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
   const state = await deriveState(tmp);
 
   assert.equal(state.phase, "pre-planning",
-    `expected pre-planning phase for empty .gsd/, got: ${state.phase}`);
+    `expected pre-planning phase for empty .gwd/, got: ${state.phase}`);
   assert.equal(state.activeMilestone, null, "no active milestone");
   assert.equal(state.activeSlice, null, "no active slice");
   assert.equal(state.activeTask, null, "no active task");
@@ -431,24 +431,24 @@ test("deriveState returns pre-planning phase for empty .gsd/ directory", async (
   assert.ok(state.nextAction.length > 0, "nextAction is non-empty");
 });
 
-test("deriveState returns pre-planning phase when no .gsd/ directory exists", async (t) => {
-  const { deriveState } = await import("../resources/extensions/gsd/state.ts");
-  // Use a temp dir with no .gsd/ subdirectory at all
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-state-nogsd-"));
+test("deriveState returns pre-planning phase when no .gwd/ directory exists", async (t) => {
+  const { deriveState } = await import("../resources/extensions/gwd/state.ts");
+  // Use a temp dir with no .gwd/ subdirectory at all
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-state-nogwd-"));
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
-  // Should not throw — missing .gsd/ is a valid "no project" state
+  // Should not throw — missing .gwd/ is a valid "no project" state
   const state = await deriveState(tmp);
 
   assert.equal(state.phase, "pre-planning",
-    `expected pre-planning phase when .gsd/ absent, got: ${state.phase}`);
+    `expected pre-planning phase when .gwd/ absent, got: ${state.phase}`);
   assert.equal(state.activeMilestone, null, "no active milestone");
 });
 
 test("deriveState shape is structurally complete", async (t) => {
-  const { deriveState } = await import("../resources/extensions/gsd/state.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-state-shape-"));
-  mkdirSync(join(tmp, ".gsd"), { recursive: true });
+  const { deriveState } = await import("../resources/extensions/gwd/state.ts");
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-state-shape-"));
+  mkdirSync(join(tmp, ".gwd"), { recursive: true });
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
   const state = await deriveState(tmp);
@@ -476,14 +476,14 @@ test("deriveState shape is structurally complete", async (t) => {
 // 7. Doctor health checks — Gap 3
 // ═══════════════════════════════════════════════════════════════════════════
 
-test("runGSDDoctor completes without throwing on empty .gsd/ directory", async (t) => {
-  const { runGSDDoctor } = await import("../resources/extensions/gsd/doctor.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-doctor-smoke-"));
-  mkdirSync(join(tmp, ".gsd"), { recursive: true });
+test("runGWDDoctor completes without throwing on empty .gwd/ directory", async (t) => {
+  const { runGWDDoctor } = await import("../resources/extensions/gwd/doctor.ts");
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-doctor-smoke-"));
+  mkdirSync(join(tmp, ".gwd"), { recursive: true });
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
   // audit-only mode (fix: false) — should never throw
-  const report = await runGSDDoctor(tmp, { fix: false });
+  const report = await runGWDDoctor(tmp, { fix: false });
 
   // Structural assertions on the DoctorReport
   assert.ok(typeof report === "object" && report !== null, "report is an object");
@@ -497,18 +497,18 @@ test("runGSDDoctor completes without throwing on empty .gsd/ directory", async (
   assert.equal(report.fixesApplied.length, 0, "no fixes applied in audit mode");
 });
 
-test("runGSDDoctor issue objects have required fields", async (t) => {
-  const { runGSDDoctor } = await import("../resources/extensions/gsd/doctor.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-doctor-fields-"));
-  mkdirSync(join(tmp, ".gsd"), { recursive: true });
+test("runGWDDoctor issue objects have required fields", async (t) => {
+  const { runGWDDoctor } = await import("../resources/extensions/gwd/doctor.ts");
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-doctor-fields-"));
+  mkdirSync(join(tmp, ".gwd"), { recursive: true });
 
   // Create a milestone dir with no ROADMAP.md to force a missing_roadmap issue
-  const mDir = join(tmp, ".gsd", "milestones", "M001");
+  const mDir = join(tmp, ".gwd", "milestones", "M001");
   mkdirSync(mDir, { recursive: true });
   writeFileSync(join(mDir, "M001-CONTEXT.md"), "# Context\n");
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
-  const report = await runGSDDoctor(tmp, { fix: false });
+  const report = await runGWDDoctor(tmp, { fix: false });
 
   // Should find at least one issue (missing roadmap for M001)
   assert.ok(report.issues.length > 0, "expected at least one issue for milestone missing ROADMAP.md");
@@ -525,18 +525,18 @@ test("runGSDDoctor issue objects have required fields", async (t) => {
   }
 });
 
-test("runGSDDoctor with fix:false never modifies the filesystem", async (t) => {
-  const { runGSDDoctor } = await import("../resources/extensions/gsd/doctor.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-doctor-readonly-"));
-  const gsdDir = join(tmp, ".gsd");
-  mkdirSync(gsdDir, { recursive: true });
+test("runGWDDoctor with fix:false never modifies the filesystem", async (t) => {
+  const { runGWDDoctor } = await import("../resources/extensions/gwd/doctor.ts");
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-doctor-readonly-"));
+  const gwdDir = join(tmp, ".gwd");
+  mkdirSync(gwdDir, { recursive: true });
 
   // Write a sentinel file — doctor must not delete or modify it
-  const sentinelPath = join(gsdDir, "SENTINEL.md");
+  const sentinelPath = join(gwdDir, "SENTINEL.md");
   writeFileSync(sentinelPath, "# sentinel\n");
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
-  await runGSDDoctor(tmp, { fix: false });
+  await runGWDDoctor(tmp, { fix: false });
 
   assert.ok(existsSync(sentinelPath), "sentinel file still exists after audit-only run");
   const content = readFileSync(sentinelPath, "utf-8");

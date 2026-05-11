@@ -19,9 +19,9 @@ describe("#4479 — --tools parsing", () => {
 	});
 
 	test("defers unrecognized names as extraToolNames (likely extension/MCP)", () => {
-		const args = parseArgs(["--tools", "read,gsd_complete_task,browser_navigate"]);
+		const args = parseArgs(["--tools", "read,gwd_complete_task,browser_navigate"]);
 		assert.deepEqual(args.tools, ["read"]);
-		assert.deepEqual(args.extraToolNames, ["gsd_complete_task", "browser_navigate"]);
+		assert.deepEqual(args.extraToolNames, ["gwd_complete_task", "browser_navigate"]);
 	});
 
 	test("normalizes only the built-in match; extras keep original casing", () => {
@@ -37,8 +37,8 @@ describe("#4479 — --tools parsing", () => {
 	});
 
 	test("only-extension-tools input yields empty tools but populated extras", () => {
-		const args = parseArgs(["--tools", "gsd_complete_task"]);
+		const args = parseArgs(["--tools", "gwd_complete_task"]);
 		assert.deepEqual(args.tools, []);
-		assert.deepEqual(args.extraToolNames, ["gsd_complete_task"]);
+		assert.deepEqual(args.extraToolNames, ["gwd_complete_task"]);
 	});
 });

@@ -11,20 +11,20 @@
 
 | Stream | Outcome |
 |---|---|
-| Stream 1 (state-machine guards, S1-T1..T9) | Shipped at handler layer in `src/resources/extensions/gsd/tools/{complete,plan,replan,reassess}-*.ts`. |
-| S1-T10 (idempotent upserts) | `replan_history` is `INSERT OR REPLACE` keyed by schema-v11 unique index `(milestone_id, slice_id, task_id)`. `assessments` is `INSERT OR REPLACE` keyed by `path` (deterministic per `(milestone_id, scope)`). Documented in `gsd-db.ts:insertAssessment`. |
-| Stream 2 (actor identity + audit log) | `WorkflowEvent` has `actor_name`, `trigger_reason`, `session_id` (`workflow-events.ts:22-32`). All 8 handlers thread the params through (`complete-task.ts:462-463`, `complete-slice.ts:458-459`, etc.). MCP schemas now expose them via `bootstrap/db-tools.ts`. Audit log persists error-severity entries to `.gsd/audit-log.jsonl` (intentional divergence — see Divergences below). |
-| Stream 3 (reversibility + ownership) | Handlers in `tools/reopen-{task,slice,milestone}.ts` (reopen-milestone is a bonus beyond the original plan). MCP-registered as `gsd_task_reopen`/`gsd_slice_reopen`/`gsd_milestone_reopen` plus aliases (`bootstrap/db-tools.ts`). Ownership module `unit-ownership.ts` shipped as SQLite-backed `.gsd/unit-claims.db` (divergence — see below); wired into `complete-task.ts:159-166` and `complete-slice.ts:260-267` via `checkOwnership`. |
+| Stream 1 (state-machine guards, S1-T1..T9) | Shipped at handler layer in `src/resources/extensions/gwd/tools/{complete,plan,replan,reassess}-*.ts`. |
+| S1-T10 (idempotent upserts) | `replan_history` is `INSERT OR REPLACE` keyed by schema-v11 unique index `(milestone_id, slice_id, task_id)`. `assessments` is `INSERT OR REPLACE` keyed by `path` (deterministic per `(milestone_id, scope)`). Documented in `gwd-db.ts:insertAssessment`. |
+| Stream 2 (actor identity + audit log) | `WorkflowEvent` has `actor_name`, `trigger_reason`, `session_id` (`workflow-events.ts:22-32`). All 8 handlers thread the params through (`complete-task.ts:462-463`, `complete-slice.ts:458-459`, etc.). MCP schemas now expose them via `bootstrap/db-tools.ts`. Audit log persists error-severity entries to `.gwd/audit-log.jsonl` (intentional divergence — see Divergences below). |
+| Stream 3 (reversibility + ownership) | Handlers in `tools/reopen-{task,slice,milestone}.ts` (reopen-milestone is a bonus beyond the original plan). MCP-registered as `gwd_task_reopen`/`gwd_slice_reopen`/`gwd_milestone_reopen` plus aliases (`bootstrap/db-tools.ts`). Ownership module `unit-ownership.ts` shipped as SQLite-backed `.gwd/unit-claims.db` (divergence — see below); wired into `complete-task.ts:159-166` and `complete-slice.ts:260-267` via `checkOwnership`. |
 
 Tests: `tests/single-writer-invariant.test.ts`, `tests/completion-hierarchy-guards.test.ts`, `tests/reopen-task.test.ts`, `tests/reopen-slice.test.ts`, `tests/unit-ownership.test.ts`, `tests/workflow-events.test.ts`, `tests/workflow-logger-audit.test.ts`, and `tests/single-writer-v3-tool-surface.test.ts` (closes the schema-exposure and reopen-registration gaps).
 
 ### Divergences from the original plan (kept as shipped)
 
-1. **DB helper named `getMilestone`, not `getMilestoneById`.** Matches the rest of `gsd-db.ts`. Plan task descriptions below reference `getMilestoneById`; the actual export is `getMilestone(milestoneId)` at `gsd-db.ts:2513`.
-2. **`updateTaskStatus` signature is `(milestoneId, sliceId, taskId, status, completedAt?)`**, not `(taskId, sliceId, status)`. Same convention as every other helper in `gsd-db.ts`.
-3. **Unit ownership uses SQLite (`.gsd/unit-claims.db`), not JSON.** SQLite gives atomic first-writer-wins semantics via `INSERT OR IGNORE`. JSON would require external locking and lose that property. API: `claimUnit`, `releaseUnit`, `getOwner`, `checkOwnership` in `unit-ownership.ts`.
+1. **DB helper named `getMilestone`, not `getMilestoneById`.** Matches the rest of `gwd-db.ts`. Plan task descriptions below reference `getMilestoneById`; the actual export is `getMilestone(milestoneId)` at `gwd-db.ts:2513`.
+2. **`updateTaskStatus` signature is `(milestoneId, sliceId, taskId, status, completedAt?)`**, not `(taskId, sliceId, status)`. Same convention as every other helper in `gwd-db.ts`.
+3. **Unit ownership uses SQLite (`.gwd/unit-claims.db`), not JSON.** SQLite gives atomic first-writer-wins semantics via `INSERT OR IGNORE`. JSON would require external locking and lose that property. API: `claimUnit`, `releaseUnit`, `getOwner`, `checkOwnership` in `unit-ownership.ts`.
 4. **Audit log persists error-severity entries only**, not every tool invocation. The canonical per-invocation log is `event-log.jsonl`. `audit-log.jsonl` is a low-volume error feed for context-reset survival (`workflow-logger.ts:318-321`). Removing the severity guard is a one-line change if richer auditing is wanted later.
-5. **Bonus handler: `gsd_milestone_reopen`.** Not in the original plan; added for symmetry with task/slice reopen and registered as an MCP tool.
+5. **Bonus handler: `gwd_milestone_reopen`.** Not in the original plan; added for symmetry with task/slice reopen and registered as an MCP tool.
 
 ---
 
@@ -54,11 +54,11 @@ error instead of silently succeeding.
 
 ### Stream 2 — Actor Identity + Persistent Audit Log (P1)
 Extend `WorkflowEvent` with `actor_name` and `trigger_reason`. Flush the
-in-process `workflow-logger` buffer to a persistent `.gsd/audit-log.jsonl`
+in-process `workflow-logger` buffer to a persistent `.gwd/audit-log.jsonl`
 after every tool invocation, so "who did what and why" is durable.
 
 ### Stream 3 — Reversibility + Unit Ownership (P2)
-Add `gsd_task_reopen` and `gsd_slice_reopen` tools. Add a unit-ownership
+Add `gwd_task_reopen` and `gwd_slice_reopen` tools. Add a unit-ownership
 validation layer so an agent can only complete/reopen units it explicitly claimed.
 
 ---
@@ -69,9 +69,9 @@ validation layer so an agent can only complete/reopen units it explicitly claime
 
 ### Stream 1: State Machine Guards
 
-#### S1-T1: Add `getTask`, `getSlice`, `getMilestone` existence helpers to `gsd-db.ts`
+#### S1-T1: Add `getTask`, `getSlice`, `getMilestone` existence helpers to `gwd-db.ts`
 
-**Files:** `src/resources/extensions/gsd/gsd-db.ts`
+**Files:** `src/resources/extensions/gwd/gwd-db.ts`
 
 These are read-only DB helpers to confirm an entity exists and return its current
 `status` field before any mutation. Each returns `null` if not found.
@@ -90,7 +90,7 @@ Need a version that returns the slice row itself.
 
 #### S1-T2: Guard `complete-task.ts` — enforce valid transitions
 
-**File:** `src/resources/extensions/gsd/tools/complete-task.ts`
+**File:** `src/resources/extensions/gwd/tools/complete-task.ts`
 
 Preconditions to add (before the transaction block):
 1. `getMilestoneById(milestoneId)` → must exist, must NOT be `"complete"` or `"done"`
@@ -103,7 +103,7 @@ On failure: return `{ error: "<reason>" }` — do NOT throw.
 
 #### S1-T3: Guard `complete-slice.ts` — enforce valid transitions
 
-**File:** `src/resources/extensions/gsd/tools/complete-slice.ts`
+**File:** `src/resources/extensions/gwd/tools/complete-slice.ts`
 
 Preconditions to add:
 1. `getSlice(sliceId, milestoneId)` → must exist, status must be `"pending"` or `"in_progress"` (not already `"complete"`)
@@ -114,7 +114,7 @@ Preconditions to add:
 
 #### S1-T4: Guard `complete-milestone.ts` — enforce valid transitions
 
-**File:** `src/resources/extensions/gsd/tools/complete-milestone.ts`
+**File:** `src/resources/extensions/gwd/tools/complete-milestone.ts`
 
 Preconditions to add:
 1. `getMilestoneById(milestoneId)` → must exist, status must be `"active"` (not already `"complete"`)
@@ -125,7 +125,7 @@ Preconditions to add:
 
 #### S1-T5: Guard `plan-task.ts` — block re-planning completed tasks
 
-**File:** `src/resources/extensions/gsd/tools/plan-task.ts`
+**File:** `src/resources/extensions/gwd/tools/plan-task.ts`
 
 Preconditions to add:
 1. `getSlice(sliceId, milestoneId)` → must exist, status must NOT be `"complete"` (already blocks planning on a closed slice)
@@ -135,7 +135,7 @@ Preconditions to add:
 
 #### S1-T6: Guard `plan-slice.ts` — block re-planning completed slices
 
-**File:** `src/resources/extensions/gsd/tools/plan-slice.ts`
+**File:** `src/resources/extensions/gwd/tools/plan-slice.ts`
 
 Preconditions to add:
 1. `getSlice(sliceId, milestoneId)` → if exists, status must NOT be `"complete"`
@@ -145,7 +145,7 @@ Preconditions to add:
 
 #### S1-T7: Guard `plan-milestone.ts` — block re-planning completed milestones
 
-**File:** `src/resources/extensions/gsd/tools/plan-milestone.ts`
+**File:** `src/resources/extensions/gwd/tools/plan-milestone.ts`
 
 Preconditions to add:
 1. If milestone exists (`getMilestoneById`), status must NOT be `"complete"`
@@ -155,7 +155,7 @@ Preconditions to add:
 
 #### S1-T8: Guard `reassess-roadmap.ts` — verify completedSliceId is actually complete
 
-**File:** `src/resources/extensions/gsd/tools/reassess-roadmap.ts`
+**File:** `src/resources/extensions/gwd/tools/reassess-roadmap.ts`
 
 Gap: `completedSliceId` is accepted without confirming it is actually `"complete"` status.
 Also: no check that milestone is still `"active"` (could reassess after milestone is done).
@@ -168,7 +168,7 @@ Preconditions to add:
 
 #### S1-T9: Guard `replan-slice.ts` — verify blockerTaskId exists and is complete
 
-**File:** `src/resources/extensions/gsd/tools/replan-slice.ts`
+**File:** `src/resources/extensions/gwd/tools/replan-slice.ts`
 
 Gaps:
 - `blockerTaskId` is accepted without verifying it exists or is `"complete"`
@@ -184,7 +184,7 @@ Preconditions to add:
 
 #### S2-T1: Extend `WorkflowEvent` with actor identity and causation fields
 
-**File:** `src/resources/extensions/gsd/workflow-events.ts`
+**File:** `src/resources/extensions/gwd/workflow-events.ts`
 
 Extend the `WorkflowEvent` interface:
 ```ts
@@ -194,9 +194,9 @@ export interface WorkflowEvent {
   ts: string;
   hash: string;
   actor: "agent" | "system";
-  actor_name?: string;       // ADD: e.g. "executor-agent-01", "gsd-orchestrator"
-  trigger_reason?: string;   // ADD: e.g. "plan-phase complete", "user invoked gsd_complete_task"
-  session_id?: string;       // ADD: process.env.GSD_SESSION_ID if set
+  actor_name?: string;       // ADD: e.g. "executor-agent-01", "gwd-orchestrator"
+  trigger_reason?: string;   // ADD: e.g. "plan-phase complete", "user invoked gwd_complete_task"
+  session_id?: string;       // ADD: process.env.GWD_SESSION_ID if set
 }
 ```
 
@@ -208,7 +208,7 @@ so fork detection isn't broken.
 
 #### S2-T2: Update all 8 tool handlers to pass actor identity to `appendEvent`
 
-**Files:** All 8 handlers in `src/resources/extensions/gsd/tools/`
+**Files:** All 8 handlers in `src/resources/extensions/gwd/tools/`
 
 Each handler receives its inputs. Add a convention where params can include:
 - `actor_name` (optional string) — caller passes their agent identity
@@ -223,15 +223,15 @@ The tool schemas (in the MCP tool definitions) should expose `actor_name` and
 
 ---
 
-#### S2-T3: Persist `workflow-logger` to `.gsd/audit-log.jsonl`
+#### S2-T3: Persist `workflow-logger` to `.gwd/audit-log.jsonl`
 
-**File:** `src/resources/extensions/gsd/workflow-logger.ts`
+**File:** `src/resources/extensions/gwd/workflow-logger.ts`
 
 Current behavior: `_buffer` is in-process memory, drained per-unit and dropped.
 This means errors/warnings disappear across context resets.
 
 Change: After `_push()` writes to the in-process buffer, also append the entry
-to `.gsd/audit-log.jsonl` (using `appendFileSync`). This requires the basePath
+to `.gwd/audit-log.jsonl` (using `appendFileSync`). This requires the basePath
 to be available — either pass it as a module-level setter (`setLogBasePath(path)`)
 called at engine init, or accept it as a param on `logWarning`/`logError`.
 
@@ -242,7 +242,7 @@ consistent with `event-log.jsonl`.
 
 #### S2-T4: Add `readAuditLog` helper to `workflow-logger.ts`
 
-**File:** `src/resources/extensions/gsd/workflow-logger.ts`
+**File:** `src/resources/extensions/gwd/workflow-logger.ts`
 
 Expose a read function so the auto-loop and diagnostics can surface persistent
 audit entries without replaying the event log:
@@ -257,7 +257,7 @@ export function readAuditLog(basePath: string): LogEntry[]
 
 #### S3-T1: Add `updateTaskStatus` and `updateSliceStatus` DB helpers
 
-**File:** `src/resources/extensions/gsd/gsd-db.ts`
+**File:** `src/resources/extensions/gwd/gwd-db.ts`
 
 If they don't already exist (check first):
 ```ts
@@ -269,9 +269,9 @@ These are the write primitives needed by reopen tools.
 
 ---
 
-#### S3-T2: Implement `gsd_task_reopen` tool handler
+#### S3-T2: Implement `gwd_task_reopen` tool handler
 
-**New file:** `src/resources/extensions/gsd/tools/reopen-task.ts`
+**New file:** `src/resources/extensions/gwd/tools/reopen-task.ts`
 
 Logic:
 1. Validate `taskId`, `sliceId`, `milestoneId` are non-empty strings
@@ -284,9 +284,9 @@ Logic:
 
 ---
 
-#### S3-T3: Implement `gsd_slice_reopen` tool handler
+#### S3-T3: Implement `gwd_slice_reopen` tool handler
 
-**New file:** `src/resources/extensions/gsd/tools/reopen-slice.ts`
+**New file:** `src/resources/extensions/gwd/tools/reopen-slice.ts`
 
 Logic:
 1. Validate `sliceId`, `milestoneId`
@@ -300,9 +300,9 @@ Logic:
 
 #### S3-T4: Add unit ownership claim/check mechanism
 
-**New file:** `src/resources/extensions/gsd/unit-ownership.ts`
+**New file:** `src/resources/extensions/gwd/unit-ownership.ts`
 
-Lightweight JSON file at `.gsd/unit-claims.json` mapping unit IDs to agent names:
+Lightweight JSON file at `.gwd/unit-claims.json` mapping unit IDs to agent names:
 ```json
 {
   "M01/S01/T01": { "agent": "executor-01", "claimed_at": "2026-03-25T..." },
@@ -325,7 +325,7 @@ getOwner(basePath, unitKey): string | null
 
 **Files:** `complete-task.ts`, `complete-slice.ts`
 
-If `actor_name` is provided AND `.gsd/unit-claims.json` exists AND the unit is claimed:
+If `actor_name` is provided AND `.gwd/unit-claims.json` exists AND the unit is claimed:
 - Verify `actor_name` matches the registered owner
 - If mismatch: return `{ error: "Unit <key> is owned by <owner>, not <actor>" }`
 - If no claim file / unit is unclaimed: allow the operation (opt-in ownership)
@@ -338,9 +338,9 @@ Ownership is enforced only when claims are present, keeping the feature opt-in.
 
 | File | Change Type |
 |------|-------------|
-| `gsd-db.ts` | Add `getTask`, `getMilestoneById` existence helpers; add `updateTaskStatus`, `updateSliceStatus` |
+| `gwd-db.ts` | Add `getTask`, `getMilestoneById` existence helpers; add `updateTaskStatus`, `updateSliceStatus` |
 | `workflow-events.ts` | Extend `WorkflowEvent` with `actor_name`, `trigger_reason`, `session_id` |
-| `workflow-logger.ts` | Add persistent flush to `.gsd/audit-log.jsonl`; add `setLogBasePath`; add `readAuditLog` |
+| `workflow-logger.ts` | Add persistent flush to `.gwd/audit-log.jsonl`; add `setLogBasePath`; add `readAuditLog` |
 | `tools/complete-task.ts` | State machine guards + ownership check + actor passthrough |
 | `tools/complete-slice.ts` | State machine guards + ownership check + actor passthrough |
 | `tools/complete-milestone.ts` | State machine guards + deep task check |
@@ -349,8 +349,8 @@ Ownership is enforced only when claims are present, keeping the feature opt-in.
 | `tools/plan-milestone.ts` | Block re-planning complete milestones + depends_on validation |
 | `tools/reassess-roadmap.ts` | Verify completedSliceId status + milestone status check |
 | `tools/replan-slice.ts` | Verify blockerTaskId exists + slice status check |
-| `tools/reopen-task.ts` | NEW — gsd_task_reopen handler |
-| `tools/reopen-slice.ts` | NEW — gsd_slice_reopen handler |
+| `tools/reopen-task.ts` | NEW — gwd_task_reopen handler |
+| `tools/reopen-slice.ts` | NEW — gwd_slice_reopen handler |
 | `unit-ownership.ts` | NEW — claim/release/check ownership |
 
 ---
@@ -393,15 +393,15 @@ After this phase:
 2. **Complete slice with open tasks** → still blocked (was already caught), plus slice status guard added
 3. **Re-plan closed work** → returns `{ error: "Cannot re-plan: slice S01 is already complete" }`
 4. **Wrong agent completes task** → returns `{ error: "Unit M01/S01/T01 is owned by executor-01, not executor-02" }`
-5. **Post-mortem** → `.gsd/audit-log.jsonl` has full trace with actor_name + trigger_reason across context resets
-6. **Oops recovery** → `gsd_task_reopen` / `gsd_slice_reopen` without manual SQL surgery
+5. **Post-mortem** → `.gwd/audit-log.jsonl` has full trace with actor_name + trigger_reason across context resets
+6. **Oops recovery** → `gwd_task_reopen` / `gwd_slice_reopen` without manual SQL surgery
 7. **depends_on enforcement** → cannot plan M02 if M01 is not yet complete
 
 ---
 
 ## Decisions
 
-1. **Ownership: opt-in** — enforced only when `.gsd/unit-claims.json` exists. Zero breaking change for existing workflows; teams adopt incrementally.
+1. **Ownership: opt-in** — enforced only when `.gwd/unit-claims.json` exists. Zero breaking change for existing workflows; teams adopt incrementally.
 
 2. **Slice reopen: reset all tasks to `"pending"`** — simpler invariant. If you're reopening a slice, you're re-doing the work. Partial resets create ambiguous state.
 
@@ -414,7 +414,7 @@ After this phase:
 ### Additional task from decision 5:
 #### S1-T10: Convert `insertAssessment` and `insertReplanHistory` to upserts
 
-**File:** `src/resources/extensions/gsd/gsd-db.ts`
+**File:** `src/resources/extensions/gwd/gwd-db.ts`
 
 - `insertAssessment`: upsert keyed on `(milestone_id, completed_slice_id)` — one assessment per completed slice per milestone
 - `insertReplanHistory`: upsert keyed on `(milestone_id, slice_id, blocker_task_id)` — one replan record per blocker per slice

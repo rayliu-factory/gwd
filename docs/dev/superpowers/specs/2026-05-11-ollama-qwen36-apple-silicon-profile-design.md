@@ -31,7 +31,7 @@ The feature is intentionally conservative. It optimizes for avoiding local memor
 
 Ollama documents that larger context windows increase memory usage and that `keep_alive` can be set to `0` to unload a model immediately after use. Ollama's Qwen3.6 library page lists MLX NVFP4 tags for Apple Silicon and larger BF16/MXFP8 variants that are poor defaults for a 48GB safety profile.
 
-GSD already has context-window-aware prompt budgets, task-count ceilings, dynamic model routing, and Ollama model discovery. The design should reuse those surfaces instead of adding a second context management system.
+GWD already has context-window-aware prompt budgets, task-count ceilings, dynamic model routing, and Ollama model discovery. The design should reuse those surfaces instead of adding a second context management system.
 
 References:
 
@@ -58,7 +58,7 @@ Add exact-tag capability matching before family-prefix matching. The exact entri
 
 ### Auto-Mode Preset
 
-Add an Ollama Apple Silicon preset resolver in the GSD auto-mode model selection path. The resolver should activate only when all of these are true:
+Add an Ollama Apple Silicon preset resolver in the GWD auto-mode model selection path. The resolver should activate only when all of these are true:
 
 - Auto-mode is dispatching work.
 - The active provider or start model provider is `ollama`.
@@ -91,7 +91,7 @@ The exact Ollama tag metadata is the primary mechanism for context safety. Once 
 - planner task-count ceiling
 - continue-here threshold calculations
 
-`context_window_override` remains authoritative. If the user sets it to 128K or another value, GSD should use the override for prompt budgeting. This is an explicit opt-in to higher memory risk.
+`context_window_override` remains authoritative. If the user sets it to 128K or another value, GWD should use the override for prompt budgeting. This is an explicit opt-in to higher memory risk.
 
 ### Large Repository Behavior
 

@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD
 // File Purpose: Tests final provider request-time tool compatibility filtering.
 
 import assert from "node:assert/strict";
@@ -48,13 +48,13 @@ test("filterToolsForProviderRequest enforces provider-specific hard caps at send
 
 test("getAdjustToolSetRequestCustomMessages only reports custom messages in the current request tail", () => {
 	const messages = [
-		{ role: "custom", customType: "gsd-run", content: "old workflow", display: false, timestamp: 1 },
+		{ role: "custom", customType: "gwd-run", content: "old workflow", display: false, timestamp: 1 },
 		{ role: "assistant", content: [{ type: "text", text: "done" }], timestamp: 2 },
 		{ role: "user", content: [{ type: "text", text: "normal prompt" }], timestamp: 3 },
-		{ role: "custom", customType: "gsd-doctor-heal", content: "current workflow", display: false, timestamp: 4 },
+		{ role: "custom", customType: "gwd-doctor-heal", content: "current workflow", display: false, timestamp: 4 },
 	] as any[];
 
 	assert.deepEqual(getAdjustToolSetRequestCustomMessages(messages), [
-		{ index: 3, customType: "gsd-doctor-heal" },
+		{ index: 3, customType: "gwd-doctor-heal" },
 	]);
 });

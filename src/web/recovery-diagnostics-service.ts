@@ -206,12 +206,12 @@ function buildCommandSuggestions(
     }
   }
 
-  if (phase === "planning") add("/gsd", "Open GSD planning")
-  if (phase === "executing" || phase === "summarizing") add("/gsd auto", "Resume GSD auto mode")
-  if (activeScope) add(`/gsd doctor ${activeScope}`, "Inspect scoped doctor report")
-  if (activeScope) add(`/gsd doctor fix ${activeScope}`, "Apply scoped doctor fixes")
-  if (validationCount > 0 && activeScope) add(`/gsd doctor audit ${activeScope}`, "Audit validation diagnostics")
-  add("/gsd status", "Check current-project status")
+  if (phase === "planning") add("/gwd", "Open GWD planning")
+  if (phase === "executing" || phase === "summarizing") add("/gwd auto", "Resume GWD auto mode")
+  if (activeScope) add(`/gwd doctor ${activeScope}`, "Inspect scoped doctor report")
+  if (activeScope) add(`/gwd doctor fix ${activeScope}`, "Apply scoped doctor fixes")
+  if (validationCount > 0 && activeScope) add(`/gwd doctor audit ${activeScope}`, "Audit validation diagnostics")
+  add("/gwd status", "Check current-project status")
 
   return [...suggestions.values()]
 }
@@ -357,7 +357,7 @@ function resolveSummary(options: {
 }
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 }
 
 async function collectRecoveryDiagnosticsChildPayload(
@@ -371,8 +371,8 @@ async function collectRecoveryDiagnosticsChildPayload(
   const env = options.env ?? process.env
   const checkExists = options.existsSync ?? existsSync
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const doctorResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/doctor.ts", checkExists)
-  const forensicsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/session-forensics.ts", checkExists)
+  const doctorResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/doctor.ts", checkExists)
+  const forensicsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/session-forensics.ts", checkExists)
   const doctorModulePath = doctorResolution.modulePath
   const sessionForensicsModulePath = forensicsResolution.modulePath
 
@@ -397,7 +397,7 @@ async function collectRecoveryDiagnosticsChildPayload(
     'const unitId = process.env.GWD_RECOVERY_UNIT_ID || "project";',
     'const sessionFile = process.env.GWD_RECOVERY_SESSION_FILE || undefined;',
     'const activityDir = process.env.GWD_RECOVERY_ACTIVITY_DIR || undefined;',
-    'const report = await doctor.runGSDDoctor(basePath, { fix: false, scope, fixLevel: "task" });',
+    'const report = await doctor.runGWDDoctor(basePath, { fix: false, scope, fixLevel: "task" });',
     'const summary = doctor.summarizeDoctorIssues(report.issues);',
     'const briefing = forensics.synthesizeCrashRecovery(basePath, unitType, unitId, sessionFile, activityDir);',
     'const trace = briefing?.trace;',
@@ -486,7 +486,7 @@ async function collectRecoveryDiagnosticsChildPayload(
           GWD_RECOVERY_UNIT_TYPE: unit?.type ?? "execute-project",
           GWD_RECOVERY_UNIT_ID: unit?.id ?? "project",
           GWD_RECOVERY_SESSION_FILE: sessionFile ?? "",
-          GWD_RECOVERY_ACTIVITY_DIR: join(basePath, ".gsd", "activity"),
+          GWD_RECOVERY_ACTIVITY_DIR: join(basePath, ".gwd", "activity"),
           GWD_RECOVERY_DOCTOR_MODULE: doctorModulePath,
           GWD_RECOVERY_FORENSICS_MODULE: sessionForensicsModulePath,
         },

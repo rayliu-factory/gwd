@@ -1,4 +1,4 @@
-// GSD2 — Claude CLI binary detection for onboarding
+// GWD2 — Claude CLI binary detection for onboarding
 // Lightweight check used at onboarding time (before extensions load).
 // The full readiness check with caching lives in the claude-code-cli extension.
 //
@@ -39,7 +39,7 @@ function spawnClaude(command: string, args: string[], opts: { timeout: number; s
  * `execFileSync` does not auto-resolve the extension — calling bare
  * `claude` would fail with ENOENT even when the CLI is installed and
  * authenticated. Mirrors the `NPM_COMMAND` pattern in
- * `src/resources/extensions/gsd/pre-execution-checks.ts`.
+ * `src/resources/extensions/gwd/pre-execution-checks.ts`.
  */
 export function getClaudeCommand(platform: NodeJS.Platform = process.platform): string {
   return platform === 'win32' ? 'claude.cmd' : 'claude'

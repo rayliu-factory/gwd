@@ -1,4 +1,4 @@
-// GWD MCP Server — .gsd/ path cache tests
+// GWD MCP Server — .gwd/ path cache tests
 
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -29,35 +29,35 @@ describe('reader path caches', () => {
   });
 
   it('returns defensive copies of cached milestone and slice ids', () => {
-    const tmp = makeTempDir('gsd-path-cache');
+    const tmp = makeTempDir('gwd-path-cache');
     try {
-      const gsdRoot = join(tmp, '.gsd');
-      mkdirSync(join(gsdRoot, 'milestones', 'M001', 'slices', 'S01'), { recursive: true });
-      mkdirSync(join(gsdRoot, 'milestones', 'M002'), { recursive: true });
+      const gwdRoot = join(tmp, '.gwd');
+      mkdirSync(join(gwdRoot, 'milestones', 'M001', 'slices', 'S01'), { recursive: true });
+      mkdirSync(join(gwdRoot, 'milestones', 'M002'), { recursive: true });
 
-      const milestoneIds = findMilestoneIds(gsdRoot);
+      const milestoneIds = findMilestoneIds(gwdRoot);
       milestoneIds.push('M999');
-      assert.deepEqual(findMilestoneIds(gsdRoot), ['M001', 'M002']);
+      assert.deepEqual(findMilestoneIds(gwdRoot), ['M001', 'M002']);
 
-      const sliceIds = findSliceIds(gsdRoot, 'M001');
+      const sliceIds = findSliceIds(gwdRoot, 'M001');
       sliceIds.push('S99');
-      assert.deepEqual(findSliceIds(gsdRoot, 'M001'), ['S01']);
+      assert.deepEqual(findSliceIds(gwdRoot, 'M001'), ['S01']);
     } finally {
       rmSync(tmp, { recursive: true, force: true });
     }
   });
 
   it('returns defensive copies of cached task file objects', () => {
-    const tmp = makeTempDir('gsd-path-task-cache');
+    const tmp = makeTempDir('gwd-path-task-cache');
     try {
-      const gsdRoot = join(tmp, '.gsd');
-      writeFixture(gsdRoot, 'milestones/M001/slices/S01/tasks/T01-PLAN.md', '# T01');
+      const gwdRoot = join(tmp, '.gwd');
+      writeFixture(gwdRoot, 'milestones/M001/slices/S01/tasks/T01-PLAN.md', '# T01');
 
-      const taskFiles = findTaskFiles(gsdRoot, 'M001', 'S01');
+      const taskFiles = findTaskFiles(gwdRoot, 'M001', 'S01');
       taskFiles[0].hasSummary = true;
       taskFiles.push({ id: 'T99', hasPlan: true, hasSummary: true });
 
-      assert.deepEqual(findTaskFiles(gsdRoot, 'M001', 'S01'), [
+      assert.deepEqual(findTaskFiles(gwdRoot, 'M001', 'S01'), [
         { id: 'T01', hasPlan: true, hasSummary: false },
       ]);
     } finally {

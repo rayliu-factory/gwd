@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { rewriteCommandWithRtk as rewriteSharedCommandWithRtk } from "../resources/extensions/shared/rtk.ts";
-import { runVerificationGate } from "../resources/extensions/gsd/verification-gate.ts";
+import { runVerificationGate } from "../resources/extensions/gwd/verification-gate.ts";
 import { AsyncJobManager } from "../resources/extensions/async-jobs/job-manager.ts";
 import { createAsyncBashTool } from "../resources/extensions/async-jobs/async-bash-tool.ts";
 import { cleanupAll, startProcess } from "../resources/extensions/bg-shell/process-manager.ts";
@@ -70,7 +70,7 @@ function withFakeRtk<T>(mapping: Record<string, string | { status?: number; stdo
 
 function withManagedFakeRtk<T>(mapping: Record<string, string | { status?: number; stdout?: string }>, run: (env: NodeJS.ProcessEnv, managedPath: string) => Promise<T> | T): Promise<T> | T {
   const fake = createFakeRtk(mapping);
-  const managedHome = mkdtempSync(join(tmpdir(), "gsd-rtk-managed-home-"));
+  const managedHome = mkdtempSync(join(tmpdir(), "gwd-rtk-managed-home-"));
   const managedDir = join(managedHome, "agent", "bin");
   const managedPath = join(managedDir, process.platform === "win32" ? "rtk.cmd" : "rtk");
   mkdirSync(managedDir, { recursive: true });

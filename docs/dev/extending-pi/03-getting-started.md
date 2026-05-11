@@ -3,10 +3,10 @@
 
 ### Minimal Extension
 
-Create `~/.gsd/agent/extensions/my-extension.ts`:
+Create `~/.gwd/agent/extensions/my-extension.ts`:
 
 ```typescript
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI } from "@gwd/pi-coding-agent";
 
 export default function (pi: ExtensionAPI) {
   pi.on("session_start", async (_event, ctx) => {
@@ -27,7 +27,7 @@ pi
 
 ### Hot Reload
 
-Extensions in auto-discovered locations (`~/.gsd/agent/extensions/` or `.gsd/extensions/`) can be hot-reloaded:
+Extensions in auto-discovered locations (`~/.gwd/agent/extensions/` or `.gwd/extensions/`) can be hot-reloaded:
 
 ```
 /reload

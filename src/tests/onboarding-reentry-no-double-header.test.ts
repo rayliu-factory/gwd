@@ -4,13 +4,13 @@ import { mkdtempSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 
-const gsdHome = mkdtempSync(join(tmpdir(), "gsd-onboarding-reentry-"))
-process.env.GWD_HOME = gsdHome
-const { handleOnboarding } = await import("../resources/extensions/gsd/commands/handlers/onboarding.ts")
+const gwdHome = mkdtempSync(join(tmpdir(), "gwd-onboarding-reentry-"))
+process.env.GWD_HOME = gwdHome
+const { handleOnboarding } = await import("../resources/extensions/gwd/commands/handlers/onboarding.ts")
 
-after(() => rmSync(gsdHome, { recursive: true, force: true }))
+after(() => rmSync(gwdHome, { recursive: true, force: true }))
 
-// Regression for #4470: /gsd onboarding re-entry must route through the
+// Regression for #4470: /gwd onboarding re-entry must route through the
 // TUI-owned setup hub instead of replaying the first-run clack wizard.
 
 test("re-entry onboarding handler opens the TUI setup hub and routes selected steps", async () => {

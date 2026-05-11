@@ -31,14 +31,14 @@ if (existsSync(agentsMdSrc)) {
   copied.push('AGENTS.md')
 }
 
-const workflowSrc = join(resourcesDir, 'GSD-WORKFLOW.md')
+const workflowSrc = join(resourcesDir, 'GWD-WORKFLOW.md')
 if (existsSync(workflowSrc)) {
-  writeFileSync(join(piRoot, 'GSD-WORKFLOW.md'), readFileSync(workflowSrc))
-  copied.push('GSD-WORKFLOW.md')
+  writeFileSync(join(piRoot, 'GWD-WORKFLOW.md'), readFileSync(workflowSrc))
+  copied.push('GWD-WORKFLOW.md')
 }
 
 process.stdout.write(
-  `Installed GSD resources for pi in ${piRoot}\n` +
+  `Installed GWD resources for pi in ${piRoot}\n` +
   `Copied: ${copied.join(', ')}\n` +
   `Extensions are now available under ${join(piAgentDir, 'extensions')}\n`
 )

@@ -1,4 +1,4 @@
-// GSD2 - Dev CLI child-process spawn helpers.
+// GWD2 - Dev CLI child-process spawn helpers.
 
 export function buildDevCliSpawnArgs({
   resolveTsPath,
@@ -11,7 +11,7 @@ export function buildDevCliSpawnArgs({
 export function buildDevCliChildEnv(baseEnv, devCliPath) {
   return {
     ...baseEnv,
-    // Child GSD processes (subagents, parallel workers, workflow MCP)
+    // Child GWD processes (subagents, parallel workers, workflow MCP)
     // must re-enter through this wrapper so source-mode TS imports keep
     // using resolve-ts. Pointing them at src/loader.ts directly makes Node
     // resolve .js specifiers without the TS resolver.

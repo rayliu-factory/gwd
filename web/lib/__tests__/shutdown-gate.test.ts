@@ -1,4 +1,4 @@
-// GWD-2 Web — Shutdown gate regression tests
+// GWD Web — Shutdown gate regression tests
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 
@@ -18,9 +18,9 @@ import {
 function resetGate() {
   cancelShutdown();
   // Reset lastBootAt so phantom-shutdown guard doesn't interfere
-  if (globalThis.__gsdShutdownGate) {
-    globalThis.__gsdShutdownGate.lastBootAt = 0;
-    globalThis.__gsdShutdownGate.activeStreams.clear();
+  if (globalThis.__gwdShutdownGate) {
+    globalThis.__gwdShutdownGate.lastBootAt = 0;
+    globalThis.__gwdShutdownGate.activeStreams.clear();
   }
   delete process.env.GWD_WEB_DAEMON_MODE;
 }
@@ -118,10 +118,10 @@ describe("shutdown-gate", () => {
       const calls: number[] = [];
       registerActiveStream(() => calls.push(1));
       registerActiveStream(() => calls.push(2));
-      assert.equal(globalThis.__gsdShutdownGate!.activeStreams.size, 2);
+      assert.equal(globalThis.__gwdShutdownGate!.activeStreams.size, 2);
       drainStreams();
       assert.deepEqual(calls, [1, 2]);
-      assert.equal(globalThis.__gsdShutdownGate!.activeStreams.size, 0);
+      assert.equal(globalThis.__gwdShutdownGate!.activeStreams.size, 0);
     });
 
     test("deregister prevents callback from being called when drainStreams fires", () => {
@@ -133,15 +133,15 @@ describe("shutdown-gate", () => {
       deregister();
       drainStreams();
       assert.equal(called, false, "deregister must prevent the callback from being called on drain");
-      assert.equal(globalThis.__gsdShutdownGate!.activeStreams.size, 0);
+      assert.equal(globalThis.__gwdShutdownGate!.activeStreams.size, 0);
     });
 
     test("deregister function removes stream from active set", () => {
       let callCount = 0;
       const deregister = registerActiveStream(() => { callCount++; });
-      assert.equal(globalThis.__gsdShutdownGate!.activeStreams.size, 1);
+      assert.equal(globalThis.__gwdShutdownGate!.activeStreams.size, 1);
       deregister();
-      assert.equal(globalThis.__gsdShutdownGate!.activeStreams.size, 0);
+      assert.equal(globalThis.__gwdShutdownGate!.activeStreams.size, 0);
       assert.equal(callCount, 0);
     });
 
@@ -150,12 +150,12 @@ describe("shutdown-gate", () => {
       const d1 = registerActiveStream(() => calls.push(1));
       const d2 = registerActiveStream(() => calls.push(2));
       const d3 = registerActiveStream(() => calls.push(3));
-      assert.equal(globalThis.__gsdShutdownGate!.activeStreams.size, 3);
+      assert.equal(globalThis.__gwdShutdownGate!.activeStreams.size, 3);
       d2();
-      assert.equal(globalThis.__gsdShutdownGate!.activeStreams.size, 2);
+      assert.equal(globalThis.__gwdShutdownGate!.activeStreams.size, 2);
       d1();
       d3();
-      assert.equal(globalThis.__gsdShutdownGate!.activeStreams.size, 0);
+      assert.equal(globalThis.__gwdShutdownGate!.activeStreams.size, 0);
       assert.deepEqual(calls, [], "no unsubscribers should have fired");
     });
   });
@@ -165,7 +165,7 @@ describe("shutdown-gate", () => {
       const before = Date.now();
       recordBoot();
       const after = Date.now();
-      const lastBoot = globalThis.__gsdShutdownGate!.lastBootAt;
+      const lastBoot = globalThis.__gwdShutdownGate!.lastBootAt;
       assert.ok(lastBoot >= before && lastBoot <= after, "lastBootAt must be within test window");
     });
 
@@ -188,11 +188,11 @@ describe("shutdown-gate", () => {
   });
 
   describe("HMR singleton", () => {
-    test("globalThis.__gsdShutdownGate is defined after module load", () => {
-      assert.ok(globalThis.__gsdShutdownGate, "singleton must exist on globalThis");
-      assert.ok(globalThis.__gsdShutdownGate.activeStreams instanceof Set);
-      assert.equal(typeof globalThis.__gsdShutdownGate.lastBootAt, "number");
-      assert.equal(typeof globalThis.__gsdShutdownGate.handlersRegistered, "boolean");
+    test("globalThis.__gwdShutdownGate is defined after module load", () => {
+      assert.ok(globalThis.__gwdShutdownGate, "singleton must exist on globalThis");
+      assert.ok(globalThis.__gwdShutdownGate.activeStreams instanceof Set);
+      assert.equal(typeof globalThis.__gwdShutdownGate.lastBootAt, "number");
+      assert.equal(typeof globalThis.__gwdShutdownGate.handlersRegistered, "boolean");
     });
 
     test("module reload does not register duplicate process handlers", async () => {
@@ -207,10 +207,10 @@ describe("shutdown-gate", () => {
 
     test("isShutdownPending reflects gate.shutdownTimer (singleton coherence)", () => {
       scheduleShutdown();
-      assert.equal(globalThis.__gsdShutdownGate!.shutdownTimer !== null, true);
+      assert.equal(globalThis.__gwdShutdownGate!.shutdownTimer !== null, true);
       assert.equal(isShutdownPending(), true);
       cancelShutdown();
-      assert.equal(globalThis.__gsdShutdownGate!.shutdownTimer, null);
+      assert.equal(globalThis.__gwdShutdownGate!.shutdownTimer, null);
       assert.equal(isShutdownPending(), false);
     });
   });

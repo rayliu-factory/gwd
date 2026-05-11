@@ -21,7 +21,7 @@ function createAuthStorage(): any {
 }
 
 test("parseModels registers custom providers in registeredProviders (#3531)", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-model-registry-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-model-registry-"));
   const modelsJsonPath = join(dir, "models.json");
   writeFileSync(
     modelsJsonPath,

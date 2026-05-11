@@ -1,7 +1,7 @@
 /**
  * TTSR Rule Loader
  *
- * Scans global (~/.gwd/agent/rules/*.md) and project-local (.gsd/rules/*.md)
+ * Scans global (~/.gwd/agent/rules/*.md) and project-local (.gwd/rules/*.md)
  * rule files. Parses YAML frontmatter for condition, scope, globs.
  * Project rules override global rules with the same name.
  */
@@ -10,7 +10,7 @@ import { join, basename } from "node:path";
 
 import type { Rule } from "./ttsr-manager.js";
 import { splitFrontmatter, parseFrontmatterMap } from "../shared/frontmatter.js";
-import { gsdHome } from "../gsd/gsd-home.js";
+import { gwdHome } from "../gwd/gwd-home.js";
 
 function parseRuleFile(filePath: string): Rule | null {
 	let content: string;
@@ -60,8 +60,8 @@ function scanDir(dir: string): Rule[] {
  * Project rules override global rules with the same name.
  */
 export function loadRules(cwd: string): Rule[] {
-	const globalDir = join(gsdHome(), "agent", "rules");
-	const projectDir = join(cwd, ".gsd", "rules");
+	const globalDir = join(gwdHome(), "agent", "rules");
+	const projectDir = join(cwd, ".gwd", "rules");
 
 	const globalRules = scanDir(globalDir);
 	const projectRules = scanDir(projectDir);

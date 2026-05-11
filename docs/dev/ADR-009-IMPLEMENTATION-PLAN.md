@@ -1,13 +1,13 @@
 # ADR-009 Implementation Plan
 
-**Related ADR:** [ADR-009-orchestration-kernel-refactor.md](/Users/jeremymcspadden/Github/gsd-2/docs/dev/ADR-009-orchestration-kernel-refactor.md)  
+**Related ADR:** [ADR-009-orchestration-kernel-refactor.md](./ADR-009-orchestration-kernel-refactor.md)
 **Status:** Completed (closure baseline established; emergency fallback retained)  
 **Date:** 2026-04-14  
 **Target Window:** 8-10 waves (incremental, no big-bang rewrite)
 
 ## Objective
 
-Implement ADR-009 by migrating GSD orchestration internals to a Unified Orchestration Kernel (UOK) with six control planes:
+Implement ADR-009 by migrating GWD orchestration internals to a Unified Orchestration Kernel (UOK) with six control planes:
 
 1. Plan
 2. Execution
@@ -49,10 +49,10 @@ Goal: define typed contracts and a new orchestration spine without changing beha
 
 Primary targets:
 
-- `src/resources/extensions/gsd/auto.ts`
-- `src/resources/extensions/gsd/auto/loop.ts`
-- `src/resources/extensions/gsd/auto/types.ts`
-- `src/resources/extensions/gsd/auto/session.ts`
+- `src/resources/extensions/gwd/auto.ts`
+- `src/resources/extensions/gwd/auto/loop.ts`
+- `src/resources/extensions/gwd/auto/types.ts`
+- `src/resources/extensions/gwd/auto/session.ts`
 
 Deliverables:
 
@@ -66,11 +66,11 @@ Goal: normalize all checks into a unified gate runner.
 
 Primary targets:
 
-- `src/resources/extensions/gsd/verification-gate.ts`
-- `src/resources/extensions/gsd/auto-verification.ts`
-- `src/resources/extensions/gsd/pre-execution-checks.ts`
-- `src/resources/extensions/gsd/post-execution-checks.ts`
-- `src/resources/extensions/gsd/milestone-validation-gates.ts`
+- `src/resources/extensions/gwd/verification-gate.ts`
+- `src/resources/extensions/gwd/auto-verification.ts`
+- `src/resources/extensions/gwd/pre-execution-checks.ts`
+- `src/resources/extensions/gwd/post-execution-checks.ts`
+- `src/resources/extensions/gwd/milestone-validation-gates.ts`
 
 Deliverables:
 
@@ -84,11 +84,11 @@ Goal: enable any-model-any-phase through requirement-based selection plus policy
 
 Primary targets:
 
-- `src/resources/extensions/gsd/model-router.ts`
-- `src/resources/extensions/gsd/auto-model-selection.ts`
-- `src/resources/extensions/gsd/preferences-models.ts`
-- `src/resources/extensions/gsd/model-cost-table.ts`
-- `src/resources/extensions/gsd/custom-execution-policy.ts`
+- `src/resources/extensions/gwd/model-router.ts`
+- `src/resources/extensions/gwd/auto-model-selection.ts`
+- `src/resources/extensions/gwd/preferences-models.ts`
+- `src/resources/extensions/gwd/model-cost-table.ts`
+- `src/resources/extensions/gwd/custom-execution-policy.ts`
 
 Deliverables:
 
@@ -103,11 +103,11 @@ Goal: move to one DAG scheduler contract.
 
 Primary targets:
 
-- `src/resources/extensions/gsd/reactive-graph.ts`
-- `src/resources/extensions/gsd/slice-parallel-orchestrator.ts`
-- `src/resources/extensions/gsd/parallel-orchestrator.ts`
-- `src/resources/extensions/gsd/graph.ts`
-- `src/resources/extensions/gsd/unit-runtime.ts`
+- `src/resources/extensions/gwd/reactive-graph.ts`
+- `src/resources/extensions/gwd/slice-parallel-orchestrator.ts`
+- `src/resources/extensions/gwd/parallel-orchestrator.ts`
+- `src/resources/extensions/gwd/graph.ts`
+- `src/resources/extensions/gwd/unit-runtime.ts`
 
 Deliverables:
 
@@ -121,10 +121,10 @@ Goal: guarantee git action and metadata record per turn.
 
 Primary targets:
 
-- `src/resources/extensions/gsd/git-service.ts`
-- `src/resources/extensions/gsd/auto-post-unit.ts`
-- `src/resources/extensions/gsd/auto-unit-closeout.ts`
-- `src/resources/extensions/gsd/auto-worktree.ts`
+- `src/resources/extensions/gwd/git-service.ts`
+- `src/resources/extensions/gwd/auto-post-unit.ts`
+- `src/resources/extensions/gwd/auto-unit-closeout.ts`
+- `src/resources/extensions/gwd/auto-worktree.ts`
 
 Deliverables:
 
@@ -138,11 +138,11 @@ Goal: unify journal/activity/metrics into a causal event model.
 
 Primary targets:
 
-- `src/resources/extensions/gsd/journal.ts`
-- `src/resources/extensions/gsd/activity-log.ts`
-- `src/resources/extensions/gsd/metrics.ts`
-- `src/resources/extensions/gsd/workflow-logger.ts`
-- `src/resources/extensions/gsd/gsd-db.ts`
+- `src/resources/extensions/gwd/journal.ts`
+- `src/resources/extensions/gwd/activity-log.ts`
+- `src/resources/extensions/gwd/metrics.ts`
+- `src/resources/extensions/gwd/workflow-logger.ts`
+- `src/resources/extensions/gwd/gwd-db.ts`
 
 Deliverables:
 
@@ -156,11 +156,11 @@ Goal: formal multi-round clarify/research/draft/compile flow.
 
 Primary targets:
 
-- `src/resources/extensions/gsd/guided-flow.ts`
-- `src/resources/extensions/gsd/preparation.ts`
-- `src/resources/extensions/gsd/auto/phases.ts`
-- `src/resources/extensions/gsd/auto-prompts.ts`
-- prompt templates under `src/resources/extensions/gsd/prompts/`
+- `src/resources/extensions/gwd/guided-flow.ts`
+- `src/resources/extensions/gwd/preparation.ts`
+- `src/resources/extensions/gwd/auto/phases.ts`
+- `src/resources/extensions/gwd/auto-prompts.ts`
+- prompt templates under `src/resources/extensions/gwd/prompts/`
 
 Deliverables:
 
@@ -219,7 +219,7 @@ Exit criteria:
 
 Verification:
 
-- targeted tests in `src/resources/extensions/gsd/tests/*auto*`
+- targeted tests in `src/resources/extensions/gwd/tests/*auto*`
 - `npm run test:unit`
 
 ## Wave 2: Gate Plane Unification
@@ -288,7 +288,7 @@ Verification:
 - `slice-parallel-orchestrator.test.ts`
 - `slice-parallel-conflict.test.ts`
 - `sidecar-queue.test.ts`
-- integration: `src/resources/extensions/gsd/tests/integration/*.test.ts`
+- integration: `src/resources/extensions/gwd/tests/integration/*.test.ts`
 
 ## Wave 5: GitOps Transactions Per Turn
 
@@ -429,7 +429,7 @@ Verification:
 
 Expected schema additions:
 
-- audit projection tables in `gsd.db`
+- audit projection tables in `gwd.db`
 - gate result persistence tables
 - turn transaction metadata
 
@@ -479,22 +479,22 @@ ADR-009 closure matrix (updated 2026-04-16):
 
 | DoD Criterion | Status | Evidence |
 | --- | --- | --- |
-| 1. UOK path is default and stable. | Complete | `resolveUokFlags()` defaults UOK planes to enabled; kernel path dispatch by default in `runAutoLoopWithUok()` and `startAuto()`. (`src/resources/extensions/gsd/uok/flags.ts`, `src/resources/extensions/gsd/uok/kernel.ts`, `src/resources/extensions/gsd/auto.ts`) |
+| 1. UOK path is default and stable. | Complete | `resolveUokFlags()` defaults UOK planes to enabled; kernel path dispatch by default in `runAutoLoopWithUok()` and `startAuto()`. (`src/resources/extensions/gwd/uok/flags.ts`, `src/resources/extensions/gwd/uok/kernel.ts`, `src/resources/extensions/gwd/auto.ts`) |
 | 2. All units execute through unified gate runner. | Complete | Shared phased loop path remains authoritative in `auto/loop.ts` (`runGuards`, `runFinalize`, phase observer telemetry). |
-| 3. Model selection supports any eligible model in any phase with policy enforcement. | Complete | ADR-009 model plane behavior is active in runtime selection/policy integration. (`src/resources/extensions/gsd/auto-model-selection.ts`, `src/resources/extensions/gsd/custom-execution-policy.ts`) |
-| 4. Hooks/agents/subagents/parallel/team execution runs through one scheduler contract. | Complete | Dispatch kind mapping + scheduler facade for `unit|hook|subagent|team-worker|verification|reprocess` in `runUnitPhaseViaContract()`. (`src/resources/extensions/gsd/auto/loop.ts`) |
-| 5. Turn-level git transaction record exists for every executed turn. | Complete | Turn observer emits git transaction stages + closeout records via UOK gitops adapter. (`src/resources/extensions/gsd/uok/loop-adapter.ts`, `src/resources/extensions/gsd/uok/gitops.ts`) |
-| 6. Unified audit events provide causal traceability across orchestration, model, tool, git, and test actions. | Complete | Unified audit envelope + emission path wired through UOK observer/kernel entry. (`src/resources/extensions/gsd/uok/audit.ts`, `src/resources/extensions/gsd/uok/kernel.ts`) |
-| 7. Plan v2 can produce a complete unit graph with fail-closed plan gate. | Complete | Plan v2 control plane remains default-on with bounded flow + gate coverage in current planner pipeline. (`src/resources/extensions/gsd/uok/flags.ts`, planning/gate suites) |
-| 8. `burn-max` profile is available and policy-safe. | Complete | Profile and policy bounds are enforced via preferences + model policy filtering. (`src/resources/extensions/gsd/auto-model-selection.ts`, `src/resources/extensions/gsd/preferences-models.ts`) |
-| 9. Legacy orchestration branches are retired or behind emergency-only fallback. | Complete | Legacy path remains only under explicit emergency controls (`uok.legacy_fallback.enabled`, `GSD_UOK_FORCE_LEGACY`, `GSD_UOK_LEGACY_FALLBACK`). (`src/resources/extensions/gsd/uok/flags.ts`) |
-| 10. CLI/web/headless behavior remains user-compatible. | Complete | Existing startup/dispatch surfaces preserved; integration coverage remains green in CI. (`src/resources/extensions/gsd/auto.ts`, `src/tests/integration/*.test.ts`) |
+| 3. Model selection supports any eligible model in any phase with policy enforcement. | Complete | ADR-009 model plane behavior is active in runtime selection/policy integration. (`src/resources/extensions/gwd/auto-model-selection.ts`, `src/resources/extensions/gwd/custom-execution-policy.ts`) |
+| 4. Hooks/agents/subagents/parallel/team execution runs through one scheduler contract. | Complete | Dispatch kind mapping + scheduler facade for `unit|hook|subagent|team-worker|verification|reprocess` in `runUnitPhaseViaContract()`. (`src/resources/extensions/gwd/auto/loop.ts`) |
+| 5. Turn-level git transaction record exists for every executed turn. | Complete | Turn observer emits git transaction stages + closeout records via UOK gitops adapter. (`src/resources/extensions/gwd/uok/loop-adapter.ts`, `src/resources/extensions/gwd/uok/gitops.ts`) |
+| 6. Unified audit events provide causal traceability across orchestration, model, tool, git, and test actions. | Complete | Unified audit envelope + emission path wired through UOK observer/kernel entry. (`src/resources/extensions/gwd/uok/audit.ts`, `src/resources/extensions/gwd/uok/kernel.ts`) |
+| 7. Plan v2 can produce a complete unit graph with fail-closed plan gate. | Complete | Plan v2 control plane remains default-on with bounded flow + gate coverage in current planner pipeline. (`src/resources/extensions/gwd/uok/flags.ts`, planning/gate suites) |
+| 8. `burn-max` profile is available and policy-safe. | Complete | Profile and policy bounds are enforced via preferences + model policy filtering. (`src/resources/extensions/gwd/auto-model-selection.ts`, `src/resources/extensions/gwd/preferences-models.ts`) |
+| 9. Legacy orchestration branches are retired or behind emergency-only fallback. | Complete | Legacy path remains only under explicit emergency controls (`uok.legacy_fallback.enabled`, `GWD_UOK_FORCE_LEGACY`, `GWD_UOK_LEGACY_FALLBACK`). (`src/resources/extensions/gwd/uok/flags.ts`) |
+| 10. CLI/web/headless behavior remains user-compatible. | Complete | Existing startup/dispatch surfaces preserved; integration coverage remains green in CI. (`src/resources/extensions/gwd/auto.ts`, `src/tests/integration/*.test.ts`) |
 
 Targeted closure/parity tests:
 
-- `src/resources/extensions/gsd/tests/uok-flags.test.ts`
-- `src/resources/extensions/gsd/tests/uok-execution-graph.test.ts`
-- `src/resources/extensions/gsd/tests/uok-kernel-path.test.ts`
+- `src/resources/extensions/gwd/tests/uok-flags.test.ts`
+- `src/resources/extensions/gwd/tests/uok-execution-graph.test.ts`
+- `src/resources/extensions/gwd/tests/uok-kernel-path.test.ts`
 
 ## Recommended Immediate Next Tasks (Week 1)
 

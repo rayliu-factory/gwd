@@ -1,5 +1,5 @@
 /**
- * Smoke: `gsd --help` must print usage.
+ * Smoke: `gwd --help` must print usage.
  *
  * Defaults to the locally built binary (`dist/loader.js`) so the test
  * exercises the artifact produced by the current checkout, not whatever
@@ -32,8 +32,8 @@ const output = execFileSync("node", [binary, "--help"], {
 
 const lower = output.toLowerCase();
 
-if (!lower.includes("gsd")) {
-  console.error(`Help output does not contain "gsd": "${output}"`);
+if (!lower.includes("gwd")) {
+  console.error(`Help output does not contain "gwd": "${output}"`);
   process.exit(1);
 }
 

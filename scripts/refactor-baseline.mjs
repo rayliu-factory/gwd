@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Read-only baseline metrics harness for the long-running refactor program.
 
 import { createHash } from "node:crypto";
@@ -13,7 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_ROOT = resolve(__dirname, "..");
 
 const DEFAULT_PROMPT_DIRS = [
-  "src/resources/extensions/gsd/prompts",
+  "src/resources/extensions/gwd/prompts",
 ];
 
 const DEFAULT_CONTEXT_FILES = [
@@ -44,11 +44,11 @@ const CONTRACT_SURFACES = [
   },
   {
     surface: "webStore",
-    path: "web/lib/gsd-workspace-store.tsx",
+    path: "web/lib/gwd-workspace-store.tsx",
   },
   {
     surface: "vscode",
-    path: "vscode-extension/src/gsd-client.ts",
+    path: "vscode-extension/src/gwd-client.ts",
   },
 ];
 
@@ -343,10 +343,10 @@ export async function collectContractsMetrics(root) {
 export async function collectProcessMetrics(root) {
   const sourceFiles = await collectFiles(join(root, "src", "resources", "extensions"), file => file.endsWith(".ts"));
   const docFiles = [
-    ...await collectFiles(join(root, "src", "resources", "extensions", "gsd", "docs"), file => file.endsWith(".md")),
+    ...await collectFiles(join(root, "src", "resources", "extensions", "gwd", "docs"), file => file.endsWith(".md")),
     ...await collectFiles(join(root, "docs", "dev"), file => file.endsWith(".md")),
   ];
-  const prEvidencePath = normalizePath(join("src", "resources", "extensions", "gsd", "pr-evidence.ts"));
+  const prEvidencePath = normalizePath(join("src", "resources", "extensions", "gwd", "pr-evidence.ts"));
   const consumerFiles = [];
   const shipPathFiles = [];
 
@@ -598,7 +598,7 @@ export function countLegacyContractImports(value) {
 export function hasProcessDocConflict(content) {
   return /markdown\s+(?:files?\s+)?(?:are|is)\s+(?:the\s+)?authoritative/i.test(content)
     || /filesystem[-\s]+authoritative/i.test(content)
-    || /\.gsd\/[^\n]*(?:source of truth|authoritative source)/i.test(content);
+    || /\.gwd\/[^\n]*(?:source of truth|authoritative source)/i.test(content);
 }
 
 export function metricSafeLabel(label) {
@@ -643,7 +643,7 @@ export async function timeCommand(root, spec) {
 
 export function renderSummary(report) {
   const lines = [
-    "GSD-2 Refactor Baseline",
+    "GWD Refactor Baseline",
     `Generated: ${report.generatedAt}`,
     `Root: ${report.root}`,
     `Schema version: ${report.schemaVersion}`,

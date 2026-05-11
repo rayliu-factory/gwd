@@ -36,7 +36,7 @@ const {
   dispatchBrowserSlashCommand,
 } = await import("../../../web/lib/browser-slash-command-dispatch.ts")
 
-const { GSDWorkspaceStore } = await import("../../../web/lib/gsd-workspace-store.tsx")
+const { GWDWorkspaceStore } = await import("../../../web/lib/gwd-workspace-store.tsx")
 
 // ─── Block 1: Type exports (R103, R104, R105) ───────────────────────────────
 
@@ -56,7 +56,7 @@ describe("diagnostics type exports", () => {
 
   it("ForensicReport has all required fields", () => {
     const report: ForensicReport = {
-      gsdVersion: "1.0.0",
+      gwdVersion: "1.0.0",
       timestamp: new Date().toISOString(),
       basePath: "/tmp/test",
       activeMilestone: "M001",
@@ -72,7 +72,7 @@ describe("diagnostics type exports", () => {
       journalSummary: null,
       activityLogMeta: null,
     }
-    assert.equal(typeof report.gsdVersion, "string")
+    assert.equal(typeof report.gwdVersion, "string")
     assert.equal(typeof report.timestamp, "string")
     assert.deepEqual(report.anomalies, [])
     assert.deepEqual(report.recentUnits, [])
@@ -253,35 +253,35 @@ describe("diagnostics contract state", () => {
 // ─── Block 3: Dispatch→surface pipeline (R103, R104, R105) ──────────────────
 
 describe("diagnostics dispatch→surface pipeline", () => {
-  it("/gwd forensics dispatches to gsd-forensics surface", () => {
+  it("/gwd forensics dispatches to gwd-forensics surface", () => {
     const outcome = dispatchBrowserSlashCommand("/gwd forensics", {})
     assert.equal(outcome.kind, "surface")
     if (outcome.kind === "surface") {
-      assert.equal(outcome.surface, "gsd-forensics")
+      assert.equal(outcome.surface, "gwd-forensics")
     }
   })
 
-  it("/gwd doctor dispatches to gsd-doctor surface", () => {
+  it("/gwd doctor dispatches to gwd-doctor surface", () => {
     const outcome = dispatchBrowserSlashCommand("/gwd doctor", {})
     assert.equal(outcome.kind, "surface")
     if (outcome.kind === "surface") {
-      assert.equal(outcome.surface, "gsd-doctor")
+      assert.equal(outcome.surface, "gwd-doctor")
     }
   })
 
-  it("/gwd skill-health dispatches to gsd-skill-health surface", () => {
+  it("/gwd skill-health dispatches to gwd-skill-health surface", () => {
     const outcome = dispatchBrowserSlashCommand("/gwd skill-health", {})
     assert.equal(outcome.kind, "surface")
     if (outcome.kind === "surface") {
-      assert.equal(outcome.surface, "gsd-skill-health")
+      assert.equal(outcome.surface, "gwd-skill-health")
     }
   })
 
-  it("/gwd doctor fix dispatches to gsd-doctor surface with args", () => {
+  it("/gwd doctor fix dispatches to gwd-doctor surface with args", () => {
     const outcome = dispatchBrowserSlashCommand("/gwd doctor fix", {})
     assert.equal(outcome.kind, "surface")
     if (outcome.kind === "surface") {
-      assert.equal(outcome.surface, "gsd-doctor")
+      assert.equal(outcome.surface, "gwd-doctor")
     }
   })
 })
@@ -289,19 +289,19 @@ describe("diagnostics dispatch→surface pipeline", () => {
 // ─── Block 4: Surface→section mapping (R103, R104, R105) ────────────────────
 
 describe("diagnostics surface→section mapping", () => {
-  it("gsd-forensics surface maps to gsd-forensics section", () => {
-    const section = commandSurfaceSectionForRequest({ surface: "gsd-forensics" as any } as any)
-    assert.equal(section, "gsd-forensics")
+  it("gwd-forensics surface maps to gwd-forensics section", () => {
+    const section = commandSurfaceSectionForRequest({ surface: "gwd-forensics" as any } as any)
+    assert.equal(section, "gwd-forensics")
   })
 
-  it("gsd-doctor surface maps to gsd-doctor section", () => {
-    const section = commandSurfaceSectionForRequest({ surface: "gsd-doctor" as any } as any)
-    assert.equal(section, "gsd-doctor")
+  it("gwd-doctor surface maps to gwd-doctor section", () => {
+    const section = commandSurfaceSectionForRequest({ surface: "gwd-doctor" as any } as any)
+    assert.equal(section, "gwd-doctor")
   })
 
-  it("gsd-skill-health surface maps to gsd-skill-health section", () => {
-    const section = commandSurfaceSectionForRequest({ surface: "gsd-skill-health" as any } as any)
-    assert.equal(section, "gsd-skill-health")
+  it("gwd-skill-health surface maps to gwd-skill-health section", () => {
+    const section = commandSurfaceSectionForRequest({ surface: "gwd-skill-health" as any } as any)
+    assert.equal(section, "gwd-skill-health")
   })
 })
 
@@ -309,42 +309,42 @@ describe("diagnostics surface→section mapping", () => {
 //
 // These methods are arrow-function class fields (instance properties, not on
 // the prototype). We verify via compile-time type assertion that the method
-// names exist on GSDWorkspaceStore, then do a runtime check that the class
+// names exist on GWDWorkspaceStore, then do a runtime check that the class
 // constructor itself is exported and usable.
 
 // Compile-time assertion: if any of these method names were removed from the
 // class, TypeScript would error on these type aliases.
-type _AssertLoadForensics = InstanceType<typeof GSDWorkspaceStore>["loadForensicsDiagnostics"]
-type _AssertLoadDoctor = InstanceType<typeof GSDWorkspaceStore>["loadDoctorDiagnostics"]
-type _AssertApplyFixes = InstanceType<typeof GSDWorkspaceStore>["applyDoctorFixes"]
-type _AssertLoadSkillHealth = InstanceType<typeof GSDWorkspaceStore>["loadSkillHealthDiagnostics"]
+type _AssertLoadForensics = InstanceType<typeof GWDWorkspaceStore>["loadForensicsDiagnostics"]
+type _AssertLoadDoctor = InstanceType<typeof GWDWorkspaceStore>["loadDoctorDiagnostics"]
+type _AssertApplyFixes = InstanceType<typeof GWDWorkspaceStore>["applyDoctorFixes"]
+type _AssertLoadSkillHealth = InstanceType<typeof GWDWorkspaceStore>["loadSkillHealthDiagnostics"]
 
 describe("diagnostics store methods", () => {
-  it("GSDWorkspaceStore is a constructable class export", () => {
-    assert.equal(typeof GSDWorkspaceStore, "function", "GSDWorkspaceStore should be a class/function export")
+  it("GWDWorkspaceStore is a constructable class export", () => {
+    assert.equal(typeof GWDWorkspaceStore, "function", "GWDWorkspaceStore should be a class/function export")
   })
 
   it("loadForensicsDiagnostics is a recognized method name on the store type", () => {
     // The compile-time type alias _AssertLoadForensics above already proves the
     // field exists. At runtime, arrow-field methods are on instances, not
     // prototype. We verify the field name appears in the actions Pick type by
-    // checking the useGSDWorkspaceActions hook references it in the exports.
-    const methodName: keyof Pick<InstanceType<typeof GSDWorkspaceStore>, "loadForensicsDiagnostics"> = "loadForensicsDiagnostics"
+    // checking the useGWDWorkspaceActions hook references it in the exports.
+    const methodName: keyof Pick<InstanceType<typeof GWDWorkspaceStore>, "loadForensicsDiagnostics"> = "loadForensicsDiagnostics"
     assert.equal(methodName, "loadForensicsDiagnostics")
   })
 
   it("loadDoctorDiagnostics is a recognized method name on the store type", () => {
-    const methodName: keyof Pick<InstanceType<typeof GSDWorkspaceStore>, "loadDoctorDiagnostics"> = "loadDoctorDiagnostics"
+    const methodName: keyof Pick<InstanceType<typeof GWDWorkspaceStore>, "loadDoctorDiagnostics"> = "loadDoctorDiagnostics"
     assert.equal(methodName, "loadDoctorDiagnostics")
   })
 
   it("applyDoctorFixes is a recognized method name on the store type", () => {
-    const methodName: keyof Pick<InstanceType<typeof GSDWorkspaceStore>, "applyDoctorFixes"> = "applyDoctorFixes"
+    const methodName: keyof Pick<InstanceType<typeof GWDWorkspaceStore>, "applyDoctorFixes"> = "applyDoctorFixes"
     assert.equal(methodName, "applyDoctorFixes")
   })
 
   it("loadSkillHealthDiagnostics is a recognized method name on the store type", () => {
-    const methodName: keyof Pick<InstanceType<typeof GSDWorkspaceStore>, "loadSkillHealthDiagnostics"> = "loadSkillHealthDiagnostics"
+    const methodName: keyof Pick<InstanceType<typeof GWDWorkspaceStore>, "loadSkillHealthDiagnostics"> = "loadSkillHealthDiagnostics"
     assert.equal(methodName, "loadSkillHealthDiagnostics")
   })
 })

@@ -37,8 +37,8 @@ export function deriveWorkflowAction(input: WorkflowActionInput): WorkflowAction
   // Suppress the action bar to avoid duplicate/confusing buttons.
   if (
     projectDetectionKind &&
-    projectDetectionKind !== "active-gsd" &&
-    projectDetectionKind !== "empty-gsd"
+    projectDetectionKind !== "active-gwd" &&
+    projectDetectionKind !== "empty-gwd"
   ) {
     return { primary: null, secondaries: [], disabled: true, disabledReason: "Project setup pending", isNewMilestone: false }
   }

@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD
 // File Purpose: Tests representative telemetry evidence collection before Phase 8 legacy cleanup deletions.
 
 import assert from "node:assert/strict";
@@ -38,7 +38,7 @@ test("parseCommandSpec rejects invalid command specs", () => {
 });
 
 test("ensureTelemetryReport creates a zero snapshot when representative commands do not touch legacy paths", async () => {
-  const root = await mkdtemp(join(tmpdir(), "gsd-legacy-cleanup-evidence-"));
+  const root = await mkdtemp(join(tmpdir(), "gwd-legacy-cleanup-evidence-"));
   const file = join(root, "nested", "legacy-telemetry.json");
 
   const report = await ensureTelemetryReport(file);
@@ -49,7 +49,7 @@ test("ensureTelemetryReport creates a zero snapshot when representative commands
 });
 
 test("collectLegacyCleanupEvidence reports nonzero counters as blockers", async () => {
-  const root = await mkdtemp(join(tmpdir(), "gsd-legacy-cleanup-blocked-"));
+  const root = await mkdtemp(join(tmpdir(), "gwd-legacy-cleanup-blocked-"));
   const file = join(root, "legacy-telemetry.json");
   const counters = Object.fromEntries(LEGACY_COUNTERS.map((counter: string) => [counter, 0]));
   counters["legacy.workflowEngineUsed"] = 1;

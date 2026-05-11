@@ -1,4 +1,4 @@
-// GSD-2 — Unit tests for parseCliArgs (canonical CLI flag parser)
+// GWD — Unit tests for parseCliArgs (canonical CLI flag parser)
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import test, { describe } from 'node:test'
@@ -6,7 +6,7 @@ import assert from 'node:assert/strict'
 import { buildHeadlessAutoArgs, parseCliArgs } from '../cli-web-branch.ts'
 
 function parse(...args: string[]) {
-  return parseCliArgs(['node', 'gsd', ...args])
+  return parseCliArgs(['node', 'gwd', ...args])
 }
 
 describe('parseCliArgs — modes', () => {

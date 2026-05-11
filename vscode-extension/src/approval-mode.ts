@@ -1,9 +1,9 @@
-// Project/App: GSD-2
+// Project/App: GWD
 // File Purpose: Pure approval-mode helpers for the VS Code extension.
 
 export type ApprovalMode = "ask" | "auto-approve" | "plan-only";
 
-export const GWD_APPROVAL_CONFIG_SECTION = "gsd";
+export const GWD_APPROVAL_CONFIG_SECTION = "gwd";
 export const GWD_APPROVAL_CONFIG_KEY = "approvalMode";
 export const GWD_APPROVAL_CONFIG_PATH = `${GWD_APPROVAL_CONFIG_SECTION}.${GWD_APPROVAL_CONFIG_KEY}`;
 

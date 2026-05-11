@@ -1,6 +1,6 @@
-# How GSD Organizes Work
+# How GWD Organizes Work
 
-GSD uses a three-level hierarchy to break projects into manageable pieces that an AI can execute reliably.
+GWD uses a three-level hierarchy to break projects into manageable pieces that an AI can execute reliably.
 
 ## The Hierarchy
 
@@ -39,13 +39,13 @@ Examples:
 
 ## Project State
 
-GSD keeps authoritative runtime state in the project-root SQLite database and renders markdown projections into `.gsd/` for review, prompts, and git history. The markdown files are useful to read and commit, but completion status and queue position come from the database unless you run an explicit import or recovery command.
+GWD keeps authoritative runtime state in the project-root SQLite database and renders markdown projections into `.gwd/` for review, prompts, and git history. The markdown files are useful to read and commit, but completion status and queue position come from the database unless you run an explicit import or recovery command.
 
-The `.gsd/` directory looks like this:
+The `.gwd/` directory looks like this:
 
 ```
-.gsd/
-  gsd.db              — authoritative runtime database (local, gitignored)
+.gwd/
+  gwd.db              — authoritative runtime database (local, gitignored)
   PROJECT.md          — living description of what the project is
   REQUIREMENTS.md     — requirement contract (active/validated/deferred)
   DECISIONS.md        — append-only architectural decisions log
@@ -74,9 +74,9 @@ The `.gsd/` directory looks like this:
 | `PROJECT.md` | High-level project description, updated as the project evolves |
 | `REQUIREMENTS.md` | Formal requirement contract — tracks what's active, validated, and deferred |
 | `DECISIONS.md` | Append-only log of architectural decisions with rationale |
-| `KNOWLEDGE.md` | Rules, patterns, and lessons learned across sessions — GSD reads this at the start of every task |
+| `KNOWLEDGE.md` | Rules, patterns, and lessons learned across sessions — GWD reads this at the start of every task |
 | `RUNTIME.md` | Runtime context like API URLs, ports, and environment variables |
-| `gsd.db` | Authoritative runtime state for workflow hierarchy, completion, requirements, decisions, and summaries |
+| `gwd.db` | Authoritative runtime state for workflow hierarchy, completion, requirements, decisions, and summaries |
 | `STATE.md` | Current status at a glance — rendered from the database, don't edit manually |
 
 ## How Work Flows
@@ -87,9 +87,9 @@ Each slice flows through phases:
 Plan → Execute (per task) → Complete → Reassess Roadmap → Next Slice
 ```
 
-1. **Plan** — GSD scouts the codebase, researches relevant docs, and decomposes the slice into tasks with clear requirements
+1. **Plan** — GWD scouts the codebase, researches relevant docs, and decomposes the slice into tasks with clear requirements
 2. **Execute** — Each task runs in a fresh AI session with focused context
-3. **Complete** — GSD writes summaries, generates a UAT script, and commits
+3. **Complete** — GWD writes summaries, generates a UAT script, and commits
 4. **Reassess** — The roadmap is checked against reality — slices may be reordered, added, or removed
 5. **Next Slice** — The loop continues until all slices are done
 
@@ -97,12 +97,12 @@ After all slices complete, a **milestone validation** gate checks that success c
 
 ## Adding Knowledge
 
-GSD maintains a knowledge base that persists across sessions. Add rules, patterns, or lessons:
+GWD maintains a knowledge base that persists across sessions. Add rules, patterns, or lessons:
 
 ```
-/gsd knowledge rule "Always use parameterized queries for database access"
-/gsd knowledge pattern "Service classes go in src/services/"
-/gsd knowledge lesson "The OAuth flow requires the redirect URL to match exactly"
+/gwd knowledge rule "Always use parameterized queries for database access"
+/gwd knowledge pattern "Service classes go in src/services/"
+/gwd knowledge lesson "The OAuth flow requires the redirect URL to match exactly"
 ```
 
 This knowledge is injected into every task prompt automatically.

@@ -1,6 +1,6 @@
 # API Reference
 
-// GSD-2 Extension SDK — Complete API surface reference
+// GWD Extension SDK — Complete API surface reference
 
 This document covers every public method and type exposed by the Extension SDK. For usage patterns and examples, see [Building Extensions](./building-extensions.md).
 
@@ -373,7 +373,7 @@ Agent lifecycle events carry optional correlation metadata when the current prov
 `ToolCallEvent` is a discriminated union by `toolName`. Use `isToolCallEventType()` and `isToolResultEventType()` type guards for narrowing:
 
 ```typescript
-import { isToolCallEventType } from "@gsd/pi-coding-agent";
+import { isToolCallEventType } from "@gwd/pi-coding-agent";
 
 pi.on("tool_call", (event, ctx) => {
   if (isToolCallEventType("bash", event)) {
@@ -411,7 +411,7 @@ pi.on("tool_call", (event, ctx) => {
 The SDK exports type guards for narrowing tool events by tool name:
 
 ```typescript
-import { isToolCallEventType, isToolResultEventType } from "@gsd/pi-coding-agent";
+import { isToolCallEventType, isToolResultEventType } from "@gwd/pi-coding-agent";
 
 // Built-in tools narrow automatically
 if (isToolCallEventType("bash", event)) {
@@ -430,15 +430,15 @@ if (isToolResultEventType<"my_tool", MyDetails>("my_tool", event)) {
 
 | Type | Import | Description |
 |------|--------|-------------|
-| `ExtensionAPI` | `@gsd/pi-coding-agent` | The `pi` object |
-| `ExtensionContext` | `@gsd/pi-coding-agent` | Context for event handlers |
-| `ExtensionCommandContext` | `@gsd/pi-coding-agent` | Extended context for command handlers |
-| `ExtensionUIContext` | `@gsd/pi-coding-agent` | UI methods on `ctx.ui` |
-| `ToolDefinition` | `@gsd/pi-coding-agent` | Tool registration shape |
-| `AgentToolResult` | `@gsd/pi-coding-agent` | Tool execution result |
-| `ProviderConfig` | `@gsd/pi-coding-agent` | Provider registration config |
-| `ExtensionFactory` | `@gsd/pi-coding-agent` | `(pi: ExtensionAPI) => void \| Promise<void>` |
-| `ContextUsage` | `@gsd/pi-coding-agent` | `{ tokens, contextWindow, percent }` |
-| `AgentAbortOrigin` | `@gsd/pi-agent-core` | `"session-transition" \| "user" \| "timeout" \| "unknown"` |
-| `ThinkingLevel` | `@gsd/pi-agent-core` | `"off" \| "low" \| "medium" \| "high" \| "xhigh"` |
+| `ExtensionAPI` | `@gwd/pi-coding-agent` | The `pi` object |
+| `ExtensionContext` | `@gwd/pi-coding-agent` | Context for event handlers |
+| `ExtensionCommandContext` | `@gwd/pi-coding-agent` | Extended context for command handlers |
+| `ExtensionUIContext` | `@gwd/pi-coding-agent` | UI methods on `ctx.ui` |
+| `ToolDefinition` | `@gwd/pi-coding-agent` | Tool registration shape |
+| `AgentToolResult` | `@gwd/pi-coding-agent` | Tool execution result |
+| `ProviderConfig` | `@gwd/pi-coding-agent` | Provider registration config |
+| `ExtensionFactory` | `@gwd/pi-coding-agent` | `(pi: ExtensionAPI) => void \| Promise<void>` |
+| `ContextUsage` | `@gwd/pi-coding-agent` | `{ tokens, contextWindow, percent }` |
+| `AgentAbortOrigin` | `@gwd/pi-agent-core` | `"session-transition" \| "user" \| "timeout" \| "unknown"` |
+| `ThinkingLevel` | `@gwd/pi-agent-core` | `"off" \| "low" \| "medium" \| "high" \| "xhigh"` |
 | `TSchema` | `@sinclair/typebox` | TypeBox schema type for tool parameters |

@@ -170,8 +170,8 @@ async function doRtkBootstrap(): Promise<void> {
   // Honor GWD_RTK_DISABLED if already explicitly set in the environment
   // (env var takes precedence over preferences for manual override).
   if (!rtkDisabled) {
-    const { loadEffectiveGSDPreferences } = await import('./resources/extensions/gsd/preferences.js')
-    const prefs = loadEffectiveGSDPreferences()
+    const { loadEffectiveGWDPreferences } = await import('./resources/extensions/gwd/preferences.js')
+    const prefs = loadEffectiveGWDPreferences()
     const rtkEnabled = prefs?.preferences.experimental?.rtk === true
     if (!rtkEnabled) {
       process.env[GWD_RTK_DISABLED_ENV] = '1'
@@ -222,15 +222,15 @@ if (shouldBypassManagedResourceMismatchGate(cliFlags.messages[0])) {
 // ---------------------------------------------------------------------------
 if (cliFlags.messages[0] === 'graph') {
   const sub = cliFlags.messages[1]
-  const { buildGraph, writeGraph, graphStatus, graphQuery, graphDiff, resolveGsdRoot } = await import('@gwd-build/mcp-server')
+  const { buildGraph, writeGraph, graphStatus, graphQuery, graphDiff, resolveGwdRoot } = await import('@gwd-build/mcp-server')
 
   const projectDir = process.cwd()
-  const gsdRoot = resolveGsdRoot(projectDir)
+  const gwdRoot = resolveGwdRoot(projectDir)
 
   if (!sub || sub === 'build') {
     try {
       const graph = await buildGraph(projectDir)
-      await writeGraph(gsdRoot, graph)
+      await writeGraph(gwdRoot, graph)
       process.stdout.write(`Graph built: ${graph.nodes.length} nodes, ${graph.edges.length} edges\n`)
     } catch (err) {
       process.stderr.write(`[${CLI_COMMAND}] graph build failed: ${err instanceof Error ? err.message : String(err)}\n`)

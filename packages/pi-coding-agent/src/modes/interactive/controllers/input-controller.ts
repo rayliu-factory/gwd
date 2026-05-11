@@ -146,12 +146,12 @@ export function setupEditorSubmitHandler(host: InteractiveModeStateHost & {
  * Drag-and-drop inserts paths like "/Users/name/Desktop/file.png" which
  * should be treated as plain text input, not a /Users command.
  *
- * Heuristic: a slash command is a single token like "/help" or "/gsd auto".
+ * Heuristic: a slash command is a single token like "/help" or "/gwd auto".
  * File paths have a second "/" within the first token (e.g., "/Users/...").
  */
 function looksLikeFilePath(text: string): boolean {
 	const firstToken = text.split(/\s/)[0];
-	// Slash commands: /help, /gsd, /commit — single "/" at start only.
+	// Slash commands: /help, /gwd, /commit — single "/" at start only.
 	// File paths: /Users/name/file, /home/user/file, /tmp/x — contain "/" after position 0.
 	return firstToken.indexOf("/", 1) !== -1;
 }

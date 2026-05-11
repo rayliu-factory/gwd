@@ -1,17 +1,17 @@
 import * as vscode from "vscode";
-import type { GsdChangeTracker } from "./change-tracker.js";
+import type { GwdChangeTracker } from "./change-tracker.js";
 
 /**
- * Provides line-level editor decorations for files modified by the GSD agent.
+ * Provides line-level editor decorations for files modified by the GWD agent.
  * Shows subtle background highlights on changed lines and gutter icons.
  */
-export class GsdLineDecorationManager implements vscode.Disposable {
+export class GwdLineDecorationManager implements vscode.Disposable {
 	private readonly addedDecoration: vscode.TextEditorDecorationType;
 	private readonly modifiedDecoration: vscode.TextEditorDecorationType;
 	private readonly gutterDecoration: vscode.TextEditorDecorationType;
 	private disposables: vscode.Disposable[] = [];
 
-	constructor(private readonly tracker: GsdChangeTracker) {
+	constructor(private readonly tracker: GwdChangeTracker) {
 		this.addedDecoration = vscode.window.createTextEditorDecorationType({
 			isWholeLine: true,
 			backgroundColor: "rgba(78, 201, 176, 0.07)",
@@ -78,12 +78,12 @@ export class GsdLineDecorationManager implements vscode.Disposable {
 
 		const addedRanges = added.map((line) => {
 			const range = new vscode.Range(line, 0, line, currentLines[line]?.length ?? 0);
-			return { range, hoverMessage: new vscode.MarkdownString("$(hubot) *Added by GSD Agent*") };
+			return { range, hoverMessage: new vscode.MarkdownString("$(hubot) *Added by GWD Agent*") };
 		});
 
 		const modifiedRanges = modified.map((line) => {
 			const range = new vscode.Range(line, 0, line, currentLines[line]?.length ?? 0);
-			return { range, hoverMessage: new vscode.MarkdownString("$(hubot) *Modified by GSD Agent*") };
+			return { range, hoverMessage: new vscode.MarkdownString("$(hubot) *Modified by GWD Agent*") };
 		});
 
 		const gutterRanges = [...added, ...modified].map((line) => ({

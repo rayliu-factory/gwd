@@ -1,19 +1,19 @@
 import * as vscode from "vscode";
-import type { GsdChangeTracker, Checkpoint } from "./change-tracker.js";
+import type { GwdChangeTracker, Checkpoint } from "./change-tracker.js";
 
 /**
  * TreeDataProvider that shows agent checkpoints (one per agent turn).
  * Each checkpoint can be restored to revert all file changes since that point.
  */
-export class GsdCheckpointProvider implements vscode.TreeDataProvider<Checkpoint>, vscode.Disposable {
-	public static readonly viewId = "gsd-checkpoints";
+export class GwdCheckpointProvider implements vscode.TreeDataProvider<Checkpoint>, vscode.Disposable {
+	public static readonly viewId = "gwd-checkpoints";
 
 	private readonly _onDidChangeTreeData = new vscode.EventEmitter<void>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
 	private disposables: vscode.Disposable[] = [];
 
-	constructor(private readonly tracker: GsdChangeTracker) {
+	constructor(private readonly tracker: GwdChangeTracker) {
 		this.disposables.push(
 			this._onDidChangeTreeData,
 			tracker.onCheckpointChange(() => this._onDidChangeTreeData.fire()),
@@ -34,7 +34,7 @@ export class GsdCheckpointProvider implements vscode.TreeDataProvider<Checkpoint
 		item.tooltip = `Checkpoint: ${checkpoint.label}\nTime: ${time.toLocaleString()}\nFiles tracked: ${fileCount}\n\nClick to restore to this point`;
 		item.contextValue = "checkpoint";
 		item.command = {
-			command: "gsd.restoreCheckpoint",
+			command: "gwd.restoreCheckpoint",
 			title: "Restore Checkpoint",
 			arguments: [checkpoint.id],
 		};

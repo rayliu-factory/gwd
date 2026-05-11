@@ -1,5 +1,5 @@
 /**
- * E2E smoke tests for the GSD CLI binary (dist/loader.js).
+ * E2E smoke tests for the GWD CLI binary (dist/loader.js).
  *
  * These tests exercise the CLI entry point as a black box by spawning child
  * processes and asserting on exit codes and output text.  They do NOT require
@@ -9,7 +9,7 @@
  * Prerequisite: npm run build must be run first.
  *
  * Run with:
- *   node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs \
+ *   node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs \
  *        --experimental-strip-types --test \
  *        src/tests/integration/e2e-smoke.test.ts
  */
@@ -48,7 +48,7 @@ type RunResult = {
  * @param env     Additional / override environment variables
  * @param cwd     Working directory for the child process (default: projectRoot)
  */
-function runGsd(
+function runGwd(
   args: string[],
   timeoutMs = 8_000,
   env: NodeJS.ProcessEnv = {},
@@ -98,11 +98,11 @@ function createTempGitRepo(prefix: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// 1. gsd --version outputs a semver string and exits 0
+// 1. gwd --version outputs a semver string and exits 0
 // ---------------------------------------------------------------------------
 
-test("gsd --version outputs a semver version string and exits 0", async () => {
-  const result = await runGsd(["--version"]);
+test("gwd --version outputs a semver version string and exits 0", async () => {
+  const result = await runGwd(["--version"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   assert.ok(!result.timedOut, "process should not time out");
@@ -117,11 +117,11 @@ test("gsd --version outputs a semver version string and exits 0", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// 2. gsd --help outputs usage information and exits 0
+// 2. gwd --help outputs usage information and exits 0
 // ---------------------------------------------------------------------------
 
-test("gsd --help outputs usage information and exits 0", async () => {
-  const result = await runGsd(["--help"]);
+test("gwd --help outputs usage information and exits 0", async () => {
+  const result = await runGwd(["--help"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   assert.ok(!result.timedOut, "process should not time out");
@@ -151,11 +151,11 @@ test("gsd --help outputs usage information and exits 0", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// 3. gsd config --help outputs config-specific or general help and exits 0
+// 3. gwd config --help outputs config-specific or general help and exits 0
 // ---------------------------------------------------------------------------
 
-test("gsd config --help outputs help and exits 0", async () => {
-  const result = await runGsd(["config", "--help"]);
+test("gwd config --help outputs help and exits 0", async () => {
+  const result = await runGwd(["config", "--help"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   assert.ok(!result.timedOut, "process should not time out");
@@ -171,11 +171,11 @@ test("gsd config --help outputs help and exits 0", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// 4. gsd update --help outputs update-specific or general help and exits 0
+// 4. gwd update --help outputs update-specific or general help and exits 0
 // ---------------------------------------------------------------------------
 
-test("gsd update --help outputs help and exits 0", async () => {
-  const result = await runGsd(["update", "--help"]);
+test("gwd update --help outputs help and exits 0", async () => {
+  const result = await runGwd(["update", "--help"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   assert.ok(!result.timedOut, "process should not time out");
@@ -188,13 +188,13 @@ test("gsd update --help outputs help and exits 0", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// 5. gsd --list-models runs without crashing
+// 5. gwd --list-models runs without crashing
 // ---------------------------------------------------------------------------
 
-test("gsd --list-models runs without crashing", async () => {
-  const result = await runGsd(["--list-models"]);
+test("gwd --list-models runs without crashing", async () => {
+  const result = await runGwd(["--list-models"]);
 
-  assert.ok(!result.timedOut, "gsd --list-models should exit within the timeout");
+  assert.ok(!result.timedOut, "gwd --list-models should exit within the timeout");
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
 
   // No unhandled crash markers
@@ -218,17 +218,17 @@ test("gsd --list-models runs without crashing", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// 6. gsd --print in text mode does not segfault or throw unhandled errors
+// 6. gwd --print in text mode does not segfault or throw unhandled errors
 //    (may fail with "No model selected" when no API keys are configured)
 // ---------------------------------------------------------------------------
 
-test("gsd --mode text --print does not segfault or throw unhandled errors", { skip: !process.env.ANTHROPIC_API_KEY && !process.env.OPENAI_API_KEY ? "no API key available — print mode requires a configured provider" : undefined }, async () => {
-  const result = await runGsd(
+test("gwd --mode text --print does not segfault or throw unhandled errors", { skip: !process.env.ANTHROPIC_API_KEY && !process.env.OPENAI_API_KEY ? "no API key available — print mode requires a configured provider" : undefined }, async () => {
+  const result = await runGwd(
     ["--mode", "text", "--print", "echo hello"],
     15_000,
   );
 
-  assert.ok(!result.timedOut, "gsd --print should not hang indefinitely");
+  assert.ok(!result.timedOut, "gwd --print should not hang indefinitely");
 
   const combinedOutput = stripAnsi(result.stdout + result.stderr);
 
@@ -280,11 +280,11 @@ test("gsd --mode text --print does not segfault or throw unhandled errors", { sk
 // ===========================================================================
 
 // ---------------------------------------------------------------------------
-// 7. gsd headless --help outputs headless-specific help and exits 0
+// 7. gwd headless --help outputs headless-specific help and exits 0
 // ---------------------------------------------------------------------------
 
-test("gsd headless --help outputs help and exits 0", async () => {
-  const result = await runGsd(["headless", "--help"]);
+test("gwd headless --help outputs help and exits 0", async () => {
+  const result = await runGwd(["headless", "--help"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   assert.ok(!result.timedOut, "process should not time out");
@@ -303,11 +303,11 @@ test("gsd headless --help outputs help and exits 0", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// 8. gsd sessions --help outputs sessions-specific help and exits 0
+// 8. gwd sessions --help outputs sessions-specific help and exits 0
 // ---------------------------------------------------------------------------
 
-test("gsd sessions --help outputs sessions-specific help and exits 0", async () => {
-  const result = await runGsd(["sessions", "--help"]);
+test("gwd sessions --help outputs sessions-specific help and exits 0", async () => {
+  const result = await runGwd(["sessions", "--help"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   assert.ok(!result.timedOut, "process should not time out");
@@ -324,13 +324,13 @@ test("gsd sessions --help outputs sessions-specific help and exits 0", async () 
 // ===========================================================================
 
 // ---------------------------------------------------------------------------
-// 9. gsd (no TTY) exits with clean error about requiring a terminal
+// 9. gwd (no TTY) exits with clean error about requiring a terminal
 // ---------------------------------------------------------------------------
 
-test("gsd with no TTY exits 1 with clean terminal-required error", async () => {
+test("gwd with no TTY exits 1 with clean terminal-required error", async () => {
   // Running with piped stdin (non-TTY) and no subcommand/flags triggers
   // interactive mode which requires a TTY
-  const result = await runGsd([], 15_000);
+  const result = await runGwd([], 15_000);
 
   assert.ok(!result.timedOut, "process should not hang");
   assert.strictEqual(result.code, 1, `expected exit 1, got ${result.code}`);
@@ -348,13 +348,13 @@ test("gsd with no TTY exits 1 with clean terminal-required error", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// 10. gsd with unknown flags does not crash
+// 10. gwd with unknown flags does not crash
 // ---------------------------------------------------------------------------
 
-test("gsd with unknown flags does not crash", async () => {
+test("gwd with unknown flags does not crash", async () => {
   // Unknown flags are silently ignored by the arg parser.
   // With --help appended, we get a clean exit path to test.
-  const result = await runGsd(["--some-unknown-flag", "--help"]);
+  const result = await runGwd(["--some-unknown-flag", "--help"]);
 
   assert.ok(!result.timedOut, "process should not time out");
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
@@ -364,11 +364,11 @@ test("gsd with unknown flags does not crash", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// 11. gsd -v is equivalent to --version
+// 11. gwd -v is equivalent to --version
 // ---------------------------------------------------------------------------
 
-test("gsd -v is equivalent to --version", async () => {
-  const result = await runGsd(["-v"]);
+test("gwd -v is equivalent to --version", async () => {
+  const result = await runGwd(["-v"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   assert.ok(!result.timedOut, "process should not time out");
@@ -382,11 +382,11 @@ test("gsd -v is equivalent to --version", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// 12. gsd -h is equivalent to --help
+// 12. gwd -h is equivalent to --help
 // ---------------------------------------------------------------------------
 
-test("gsd -h is equivalent to --help", async () => {
-  const result = await runGsd(["-h"]);
+test("gwd -h is equivalent to --help", async () => {
+  const result = await runGwd(["-h"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   assert.ok(!result.timedOut, "process should not time out");
@@ -403,38 +403,38 @@ test("gsd -h is equivalent to --help", async () => {
 // ===========================================================================
 
 // ---------------------------------------------------------------------------
-// 13. gsd headless without .gsd/ directory exits 1 with clean error
+// 13. gwd headless without .gwd/ directory exits 1 with clean error
 // ---------------------------------------------------------------------------
 
-test("gsd headless without .gsd/ directory exits 1 with clean error", async (t) => {
-  const tmpDir = mkdtempSync(join(tmpdir(), "gsd-e2e-no-gsd-"));
+test("gwd headless without .gwd/ directory exits 1 with clean error", async (t) => {
+  const tmpDir = mkdtempSync(join(tmpdir(), "gwd-e2e-no-gwd-"));
 
   t.after(() => { rmSync(tmpDir, { recursive: true, force: true }); });
 
-  const result = await runGsd(["headless"], 10_000, {}, tmpDir);
+  const result = await runGwd(["headless"], 10_000, {}, tmpDir);
 
   assert.ok(!result.timedOut, "process should not hang");
   assert.strictEqual(result.code, 1, `expected exit 1, got ${result.code}`);
 
   const combined = stripAnsi(result.stdout + result.stderr);
   assert.ok(
-    combined.includes(".gsd/") || combined.includes("No .gsd"),
-    `expected .gsd/ missing error, got:\n${combined.slice(0, 500)}`,
+    combined.includes(".gwd/") || combined.includes("No .gwd"),
+    `expected .gwd/ missing error, got:\n${combined.slice(0, 500)}`,
   );
 
   assertNoCrashMarkers(combined);
 });
 
 // ---------------------------------------------------------------------------
-// 14. gsd headless new-milestone without --context exits 1
+// 14. gwd headless new-milestone without --context exits 1
 // ---------------------------------------------------------------------------
 
-test("gsd headless new-milestone without --context exits 1", async (t) => {
-  const tmpDir = mkdtempSync(join(tmpdir(), "gsd-e2e-no-ctx-"));
+test("gwd headless new-milestone without --context exits 1", async (t) => {
+  const tmpDir = mkdtempSync(join(tmpdir(), "gwd-e2e-no-ctx-"));
 
   t.after(() => { rmSync(tmpDir, { recursive: true, force: true }); });
 
-  const result = await runGsd(["headless", "new-milestone"], 10_000, {}, tmpDir);
+  const result = await runGwd(["headless", "new-milestone"], 10_000, {}, tmpDir);
 
   assert.ok(!result.timedOut, "process should not hang");
   assert.strictEqual(result.code, 1, `expected exit 1, got ${result.code}`);
@@ -449,15 +449,15 @@ test("gsd headless new-milestone without --context exits 1", async (t) => {
 });
 
 // ---------------------------------------------------------------------------
-// 15. gsd headless --timeout with invalid value exits 1
+// 15. gwd headless --timeout with invalid value exits 1
 // ---------------------------------------------------------------------------
 
-test("gsd headless --timeout with invalid value exits 1", async (t) => {
-  const tmpDir = mkdtempSync(join(tmpdir(), "gsd-e2e-bad-timeout-"));
+test("gwd headless --timeout with invalid value exits 1", async (t) => {
+  const tmpDir = mkdtempSync(join(tmpdir(), "gwd-e2e-bad-timeout-"));
 
   t.after(() => { rmSync(tmpDir, { recursive: true, force: true }); });
 
-  const result = await runGsd(
+  const result = await runGwd(
     ["headless", "--timeout", "not-a-number", "auto"],
     10_000,
     {},
@@ -477,15 +477,15 @@ test("gsd headless --timeout with invalid value exits 1", async (t) => {
 });
 
 // ---------------------------------------------------------------------------
-// 16. gsd headless --timeout with negative value exits 1
+// 16. gwd headless --timeout with negative value exits 1
 // ---------------------------------------------------------------------------
 
-test("gsd headless --timeout with negative value exits 1", async (t) => {
-  const tmpDir = mkdtempSync(join(tmpdir(), "gsd-e2e-neg-timeout-"));
+test("gwd headless --timeout with negative value exits 1", async (t) => {
+  const tmpDir = mkdtempSync(join(tmpdir(), "gwd-e2e-neg-timeout-"));
 
   t.after(() => { rmSync(tmpDir, { recursive: true, force: true }); });
 
-  const result = await runGsd(
+  const result = await runGwd(
     ["headless", "--timeout", "-5000", "auto"],
     10_000,
     {},
@@ -504,17 +504,17 @@ test("gsd headless --timeout with negative value exits 1", async (t) => {
   assertNoCrashMarkers(combined);
 });
 
-test("gsd headless query returns JSON from the built CLI", async (t) => {
-  const tmpDir = createTempGitRepo("gsd-e2e-query-");
+test("gwd headless query returns JSON from the built CLI", async (t) => {
+  const tmpDir = createTempGitRepo("gwd-e2e-query-");
 
   t.after(() => { rmSync(tmpDir, { recursive: true, force: true }); });
 
-  mkdirSync(join(tmpDir, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(tmpDir, ".gwd", "milestones"), { recursive: true });
 
   // Cold packaged startup in a fresh temp repo is now regularly >10s because
   // the built CLI loads bundled TS resources through jiti before answering.
   // This command is still healthy; it just needs a realistic timeout budget.
-  const result = await runGsd(["headless", "query"], 30_000, {}, tmpDir);
+  const result = await runGwd(["headless", "query"], 30_000, {}, tmpDir);
 
   assert.ok(!result.timedOut, "process should not hang");
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
@@ -526,14 +526,14 @@ test("gsd headless query returns JSON from the built CLI", async (t) => {
   assert.equal(typeof snapshot.state?.phase, "string", "query output should include state.phase");
 });
 
-test("gsd worktree list loads the built worktree CLI without module errors", async (t) => {
-  const tmpDir = createTempGitRepo("gsd-e2e-worktree-");
+test("gwd worktree list loads the built worktree CLI without module errors", async (t) => {
+  const tmpDir = createTempGitRepo("gwd-e2e-worktree-");
 
   t.after(() => { rmSync(tmpDir, { recursive: true, force: true }); });
 
   // Cold packaged startup in a fresh temp repo is now regularly >10s because
   // the built CLI loads bundled TS resources through jiti before listing.
-  const result = await runGsd(["worktree", "list"], 30_000, {}, tmpDir);
+  const result = await runGwd(["worktree", "list"], 30_000, {}, tmpDir);
 
   assert.ok(!result.timedOut, "process should not hang");
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
@@ -554,8 +554,8 @@ test("gsd worktree list loads the built worktree CLI without module errors", asy
 // 17. --help output lists all subcommands
 // ---------------------------------------------------------------------------
 
-test("gsd --help lists all documented subcommands", async () => {
-  const result = await runGsd(["--help"]);
+test("gwd --help lists all documented subcommands", async () => {
+  const result = await runGwd(["--help"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   const output = stripAnsi(result.stdout);
@@ -573,8 +573,8 @@ test("gsd --help lists all documented subcommands", async () => {
 // 18. --help output lists all key flags
 // ---------------------------------------------------------------------------
 
-test("gsd --help lists all key flags", async () => {
-  const result = await runGsd(["--help"]);
+test("gwd --help lists all key flags", async () => {
+  const result = await runGwd(["--help"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   const output = stripAnsi(result.stdout);
@@ -604,11 +604,11 @@ test("gsd --help lists all key flags", async () => {
 // ===========================================================================
 
 // ---------------------------------------------------------------------------
-// 19. gsd --version followed by other flags still just prints version
+// 19. gwd --version followed by other flags still just prints version
 // ---------------------------------------------------------------------------
 
-test("gsd --version ignores trailing arguments", async () => {
-  const result = await runGsd(["--version", "--help", "--list-models"]);
+test("gwd --version ignores trailing arguments", async () => {
+  const result = await runGwd(["--version", "--help", "--list-models"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   assert.ok(!result.timedOut, "process should not time out");
@@ -623,13 +623,13 @@ test("gsd --version ignores trailing arguments", async () => {
 });
 
 // ---------------------------------------------------------------------------
-// 20. gsd headless help (positional, not flag) exits 0
+// 20. gwd headless help (positional, not flag) exits 0
 // ---------------------------------------------------------------------------
 
-test("gsd headless help (positional) exits cleanly", async () => {
+test("gwd headless help (positional) exits cleanly", async () => {
   // "help" as a positional is treated as a quick command by headless mode.
-  // Without .gsd/ it should fail, but with --help flag it should succeed.
-  const result = await runGsd(["headless", "--help"]);
+  // Without .gwd/ it should fail, but with --help flag it should succeed.
+  const result = await runGwd(["headless", "--help"]);
 
   assert.strictEqual(result.code, 0, `expected exit 0, got ${result.code}`);
   assert.ok(!result.timedOut, "process should not time out");

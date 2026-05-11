@@ -24,7 +24,7 @@ import { type ExtensionAPI, getMarkdownTheme } from "@gwd/pi-coding-agent";
 import { Container, Markdown, Spacer, Text } from "@gwd/pi-tui";
 import { Type } from "@sinclair/typebox";
 import { formatTokenCount } from "../shared/mod.js";
-import { getCurrentPhase } from "../shared/gsd-phase-state.js";
+import { getCurrentPhase } from "../shared/gwd-phase-state.js";
 import { type AgentConfig, type AgentScope, discoverAgents } from "./agents.js";
 import {
 	type IsolationEnvironment,
@@ -35,8 +35,8 @@ import {
 	readIsolationMode,
 } from "./isolation.js";
 import { registerWorker, updateWorker } from "./worker-registry.js";
-import { loadEffectiveGSDPreferences } from "../gsd/preferences.js";
-import { emitJournalEvent } from "../gsd/journal.js";
+import { loadEffectiveGWDPreferences } from "../gwd/preferences.js";
+import { emitJournalEvent } from "../gwd/journal.js";
 import { CmuxClient, shellEscape } from "../cmux/index.js";
 
 const MAX_PARALLEL_TASKS = 8;
@@ -648,7 +648,7 @@ export default function (pi: ExtensionAPI) {
 		handler: async (_args, ctx) => {
 			const discovery = discoverAgents(ctx.cwd, "both");
 			if (discovery.agents.length === 0) {
-				ctx.ui.notify("No agents found. Add .md files to ~/.gwd/agent/agents/ or .gsd/agents/", "warning");
+				ctx.ui.notify("No agents found. Add .md files to ~/.gwd/agent/agents/ or .gwd/agents/", "warning");
 				return;
 			}
 			const lines = discovery.agents.map(
@@ -665,7 +665,7 @@ export default function (pi: ExtensionAPI) {
 			"Delegate tasks to specialized subagents with isolated context windows.",
 			"Each subagent is a separate pi process with its own tools, model, and system prompt.",
 			"Modes: single ({ agent, task }), parallel ({ tasks: [{agent, task},...] }), chain ({ chain: [{agent, task},...] } with {previous} placeholder).",
-			"Agents are defined as .md files in ~/.gwd/agent/agents/ (user) or .gsd/agents/ (project).",
+			"Agents are defined as .md files in ~/.gwd/agent/agents/ (user) or .gwd/agents/ (project).",
 			"Use the /subagent command to list available agents and their descriptions.",
 			"Use chain mode to pipeline: scout finds context, planner designs, worker implements.",
 		].join(" "),
@@ -685,7 +685,7 @@ export default function (pi: ExtensionAPI) {
 			const discovery = discoverAgents(ctx.cwd, agentScope);
 			const agents = discovery.agents;
 			const confirmProjectAgents = params.confirmProjectAgents ?? false;
-			const cmuxClient = CmuxClient.fromPreferences(loadEffectiveGSDPreferences()?.preferences);
+			const cmuxClient = CmuxClient.fromPreferences(loadEffectiveGWDPreferences()?.preferences);
 			const cmuxSplitsEnabled = cmuxClient.getConfig().splits;
 
 			// Resolve isolation mode

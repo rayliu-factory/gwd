@@ -1,17 +1,17 @@
 // Project/App Name: gwd-pi · headless doctor wiring (#4929)
 //
 // Regression test for the live-regression assertion added in #4904
-// ("gsd doctor surfaces actionable guidance about the stale lock").
+// ("gwd doctor surfaces actionable guidance about the stale lock").
 //
 // Before this fix, the headless dispatcher had no `doctor` case — the
 // only path the live-regression test could reach (`gwd headless doctor`)
 // fell through to RPC dispatch and tried to launch a TUI subprocess.
-// Now the dispatcher invokes runGSDDoctor directly (mirrors the existing
+// Now the dispatcher invokes runGWDDoctor directly (mirrors the existing
 // `query` shape), and the resulting report from a stale-lock fixture
 // carries the "lock" keyword and stale PID the live-regression
 // assertion checks for.
 //
-// This test exercises the runGSDDoctor + formatDoctorReport pipeline
+// This test exercises the runGWDDoctor + formatDoctorReport pipeline
 // the headless case wires up — covering the behavior end-to-end without
 // having to spawn a child process. The dispatch wiring itself is one
 // branch in headless.ts (verified by `npm run build:core`); the
@@ -24,26 +24,26 @@ import { mkdtempSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-import { runGSDDoctor } from "../resources/extensions/gsd/doctor.ts";
+import { runGWDDoctor } from "../resources/extensions/gwd/doctor.ts";
 import {
   formatDoctorReport,
   formatDoctorReportJson,
-} from "../resources/extensions/gsd/doctor-format.ts";
+} from "../resources/extensions/gwd/doctor-format.ts";
 import {
   openDatabase,
   closeDatabase,
   insertMilestone,
   _getAdapter,
-} from "../resources/extensions/gsd/gsd-db.ts";
-import { registerAutoWorker } from "../resources/extensions/gsd/db/auto-workers.ts";
-import { claimMilestoneLease } from "../resources/extensions/gsd/db/milestone-leases.ts";
-import { recordDispatchClaim } from "../resources/extensions/gsd/db/unit-dispatches.ts";
-import { normalizeRealPath } from "../resources/extensions/gsd/paths.ts";
+} from "../resources/extensions/gwd/gwd-db.ts";
+import { registerAutoWorker } from "../resources/extensions/gwd/db/auto-workers.ts";
+import { claimMilestoneLease } from "../resources/extensions/gwd/db/milestone-leases.ts";
+import { recordDispatchClaim } from "../resources/extensions/gwd/db/unit-dispatches.ts";
+import { normalizeRealPath } from "../resources/extensions/gwd/paths.ts";
 
 function makeStaleLockFixture(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-headless-doctor-"));
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-headless-doctor-"));
+  mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "Test Milestone", status: "active" });
   const workerId = registerAutoWorker({ projectRootRealpath: normalizeRealPath(base) });
   const lease = claimMilestoneLease(workerId, "M001");
@@ -68,14 +68,14 @@ function makeStaleLockFixture(): string {
   return base;
 }
 
-test("#4929: runGSDDoctor + formatDoctorReport surface 'lock' + stale PID for stale auto.lock", async (t) => {
+test("#4929: runGWDDoctor + formatDoctorReport surface 'lock' + stale PID for stale auto.lock", async (t) => {
   const base = makeStaleLockFixture();
   t.after(() => {
     closeDatabase();
     rmSync(base, { recursive: true, force: true });
   });
 
-  const report = await runGSDDoctor(base);
+  const report = await runGWDDoctor(base);
   const out = formatDoctorReport(report);
   const lower = out.toLowerCase();
 
@@ -103,7 +103,7 @@ test("#4929: formatDoctorReportJson preserves the stale-lock issue + PID for --j
     rmSync(base, { recursive: true, force: true });
   });
 
-  const report = await runGSDDoctor(base);
+  const report = await runGWDDoctor(base);
   const json = formatDoctorReportJson(report);
   const parsed = JSON.parse(json);
 

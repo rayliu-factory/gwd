@@ -3,7 +3,7 @@ title: "Cost management"
 description: "Budget ceilings, cost tracking, projections, and enforcement modes."
 ---
 
-GSD tracks token usage and cost for every unit of work dispatched during auto mode. This data powers the dashboard, budget enforcement, and cost projections.
+GWD tracks token usage and cost for every unit of work dispatched during auto mode. This data powers the dashboard, budget enforcement, and cost projections.
 
 ## Cost tracking
 
@@ -15,11 +15,11 @@ Every unit's metrics are captured automatically:
 - **Tool calls** — number of tool invocations
 - **Message counts** — assistant and user messages
 
-Data is stored in `.gsd/metrics.json` and survives across sessions.
+Data is stored in `.gwd/metrics.json` and survives across sessions.
 
 ### Viewing costs
 
-`Ctrl+Alt+G` or `/gsd status` shows real-time cost breakdown by:
+`Ctrl+Alt+G` or `/gwd status` shows real-time cost breakdown by:
 
 - Phase (research, planning, execution, completion, reassessment)
 - Slice (M001/S01, M001/S02, ...)
@@ -42,7 +42,7 @@ budget_ceiling: 50.00
 
 ## Cost projections
 
-After two or more slices complete, GSD projects the remaining cost:
+After two or more slices complete, GWD projects the remaining cost:
 
 ```
 Projected remaining: $12.40 ($6.20/slice avg × 2 remaining)
@@ -72,9 +72,9 @@ See [token optimization](/guides/token-optimization) for details.
 ## Tips
 
 - Start with `balanced` and a generous `budget_ceiling` to establish baseline costs
-- Check `/gsd status` after a few slices to see per-slice averages
+- Check `/gwd status` after a few slices to see per-slice averages
 - Switch to `budget` for well-understood, repetitive work
 - Use `quality` only for architectural decisions
 - Per-phase model selection lets you use Opus for planning while keeping execution on Sonnet
 - Enable [dynamic routing](/guides/dynamic-model-routing) for automatic downgrading on simple tasks
-- Use `/gsd visualize` → Metrics tab to see where your budget is going
+- Use `/gwd visualize` → Metrics tab to see where your budget is going

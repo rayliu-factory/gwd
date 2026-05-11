@@ -1,14 +1,14 @@
 ---
 title: "Troubleshooting"
-description: "Common issues, /gsd doctor, /gsd forensics, and recovery procedures."
+description: "Common issues, /gwd doctor, /gwd forensics, and recovery procedures."
 ---
 
-## `/gsd doctor`
+## `/gwd doctor`
 
-The built-in diagnostic tool validates `.gsd/` integrity:
+The built-in diagnostic tool validates `.gwd/` integrity:
 
 ```
-/gsd doctor
+/gwd doctor
 ```
 
 It checks file structure, referential integrity, completion state consistency, git worktree health, and stale DB-backed runtime records.
@@ -19,16 +19,16 @@ It checks file structure, referential integrity, completion state consistency, g
   <Accordion title="Auto mode loops on the same unit">
     **Cause:** Stale cache after a crash, or the LLM didn't produce the expected artifact.
 
-    **Fix:** Run `/gsd doctor` to repair state, then `/gsd auto`.
+    **Fix:** Run `/gwd doctor` to repair state, then `/gwd auto`.
   </Accordion>
 
   <Accordion title="Auto mode stops with 'Loop detected'">
     **Cause:** A unit failed to produce its expected artifact twice in a row.
 
-    **Fix:** Check the task plan for clarity. Refine it manually, then `/gsd auto`.
+    **Fix:** Check the task plan for clarity. Refine it manually, then `/gwd auto`.
   </Accordion>
 
-  <Accordion title="command not found: gsd">
+  <Accordion title="command not found: gwd">
     **Cause:** npm's global bin directory isn't in `$PATH`.
 
     **Fix:**
@@ -38,7 +38,7 @@ It checks file structure, referential integrity, completion state consistency, g
     source ~/.zshrc
     ```
 
-    **Workaround:** `npx gsd-pi` or `$(npm prefix -g)/bin/gsd`
+    **Workaround:** `npx gwd-pi` or `$(npm prefix -g)/bin/gwd`
   </Accordion>
 
   <Accordion title="Provider errors during auto mode">
@@ -59,24 +59,24 @@ It checks file structure, referential integrity, completion state consistency, g
   </Accordion>
 
   <Accordion title="Budget ceiling reached">
-    Increase `budget_ceiling` in preferences, or switch to `budget` token profile. Resume with `/gsd auto`.
+    Increase `budget_ceiling` in preferences, or switch to `budget` token profile. Resume with `/gwd auto`.
   </Accordion>
 
   <Accordion title="Auto mode says another session is running">
-    GSD now derives active-session ownership from DB-backed worker and dispatch state rather than `auto.lock`. In most cases `/gsd doctor fix` clears stale runtime rows and the next `/gsd auto` resumes normally:
+    GWD now derives active-session ownership from DB-backed worker and dispatch state rather than `auto.lock`. In most cases `/gwd doctor fix` clears stale runtime rows and the next `/gwd auto` resumes normally:
     ```bash
-    /gsd doctor fix
+    /gwd doctor fix
     ```
   </Accordion>
 
-  <Accordion title="Git merge conflicts on .gsd/ files">
-    GSD auto-resolves conflicts on `.gsd/` runtime files. For code conflicts, the LLM attempts resolution. If that fails, resolve manually.
+  <Accordion title="Git merge conflicts on .gwd/ files">
+    GWD auto-resolves conflicts on `.gwd/` runtime files. For code conflicts, the LLM attempts resolution. If that fails, resolve manually.
   </Accordion>
 
   <Accordion title="EBUSY / EPERM / EACCES on Windows">
     **Cause:** Antivirus, indexers, or editors briefly locking files during atomic rename.
 
-    **Fix:** Re-run the operation. Close tools holding files open if the error persists. Run `/gsd doctor` to verify repo health.
+    **Fix:** Re-run the operation. Close tools holding files open if the error persists. Run `/gwd doctor` to verify repo health.
   </Accordion>
 
   <Accordion title="Worktree isolation stopped working after upgrade to v2.45+">
@@ -88,40 +88,40 @@ It checks file structure, referential integrity, completion state consistency, g
       isolation: worktree
     ```
 
-    In a brand-new repo, make an initial commit first. Until a committed `HEAD` exists, GSD temporarily runs worktree isolation as `none`.
+    In a brand-new repo, make an initial commit first. Until a committed `HEAD` exists, GWD temporarily runs worktree isolation as `none`.
   </Accordion>
 
   <Accordion title="Node.js version or git not found at startup">
-    **Cause:** GSD v2.45+ checks for Node.js >= 22 and git availability at startup.
+    **Cause:** GWD v2.45+ checks for Node.js >= 22 and git availability at startup.
 
     **Fix:** Install Node.js 22+ (24 LTS recommended) and ensure `git` is in your PATH.
   </Accordion>
 </AccordionGroup>
 
-## `/gsd forensics`
+## `/gwd forensics`
 
 Full-access debugger for post-mortem analysis:
 
 ```
-/gsd forensics [optional problem description]
+/gwd forensics [optional problem description]
 ```
 
 Provides anomaly detection, unit traces, metrics analysis, doctor integration, and LLM-guided investigation.
 
 ## MCP client issues
 
-Use `/gsd mcp` to check MCP server status and connectivity at a glance.
+Use `/gwd mcp` to check MCP server status and connectivity at a glance.
 
 <AccordionGroup>
   <Accordion title="No configured servers">
-    Verify `.mcp.json` or `.gsd/mcp.json` exists and parses as valid JSON.
+    Verify `.mcp.json` or `.gwd/mcp.json` exists and parses as valid JSON.
   </Accordion>
 
   <Accordion title="mcp_discover times out">
-    Run the configured command outside GSD to confirm the server starts. Check backend URLs and dependencies.
+    Run the configured command outside GWD to confirm the server starts. Check backend URLs and dependencies.
   </Accordion>
 
-  <Accordion title="Local server works manually but not in GSD">
+  <Accordion title="Local server works manually but not in GWD">
     Use absolute paths. Set required environment variables in the MCP config's `env` block.
   </Accordion>
 </AccordionGroup>
@@ -131,28 +131,28 @@ Use `/gsd mcp` to check MCP server status and connectivity at a glance.
 ### Reset auto mode state
 
 ```bash
-rm .gsd/completed-units.json
+rm .gwd/completed-units.json
 ```
 
-Then run `/gsd doctor` to refresh projections and `/gsd auto` to restart from current DB-backed state.
+Then run `/gwd doctor` to refresh projections and `/gwd auto` to restart from current DB-backed state.
 
 ### Reset routing history
 
 ```bash
-rm .gsd/routing-history.json
+rm .gwd/routing-history.json
 ```
 
 ### Full state rebuild
 
 ```
-/gsd doctor
+/gwd doctor
 ```
 
 Refreshes `STATE.md` and related projections from authoritative database state.
 
 ## Getting help
 
-- **GitHub Issues:** [github.com/gsd-build/GSD-2/issues](https://github.com/gsd-build/gsd-2/issues)
-- **Dashboard:** `Ctrl+Alt+G` or `/gsd status`
-- **Forensics:** `/gsd forensics`
-- **Session logs:** `.gsd/activity/`
+- **GitHub Issues:** [github.com/rayliu-factory/gwd/issues](https://github.com/rayliu-factory/gwd/issues)
+- **Dashboard:** `Ctrl+Alt+G` or `/gwd status`
+- **Forensics:** `/gwd forensics`
+- **Session logs:** `.gwd/activity/`

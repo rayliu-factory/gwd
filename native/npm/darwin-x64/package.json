@@ -1,6 +1,6 @@
 {
   "name": "@gwd-build/engine-darwin-x64",
-  "version": "2.81.0",
+  "version": "0.0.1",
   "description": "GWD native engine binary for macOS Intel",
   "os": [
     "darwin"
@@ -8,13 +8,13 @@
   "cpu": [
     "x64"
   ],
-  "main": "gsd_engine.node",
+  "main": "gwd_engine.node",
   "files": [
-    "gsd_engine.node"
+    "gwd_engine.node"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gwd-build/gwd-2.git"
+    "url": "https://github.com/rayliu-factory/gwd.git"
   }
 }

@@ -1,7 +1,7 @@
 /**
  * Shared subprocess runner for web service files.
  *
- * Every web service that loads upstream GSD extension modules needs to spawn
+ * Every web service that loads upstream GWD extension modules needs to spawn
  * a Node child process with the TS loader, type-stripping flag, and --eval.
  * This module centralises that boilerplate so services only specify what
  * varies: the script, env vars, and module paths.
@@ -24,7 +24,7 @@ const DEFAULT_TIMEOUT_MS = 30_000
 export interface ModuleSpec {
   /** Environment variable name the child process reads to find this module. */
   envKey: string
-  /** Path relative to packageRoot (e.g. "src/resources/extensions/gsd/doctor.ts"). */
+  /** Path relative to packageRoot (e.g. "src/resources/extensions/gwd/doctor.ts"). */
   relativePath: string
 }
 
@@ -59,7 +59,7 @@ export function resolveModulePaths(
     "src",
     "resources",
     "extensions",
-    "gsd",
+    "gwd",
     "tests",
     "resolve-ts.mjs",
   )
@@ -128,7 +128,7 @@ export async function runSubprocess<T>(options: RunSubprocessOptions): Promise<T
 
   const tsLoaderPath =
     options.tsLoaderPath ??
-    join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+    join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 
   return await new Promise<T>((resolveResult, reject) => {
     execFile(

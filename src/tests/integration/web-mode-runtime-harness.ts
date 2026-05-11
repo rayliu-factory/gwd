@@ -6,7 +6,7 @@ import { join } from "node:path"
 import type { Page, Request, Response } from "playwright"
 
 const projectRoot = process.cwd()
-const resolveTsPath = join(projectRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+const resolveTsPath = join(projectRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 const loaderPath = join(projectRoot, "src", "loader.ts")
 const builtAgentEntryPath = join(projectRoot, "packages", "pi-coding-agent", "dist", "index.js")
 const packagedWebHostPath = join(projectRoot, "dist", "web", "standalone", "server.js")
@@ -108,7 +108,7 @@ export type RuntimeReadyProof<TBoot = unknown> = {
 }
 
 export function writePreseededAuthFile(tempHome: string): void {
-  const agentDir = join(tempHome, ".gsd", "agent")
+  const agentDir = join(tempHome, ".gwd", "agent")
   mkdirSync(agentDir, { recursive: true, mode: 0o700 })
   const authPath = join(agentDir, "auth.json")
   const fakeCredential = { type: "api_key", key: "sk-ant-test-fake-key-for-runtime-test" }
@@ -176,7 +176,7 @@ export async function launchPackagedWebHost(options: {
 }): Promise<RuntimeLaunchResult> {
   ensureRuntimeArtifacts()
 
-  mkdirSync(join(options.tempHome, ".gsd"), { recursive: true })
+  mkdirSync(join(options.tempHome, ".gwd"), { recursive: true })
   const browserLogPath = options.browserLogPath ?? join(options.tempHome, "browser-open.log")
   const fakeBin = join(options.tempHome, "fake-bin")
   mkdirSync(fakeBin, { recursive: true })

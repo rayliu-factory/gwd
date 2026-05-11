@@ -22,20 +22,20 @@ parallel:
 2. Start parallel execution:
 
 ```
-/gsd parallel start
+/gwd parallel start
 ```
 
 3. Monitor progress:
 
 ```
-/gsd parallel status
+/gwd parallel status
 ```
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  Coordinator (your GSD session)                      │
+│  Coordinator (your GWD session)                      │
 │                                                      │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐           │
 │  │ Worker 1 │  │ Worker 2 │  │ Worker 3 │  ...       │
@@ -43,7 +43,7 @@ parallel:
 │  └──────────┘  └──────────┘  └──────────┘           │
 │       │              │              │                │
 │       ▼              ▼              ▼                │
-│  .gsd/worktrees/ .gsd/worktrees/ .gsd/worktrees/    │
+│  .gwd/worktrees/ .gwd/worktrees/ .gwd/worktrees/    │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -53,13 +53,13 @@ parallel:
 |----------|-----------------|
 | Filesystem | Git worktree — separate checkout |
 | Git branch | `milestone/<MID>` per milestone |
-| State | `GSD_MILESTONE_LOCK` — each worker sees only its milestone |
+| State | `GWD_MILESTONE_LOCK` — each worker sees only its milestone |
 | Context | Separate process with its own agent sessions |
 | Metrics | Each worktree has its own `metrics.json` |
 
 ## Eligibility analysis
 
-Before starting, GSD checks which milestones can run concurrently:
+Before starting, GWD checks which milestones can run concurrently:
 
 1. **Not complete** — finished milestones are skipped
 2. **Dependencies satisfied** — all `dependsOn` entries must be complete
@@ -88,16 +88,16 @@ parallel:
 
 | Command | Description |
 |---------|-------------|
-| `/gsd parallel start` | Analyze, confirm, and start workers |
-| `/gsd parallel status` | Show workers with state, progress, cost |
-| `/gsd parallel stop [MID]` | Stop all or a specific worker |
-| `/gsd parallel pause [MID]` | Pause all or a specific worker |
-| `/gsd parallel resume [MID]` | Resume paused workers |
-| `/gsd parallel merge [MID]` | Merge completed milestones to main |
+| `/gwd parallel start` | Analyze, confirm, and start workers |
+| `/gwd parallel status` | Show workers with state, progress, cost |
+| `/gwd parallel stop [MID]` | Stop all or a specific worker |
+| `/gwd parallel pause [MID]` | Pause all or a specific worker |
+| `/gwd parallel resume [MID]` | Resume paused workers |
+| `/gwd parallel merge [MID]` | Merge completed milestones to main |
 
 ## Merge reconciliation
 
-- `.gsd/` state files — auto-resolved (accept milestone branch version)
+- `.gwd/` state files — auto-resolved (accept milestone branch version)
 - Code conflicts — merge halts, shows conflicting files. Resolve manually and retry.
 
 ## Budget management
@@ -108,16 +108,16 @@ When `budget_ceiling` is set, aggregate cost is tracked across all workers. Ceil
 
 ### "No milestones are eligible"
 
-All milestones are complete or blocked by dependencies. Check `/gsd queue`.
+All milestones are complete or blocked by dependencies. Check `/gwd queue`.
 
 ### Worker crashed
 
-Workers persist state to disk. On restart, the coordinator detects dead PIDs. Run `/gsd doctor --fix` to clean up, then `/gsd parallel start` to spawn new workers.
+Workers persist state to disk. On restart, the coordinator detects dead PIDs. Run `/gwd doctor --fix` to clean up, then `/gwd parallel start` to spawn new workers.
 
 ### Merge conflicts
 
 ```
-/gsd parallel merge       # see which milestones conflict
-# resolve in .gsd/worktrees/<MID>/
-/gsd parallel merge MID   # retry
+/gwd parallel merge       # see which milestones conflict
+# resolve in .gwd/worktrees/<MID>/
+/gwd parallel merge MID   # retry
 ```

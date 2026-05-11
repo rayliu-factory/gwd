@@ -28,7 +28,7 @@ import { maybeLogTokenAudit } from "./token-audit.js";
  * schema validation before the loop terminates. This prevents unbounded retry
  * loops when the LLM repeatedly emits tool calls with arguments that cannot
  * pass validation (e.g., schema overload, truncated JSON, missing required
- * fields). See: https://github.com/gwd-build/gwd-2/issues/2783
+ * fields). See: https://github.com/rayliu-factory/gwd/issues/2783
  */
 export const MAX_CONSECUTIVE_VALIDATION_FAILURES = 3;
 

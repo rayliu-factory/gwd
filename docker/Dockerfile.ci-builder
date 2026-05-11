@@ -1,6 +1,6 @@
 # ──────────────────────────────────────────────
 # CI Builder
-# Image: ghcr.io/gsd-build/gsd-ci-builder
+# Image: ghcr.io/rayliu-factory/gwd-ci-builder
 # Used by: pipeline.yml Dev stage
 # ──────────────────────────────────────────────
 FROM node:24-bookworm

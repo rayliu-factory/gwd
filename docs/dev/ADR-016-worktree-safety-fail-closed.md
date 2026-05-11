@@ -1,11 +1,11 @@
-<!-- Project/App: GSD-2 -->
+<!-- Project/App: GWD -->
 <!-- File Purpose: ADR for fail-closed Worktree Safety behavior. -->
 
 # ADR-016: Fail Closed for Source-Writing Worktree Safety
 
 **Status:** Accepted
 **Date:** 2026-05-09
-**Author:** GSD architecture review
+**Author:** GWD architecture review
 **Related:** ADR-001 (branchless worktree architecture), ADR-014 (deep Auto Orchestration module), ADR-015 (runtime invariant modules)
 
 ## Context
@@ -18,12 +18,12 @@ That fallback was convenient for untracked project-root content, but it weakened
 
 Source-writing Units fail closed under worktree isolation unless Worktree Safety proves the Unit root is safe.
 
-A source-writing Unit is any Unit whose Tool Contract permits writes outside `.gsd/**`, currently tool policy modes `all` and `docs`. Planning-only Units may continue to write `.gsd/**` artifacts at the project root.
+A source-writing Unit is any Unit whose Tool Contract permits writes outside `.gwd/**`, currently tool policy modes `all` and `docs`. Planning-only Units may continue to write `.gwd/**` artifacts at the project root.
 
 Worktree Safety validates:
 
 - the milestone id is present and path-safe
-- the Unit root is the canonical `<projectRoot>/.gsd/worktrees/<milestone>` path
+- the Unit root is the canonical `<projectRoot>/.gwd/worktrees/<milestone>` path
 - the worktree root exists
 - `.git` is a worktree file, not a standalone `.git` directory
 - the root is registered by `git worktree list`

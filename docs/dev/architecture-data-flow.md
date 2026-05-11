@@ -6,9 +6,9 @@ If you need a shorter overview first, read [Architecture Overview](./architectur
 
 ## Naming Note
 
-The product is currently packaged as `gwd-pi` and exposes the `gwd` CLI. Many source files, docs, and runtime artifacts still use the older `GSD` name. Treat `GWD` and `GSD` as the same product unless a file is specifically about namespace migration.
+The product is packaged as `gwd-pi` and exposes the `gwd` CLI. Current user and contributor docs should use GWD names, `/gwd` commands, `.gwd/` project state, and `GWD_*` environment variables.
 
-One path detail matters: the current path contract resolves the workflow database to `.gsd/gsd.db` through `resolveGsdPathContract()` in `src/resources/extensions/gsd/paths.ts`. Some older comments may still mention `.gsd/gwd.db`; trust the path contract and tests.
+One path detail matters: the current path contract resolves the workflow database to `.gwd/gwd.db` through `resolveGwdPathContract()` in `src/resources/extensions/gwd/paths.ts`. Trust the path contract and tests when docs, comments, or older plans disagree.
 
 ## Mental Model
 
@@ -17,9 +17,9 @@ GWD is a TypeScript monorepo that wraps a vendored Pi coding-agent runtime with 
 There are two important persistence streams:
 
 - Conversation sessions are stored under `~/.gwd/sessions/` by `SessionManager`.
-- Project workflow state is stored in `.gsd/gsd.db`; markdown files under `.gsd/` are human-readable projections and recovery artifacts.
+- Project workflow state is stored in `.gwd/gwd.db`; markdown files under `.gwd/` are human-readable projections and recovery artifacts.
 
-For agent contributors, the safe default is: read state through exported helpers, write workflow state through registered GWD tools or `gsd-db.ts` wrappers, and avoid direct SQL or direct edits to generated `.gsd/` files.
+For agent contributors, the safe default is: read state through exported helpers, write workflow state through registered GWD tools or `gwd-db.ts` wrappers, and avoid direct SQL or direct edits to generated `.gwd/` files.
 
 ## Repository Layers
 
@@ -81,7 +81,7 @@ flowchart TB
 | `packages/pi-coding-agent/src/core/` | Session wrapper, tools, extension system | agent sessions, tools, compaction, persistence |
 | `packages/pi-agent-core/src/` | Provider-agnostic agent loop | LLM turn behavior, tool-call loop, events |
 | `packages/pi-ai/src/` | Provider adapters and streaming | model/provider support, API payloads |
-| `src/resources/extensions/gsd/` | GWD workflow engine | auto mode, DB state, commands, workflow tools |
+| `src/resources/extensions/gwd/` | GWD workflow engine | auto mode, DB state, commands, workflow tools |
 | `src/web/` | Server-side web bridge services | browser to RPC process flow |
 | `web/` | Next.js frontend | browser UI, live state, terminal panes |
 | `packages/contracts/` | Shared RPC contracts | changing RPC command/event shapes |
@@ -129,7 +129,7 @@ sequenceDiagram
   participant CLI as src/cli.ts
   participant Resources as src/resource-loader.ts
   participant Pi as @gwd/pi-coding-agent
-  participant GsdExt as src/resources/extensions/gsd
+  participant GwdExt as src/resources/extensions/gwd
 
   User->>Loader: run gwd
   Loader->>Loader: handle --help/--version fast path
@@ -142,9 +142,9 @@ sequenceDiagram
   Resources->>Resources: sync bundled extensions, skills, agents to ~/.gwd/agent
   CLI->>Pi: create AuthStorage, ModelRegistry, SettingsManager
   CLI->>Pi: create DefaultResourceLoader and reload
-  Pi->>GsdExt: load extension entry points through jiti
+  Pi->>GwdExt: load extension entry points through jiti
   CLI->>Pi: createAgentSession()
-  Pi->>GsdExt: bind commands, tools, hooks, UI context
+  Pi->>GwdExt: bind commands, tools, hooks, UI context
 ```
 
 Key details:
@@ -152,7 +152,7 @@ Key details:
 - `src/loader.ts` intentionally sets environment variables before importing the Pi SDK. This prevents configuration from being read too early.
 - `src/resource-loader.ts` syncs bundled resources into `~/.gwd/agent/` so installed or updated resources are used consistently.
 - `packages/pi-coding-agent/src/core/resource-loader.ts` then loads extensions, skills, prompt templates, themes, and project context files.
-- `src/resources/extensions/gsd/index.ts` registers the core `/gwd` command first, then bootstraps tools and hooks through `bootstrap/register-extension.ts`.
+- `src/resources/extensions/gwd/index.ts` registers the core `/gwd` command first, then bootstraps tools and hooks through `bootstrap/register-extension.ts`.
 
 ## Agent Turn Data Flow
 
@@ -227,19 +227,19 @@ The GWD extension registers several classes of tools:
 When adding a tool, decide where it belongs:
 
 - Generic coding tool: `packages/pi-coding-agent/src/core/tools/`.
-- GWD workflow tool: `src/resources/extensions/gsd/bootstrap/*-tools.ts`.
+- GWD workflow tool: `src/resources/extensions/gwd/bootstrap/*-tools.ts`.
 - External/public protocol shape: also update `packages/contracts/` or MCP adapters if applicable.
 
 ## Workflow State Data Flow
 
 ```mermaid
 flowchart LR
-  AgentTool["GWD workflow tool<br/>gsd_*"] --> EnsureDb["ensureDbOpen(basePath)"]
-  EnsureDb --> PathContract["resolveGsdPathContract()<br/>project root and DB path"]
-  PathContract --> DbFacade["gsd-db.ts<br/>single write facade"]
-  DbFacade --> SQLite[".gsd/gsd.db<br/>SQLite WAL"]
+  AgentTool["GWD workflow tool<br/>gwd_*"] --> EnsureDb["ensureDbOpen(basePath)"]
+  EnsureDb --> PathContract["resolveGwdPathContract()<br/>project root and DB path"]
+  PathContract --> DbFacade["gwd-db.ts<br/>single write facade"]
+  DbFacade --> SQLite[".gwd/gwd.db<br/>SQLite WAL"]
   DbFacade --> Writer["db-writer.ts<br/>markdown generators"]
-  Writer --> Projections[".gsd/*.md<br/>human-readable projections"]
+  Writer --> Projections[".gwd/*.md<br/>human-readable projections"]
   Writer --> Cache["invalidate state, path, parse caches"]
   SQLite --> Derive["state.ts<br/>deriveStateFromDb()"]
   Derive --> Dispatch["auto dispatch and dashboards"]
@@ -250,21 +250,21 @@ Important invariants:
 
 - Runtime state is DB-first. `deriveState()` reads the database whenever it is available.
 - Markdown fallback is explicit-only through `GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK=1` or recovery flows.
-- `gsd-db.ts` is the write facade. Do not add ad hoc `INSERT`, `UPDATE`, or `DELETE` calls outside its wrappers.
+- `gwd-db.ts` is the write facade. Do not add ad hoc `INSERT`, `UPDATE`, or `DELETE` calls outside its wrappers.
 - `db-writer.ts` regenerates `DECISIONS.md`, `REQUIREMENTS.md`, and artifact projections after DB writes.
 - Projection writes are best effort for some paths. A failed projection write should not roll back an already committed DB write unless the caller explicitly requires it.
-- Worktree execution still converges on the project-root `.gsd/gsd.db`; worktree-local `.gsd/` content is compatibility/projection state.
+- Worktree execution still converges on the project-root `.gwd/gwd.db`; worktree-local `.gwd/` content is compatibility/projection state.
 
 ### DB Write Example
 
 ```mermaid
 sequenceDiagram
-  participant Tool as gsd_decision_save
+  participant Tool as gwd_decision_save
   participant DbTools as bootstrap/db-tools.ts
   participant Writer as db-writer.ts
-  participant Db as gsd-db.ts
-  participant Sqlite as .gsd/gsd.db
-  participant Disk as .gsd/DECISIONS.md
+  participant Db as gwd-db.ts
+  participant Sqlite as .gwd/gwd.db
+  participant Disk as .gwd/DECISIONS.md
   participant State as state/cache modules
 
   Tool->>DbTools: execute(params, ctx)
@@ -282,7 +282,7 @@ sequenceDiagram
 
 ## Auto Mode Data Flow
 
-Auto mode is the autonomous execution loop owned by `src/resources/extensions/gsd/auto*` and `src/resources/extensions/gsd/auto/`.
+Auto mode is the autonomous execution loop owned by `src/resources/extensions/gwd/auto*` and `src/resources/extensions/gwd/auto/`.
 
 ```mermaid
 flowchart TB
@@ -411,13 +411,13 @@ Common checks:
 | Add a CLI subcommand | `src/cli.ts`, `src/help-text.ts`, command-specific modules | parser/help tests, subcommand tests |
 | Change startup behavior | `src/loader.ts`, `src/cli.ts`, `src/runtime-checks.ts` | startup, runtime, package smoke tests |
 | Add or change a built-in coding tool | `packages/pi-coding-agent/src/core/tools/` | tool unit tests and agent-session tool tests |
-| Add a GWD workflow tool | `src/resources/extensions/gsd/bootstrap/*-tools.ts`, `tools/workflow-tool-executors.ts` | extension/tool tests and DB writer tests |
-| Change workflow state | `gsd-db.ts`, `db-writer.ts`, `state.ts`, `docs/db-map.md` | DB migration, state derivation, projection tests |
+| Add a GWD workflow tool | `src/resources/extensions/gwd/bootstrap/*-tools.ts`, `tools/workflow-tool-executors.ts` | extension/tool tests and DB writer tests |
+| Change workflow state | `gwd-db.ts`, `db-writer.ts`, `state.ts`, `docs/db-map.md` | DB migration, state derivation, projection tests |
 | Change auto-mode dispatch | `auto/loop.ts`, `auto-dispatch.ts`, `auto-prompts.ts`, `auto-post-unit.ts` | auto loop, dispatch, recovery, integration tests |
 | Change web UI command behavior | `web/app/api/*`, `src/web/bridge-service.ts`, `packages/contracts/src/rpc.ts` | web integration and bridge contract tests |
 | Change provider/model behavior | `packages/pi-ai/src/`, `packages/pi-coding-agent/src/core/model-*`, `src/models-resolver.ts` | provider/model registry tests |
 | Change resource or extension loading | `src/resource-loader.ts`, `packages/pi-coding-agent/src/core/resource-loader.ts`, `extensions/loader.ts` | extension discovery/load/perf tests |
-| Change worktree behavior | `src/worktree-cli.ts`, `src/resources/extensions/gsd/auto-worktree.ts`, `worktree-state-projection.ts` | worktree CLI, projection, auto integration tests |
+| Change worktree behavior | `src/worktree-cli.ts`, `src/resources/extensions/gwd/auto-worktree.ts`, `worktree-state-projection.ts` | worktree CLI, projection, auto integration tests |
 
 ## Agent Contributor Checklist
 
@@ -425,7 +425,7 @@ Before editing:
 
 1. Read the target module and nearby tests.
 2. Check [File System Map](./FILE-SYSTEM-MAP.md) for ownership labels.
-3. If `.gsd/` state is involved, read [Database Map](../db-map.md) and inspect `gsd-db.ts`.
+3. If `.gwd/` state is involved, read [Database Map](../db-map.md) and inspect `gwd-db.ts`.
 4. Use `rg` to find all call sites and contract tests.
 
 While editing:

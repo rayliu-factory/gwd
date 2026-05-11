@@ -10,30 +10,30 @@
  * reconcile DB state from markdown without launching an LLM session or a
  * TTY-bound interactive runtime.
  *
- * Output: `gsd-recover: recovered <N>M/<N>S/<N>T hierarchy\n` to stderr on
+ * Output: `gwd-recover: recovered <N>M/<N>S/<N>T hierarchy\n` to stderr on
  * success — same marker emitted by handleRecover (commands-maintenance.ts)
  * so callers can distinguish the success path from a silent no-op.
  *
  * Exit codes:
  *   0 — recovery succeeded
- *   1 — `.gsd/` missing, DB could not be opened, or migration threw
+ *   1 — `.gwd/` missing, DB could not be opened, or migration threw
  */
 
 import { createJiti } from '@mariozechner/jiti'
 import { fileURLToPath } from 'node:url'
-import { resolveGsdAgentExtensionsDir, shouldUseAgentExtensionsDir } from './headless-query.js'
-import { resolveBundledGsdExtensionModule } from './bundled-resource-path.js'
+import { resolveGwdAgentExtensionsDir, shouldUseAgentExtensionsDir } from './headless-query.js'
+import { resolveBundledGwdExtensionModule } from './bundled-resource-path.js'
 import { join } from 'node:path'
 import { existsSync } from 'node:fs'
 
 const jiti = createJiti(fileURLToPath(import.meta.url), { interopDefault: true, debug: false })
 
-const agentExtensionsDir = resolveGsdAgentExtensionsDir()
+const agentExtensionsDir = resolveGwdAgentExtensionsDir()
 const { useAgentDir } = shouldUseAgentExtensionsDir({ env: process.env })
-const gsdExtensionPath = (...segments: string[]) =>
+const gwdExtensionPath = (...segments: string[]) =>
   useAgentDir
     ? resolveAgentExtensionModule(agentExtensionsDir, segments)
-    : resolveBundledGsdExtensionModule(import.meta.url, segments.join('/'))
+    : resolveBundledGwdExtensionModule(import.meta.url, segments.join('/'))
 
 function resolveAgentExtensionModule(agentDir: string, segments: string[]): string {
   const requested = join(agentDir, ...segments)
@@ -46,10 +46,10 @@ function resolveAgentExtensionModule(agentDir: string, segments: string[]): stri
 }
 
 async function loadExtensionModules() {
-  const stateModule = await jiti.import(gsdExtensionPath('state.ts'), {}) as any
-  const dbModule = await jiti.import(gsdExtensionPath('gsd-db.ts'), {}) as any
-  const importerModule = await jiti.import(gsdExtensionPath('md-importer.ts'), {}) as any
-  const dynamicToolsModule = await jiti.import(gsdExtensionPath('bootstrap/dynamic-tools.ts'), {}) as any
+  const stateModule = await jiti.import(gwdExtensionPath('state.ts'), {}) as any
+  const dbModule = await jiti.import(gwdExtensionPath('gwd-db.ts'), {}) as any
+  const importerModule = await jiti.import(gwdExtensionPath('md-importer.ts'), {}) as any
+  const dynamicToolsModule = await jiti.import(gwdExtensionPath('bootstrap/dynamic-tools.ts'), {}) as any
   return {
     ensureDbOpen: dynamicToolsModule.ensureDbOpen as (basePath: string) => Promise<boolean>,
     isDbAvailable: dbModule.isDbAvailable as () => boolean,
@@ -66,9 +66,9 @@ export interface RecoverResult {
 }
 
 export async function handleRecover(basePath: string): Promise<RecoverResult> {
-  const gsdDir = join(basePath, '.gsd')
-  if (!existsSync(gsdDir)) {
-    process.stderr.write(`[headless] recover: no .gsd/ directory at ${basePath}\n`)
+  const gwdDir = join(basePath, '.gwd')
+  if (!existsSync(gwdDir)) {
+    process.stderr.write(`[headless] recover: no .gwd/ directory at ${basePath}\n`)
     return { exitCode: 1 }
   }
 
@@ -102,7 +102,7 @@ export async function handleRecover(basePath: string): Promise<RecoverResult> {
   modules.invalidateStateCache()
 
   process.stderr.write(
-    `gsd-recover: recovered ${counts.milestones}M/${counts.slices}S/${counts.tasks}T hierarchy\n`,
+    `gwd-recover: recovered ${counts.milestones}M/${counts.slices}S/${counts.tasks}T hierarchy\n`,
   )
   return { exitCode: 0 }
 }

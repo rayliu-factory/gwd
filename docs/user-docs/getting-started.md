@@ -1,6 +1,6 @@
-# Getting Started with GSD
+# Getting Started with GWD
 
-GSD is an AI coding agent that handles planning, execution, verification, and shipping so you can focus on what to build. This guide walks you through installation on macOS, Windows, and Linux, then gets you running your first session.
+GWD is an AI coding agent that handles planning, execution, verification, and shipping so you can focus on what to build. This guide walks you through installation on macOS, Windows, and Linux, then gets you running your first session.
 
 ---
 
@@ -41,10 +41,10 @@ node --version   # should print v22.x or higher
 git --version    # should print 2.20+
 ```
 
-**Step 4 — Install GSD:**
+**Step 4 — Install GWD:**
 
 ```bash
-npm install -g gsd-pi
+npm install -g gwd-pi
 ```
 
 **Step 5 — Set up your LLM provider:**
@@ -54,7 +54,7 @@ npm install -g gsd-pi
 export ANTHROPIC_API_KEY="sk-ant-..."
 
 # Option B: Use the built-in config wizard
-gsd config
+gwd config
 ```
 
 To persist the key, add the export line to `~/.zshrc`:
@@ -66,28 +66,28 @@ source ~/.zshrc
 
 See [Provider Setup Guide](./providers.md) for all 20+ supported providers.
 
-**Step 6 — Launch GSD:**
+**Step 6 — Launch GWD:**
 
 ```bash
 cd ~/my-project   # navigate to any project
-gsd               # start a session
+gwd               # start a session
 ```
 
 **Step 7 — Verify everything works:**
 
 ```bash
-gsd --version     # prints the installed version
+gwd --version     # prints the installed version
 ```
 
 Inside the session, type `/model` to confirm your LLM is connected.
 
-> **Apple Silicon PATH fix:** If `gsd` isn't found after install, npm's global bin may not be in your PATH:
+> **Apple Silicon PATH fix:** If `gwd` isn't found after install, npm's global bin may not be in your PATH:
 > ```bash
 > echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.zshrc
 > source ~/.zshrc
 > ```
 
-> **oh-my-zsh conflict:** The oh-my-zsh git plugin defines `alias gsd='git svn dcommit'`. Fix with `unalias gsd 2>/dev/null` in `~/.zshrc`, or use `gsd-cli` instead.
+> **oh-my-zsh conflict:** The oh-my-zsh git plugin defines `alias gwd='git svn dcommit'`. Fix with `unalias gwd 2>/dev/null` in `~/.zshrc`, or use `gwd-cli` instead.
 
 ---
 
@@ -113,10 +113,10 @@ node --version   # should print v22.x or higher
 git --version    # should print 2.20+
 ```
 
-**Step 4 — Install GSD:**
+**Step 4 — Install GWD:**
 
 ```powershell
-npm install -g gsd-pi
+npm install -g gwd-pi
 ```
 
 **Step 5 — Set up your LLM provider:**
@@ -126,7 +126,7 @@ npm install -g gsd-pi
 $env:ANTHROPIC_API_KEY = "sk-ant-..."
 
 # Option B: Use the built-in config wizard
-gsd config
+gwd config
 ```
 
 To persist the key permanently, add it via System Settings > Environment Variables, or run:
@@ -137,17 +137,17 @@ To persist the key permanently, add it via System Settings > Environment Variabl
 
 See [Provider Setup Guide](./providers.md) for all 20+ supported providers.
 
-**Step 6 — Launch GSD:**
+**Step 6 — Launch GWD:**
 
 ```powershell
 cd C:\Users\you\my-project   # navigate to any project
-gsd                           # start a session
+gwd                           # start a session
 ```
 
 **Step 7 — Verify everything works:**
 
 ```powershell
-gsd --version     # prints the installed version
+gwd --version     # prints the installed version
 ```
 
 Inside the session, type `/model` to confirm your LLM is connected.
@@ -160,7 +160,7 @@ Inside the session, type `/model` to confirm your LLM is connected.
 
 > **Windows tips:**
 > - Use **Windows Terminal** or **PowerShell** for the best experience. Command Prompt works but has limited color support.
-> - If `gsd` isn't recognized, restart your terminal. Windows needs a fresh terminal to pick up new PATH entries.
+> - If `gwd` isn't recognized, restart your terminal. Windows needs a fresh terminal to pick up new PATH entries.
 > - **WSL2** also works — install WSL, then follow the Linux instructions inside your distro.
 
 ---
@@ -217,10 +217,10 @@ node --version   # should print v22.x or higher
 git --version    # should print 2.20+
 ```
 
-**Step 3 — Install GSD:**
+**Step 3 — Install GWD:**
 
 ```bash
-npm install -g gsd-pi
+npm install -g gwd-pi
 ```
 
 **Step 4 — Set up your LLM provider:**
@@ -230,7 +230,7 @@ npm install -g gsd-pi
 export ANTHROPIC_API_KEY="sk-ant-..."
 
 # Option B: Use the built-in config wizard
-gsd config
+gwd config
 ```
 
 To persist the key, add the export line to `~/.bashrc` (or `~/.zshrc`):
@@ -242,17 +242,17 @@ source ~/.bashrc
 
 See [Provider Setup Guide](./providers.md) for all 20+ supported providers.
 
-**Step 5 — Launch GSD:**
+**Step 5 — Launch GWD:**
 
 ```bash
 cd ~/my-project   # navigate to any project
-gsd               # start a session
+gwd               # start a session
 ```
 
 **Step 6 — Verify everything works:**
 
 ```bash
-gsd --version     # prints the installed version
+gwd --version     # prints the installed version
 ```
 
 Inside the session, type `/model` to confirm your LLM is connected.
@@ -263,7 +263,7 @@ Inside the session, type `/model` to confirm your LLM is connected.
 > npm config set prefix '~/.npm-global'
 > echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
 > source ~/.bashrc
-> npm install -g gsd-pi
+> npm install -g gwd-pi
 > ```
 
 ---
@@ -272,29 +272,29 @@ Inside the session, type `/model` to confirm your LLM is connected.
 
 > **Downloads:** [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-Run GSD in an isolated sandbox without installing Node.js on your host.
+Run GWD in an isolated sandbox without installing Node.js on your host.
 
 **Step 1 — Install Docker Desktop** (4.58+ required).
 
-**Step 2 — Clone the GSD repo:**
+**Step 2 — Clone the GWD repo:**
 
 ```bash
-git clone https://github.com/gsd-build/gsd-2.git
-cd gsd-2/docker
+git clone https://github.com/rayliu-factory/gwd.git
+cd gwd/docker
 ```
 
 **Step 3 — Create and enter a sandbox:**
 
 ```bash
-docker sandbox create --template . --name gsd-sandbox
-docker sandbox exec -it gsd-sandbox bash
+docker sandbox create --template . --name gwd-sandbox
+docker sandbox exec -it gwd-sandbox bash
 ```
 
-**Step 4 — Set your API key and run GSD:**
+**Step 4 — Set your API key and run GWD:**
 
 ```bash
 export ANTHROPIC_API_KEY="sk-ant-..."
-gsd auto "implement the feature described in issue #42"
+gwd auto "implement the feature described in issue #42"
 ```
 
 See [Docker Sandbox docs](../../docker/README.md) for full configuration, resource limits, and compose files.
@@ -305,7 +305,7 @@ See [Docker Sandbox docs](../../docker/README.md) for full configuration, resour
 
 ### Choose a Model
 
-GSD auto-selects a default model after provider setup. Switch anytime inside a session:
+GWD auto-selects a default model after provider setup. Switch anytime inside a session:
 
 ```
 /model
@@ -317,23 +317,23 @@ Or configure per-phase models in preferences — see [Configuration](./configura
 
 ## Two Ways to Work
 
-### Step Mode — `/gsd`
+### Step Mode — `/gwd`
 
-Type `/gsd` inside a session. GSD executes one unit of work at a time, pausing between each with a wizard showing what completed and what's next.
+Type `/gwd` inside a session. GWD executes one unit of work at a time, pausing between each with a wizard showing what completed and what's next.
 
-- **No `.gsd/` directory** — starts a discussion flow to capture your project vision
+- **No `.gwd/` directory** — starts a discussion flow to capture your project vision
 - **Milestone exists, no roadmap** — discuss or research the milestone
 - **Roadmap exists, slices pending** — plan the next slice or execute a task
 - **Mid-task** — resume where you left off
 
 Step mode keeps you in the loop, reviewing output between each step.
 
-### Auto Mode — `/gsd auto`
+### Auto Mode — `/gwd auto`
 
-Type `/gsd auto` and walk away. GSD autonomously researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete.
+Type `/gwd auto` and walk away. GWD autonomously researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete.
 
 ```
-/gsd auto
+/gwd auto
 ```
 
 See [Auto Mode](./auto-mode.md) for full details.
@@ -347,24 +347,24 @@ Run auto mode in one terminal, steer from another.
 **Terminal 1 — let it build:**
 
 ```bash
-gsd
-/gsd auto
+gwd
+/gwd auto
 ```
 
 **Terminal 2 — steer while it works:**
 
 ```bash
-gsd
-/gsd discuss    # talk through architecture decisions
-/gsd status     # check progress
-/gsd queue      # queue the next milestone
+gwd
+/gwd discuss    # talk through architecture decisions
+/gwd status     # check progress
+/gwd queue      # queue the next milestone
 ```
 
-Both terminals coordinate through the same project-root GSD runtime. The SQLite database is authoritative, `.gsd/` markdown is refreshed from it, and decisions in terminal 2 are picked up at the next phase boundary automatically as long as both sessions are on the same machine and local checkout.
+Both terminals coordinate through the same project-root GWD runtime. The SQLite database is authoritative, `.gwd/` markdown is refreshed from it, and decisions in terminal 2 are picked up at the next phase boundary automatically as long as both sessions are on the same machine and local checkout.
 
 ---
 
-## How GSD Organizes Work
+## How GWD Organizes Work
 
 ```
 Milestone  →  a shippable version (4-10 slices)
@@ -374,11 +374,11 @@ Milestone  →  a shippable version (4-10 slices)
 
 The iron rule: **a task must fit in one context window.** If it can't, it's two tasks.
 
-GSD keeps authoritative runtime state in the project-root SQLite database and renders markdown projections into `.gsd/` for review, prompts, and git history:
+GWD keeps authoritative runtime state in the project-root SQLite database and renders markdown projections into `.gwd/` for review, prompts, and git history:
 
 ```
-.gsd/
-  gsd.db              — authoritative runtime database (local, gitignored)
+.gwd/
+  gwd.db              — authoritative runtime database (local, gitignored)
   PROJECT.md          — what the project is right now
   REQUIREMENTS.md     — requirement contract
   DECISIONS.md        — append-only architectural decisions
@@ -397,22 +397,22 @@ GSD keeps authoritative runtime state in the project-root SQLite database and re
 
 ## VS Code Extension
 
-GSD is also available as a VS Code extension. Install from the marketplace (publisher: FluxLabs) or search for "GSD" in VS Code extensions:
+GWD is also available as a VS Code extension. Install from the marketplace (publisher: FluxLabs) or search for "GWD" in VS Code extensions:
 
-- **`@gsd` chat participant** — talk to the agent in VS Code Chat
+- **`@gwd` chat participant** — talk to the agent in VS Code Chat
 - **Sidebar dashboard** — connection status, model info, token usage
 - **Full command palette** — start/stop agent, switch models, export sessions
 
-The CLI (`gsd-pi`) must be installed first — the extension connects to it via RPC.
+The CLI (`gwd-pi`) must be installed first — the extension connects to it via RPC.
 
 ---
 
 ## Web Interface
 
-GSD has a browser-based interface for visual project management:
+GWD has a browser-based interface for visual project management:
 
 ```bash
-gsd --web
+gwd --web
 ```
 
 See [Web Interface](./web-interface.md) for details.
@@ -422,7 +422,7 @@ See [Web Interface](./web-interface.md) for details.
 ## Resume a Session
 
 ```bash
-gsd --continue    # or gsd -c
+gwd --continue    # or gwd -c
 ```
 
 Resumes the most recent session for the current directory.
@@ -430,23 +430,23 @@ Resumes the most recent session for the current directory.
 Browse all saved sessions:
 
 ```bash
-gsd sessions
+gwd sessions
 ```
 
 ---
 
-## Updating GSD
+## Updating GWD
 
-GSD checks for updates every 24 hours and prompts at startup. You can also update manually:
+GWD checks for updates every 24 hours and prompts at startup. You can also update manually:
 
 ```bash
-npm update -g gsd-pi
+npm update -g gwd-pi
 ```
 
 Or from within a session:
 
 ```
-/gsd update
+/gwd update
 ```
 
 ---
@@ -455,11 +455,11 @@ Or from within a session:
 
 | Problem | Fix |
 |---------|-----|
-| `command not found: gsd` | Add npm global bin to PATH (see OS-specific notes above) |
-| `gsd` runs `git svn dcommit` | oh-my-zsh conflict — `unalias gsd` or use `gsd-cli` |
+| `command not found: gwd` | Add npm global bin to PATH (see OS-specific notes above) |
+| `gwd` runs `git svn dcommit` | oh-my-zsh conflict — `unalias gwd` or use `gwd-cli` |
 | Permission errors on `npm install -g` | Fix npm prefix (see Linux notes) or use nvm |
-| Can't connect to LLM | Check API key with `gsd config`, verify network access |
-| `gsd` hangs on start | Check Node.js version: `node --version` (need 22+) |
+| Can't connect to LLM | Check API key with `gwd config`, verify network access |
+| `gwd` hangs on start | Check Node.js version: `node --version` (need 22+) |
 
 For more, see [Troubleshooting](./troubleshooting.md).
 

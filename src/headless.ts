@@ -57,7 +57,7 @@ import type { ExtensionUIRequest, ProgressContext } from './headless-ui.js'
 
 import {
   loadContext,
-  bootstrapGsdProject,
+  bootstrapGwdProject,
 } from './headless-context.js'
 
 // ---------------------------------------------------------------------------
@@ -308,7 +308,7 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
     }
   }
 
-  // For new-milestone, load context and bootstrap .gsd/ before spawning RPC child
+  // For new-milestone, load context and bootstrap .gwd/ before spawning RPC child
   if (isNewMilestone) {
     if (!options.context && !options.contextText) {
       process.stderr.write('[headless] Error: new-milestone requires --context <file> or --context-text <text>\n')
@@ -323,25 +323,25 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
       process.exit(1)
     }
 
-    // Bootstrap .gsd/ if needed
-    const gsdDir = join(process.cwd(), '.gsd')
-    if (!existsSync(gsdDir)) {
+    // Bootstrap .gwd/ if needed
+    const gwdDir = join(process.cwd(), '.gwd')
+    if (!existsSync(gwdDir)) {
       if (!options.json) {
-        process.stderr.write('[headless] Bootstrapping .gsd/ project structure...\n')
+        process.stderr.write('[headless] Bootstrapping .gwd/ project structure...\n')
       }
-      bootstrapGsdProject(process.cwd())
+      bootstrapGwdProject(process.cwd())
     }
 
     // Write context to temp file for the RPC child to read
-    const runtimeDir = join(gsdDir, 'runtime')
+    const runtimeDir = join(gwdDir, 'runtime')
     mkdirSync(runtimeDir, { recursive: true })
     writeFileSync(join(runtimeDir, 'headless-context.md'), contextContent, 'utf-8')
   }
 
-  // Validate .gsd/ directory (skip for new-milestone since we just bootstrapped it)
-  const gsdDir = join(process.cwd(), '.gsd')
-  if (!isNewMilestone && !existsSync(gsdDir)) {
-    process.stderr.write('[headless] Error: No .gsd/ directory found in current directory.\n')
+  // Validate .gwd/ directory (skip for new-milestone since we just bootstrapped it)
+  const gwdDir = join(process.cwd(), '.gwd')
+  if (!isNewMilestone && !existsSync(gwdDir)) {
+    process.stderr.write('[headless] Error: No .gwd/ directory found in current directory.\n')
     process.stderr.write(`[headless] Run '${CLI_COMMAND}' interactively first to initialize a project.\n`)
     process.exit(1)
   }
@@ -369,11 +369,11 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
   // suite) get the same diagnostic without a TTY.
   if (options.command === 'doctor') {
     const wantsJson = options.json || options.commandArgs.includes('--json')
-    const { runGSDDoctor } = await import('./resources/extensions/gsd/doctor.js')
-    const { formatDoctorReport, formatDoctorReportJson } = await import('./resources/extensions/gsd/doctor-format.js')
+    const { runGWDDoctor } = await import('./resources/extensions/gwd/doctor.js')
+    const { formatDoctorReport, formatDoctorReportJson } = await import('./resources/extensions/gwd/doctor-format.js')
     let exitCode = 1
     try {
-      const report = await runGSDDoctor(process.cwd())
+      const report = await runGWDDoctor(process.cwd())
       const out = wantsJson ? formatDoctorReportJson(report) : formatDoctorReport(report)
       process.stdout.write(`${out}\n`)
       exitCode = report.ok ? 0 : 1
@@ -833,7 +833,7 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
   // v2 protocol negotiation — attempt init for structured completion events
   let v2Enabled = false
   try {
-    await client.init({ clientId: 'gsd-headless' })
+    await client.init({ clientId: 'gwd-headless' })
     v2Enabled = true
   } catch {
     process.stderr.write('[headless] Warning: v2 init failed, falling back to v1 string-matching\n')

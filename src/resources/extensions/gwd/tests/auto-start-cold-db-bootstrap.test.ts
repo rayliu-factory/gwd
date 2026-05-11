@@ -1,0 +1,27 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdtempSync, mkdirSync, realpathSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+
+import { openProjectDbIfPresent } from "../auto-start.ts";
+import { closeDatabase, isDbAvailable, openDatabase } from "../gwd-db.ts";
+
+test.afterEach(() => {
+  if (isDbAvailable()) closeDatabase();
+});
+
+test("#2841: cold DB bootstrap opens an existing project database before state derivation", async (t) => {
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-cold-db-")));
+  t.after(() => rmSync(base, { recursive: true, force: true }));
+  mkdirSync(join(base, ".gwd"), { recursive: true });
+  const dbPath = join(base, ".gwd", "gwd.db");
+
+  assert.equal(openDatabase(dbPath), true);
+  closeDatabase();
+  assert.equal(isDbAvailable(), false);
+
+  await openProjectDbIfPresent(base);
+
+  assert.equal(isDbAvailable(), true);
+});

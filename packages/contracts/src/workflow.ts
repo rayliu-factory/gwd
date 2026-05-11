@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD
 // File Purpose: Canonical workflow MCP tool metadata shared across package boundaries.
 
 export type WorkflowToolWritePolicy = "read" | "write";
@@ -14,7 +14,7 @@ export interface WorkflowToolContractMetadata {
 
 export const WORKFLOW_TOOL_CONTRACTS = [
 	{
-		canonicalName: "gsd_decision_save",
+		canonicalName: "gwd_decision_save",
 		aliases: [],
 		schemaId: "workflow.decision.save",
 		executorId: "executeDecisionSave",
@@ -22,7 +22,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.decision.save",
 	},
 	{
-		canonicalName: "gsd_requirement_update",
+		canonicalName: "gwd_requirement_update",
 		aliases: [],
 		schemaId: "workflow.requirement.update",
 		executorId: "executeRequirementUpdate",
@@ -30,7 +30,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.requirement.update",
 	},
 	{
-		canonicalName: "gsd_requirement_save",
+		canonicalName: "gwd_requirement_save",
 		aliases: [],
 		schemaId: "workflow.requirement.save",
 		executorId: "executeRequirementSave",
@@ -38,7 +38,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.requirement.save",
 	},
 	{
-		canonicalName: "gsd_milestone_generate_id",
+		canonicalName: "gwd_milestone_generate_id",
 		aliases: [],
 		schemaId: "workflow.milestone.generate_id",
 		executorId: "executeMilestoneGenerateId",
@@ -46,7 +46,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.milestone.generate_id",
 	},
 	{
-		canonicalName: "gsd_plan_milestone",
+		canonicalName: "gwd_plan_milestone",
 		aliases: [],
 		schemaId: "workflow.milestone.plan",
 		executorId: "executePlanMilestone",
@@ -54,7 +54,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.milestone.plan",
 	},
 	{
-		canonicalName: "gsd_plan_slice",
+		canonicalName: "gwd_plan_slice",
 		aliases: [],
 		schemaId: "workflow.slice.plan",
 		executorId: "executePlanSlice",
@@ -62,7 +62,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.slice.plan",
 	},
 	{
-		canonicalName: "gsd_plan_task",
+		canonicalName: "gwd_plan_task",
 		aliases: [],
 		schemaId: "workflow.task.plan",
 		executorId: "executePlanTask",
@@ -70,7 +70,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.task.plan",
 	},
 	{
-		canonicalName: "gsd_replan_slice",
+		canonicalName: "gwd_replan_slice",
 		aliases: [],
 		schemaId: "workflow.slice.replan",
 		executorId: "executeReplanSlice",
@@ -78,7 +78,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.slice.replan",
 	},
 	{
-		canonicalName: "gsd_slice_complete",
+		canonicalName: "gwd_slice_complete",
 		aliases: [],
 		schemaId: "workflow.slice.complete",
 		executorId: "executeSliceComplete",
@@ -86,7 +86,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.slice.complete",
 	},
 	{
-		canonicalName: "gsd_skip_slice",
+		canonicalName: "gwd_skip_slice",
 		aliases: [],
 		schemaId: "workflow.slice.skip",
 		executorId: "executeSkipSlice",
@@ -94,7 +94,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.slice.skip",
 	},
 	{
-		canonicalName: "gsd_complete_milestone",
+		canonicalName: "gwd_complete_milestone",
 		aliases: [],
 		schemaId: "workflow.milestone.complete",
 		executorId: "executeCompleteMilestone",
@@ -102,7 +102,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.milestone.complete",
 	},
 	{
-		canonicalName: "gsd_validate_milestone",
+		canonicalName: "gwd_validate_milestone",
 		aliases: [],
 		schemaId: "workflow.milestone.validate",
 		executorId: "executeValidateMilestone",
@@ -110,7 +110,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.milestone.validate",
 	},
 	{
-		canonicalName: "gsd_reassess_roadmap",
+		canonicalName: "gwd_reassess_roadmap",
 		aliases: [],
 		schemaId: "workflow.roadmap.reassess",
 		executorId: "executeReassessRoadmap",
@@ -118,7 +118,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.roadmap.reassess",
 	},
 	{
-		canonicalName: "gsd_save_gate_result",
+		canonicalName: "gwd_save_gate_result",
 		aliases: [],
 		schemaId: "workflow.gate.save_result",
 		executorId: "executeSaveGateResult",
@@ -126,7 +126,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.gate.save_result",
 	},
 	{
-		canonicalName: "gsd_summary_save",
+		canonicalName: "gwd_summary_save",
 		aliases: [],
 		schemaId: "workflow.summary.save",
 		executorId: "executeSummarySave",
@@ -134,7 +134,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.summary.save",
 	},
 	{
-		canonicalName: "gsd_task_complete",
+		canonicalName: "gwd_task_complete",
 		aliases: [],
 		schemaId: "workflow.task.complete",
 		executorId: "executeTaskComplete",
@@ -142,7 +142,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.task.complete",
 	},
 	{
-		canonicalName: "gsd_milestone_status",
+		canonicalName: "gwd_milestone_status",
 		aliases: [],
 		schemaId: "workflow.milestone.status",
 		executorId: "executeMilestoneStatus",
@@ -150,7 +150,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.milestone.status",
 	},
 	{
-		canonicalName: "gsd_journal_query",
+		canonicalName: "gwd_journal_query",
 		aliases: [],
 		schemaId: "workflow.journal.query",
 		executorId: "executeJournalQuery",
@@ -158,31 +158,31 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.journal.query",
 	},
 	{
-		canonicalName: "gsd_exec",
+		canonicalName: "gwd_exec",
 		aliases: [],
 		schemaId: "workflow.exec.run",
-		executorId: "executeGsdExec",
+		executorId: "executeGwdExec",
 		writePolicy: "write",
 		auditEvent: "workflow.exec.run",
 	},
 	{
-		canonicalName: "gsd_exec_search",
+		canonicalName: "gwd_exec_search",
 		aliases: [],
 		schemaId: "workflow.exec.search",
-		executorId: "executeGsdExecSearch",
+		executorId: "executeGwdExecSearch",
 		writePolicy: "read",
 		auditEvent: "workflow.exec.search",
 	},
 	{
-		canonicalName: "gsd_resume",
+		canonicalName: "gwd_resume",
 		aliases: [],
 		schemaId: "workflow.resume",
-		executorId: "executeGsdResume",
+		executorId: "executeGwdResume",
 		writePolicy: "read",
 		auditEvent: "workflow.resume",
 	},
 	{
-		canonicalName: "gsd_capture_thought",
+		canonicalName: "gwd_capture_thought",
 		aliases: [],
 		schemaId: "workflow.memory.capture_thought",
 		executorId: "executeCaptureThought",
@@ -190,7 +190,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.memory.capture_thought",
 	},
 	{
-		canonicalName: "gsd_memory_query",
+		canonicalName: "gwd_memory_query",
 		aliases: [],
 		schemaId: "workflow.memory.query",
 		executorId: "executeMemoryQuery",
@@ -198,7 +198,7 @@ export const WORKFLOW_TOOL_CONTRACTS = [
 		auditEvent: "workflow.memory.query",
 	},
 	{
-		canonicalName: "gsd_memory_graph",
+		canonicalName: "gwd_memory_graph",
 		aliases: [],
 		schemaId: "workflow.memory.graph",
 		executorId: "executeMemoryGraph",

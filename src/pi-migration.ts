@@ -1,6 +1,6 @@
 /**
  * One-time migration of provider credentials from Pi (~/.pi/agent/auth.json)
- * into GSD's auth storage. Runs when GSD has no LLM providers configured,
+ * into GWD's auth storage. Runs when GWD has no LLM providers configured,
  * so users with an existing Pi install skip re-authentication.
  */
 
@@ -27,10 +27,10 @@ const LLM_PROVIDER_IDS = [
 ]
 
 /**
- * Migrate provider credentials from Pi's auth.json into GSD's AuthStorage.
+ * Migrate provider credentials from Pi's auth.json into GWD's AuthStorage.
  *
- * Only runs when GSD has no LLM provider configured and Pi's auth.json exists.
- * Copies any credentials GSD doesn't already have. Returns true if an LLM
+ * Only runs when GWD has no LLM provider configured and Pi's auth.json exists.
+ * Copies any credentials GWD doesn't already have. Returns true if an LLM
  * provider was migrated (so onboarding can be skipped).
  */
 export function migratePiCredentials(authStorage: AuthStorage): boolean {

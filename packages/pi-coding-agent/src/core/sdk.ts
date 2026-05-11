@@ -1,10 +1,10 @@
-// GSD2 - Coding agent session factory and runtime wiring
+// GWD2 - Coding agent session factory and runtime wiring
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 /**
  * Lightweight PATH scan for the `claude` binary — no subprocess, no network.
- * Mirrors the check in src/resources/extensions/gsd/doctor-providers.ts so the
+ * Mirrors the check in src/resources/extensions/gwd/doctor-providers.ts so the
  * legacy Anthropic OAuth self-heal path can only trigger when the user has a
  * working Claude Code CLI to fall back to.
  */

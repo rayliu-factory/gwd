@@ -103,9 +103,9 @@ const contentResult = searchContent(Buffer.from(fileContent), {
 });
 ```
 
-### gsd_parser
+### gwd_parser
 
-GWD file parsing and frontmatter extraction. Reads `.gsd` files and extracts structured metadata from YAML frontmatter blocks.
+GWD file parsing and frontmatter extraction. Reads `.gwd` files and extracts structured metadata from YAML frontmatter blocks.
 
 ### highlight
 

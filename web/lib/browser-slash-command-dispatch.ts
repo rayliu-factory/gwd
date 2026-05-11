@@ -14,28 +14,28 @@ export type BrowserSlashCommandSurface =
   | "session"
   | "export"
   // GWD subcommand surfaces (S02)
-  | "gsd-status"
-  | "gsd-visualize"
-  | "gsd-forensics"
-  | "gsd-doctor"
-  | "gsd-skill-health"
-  | "gsd-knowledge"
-  | "gsd-capture"
-  | "gsd-triage"
-  | "gsd-quick"
-  | "gsd-history"
-  | "gsd-undo"
-  | "gsd-inspect"
-  | "gsd-prefs"
-  | "gsd-config"
-  | "gsd-hooks"
-  | "gsd-mode"
-  | "gsd-steer"
-  | "gsd-export"
-  | "gsd-cleanup"
-  | "gsd-queue"
+  | "gwd-status"
+  | "gwd-visualize"
+  | "gwd-forensics"
+  | "gwd-doctor"
+  | "gwd-skill-health"
+  | "gwd-knowledge"
+  | "gwd-capture"
+  | "gwd-triage"
+  | "gwd-quick"
+  | "gwd-history"
+  | "gwd-undo"
+  | "gwd-inspect"
+  | "gwd-prefs"
+  | "gwd-config"
+  | "gwd-hooks"
+  | "gwd-mode"
+  | "gwd-steer"
+  | "gwd-export"
+  | "gwd-cleanup"
+  | "gwd-queue"
 
-export type BrowserSlashCommandLocalAction = "clear_terminal" | "refresh_workspace" | "gsd_help"
+export type BrowserSlashCommandLocalAction = "clear_terminal" | "refresh_workspace" | "gwd_help"
 
 export type BrowserSlashPromptCommandType = "prompt" | "follow_up"
 
@@ -114,27 +114,27 @@ const SURFACE_COMMANDS = new Map<string, BrowserSlashCommandSurface>([
 // --- GWD subcommand dispatch (S02) ---
 
 const GWD_SURFACE_SUBCOMMANDS = new Map<string, BrowserSlashCommandSurface>([
-  ["status", "gsd-status"],
-  ["visualize", "gsd-visualize"],
-  ["forensics", "gsd-forensics"],
-  ["doctor", "gsd-doctor"],
-  ["skill-health", "gsd-skill-health"],
-  ["knowledge", "gsd-knowledge"],
-  ["capture", "gsd-capture"],
-  ["triage", "gsd-triage"],
-  ["quick", "gsd-quick"],
-  ["history", "gsd-history"],
-  ["undo", "gsd-undo"],
-  ["inspect", "gsd-inspect"],
+  ["status", "gwd-status"],
+  ["visualize", "gwd-visualize"],
+  ["forensics", "gwd-forensics"],
+  ["doctor", "gwd-doctor"],
+  ["skill-health", "gwd-skill-health"],
+  ["knowledge", "gwd-knowledge"],
+  ["capture", "gwd-capture"],
+  ["triage", "gwd-triage"],
+  ["quick", "gwd-quick"],
+  ["history", "gwd-history"],
+  ["undo", "gwd-undo"],
+  ["inspect", "gwd-inspect"],
   ["model", "model"],
-  ["prefs", "gsd-prefs"],
-  ["config", "gsd-config"],
-  ["hooks", "gsd-hooks"],
-  ["mode", "gsd-mode"],
-  ["steer", "gsd-steer"],
-  ["export", "gsd-export"],
-  ["cleanup", "gsd-cleanup"],
-  ["queue", "gsd-queue"],
+  ["prefs", "gwd-prefs"],
+  ["config", "gwd-config"],
+  ["hooks", "gwd-hooks"],
+  ["mode", "gwd-mode"],
+  ["steer", "gwd-steer"],
+  ["export", "gwd-export"],
+  ["cleanup", "gwd-cleanup"],
+  ["queue", "gwd-queue"],
 ])
 
 const GWD_PASSTHROUGH_SUBCOMMANDS = new Set<string>([
@@ -159,7 +159,7 @@ Advanced:    export · cleanup · run-hook · migrate · remote
 
 Type /gwd <subcommand> to run. Use /gwd help for this message.`
 
-function dispatchGSDSubcommand(
+function dispatchGWDSubcommand(
   input: string,
   args: string,
   options: BrowserSlashCommandDispatchOptions,
@@ -188,7 +188,7 @@ function dispatchGSDSubcommand(
       kind: "local",
       input,
       commandName: "gwd",
-      action: "gsd_help",
+      action: "gwd_help",
     }
   }
 
@@ -345,7 +345,7 @@ export function dispatchBrowserSlashCommand(
   // GWD subcommand dispatch — must precede SURFACE_COMMANDS to avoid
   // `/gwd export` colliding with the built-in `/export` surface.
   if (parsed.name === "gwd") {
-    return dispatchGSDSubcommand(trimmed, parsed.args, options)
+    return dispatchGWDSubcommand(trimmed, parsed.args, options)
   }
 
   const browserSurface = SURFACE_COMMANDS.get(parsed.name)

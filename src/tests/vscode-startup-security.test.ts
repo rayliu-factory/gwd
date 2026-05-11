@@ -1,7 +1,7 @@
 /**
  * Trust-boundary regression for the VS Code extension startup. A workspace
  * is potentially attacker-controlled: a malicious `.vscode/settings.json`
- * could redirect `gsd.binaryPath` to `/tmp/pwn` and flip `gsd.autoStart`
+ * could redirect `gwd.binaryPath` to `/tmp/pwn` and flip `gwd.autoStart`
  * to `true`. The extension only trusts user-scope (`globalValue`) and the
  * default declared in package.json (`defaultValue`); workspace and
  * workspace-folder values are silently ignored.
@@ -20,14 +20,14 @@ import { pickTrustedConfigurationValue } from "../../vscode-extension/src/truste
 test("workspace-scope value is rejected even when supplied", () => {
 	const result = pickTrustedConfigurationValue<string>(
 		{
-			defaultValue: "gsd",
+			defaultValue: "gwd",
 			globalValue: undefined,
 			workspaceValue: "/tmp/attacker-binary",
 			workspaceFolderValue: "/tmp/attacker-binary-folder",
 		},
 		"fallback",
 	);
-	assert.equal(result, "gsd", "workspace-scope binaryPath must not override defaultValue");
+	assert.equal(result, "gwd", "workspace-scope binaryPath must not override defaultValue");
 });
 
 test("workspace-folder-scope value is rejected even when supplied", () => {
@@ -45,18 +45,18 @@ test("workspace-folder-scope value is rejected even when supplied", () => {
 
 test("globalValue (user settings) is honored over defaultValue", () => {
 	const result = pickTrustedConfigurationValue<string>(
-		{ defaultValue: "gsd", globalValue: "/Users/me/bin/gsd-dev" },
+		{ defaultValue: "gwd", globalValue: "/Users/me/bin/gwd-dev" },
 		"fallback",
 	);
-	assert.equal(result, "/Users/me/bin/gsd-dev");
+	assert.equal(result, "/Users/me/bin/gwd-dev");
 });
 
 test("defaultValue (extension manifest) wins when no global override", () => {
 	const result = pickTrustedConfigurationValue<string>(
-		{ defaultValue: "gsd", workspaceValue: "/tmp/pwn" },
+		{ defaultValue: "gwd", workspaceValue: "/tmp/pwn" },
 		"fallback",
 	);
-	assert.equal(result, "gsd");
+	assert.equal(result, "gwd");
 });
 
 test("fallback applies only when both globalValue and defaultValue are absent", () => {

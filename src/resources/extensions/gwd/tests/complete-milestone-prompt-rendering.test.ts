@@ -1,0 +1,47 @@
+// Project/App: GWD-2
+// File Purpose: Verifies the complete milestone prompt renders required completion and verification guardrails.
+
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+test("complete milestone prompt renders compact verification and completion guidance", async (t) => {
+  const previousGwdHome = process.env.GWD_HOME;
+  const providedGwdHome = process.env.GWD_TEST_HOME;
+  const isolatedHome = providedGwdHome ?? mkdtempSync(join(tmpdir(), "gwd-complete-milestone-render-"));
+  process.env.GWD_HOME = isolatedHome;
+  t.after(() => {
+    if (previousGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGwdHome;
+    if (!providedGwdHome) rmSync(isolatedHome, { recursive: true, force: true });
+  });
+
+  const { loadPrompt } = await import(`../prompt-loader.ts?test=${Date.now()}`);
+  const prompt = loadPrompt("complete-milestone", {
+    workingDirectory: process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd(),
+    milestoneId: "M001",
+    milestoneTitle: "Baseline And Safety",
+    roadmapPath: ".gwd/milestones/M001/M001-ROADMAP.md",
+    milestoneSummaryPath: ".gwd/milestones/M001/M001-SUMMARY.md",
+    inlinedContext: "## Milestone Summary\n\n## Horizontal Checklist\n\n## Decision Re-evaluation",
+    extractLearningsSteps: "Write M001-LEARNINGS.md and call capture_thought.",
+  });
+
+  assert.match(prompt, /Complete Milestone M001/);
+  assert.match(prompt, /Verification Gate/);
+  assert.match(prompt, /Do NOT call `gwd_complete_milestone`/);
+  assert.match(prompt, /verification FAILED/);
+  assert.match(prompt, /gwd_requirement_update/);
+  assert.match(prompt, /gwd_complete_milestone/);
+  assert.match(prompt, /verificationPassed/);
+  assert.match(prompt, /gwd_milestone_status/);
+  assert.match(prompt, /Do NOT query.*\.gwd\/gwd\.db/i);
+  assert.match(prompt, /Horizontal Checklist/);
+  assert.match(prompt, /Decision Re-evaluation/);
+  assert.match(prompt, /self-diff/i);
+  assert.match(prompt, /GWD-(?:Task|Unit)/);
+  assert.match(prompt, /Milestone M001 complete/);
+  assert.doesNotMatch(prompt, /\{\{[a-zA-Z][a-zA-Z0-9_]*\}\}/);
+});

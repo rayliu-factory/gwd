@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { readFileSync, existsSync } from 'node:fs';
-import { resolveGsdRoot, resolveRootFile } from './paths.js';
+import { resolveGwdRoot, resolveRootFile } from './paths.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -86,8 +86,8 @@ export function readCaptures(
   projectDir: string,
   filter: 'all' | 'pending' | 'actionable' = 'all',
 ): CapturesResult {
-  const gsd = resolveGsdRoot(projectDir);
-  const capturesPath = resolveRootFile(gsd, 'CAPTURES.md');
+  const gwd = resolveGwdRoot(projectDir);
+  const capturesPath = resolveRootFile(gwd, 'CAPTURES.md');
 
   if (!existsSync(capturesPath)) {
     return { captures: [], counts: { total: 0, pending: 0, resolved: 0, actionable: 0 } };

@@ -11,12 +11,12 @@ const EXPORT_MAX_BUFFER = 4 * 1024 * 1024
 const EXPORT_MODULE_ENV = "GWD_EXPORT_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "gwd", "tests", "resolve-ts.mjs")
 }
 
 /**
  * Generates an export file via a child process and returns its content.
- * The child calls writeExportFile() which creates a timestamped file in .gsd/,
+ * The child calls writeExportFile() which creates a timestamped file in .gwd/,
  * then reads its content back for browser display.
  */
 export async function collectExportData(
@@ -27,7 +27,7 @@ export async function collectExportData(
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/export.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gwd/export.ts")
   const exportModulePath = moduleResolution.modulePath
 
   if (!moduleResolution.useCompiledJs && (!existsSync(resolveTsLoader) || !existsSync(exportModulePath))) {

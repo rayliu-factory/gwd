@@ -1,16 +1,16 @@
 import * as vscode from "vscode";
 import { execFile } from "node:child_process";
-import type { GsdChangeTracker } from "./change-tracker.js";
+import type { GwdChangeTracker } from "./change-tracker.js";
 import { buildAgentGitAddArgs, buildAgentGitDiffArgs, buildAgentGitStatusArgs } from "./git-args.js";
 
 /**
  * Provides git integration for agent changes — commit, branch, and diff.
  */
-export class GsdGitIntegration implements vscode.Disposable {
+export class GwdGitIntegration implements vscode.Disposable {
 	private disposables: vscode.Disposable[] = [];
 
 	constructor(
-		private readonly tracker: GsdChangeTracker,
+		private readonly tracker: GwdChangeTracker,
 		private readonly cwd: string,
 	) {}
 
@@ -87,12 +87,12 @@ export class GsdGitIntegration implements vscode.Disposable {
 			if (!diff.trim()) {
 				// Files may be untracked — show status instead
 				const status = await this.git(buildAgentGitStatusArgs(files));
-				const channel = vscode.window.createOutputChannel("GSD Git Diff");
+				const channel = vscode.window.createOutputChannel("GWD Git Diff");
 				channel.appendLine("# Agent-modified files (unstaged):");
 				channel.appendLine(status);
 				channel.show();
 			} else {
-				const channel = vscode.window.createOutputChannel("GSD Git Diff");
+				const channel = vscode.window.createOutputChannel("GWD Git Diff");
 				channel.clear();
 				channel.appendLine(diff);
 				channel.show();

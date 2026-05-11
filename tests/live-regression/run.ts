@@ -1,11 +1,11 @@
 /**
  * Live Regression Test Harness — Post-Build Pipeline Validation
  *
- * These tests run AFTER `npm publish` against the installed `gsd` binary.
+ * These tests run AFTER `npm publish` against the installed `gwd` binary.
  * They exercise the dispatch loop state machine end-to-end by:
  *
- * 1. Creating real `.gsd/` directory structures with milestone artifacts
- * 2. Calling `gsd headless query` to verify state derivation
+ * 1. Creating real `.gwd/` directory structures with milestone artifacts
+ * 2. Calling `gwd headless query` to verify state derivation
  * 3. Verifying phase transitions match expected outcomes
  * 4. Testing crash recovery (lock file lifecycle) with a real captured PID
  * 5. Testing TTY / version-skew gating on startup
@@ -33,7 +33,7 @@ import { tmpdir } from "os";
 
 // ─── Config ───────────────────────────────────────────────────────────────
 
-const binary = process.env.GWD_SMOKE_BINARY || "gsd";
+const binary = process.env.GWD_SMOKE_BINARY || "gwd";
 let passed = 0;
 let failed = 0;
 
@@ -75,14 +75,14 @@ function gitInitRepo(dir: string): void {
   runGit(["commit", "--allow-empty", "-m", "init"]);
 }
 
-function gsd(
+function gwd(
   args: string[],
   cwd: string,
   env?: Record<string, string>,
 ): { stdout: string; stderr: string; code: number } {
   const result = spawnSync(
-    binary === "gsd" ? "gsd" : "node",
-    binary === "gsd" ? args : [binary, ...args],
+    binary === "gwd" ? "gwd" : "node",
+    binary === "gwd" ? args : [binary, ...args],
     {
       cwd,
       encoding: "utf-8",
@@ -99,7 +99,7 @@ function gsd(
 }
 
 function createTempProject(name: string): string {
-  const dir = mkdtempSync(join(tmpdir(), `gsd-live-${name}-`));
+  const dir = mkdtempSync(join(tmpdir(), `gwd-live-${name}-`));
   gitInitRepo(dir);
   return dir;
 }
@@ -110,9 +110,9 @@ function seedStaleCrashLock(
   unitType: string,
   unitId: string,
 ): void {
-  const gsdDir = join(projectDir, ".gsd");
-  mkdirSync(gsdDir, { recursive: true });
-  const db = new DatabaseSync(join(gsdDir, "gsd.db"));
+  const gwdDir = join(projectDir, ".gwd");
+  mkdirSync(gwdDir, { recursive: true });
+  const db = new DatabaseSync(join(gwdDir, "gwd.db"));
   db.exec(`
     CREATE TABLE IF NOT EXISTS workers (
       worker_id TEXT PRIMARY KEY,
@@ -203,18 +203,18 @@ function buildTaskSummary(id: string): string {
 
 // Recover DB hierarchy from on-disk markdown projections. DB is authoritative
 // at runtime, so live-regression fixtures that exist only as markdown must be
-// imported via `gsd headless recover` before `headless query` can derive
-// their state. The interactive `gsd recover` command requires a TTY; the
+// imported via `gwd headless recover` before `headless query` can derive
+// their state. The interactive `gwd recover` command requires a TTY; the
 // headless subcommand is the non-interactive parallel.
 function recover(dir: string): void {
-  const result = gsd(["headless", "recover"], dir);
+  const result = gwd(["headless", "recover"], dir);
   assert(
     result.code === 0,
-    `gsd headless recover should succeed for fixture, got ${result.code}: ${result.stderr}`,
+    `gwd headless recover should succeed for fixture, got ${result.code}: ${result.stderr}`,
   );
   assert(
-    result.stderr.includes("gsd-recover: recovered"),
-    `gsd headless recover should reach success path, got stderr: ${result.stderr}`,
+    result.stderr.includes("gwd-recover: recovered"),
+    `gwd headless recover should reach success path, got stderr: ${result.stderr}`,
   );
 }
 
@@ -223,10 +223,10 @@ function recover(dir: string): void {
 run("headless query returns valid JSON on initialized project", () => {
   const dir = createTempProject("query");
   try {
-    const gsdDir = join(dir, ".gsd");
-    mkdirSync(join(gsdDir, "milestones"), { recursive: true });
+    const gwdDir = join(dir, ".gwd");
+    mkdirSync(join(gwdDir, "milestones"), { recursive: true });
 
-    const result = gsd(["headless", "query"], dir);
+    const result = gwd(["headless", "query"], dir);
     assert(
       result.code === 0,
       `expected exit 0, got ${result.code}: ${result.stderr}`,
@@ -251,9 +251,9 @@ run("headless query returns valid JSON on initialized project", () => {
 run("headless query: empty project reports pre-planning or idle", () => {
   const dir = createTempProject("empty");
   try {
-    mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
+    mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
 
-    const result = gsd(["headless", "query"], dir);
+    const result = gwd(["headless", "query"], dir);
     assert(result.code === 0, `expected exit 0, got ${result.code}`);
 
     const json = JSON.parse(result.stdout);
@@ -275,7 +275,7 @@ run("headless query: empty project reports pre-planning or idle", () => {
 run("headless query: milestone with roadmap reports planning phase", () => {
   const dir = createTempProject("planning");
   try {
-    const mDir = join(dir, ".gsd", "milestones", "M001");
+    const mDir = join(dir, ".gwd", "milestones", "M001");
     mkdirSync(join(mDir, "slices", "S01"), { recursive: true });
     writeFileSync(join(mDir, "M001-CONTEXT.md"), "# M001\n\nContext.");
     writeFileSync(
@@ -284,7 +284,7 @@ run("headless query: milestone with roadmap reports planning phase", () => {
     );
 
     recover(dir);
-    const result = gsd(["headless", "query"], dir);
+    const result = gwd(["headless", "query"], dir);
     assert(result.code === 0, `expected exit 0, got ${result.code}`);
 
     const json = JSON.parse(result.stdout);
@@ -307,7 +307,7 @@ run("headless query: milestone with roadmap reports planning phase", () => {
 run("headless query: all tasks done reports summarizing phase", () => {
   const dir = createTempProject("summarizing");
   try {
-    const mDir = join(dir, ".gsd", "milestones", "M001");
+    const mDir = join(dir, ".gwd", "milestones", "M001");
     const sDir = join(mDir, "slices", "S01");
     mkdirSync(join(sDir, "tasks"), { recursive: true });
     writeFileSync(join(mDir, "M001-CONTEXT.md"), "# M001\n\nContext.");
@@ -325,7 +325,7 @@ run("headless query: all tasks done reports summarizing phase", () => {
     );
 
     recover(dir);
-    const result = gsd(["headless", "query"], dir);
+    const result = gwd(["headless", "query"], dir);
     assert(result.code === 0, `expected exit 0, got ${result.code}`);
 
     const json = JSON.parse(result.stdout);
@@ -350,7 +350,7 @@ run("headless query: all tasks done reports summarizing phase", () => {
 run("headless query: milestone with summary reports complete or idle", () => {
   const dir = createTempProject("complete");
   try {
-    const mDir = join(dir, ".gsd", "milestones", "M001");
+    const mDir = join(dir, ".gwd", "milestones", "M001");
     mkdirSync(mDir, { recursive: true });
     writeFileSync(
       join(mDir, "M001-ROADMAP.md"),
@@ -359,7 +359,7 @@ run("headless query: milestone with summary reports complete or idle", () => {
     writeFileSync(join(mDir, "M001-SUMMARY.md"), "# M001 Summary\n\nComplete.");
 
     recover(dir);
-    const result = gsd(["headless", "query"], dir);
+    const result = gwd(["headless", "query"], dir);
     assert(result.code === 0, `expected exit 0, got ${result.code}`);
 
     const json = JSON.parse(result.stdout);
@@ -387,7 +387,7 @@ runAsync("stale auto.lock with captured dead PID does not block --version", asyn
     const deadPid = await captureDeadPid();
     seedStaleCrashLock(dir, deadPid, "starting", "bootstrap");
 
-    const result = gsd(["--version"], dir);
+    const result = gwd(["--version"], dir);
     assert(
       result.code === 0,
       `--version should succeed even with stale lock, got code ${result.code}: ${result.stderr}`,
@@ -401,15 +401,15 @@ runAsync("stale auto.lock with captured dead PID does not block --version", asyn
   }
 });
 
-// ─── Test: `gsd doctor` emits actionable guidance on stale lock ─────────
+// ─── Test: `gwd doctor` emits actionable guidance on stale lock ─────────
 //
 // Previously "crash recovery shows actionable guidance" called
 // `headless query` (which does not emit guidance) and asserted only
-// exit 0.  A silent no-op passed.  Now: invoke `gsd doctor` — the
+// exit 0.  A silent no-op passed.  Now: invoke `gwd doctor` — the
 // command users are pointed at for recovery — and assert the output
 // actually mentions the stale lock with its PID.
 
-runAsync("gsd doctor surfaces actionable guidance about the stale lock", async () => {
+runAsync("gwd doctor surfaces actionable guidance about the stale lock", async () => {
   const dir = createTempProject("crash-guidance");
   try {
     const deadPid = await captureDeadPid();
@@ -424,7 +424,7 @@ runAsync("gsd doctor surfaces actionable guidance about the stale lock", async (
     let exitCode = 1;
     let ran = false;
     for (const argv of candidates) {
-      const r = gsd(argv, dir);
+      const r = gwd(argv, dir);
       const combined = `${r.stdout}\n${r.stderr}`;
       if (r.code === 0 || r.code === 1) {
         emitted = combined;
@@ -434,7 +434,7 @@ runAsync("gsd doctor surfaces actionable guidance about the stale lock", async (
       }
     }
     if (!ran) {
-      throw new Error("gsd doctor command is not available on this binary");
+      throw new Error("gwd doctor command is not available on this binary");
     }
 
     const lower = emitted.toLowerCase();
@@ -472,7 +472,7 @@ runAsync("gsd doctor surfaces actionable guidance about the stale lock", async (
 run("non-TTY invocation exits with clean TTY error", () => {
   const dir = createTempProject("tty-check");
   try {
-    const result = gsd([], dir);
+    const result = gwd([], dir);
     assert(
       result.code === 1,
       `expected exit 1 for non-TTY, got ${result.code}`,
@@ -500,13 +500,13 @@ run("version skew is detected and named in stderr", () => {
   const dir = createTempProject("version-skew");
   try {
     const fakeHome = dir;
-    mkdirSync(join(fakeHome, ".gsd", "agent"), { recursive: true });
+    mkdirSync(join(fakeHome, ".gwd", "agent"), { recursive: true });
     writeFileSync(
-      join(fakeHome, ".gsd", "agent", "managed-resources.json"),
-      JSON.stringify({ gsdVersion: "999.0.0" }),
+      join(fakeHome, ".gwd", "agent", "managed-resources.json"),
+      JSON.stringify({ gwdVersion: "999.0.0" }),
     );
 
-    const result = gsd([], dir, { HOME: fakeHome });
+    const result = gwd([], dir, { HOME: fakeHome });
     assert(result.code === 1, `expected exit 1, got ${result.code}`);
 
     const stderr = result.stderr;
@@ -523,7 +523,7 @@ run("version skew is detected and named in stderr", () => {
   }
 });
 
-// NB: the previous "gsd --help works" test was a duplicate of
+// NB: the previous "gwd --help works" test was a duplicate of
 // tests/smoke/test-help.ts and has been removed from this harness
 // (see #4801).  Smoke coverage of `--help` now lives in one place.
 

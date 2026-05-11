@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Checks persisted Phase 8 legacy telemetry before cleanup deletions.
 
 import { readFile } from "node:fs/promises";
@@ -84,7 +84,7 @@ export function evaluateLegacyCleanupGate(report) {
 
 export function renderLegacyCleanupGateSummary(result) {
   const lines = [
-    "GSD-2 Legacy Cleanup Gate",
+    "GWD-2 Legacy Cleanup Gate",
     `Snapshot: ${result.ts || "unknown"}`,
     `Status: ${result.ok ? "PASS" : "BLOCK"}`,
     "",
