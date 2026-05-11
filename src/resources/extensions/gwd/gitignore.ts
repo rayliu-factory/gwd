@@ -289,7 +289,7 @@ auto_supervisor: {}
 
 Project-specific guidance for skill selection and execution preferences.
 
-See \`~/.gwd/agent/extensions/gsd/docs/preferences-reference.md\` for full field documentation and examples.
+See \`~/.gwd/agent/extensions/gwd/docs/preferences-reference.md\` for full field documentation and examples.
 
 ## Fields
 

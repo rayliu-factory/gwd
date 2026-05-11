@@ -97,4 +97,4 @@ pre_dispatch_hooks: []
 
 # GWD Skill Preferences
 
-See `~/.gwd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.
+See `~/.gwd/agent/extensions/gwd/docs/preferences-reference.md` for full field documentation and examples.

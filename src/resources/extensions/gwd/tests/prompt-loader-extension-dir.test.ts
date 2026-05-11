@@ -10,7 +10,7 @@ function makeExists(paths: Set<string>): (path: string) => boolean {
 
 test("resolveExtensionDirFromCandidates prefers user-local dir when both trees are valid", () => {
   const moduleDir = "/npm/global/gwd";
-  const agentDir = "/home/user/.gsd/agent/extensions/gsd";
+  const agentDir = "/home/user/.gsd/agent/extensions/gwd";
   const paths = new Set<string>([
     join(moduleDir, "prompts"),
     join(moduleDir, "templates", "task-summary.md"),
@@ -24,7 +24,7 @@ test("resolveExtensionDirFromCandidates prefers user-local dir when both trees a
 
 test("resolveExtensionDirFromCandidates rejects module dir missing task-summary template", () => {
   const moduleDir = "/npm/global/gwd";
-  const agentDir = "/home/user/.gsd/agent/extensions/gsd";
+  const agentDir = "/home/user/.gsd/agent/extensions/gwd";
   const paths = new Set<string>([
     join(moduleDir, "prompts"),
     // Missing module templates/task-summary.md on purpose.
@@ -38,7 +38,7 @@ test("resolveExtensionDirFromCandidates rejects module dir missing task-summary 
 
 test("resolveExtensionDirFromCandidates falls back to prompts-only dir when neither tree is fully valid", () => {
   const moduleDir = "/npm/global/gwd";
-  const agentDir = "/home/user/.gsd/agent/extensions/gsd";
+  const agentDir = "/home/user/.gsd/agent/extensions/gwd";
   const paths = new Set<string>([
     join(moduleDir, "prompts"),
     // Neither side has templates/task-summary.md.
