@@ -164,6 +164,20 @@ test("isOllamaAppleSiliconResourceFailure matches local 35B resource failures on
     "llama runner process has terminated: out of memory",
   ), true);
 
+  for (const message of [
+    "allocation",
+    "allocation failed",
+    "model load",
+    "model load error",
+    "runner termination",
+  ]) {
+    assert.equal(isOllamaAppleSiliconResourceFailure(
+      "ollama",
+      OLLAMA_QWEN36_35B_A3B_NVFP4,
+      message,
+    ), true, message);
+  }
+
   assert.equal(isOllamaAppleSiliconResourceFailure(
     "ollama",
     OLLAMA_QWEN36_27B_NVFP4,
