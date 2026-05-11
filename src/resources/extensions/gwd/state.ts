@@ -39,7 +39,7 @@ import {
 import { findMilestoneIds } from './milestone-ids.js';
 import { loadQueueOrder, sortByQueueOrder } from './queue-order.js';
 import { isClosedStatus, isDeferredStatus } from './status-guards.js';
-import { nativeBatchParseGsdFiles, type BatchParsedFile } from './native-parser-bridge.js';
+import { nativeBatchParseGwdFiles, type BatchParsedFile } from './native-parser-bridge.js';
 
 import { join, resolve } from 'path';
 import { existsSync, readdirSync } from 'node:fs';
@@ -906,7 +906,7 @@ export async function _deriveStateImpl(
   // Filesystem fallback: used when deriveStateFromDb() is not available
   // (pre-migration projects). The DB-backed path is preferred when available
   // — see deriveStateFromDb() above.
-  const batchFiles = nativeBatchParseGsdFiles(gsdDir);
+  const batchFiles = nativeBatchParseGwdFiles(gsdDir);
   if (batchFiles) {
     for (const f of batchFiles) {
       const absPath = resolve(gsdDir, f.path);
