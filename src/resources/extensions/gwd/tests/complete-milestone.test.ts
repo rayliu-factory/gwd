@@ -11,7 +11,7 @@ import { openDatabase, closeDatabase, insertMilestone, insertSlice, insertTask }
 import { clearPathCache } from "../paths.ts";
 import { clearParseCache } from "../files.ts";
 
-// loadPrompt reads from ~/.gwd/agent/extensions/gsd/prompts/ (main checkout).
+// loadPrompt reads from ~/.gwd/agent/extensions/gwd/prompts/ (main checkout).
 // In a worktree the file may not exist there yet, so we resolve prompts
 // relative to this test file's location (the worktree copy).
 const __dirname = dirname(fileURLToPath(import.meta.url));

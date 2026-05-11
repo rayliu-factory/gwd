@@ -4,7 +4,7 @@ description: Break a plan or milestone brief into independently-grabbable vertic
 ---
 
 <objective>
-Decompose an approved plan into the smallest useful vertical slices that each cut end-to-end through every relevant layer. Primary output is the `Slices` section of `M###-ROADMAP.md` (matching the template at `src/resources/extensions/gsd/templates/roadmap.md`). Secondary output, only with explicit confirmation, is a set of GitHub issues with blocked-by relationships wired up.
+Decompose an approved plan into the smallest useful vertical slices that each cut end-to-end through every relevant layer. Primary output is the `Slices` section of `M###-ROADMAP.md` (matching the template at `src/resources/extensions/gwd/templates/roadmap.md`). Secondary output, only with explicit confirmation, is a set of GitHub issues with blocked-by relationships wired up.
 </objective>
 
 <context>
@@ -30,7 +30,7 @@ Typical invocation points:
 
 1. Read `M###-CONTEXT.md` for the active milestone — the brief is the source of truth for scope.
 2. Read `M###-ROADMAP.md` if one exists — you may be refining rather than creating from scratch.
-3. Read `src/resources/extensions/gsd/templates/roadmap.md` for the exact slice format. The parser depends on it.
+3. Read `src/resources/extensions/gwd/templates/roadmap.md` for the exact slice format. The parser depends on it.
 4. If the plan came from a GitHub issue (user passed a URL or number), fetch it with `mcp__github__issue_read`.
 
 ## Step 2: Explore the codebase briefly

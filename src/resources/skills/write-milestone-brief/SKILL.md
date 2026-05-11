@@ -4,7 +4,7 @@ description: Synthesize the current conversation into a milestone brief (PRD). W
 ---
 
 <objective>
-Take everything established in the current conversation (plus repo reality) and produce a milestone brief that a future agent can execute from with zero additional context. The output is a populated `M###-CONTEXT.md`, matching the template at `src/resources/extensions/gsd/templates/context.md`. Optionally, with explicit confirmation, also a GitHub issue.
+Take everything established in the current conversation (plus repo reality) and produce a milestone brief that a future agent can execute from with zero additional context. The output is a populated `M###-CONTEXT.md`, matching the template at `src/resources/extensions/gwd/templates/context.md`. Optionally, with explicit confirmation, also a GitHub issue.
 </objective>
 
 <context>
@@ -36,7 +36,7 @@ Find the active milestone:
 
 ## Step 2: Read the template
 
-Read `src/resources/extensions/gsd/templates/context.md` (the full path is shown in the `templatesDir` system-prompt field). Match its structure exactly — parsers and downstream prompts depend on the headings.
+Read `src/resources/extensions/gwd/templates/context.md` (the full path is shown in the `templatesDir` system-prompt field). Match its structure exactly — parsers and downstream prompts depend on the headings.
 
 ## Step 3: Sketch the modules
 
@@ -65,7 +65,7 @@ Populate `M###-CONTEXT.md` using the template. Key sections:
 - **Acceptance Criteria** — per-slice, testable criteria gathered during discussion.
 - **Open Questions** — anything material that is genuinely unresolved. Note current thinking so future agents have a starting point.
 
-> The template headings above are mandatory — do not omit, rename, or reorder them. The exact required order matches `src/resources/extensions/gsd/templates/context.md`: Project Description → Why This Milestone → User-Visible Outcome → Completion Class → Final Integrated Acceptance → Architectural Decisions → Error Handling Strategy → Risks and Unknowns → Existing Codebase / Prior Art → Relevant Requirements → Scope → Technical Constraints → Integration Points → Testing Requirements → Acceptance Criteria → Open Questions.
+> The template headings above are mandatory — do not omit, rename, or reorder them. The exact required order matches `src/resources/extensions/gwd/templates/context.md`: Project Description → Why This Milestone → User-Visible Outcome → Completion Class → Final Integrated Acceptance → Architectural Decisions → Error Handling Strategy → Risks and Unknowns → Existing Codebase / Prior Art → Relevant Requirements → Scope → Technical Constraints → Integration Points → Testing Requirements → Acceptance Criteria → Open Questions.
 
 ## Step 5: Write it
 

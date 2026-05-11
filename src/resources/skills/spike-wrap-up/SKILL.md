@@ -8,9 +8,9 @@ Convert the output of a research spike (`SCOPE.md`, `research/*.md`, `RECOMMENDA
 </objective>
 
 <context>
-GWD's spike workflow (`src/resources/extensions/gsd/workflow-templates/spike.md`) produces documents in `.gsd/workflows/spikes/<slug>/`. Those documents are useful once and then forgotten unless something packages them for reuse.
+GWD's spike workflow (`src/resources/extensions/gwd/workflow-templates/spike.md`) produces documents in `.gsd/workflows/spikes/<slug>/`. Those documents are useful once and then forgotten unless something packages them for reuse.
 
-GWD already watches `.claude/skills/` (and `.agents/skills/`) at both user and project levels — see `src/resources/extensions/gsd/skill-discovery.ts`. Any skill written there is picked up on the next session without further wiring. This skill is the bridge from "spike done" to "skill available."
+GWD already watches `.claude/skills/` (and `.agents/skills/`) at both user and project levels — see `src/resources/extensions/gwd/skill-discovery.ts`. Any skill written there is picked up on the next session without further wiring. This skill is the bridge from "spike done" to "skill available."
 
 Invocation points:
 - End of Phase 3 (synthesize) in `/gwd start spike` — prompt suggests running this skill

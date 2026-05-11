@@ -223,11 +223,11 @@ Add the \`completing-milestone\` phase to the GWD state machine.
 
 ## Inputs
 
-- \`agent/extensions/gsd/types.ts\` — Phase type definition
+- \`agent/extensions/gwd/types.ts\` — Phase type definition
 
 ## Expected Output
 
-- \`agent/extensions/gsd/types.ts\` — Phase union includes \`'completing-milestone'\`
+- \`agent/extensions/gwd/types.ts\` — Phase union includes \`'completing-milestone'\`
 `;
   const result = parseTaskPlanMustHaves(content);
   assert.deepStrictEqual(result.length, 5, 'real plan has 5 must-haves');

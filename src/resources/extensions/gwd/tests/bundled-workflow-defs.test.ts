@@ -20,7 +20,7 @@ import { validateDefinition } from "../definition-loader.ts";
 // ─── Path resolution ─────────────────────────────────────────────────────
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// Navigate from tests/ → extensions/gsd/ → extensions/ → resources/ → skills/create-workflow/templates/
+// Navigate from tests/ → extensions/gwd/ → extensions/ → resources/ → skills/create-workflow/templates/
 const templatesDir = join(
   __dirname,
   "..",

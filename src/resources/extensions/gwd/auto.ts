@@ -2366,7 +2366,7 @@ export async function startAuto(
     // bundled extension updates before resume-time verification/state logic runs.
     // GWD_PKG_ROOT is set by loader.ts and points to the gwd-pi package root.
     // The relative import ("../../../resource-loader.js") only works from the source
-    // tree; deployed extensions live at ~/.gwd/agent/extensions/gsd/ where the
+    // tree; deployed extensions live at ~/.gwd/agent/extensions/gwd/ where the
     // relative path resolves to ~/.gwd/agent/resource-loader.js which doesn't exist.
     // Using GWD_PKG_ROOT constructs a correct absolute path in both contexts (#3949).
     await refreshResumeResourcesAndDb(s.basePath);

@@ -62,7 +62,7 @@ log.info({
 });
 ```
 
-Use the project's existing logger if one exists. In gwd-2, follow the patterns in `src/resources/extensions/gsd/activity-log.ts` and `src/resources/extensions/gsd/journal.ts` — structured JSONL, one event per line, with `ts`, `event`, and domain-specific fields.
+Use the project's existing logger if one exists. In gwd-2, follow the patterns in `src/resources/extensions/gwd/activity-log.ts` and `src/resources/extensions/gwd/journal.ts` — structured JSONL, one event per line, with `ts`, `event`, and domain-specific fields.
 
 Avoid:
 - `console.log("here")` — what does "here" mean in six months?

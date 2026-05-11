@@ -81,7 +81,7 @@ A good root cause is:
 
 Bad root cause: "Auto-mode got stuck in a loop." Good root cause: "After slice completion, `auto-unit-closeout.ts` emits `unit-end` before `auto-post-unit.ts` updates the roadmap checkbox. The next `iteration-start` finds the same unit `[ ]` and re-dispatches — `dispatch-guard.ts:42` has no check against the freshly-ended `unitId`."
 
-Consult the source map in `src/resources/extensions/gsd/prompts/forensics.md` to map symptoms to the likely domain files.
+Consult the source map in `src/resources/extensions/gwd/prompts/forensics.md` to map symptoms to the likely domain files.
 
 ## Step 5: Propose a fix
 
@@ -111,7 +111,7 @@ Format the output as a GitHub-issue-ready report:
 
 <specific named cause — file, function, state transition>
 
-`src/resources/extensions/gsd/auto-unit-closeout.ts:<line>`: <exactly what goes wrong>
+`src/resources/extensions/gwd/auto-unit-closeout.ts:<line>`: <exactly what goes wrong>
 
 ## Proposed Fix
 

@@ -1471,8 +1471,8 @@ describe("normalizeFilePath tilde expansion (#4446)", () => {
 
   test("expands ~/ prefixed paths to homedir", () => {
     assert.equal(
-      normalizeFilePath("~/.gwd/agent/extensions/gsd/native-git-bridge.js"),
-      join(homedir(), ".gwd/agent/extensions/gsd/native-git-bridge.js"),
+      normalizeFilePath("~/.gwd/agent/extensions/gwd/native-git-bridge.js"),
+      join(homedir(), ".gwd/agent/extensions/gwd/native-git-bridge.js"),
     );
   });
 });
