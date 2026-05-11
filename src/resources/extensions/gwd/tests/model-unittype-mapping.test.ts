@@ -19,7 +19,7 @@ import { KNOWN_UNIT_LABELS } from "../preferences-types.ts";
 
 function withModelPreferences<T>(fn: () => T): T {
   const oldHome = process.env.GWD_HOME;
-  const home = mkdtempSync(join(tmpdir(), "gsd-model-map-"));
+  const home = mkdtempSync(join(tmpdir(), "gwd-model-map-"));
   try {
     process.env.GWD_HOME = home;
     writeFileSync(join(home, "preferences.md"), [

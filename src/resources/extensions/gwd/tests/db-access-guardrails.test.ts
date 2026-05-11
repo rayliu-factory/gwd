@@ -1,4 +1,4 @@
-// GSD2 — Regression tests: DB anti-pattern guardrails in prompt templates
+// GWD2 — Regression tests: DB anti-pattern guardrails in prompt templates
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -86,7 +86,7 @@ test("no prompt file contains an unguarded sqlite3 command invocation", () => {
       //   sqlite3 -header .gwd/gwd.db, etc.
       // Guardrail text that says "Never run" or "Do NOT query" is fine — only flag
       // lines where these appear without a surrounding prohibition keyword.
-      if (/sqlite3\b.*gsd\.db/.test(trimmed)) {
+      if (/sqlite3\b.*gwd\.db/.test(trimmed)) {
         const context = lines.slice(Math.max(0, i - 3), i + 1).join(" ");
         if (!/Never|Do NOT|do not|don't|prohibited|forbidden|never run/i.test(context)) {
           violations.push(`${file}:${i + 1} — unguarded sqlite3 command: ${trimmed}`);

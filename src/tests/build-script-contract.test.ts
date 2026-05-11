@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Regression coverage for workspace build ordering around shared contracts.
 
 import assert from "node:assert/strict";

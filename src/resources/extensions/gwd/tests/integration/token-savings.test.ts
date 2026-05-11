@@ -144,7 +144,7 @@ A test project for validating token savings with DB-scoped content.
 
 console.log('\n=== token-savings: plan-slice prompt ≥30% character savings ===');
 {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-token-savings-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-token-savings-'));
   mkdirSync(join(base, '.gwd'), { recursive: true });
   writeFileSync(join(base, '.gwd', 'DECISIONS.md'), decisionsMarkdown);
   writeFileSync(join(base, '.gwd', 'REQUIREMENTS.md'), requirementsMarkdown);
@@ -163,7 +163,7 @@ console.log('\n=== token-savings: plan-slice prompt ≥30% character savings ===
   const dbDecisionsContent = formatDecisionsForPrompt(scopedDecisions);
   const dbRequirementsContent = formatRequirementsForPrompt(scopedRequirements);
 
-  // ── Full-markdown equivalents (what inlineGsdRootFile would return) ──
+  // ── Full-markdown equivalents (what inlineGwdRootFile would return) ──
   const fullDecisionsContent = readFileSync(join(base, '.gwd', 'DECISIONS.md'), 'utf-8');
   const fullRequirementsContent = readFileSync(join(base, '.gwd', 'REQUIREMENTS.md'), 'utf-8');
 
@@ -224,7 +224,7 @@ console.log('\n=== token-savings: plan-slice prompt ≥30% character savings ===
 
 console.log('\n=== token-savings: research-milestone prompt shows meaningful savings ===');
 {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-token-savings-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-token-savings-'));
   mkdirSync(join(base, '.gwd'), { recursive: true });
   writeFileSync(join(base, '.gwd', 'DECISIONS.md'), decisionsMarkdown);
   writeFileSync(join(base, '.gwd', 'REQUIREMENTS.md'), requirementsMarkdown);
@@ -272,7 +272,7 @@ console.log('\n=== token-savings: research-milestone prompt shows meaningful sav
 
 console.log('\n=== token-savings: quality — correct scoping, no cross-contamination ===');
 {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-token-savings-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-token-savings-'));
   mkdirSync(join(base, '.gwd'), { recursive: true });
   writeFileSync(join(base, '.gwd', 'DECISIONS.md'), decisionsMarkdown);
   writeFileSync(join(base, '.gwd', 'REQUIREMENTS.md'), requirementsMarkdown);

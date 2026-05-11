@@ -1,4 +1,4 @@
-// GSD2 - Write gate regression tests.
+// GWD2 - Write gate regression tests.
 /**
  * Unit tests for the CONTEXT.md write-gate (D031 guard chain).
  *
@@ -300,7 +300,7 @@ test('write-gate: deep root PROJECT/REQUIREMENTS final saves require verified ap
 });
 
 test('write-gate: reopening a gate revokes its previous verified approval', () => {
-  const base = join(tmpdir(), `gsd-write-gate-reopen-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-write-gate-reopen-${randomUUID()}`);
   mkdirSync(base, { recursive: true });
 
   try {
@@ -477,8 +477,8 @@ test('write-gate: resetWriteGateState clears pending gate', () => {
 });
 
 test('write-gate: in-memory state is scoped by basePath', () => {
-  const workspaceA = join(tmpdir(), `gsd-write-gate-isolation-a-${randomUUID()}`);
-  const workspaceB = join(tmpdir(), `gsd-write-gate-isolation-b-${randomUUID()}`);
+  const workspaceA = join(tmpdir(), `gwd-write-gate-isolation-a-${randomUUID()}`);
+  const workspaceB = join(tmpdir(), `gwd-write-gate-isolation-b-${randomUUID()}`);
 
   try {
     clearDiscussionFlowState(workspaceA);
@@ -632,7 +632,7 @@ test('write-gate: isDepthConfirmationAnswer fails closed when options are missin
 // ─── Scenario 29: loadWriteGateSnapshot returns clean state when persist file deleted (#4343) ──
 
 test('write-gate: loadWriteGateSnapshot returns empty default when persist file is deleted (#4343)', () => {
-  const base = join(tmpdir(), `gsd-write-gate-4343-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-write-gate-4343-${randomUUID()}`);
   mkdirSync(join(base, '.gwd', 'runtime'), { recursive: true });
   const stateFilePath = join(base, '.gwd', 'runtime', 'write-gate-state.json');
   const originalEnv = process.env.GWD_PERSIST_WRITE_GATE_STATE;
@@ -690,8 +690,8 @@ test('write-gate: loadWriteGateSnapshot returns empty default when persist file 
 // ─── Scenario 30: write-gate persistence recreates dangling external .gwd target ──
 
 test('write-gate: resetWriteGateState persists through dangling .gwd symlink', () => {
-  const base = join(tmpdir(), `gsd-write-gate-dangling-${randomUUID()}`);
-  const externalState = join(tmpdir(), `gsd-write-gate-external-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-write-gate-dangling-${randomUUID()}`);
+  const externalState = join(tmpdir(), `gwd-write-gate-external-${randomUUID()}`);
   const stateFilePath = join(base, '.gwd', 'runtime', 'write-gate-state.json');
   const originalEnv = process.env.GWD_PERSIST_WRITE_GATE_STATE;
 

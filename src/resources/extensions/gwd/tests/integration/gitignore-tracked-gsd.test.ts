@@ -1,5 +1,5 @@
 /**
- * gitignore-tracked-gsd.test.ts — Regression tests for #1364.
+ * gitignore-tracked-gwd.test.ts — Regression tests for #1364.
  *
  * Verifies that ensureGitignore() does NOT add ".gwd" to .gitignore
  * when .gwd/ contains git-tracked files, and that migrateToExternalState()
@@ -22,7 +22,7 @@ import {
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-import { ensureGitignore, hasGitTrackedGsdFiles } from "../../gitignore.ts";
+import { ensureGitignore, hasGitTrackedGwdFiles } from "../../gitignore.ts";
 import { migrateToExternalState } from "../../migrate-external.ts";
 
 // ─── Helpers ─────────────────────────────────────────────────────────
@@ -32,7 +32,7 @@ function git(dir: string, ...args: string[]): string {
 }
 
 function makeTempRepo(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-gitignore-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-gitignore-test-"));
   git(dir, "init");
   git(dir, "config", "user.email", "test@test.com");
   git(dir, "config", "user.name", "Test");
@@ -51,34 +51,34 @@ function cleanup(dir: string): void {
   }
 }
 
-// ─── hasGitTrackedGsdFiles ───────────────────────────────────────────
+// ─── hasGitTrackedGwdFiles ───────────────────────────────────────────
 
-test("hasGitTrackedGsdFiles returns false when .gwd/ does not exist", (t) => {
+test("hasGitTrackedGwdFiles returns false when .gwd/ does not exist", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
-  assert.equal(hasGitTrackedGsdFiles(dir), false);
+  assert.equal(hasGitTrackedGwdFiles(dir), false);
 });
 
-test("hasGitTrackedGsdFiles returns true when .gwd/ has tracked files", (t) => {
+test("hasGitTrackedGwdFiles returns true when .gwd/ has tracked files", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
   mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   writeFileSync(join(dir, ".gwd", "PROJECT.md"), "# Test Project\n");
   git(dir, "add", ".gwd/PROJECT.md");
-  git(dir, "commit", "-m", "add gsd");
-  assert.equal(hasGitTrackedGsdFiles(dir), true);
+  git(dir, "commit", "-m", "add gwd");
+  assert.equal(hasGitTrackedGwdFiles(dir), true);
 });
 
-test("hasGitTrackedGsdFiles returns false when .gwd/ exists but is untracked", (t) => {
+test("hasGitTrackedGwdFiles returns false when .gwd/ exists but is untracked", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   writeFileSync(join(dir, ".gwd", "STATE.md"), "state\n");
   // Not git-added — should return false
-  assert.equal(hasGitTrackedGsdFiles(dir), false);
+  assert.equal(hasGitTrackedGwdFiles(dir), false);
 });
 
 // ─── ensureGitignore — tracked .gwd/ protection ─────────────────────
@@ -91,7 +91,7 @@ test("ensureGitignore does NOT add .gwd when .gwd/ has tracked files (#1364)", (
     writeFileSync(join(dir, ".gwd", "PROJECT.md"), "# Test Project\n");
     writeFileSync(join(dir, ".gwd", "DECISIONS.md"), "# Decisions\n");
     git(dir, "add", ".gwd/");
-    git(dir, "commit", "-m", "track gsd state");
+    git(dir, "commit", "-m", "track gwd state");
 
     // Run ensureGitignore
     ensureGitignore(dir);
@@ -153,7 +153,7 @@ test("ensureGitignore with tracked .gwd/ does not cause git to see files as dele
       "# M001\n",
     );
     git(dir, "add", ".gwd/");
-    git(dir, "commit", "-m", "track gsd state");
+    git(dir, "commit", "-m", "track gwd state");
 
     // Run ensureGitignore
     ensureGitignore(dir);
@@ -176,14 +176,14 @@ test("ensureGitignore with tracked .gwd/ does not cause git to see files as dele
   }
 });
 
-test("hasGitTrackedGsdFiles returns true (fail-safe) when git is not available", (t) => {
+test("hasGitTrackedGwdFiles returns true (fail-safe) when git is not available", (t) => {
   const dir = makeTempRepo();
   try {
     // Create and track .gwd/ files
     mkdirSync(join(dir, ".gwd"), { recursive: true });
     writeFileSync(join(dir, ".gwd", "PROJECT.md"), "# Project\n");
     git(dir, "add", ".gwd/");
-    git(dir, "commit", "-m", "track gsd");
+    git(dir, "commit", "-m", "track gwd");
 
     // Corrupt the git index to simulate git failure
     const indexPath = join(dir, ".git", "index.lock");
@@ -191,7 +191,7 @@ test("hasGitTrackedGsdFiles returns true (fail-safe) when git is not available",
 
     // Should fail safe — assume tracked rather than silently returning false
     // (The index lock causes git ls-files to fail; rev-parse also fails → true)
-    const result = hasGitTrackedGsdFiles(dir);
+    const result = hasGitTrackedGwdFiles(dir);
     assert.equal(result, true, "Should return true (fail-safe) when git is unavailable");
   } finally {
     cleanup(dir);
@@ -207,7 +207,7 @@ test("migrateToExternalState aborts when .gwd/ has tracked files (#1364)", (t) =
     mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
     writeFileSync(join(dir, ".gwd", "PROJECT.md"), "# Project\n");
     git(dir, "add", ".gwd/");
-    git(dir, "commit", "-m", "track gsd state");
+    git(dir, "commit", "-m", "track gwd state");
 
     // Attempt migration — should abort without moving anything
     const result = migrateToExternalState(dir);
@@ -236,9 +236,9 @@ test("migrateToExternalState cleans git index so tracked files don't show as del
     writeFileSync(join(dir, ".gwd", "PROJECT.md"), "# Project\n");
     writeFileSync(join(dir, ".gwd", "milestones", "M001", "PLAN.md"), "# Plan\n");
     git(dir, "add", ".gwd/");
-    git(dir, "commit", "-m", "track gsd state");
+    git(dir, "commit", "-m", "track gwd state");
     git(dir, "rm", "-r", "--cached", ".gwd/");
-    git(dir, "commit", "-m", "untrack gsd (simulates pre-migration project)");
+    git(dir, "commit", "-m", "untrack gwd (simulates pre-migration project)");
 
     const result = migrateToExternalState(dir);
     assert.equal(result.migrated, true, "Migration should succeed");

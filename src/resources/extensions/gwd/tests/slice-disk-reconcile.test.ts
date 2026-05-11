@@ -27,7 +27,7 @@ import { createTestContext } from "./test-helpers.ts";
 const { assertEq, assertTrue, report } = createTestContext();
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-slice-reconcile-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-slice-reconcile-"));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }

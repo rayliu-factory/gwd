@@ -2,7 +2,7 @@
  * worktree-db-respawn-truncation.test.ts — Regression test for #2815.
  *
  * Verifies that syncProjectRootToWorktree does NOT delete a non-empty
- * worktree gwd.db. On worker respawn, gsd-migrate populates the DB
+ * worktree gwd.db. On worker respawn, gwd-migrate populates the DB
  * (~1.7MB) before the auto-loop calls syncProjectRootToWorktree. The
  * sync step must preserve the freshly-migrated DB to avoid truncating
  * it to 0 bytes and causing "no such table: slices" failures.
@@ -23,7 +23,7 @@ import assert from 'node:assert/strict';
 
 
 function createBase(name: string): string {
-  const base = mkdtempSync(join(tmpdir(), `gsd-wt-respawn-${name}-`));
+  const base = mkdtempSync(join(tmpdir(), `gwd-wt-respawn-${name}-`));
   mkdirSync(join(base, '.gwd', 'milestones'), { recursive: true });
   return base;
 }
@@ -46,7 +46,7 @@ describe('worktree-db-respawn-truncation (#2815)', async () => {
       mkdirSync(m001Dir, { recursive: true });
       writeFileSync(join(m001Dir, 'M001-ROADMAP.md'), '# Roadmap');
 
-      // Simulate a freshly-migrated worktree DB (non-empty, like after gsd-migrate)
+      // Simulate a freshly-migrated worktree DB (non-empty, like after gwd-migrate)
       // Real DBs are ~1.7MB; we use a smaller payload to prove the size check works
       const fakeDbContent = Buffer.alloc(4096, 0x42); // 4KB non-empty DB
       writeFileSync(join(wtBase, '.gwd', 'gwd.db'), fakeDbContent);
@@ -113,27 +113,27 @@ describe('worktree-db-respawn-truncation (#2815)', async () => {
 
       // Create an empty (0-byte) gwd.db plus orphaned WAL and SHM files —
       // this is the exact state that causes Node 24 node:sqlite CPU spin (#2478).
-      const wtGsd = join(wtBase, '.gwd');
-      writeFileSync(join(wtGsd, 'gwd.db'), '');
-      writeFileSync(join(wtGsd, 'gwd.db-wal'), Buffer.alloc(605672, 0xAA));
-      writeFileSync(join(wtGsd, 'gwd.db-shm'), Buffer.alloc(32768, 0xBB));
+      const wtGwd = join(wtBase, '.gwd');
+      writeFileSync(join(wtGwd, 'gwd.db'), '');
+      writeFileSync(join(wtGwd, 'gwd.db-wal'), Buffer.alloc(605672, 0xAA));
+      writeFileSync(join(wtGwd, 'gwd.db-shm'), Buffer.alloc(32768, 0xBB));
 
-      assert.ok(existsSync(join(wtGsd, 'gwd.db')), 'gwd.db exists before sync');
-      assert.ok(existsSync(join(wtGsd, 'gwd.db-wal')), 'gwd.db-wal exists before sync');
-      assert.ok(existsSync(join(wtGsd, 'gwd.db-shm')), 'gwd.db-shm exists before sync');
+      assert.ok(existsSync(join(wtGwd, 'gwd.db')), 'gwd.db exists before sync');
+      assert.ok(existsSync(join(wtGwd, 'gwd.db-wal')), 'gwd.db-wal exists before sync');
+      assert.ok(existsSync(join(wtGwd, 'gwd.db-shm')), 'gwd.db-shm exists before sync');
 
       syncProjectRootToWorktree(mainBase, wtBase, 'M001');
 
       assert.ok(
-        !existsSync(join(wtGsd, 'gwd.db')),
+        !existsSync(join(wtGwd, 'gwd.db')),
         '#2478: empty gwd.db must be deleted',
       );
       assert.ok(
-        !existsSync(join(wtGsd, 'gwd.db-wal')),
+        !existsSync(join(wtGwd, 'gwd.db-wal')),
         '#2478: orphaned gwd.db-wal must be deleted alongside gwd.db',
       );
       assert.ok(
-        !existsSync(join(wtGsd, 'gwd.db-shm')),
+        !existsSync(join(wtGwd, 'gwd.db-shm')),
         '#2478: orphaned gwd.db-shm must be deleted alongside gwd.db',
       );
     } finally {
@@ -155,22 +155,22 @@ describe('worktree-db-respawn-truncation (#2815)', async () => {
 
       // Orphaned WAL/SHM with NO gwd.db at all — can happen from a previous
       // partial cleanup. These must still be cleaned up.
-      const wtGsd = join(wtBase, '.gwd');
-      writeFileSync(join(wtGsd, 'gwd.db-wal'), Buffer.alloc(1024, 0xAA));
-      writeFileSync(join(wtGsd, 'gwd.db-shm'), Buffer.alloc(1024, 0xBB));
+      const wtGwd = join(wtBase, '.gwd');
+      writeFileSync(join(wtGwd, 'gwd.db-wal'), Buffer.alloc(1024, 0xAA));
+      writeFileSync(join(wtGwd, 'gwd.db-shm'), Buffer.alloc(1024, 0xBB));
 
-      assert.ok(!existsSync(join(wtGsd, 'gwd.db')), 'gwd.db does not exist');
-      assert.ok(existsSync(join(wtGsd, 'gwd.db-wal')), 'orphaned gwd.db-wal exists');
-      assert.ok(existsSync(join(wtGsd, 'gwd.db-shm')), 'orphaned gwd.db-shm exists');
+      assert.ok(!existsSync(join(wtGwd, 'gwd.db')), 'gwd.db does not exist');
+      assert.ok(existsSync(join(wtGwd, 'gwd.db-wal')), 'orphaned gwd.db-wal exists');
+      assert.ok(existsSync(join(wtGwd, 'gwd.db-shm')), 'orphaned gwd.db-shm exists');
 
       syncProjectRootToWorktree(mainBase, wtBase, 'M001');
 
       assert.ok(
-        !existsSync(join(wtGsd, 'gwd.db-wal')),
+        !existsSync(join(wtGwd, 'gwd.db-wal')),
         '#2478: orphaned gwd.db-wal must be deleted even without main db file',
       );
       assert.ok(
-        !existsSync(join(wtGsd, 'gwd.db-shm')),
+        !existsSync(join(wtGwd, 'gwd.db-shm')),
         '#2478: orphaned gwd.db-shm must be deleted even without main db file',
       );
     } finally {

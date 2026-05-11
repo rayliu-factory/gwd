@@ -33,7 +33,7 @@ const _require = createRequire(import.meta.url);
 // ---------------------------------------------------------------------------
 
 function makeTmp(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-v21-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-v21-'));
 }
 
 function cleanup(base: string): void {

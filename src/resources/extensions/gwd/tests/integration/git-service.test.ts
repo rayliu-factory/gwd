@@ -313,7 +313,7 @@ describe('git-service', async () => {
   // ─── runGit ────────────────────────────────────────────────────────────
 
 
-  const tempDir = mkdtempSync(join(tmpdir(), "gsd-git-service-test-"));
+  const tempDir = mkdtempSync(join(tmpdir(), "gwd-git-service-test-"));
   runGit(tempDir, ["init", "-b", "main"]);
   runGit(tempDir, ["config", "user.name", "Pi Test"]);
   runGit(tempDir, ["config", "user.email", "pi@example.com"]);
@@ -360,7 +360,7 @@ describe('git-service', async () => {
   }
 
   function initTempRepo(): string {
-    const dir = mkdtempSync(join(tmpdir(), "gsd-git-t02-"));
+    const dir = mkdtempSync(join(tmpdir(), "gwd-git-t02-"));
     runGit(dir, ["init", "-b", "main"]);
     runGit(dir, ["config", "user.name", "Pi Test"]);
     runGit(dir, ["config", "user.email", "pi@example.com"]);
@@ -682,7 +682,7 @@ describe('git-service', async () => {
   // ─── Helper: create repo for branch tests ────────────────────────────
 
   function initBranchTestRepo(): string {
-    const dir = mkdtempSync(join(tmpdir(), "gsd-git-t03-"));
+    const dir = mkdtempSync(join(tmpdir(), "gwd-git-t03-"));
     runGit(dir, ["init", "-b", "main"]);
     runGit(dir, ["config", "user.name", "Pi Test"]);
     runGit(dir, ["config", "user.email", "pi@example.com"]);
@@ -723,7 +723,7 @@ describe('git-service', async () => {
 
   {
     // master-only repo
-    const repo = mkdtempSync(join(tmpdir(), "gsd-git-t03-master-"));
+    const repo = mkdtempSync(join(tmpdir(), "gwd-git-t03-master-"));
     runGit(repo, ["init", "-b", "master"]);
     runGit(repo, ["config", "user.name", "Pi Test"]);
     runGit(repo, ["config", "user.email", "pi@example.com"]);
@@ -748,7 +748,7 @@ describe('git-service', async () => {
     const svc = new GitServiceImpl(repo);
 
     // Create a branch with a commit
-    run("git checkout -b gsd/M001/S01", repo);
+    run("git checkout -b gwd/M001/S01", repo);
     createFile(repo, "src/snap.ts", "snapshot me");
     svc.commit({ message: "snapshot test commit" });
 
@@ -1001,7 +1001,7 @@ describe('git-service', async () => {
   test('Integration branch: rejects slice branches', () => {
     const repo = initBranchTestRepo();
 
-    writeIntegrationBranch(repo, "M001", "gsd/M001/S01");
+    writeIntegrationBranch(repo, "M001", "gwd/M001/S01");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), null, "slice branches are not recorded as integration branch");
 
     rmSync(repo, { recursive: true, force: true });
@@ -1013,28 +1013,28 @@ describe('git-service', async () => {
     const repo = initBranchTestRepo();
 
     // All 8 registered workflow templates should be rejected
-    writeIntegrationBranch(repo, "M001", "gsd/hotfix/fix-login");
+    writeIntegrationBranch(repo, "M001", "gwd/hotfix/fix-login");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), null, "hotfix branch is not recorded");
 
-    writeIntegrationBranch(repo, "M001", "gsd/bugfix/null-pointer");
+    writeIntegrationBranch(repo, "M001", "gwd/bugfix/null-pointer");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), null, "bugfix branch is not recorded");
 
-    writeIntegrationBranch(repo, "M001", "gsd/small-feature/add-button");
+    writeIntegrationBranch(repo, "M001", "gwd/small-feature/add-button");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), null, "small-feature branch is not recorded");
 
-    writeIntegrationBranch(repo, "M001", "gsd/refactor/rename-module");
+    writeIntegrationBranch(repo, "M001", "gwd/refactor/rename-module");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), null, "refactor branch is not recorded");
 
-    writeIntegrationBranch(repo, "M001", "gsd/spike/evaluate-lib");
+    writeIntegrationBranch(repo, "M001", "gwd/spike/evaluate-lib");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), null, "spike branch is not recorded");
 
-    writeIntegrationBranch(repo, "M001", "gsd/security-audit/owasp-scan");
+    writeIntegrationBranch(repo, "M001", "gwd/security-audit/owasp-scan");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), null, "security-audit branch is not recorded");
 
-    writeIntegrationBranch(repo, "M001", "gsd/dep-upgrade/bump-react");
+    writeIntegrationBranch(repo, "M001", "gwd/dep-upgrade/bump-react");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), null, "dep-upgrade branch is not recorded");
 
-    writeIntegrationBranch(repo, "M001", "gsd/full-project/new-app");
+    writeIntegrationBranch(repo, "M001", "gwd/full-project/new-app");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), null, "full-project branch is not recorded");
 
     rmSync(repo, { recursive: true, force: true });
@@ -1042,7 +1042,7 @@ describe('git-service', async () => {
 
   // ─── writeIntegrationBranch: still records legitimate branches ────────
 
-  test('Integration branch: records non-ephemeral gsd branches', () => {
+  test('Integration branch: records non-ephemeral gwd branches', () => {
     const repo = initBranchTestRepo();
 
     // A normal feature branch should still be recorded
@@ -1053,10 +1053,10 @@ describe('git-service', async () => {
     writeIntegrationBranch(repo, "M002", "main");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M002"), "main", "main branch is recorded");
 
-    // User-managed gsd/* integration branches should not be rejected unless
+    // User-managed gwd/* integration branches should not be rejected unless
     // they match a GWD-generated workflow template prefix.
-    writeIntegrationBranch(repo, "M003", "gsd/release/2026-q2");
-    assert.deepStrictEqual(readIntegrationBranch(repo, "M003"), "gsd/release/2026-q2", "user gsd/* branches are recorded");
+    writeIntegrationBranch(repo, "M003", "gwd/release/2026-q2");
+    assert.deepStrictEqual(readIntegrationBranch(repo, "M003"), "gwd/release/2026-q2", "user gwd/* branches are recorded");
 
     rmSync(repo, { recursive: true, force: true });
   });
@@ -1225,7 +1225,7 @@ describe('git-service', async () => {
 
   test('untrackRuntimeFiles', async () => {
     const { untrackRuntimeFiles } = await import("../../gitignore.ts");
-    const repo = mkdtempSync(join(tmpdir(), "gsd-untrack-"));
+    const repo = mkdtempSync(join(tmpdir(), "gwd-untrack-"));
     runGit(repo, ["init", "-b", "main"]);
     runGit(repo, ["config", "user.email", "test@test.com"]);
     runGit(repo, ["config", "user.name", "Test"]);
@@ -1274,7 +1274,7 @@ describe('git-service', async () => {
   // ─── smartStage excludes runtime files but allows milestone artifacts ──
 
   test('smartStage excludes runtime files, allows milestone artifacts', () => {
-    const repo = mkdtempSync(join(tmpdir(), "gsd-smart-stage-excludes-"));
+    const repo = mkdtempSync(join(tmpdir(), "gwd-smart-stage-excludes-"));
     runGit(repo, ["init", "-b", "main"]);
     runGit(repo, ["config", "user.email", "test@test.com"]);
     runGit(repo, ["config", "user.name", "Test"]);
@@ -1334,7 +1334,7 @@ describe('git-service', async () => {
 
   test('ensureGitignore: adds .gwd entry', async () => {
     const { ensureGitignore } = await import("../../gitignore.ts");
-    const repo = mkdtempSync(join(tmpdir(), "gsd-gitignore-external-state-"));
+    const repo = mkdtempSync(join(tmpdir(), "gwd-gitignore-external-state-"));
 
     // Should add .gwd to gitignore (external state dir is a symlink)
     const modified = ensureGitignore(repo);
@@ -1362,13 +1362,13 @@ describe('git-service', async () => {
     const repo = initTempRepo();
 
     // Create the real .gwd directory outside the repo, then symlink it
-    const externalGsd = mkdtempSync(join(tmpdir(), "gsd-external-"));
-    mkdirSync(join(externalGsd, "activity"), { recursive: true });
-    writeFileSync(join(externalGsd, "activity", "log.jsonl"), "log data");
-    writeFileSync(join(externalGsd, "STATE.md"), "# State");
+    const externalGwd = mkdtempSync(join(tmpdir(), "gwd-external-"));
+    mkdirSync(join(externalGwd, "activity"), { recursive: true });
+    writeFileSync(join(externalGwd, "activity", "log.jsonl"), "log data");
+    writeFileSync(join(externalGwd, "STATE.md"), "# State");
 
     // Symlink .gwd -> external directory
-    symlinkSync(externalGsd, join(repo, ".gwd"));
+    symlinkSync(externalGwd, join(repo, ".gwd"));
 
     // Add .gitignore so .gwd/ is ignored
     writeFileSync(join(repo, ".gitignore"), ".gwd\n");
@@ -1402,7 +1402,7 @@ describe('git-service', async () => {
     assert.ok(!staged.includes(".gwd"), ".gwd content not staged");
 
     rmSync(repo, { recursive: true, force: true });
-    rmSync(externalGsd, { recursive: true, force: true });
+    rmSync(externalGwd, { recursive: true, force: true });
   });
 
   test('nativeAddAllWithExclusions: self-heals symlinked .gwd when .gitignore lacks it (#4423)', () => {
@@ -1411,12 +1411,12 @@ describe('git-service', async () => {
     // `git add -A`. Without this, new user files are silently dropped.
     const repo = initTempRepo();
 
-    const externalGsd = mkdtempSync(join(tmpdir(), "gsd-external-unignored-"));
-    mkdirSync(join(externalGsd, "activity"), { recursive: true });
-    writeFileSync(join(externalGsd, "activity", "log.jsonl"), "log data");
-    writeFileSync(join(externalGsd, "STATE.md"), "# State");
+    const externalGwd = mkdtempSync(join(tmpdir(), "gwd-external-unignored-"));
+    mkdirSync(join(externalGwd, "activity"), { recursive: true });
+    writeFileSync(join(externalGwd, "activity", "log.jsonl"), "log data");
+    writeFileSync(join(externalGwd, "STATE.md"), "# State");
 
-    symlinkSync(externalGsd, join(repo, ".gwd"));
+    symlinkSync(externalGwd, join(repo, ".gwd"));
 
     createFile(repo, "src/app.ts", "export const x = 1;");
     run("git add -A", repo);
@@ -1446,7 +1446,7 @@ describe('git-service', async () => {
     assert.ok(/^\.gwd\/?$/m.test(gitignore), ".gitignore contains .gwd entry after self-heal");
 
     rmSync(repo, { recursive: true, force: true });
-    rmSync(externalGsd, { recursive: true, force: true });
+    rmSync(externalGwd, { recursive: true, force: true });
   });
 
   test('nativeAddAllWithExclusions: explicit staging protects work when manage_gitignore:false (#4423)', () => {
@@ -1455,12 +1455,12 @@ describe('git-service', async () => {
     // by explicitly staging untracked real files while skipping `.gwd`.
     const repo = initTempRepo();
 
-    const externalGsd = mkdtempSync(join(tmpdir(), "gsd-external-optout-"));
-    mkdirSync(join(externalGsd, "activity"), { recursive: true });
-    writeFileSync(join(externalGsd, "activity", "log.jsonl"), "log data");
-    writeFileSync(join(externalGsd, "STATE.md"), "# State");
+    const externalGwd = mkdtempSync(join(tmpdir(), "gwd-external-optout-"));
+    mkdirSync(join(externalGwd, "activity"), { recursive: true });
+    writeFileSync(join(externalGwd, "activity", "log.jsonl"), "log data");
+    writeFileSync(join(externalGwd, "STATE.md"), "# State");
 
-    symlinkSync(externalGsd, join(repo, ".gwd"));
+    symlinkSync(externalGwd, join(repo, ".gwd"));
 
     // Create PREFERENCES.md inside the symlink target (the linked .gwd dir)
     // with the opt-out flag. The regex matches a top-level occurrence.
@@ -1503,7 +1503,7 @@ describe('git-service', async () => {
     }
 
     rmSync(repo, { recursive: true, force: true });
-    rmSync(externalGsd, { recursive: true, force: true });
+    rmSync(externalGwd, { recursive: true, force: true });
   });
 
   // ─── nativeAddAllWithExclusions: non-symlinked .gwd still works ───────
@@ -1536,12 +1536,12 @@ describe('git-service', async () => {
     const err = new MergeConflictError(
       ["src/foo.ts", "src/bar.ts"],
       "squash",
-      "gsd/M001/S01",
+      "gwd/M001/S01",
       "main",
     );
     assert.deepStrictEqual(err.conflictedFiles, ["src/foo.ts", "src/bar.ts"], "MergeConflictError.conflictedFiles populated");
     assert.deepStrictEqual(err.strategy, "squash", "MergeConflictError.strategy set");
-    assert.deepStrictEqual(err.branch, "gsd/M001/S01", "MergeConflictError.branch set");
+    assert.deepStrictEqual(err.branch, "gwd/M001/S01", "MergeConflictError.branch set");
     assert.deepStrictEqual(err.mainBranch, "main", "MergeConflictError.mainBranch set");
     assert.deepStrictEqual(err.name, "MergeConflictError", "MergeConflictError.name is MergeConflictError");
     assert.ok(err.message.includes("src/foo.ts"), "MergeConflictError message lists conflicted files");
@@ -1550,13 +1550,13 @@ describe('git-service', async () => {
     assert.ok(err instanceof Error, "MergeConflictError is an Error instance");
   });
 
-  // ─── Integration branch: rejects gsd/quick/* branches ────────────────────
+  // ─── Integration branch: rejects gwd/quick/* branches ────────────────────
 
-  test('Integration branch: rejects gsd/quick/* branches', () => {
+  test('Integration branch: rejects gwd/quick/* branches', () => {
     const repo = initBranchTestRepo();
 
-    writeIntegrationBranch(repo, "M001", "gsd/quick/1234-some-task");
-    assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), null, "gsd/quick/* branches are not recorded as integration branch");
+    writeIntegrationBranch(repo, "M001", "gwd/quick/1234-some-task");
+    assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), null, "gwd/quick/* branches are not recorded as integration branch");
 
     rmSync(repo, { recursive: true, force: true });
   });
@@ -1646,12 +1646,12 @@ describe('git-service', async () => {
     const repo = initTempRepo();
 
     // Create an external .gwd directory and symlink it into the repo
-    const externalGsd = mkdtempSync(join(tmpdir(), "gsd-external-symlink-"));
-    mkdirSync(join(externalGsd, "milestones", "M009"), { recursive: true });
-    mkdirSync(join(externalGsd, "activity"), { recursive: true });
-    mkdirSync(join(externalGsd, "runtime"), { recursive: true });
+    const externalGwd = mkdtempSync(join(tmpdir(), "gwd-external-symlink-"));
+    mkdirSync(join(externalGwd, "milestones", "M009"), { recursive: true });
+    mkdirSync(join(externalGwd, "activity"), { recursive: true });
+    mkdirSync(join(externalGwd, "runtime"), { recursive: true });
 
-    symlinkSync(externalGsd, join(repo, ".gwd"));
+    symlinkSync(externalGwd, join(repo, ".gwd"));
 
     // .gitignore blocks .gwd (as ensureGitignore would do for symlink projects)
     writeFileSync(join(repo, ".gitignore"), ".gwd\n");
@@ -1666,9 +1666,9 @@ describe('git-service', async () => {
     run('git commit -m "add feature"', repo);
 
     // Simulate new milestone artifacts created during execution
-    writeFileSync(join(externalGsd, "milestones", "M009", "M009-SUMMARY.md"), "# M009 Summary");
-    writeFileSync(join(externalGsd, "milestones", "M009", "S01-SUMMARY.md"), "# S01 Summary");
-    writeFileSync(join(externalGsd, "milestones", "M009", "T01-VERIFY.json"), '{"passed":true}');
+    writeFileSync(join(externalGwd, "milestones", "M009", "M009-SUMMARY.md"), "# M009 Summary");
+    writeFileSync(join(externalGwd, "milestones", "M009", "S01-SUMMARY.md"), "# S01 Summary");
+    writeFileSync(join(externalGwd, "milestones", "M009", "T01-VERIFY.json"), '{"passed":true}');
 
     // Modify the tracked source file — git add -u will stage this change
     writeFileSync(join(repo, "src/feature.ts"), "export const feature = false; // updated");
@@ -1683,22 +1683,22 @@ describe('git-service', async () => {
       "symlink autoCommit: .gwd/milestones/ files are NOT staged (external state stays external)");
 
     try { rmSync(repo, { recursive: true, force: true }); } catch {}
-    try { rmSync(externalGsd, { recursive: true, force: true }); } catch {}
+    try { rmSync(externalGwd, { recursive: true, force: true }); } catch {}
   });
 
-  // ─── autoCommit: absorbs preceding gsd snapshot commits ─────────────────
+  // ─── autoCommit: absorbs preceding gwd snapshot commits ─────────────────
 
-  test('autoCommit: absorbs preceding gsd snapshot commits', () => {
+  test('autoCommit: absorbs preceding gwd snapshot commits', () => {
     const repo = initTempRepo();
 
-    // Simulate 2 gsd snapshot commits
+    // Simulate 2 gwd snapshot commits
     createFile(repo, "file1.ts", "v1");
     run("git add -A", repo);
-    run('git commit -m "gsd snapshot: uncommitted changes after 35m inactivity"', repo);
+    run('git commit -m "gwd snapshot: uncommitted changes after 35m inactivity"', repo);
 
     createFile(repo, "file2.ts", "v2");
     run("git add -A", repo);
-    run('git commit -m "gsd snapshot: pre-dispatch, uncommitted changes after 40m inactivity"', repo);
+    run('git commit -m "gwd snapshot: pre-dispatch, uncommitted changes after 40m inactivity"', repo);
 
     // Verify we have 3 commits (init + 2 snapshots)
     const countBefore = run("git rev-list --count HEAD", repo);
@@ -1721,9 +1721,9 @@ describe('git-service', async () => {
     assert.ok(files.includes("file2.ts"), "file2.ts from snapshot 2 preserved");
     assert.ok(files.includes("feature.ts"), "feature.ts from real commit preserved");
 
-    // No gsd snapshot commits in log
+    // No gwd snapshot commits in log
     const log = run("git log --oneline", repo);
-    assert.ok(!log.includes("gsd snapshot"), "no gsd snapshot commits remain in history");
+    assert.ok(!log.includes("gwd snapshot"), "no gwd snapshot commits remain in history");
 
     rmSync(repo, { recursive: true, force: true });
   });

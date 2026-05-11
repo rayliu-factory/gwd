@@ -8,12 +8,12 @@ import { runGWDDoctor } from "../../doctor.js";
 import { formatDoctorReportJson } from "../../doctor-format.js";
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
-function makeBase(): { base: string; gsd: string; mDir: string } {
-  const base = mkdtempSync(join(tmpdir(), "gsd-doctor-enh-"));
-  const gsd = join(base, ".gwd");
-  const mDir = join(gsd, "milestones", "M001");
+function makeBase(): { base: string; gwd: string; mDir: string } {
+  const base = mkdtempSync(join(tmpdir(), "gwd-doctor-enh-"));
+  const gwd = join(base, ".gwd");
+  const mDir = join(gwd, "milestones", "M001");
   mkdirSync(join(mDir, "slices"), { recursive: true });
-  return { base, gsd, mDir };
+  return { base, gwd, mDir };
 }
 
 function writeRoadmap(mDir: string, content: string): void {
@@ -111,11 +111,11 @@ describe('doctor-enhancements', async () => {
 
   // ── 6. Metrics ledger corrupt ───────────────────────────────────────────────
   test('metrics ledger corrupt', async () => {
-    const { base, gsd, mDir } = makeBase();
+    const { base, gwd, mDir } = makeBase();
     writeRoadmap(mDir, `# M001: Metrics Test\n\n## Slices\n- [ ] **S01: Slice** \`risk:low\` \`depends:[]\`\n  > After this: done\n`);
     writeSlice(mDir, "S01", "# S01: Slice\n\n**Goal:** G\n**Demo:** D\n\n## Tasks\n- [ ] **T01: Task** `est:10m`\n  Pending.\n");
     // Write invalid metrics.json
-    writeFileSync(join(gsd, "metrics.json"), '{"version":2,"data":[]}');
+    writeFileSync(join(gwd, "metrics.json"), '{"version":2,"data":[]}');
 
     const result = await runGWDDoctor(base, { fix: false });
     assert.ok(
@@ -214,20 +214,20 @@ describe('doctor-enhancements', async () => {
     assert.ok(typeof result.timing?.git === "number", "timing.git is a number");
     assert.ok(typeof result.timing?.runtime === "number", "timing.runtime is a number");
     assert.ok(typeof result.timing?.environment === "number", "timing.environment is a number");
-    assert.ok(typeof result.timing?.gsdState === "number", "timing.gsdState is a number");
+    assert.ok(typeof result.timing?.gwdState === "number", "timing.gwdState is a number");
 
     rmSync(base, { recursive: true, force: true });
   });
 
   // ── 12. Doctor history ───────────────────────────────────────────────────────
   test('doctor history', async () => {
-    const { base, gsd, mDir } = makeBase();
+    const { base, gwd, mDir } = makeBase();
     writeRoadmap(mDir, `# M001: History Test\n\n## Slices\n- [ ] **S01: Slice** \`risk:low\` \`depends:[]\`\n  > After this: done\n`);
     writeSlice(mDir, "S01", "# S01: Slice\n\n**Goal:** G\n**Demo:** D\n\n## Tasks\n- [ ] **T01: Task** `est:10m`\n  Pending.\n");
 
     await runGWDDoctor(base, { fix: false });
 
-    const historyPath = join(gsd, "doctor-history.jsonl");
+    const historyPath = join(gwd, "doctor-history.jsonl");
     assert.ok(existsSync(historyPath), "doctor-history.jsonl is created after run");
 
     const { readDoctorHistory } = await import("../../doctor.js");

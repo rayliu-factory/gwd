@@ -47,7 +47,7 @@ const _require = createRequire(import.meta.url);
 // ═══════════════════════════════════════════════════════════════════════════
 
 function tempDbPath(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-db-test-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-db-test-'));
   return path.join(dir, 'test.db');
 }
 
@@ -90,11 +90,11 @@ function openRawSqliteForTest(dbPath: string): { exec(sql: string): void; close(
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// gsd-db tests
+// gwd-db tests
 // ═══════════════════════════════════════════════════════════════════════════
 
-describe('gsd-db', () => {
-  test('gsd-db: provider detection', () => {
+describe('gwd-db', () => {
+  test('gwd-db: provider detection', () => {
     const provider = getDbProvider();
     assert.ok(provider !== null, 'provider should be non-null');
     assert.ok(
@@ -103,7 +103,7 @@ describe('gsd-db', () => {
     );
   });
 
-  test('gsd-db: fresh DB schema init (memory)', () => {
+  test('gwd-db: fresh DB schema init (memory)', () => {
     const ok = openDatabase(':memory:');
     assert.ok(ok, 'openDatabase should return true');
     assert.ok(isDbAvailable(), 'isDbAvailable should be true after open');
@@ -124,7 +124,7 @@ describe('gsd-db', () => {
     assert.ok(!isDbAvailable(), 'isDbAvailable should be false after close');
   });
 
-  test('gsd-db: double-init idempotency', () => {
+  test('gwd-db: double-init idempotency', () => {
     const dbPath = tempDbPath();
     openDatabase(dbPath);
 
@@ -157,7 +157,7 @@ describe('gsd-db', () => {
     cleanup(dbPath);
   });
 
-  test('gsd-db: insert + get decision', () => {
+  test('gwd-db: insert + get decision', () => {
     openDatabase(':memory:');
     insertDecision({
       id: 'D042',
@@ -186,7 +186,7 @@ describe('gsd-db', () => {
     closeDatabase();
   });
 
-  test('gsd-db: insert + get requirement', () => {
+  test('gwd-db: insert + get requirement', () => {
     openDatabase(':memory:');
     insertRequirement({
       id: 'R007',
@@ -218,7 +218,7 @@ describe('gsd-db', () => {
     closeDatabase();
   });
 
-  test('gsd-db: active_decisions view excludes superseded', () => {
+  test('gwd-db: active_decisions view excludes superseded', () => {
     openDatabase(':memory:');
 
     insertDecision({
@@ -270,7 +270,7 @@ describe('gsd-db', () => {
     closeDatabase();
   });
 
-  test('gsd-db: active_requirements view excludes superseded', () => {
+  test('gwd-db: active_requirements view excludes superseded', () => {
     openDatabase(':memory:');
 
     insertRequirement({
@@ -314,7 +314,7 @@ describe('gsd-db', () => {
     closeDatabase();
   });
 
-  test('gsd-db: WAL mode on file-backed DB', () => {
+  test('gwd-db: WAL mode on file-backed DB', () => {
     const dbPath = tempDbPath();
     openDatabase(dbPath);
 
@@ -325,7 +325,7 @@ describe('gsd-db', () => {
     cleanup(dbPath);
   });
 
-  test('gsd-db: mmap stays disabled on darwin file-backed DBs', () => {
+  test('gwd-db: mmap stays disabled on darwin file-backed DBs', () => {
     const darwinDbPath = tempDbPath();
     withPlatform('darwin', () => {
       openDatabase(darwinDbPath);
@@ -345,7 +345,7 @@ describe('gsd-db', () => {
     });
   });
 
-  test('gsd-db: transaction rollback on error', () => {
+  test('gwd-db: transaction rollback on error', () => {
     openDatabase(':memory:');
 
     // Insert a decision normally
@@ -395,7 +395,7 @@ describe('gsd-db', () => {
     closeDatabase();
   });
 
-  test('gsd-db: failed BEGIN does not poison transaction depth', () => {
+  test('gwd-db: failed BEGIN does not poison transaction depth', () => {
     openDatabase(':memory:');
     const adapter = _getAdapter()!;
 
@@ -423,7 +423,7 @@ describe('gsd-db', () => {
     }
   });
 
-  test('gsd-db: recreates missing verification evidence dedup index after removing duplicate rows', () => {
+  test('gwd-db: recreates missing verification evidence dedup index after removing duplicate rows', () => {
     const dbPath = tempDbPath();
     openDatabase(dbPath);
 
@@ -462,7 +462,7 @@ describe('gsd-db', () => {
     cleanup(dbPath);
   });
 
-  test('gsd-db: legacy DB missing memories.scope opens and bootstraps index columns', () => {
+  test('gwd-db: legacy DB missing memories.scope opens and bootstraps index columns', () => {
     const dbPath = tempDbPath();
     const legacyDb = openRawSqliteForTest(dbPath);
     legacyDb.exec(`
@@ -509,7 +509,7 @@ describe('gsd-db', () => {
     cleanup(dbPath);
   });
 
-  test('gsd-db: pre-v18 DB with memory_sources missing scope opens without crash (issue #4607)', () => {
+  test('gwd-db: pre-v18 DB with memory_sources missing scope opens without crash (issue #4607)', () => {
     // Regression: initSchema() ran CREATE INDEX on memories.scope and
     // memory_sources.scope unconditionally, before the v18 migration adds those
     // columns to existing rows.  Databases at schema v17 that had a
@@ -804,7 +804,7 @@ describe('gsd-db', () => {
     cleanup(dbPath);
   });
 
-  test('gsd-db: rowToTask tolerates legacy comma-separated task arrays', () => {
+  test('gwd-db: rowToTask tolerates legacy comma-separated task arrays', () => {
     openDatabase(':memory:');
 
     const adapter = _getAdapter()!;
@@ -838,7 +838,7 @@ describe('gsd-db', () => {
     closeDatabase();
   });
 
-  test('gsd-db: query wrappers return null/empty when DB unavailable', () => {
+  test('gwd-db: query wrappers return null/empty when DB unavailable', () => {
     // Ensure DB is closed
     closeDatabase();
     assert.ok(!isDbAvailable(), 'DB should not be available');
@@ -856,7 +856,7 @@ describe('gsd-db', () => {
     assert.deepStrictEqual(ar, [], 'getActiveRequirements returns [] when DB closed');
   });
 
-  test('gsd-db: closeDatabase resets wasDbOpenAttempted after an intentional close', () => {
+  test('gwd-db: closeDatabase resets wasDbOpenAttempted after an intentional close', () => {
     openDatabase(':memory:');
     assert.ok(wasDbOpenAttempted(), 'wasDbOpenAttempted should be true after openDatabase was called');
 
@@ -865,7 +865,7 @@ describe('gsd-db', () => {
     assert.ok(!wasDbOpenAttempted(), 'wasDbOpenAttempted should reset after closeDatabase');
   });
 
-  test('gsd-db: rowToTask tolerates corrupt comma-separated task arrays', () => {
+  test('gwd-db: rowToTask tolerates corrupt comma-separated task arrays', () => {
     openDatabase(':memory:');
     insertMilestone({ id: 'M001', status: 'active' });
     insertSlice({ milestoneId: 'M001', id: 'S01', status: 'active' });
@@ -919,7 +919,7 @@ describe('gsd-db', () => {
     closeDatabase();
   });
 
-  test('gsd-db: FTS5 unavailable warning normalizes provider typo', () => {
+  test('gwd-db: FTS5 unavailable warning normalizes provider typo', () => {
     const previousStderr = setStderrLoggingEnabled(false);
     _resetLogs();
     try {
@@ -1116,7 +1116,7 @@ describe('gsd-db', () => {
 
     test('getDbStatus: resets lastError/lastPhase after closeDatabase', () => {
       // Simulate a failed open to set error state
-      const corruptPath = path.join(os.tmpdir(), `gsd-corrupt-${Date.now()}.db`);
+      const corruptPath = path.join(os.tmpdir(), `gwd-corrupt-${Date.now()}.db`);
       fs.writeFileSync(corruptPath, Buffer.from('not a sqlite file at all!!!!!'));
       try {
         openDatabase(corruptPath);
@@ -1136,7 +1136,7 @@ describe('gsd-db', () => {
 
     test('getDbStatus: captures open-phase error on corrupt file', () => {
       closeDatabase();
-      const corruptPath = path.join(os.tmpdir(), `gsd-corrupt-${Date.now()}.db`);
+      const corruptPath = path.join(os.tmpdir(), `gwd-corrupt-${Date.now()}.db`);
       fs.writeFileSync(corruptPath, Buffer.from('not a sqlite file at all!!!!!'));
       try {
         openDatabase(corruptPath);
@@ -1161,7 +1161,7 @@ describe('gsd-db', () => {
 
     test('getDbStatus: error state resets on next successful open', () => {
       closeDatabase();
-      const corruptPath = path.join(os.tmpdir(), `gsd-corrupt-${Date.now()}.db`);
+      const corruptPath = path.join(os.tmpdir(), `gwd-corrupt-${Date.now()}.db`);
       fs.writeFileSync(corruptPath, Buffer.from('not a sqlite file at all!!!!!'));
       try { openDatabase(corruptPath); } catch { /* expected */ }
       assert.ok(!getDbStatus().available, 'DB unavailable after corrupt open');

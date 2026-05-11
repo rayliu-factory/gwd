@@ -11,7 +11,7 @@ import { deriveState, isGhostMilestone, invalidateStateCache } from "../state.ts
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-parity-test-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-parity-test-"));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }

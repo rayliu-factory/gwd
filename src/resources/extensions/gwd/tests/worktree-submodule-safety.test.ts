@@ -53,10 +53,10 @@ function runGit(cwd: string, args: string[]): string {
       // Disable user config from polluting the test environment.
       GIT_CONFIG_GLOBAL: "/dev/null",
       GIT_CONFIG_SYSTEM: "/dev/null",
-      GIT_AUTHOR_NAME: "gsd-test",
-      GIT_AUTHOR_EMAIL: "gsd-test@example.com",
-      GIT_COMMITTER_NAME: "gsd-test",
-      GIT_COMMITTER_EMAIL: "gsd-test@example.com",
+      GIT_AUTHOR_NAME: "gwd-test",
+      GIT_AUTHOR_EMAIL: "gwd-test@example.com",
+      GIT_COMMITTER_NAME: "gwd-test",
+      GIT_COMMITTER_EMAIL: "gwd-test@example.com",
       // Allow local-path submodule URLs. Git 2.38.1+ blocks the `file` transport
       // in `submodule add` by default (CVE-2022-39253). The config also has to
       // propagate to git subprocess env for submodule cloning.

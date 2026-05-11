@@ -18,7 +18,7 @@ function readAuditPayloads(basePath: string): Array<Record<string, unknown>> {
 }
 
 test("uok turn observer adds writer sequence metadata to audit events", (t) => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-loop-writer-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-uok-loop-writer-"));
   resetWriterTokensForTests();
   t.after(() => {
     resetWriterTokensForTests();
@@ -65,7 +65,7 @@ test("uok turn observer adds writer sequence metadata to audit events", (t) => {
 });
 
 test("uok turn observer releases writer token when validation throws", (t) => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-loop-writer-throw-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-uok-loop-writer-throw-"));
   resetWriterTokensForTests();
   t.after(() => {
     resetWriterTokensForTests();
@@ -114,7 +114,7 @@ test("uok turn observer releases writer token when validation throws", (t) => {
 });
 
 test("uok turn observer falls back to cached phaseResults when result.phaseResults is missing", (t) => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-loop-writer-missing-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-uok-loop-writer-missing-"));
   resetWriterTokensForTests();
   t.after(() => {
     resetWriterTokensForTests();

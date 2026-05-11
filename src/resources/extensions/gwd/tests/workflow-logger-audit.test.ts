@@ -17,7 +17,7 @@ import {
 } from "../workflow-logger.ts";
 
 function createTempProject(): string {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-wflog-test-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-wflog-test-"));
   mkdirSync(join(tmp, ".gwd"), { recursive: true });
   return tmp;
 }

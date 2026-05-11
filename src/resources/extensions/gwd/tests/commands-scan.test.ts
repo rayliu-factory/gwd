@@ -23,7 +23,7 @@ import {
 const tmpDirs: string[] = [];
 
 function makeTmpDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-scan-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-scan-test-"));
   tmpDirs.push(dir);
   return dir;
 }

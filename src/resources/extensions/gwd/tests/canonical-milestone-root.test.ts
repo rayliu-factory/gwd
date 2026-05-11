@@ -19,7 +19,7 @@ import { randomUUID } from "node:crypto";
 import { resolveCanonicalMilestoneRoot } from "../worktree-manager.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-canon-test-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-canon-test-${randomUUID()}`);
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }

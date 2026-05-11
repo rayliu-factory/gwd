@@ -19,7 +19,7 @@ describe("dispatcher DB-authoritative planning boundary", () => {
   let base: string;
 
   beforeEach(() => {
-    base = mkdtempSync(join(tmpdir(), "gsd-dispatcher-planning-"));
+    base = mkdtempSync(join(tmpdir(), "gwd-dispatcher-planning-"));
     mkdirSync(join(base, ".gwd", "milestones", "M001", "S01"), { recursive: true });
     writeFileSync(join(base, ".gwd", "milestones", "M001", "CONTEXT.md"), "# M001\n");
     writeFileSync(join(base, ".gwd", "milestones", "M001", "ROADMAP.md"), [

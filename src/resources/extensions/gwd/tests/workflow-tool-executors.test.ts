@@ -30,7 +30,7 @@ import {
 } from "../tools/workflow-tool-executors.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-workflow-executors-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-workflow-executors-${randomUUID()}`);
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

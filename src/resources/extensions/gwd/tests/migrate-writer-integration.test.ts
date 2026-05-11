@@ -7,7 +7,7 @@ import { mkdtempSync, existsSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
-import { writeGSDDirectory } from '../migrate/writer.ts';
+import { writeGWDDirectory } from '../migrate/writer.ts';
 import { generatePreview } from '../migrate/preview.ts';
 import { parseRoadmap, parsePlan } from '../parsers-legacy.ts';
 import { parseSummary } from '../files.ts';
@@ -17,18 +17,18 @@ import { ensureDbOpen } from '../bootstrap/dynamic-tools.ts';
 import { closeDatabase, getAllMilestones } from '../gwd-db.ts';
 import { importWrittenMigrationToDb } from '../migrate/command.ts';
 import type {
-  GSDProject,
-  GSDMilestone,
-  GSDSlice,
-  GSDTask,
-  GSDRequirement,
+  GWDProject,
+  GWDMilestone,
+  GWDSlice,
+  GWDTask,
+  GWDRequirement,
 } from '../migrate/types.ts';
 import { describe, test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 
 // ─── Fixture Builders ──────────────────────────────────────────────────────
 
-function makeTask(id: string, title: string, done: boolean, hasSummary: boolean): GSDTask {
+function makeTask(id: string, title: string, done: boolean, hasSummary: boolean): GWDTask {
   return {
     id,
     title,
@@ -49,9 +49,9 @@ function makeTask(id: string, title: string, done: boolean, hasSummary: boolean)
 
 function makeSlice(
   id: string, title: string, done: boolean,
-  tasks: GSDTask[], depends: string[],
+  tasks: GWDTask[], depends: string[],
   hasSummary: boolean,
-): GSDSlice {
+): GWDSlice {
   return {
     id,
     title,
@@ -74,7 +74,7 @@ function makeSlice(
   };
 }
 
-function buildIncompleteProject(): GSDProject {
+function buildIncompleteProject(): GWDProject {
   const t01 = makeTask('T01', 'Setup Database', true, true);
   const t02 = makeTask('T02', 'Add Auth Middleware', true, true);
   const s01 = makeSlice('S01', 'Auth Foundation', true, [t01, t02], [], true);
@@ -82,7 +82,7 @@ function buildIncompleteProject(): GSDProject {
   const t03 = makeTask('T03', 'Build Dashboard UI', false, false);
   const s02 = makeSlice('S02', 'Dashboard', false, [t03], ['S01'], false);
 
-  const milestone: GSDMilestone = {
+  const milestone: GWDMilestone = {
     id: 'M001',
     title: 'MVP Launch',
     vision: 'Ship the minimum viable product',
@@ -92,7 +92,7 @@ function buildIncompleteProject(): GSDProject {
     boundaryMap: [],
   };
 
-  const requirements: GSDRequirement[] = [
+  const requirements: GWDRequirement[] = [
     { id: 'R001', title: 'User Authentication', class: 'core-capability', status: 'validated', description: 'Users must authenticate.', source: 'stakeholder', primarySlice: 'S01' },
     { id: 'R002', title: 'Dashboard View', class: 'core-capability', status: 'active', description: 'Dashboard shows data.', source: 'stakeholder', primarySlice: 'S02' },
     { id: 'R003', title: 'Export to PDF', class: 'nice-to-have', status: 'deferred', description: 'PDF export.', source: 'inferred', primarySlice: 'none yet' },
@@ -107,11 +107,11 @@ function buildIncompleteProject(): GSDProject {
   };
 }
 
-function buildCompleteProject(): GSDProject {
+function buildCompleteProject(): GWDProject {
   const t01 = makeTask('T01', 'Only Task', true, true);
   const s01 = makeSlice('S01', 'Only Slice', true, [t01], [], true);
 
-  const milestone: GSDMilestone = {
+  const milestone: GWDMilestone = {
     id: 'M001',
     title: 'Complete Milestone',
     vision: 'Everything done',
@@ -136,15 +136,15 @@ function buildCompleteProject(): GSDProject {
   // ─── Scenario 1: Incomplete project ────────────────────────────────────
 
 test('Scenario 1: Incomplete project — write, parse, deriveState', async () => {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-writer-int-'));
+    const base = mkdtempSync(join(tmpdir(), 'gwd-writer-int-'));
     try {
       const project = buildIncompleteProject();
-      const result = await writeGSDDirectory(project, base);
+      const result = await writeGWDDirectory(project, base);
 
       // (a) Key files exist
       console.log('  --- file existence ---');
-      const gsd = join(base, '.gwd');
-      const m = join(gsd, 'milestones', 'M001');
+      const gwd = join(base, '.gwd');
+      const m = join(gwd, 'milestones', 'M001');
 
       assert.ok(existsSync(join(m, 'M001-ROADMAP.md')), 'incomplete: M001-ROADMAP.md exists');
       assert.ok(existsSync(join(m, 'M001-CONTEXT.md')), 'incomplete: M001-CONTEXT.md exists');
@@ -153,10 +153,10 @@ test('Scenario 1: Incomplete project — write, parse, deriveState', async () =>
       assert.ok(existsSync(join(m, 'slices', 'S02', 'S02-PLAN.md')), 'incomplete: S02-PLAN.md exists');
       assert.ok(existsSync(join(m, 'slices', 'S01', 'S01-SUMMARY.md')), 'incomplete: S01-SUMMARY.md exists');
       assert.ok(!existsSync(join(m, 'slices', 'S02', 'S02-SUMMARY.md')), 'incomplete: S02-SUMMARY.md NOT written (null)');
-      assert.ok(existsSync(join(gsd, 'REQUIREMENTS.md')), 'incomplete: REQUIREMENTS.md exists');
-      assert.ok(existsSync(join(gsd, 'PROJECT.md')), 'incomplete: PROJECT.md exists');
-      assert.ok(existsSync(join(gsd, 'DECISIONS.md')), 'incomplete: DECISIONS.md exists');
-      assert.ok(existsSync(join(gsd, 'STATE.md')), 'incomplete: STATE.md exists');
+      assert.ok(existsSync(join(gwd, 'REQUIREMENTS.md')), 'incomplete: REQUIREMENTS.md exists');
+      assert.ok(existsSync(join(gwd, 'PROJECT.md')), 'incomplete: PROJECT.md exists');
+      assert.ok(existsSync(join(gwd, 'DECISIONS.md')), 'incomplete: DECISIONS.md exists');
+      assert.ok(existsSync(join(gwd, 'STATE.md')), 'incomplete: STATE.md exists');
 
       // Task files
       assert.ok(existsSync(join(m, 'slices', 'S01', 'tasks', 'T01-PLAN.md')), 'incomplete: T01-PLAN.md exists');
@@ -254,10 +254,10 @@ test('Scenario 1: Incomplete project — write, parse, deriveState', async () =>
 });
 
 test('Scenario 1b: written migration imports into authoritative DB state', async () => {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-writer-db-import-'));
+    const base = mkdtempSync(join(tmpdir(), 'gwd-writer-db-import-'));
     try {
       const project = buildIncompleteProject();
-      await writeGSDDirectory(project, base);
+      await writeGWDDirectory(project, base);
 
       assert.equal(await ensureDbOpen(base), true, 'db import: ensureDbOpen creates authoritative DB');
 
@@ -281,10 +281,10 @@ test('Scenario 1b: written migration imports into authoritative DB state', async
 });
 
 test('Scenario 1c: DB import verification fails when preview counts do not match', async () => {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-writer-db-check-'));
+    const base = mkdtempSync(join(tmpdir(), 'gwd-writer-db-check-'));
     try {
       const project = buildIncompleteProject();
-      await writeGSDDirectory(project, base);
+      await writeGWDDirectory(project, base);
 
       const preview = generatePreview(project);
       await assert.rejects(
@@ -301,10 +301,10 @@ test('Scenario 1c: DB import verification fails when preview counts do not match
   // ─── Scenario 2: Fully complete project ────────────────────────────────
 
 test('Scenario 2: Fully complete project — deriveState phase', async () => {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-writer-int-complete-'));
+    const base = mkdtempSync(join(tmpdir(), 'gwd-writer-int-complete-'));
     try {
       const project = buildCompleteProject();
-      await writeGSDDirectory(project, base);
+      await writeGWDDirectory(project, base);
 
       // Null research should NOT produce a file
       const m = join(base, '.gwd', 'milestones', 'M001');

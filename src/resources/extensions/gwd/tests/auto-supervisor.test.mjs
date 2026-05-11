@@ -10,9 +10,9 @@ test('resolveAutoSupervisorConfig provides safe timeout defaults', () => {
   // Isolate from any developer ~/.gwd/PREFERENCES.md that overrides these
   // defaults — the test pins what resolveAutoSupervisorConfig() returns when
   // no preferences file exists, so it must not pick up the runner's home dir.
-  const previousGsdHome = process.env.GWD_HOME;
+  const previousGwdHome = process.env.GWD_HOME;
   const previousCwd = process.cwd();
-  const isolated = mkdtempSync(join(tmpdir(), 'gsd-supervisor-defaults-'));
+  const isolated = mkdtempSync(join(tmpdir(), 'gwd-supervisor-defaults-'));
   process.env.GWD_HOME = isolated;
   process.chdir(isolated);
   try {
@@ -21,17 +21,17 @@ test('resolveAutoSupervisorConfig provides safe timeout defaults', () => {
     assert.equal(supervisor.idle_timeout_minutes, 10);
     assert.equal(supervisor.hard_timeout_minutes, 30);
   } finally {
-    if (previousGsdHome === undefined) {
+    if (previousGwdHome === undefined) {
       delete process.env.GWD_HOME;
     } else {
-      process.env.GWD_HOME = previousGsdHome;
+      process.env.GWD_HOME = previousGwdHome;
     }
     process.chdir(previousCwd);
   }
 });
 
 test('writeUnitRuntimeRecord persists progress and recovery metadata defaults', () => {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-auto-supervisor-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-auto-supervisor-'));
   const startedAt = 1234567890;
 
   writeUnitRuntimeRecord(base, 'plan-milestone', 'M010', startedAt, {
@@ -51,7 +51,7 @@ test('writeUnitRuntimeRecord persists progress and recovery metadata defaults', 
 });
 
 test('writeUnitRuntimeRecord keeps explicit recovery attempt fields', () => {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-auto-supervisor-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-auto-supervisor-'));
   const startedAt = 2234567890;
 
   writeUnitRuntimeRecord(base, 'research-milestone', 'M011', startedAt, {

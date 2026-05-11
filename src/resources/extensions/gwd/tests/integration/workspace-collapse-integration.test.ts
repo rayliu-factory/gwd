@@ -38,7 +38,7 @@ import {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeProjectDir(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-collapse-int-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-collapse-int-")));
   mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   return dir;
 }
@@ -50,7 +50,7 @@ function git(args: string[], cwd: string): void {
 function makeGitRepo(): string {
   const dir = makeProjectDir();
   git(["init"], dir);
-  git(["config", "user.email", "test@gsd.test"], dir);
+  git(["config", "user.email", "test@gwd.test"], dir);
   git(["config", "user.name", "GWD Test"], dir);
   writeFileSync(join(dir, "README.md"), "# test\n");
   git(["add", "README.md"], dir);
@@ -68,7 +68,7 @@ describe("workspace-collapse integration: Test 1 — cwd-drift path agreement", 
 
   beforeEach(() => {
     projectDir = makeProjectDir();
-    otherDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-cwd-drift-other-")));
+    otherDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-cwd-drift-other-")));
     _clearGwdRootCache();
   });
 
@@ -179,7 +179,7 @@ describe("workspace-collapse integration: Test 3 — write-gate snapshot survive
 
   beforeEach(() => {
     projectDir = makeProjectDir();
-    otherDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-wg-other-")));
+    otherDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-wg-other-")));
     // Start with a clean write-gate state for projectDir
     clearDiscussionFlowState(projectDir);
   });
@@ -302,17 +302,17 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
   let fakeHome: string;
   let savedHome: string | undefined;
   let savedUserProfile: string | undefined;
-  let savedGsdHome: string | undefined;
+  let savedGwdHome: string | undefined;
 
   beforeEach(() => {
-    projectDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-cache-int-")));
+    projectDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-cache-int-")));
     mkdirSync(join(projectDir, ".gwd"), { recursive: true });
 
-    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-cache-int-home-")));
+    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gwd-cache-int-home-")));
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
-    savedGsdHome = process.env.GWD_HOME;
+    savedGwdHome = process.env.GWD_HOME;
 
     // Prevent ~/.gwd interference
     process.env.HOME = fakeHome;
@@ -327,8 +327,8 @@ describe("workspace-collapse integration: Test 5 — gsdRootCache normalization 
     else process.env.HOME = savedHome;
     if (savedUserProfile === undefined) delete process.env.USERPROFILE;
     else process.env.USERPROFILE = savedUserProfile;
-    if (savedGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = savedGsdHome;
+    if (savedGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = savedGwdHome;
 
     clearPathCache();
     rmSync(projectDir, { recursive: true, force: true });

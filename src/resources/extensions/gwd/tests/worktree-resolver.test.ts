@@ -230,8 +230,8 @@ function makeDeps(
         this.gitConfig = gitConfig;
       }
     } as unknown as LegacyTestDeps["GitServiceImpl"],
-    loadEffectiveGSDPreferences: () => {
-      calls.push({ fn: "loadEffectiveGSDPreferences", args: [] });
+    loadEffectiveGWDPreferences: () => {
+      calls.push({ fn: "loadEffectiveGWDPreferences", args: [] });
       return { preferences: { git: {} } };
     },
     invalidateAllCaches: () => {
@@ -282,7 +282,7 @@ function findCalls(calls: CallLog[], fn: string): CallLog[] {
 }
 
 function makeDbBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-worktree-resolver-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-worktree-resolver-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
@@ -613,7 +613,7 @@ test("exitMilestone commits, tears down, and resets basePath", () => {
 
 test("exitMilestone moves cwd to project root before teardown", (t) => {
   const originalCwd = process.cwd();
-  const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-exit-cwd-")));
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-exit-cwd-")));
   const wtPath = join(base, ".gwd", "worktrees", "M001");
   mkdirSync(wtPath, { recursive: true });
   t.after(() => {
@@ -1478,7 +1478,7 @@ test("mergeAndExit propagates non-MergeConflictError to caller (#4380)", () => {
 test("mergeAndExit keeps worktree cwd before worktree-mode merge work", () => {
   // Set up real dirs so process.chdir actually succeeds. realpathSync
   // canonicalizes the macOS /var → /private/var symlink so equality holds.
-  const projectRoot = realpathSync(mkdtempSync(join(tmpdir(), "gsd-resolver-cwd-")));
+  const projectRoot = realpathSync(mkdtempSync(join(tmpdir(), "gwd-resolver-cwd-")));
   const worktreePath = join(projectRoot, ".gwd/worktrees/M001");
   mkdirSync(worktreePath, { recursive: true });
   const previousCwd = process.cwd();
@@ -1522,7 +1522,7 @@ test("mergeAndExit anchors cwd even on isolation-degraded skip path", () => {
   // bypass the per-mode merge helpers entirely. They must still leave cwd
   // at the project root so a subsequent worktree teardown elsewhere does
   // not strand cwd in a deleted dir.
-  const projectRoot = realpathSync(mkdtempSync(join(tmpdir(), "gsd-resolver-cwd-degraded-")));
+  const projectRoot = realpathSync(mkdtempSync(join(tmpdir(), "gwd-resolver-cwd-degraded-")));
   const worktreePath = join(projectRoot, ".gwd/worktrees/M001");
   mkdirSync(worktreePath, { recursive: true });
   const previousCwd = process.cwd();

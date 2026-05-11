@@ -1,13 +1,13 @@
 /**
- * GSD-2 e2e sanity tests.
+ * GWD-2 e2e sanity tests.
  *
  * Smallest possible vertical slice that exercises the e2e harness through
- * a real spawn of the built `gsd` binary. If this suite passes, the harness
+ * a real spawn of the built `gwd` binary. If this suite passes, the harness
  * + CI wiring + binary build are working. Every later e2e suite builds on
  * the same shared helpers in `_shared/`.
  *
  * Requires GWD_SMOKE_BINARY to point at the built loader (e.g. dist/loader.js)
- * unless `gsd` is on PATH.
+ * unless `gwd` is on PATH.
  */
 
 import { describe, test } from "node:test";
@@ -27,7 +27,7 @@ describe("e2e sanity (real-process)", () => {
 	const avail = binaryAvailable();
 	const skipReason = avail.ok ? null : avail.reason;
 
-	test("gsd --version prints a semver and exits 0", { skip: skipReason ?? false }, (t) => {
+	test("gwd --version prints a semver and exits 0", { skip: skipReason ?? false }, (t) => {
 		const project = createTmpProject();
 		t.after(project.cleanup);
 
@@ -42,7 +42,7 @@ describe("e2e sanity (real-process)", () => {
 		);
 	});
 
-	test("gsd --help mentions usage and exits 0", { skip: skipReason ?? false }, (t) => {
+	test("gwd --help mentions usage and exits 0", { skip: skipReason ?? false }, (t) => {
 		const project = createTmpProject();
 		t.after(project.cleanup);
 

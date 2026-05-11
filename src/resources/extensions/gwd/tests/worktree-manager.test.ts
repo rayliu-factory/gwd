@@ -9,8 +9,8 @@ import {
   createWorktree,
   listWorktrees,
   removeWorktree,
-  diffWorktreeGSD,
-  getWorktreeGSDDiff,
+  diffWorktreeGWD,
+  getWorktreeGWDDiff,
   getWorktreeLog,
   worktreeBranchName,
   worktreePath,
@@ -21,7 +21,7 @@ function run(command: string, cwd: string): string {
 }
 
 function makeBaseRepo(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-wt-test-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-wt-test-"));
   run("git init -b main", base);
   run('git config user.name "Test User"', base);
   run('git config user.email "test@example.com"', base);
@@ -156,9 +156,9 @@ describe("listWorktrees", () => {
   });
 });
 
-// ─── diffWorktreeGSD ─────────────────────────────────────────────────────────
+// ─── diffWorktreeGWD ─────────────────────────────────────────────────────────
 
-describe("diffWorktreeGSD and getWorktreeGSDDiff", () => {
+describe("diffWorktreeGWD and getWorktreeGWDDiff", () => {
   let base: string;
   beforeEach(() => {
     const repo = makeRepoWithChanges("feature-x");
@@ -167,7 +167,7 @@ describe("diffWorktreeGSD and getWorktreeGSDDiff", () => {
   afterEach(() => { rmSync(base, { recursive: true, force: true }); });
 
   test("detects added and modified GWD files", () => {
-    const diff = diffWorktreeGSD(base, "feature-x");
+    const diff = diffWorktreeGWD(base, "feature-x");
     assert.ok(diff.added.length > 0, "should have added files");
     assert.ok(
       diff.added.some((f) => f.includes("M002")),
@@ -182,7 +182,7 @@ describe("diffWorktreeGSD and getWorktreeGSDDiff", () => {
   });
 
   test("returns patch content", () => {
-    const fullDiff = getWorktreeGSDDiff(base, "feature-x");
+    const fullDiff = getWorktreeGWDDiff(base, "feature-x");
     assert.ok(fullDiff.includes("M002"), "diff should mention M002");
     assert.ok(fullDiff.includes("updated"), "diff should mention the update");
   });

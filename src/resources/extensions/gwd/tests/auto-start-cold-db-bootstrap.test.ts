@@ -12,7 +12,7 @@ test.afterEach(() => {
 });
 
 test("#2841: cold DB bootstrap opens an existing project database before state derivation", async (t) => {
-  const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-cold-db-")));
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-cold-db-")));
   t.after(() => rmSync(base, { recursive: true, force: true }));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   const dbPath = join(base, ".gwd", "gwd.db");

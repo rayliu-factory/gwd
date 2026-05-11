@@ -18,7 +18,7 @@ import { gsdHome } from "./gwd-home.js";
 
 export interface ProjectDetection {
   /** What kind of GWD state exists in this directory */
-  state: "none" | "v1-planning" | "v2-gsd" | "v2-gsd-empty";
+  state: "none" | "v1-planning" | "v2-gwd" | "v2-gwd-empty";
 
   /** Is this the first time GWD has been used on this machine? */
   isFirstEverLaunch: boolean;
@@ -29,7 +29,7 @@ export interface ProjectDetection {
   /** v1 details (only when state === 'v1-planning') */
   v1?: V1Detection;
 
-  /** v2 details (only when state === 'v2-gsd' or 'v2-gsd-empty') */
+  /** v2 details (only when state === 'v2-gwd' or 'v2-gwd-empty') */
   v2?: V2Detection;
 
   /** Detected project ecosystem signals */
@@ -318,9 +318,9 @@ export function detectProjectState(basePath: string): ProjectDetection {
 
   let state: ProjectDetection["state"];
   if (v2 && v2.milestoneCount > 0) {
-    state = "v2-gsd";
+    state = "v2-gwd";
   } else if (v2 && v2.milestoneCount === 0) {
-    state = "v2-gsd-empty";
+    state = "v2-gwd-empty";
   } else if (v1) {
     state = "v1-planning";
   } else {

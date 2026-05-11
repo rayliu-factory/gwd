@@ -12,7 +12,7 @@ import { dispatchDirectPhase } from "../auto-direct-dispatch.ts";
 import { invalidateStateCache } from "../state.ts";
 
 function createFixture(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-dispatch-uat-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-dispatch-uat-"));
 
   // Milestone M001 with two slices: S01 done, S02 incomplete
   const milestoneDir = join(base, ".gwd", "milestones", "M001");
@@ -111,7 +111,7 @@ test("dispatch uat targets last completed slice, not activeSlice (#1693)", async
 });
 
 test("dispatch uat warns when no completed slices exist", async (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-dispatch-uat-none-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-dispatch-uat-none-"));
   invalidateStateCache();
 
   const milestoneDir = join(base, ".gwd", "milestones", "M001");

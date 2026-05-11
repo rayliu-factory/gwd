@@ -66,7 +66,7 @@ function allBranches(cwd: string): string[] {
  * Returns { repo, featureBranch } with HEAD on the feature branch.
  */
 function createFeatureBranchRepo(featureBranch: string): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-fb-lifecycle-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-fb-lifecycle-")));
   run("git init", dir);
   run("git config user.email test@test.com", dir);
   run("git config user.name Test", dir);
@@ -339,8 +339,8 @@ describe('feature-branch-lifecycle-integration', async () => {
 
       // With external state, worktree .gwd is a symlink to shared state.
       // Verify symlink was created (planning files are shared, not copied).
-      const wtGsd = join(wtPath, ".gwd");
-      assert.ok(existsSync(wtGsd), "worktree .gwd exists (symlink or dir)");
+      const wtGwd = join(wtPath, ".gwd");
+      assert.ok(existsSync(wtGwd), "worktree .gwd exists (symlink or dir)");
 
       // Clean up: chdir back before teardown
       process.chdir(savedCwd);

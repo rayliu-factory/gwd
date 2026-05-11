@@ -1,4 +1,4 @@
-// GWD-2 — Regression tests for #3512: gsd-auto-wrapup mid-turn interruption
+// GWD-2 — Regression tests for #3512: gwd-auto-wrapup mid-turn interruption
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { describe, test } from "node:test";
@@ -46,7 +46,7 @@ function makeHookHarness() {
 describe("hook dispatch session workspace root", () => {
   test("dispatchHookUnit passes basePath explicitly to newSession", async (t) => {
     const originalCwd = process.cwd();
-    const basePath = mkdtempSync(join(tmpdir(), "gsd-hook-cwd-"));
+    const basePath = mkdtempSync(join(tmpdir(), "gwd-hook-cwd-"));
     mkdirSync(join(basePath, ".gwd"), { recursive: true });
     autoSession.reset();
     t.after(() => {
@@ -100,7 +100,7 @@ describe("hook dispatch session workspace root", () => {
 
 describe("deep setup approval questions pause immediately", () => {
   test("plain-text approval boundary defers durable gate until same-turn CONTEXT-DRAFT can save", async () => {
-    const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-deferred-approval-")));
+    const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-deferred-approval-")));
     const previousCwd = process.cwd();
     try {
       mkdirSync(join(base, ".gwd", "milestones", "M003"), { recursive: true });

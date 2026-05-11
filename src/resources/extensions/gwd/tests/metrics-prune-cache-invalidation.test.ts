@@ -24,7 +24,7 @@ import { createWorkspace, scopeMilestone } from "../workspace.ts";
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeProjectDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-metrics-prune-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-metrics-prune-"));
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   return dir;
 }

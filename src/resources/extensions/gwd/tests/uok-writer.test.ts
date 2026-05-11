@@ -13,7 +13,7 @@ import {
 } from "../uok/writer.ts";
 
 test("uok writer enforces one active token per turn", (t) => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-writer-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-uok-writer-"));
   resetWriterTokensForTests();
   t.after(() => {
     resetWriterTokensForTests();
@@ -36,7 +36,7 @@ test("uok writer enforces one active token per turn", (t) => {
 });
 
 test("uok writer produces monotonic sequence records across turns", (t) => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-writer-seq-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-uok-writer-seq-"));
   resetWriterTokensForTests();
   t.after(() => {
     resetWriterTokensForTests();

@@ -15,7 +15,7 @@ import { hasFileConflict } from "../slice-parallel-conflict.js";
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-slice-conflict-test-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-slice-conflict-test-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

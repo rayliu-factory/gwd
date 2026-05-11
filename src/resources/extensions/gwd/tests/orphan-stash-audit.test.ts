@@ -93,7 +93,7 @@ describe("auditOrphanedPreflightStashes", () => {
     assert.equal(existsSync(join(repo, "wip.txt")), false);
   });
 
-  test("ignores non-gsd stash entries", () => {
+  test("ignores non-gwd stash entries", () => {
     writeFileSync(join(repo, "manual.txt"), "manual\n");
     git(repo, "stash", "push", "--include-untracked", "-m", "user manual stash");
 

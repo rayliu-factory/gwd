@@ -8,7 +8,7 @@ import { initNotificationStore, appendNotification, _resetNotificationStore } fr
 import { buildNotificationWidgetLines, initNotificationWidget, _resetNotificationWidgetForTests } from "../notification-widget.js";
 
 test("buildNotificationWidgetLines shows unread count with shortcut pair", () => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-notification-widget-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-notification-widget-"));
   try {
     mkdirSync(join(tmp, ".gwd"), { recursive: true });
     _resetNotificationStore();
@@ -29,7 +29,7 @@ test("buildNotificationWidgetLines shows unread count with shortcut pair", () =>
 });
 
 test("initNotificationWidget replaces prior interval and store subscription", () => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-notification-widget-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-notification-widget-"));
   const firstStatuses: Array<string | undefined> = [];
   const secondStatuses: Array<string | undefined> = [];
   try {

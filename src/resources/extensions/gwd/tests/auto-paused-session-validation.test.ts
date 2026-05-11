@@ -18,7 +18,7 @@ import { resolveMilestonePath, resolveMilestoneFile } from "../paths.ts";
 // ─── Filesystem validation unit tests ───────────────────────────────────────
 
 function makeTmpBase(): string {
-  return join(tmpdir(), `gsd-paused-test-${randomUUID()}`);
+  return join(tmpdir(), `gwd-paused-test-${randomUUID()}`);
 }
 
 function cleanup(base: string): void {

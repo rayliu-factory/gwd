@@ -69,7 +69,7 @@ test("buildFlatRateContext invokes getProviderAuthMode with correct `this`", () 
 // ─── Bug 1: isSamePath source check ─────────────────────────────────────
 
 test("isSamePath returns false for missing paths without throwing", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-same-path-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-same-path-"));
   try {
     assert.equal(_isSamePath(join(dir, "missing-a"), join(dir, "missing-b")), false);
   } finally {

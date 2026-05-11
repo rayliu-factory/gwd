@@ -17,18 +17,18 @@ interface Fixture {
   fakeHome: string;
   savedHome: string | undefined;
   savedUserProfile: string | undefined;
-  savedGsdHome: string | undefined;
+  savedGwdHome: string | undefined;
 }
 
 function makeFixture(): Fixture {
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-decoupled-')));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gwd-decoupled-')));
   mkdirSync(join(projectDir, '.gwd'), { recursive: true });
 
-  const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-decoupled-home-')));
+  const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gwd-decoupled-home-')));
 
   const savedHome = process.env.HOME;
   const savedUserProfile = process.env.USERPROFILE;
-  const savedGsdHome = process.env.GWD_HOME;
+  const savedGwdHome = process.env.GWD_HOME;
 
   // Redirect HOME so gsdRoot never accidentally resolves to the real ~/.gwd.
   process.env.HOME = fakeHome;
@@ -37,7 +37,7 @@ function makeFixture(): Fixture {
 
   _clearGwdRootCache();
 
-  return { projectDir, fakeHome, savedHome, savedUserProfile, savedGsdHome };
+  return { projectDir, fakeHome, savedHome, savedUserProfile, savedGwdHome };
 }
 
 function teardownFixture(f: Fixture): void {
@@ -45,8 +45,8 @@ function teardownFixture(f: Fixture): void {
   else process.env.HOME = f.savedHome;
   if (f.savedUserProfile === undefined) delete process.env.USERPROFILE;
   else process.env.USERPROFILE = f.savedUserProfile;
-  if (f.savedGsdHome === undefined) delete process.env.GWD_HOME;
-  else process.env.GWD_HOME = f.savedGsdHome;
+  if (f.savedGwdHome === undefined) delete process.env.GWD_HOME;
+  else process.env.GWD_HOME = f.savedGwdHome;
 
   _clearGwdRootCache();
   clearPathCache();

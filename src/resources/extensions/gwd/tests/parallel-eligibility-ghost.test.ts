@@ -25,7 +25,7 @@ import {
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-parallel-elig-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-parallel-elig-"));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }

@@ -53,7 +53,7 @@ function makeSymlinkedFixture(prefix: string): SymlinkedFixture {
   // Use realpathSync on tmpdir so that subsequent realpath comparisons are stable
   // — macOS /var symlinks to /private/var, which would otherwise pollute the
   // canonical-root assertions below.
-  const root = realpathSync(mkdtempSync(join(tmpdir(), `gsd-${prefix}-`)));
+  const root = realpathSync(mkdtempSync(join(tmpdir(), `gwd-${prefix}-`)));
   const projectRoot = join(root, "project");
   const externalState = join(root, "external-state", "projects", "abc123");
 

@@ -10,7 +10,7 @@ import { resolveExpectedArtifactPath, diagnoseExpectedArtifact } from "../auto-a
 import { verifyExpectedArtifact, buildLoopRemediationSteps } from "../auto-recovery.ts";
 import { resolveDispatch, type DispatchContext } from "../auto-dispatch.ts";
 import { buildCompleteMilestonePrompt, buildValidateMilestonePrompt } from "../auto-prompts.ts";
-import type { GSDState } from "../types.ts";
+import type { GWDState } from "../types.ts";
 import { clearPathCache } from "../paths.ts";
 import { clearParseCache } from "../files.ts";
 import { closeDatabase, insertMilestone, insertSlice, openDatabase, getMilestone } from "../gwd-db.ts";
@@ -18,7 +18,7 @@ import { closeDatabase, insertMilestone, insertSlice, openDatabase, getMilestone
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-val-test-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-val-test-${randomUUID()}`);
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }
@@ -321,7 +321,7 @@ Test
 // ─── Dispatch rule ────────────────────────────────────────────────────────
 
 test("dispatch rule matches validating-milestone phase", async () => {
-  const state: GSDState = {
+  const state: GWDState = {
     activeMilestone: { id: "M001", title: "Test" },
     activeSlice: null,
     activeTask: null,
@@ -359,7 +359,7 @@ test("dispatch rule matches validating-milestone phase", async () => {
 });
 
 test("dispatch rule skips when skip_milestone_validation preference is set", async () => {
-  const state: GSDState = {
+  const state: GWDState = {
     activeMilestone: { id: "M001", title: "Test" },
     activeSlice: null,
     activeTask: null,
@@ -435,7 +435,7 @@ test("skip write immediately advances deriveState out of validating-milestone", 
 });
 
 test("dispatch rule ignores failure-path SUMMARY projection when DB milestone is not complete (#4658 superseded)", async () => {
-  const state: GSDState = {
+  const state: GWDState = {
     activeMilestone: { id: "M001", title: "Test" },
     activeSlice: null,
     activeTask: null,
@@ -470,7 +470,7 @@ test("dispatch rule ignores failure-path SUMMARY projection when DB milestone is
 });
 
 test("dispatch rule does not reconcile DB from successful stale SUMMARY projection (#4658 superseded)", async () => {
-  const state: GSDState = {
+  const state: GWDState = {
     activeMilestone: { id: "M001", title: "Test" },
     activeSlice: null,
     activeTask: null,
@@ -519,7 +519,7 @@ test("dispatch rule does not reconcile DB from successful stale SUMMARY projecti
 });
 
 test("dispatch rule ignores ambiguous stale SUMMARY projection (#4658 superseded)", async () => {
-  const state: GSDState = {
+  const state: GWDState = {
     activeMilestone: { id: "M001", title: "Test" },
     activeSlice: null,
     activeTask: null,
@@ -671,7 +671,7 @@ test("buildLoopRemediationSteps returns steps for validate-milestone", () => {
     assert.ok(result);
     assert.ok(result!.includes("VALIDATION"));
     assert.ok(result!.includes("verdict: pass"));
-    assert.ok(result!.includes("gsd recover"));
+    assert.ok(result!.includes("gwd recover"));
   } finally {
     cleanup(base);
   }

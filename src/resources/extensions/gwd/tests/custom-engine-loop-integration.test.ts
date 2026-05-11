@@ -171,7 +171,7 @@ function makeMockDeps(overrides?: Partial<LoopDeps>): LoopDeps & { callLog: stri
       } as any;
     },
     rebuildState: async () => {},
-    loadEffectiveGSDPreferences: () => undefined,
+    loadEffectiveGWDPreferences: () => undefined,
     preDispatchHealthGate: async () => ({ proceed: true, fixesApplied: [] }),
     checkResourcesStale: () => null,
     validateSessionLock: () => ({ valid: true } as SessionLockStatus),

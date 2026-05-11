@@ -66,7 +66,7 @@ test("mergeMilestoneToMain restores cwd to project root", () => {
 
   // Isolate from user's global preferences (which may have git.main_branch set)
   const originalHome = process.env.HOME;
-  const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-fake-home-")));
+  const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gwd-fake-home-")));
   process.env.HOME = fakeHome;
   _clearGwdRootCache();
   _resetServiceCache();

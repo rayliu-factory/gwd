@@ -9,7 +9,7 @@ import { handlePlanMilestone } from '../tools/plan-milestone.ts';
 import { parseRoadmap } from '../parsers-legacy.ts';
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-plan-milestone-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-plan-milestone-'));
   mkdirSync(join(base, '.gwd', 'milestones', 'M001'), { recursive: true });
   return base;
 }

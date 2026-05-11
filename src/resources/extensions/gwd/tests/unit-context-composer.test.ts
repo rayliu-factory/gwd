@@ -186,7 +186,7 @@ test("Context Mode composer: workflow-preferences and research-decision render n
 // ─── Integration: migrated buildReassessRoadmapPrompt ─────────────────────
 
 function makeFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-composer-pilot-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-composer-pilot-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;
 }

@@ -1,5 +1,5 @@
 /**
- * Tests for `gsd auto` routing — verifies that `auto` is recognized as a
+ * Tests for `gwd auto` routing — verifies that `auto` is recognized as a
  * subcommand alias for `headless auto` only when stdin or stdout are not TTYs.
  *
  * Regression test for #2732.
@@ -15,16 +15,16 @@ import { pathToFileURL } from 'node:url'
 
 import { shouldRedirectAutoToHeadless } from '../cli-auto-routing.js'
 
-test('routes `gsd auto` with piped stdout to headless mode (#2732)', () => {
+test('routes `gwd auto` with piped stdout to headless mode (#2732)', () => {
   assert.equal(shouldRedirectAutoToHeadless('auto', true, false), true)
 })
 
-test('routes `gsd auto` with piped stdin to headless mode', () => {
+test('routes `gwd auto` with piped stdin to headless mode', () => {
   assert.equal(shouldRedirectAutoToHeadless('auto', false, true), true)
 })
 
-test('src/cli.ts routes `gsd auto` with piped stdout through the headless entrypoint', () => {
-  const tempDir = mkdtempSync(join(tmpdir(), 'gsd-auto-cli-route-'))
+test('src/cli.ts routes `gwd auto` with piped stdout through the headless entrypoint', () => {
+  const tempDir = mkdtempSync(join(tmpdir(), 'gwd-auto-cli-route-'))
   const loaderPath = join(tempDir, 'stub-loader.mjs')
   try {
     writeFileSync(loaderPath, `
@@ -155,7 +155,7 @@ export async function load(url, context, nextLoad) {
   }
 })
 
-test('keeps terminal `gsd auto` on the interactive path', () => {
+test('keeps terminal `gwd auto` on the interactive path', () => {
   assert.equal(shouldRedirectAutoToHeadless('auto', true, true), false)
 })
 

@@ -17,7 +17,7 @@ import { AutoSession } from "../auto/session.ts";
 import { runPreDispatch } from "../auto/phases.ts";
 
 test("milestone transition archives completed units and rebuilds state", async () => {
-  const tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-cu-reset-")));
+  const tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-cu-reset-")));
   const calls: string[] = [];
   try {
     const gsdDir = join(tempDir, ".gwd");

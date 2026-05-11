@@ -72,7 +72,7 @@ try {
 });
 
 test('worktree isolation is disabled for an unborn repo until the first commit', (t) => {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-unborn-worktree-"));
+  const repo = mkdtempSync(join(tmpdir(), "gwd-unborn-worktree-"));
   t.after(() => {
     rmSync(repo, { recursive: true, force: true });
     invalidateAllCaches();

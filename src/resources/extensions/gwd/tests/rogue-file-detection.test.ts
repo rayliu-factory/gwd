@@ -16,7 +16,7 @@ import { openDatabase, closeDatabase, isDbAvailable, insertMilestone, insertSlic
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function createTmpBase(): string {
-  return realpathSync(mkdtempSync(join(tmpdir(), "gsd-rogue-test-")));
+  return realpathSync(mkdtempSync(join(tmpdir(), "gwd-rogue-test-")));
 }
 
 /**

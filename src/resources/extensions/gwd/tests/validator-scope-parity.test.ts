@@ -21,7 +21,7 @@ import {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function makeProjectDir(label = "gsd-vsp-"): string {
+function makeProjectDir(label = "gwd-vsp-"): string {
   const dir = realpathSync(mkdtempSync(join(tmpdir(), label)));
   mkdirSync(join(dir, ".gwd", "milestones", "M001"), { recursive: true });
   return dir;
@@ -101,7 +101,7 @@ describe("validator-scope-parity: scope-based validators are immune to cwd-drift
     const pathBefore = resolveExpectedArtifactPathForScope(scope, "plan-milestone", "M001");
 
     const originalCwd = process.cwd();
-    const altDir = mkdtempSync(join(tmpdir(), "gsd-cwd-alt-"));
+    const altDir = mkdtempSync(join(tmpdir(), "gwd-cwd-alt-"));
     t.after(() => {
       process.chdir(originalCwd);
       rmSync(altDir, { recursive: true, force: true });
@@ -126,7 +126,7 @@ describe("validator-scope-parity: scope-based validators are immune to cwd-drift
     const resultBefore = isGhostMilestoneByScope(scope);
 
     const originalCwd = process.cwd();
-    const altDir = mkdtempSync(join(tmpdir(), "gsd-cwd-alt2-"));
+    const altDir = mkdtempSync(join(tmpdir(), "gwd-cwd-alt2-"));
     t.after(() => {
       process.chdir(originalCwd);
       rmSync(altDir, { recursive: true, force: true });
@@ -193,7 +193,7 @@ describe("validator-scope-parity: scope uses canonical projectRoot not worktree 
   let base: string;
 
   beforeEach(() => {
-    base = makeProjectDir("gsd-wt-parity-");
+    base = makeProjectDir("gwd-wt-parity-");
   });
 
   afterEach(() => {

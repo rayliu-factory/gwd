@@ -36,7 +36,7 @@ import { invalidateAllCaches } from "../cache.ts";
 // ─── Fixture Helpers ─────────────────────────────────────────────────────────
 
 function createBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-needs-discussion-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-needs-discussion-"));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }

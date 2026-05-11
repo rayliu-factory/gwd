@@ -33,12 +33,12 @@ function cleanup(base: string): void {
 }
 
 async function loadAutoPromptBuilders(t: TestContext): Promise<AutoPromptBuilders> {
-  const previousGsdHome = process.env.GWD_HOME;
-  const isolatedHome = mkdtempSync(join(tmpdir(), "gsd-prompt-loader-home-"));
+  const previousGwdHome = process.env.GWD_HOME;
+  const isolatedHome = mkdtempSync(join(tmpdir(), "gwd-prompt-loader-home-"));
   process.env.GWD_HOME = isolatedHome;
   t.after(() => {
-    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = previousGsdHome;
+    if (previousGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGwdHome;
     rmSync(isolatedHome, { recursive: true, force: true });
   });
   return import(`../auto-prompts.ts?promptDupCuts=${Date.now()}-${Math.random()}`) as Promise<AutoPromptBuilders>;
@@ -143,7 +143,7 @@ function writeTaskSummary(base: string, options?: { blocker?: boolean; repeatedN
 }
 
 test("execute-task rendering makes memory_query and template disk reads fallback-only", async (t) => {
-  const base = makeBase("gsd-execute-dup-cuts-");
+  const base = makeBase("gwd-execute-dup-cuts-");
   t.after(() => cleanup(base));
   invalidateAllCaches();
 
@@ -166,7 +166,7 @@ test("execute-task rendering makes memory_query and template disk reads fallback
 });
 
 test("complete-slice renders task summary excerpts without full summary bodies", async (t) => {
-  const base = makeBase("gsd-complete-slice-excerpts-");
+  const base = makeBase("gwd-complete-slice-excerpts-");
   t.after(() => cleanup(base));
   invalidateAllCaches();
 
@@ -185,7 +185,7 @@ test("complete-slice renders task summary excerpts without full summary bodies",
 });
 
 test("complete-slice caps malformed task summaries instead of inlining full bodies", async (t) => {
-  const base = makeBase("gsd-complete-slice-malformed-excerpts-");
+  const base = makeBase("gwd-complete-slice-malformed-excerpts-");
   t.after(() => cleanup(base));
   invalidateAllCaches();
 
@@ -208,7 +208,7 @@ test("complete-slice caps malformed task summaries instead of inlining full bodi
 });
 
 test("replan-slice renders blocker summary excerpt and tells the agent to read full only on demand", async (t) => {
-  const base = makeBase("gsd-replan-excerpts-");
+  const base = makeBase("gwd-replan-excerpts-");
   t.after(() => cleanup(base));
   invalidateAllCaches();
 

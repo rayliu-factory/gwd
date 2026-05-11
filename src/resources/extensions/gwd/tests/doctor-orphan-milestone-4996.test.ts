@@ -18,7 +18,7 @@ import {
 import { invalidateAllCaches } from "../cache.ts";
 import type { DoctorIssue, DoctorIssueCode } from "../doctor-types.ts";
 
-function makeBase(prefix = "gsd-doctor-orphan-"): string {
+function makeBase(prefix = "gwd-doctor-orphan-"): string {
   const base = mkdtempSync(join(tmpdir(), prefix));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;

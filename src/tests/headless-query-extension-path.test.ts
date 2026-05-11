@@ -15,7 +15,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 import {
-  resolveGsdAgentExtensionsDir,
+  resolveGwdAgentExtensionsDir,
   shouldUseAgentExtensionsDir,
 } from '../headless-query.ts'
 
@@ -29,7 +29,7 @@ function makeTempDir(): string {
 }
 
 test('GWD_AGENT_DIR overrides homedir-based agent dir resolution', () => {
-  const root = resolveGsdAgentExtensionsDir({ GWD_AGENT_DIR: '/some/agent' })
+  const root = resolveGwdAgentExtensionsDir({ GWD_AGENT_DIR: '/some/agent' })
   assert.equal(root, join('/some/agent', 'extensions', 'gwd'))
 })
 
@@ -58,8 +58,8 @@ test('agent dir is selected when synced JS state exists under it', (t) => {
 })
 
 test('GWD_HOME drives default agent dir when GWD_AGENT_DIR is absent', () => {
-  const root = resolveGsdAgentExtensionsDir({ GWD_HOME: '/custom/gsd-home' })
-  assert.equal(root, join('/custom/gsd-home', 'agent', 'extensions', 'gwd'))
+  const root = resolveGwdAgentExtensionsDir({ GWD_HOME: '/custom/gwd-home' })
+  assert.equal(root, join('/custom/gwd-home', 'agent', 'extensions', 'gwd'))
 })
 
 test('agent dir is rejected when state.ts is absent (falls back to bundled)', (t) => {

@@ -1,5 +1,5 @@
-// Project/App: GSD-2
-// File Purpose: Characterization tests for representative GSD prompt fixture metrics.
+// Project/App: GWD-2
+// File Purpose: Characterization tests for representative GWD prompt fixture metrics.
 
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";

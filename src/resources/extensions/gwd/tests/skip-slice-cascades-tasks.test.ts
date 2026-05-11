@@ -31,7 +31,7 @@ describe("handleSkipSlice cascades skip to tasks (#4375)", () => {
   let dbPath: string;
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), "gsd-skip-cascade-"));
+    dir = mkdtempSync(join(tmpdir(), "gwd-skip-cascade-"));
     dbPath = join(dir, "test.db");
     openDatabase(dbPath);
     insertMilestone({ id: "M001", title: "Test", status: "active" });

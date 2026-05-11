@@ -25,7 +25,7 @@ import { resolveCanonicalMilestoneRoot } from "../worktree-manager.ts";
 import { queryJournal } from "../journal.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-tel-test-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-tel-test-${randomUUID()}`);
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

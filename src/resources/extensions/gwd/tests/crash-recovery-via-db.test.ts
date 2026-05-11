@@ -33,7 +33,7 @@ import { normalizeRealPath } from "../paths.ts";
 import { writeUnitRuntimeRecord } from "../unit-runtime.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-crash-recovery-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-crash-recovery-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

@@ -1,5 +1,5 @@
 /**
- * GSD2 Metrics — regression test for parallel-mode atomic merge
+ * GWD2 Metrics — regression test for parallel-mode atomic merge
  *
  * Verifies that concurrent metrics.json writers do not silently discard
  * each other's entries (last-writer-wins). Two child processes each write
@@ -145,7 +145,7 @@ describe("metrics atomic merge — parallel workers", () => {
   let metricsPath: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), "gsd-metrics-atomic-"));
+    tmpDir = mkdtempSync(join(tmpdir(), "gwd-metrics-atomic-"));
     gsdDir = join(tmpDir, ".gwd");
     mkdirSync(gsdDir, { recursive: true });
     metricsPath = join(gsdDir, "metrics.json");

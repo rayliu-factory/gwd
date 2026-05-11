@@ -33,7 +33,7 @@ const tmpDirs: string[] = [];
 let savedCwd: string | undefined;
 
 function setupProjectWithSkill(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-worker-skill-int-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-worker-skill-int-"));
   tmpDirs.push(base);
 
   // Milestone roadmap — buildResearchSlicePrompt inlines the roadmap excerpt.
@@ -57,7 +57,7 @@ function setupProjectWithSkill(): string {
   );
 
   // Project preferences — buildSkillActivationBlock picks these up via
-  // loadEffectiveGSDPreferences(), which reads from `${cwd}/.gwd/PREFERENCES.md`.
+  // loadEffectiveGWDPreferences(), which reads from `${cwd}/.gwd/PREFERENCES.md`.
   writeFileSync(
     join(base, ".gwd", "PREFERENCES.md"),
     ["---", `always_use_skills:`, `  - ${SKILL_NAME}`, "---", ""].join("\n"),

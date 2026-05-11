@@ -25,7 +25,7 @@ import {
 function makeTempDir(prefix: string): string {
   const dir = join(
     tmpdir(),
-    `gsd-detection-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `gwd-detection-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(dir, { recursive: true });
   return dir;
@@ -189,24 +189,24 @@ test("classifyProject: generated framework/cache dirs do not count as content", 
   assert.equal(classification.kind, "greenfield");
 });
 
-test("detectProjectState: directory with .gwd/milestones/M001 returns v2-gsd", (t) => {
-  const dir = makeTempDir("v2-gsd");
+test("detectProjectState: directory with .gwd/milestones/M001 returns v2-gwd", (t) => {
+  const dir = makeTempDir("v2-gwd");
   t.after(() => cleanup(dir));
 
   mkdirSync(join(dir, ".gwd", "milestones", "M001"), { recursive: true });
   const result = detectProjectState(dir);
-  assert.equal(result.state, "v2-gsd");
+  assert.equal(result.state, "v2-gwd");
   assert.ok(result.v2);
   assert.equal(result.v2!.milestoneCount, 1);
 });
 
-test("detectProjectState: directory with empty .gwd/milestones returns v2-gsd-empty", (t) => {
+test("detectProjectState: directory with empty .gwd/milestones returns v2-gwd-empty", (t) => {
   const dir = makeTempDir("v2-empty");
   t.after(() => cleanup(dir));
 
   mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   const result = detectProjectState(dir);
-  assert.equal(result.state, "v2-gsd-empty");
+  assert.equal(result.state, "v2-gwd-empty");
   assert.ok(result.v2);
   assert.equal(result.v2!.milestoneCount, 0);
 });
@@ -232,7 +232,7 @@ test("detectProjectState: v2 takes priority over v1 when both exist", (t) => {
   mkdirSync(join(dir, ".gwd", "milestones", "M001"), { recursive: true });
   mkdirSync(join(dir, ".planning"), { recursive: true });
   const result = detectProjectState(dir);
-  assert.equal(result.state, "v2-gsd");
+  assert.equal(result.state, "v2-gwd");
 });
 
 test("detectProjectState: detects preferences in .gwd/", (t) => {

@@ -119,7 +119,7 @@ describe("Enhanced Verification Integration Tests", () => {
         createTask({
           id: "T01",
           sequence: 0,
-          title: "Add validation to gsd-db",
+          title: "Add validation to gwd-db",
           description: `
 ## Steps
 1. Update src/resources/extensions/gwd/gwd-db.ts to add validation
@@ -251,7 +251,7 @@ Read the types from src/resources/extensions/gwd/types.ts and use them.
       // Simulate a completed task that modified real files
       const completedTask = createTask({
         id: "T01",
-        title: "Update gsd-db validation",
+        title: "Update gwd-db validation",
         status: "complete",
         key_files: [
           join(GWD_SRC_DIR, "gwd-db.ts"),
@@ -459,14 +459,14 @@ import { runPostExecutionChecks } from "./post-execution-checks.ts";
 
     test("handles large number of files without timeout", () => {
       // Use all available GWD source files to stress test
-      const allGsdFiles = REAL_GWD_FILES.map((f) => join(GWD_SRC_DIR, f));
+      const allGwdFiles = REAL_GWD_FILES.map((f) => join(GWD_SRC_DIR, f));
 
       const task = createTask({
         id: "T01",
         title: "Large refactor touching many files",
         status: "complete",
-        key_files: allGsdFiles,
-        files: allGsdFiles,
+        key_files: allGwdFiles,
+        files: allGwdFiles,
       });
 
       const start = performance.now();

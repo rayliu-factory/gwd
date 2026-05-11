@@ -26,7 +26,7 @@ function makeSession(activeRunDir: string): {
 }
 
 test("hydrateCustomVerifyRetryCounts loads positive finite counts from disk", () => {
-    const dir = mkdtempSync(join(tmpdir(), "gsd-verify-retries-"));
+    const dir = mkdtempSync(join(tmpdir(), "gwd-verify-retries-"));
   try {
     const session = makeSession(dir);
     mkdirSync(join(dir, "runtime"));
@@ -58,7 +58,7 @@ test("hydrateCustomVerifyRetryCounts loads positive finite counts from disk", ()
 });
 
 test("hydrateCustomVerifyRetryCounts keeps existing in-memory counts", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-verify-retries-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-verify-retries-"));
   try {
     const session = makeSession(dir);
     session.verificationRetryCount.set("existing", 4);
@@ -74,7 +74,7 @@ test("hydrateCustomVerifyRetryCounts keeps existing in-memory counts", () => {
 });
 
 test("hydrateCustomVerifyRetryCounts logs read failures and returns the existing map", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-verify-retries-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-verify-retries-"));
   try {
     const session = makeSession(dir);
     const logged: unknown[] = [];
@@ -92,7 +92,7 @@ test("hydrateCustomVerifyRetryCounts logs read failures and returns the existing
 });
 
 test("saveCustomVerifyRetryCounts writes counts with an updated timestamp", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-verify-retries-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-verify-retries-"));
   try {
     const session = makeSession(dir);
     session.verificationRetryCount.set("execute-task/M001/S001/T001", 3);
@@ -112,7 +112,7 @@ test("saveCustomVerifyRetryCounts writes counts with an updated timestamp", () =
 });
 
 test("saveCustomVerifyRetryCounts deletes empty retry files and ignores missing files", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-verify-retries-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-verify-retries-"));
   try {
     const session = makeSession(dir);
     session.verificationRetryCount.set("execute-task/M001/S001/T001", 1);

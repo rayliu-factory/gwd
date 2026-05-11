@@ -15,7 +15,7 @@ import { createMemory } from '../memory-store.ts';
 import { executeResume } from '../tools/resume-tool.ts';
 
 function freshBase(): string {
-  return mkdtempSync(join(tmpdir(), 'gsd-snap-'));
+  return mkdtempSync(join(tmpdir(), 'gwd-snap-'));
 }
 
 function cleanup(dir: string): void {
@@ -96,13 +96,13 @@ test('writeCompactionSnapshot + readCompactionSnapshot + executeResume: end-to-e
 
     const contents = readCompactionSnapshot(base);
     assert.ok(contents);
-    assert.match(contents!, /Single-writer DB through gsd-db\.ts/);
+    assert.match(contents!, /Single-writer DB through gwd-db\.ts/);
     assert.match(contents!, /M099 resume check/);
 
     const tool = executeResume({}, { baseDir: base });
     assert.ok(!tool.isError);
     assert.equal(tool.details.found, true);
-    assert.match(tool.content[0].text, /Single-writer DB through gsd-db\.ts/);
+    assert.match(tool.content[0].text, /Single-writer DB through gwd-db\.ts/);
 
     // also verify the file content matches (without trailing newline)
     const raw = readFileSync(out.path, 'utf-8');

@@ -59,7 +59,7 @@ function mkPi(cap: MockCapture): any {
 function mkBase(): string {
   // realpathSync to normalize the macOS /var → /private/var symlink so the
   // basePath we pass matches what the workspace projectRoot resolves to.
-  const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-ready-guard-")));
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-ready-guard-")));
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   writeFileSync(
     join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md"),

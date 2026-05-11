@@ -24,7 +24,7 @@ import { parkMilestone, unparkMilestone, discardMilestone } from '../milestone-a
 
 
 function createFixture(): string {
-  const b = mkdtempSync(join(tmpdir(), 'gsd-edge-'));
+  const b = mkdtempSync(join(tmpdir(), 'gwd-edge-'));
   mkdirSync(join(b, '.gwd', 'milestones'), { recursive: true });
   return b;
 }

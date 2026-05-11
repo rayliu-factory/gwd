@@ -20,7 +20,7 @@ import { executeTriageResolutions } from '../triage-resolution.ts';
 
 describe('note captures executed in triage resolution (#3578)', () => {
   test('resolved note captures are stamped executed', () => {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-note-capture-'));
+    const base = mkdtempSync(join(tmpdir(), 'gwd-note-capture-'));
     try {
       mkdirSync(join(base, '.gwd'), { recursive: true });
       writeFileSync(join(base, '.gwd', 'CAPTURES.md'), [

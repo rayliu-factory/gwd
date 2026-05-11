@@ -24,7 +24,7 @@ function runGit(base: string, args: string[]): string {
 }
 
 function makeRepoWithUnmergedCompletedMilestone(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-orphan-bootstrap-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-orphan-bootstrap-"));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   writeFileSync(
     join(base, ".gwd", "PREFERENCES.md"),

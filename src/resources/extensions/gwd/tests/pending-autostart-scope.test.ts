@@ -15,7 +15,7 @@ import {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeProjectDir(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-pas-scope-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-pas-scope-")));
   mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   return dir;
 }
@@ -67,7 +67,7 @@ describe("pendingAutoStart scope pinning (C1)", () => {
 
     // Change cwd to a different directory, then check that scope is unchanged
     const originalCwd = process.cwd();
-    const altDir = mkdtempSync(join(tmpdir(), "gsd-cwd-alt-"));
+    const altDir = mkdtempSync(join(tmpdir(), "gwd-cwd-alt-"));
     t.after(() => {
       process.chdir(originalCwd);
       rmSync(altDir, { recursive: true, force: true });

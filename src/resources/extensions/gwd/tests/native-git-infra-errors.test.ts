@@ -8,7 +8,7 @@ import { git } from "./test-utils.ts";
 import { GWD_GIT_ERROR } from "../errors.js";
 
 test("nativeAddAllWithExclusions preserves infrastructure failures from git add", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-native-git-infra-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-native-git-infra-"));
   const repo = join(base, "repo");
   const bin = join(base, "bin");
   mkdirSync(repo);

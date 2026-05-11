@@ -21,7 +21,7 @@ import { tmpdir } from "node:os";
 import { findNestedGitDirs } from "../worktree-manager.ts";
 
 function makeRoot(t: { after: (fn: () => void) => void }): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-nested-git-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-nested-git-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   return dir;
 }

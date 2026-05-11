@@ -5,9 +5,9 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 
 import { resolveDispatch, type DispatchContext } from "../auto-dispatch.ts";
-import type { GSDState } from "../types.ts";
+import type { GWDState } from "../types.ts";
 
-function makeState(phase: GSDState["phase"]): GSDState {
+function makeState(phase: GWDState["phase"]): GWDState {
   return {
     activeMilestone: { id: "M001", title: "Structured Questions" },
     activeSlice: null,
@@ -22,7 +22,7 @@ function makeState(phase: GSDState["phase"]): GSDState {
 
 function makeContext(
   basePath: string,
-  phase: GSDState["phase"],
+  phase: GWDState["phase"],
   structuredQuestionsAvailable: "true" | "false",
 ): DispatchContext {
   return {

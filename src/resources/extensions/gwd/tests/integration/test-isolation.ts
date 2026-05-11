@@ -20,14 +20,14 @@ let fakeHome: string | null = null;
 
 /**
  * Isolate the test environment from user's global preferences.
- * Creates a fake HOME directory so loadEffectiveGSDPreferences() returns
+ * Creates a fake HOME directory so loadEffectiveGWDPreferences() returns
  * empty global preferences instead of the user's ~/.gwd/preferences.md.
  *
  * Call this in a test.before() hook.
  */
 export function isolateFromGlobalPreferences(): void {
   originalHome = process.env.HOME;
-  fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-test-home-")));
+  fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gwd-test-home-")));
   process.env.HOME = fakeHome;
   _clearGwdRootCache();
   _resetServiceCache();

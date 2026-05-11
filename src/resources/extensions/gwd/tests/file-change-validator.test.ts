@@ -16,7 +16,7 @@ function git(cwd: string, ...args: string[]): string {
 }
 
 test("validateFileChanges works on repos with a single commit (no HEAD~1)", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-file-change-validator-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-file-change-validator-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   git(base, "init");
@@ -36,7 +36,7 @@ test("validateFileChanges works on repos with a single commit (no HEAD~1)", (t) 
 });
 
 test("validateFileChanges excludes allowlisted files from unexpected-change warnings", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-file-change-validator-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-file-change-validator-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   mkdirSync(join(base, "tracking", "history"), { recursive: true });
@@ -74,7 +74,7 @@ test("validateFileChanges excludes allowlisted files from unexpected-change warn
 });
 
 test("validateFileChanges ignores inline descriptions in expected output paths", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-file-change-validator-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-file-change-validator-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   mkdirSync(join(base, "definitions"), { recursive: true });

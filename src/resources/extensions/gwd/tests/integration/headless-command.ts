@@ -1,5 +1,5 @@
 /**
- * Integration test for `gsd headless` CLI subcommand
+ * Integration test for `gwd headless` CLI subcommand
  *
  * Validates that the headless CLI entry point works end-to-end:
  *   1. Creates a temp dir with a complete .gwd/ project fixture
@@ -240,7 +240,7 @@ Create a file called hello.txt in the project root with the content "Hello from 
 // ── Fixture Creation ─────────────────────────────────────────────────────────
 
 function createFixture(): string {
-  const tmpDir = mkdtempSync(join(tmpdir(), "gsd-headless-cmd-"));
+  const tmpDir = mkdtempSync(join(tmpdir(), "gwd-headless-cmd-"));
 
   // Initialize git repo (GWD requires it for branch-per-slice)
   execSync("git init -b main", { cwd: tmpDir, stdio: "pipe" });

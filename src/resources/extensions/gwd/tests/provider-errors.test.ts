@@ -158,16 +158,16 @@ test("agent-end recovery switches Ollama Apple Silicon 35B resource failures to 
 
 test("agent-end recovery applies context_window_override to Ollama Apple Silicon fallback", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-ollama-agent-context-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-ollama-agent-context-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-ollama-agent-context-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-ollama-agent-context-home-"));
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
     cleanupOllamaAppleSiliconAgentEndTest();
   });
 
@@ -177,7 +177,7 @@ test("agent-end recovery applies context_window_override to Ollama Apple Silicon
     "---\ncontext_window_override: 131072\n---\n",
     "utf-8",
   );
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   cleanupOllamaAppleSiliconAgentEndTest();

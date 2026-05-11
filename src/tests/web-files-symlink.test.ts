@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { resolveSecurePath } from "../../web/lib/secure-path.ts";
 
 test("web file API resolves normal project files under the canonical root", () => {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-root-"));
+  const root = mkdtempSync(join(tmpdir(), "gwd-web-root-"));
   try {
     writeFileSync(join(root, "inside.txt"), "inside");
 
@@ -18,8 +18,8 @@ test("web file API resolves normal project files under the canonical root", () =
 });
 
 test("web file API rejects symlinks that resolve outside the project root", () => {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-root-"));
-  const outside = mkdtempSync(join(tmpdir(), "gsd-web-outside-"));
+  const root = mkdtempSync(join(tmpdir(), "gwd-web-root-"));
+  const outside = mkdtempSync(join(tmpdir(), "gwd-web-outside-"));
   try {
     writeFileSync(join(outside, "secret.txt"), "secret");
     symlinkSync(join(outside, "secret.txt"), join(root, "linked-secret.txt"));
@@ -32,8 +32,8 @@ test("web file API rejects symlinks that resolve outside the project root", () =
 });
 
 test("web file API rejects writes through symlinked parent directories outside root", () => {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-root-"));
-  const outside = mkdtempSync(join(tmpdir(), "gsd-web-outside-"));
+  const root = mkdtempSync(join(tmpdir(), "gwd-web-root-"));
+  const outside = mkdtempSync(join(tmpdir(), "gwd-web-outside-"));
   try {
     symlinkSync(outside, join(root, "linked-outside"), "dir");
 

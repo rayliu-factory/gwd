@@ -13,7 +13,7 @@ import { parseTaskPlanFile } from '../files.ts';
 import { deriveState, invalidateStateCache } from '../state.ts';
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-plan-slice-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-plan-slice-'));
   mkdirSync(join(base, '.gwd', 'milestones', 'M001', 'slices', 'S02', 'tasks'), { recursive: true });
   return base;
 }

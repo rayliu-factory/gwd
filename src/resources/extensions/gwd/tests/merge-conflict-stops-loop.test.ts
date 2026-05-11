@@ -120,7 +120,7 @@ function makeDeps(
     GitServiceImpl: class {
       constructor(_basePath: string, _config: unknown) {}
     } as never,
-    loadEffectiveGSDPreferences: () => ({ preferences: {} }),
+    loadEffectiveGWDPreferences: () => ({ preferences: {} }),
     invalidateAllCaches: () => undefined,
     captureIntegrationBranch: () => undefined,
     worktreeProjection: new WorktreeStateProjection(),

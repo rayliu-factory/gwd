@@ -5,7 +5,7 @@
 // formatted prompt output → token savings validation → re-import after changes →
 // structured tool write-back → DB consistency verification.
 //
-// Crosses ≥4 module boundaries: gsd-db, md-importer, context-store, db-writer.
+// Crosses ≥4 module boundaries: gwd-db, md-importer, context-store, db-writer.
 // Uses file-backed DB (not :memory:) for WAL fidelity.
 
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync, readFileSync, appendFileSync } from 'node:fs';
@@ -120,7 +120,7 @@ const ROADMAP_CONTENT = `# M001: Test Milestone\n\n**Vision:** Integration test 
 
 test('integration-lifecycle: full pipeline', async () => {
     // ── Step 1: Set up temp dir with realistic .gwd/ structure ──────────
-    const base = mkdtempSync(join(tmpdir(), 'gsd-int-lifecycle-'));
+    const base = mkdtempSync(join(tmpdir(), 'gwd-int-lifecycle-'));
     const gsdDir = join(base, '.gwd');
     mkdirSync(gsdDir, { recursive: true });
     mkdirSync(join(gsdDir, 'milestones', 'M001'), { recursive: true });

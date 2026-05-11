@@ -11,7 +11,7 @@ function mkStatus(over: Partial<WorktreeStatus>): WorktreeStatus {
   return {
     name,
     path: `/repo/.gwd/worktrees/${name}`,
-    branch: `gsd/${name}`,
+    branch: `gwd/${name}`,
     exists: true,
     filesChanged: 0,
     linesAdded: 0,

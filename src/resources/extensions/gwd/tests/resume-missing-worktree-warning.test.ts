@@ -28,7 +28,7 @@ import { createWorkspace, scopeMilestone } from "../workspace.ts";
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeProjectDir(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-resume-warn-test-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-resume-warn-test-")));
   mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   return dir;
 }

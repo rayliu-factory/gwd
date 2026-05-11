@@ -672,7 +672,7 @@ function makeMockDeps(
         blockers: [],
       } as any;
     },
-    loadEffectiveGSDPreferences: () => ({
+    loadEffectiveGWDPreferences: () => ({
       // These loop-mechanics tests mock executing state without plan-v2 artifacts.
       // Plan-v2 default-on coverage lives in uok-plan-v2-wiring.test.ts.
       preferences: { uok: { plan_v2: { enabled: false } } },
@@ -781,7 +781,7 @@ function makeLoopSession(overrides?: Partial<Record<string, unknown>>) {
     verbose: false,
     stepMode: false,
     paused: false,
-    basePath: mkdtempSync(join(tmpdir(), "gsd-auto-loop-")),
+    basePath: mkdtempSync(join(tmpdir(), "gwd-auto-loop-")),
     originalBasePath: "",
     currentMilestoneId: "M001",
     currentUnit: null,
@@ -2672,7 +2672,7 @@ test("autoLoop stops when Worktree Safety finds no .git marker for execute-task 
   const notifications: string[] = [];
   ctx.ui.notify = (msg: string) => { notifications.push(msg); };
 
-  const projectRoot = mkdtempSync(join(tmpdir(), "gsd-wt-safety-loop-"));
+  const projectRoot = mkdtempSync(join(tmpdir(), "gwd-wt-safety-loop-"));
   const worktreeRoot = join(projectRoot, ".gwd", "worktrees", "M001");
   mkdirSync(worktreeRoot, { recursive: true });
   t.after(() => rmSync(projectRoot, { recursive: true, force: true }));
@@ -2721,7 +2721,7 @@ test("dispatch Worktree Safety wins before stuck detection for execute-task with
   const notifications: string[] = [];
   ctx.ui.notify = (msg: string) => { notifications.push(msg); };
 
-  const projectRoot = mkdtempSync(join(tmpdir(), "gsd-wt-safety-dispatch-"));
+  const projectRoot = mkdtempSync(join(tmpdir(), "gwd-wt-safety-dispatch-"));
   const worktreeRoot = join(projectRoot, ".gwd", "worktrees", "M001");
   mkdirSync(worktreeRoot, { recursive: true });
   t.after(() => rmSync(projectRoot, { recursive: true, force: true }));
@@ -2788,7 +2788,7 @@ test("dispatch Worktree Safety stops unknown unit types with missing Tool Contra
   const notifications: string[] = [];
   ctx.ui.notify = (msg: string) => { notifications.push(msg); };
 
-  const projectRoot = mkdtempSync(join(tmpdir(), "gsd-wt-safety-missing-contract-"));
+  const projectRoot = mkdtempSync(join(tmpdir(), "gwd-wt-safety-missing-contract-"));
   const worktreeRoot = join(projectRoot, ".gwd", "worktrees", "M001");
   mkdirSync(worktreeRoot, { recursive: true });
   t.after(() => rmSync(projectRoot, { recursive: true, force: true }));
@@ -3063,7 +3063,7 @@ test("autoLoop enforces min_request_interval_ms delay between LLM dispatches (#2
     const s = makeLoopSession();
 
     const deps = makeMockDeps({
-      loadEffectiveGSDPreferences: () => ({
+      loadEffectiveGWDPreferences: () => ({
         preferences: {
           min_request_interval_ms: 300,
           uok: { plan_v2: { enabled: false } },
@@ -3151,7 +3151,7 @@ test("autoLoop skips rate-limit delay when min_request_interval_ms is 0 (default
     const s = makeLoopSession();
 
     const deps = makeMockDeps({
-      loadEffectiveGSDPreferences: () => ({
+      loadEffectiveGWDPreferences: () => ({
         preferences: { uok: { plan_v2: { enabled: false } } },
       }),
       deriveState: async () => {

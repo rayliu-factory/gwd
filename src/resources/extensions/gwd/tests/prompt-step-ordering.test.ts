@@ -16,7 +16,7 @@ import { buildCompleteMilestonePrompt, buildCompleteSlicePrompt } from '../auto-
 import { registerHooks } from '../bootstrap/register-hooks.ts';
 
 function makePromptBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-prompt-order-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-prompt-order-'));
   const msDir = join(base, '.gwd', 'milestones', 'M001');
   const sliceDir = join(msDir, 'slices', 'S01');
   mkdirSync(sliceDir, { recursive: true });
@@ -82,7 +82,7 @@ describe('register-hooks session_before_compact (#3696)', () => {
 
     _setAutoActiveForTest(true);
     try {
-      const result = await compact({}, { cwd: mkdtempSync(join(tmpdir(), 'gsd-compact-active-')), ui: { notify() {}, setWidget() {} } });
+      const result = await compact({}, { cwd: mkdtempSync(join(tmpdir(), 'gwd-compact-active-')), ui: { notify() {}, setWidget() {} } });
       assert.deepEqual(result, { cancel: true });
     } finally {
       _setAutoActiveForTest(false);

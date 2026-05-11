@@ -25,7 +25,7 @@ function makeEvent(cmd: string, params: Record<string, unknown>, ts?: string): W
 const tempDirs: string[] = [];
 
 function tempDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gsd-recon-test-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gwd-recon-test-"));
   tempDirs.push(dir);
   return dir;
 }

@@ -12,7 +12,7 @@ import { closeDatabase, insertMilestone, insertSlice, openDatabase } from "../gw
 import { WorktreeLifecycle } from "../worktree-lifecycle.ts";
 
 test("cleanupAfterLoopExit preserves paused auto badge after provider pause", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-paused-cleanup-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-paused-cleanup-"));
   const previousCwd = process.cwd();
   const statuses: Array<[string, string | undefined]> = [];
 
@@ -33,7 +33,7 @@ test("cleanupAfterLoopExit preserves paused auto badge after provider pause", as
       },
     } as any);
 
-    assert.equal(statuses.some(([key]) => key === "gsd-auto"), false);
+    assert.equal(statuses.some(([key]) => key === "gwd-auto"), false);
     assert.equal(autoSession.active, false);
     assert.equal(autoSession.paused, true);
   } finally {
@@ -61,8 +61,8 @@ test("cleanupAfterLoopExit clears status and widget when auto is not paused", as
       },
     } as any);
 
-    assert.deepEqual(statusCalls, [["gsd-auto", undefined]]);
-    assert.deepEqual(widgetCalls, [["gsd-progress", undefined]]);
+    assert.deepEqual(statusCalls, [["gwd-auto", undefined]]);
+    assert.deepEqual(widgetCalls, [["gwd-progress", undefined]]);
     assert.equal(autoSession.active, false);
     assert.equal(autoSession.paused, false);
   } finally {
@@ -71,7 +71,7 @@ test("cleanupAfterLoopExit clears status and widget when auto is not paused", as
 });
 
 test("cleanupAfterLoopExit restores project root through lifecycle and preserves chdir", async (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-cleanup-lifecycle-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-cleanup-lifecycle-"));
   const worktree = join(base, ".gwd", "worktrees", "M001");
   const previousCwd = process.cwd();
   let restoreCalls = 0;
@@ -107,7 +107,7 @@ test("cleanupAfterLoopExit restores project root through lifecycle and preserves
 });
 
 test("cleanupAfterLoopExit keeps cleanup best-effort when lifecycle restore throws", async (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-cleanup-restore-throw-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-cleanup-restore-throw-"));
   const worktree = join(base, ".gwd", "worktrees", "M001");
   const previousCwd = process.cwd();
   t.mock.method(WorktreeLifecycle.prototype, "restoreToProjectRoot", () => {
@@ -155,7 +155,7 @@ test("rerootCommandSession refreshes command workspace to project root", async (
 });
 
 test("stopAuto completion closeout reroots session, restores cwd, and preserves final widget", async (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-completion-stop-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-completion-stop-"));
   const previousCwd = process.cwd();
   const widgetCalls: Array<[string, unknown]> = [];
   const newSessionWorkspaces: string[] = [];
@@ -207,7 +207,7 @@ test("stopAuto completion closeout reroots session, restores cwd, and preserves 
   ].join("\n"), "utf-8");
 
   autoSession.reset();
-  openDatabase(join(base, "gsd-test.db"));
+  openDatabase(join(base, "gwd-test.db"));
   insertMilestone({ id: "M003", title: "Budget tracking", status: "complete" });
   insertSlice({ id: "S01", milestoneId: "M003", title: "Complete slice", status: "complete", sequence: 1 });
   insertSlice({ id: "S02", milestoneId: "M003", title: "Done slice", status: "done", sequence: 2 });
@@ -222,7 +222,7 @@ test("stopAuto completion closeout reroots session, restores cwd, and preserves 
   autoSession.cmdCtx = {
     newSession: async ({ workspaceRoot }: { workspaceRoot: string }) => {
       newSessionWorkspaces.push(workspaceRoot);
-      widgetCalls.push(["gsd-progress", undefined]);
+      widgetCalls.push(["gwd-progress", undefined]);
       return { cancelled: false };
     },
     sessionManager: {
@@ -268,10 +268,10 @@ test("stopAuto completion closeout reroots session, restores cwd, and preserves 
     assert.equal(restoreCalls, 1, "completion stop must restore project root through lifecycle");
     assert.equal(realpathSync(process.cwd()), realpathSync(base), "completion stop must chdir back to project root");
     assert.ok(
-      widgetCalls.some(([key, value]) => key === "gsd-progress" && typeof value === "function"),
+      widgetCalls.some(([key, value]) => key === "gwd-progress" && typeof value === "function"),
       "completion stop must install a final progress widget",
     );
-    const lastProgressWidget = widgetCalls.filter(([key]) => key === "gsd-progress").at(-1);
+    const lastProgressWidget = widgetCalls.filter(([key]) => key === "gwd-progress").at(-1);
     assert.equal(typeof lastProgressWidget?.[1], "function", "completion stop must leave the final progress widget installed after reroot");
     const factory = lastProgressWidget?.[1] as any;
     const component = factory(
@@ -283,7 +283,7 @@ test("stopAuto completion closeout reroots session, restores cwd, and preserves 
     assert.match(output, /Outcome/);
     assert.match(output, /Added budget warning output/);
     assert.match(output, /Verification/);
-    assert.match(output, /Files: src\/resources\/extensions\/gsd\/auto-dashboard\.ts/);
+    assert.match(output, /Files: src\/resources\/extensions\/gwd\/auto-dashboard\.ts/);
     assert.match(output, /Lessons: Milestone endings need report output/);
     assert.match(output, /2\/3 slices/);
     assert.doesNotMatch(output, /COMPLETE-MILESTONE/);

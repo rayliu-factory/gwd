@@ -17,7 +17,7 @@ import type { MilestoneScope } from "../workspace.ts";
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeProjectDir(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-scope-test-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-scope-test-")));
   mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   return dir;
 }
@@ -120,10 +120,10 @@ describe("AutoSession.scope — project mode (basePath equals originalBasePath)"
     applyRebuildScope(s, projectDir, mid);
 
     assert.ok(s.scope, "scope should be set");
-    const gsd = join(projectDir, ".gwd");
-    assert.equal(s.scope.contextFile(), join(gsd, "milestones", mid, `${mid}-CONTEXT.md`));
-    assert.equal(s.scope.roadmapFile(), join(gsd, "milestones", mid, `${mid}-ROADMAP.md`));
-    assert.equal(s.scope.stateFile(), join(gsd, "STATE.md"));
+    const gwd = join(projectDir, ".gwd");
+    assert.equal(s.scope.contextFile(), join(gwd, "milestones", mid, `${mid}-CONTEXT.md`));
+    assert.equal(s.scope.roadmapFile(), join(gwd, "milestones", mid, `${mid}-ROADMAP.md`));
+    assert.equal(s.scope.stateFile(), join(gwd, "STATE.md"));
   });
 });
 

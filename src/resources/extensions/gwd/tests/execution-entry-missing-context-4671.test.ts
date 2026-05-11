@@ -16,7 +16,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { DISPATCH_RULES, type DispatchContext } from "../auto-dispatch.ts";
-import type { GSDState, Phase } from "../types.ts";
+import type { GWDState, Phase } from "../types.ts";
 
 const RULE_NAME_TOKEN = "execution-entry phase (no context)";
 
@@ -30,7 +30,7 @@ function findRule() {
   return matches[0];
 }
 
-function buildState(phase: Phase): GSDState {
+function buildState(phase: Phase): GWDState {
   return {
     activeMilestone: { id: "M001", title: "Test milestone" },
     activeSlice: null,
@@ -44,12 +44,12 @@ function buildState(phase: Phase): GSDState {
 }
 
 function makeBasePath(prefix: string): string {
-  const dir = mkdtempSync(join(tmpdir(), `gsd-4671-${prefix}-`));
+  const dir = mkdtempSync(join(tmpdir(), `gwd-4671-${prefix}-`));
   mkdirSync(join(dir, ".gwd", "milestones", "M001"), { recursive: true });
   return dir;
 }
 
-function buildCtx(basePath: string, state: GSDState): DispatchContext {
+function buildCtx(basePath: string, state: GWDState): DispatchContext {
   return {
     basePath,
     mid: "M001",

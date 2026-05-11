@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { hasGitIndexLockForTest } from "../auto-start.ts";
 
 test("bootstrapAutoSession detects .git/index.lock without deleting it", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-index-lock-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-index-lock-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
   const lockPath = join(base, ".git", "index.lock");
   mkdirSync(join(base, ".git"), { recursive: true });
@@ -18,7 +18,7 @@ test("bootstrapAutoSession detects .git/index.lock without deleting it", (t) => 
 });
 
 test("bootstrapAutoSession reports no index lock when the lock file is absent", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-index-lock-missing-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-index-lock-missing-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
   mkdirSync(join(base, ".git"), { recursive: true });
 

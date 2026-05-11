@@ -8,9 +8,9 @@ import { randomUUID } from "node:crypto";
 import {
   resolveDeepProjectSetupState,
 } from "../deep-project-setup-policy.ts";
-import type { GSDPreferences } from "../preferences.ts";
+import type { GWDPreferences } from "../preferences.ts";
 
-const deepPrefs = { planning_depth: "deep" } as GSDPreferences;
+const deepPrefs = { planning_depth: "deep" } as GWDPreferences;
 
 const validProject = readFileSync(
   new URL("../schemas/__fixtures__/valid-project.md", import.meta.url),
@@ -22,7 +22,7 @@ const validRequirements = readFileSync(
 );
 
 function makeBase(): string {
-  const base = join(tmpdir(), `gsd-deep-policy-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-deep-policy-${randomUUID()}`);
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

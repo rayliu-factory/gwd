@@ -23,7 +23,7 @@ import { isGhostMilestone } from '../state.ts';
 
 describe('isGhostMilestone phantom queued detection (#3671)', () => {
   test('queued DB row with no artifacts is a ghost, but content makes it real', () => {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-phantom-ghost-'));
+    const base = mkdtempSync(join(tmpdir(), 'gwd-phantom-ghost-'));
     try {
       openDatabase(':memory:');
       insertMilestone({ id: 'M001', title: 'Reserved only', status: 'queued' });

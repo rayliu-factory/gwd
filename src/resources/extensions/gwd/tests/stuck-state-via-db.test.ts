@@ -28,7 +28,7 @@ import {
 import { setRuntimeKv, getRuntimeKv } from "../db/runtime-kv.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-stuck-state-db-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-stuck-state-db-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

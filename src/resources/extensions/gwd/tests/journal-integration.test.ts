@@ -64,7 +64,7 @@ function makeMockDeps(
       registry: [{ id: "M001", status: "active" }],
       blockers: [],
     }) as any,
-    loadEffectiveGSDPreferences: () => ({ preferences: {} }),
+    loadEffectiveGWDPreferences: () => ({ preferences: {} }),
     preDispatchHealthGate: async () => ({ proceed: true, fixesApplied: [] }),
     checkResourcesStale: () => null,
     validateSessionLock: () => ({ valid: true }) as SessionLockStatus,
@@ -337,7 +337,7 @@ test("runDispatch pauses when complete-milestone summary exists on disk but the 
   const capture = createEventCapture();
   let pauseCalls = 0;
   let stopCalls = 0;
-  const base = join(tmpdir(), `gsd-stuck-complete-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-stuck-complete-${randomUUID()}`);
   t.after(() => {
     rmSync(base, { recursive: true, force: true });
   });
@@ -407,7 +407,7 @@ test("runDispatch pauses when execute-task artifacts exist but DB status is stil
   let pauseCalls = 0;
   let stopCalls = 0;
   let invalidateCalls = 0;
-  const base = join(tmpdir(), `gsd-stuck-execute-task-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-stuck-execute-task-${randomUUID()}`);
   t.after(() => {
     closeDatabase();
     rmSync(base, { recursive: true, force: true });
@@ -490,7 +490,7 @@ test("runDispatch pauses at Level 2 when execute-task artifacts exist but DB sta
   let pauseCalls = 0;
   let stopCalls = 0;
   let invalidateCalls = 0;
-  const base = join(tmpdir(), `gsd-stuck-execute-task-l2-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-stuck-execute-task-l2-${randomUUID()}`);
   t.after(() => {
     closeDatabase();
     rmSync(base, { recursive: true, force: true });
@@ -566,7 +566,7 @@ test("runDispatch clears execute-task stuck state when artifacts and DB status a
   let pauseCalls = 0;
   let stopCalls = 0;
   let invalidateCalls = 0;
-  const base = join(tmpdir(), `gsd-stuck-execute-task-complete-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-stuck-execute-task-complete-${randomUUID()}`);
   t.after(() => {
     closeDatabase();
     rmSync(base, { recursive: true, force: true });
@@ -640,7 +640,7 @@ test("runDispatch clears stuck state after Level 1 artifact recovery", async (t)
   const capture = createEventCapture();
   let invalidateCalls = 0;
   let stopCalls = 0;
-  const base = join(tmpdir(), `gsd-stuck-plan-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-stuck-plan-${randomUUID()}`);
   t.after(() => {
     closeDatabase();
     rmSync(base, { recursive: true, force: true });
@@ -707,7 +707,7 @@ test("runDispatch escapes Level 2 stuck stop when artifact verifies after cache 
   const capture = createEventCapture();
   let invalidateCalls = 0;
   let stopCalls = 0;
-  const base = join(tmpdir(), `gsd-stuck-plan-l2-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-stuck-plan-l2-${randomUUID()}`);
   t.after(() => {
     closeDatabase();
     rmSync(base, { recursive: true, force: true });
@@ -1023,7 +1023,7 @@ test("terminal event is emitted on blocked state", async () => {
 });
 
 test("#4671: plan-v2 missing CONTEXT.md reaches dispatch recovery instead of pausing", async () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-4671-predispatch-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-4671-predispatch-"));
   mkdirSync(join(basePath, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   openDatabase(join(basePath, ".gwd", "gwd.db"));
   try {
@@ -1080,7 +1080,7 @@ test("#4671: plan-v2 missing CONTEXT.md reaches dispatch recovery instead of pau
 });
 
 test("plan-v2 empty graph rederives state before pausing", async () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-plan-v2-empty-graph-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-plan-v2-empty-graph-"));
   mkdirSync(join(basePath, ".gwd", "milestones", "M001"), { recursive: true });
   writeFileSync(
     join(basePath, ".gwd", "milestones", "M001", "M001-CONTEXT.md"),
@@ -1143,7 +1143,7 @@ test("plan-v2 empty graph rederives state before pausing", async () => {
 });
 
 test("plan-v2 empty graph pauses after one failed rederive", async () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-plan-v2-empty-graph-pause-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-plan-v2-empty-graph-pause-"));
   mkdirSync(join(basePath, ".gwd", "milestones", "M001"), { recursive: true });
   writeFileSync(
     join(basePath, ".gwd", "milestones", "M001", "M001-CONTEXT.md"),
@@ -1333,7 +1333,7 @@ test("session-failed cancellations close out and emit unit-end before hard stop"
 test("runFinalize pauses and emits unit-end when pre-verification times out", async () => {
   const capture = createEventCapture();
   let pauseCalls = 0;
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-finalize-timeout-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-finalize-timeout-"));
 
   const deps = makeMockDeps(capture, {
     pauseAuto: async () => { pauseCalls++; },

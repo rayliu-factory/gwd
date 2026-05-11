@@ -7,7 +7,7 @@
  *
  * The original H3 fix (d1276b021) wrapped only `removeWorktree(...)` in a
  * try/finally. But `process.chdir(originalBasePath)` at the top of the function
- * can throw a GSDError if the target directory no longer exists. In that case
+ * can throw a GWDError if the target directory no longer exists. In that case
  * execution exits the function before ever reaching the inner try/finally, leaving
  * `activeWorkspace` stale.
  *
@@ -51,9 +51,9 @@ function git(args: string[], cwd: string): void {
 }
 
 function createTempRepo(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-chdir-fail-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-chdir-fail-")));
   git(["init"], dir);
-  git(["config", "user.email", "test@gsd.test"], dir);
+  git(["config", "user.email", "test@gwd.test"], dir);
   git(["config", "user.name", "Test"], dir);
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   writeFileSync(join(dir, "README.md"), "# test\n");

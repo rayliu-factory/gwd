@@ -311,10 +311,10 @@ node_modules/
 
       // Create .gwd as a symlink to an external directory (standard external
       // state layout), and write a .gitignore that does NOT list .gwd.
-      const externalGsd = mkdtempSync(join(tmpdir(), "gsd-external-doctor-"));
-      cleanups.push(externalGsd);
-      writeFileSync(join(externalGsd, "STATE.md"), "# State\n");
-      symlinkSync(externalGsd, join(dir, ".gwd"));
+      const externalGwd = mkdtempSync(join(tmpdir(), "gwd-external-doctor-"));
+      cleanups.push(externalGwd);
+      writeFileSync(join(externalGwd, "STATE.md"), "# State\n");
+      symlinkSync(externalGwd, join(dir, ".gwd"));
 
       writeFileSync(join(dir, ".gitignore"), "node_modules/\n");
 

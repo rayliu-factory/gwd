@@ -25,7 +25,7 @@ const { assertEq, assertTrue, assertMatch, report } = createTestContext();
 // ═══════════════════════════════════════════════════════════════════════════
 
 function tempDbPath(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-complete-task-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-complete-task-'));
   return path.join(dir, 'test.db');
 }
 
@@ -54,7 +54,7 @@ function cleanupDir(dirPath: string): void {
  * Create a temp project directory with .gwd structure for handler tests.
  */
 function createTempProject(): { basePath: string; planPath: string } {
-  const basePath = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-handler-'));
+  const basePath = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-handler-'));
   const tasksDir = path.join(basePath, '.gwd', 'milestones', 'M001', 'slices', 'S01', 'tasks');
   fs.mkdirSync(tasksDir, { recursive: true });
 
@@ -435,7 +435,7 @@ console.log('\n=== complete-task: handler with missing plan file ===');
   openDatabase(dbPath);
 
   // Create a temp dir WITHOUT a plan file
-  const basePath = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-no-plan-'));
+  const basePath = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-no-plan-'));
   const tasksDir = path.join(basePath, '.gwd', 'milestones', 'M001', 'slices', 'S01', 'tasks');
   fs.mkdirSync(tasksDir, { recursive: true });
 

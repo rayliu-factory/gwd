@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Shared RPC protocol fixture records for Phase 0 characterization and Phase 1 contracts work.
 
 export const rpcGoldenCommands = [
@@ -37,7 +37,7 @@ export const rpcGoldenResponses = [
       isCompacting: false,
       steeringMode: "all",
       followUpMode: "one-at-a-time",
-      sessionFile: "/tmp/gsd/session.json",
+      sessionFile: "/tmp/gwd/session.json",
       sessionId: "session-fixture",
       sessionName: "Phase 0 Fixture",
       autoCompactionEnabled: true,
@@ -67,7 +67,7 @@ export const rpcGoldenResponses = [
     command: "get_session_stats",
     success: true,
     data: {
-      sessionFile: "/tmp/gsd/session.json",
+      sessionFile: "/tmp/gwd/session.json",
       sessionId: "session-fixture",
       userMessages: 2,
       assistantMessages: 2,

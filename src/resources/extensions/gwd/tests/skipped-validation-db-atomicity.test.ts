@@ -14,7 +14,7 @@ import {
 } from "../gwd-db.ts";
 
 test("skipped validation dispatch persists the validation file and DB assessment together", async () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-skip-validation-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-skip-validation-"));
   const milestoneDir = join(basePath, ".gwd", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   const rule = DISPATCH_RULES.find((r) => r.name === "validating-milestone → validate-milestone");

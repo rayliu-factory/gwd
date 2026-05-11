@@ -1,4 +1,4 @@
-// GSD2 complete-milestone tests
+// GWD2 complete-milestone tests
 import { describe, test, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync, existsSync } from "node:fs";
@@ -33,7 +33,7 @@ function loadPromptFromWorktree(name: string, vars: Record<string, string> = {})
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-complete-ms-test-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-complete-ms-test-"));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }

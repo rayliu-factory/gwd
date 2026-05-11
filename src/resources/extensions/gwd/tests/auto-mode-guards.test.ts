@@ -15,7 +15,7 @@ import { parkMilestone, unparkMilestone, discardMilestone } from '../milestone-a
 import { _setAutoActiveForTest } from '../auto.ts';
 
 function createFixture(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-guard-test-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-guard-test-'));
   const mDir = join(base, '.gwd', 'milestones', 'M001');
   mkdirSync(mDir, { recursive: true });
   writeFileSync(join(mDir, 'M001-ROADMAP.md'), '# M001\n', 'utf-8');

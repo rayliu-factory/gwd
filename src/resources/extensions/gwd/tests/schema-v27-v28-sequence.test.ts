@@ -23,7 +23,7 @@ import {
 } from "../gwd-db.ts";
 
 function makeTmp(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "gsd-v27v28-"));
+  return fs.mkdtempSync(path.join(os.tmpdir(), "gwd-v27v28-"));
 }
 
 function cleanup(base: string): void {

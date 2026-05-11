@@ -5,9 +5,9 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 
 import { formatDoctorReport, runGWDDoctor, summarizeDoctorIssues, filterDoctorIssues, selectDoctorScope, validateTitle } from "../../doctor.js";
-const tmpBase = mkdtempSync(join(tmpdir(), "gsd-doctor-test-"));
-const gsd = join(tmpBase, ".gwd");
-const mDir = join(gsd, "milestones", "M001");
+const tmpBase = mkdtempSync(join(tmpdir(), "gwd-doctor-test-"));
+const gwd = join(tmpBase, ".gwd");
+const mDir = join(gwd, "milestones", "M001");
 const sDir = join(mDir, "slices", "S01");
 const tDir = join(sDir, "tasks");
 mkdirSync(tDir, { recursive: true });
@@ -95,9 +95,9 @@ describe('doctor', async () => {
 
   // ─── Milestone summary detection: missing summary ──────────────────────
   test('doctor detects missing milestone summary', async () => {
-    const msBase = mkdtempSync(join(tmpdir(), "gsd-doctor-ms-test-"));
-    const msGsd = join(msBase, ".gwd");
-    const msMDir = join(msGsd, "milestones", "M001");
+    const msBase = mkdtempSync(join(tmpdir(), "gwd-doctor-ms-test-"));
+    const msGwd = join(msBase, ".gwd");
+    const msMDir = join(msGwd, "milestones", "M001");
     const msSDir = join(msMDir, "slices", "S01");
     const msTDir = join(msSDir, "tasks");
     mkdirSync(msTDir, { recursive: true });
@@ -162,9 +162,9 @@ parent: M001
 
   // ─── Milestone summary detection: summary present (no false positive) ──
   test('doctor does NOT flag milestone with summary', async () => {
-    const msBase = mkdtempSync(join(tmpdir(), "gsd-doctor-ms-ok-test-"));
-    const msGsd = join(msBase, ".gwd");
-    const msMDir = join(msGsd, "milestones", "M001");
+    const msBase = mkdtempSync(join(tmpdir(), "gwd-doctor-ms-ok-test-"));
+    const msGwd = join(msBase, ".gwd");
+    const msMDir = join(msGwd, "milestones", "M001");
     const msSDir = join(msMDir, "slices", "S01");
     const msTDir = join(msSDir, "tasks");
     mkdirSync(msTDir, { recursive: true });
@@ -221,9 +221,9 @@ parent: M001
 
   // ─── blocker_discovered_no_replan detection ────────────────────────────
   test('doctor detects blocker_discovered_no_replan', async () => {
-    const bBase = mkdtempSync(join(tmpdir(), "gsd-doctor-blocker-test-"));
-    const bGsd = join(bBase, ".gwd");
-    const bMDir = join(bGsd, "milestones", "M001");
+    const bBase = mkdtempSync(join(tmpdir(), "gwd-doctor-blocker-test-"));
+    const bGwd = join(bBase, ".gwd");
+    const bMDir = join(bGwd, "milestones", "M001");
     const bSDir = join(bMDir, "slices", "S01");
     const bTDir = join(bSDir, "tasks");
     mkdirSync(bTDir, { recursive: true });
@@ -287,9 +287,9 @@ Discovered an issue.
 
   // ─── blocker_discovered with REPLAN.md (no false positive) ─────────────
   test('doctor does NOT flag blocker when REPLAN.md exists', async () => {
-    const bBase = mkdtempSync(join(tmpdir(), "gsd-doctor-blocker-ok-test-"));
-    const bGsd = join(bBase, ".gwd");
-    const bMDir = join(bGsd, "milestones", "M001");
+    const bBase = mkdtempSync(join(tmpdir(), "gwd-doctor-blocker-ok-test-"));
+    const bGwd = join(bBase, ".gwd");
+    const bMDir = join(bGwd, "milestones", "M001");
     const bSDir = join(bMDir, "slices", "S01");
     const bTDir = join(bSDir, "tasks");
     mkdirSync(bTDir, { recursive: true });
@@ -343,9 +343,9 @@ Discovered an issue.
 
   // ─── Must-have verification: all addressed → no issue ─────────────────
   test('doctor: done task with must-haves all addressed → no issue', async () => {
-    const mhBase = mkdtempSync(join(tmpdir(), "gsd-doctor-mh-ok-"));
-    const mhGsd = join(mhBase, ".gwd");
-    const mhMDir = join(mhGsd, "milestones", "M001");
+    const mhBase = mkdtempSync(join(tmpdir(), "gwd-doctor-mh-ok-"));
+    const mhGwd = join(mhBase, ".gwd");
+    const mhMDir = join(mhGwd, "milestones", "M001");
     const mhSDir = join(mhMDir, "slices", "S01");
     const mhTDir = join(mhSDir, "tasks");
     mkdirSync(mhTDir, { recursive: true });
@@ -370,9 +370,9 @@ Discovered an issue.
 
   // ─── Must-have verification: not addressed → warning fired ───────────
   test('doctor: done task with must-haves NOT addressed → warning', async () => {
-    const mhBase = mkdtempSync(join(tmpdir(), "gsd-doctor-mh-fail-"));
-    const mhGsd = join(mhBase, ".gwd");
-    const mhMDir = join(mhGsd, "milestones", "M001");
+    const mhBase = mkdtempSync(join(tmpdir(), "gwd-doctor-mh-fail-"));
+    const mhGwd = join(mhBase, ".gwd");
+    const mhMDir = join(mhGwd, "milestones", "M001");
     const mhSDir = join(mhMDir, "slices", "S01");
     const mhTDir = join(mhSDir, "tasks");
     mkdirSync(mhTDir, { recursive: true });
@@ -400,9 +400,9 @@ Discovered an issue.
 
   // ─── Must-have verification: no task plan → no issue ─────────────────
   test('doctor: done task with no task plan file → no issue', async () => {
-    const mhBase = mkdtempSync(join(tmpdir(), "gsd-doctor-mh-noplan-"));
-    const mhGsd = join(mhBase, ".gwd");
-    const mhMDir = join(mhGsd, "milestones", "M001");
+    const mhBase = mkdtempSync(join(tmpdir(), "gwd-doctor-mh-noplan-"));
+    const mhGwd = join(mhBase, ".gwd");
+    const mhMDir = join(mhGwd, "milestones", "M001");
     const mhSDir = join(mhMDir, "slices", "S01");
     const mhTDir = join(mhSDir, "tasks");
     mkdirSync(mhTDir, { recursive: true });
@@ -424,9 +424,9 @@ Discovered an issue.
 
   // ─── Must-have verification: plan exists but no Must-Haves section → no issue
   test('doctor: done task with plan but no Must-Haves section → no issue', async () => {
-    const mhBase = mkdtempSync(join(tmpdir(), "gsd-doctor-mh-nosect-"));
-    const mhGsd = join(mhBase, ".gwd");
-    const mhMDir = join(mhGsd, "milestones", "M001");
+    const mhBase = mkdtempSync(join(tmpdir(), "gwd-doctor-mh-nosect-"));
+    const mhGwd = join(mhBase, ".gwd");
+    const mhMDir = join(mhGwd, "milestones", "M001");
     const mhSDir = join(mhMDir, "slices", "S01");
     const mhTDir = join(mhSDir, "tasks");
     mkdirSync(mhTDir, { recursive: true });
@@ -483,9 +483,9 @@ Discovered an issue.
 
   // ─── doctor detects delimiter_in_title for milestone ───────────────────
   test('doctor detects em dash in milestone title', async () => {
-    const dtBase = mkdtempSync(join(tmpdir(), "gsd-doctor-dt-test-"));
-    const dtGsd = join(dtBase, ".gwd");
-    const dtMDir = join(dtGsd, "milestones", "M001");
+    const dtBase = mkdtempSync(join(tmpdir(), "gwd-doctor-dt-test-"));
+    const dtGwd = join(dtBase, ".gwd");
+    const dtMDir = join(dtGwd, "milestones", "M001");
     const dtSDir = join(dtMDir, "slices", "S01");
     const dtTDir = join(dtSDir, "tasks");
     mkdirSync(dtTDir, { recursive: true });
@@ -510,9 +510,9 @@ Discovered an issue.
 
   // ─── doctor detects delimiter_in_title for slice ────────────────────────
   test('doctor detects em dash in slice title', async () => {
-    const dtBase = mkdtempSync(join(tmpdir(), "gsd-doctor-dt-slice-"));
-    const dtGsd = join(dtBase, ".gwd");
-    const dtMDir = join(dtGsd, "milestones", "M001");
+    const dtBase = mkdtempSync(join(tmpdir(), "gwd-doctor-dt-slice-"));
+    const dtGwd = join(dtBase, ".gwd");
+    const dtMDir = join(dtGwd, "milestones", "M001");
     const dtSDir = join(dtMDir, "slices", "S01");
     const dtTDir = join(dtSDir, "tasks");
     mkdirSync(dtTDir, { recursive: true });
@@ -535,9 +535,9 @@ Discovered an issue.
 
   // ─── doctor does NOT flag clean titles ──────────────────────────────────
   test('doctor does NOT flag milestone with clean title', async () => {
-    const dtBase = mkdtempSync(join(tmpdir(), "gsd-doctor-dt-clean-"));
-    const dtGsd = join(dtBase, ".gwd");
-    const dtMDir = join(dtGsd, "milestones", "M001");
+    const dtBase = mkdtempSync(join(tmpdir(), "gwd-doctor-dt-clean-"));
+    const dtGwd = join(dtBase, ".gwd");
+    const dtMDir = join(dtGwd, "milestones", "M001");
     const dtSDir = join(dtMDir, "slices", "S01");
     const dtTDir = join(dtSDir, "tasks");
     mkdirSync(dtTDir, { recursive: true });
@@ -558,7 +558,7 @@ Discovered an issue.
   test('doctor: unresolvable_dependency warns for leftover range ID', async () => {
     // Simulate a roadmap where expandDependencies did NOT expand (pre-fix stored artifact)
     // by writing a dep that looks like a range but doesn't match any real slice.
-    const base = mkdtempSync(join(tmpdir(), "gsd-doctor-udep-"));
+    const base = mkdtempSync(join(tmpdir(), "gwd-doctor-udep-"));
     const mDir2 = join(base, ".gwd", "milestones", "M001");
     const sDir2 = join(mDir2, "slices", "S01");
     const tDir2 = join(sDir2, "tasks");
@@ -586,7 +586,7 @@ Discovered an issue.
 
   // ─── unresolvable_dependency: valid deps do not warn ─────────────────
   test('doctor: no unresolvable_dependency for valid deps', async () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-doctor-udep-ok-"));
+    const base = mkdtempSync(join(tmpdir(), "gwd-doctor-udep-ok-"));
     const mDir2 = join(base, ".gwd", "milestones", "M001");
     const sDir2 = join(mDir2, "slices", "S01");
     const tDir2 = join(sDir2, "tasks");

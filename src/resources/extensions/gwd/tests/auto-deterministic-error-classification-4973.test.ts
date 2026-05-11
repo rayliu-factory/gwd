@@ -36,7 +36,7 @@ import { escalateTier } from "../model-router.ts";
 const tmpDirs: string[] = [];
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), `gsd-test-4973-${randomUUID().slice(0, 8)}-`));
+  const base = mkdtempSync(join(tmpdir(), `gwd-test-4973-${randomUUID().slice(0, 8)}-`));
   tmpDirs.push(base);
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   return base;

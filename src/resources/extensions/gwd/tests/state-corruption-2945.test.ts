@@ -30,7 +30,7 @@ import type { AutoSession } from "../auto/session.ts";
 // ─── Fixture helpers ────────────────────────────────────────────────────────
 
 function tempDbPath(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-2945-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-2945-"));
   return join(dir, "test.db");
 }
 
@@ -45,7 +45,7 @@ function cleanupDb(dbPath: string): void {
 }
 
 function createTempProject(): { basePath: string } {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-2945-project-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-2945-project-"));
   mkdirSync(join(basePath, ".gwd", "milestones", "M001"), { recursive: true });
   return { basePath };
 }
@@ -293,11 +293,11 @@ describe("#2945 Bug 3: mergeAndExit must teardown worktree after successful merg
       autoCommitCurrentBranch: () => {},
       getCurrentBranch: () => "main",
       checkoutBranch: () => {},
-      autoWorktreeBranch: () => "gsd/M001",
+      autoWorktreeBranch: () => "gwd/M001",
       resolveMilestoneFile: () => "/mock/roadmap.md",
       readFileSync: () => "# Roadmap content",
       GitServiceImpl: class {} as unknown as new (p: string, c: unknown) => unknown,
-      loadEffectiveGSDPreferences: () => undefined,
+      loadEffectiveGWDPreferences: () => undefined,
       invalidateAllCaches: () => {},
       captureIntegrationBranch: () => {},
       enterBranchModeForMilestone: () => {},

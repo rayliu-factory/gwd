@@ -75,7 +75,7 @@ interface Layout {
 }
 
 function buildLayout(opts: { withSpec?: boolean; summaryBytes?: number } = {}): Layout {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-eval-review-int-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-eval-review-int-"));
   const milestoneId = "M001";
   const sliceId = "S07";
   const sliceDir = join(basePath, ".gwd", "milestones", milestoneId, "slices", sliceId);

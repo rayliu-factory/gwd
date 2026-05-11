@@ -20,7 +20,7 @@ import {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTmpDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-freeform-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-freeform-'));
   fs.mkdirSync(path.join(dir, '.gwd'), { recursive: true });
   return dir;
 }

@@ -23,7 +23,7 @@ test.afterEach(() => {
 });
 
 test("checkAutoStartAfterDiscuss waits until discussion artifacts exist before re-entering auto-mode", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-bootstrap-await-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-bootstrap-await-"));
   const notifications: string[] = [];
   t.after(() => rmSync(base, { recursive: true, force: true }));
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });

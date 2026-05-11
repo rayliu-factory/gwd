@@ -18,7 +18,7 @@ import {
 import { handleReassessRoadmap } from '../tools/reassess-roadmap.ts';
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-reassess-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-reassess-'));
   mkdirSync(join(base, '.gwd', 'milestones', 'M001', 'slices', 'S01'), { recursive: true });
   mkdirSync(join(base, '.gwd', 'milestones', 'M001', 'slices', 'S02'), { recursive: true });
   mkdirSync(join(base, '.gwd', 'milestones', 'M001', 'slices', 'S03'), { recursive: true });

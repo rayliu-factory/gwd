@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { verifyExpectedArtifact } from "../auto-recovery.ts";
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-plan-milestone-artifact-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-plan-milestone-artifact-"));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }

@@ -6,9 +6,9 @@ import assert from "node:assert/strict";
 
 import { createAutoOrchestrator } from "../auto/orchestrator.js";
 import type { AutoOrchestratorDeps } from "../auto/contracts.js";
-import type { GSDState } from "../types.js";
+import type { GWDState } from "../types.js";
 
-function makeState(): GSDState {
+function makeState(): GWDState {
   return {
     activeMilestone: { id: "M001", title: "Milestone" },
     activeSlice: null,

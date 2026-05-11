@@ -5,7 +5,7 @@
  * silent data loss. When a repo has a remote URL, the identity hash
  * should be based solely on the remote — making moves transparent.
  *
- * For local-only repos (no remote), ensureGsdSymlink should detect
+ * For local-only repos (no remote), ensureGwdSymlink should detect
  * orphaned state directories with a matching .gwd-id marker and
  * recover them automatically.
  */
@@ -29,8 +29,8 @@ import { execFileSync } from "node:child_process";
 
 import {
   repoIdentity,
-  externalGsdRoot,
-  ensureGsdSymlink,
+  externalGwdRoot,
+  ensureGwdSymlink,
   readRepoMeta,
   externalProjectsRoot,
 } from "../repo-identity.ts";
@@ -67,7 +67,7 @@ describe("project-relocation-recovery (#2750)", () => {
 
   before(() => {
     savedStateDir = process.env.GWD_STATE_DIR;
-    stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-state-")));
+    stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-reloc-state-")));
     process.env.GWD_STATE_DIR = stateDir;
   });
 
@@ -83,7 +83,7 @@ describe("project-relocation-recovery (#2750)", () => {
   // ── Remote repos: identity should be path-independent ─────────────────
 
   test("repoIdentity is stable across moves for repos with a remote URL", () => {
-    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-a-")));
+    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gwd-reloc-a-")));
     initRepo(repoA, "https://github.com/example/myrepo.git");
 
     const identityBefore = repoIdentity(repoA);
@@ -91,7 +91,7 @@ describe("project-relocation-recovery (#2750)", () => {
     // Move the repo to a new location
     const repoB = join(
       tmpdir(),
-      `gsd-reloc-b-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      `gwd-reloc-b-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     );
     renameSync(repoA, repoB);
 
@@ -106,12 +106,12 @@ describe("project-relocation-recovery (#2750)", () => {
     rmSync(repoB, { recursive: true, force: true });
   });
 
-  test("ensureGsdSymlink reuses the same external dir after repo move (remote repo)", () => {
-    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-reuse-a-")));
+  test("ensureGwdSymlink reuses the same external dir after repo move (remote repo)", () => {
+    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gwd-reloc-reuse-a-")));
     initRepo(repoA, "https://github.com/example/reloc-reuse.git");
 
     // Initialize GWD state with some planning data
-    const externalA = ensureGsdSymlink(repoA);
+    const externalA = ensureGwdSymlink(repoA);
     const milestonesPath = join(externalA, "milestones");
     mkdirSync(milestonesPath, { recursive: true });
     writeFileSync(
@@ -123,12 +123,12 @@ describe("project-relocation-recovery (#2750)", () => {
     // Move the repo
     const repoB = join(
       tmpdir(),
-      `gsd-reloc-reuse-b-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      `gwd-reloc-reuse-b-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     );
     renameSync(repoA, repoB);
 
-    // ensureGsdSymlink at the new location should find the same external dir
-    const externalB = ensureGsdSymlink(repoB);
+    // ensureGwdSymlink at the new location should find the same external dir
+    const externalB = ensureGwdSymlink(repoB);
 
     assert.strictEqual(
       normalizePath(externalB),
@@ -155,21 +155,21 @@ describe("project-relocation-recovery (#2750)", () => {
   });
 
   test("repo-meta.json gitRoot is updated after move (remote repo)", () => {
-    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-meta-a-")));
+    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gwd-reloc-meta-a-")));
     initRepo(repoA, "https://github.com/example/reloc-meta.git");
 
-    const externalA = ensureGsdSymlink(repoA);
+    const externalA = ensureGwdSymlink(repoA);
     const metaBefore = readRepoMeta(externalA);
     assert.ok(metaBefore !== null, "metadata should exist before move");
 
     // Move the repo
     const repoB = join(
       tmpdir(),
-      `gsd-reloc-meta-b-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      `gwd-reloc-meta-b-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     );
     renameSync(repoA, repoB);
 
-    const externalB = ensureGsdSymlink(repoB);
+    const externalB = ensureGwdSymlink(repoB);
     const metaAfter = readRepoMeta(externalB);
     assert.ok(metaAfter !== null, "metadata should exist after move");
     assert.strictEqual(
@@ -188,14 +188,14 @@ describe("project-relocation-recovery (#2750)", () => {
 
   // ── Local-only repos: .gwd-id marker provides recovery ────────────────
 
-  test("ensureGsdSymlink writes a .gwd-id marker in the project root", () => {
-    const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-marker-")));
+  test("ensureGwdSymlink writes a .gwd-id marker in the project root", () => {
+    const repo = realpathSync(mkdtempSync(join(tmpdir(), "gwd-reloc-marker-")));
     initRepo(repo);
 
-    ensureGsdSymlink(repo);
+    ensureGwdSymlink(repo);
 
     const markerPath = join(repo, ".gwd-id");
-    assert.ok(existsSync(markerPath), ".gwd-id marker must be written by ensureGsdSymlink");
+    assert.ok(existsSync(markerPath), ".gwd-id marker must be written by ensureGwdSymlink");
 
     const markerId = readFileSync(markerPath, "utf-8").trim();
     const computedId = repoIdentity(repo);
@@ -205,12 +205,12 @@ describe("project-relocation-recovery (#2750)", () => {
   });
 
   test("local-only repo recovers state via .gwd-id marker after move", () => {
-    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-local-a-")));
+    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gwd-reloc-local-a-")));
     initRepo(repoA);
     // No remote — identity includes gitRoot
 
     // Initialize GWD state
-    const externalA = ensureGsdSymlink(repoA);
+    const externalA = ensureGwdSymlink(repoA);
     mkdirSync(join(externalA, "milestones"), { recursive: true });
     writeFileSync(
       join(externalA, "milestones", "M001.md"),
@@ -223,7 +223,7 @@ describe("project-relocation-recovery (#2750)", () => {
     // Move the repo
     const repoB = join(
       tmpdir(),
-      `gsd-reloc-local-b-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      `gwd-reloc-local-b-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     );
     renameSync(repoA, repoB);
 
@@ -235,8 +235,8 @@ describe("project-relocation-recovery (#2750)", () => {
       "local-only repo identity changes with move (expected)",
     );
 
-    // But ensureGsdSymlink should detect .gwd-id marker and recover
-    const externalB = ensureGsdSymlink(repoB);
+    // But ensureGwdSymlink should detect .gwd-id marker and recover
+    const externalB = ensureGwdSymlink(repoB);
     assert.ok(
       existsSync(join(externalB, "milestones", "M001.md")),
       "local-only repo must recover state via .gwd-id marker after move",
@@ -248,10 +248,10 @@ describe("project-relocation-recovery (#2750)", () => {
   // ── Edge cases ────────────────────────────────────────────────────────
 
   test("identity remains different for repos with different remotes", () => {
-    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-diff-a-")));
+    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gwd-reloc-diff-a-")));
     initRepo(repoA, "https://github.com/example/repo-alpha.git");
 
-    const repoB = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-diff-b-")));
+    const repoB = realpathSync(mkdtempSync(join(tmpdir(), "gwd-reloc-diff-b-")));
     initRepo(repoB, "https://github.com/example/repo-beta.git");
 
     assert.notStrictEqual(
@@ -265,10 +265,10 @@ describe("project-relocation-recovery (#2750)", () => {
   });
 
   test("no orphaned state dir created when remote repo is moved", () => {
-    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gsd-reloc-orphan-a-")));
+    const repoA = realpathSync(mkdtempSync(join(tmpdir(), "gwd-reloc-orphan-a-")));
     initRepo(repoA, "https://github.com/example/no-orphan.git");
 
-    ensureGsdSymlink(repoA);
+    ensureGwdSymlink(repoA);
 
     // Count project dirs before move
     const projectsDir = externalProjectsRoot();
@@ -279,11 +279,11 @@ describe("project-relocation-recovery (#2750)", () => {
     // Move the repo
     const repoB = join(
       tmpdir(),
-      `gsd-reloc-orphan-b-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      `gwd-reloc-orphan-b-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     );
     renameSync(repoA, repoB);
 
-    ensureGsdSymlink(repoB);
+    ensureGwdSymlink(repoB);
 
     const countAfter = readdirSync(projectsDir).length;
     assert.strictEqual(

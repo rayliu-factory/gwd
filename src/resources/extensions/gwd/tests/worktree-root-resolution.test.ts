@@ -9,7 +9,7 @@ import { randomUUID } from "node:crypto";
 import { resolveProjectRoot } from "../worktree.ts";
 
 function makeParentRepo(): string {
-  const parent = join(tmpdir(), `gsd-root-resolution-${randomUUID()}`);
+  const parent = join(tmpdir(), `gwd-root-resolution-${randomUUID()}`);
   mkdirSync(parent, { recursive: true });
   execFileSync("git", ["init"], { cwd: parent, stdio: "ignore" });
   execFileSync("git", ["config", "user.email", "test@test.com"], { cwd: parent });

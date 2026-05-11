@@ -34,7 +34,7 @@ import type { Decision, Requirement } from '../types.ts';
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTmpDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-dbwriter-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-dbwriter-'));
   // Create .gwd directory structure
   fs.mkdirSync(path.join(dir, '.gwd'), { recursive: true });
   return dir;

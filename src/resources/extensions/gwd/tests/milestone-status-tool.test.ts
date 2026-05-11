@@ -1,4 +1,4 @@
-// GSD2 — Tests for gwd_milestone_status read-only query tool
+// GWD2 — Tests for gwd_milestone_status read-only query tool
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -25,7 +25,7 @@ function makeMockPi() {
 }
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-query-tool-test-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-query-tool-test-${randomUUID()}`);
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
@@ -184,7 +184,7 @@ test("gwd_milestone_status returns not-found for missing milestone", async () =>
 
 test("gwd_milestone_status handles missing DB gracefully", async () => {
   // Create a directory without .gwd/ to ensure ensureDbOpen has nothing to open
-  const base = join(tmpdir(), `gsd-no-db-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-no-db-${randomUUID()}`);
   mkdirSync(base, { recursive: true });
   closeDatabase(); // ensure no prior DB is open
   try {

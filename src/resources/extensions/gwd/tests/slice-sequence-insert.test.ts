@@ -51,7 +51,7 @@ function slice(sliceId: string, title: string) {
 
 describe("slice sequence on insert (#3697)", () => {
   test("plan milestone persists slices in agent-provided order", async () => {
-    const base = makeBase("gsd-sequence-plan-");
+    const base = makeBase("gwd-sequence-plan-");
 
     const result = await handlePlanMilestone({
       milestoneId: "M001",
@@ -68,7 +68,7 @@ describe("slice sequence on insert (#3697)", () => {
   });
 
   test("reassess roadmap appends new slices after existing slices", async () => {
-    const base = makeBase("gsd-sequence-reassess-");
+    const base = makeBase("gwd-sequence-reassess-");
     insertMilestone({ id: "M001", title: "Sequence", status: "active", depends_on: [] });
     insertSlice({ id: "S01", milestoneId: "M001", title: "Done", status: "complete", risk: "low", depends: [], demo: "", sequence: 1 });
     insertSlice({ id: "S02", milestoneId: "M001", title: "Existing", status: "pending", risk: "low", depends: [], demo: "", sequence: 2 });
@@ -96,7 +96,7 @@ describe("slice sequence on insert (#3697)", () => {
   });
 
   test("markdown importer preserves roadmap order in sequence values", () => {
-    const base = makeBase("gsd-sequence-import-");
+    const base = makeBase("gwd-sequence-import-");
     const milestoneDir = join(base, ".gwd", "milestones", "M001");
     mkdirSync(milestoneDir, { recursive: true });
     writeFileSync(

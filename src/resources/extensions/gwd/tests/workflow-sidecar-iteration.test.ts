@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import type { GSDState } from "../types.ts";
+import type { GWDState } from "../types.ts";
 import type { SidecarItem } from "../auto/session.ts";
 import { buildSidecarIterationData } from "../auto/workflow-sidecar-iteration.ts";
 
@@ -25,7 +25,7 @@ test("buildSidecarIterationData derives state from canonical project root", asyn
     activeMilestone: { id: "M001", title: "Milestone 1" },
     activeSlice: { id: "S01" },
     activeTask: { id: "T01" },
-  } as GSDState;
+  } as GWDState;
 
   await buildSidecarIterationData({
     sidecarItem: makeSidecarItem(),
@@ -45,7 +45,7 @@ test("buildSidecarIterationData maps sidecar item and milestone state into itera
   const state = {
     phase: "executing",
     activeMilestone: { id: "M001", title: "Milestone 1" },
-  } as GSDState;
+  } as GWDState;
 
   const iterData = await buildSidecarIterationData({
     sidecarItem: makeSidecarItem({
@@ -83,7 +83,7 @@ test("buildSidecarIterationData logs task, slice, or milestone active unit", asy
       activeMilestone: { id: "M001", title: "Milestone 1" },
       activeSlice: { id: "S01" },
       activeTask: { id: "T01" },
-    }) as GSDState,
+    }) as GWDState,
     logPostDerive: details => logs.push(details),
   });
 
@@ -101,7 +101,7 @@ test("buildSidecarIterationData handles missing active milestone", async () => {
     sidecarItem: makeSidecarItem(),
     basePath: "/worktree",
     canonicalProjectRoot: "/project",
-    deriveState: async () => ({ phase: "blocked" }) as GSDState,
+    deriveState: async () => ({ phase: "blocked" }) as GWDState,
     logPostDerive: () => {},
   });
 

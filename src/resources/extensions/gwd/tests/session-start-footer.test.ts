@@ -71,22 +71,22 @@ test("session_start handler guards initHealthWidget with !isAutoActive()", () =>
 test("session_switch toggles gwd-health from runtime auto state without touching the footer", async (t) => {
   const dir = join(
     tmpdir(),
-    `gsd-session-switch-widget-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `gwd-session-switch-widget-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(join(dir, ".gwd"), { recursive: true });
-  const tempGsdHome = join(dir, "home");
-  mkdirSync(tempGsdHome, { recursive: true });
+  const tempGwdHome = join(dir, "home");
+  mkdirSync(tempGwdHome, { recursive: true });
 
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  process.env.GWD_HOME = tempGsdHome;
+  const originalGwdHome = process.env.GWD_HOME;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(dir);
   autoSession.reset();
   t.after(() => {
     autoSession.reset();
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     try { rmSync(dir, { recursive: true, force: true }); } catch { /* best-effort */ }
   });
 
@@ -158,7 +158,7 @@ test("session_switch toggles gwd-health from runtime auto state without touching
 test("session_start does NOT call setFooter or suppress gwd-health when isAutoActive() is false", async (t) => {
   const dir = join(
     tmpdir(),
-    `gsd-footer-test-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `gwd-footer-test-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(dir, { recursive: true });
 
@@ -209,7 +209,7 @@ test("session_start does NOT call setFooter or suppress gwd-health when isAutoAc
 test("session_start installs the welcome screen as the TUI header", async (t) => {
   const dir = join(
     tmpdir(),
-    `gsd-welcome-header-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `gwd-welcome-header-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(join(dir, "bin"), { recursive: true });
   mkdirSync(join(dir, "dist"), { recursive: true });
@@ -226,9 +226,9 @@ test("session_start installs the welcome screen as the TUI header", async (t) =>
   );
 
   const originalCwd = process.cwd();
-  const originalGsdPkgRoot = process.env.GWD_PKG_ROOT;
-  const originalGsdBinPath = process.env.GWD_BIN_PATH;
-  const originalGsdVersion = process.env.GWD_VERSION;
+  const originalGwdPkgRoot = process.env.GWD_PKG_ROOT;
+  const originalGwdBinPath = process.env.GWD_BIN_PATH;
+  const originalGwdVersion = process.env.GWD_VERSION;
   const originalFirstRunBanner = process.env.GWD_FIRST_RUN_BANNER;
   process.chdir(dir);
   process.env.GWD_PKG_ROOT = dir;
@@ -237,12 +237,12 @@ test("session_start installs the welcome screen as the TUI header", async (t) =>
   delete process.env.GWD_FIRST_RUN_BANNER;
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdPkgRoot === undefined) delete process.env.GWD_PKG_ROOT;
-    else process.env.GWD_PKG_ROOT = originalGsdPkgRoot;
-    if (originalGsdBinPath === undefined) delete process.env.GWD_BIN_PATH;
-    else process.env.GWD_BIN_PATH = originalGsdBinPath;
-    if (originalGsdVersion === undefined) delete process.env.GWD_VERSION;
-    else process.env.GWD_VERSION = originalGsdVersion;
+    if (originalGwdPkgRoot === undefined) delete process.env.GWD_PKG_ROOT;
+    else process.env.GWD_PKG_ROOT = originalGwdPkgRoot;
+    if (originalGwdBinPath === undefined) delete process.env.GWD_BIN_PATH;
+    else process.env.GWD_BIN_PATH = originalGwdBinPath;
+    if (originalGwdVersion === undefined) delete process.env.GWD_VERSION;
+    else process.env.GWD_VERSION = originalGwdVersion;
     if (originalFirstRunBanner === undefined) delete process.env.GWD_FIRST_RUN_BANNER;
     else process.env.GWD_FIRST_RUN_BANNER = originalFirstRunBanner;
     try { rmSync(dir, { recursive: true, force: true }); } catch { /* best-effort */ }
@@ -286,20 +286,20 @@ test("session_start installs the welcome screen as the TUI header", async (t) =>
 test("session_start and session_switch apply disabled model provider policy from current preferences", async (t) => {
   const dir = join(
     tmpdir(),
-    `gsd-disabled-provider-policy-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `gwd-disabled-provider-policy-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(join(dir, ".gwd"), { recursive: true });
-  const tempGsdHome = join(dir, "home");
-  mkdirSync(tempGsdHome, { recursive: true });
+  const tempGwdHome = join(dir, "home");
+  mkdirSync(tempGwdHome, { recursive: true });
 
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  process.env.GWD_HOME = tempGsdHome;
+  const originalGwdHome = process.env.GWD_HOME;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(dir);
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     try { rmSync(dir, { recursive: true, force: true }); } catch { /* best-effort */ }
   });
 

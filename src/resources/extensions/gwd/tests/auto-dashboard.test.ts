@@ -40,7 +40,7 @@ import {
 function makeTempDir(prefix: string): string {
   return join(
     tmpdir(),
-    `gsd-auto-dashboard-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `gwd-auto-dashboard-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
 }
 
@@ -389,7 +389,7 @@ test("last commit refresh still returns commit info for a valid git repo", (t) =
 
   execFileSync("git", ["init", "-b", "main"], { cwd: dir, stdio: "pipe" });
   execFileSync("git", ["config", "user.name", "GWD Test"], { cwd: dir, stdio: "pipe" });
-  execFileSync("git", ["config", "user.email", "gsd@example.com"], { cwd: dir, stdio: "pipe" });
+  execFileSync("git", ["config", "user.email", "gwd@example.com"], { cwd: dir, stdio: "pipe" });
   writeFileSync(join(dir, "README.md"), "hello\n", "utf-8");
   execFileSync("git", ["add", "README.md"], { cwd: dir, stdio: "pipe" });
   execFileSync("git", ["commit", "-m", "test: seed dashboard repo"], { cwd: dir, stdio: "pipe" });

@@ -21,7 +21,7 @@ import {
 } from "../db/milestone-leases.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-leases-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-leases-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

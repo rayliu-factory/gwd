@@ -32,11 +32,11 @@ import { recordDispatchClaim } from "../db/unit-dispatches.ts";
 import { insertSlice, insertTask } from "../gwd-db.ts";
 import { setRuntimeKv } from "../db/runtime-kv.ts";
 import { normalizeRealPath } from "../paths.ts";
-import type { GSDState } from "../types.ts";
+import type { GWDState } from "../types.ts";
 import { _synthesizePausedSessionRecoveryForTest } from "../auto.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-test-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-test-${randomUUID()}`);
   mkdirSync(join(base, ".gwd"), { recursive: true });
   // Phase C pt 2: lock and paused-session live in the DB now. Open it
   // for every test base so the helpers below can write through.
@@ -203,7 +203,7 @@ function writeActivityLog(base: string, entries: Record<string, unknown>[]): voi
   );
 }
 
-function makeState(phase: GSDState["phase"], activeMilestone = true): GSDState {
+function makeState(phase: GWDState["phase"], activeMilestone = true): GWDState {
   return {
     activeMilestone: activeMilestone ? { id: "M001", title: "Test" } : null,
     activeSlice: null,

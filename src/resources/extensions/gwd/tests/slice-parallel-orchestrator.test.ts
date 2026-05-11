@@ -45,7 +45,7 @@ function readProcessStartFingerprint(pid: number): string | null {
 }
 
 function makeTempProject(): string {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-slice-parallel-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-slice-parallel-"));
   mkdirSync(join(basePath, ".gwd"), { recursive: true });
   return basePath;
 }

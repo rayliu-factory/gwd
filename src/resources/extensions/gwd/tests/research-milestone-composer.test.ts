@@ -17,7 +17,7 @@ import {
 } from "../gwd-db.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-research-ms-composer-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-research-ms-composer-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   return base;
 }

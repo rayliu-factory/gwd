@@ -11,7 +11,7 @@ import { clearPathCache } from "../paths.js";
 import { clearParseCache } from "../files.js";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-val-handler-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-val-handler-${randomUUID()}`);
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   return base;
 }

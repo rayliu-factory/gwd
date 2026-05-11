@@ -22,14 +22,14 @@ test("resource manifest includes contentHash", async (t) => {
     contentHash: "abc123def456",
   };
 
-  const tmpDir = mkdtempSync(join(tmpdir(), "gsd-resource-test-"));
+  const tmpDir = mkdtempSync(join(tmpdir(), "gwd-resource-test-"));
   const manifestPath = join(tmpDir, "managed-resources.json");
 
   t.after(() => { rmSync(tmpDir, { recursive: true, force: true }); });
 
   writeFileSync(manifestPath, JSON.stringify(manifest));
   const read = JSON.parse(readFileSync(manifestPath, "utf-8"));
-  assert.equal(read.gsdVersion, "2.28.0");
+  assert.equal(read.gwdVersion, "2.28.0");
   assert.equal(read.contentHash, "abc123def456");
   assert.equal(typeof read.syncedAt, "number");
 });
@@ -45,7 +45,7 @@ test("missing contentHash in manifest triggers re-sync (upgrade path)", () => {
   // Simulate the check in initResources:
   // if (manifest.contentHash && manifest.contentHash === currentHash)
   const currentHash = "somehash";
-  const shouldSkip = oldManifest.gsdVersion === "2.28.0"
+  const shouldSkip = oldManifest.gwdVersion === "2.28.0"
     && ("contentHash" in oldManifest)
     && (oldManifest as any).contentHash === currentHash;
 
@@ -60,7 +60,7 @@ test("matching contentHash skips re-sync", () => {
   };
 
   const currentHash = "abc123";
-  const shouldSkip = manifest.gsdVersion === "2.28.0"
+  const shouldSkip = manifest.gwdVersion === "2.28.0"
     && manifest.contentHash != null
     && manifest.contentHash === currentHash;
 
@@ -75,7 +75,7 @@ test("different contentHash triggers re-sync", () => {
   };
 
   const currentHash = "new_hash";
-  const shouldSkip = manifest.gsdVersion === "2.28.0"
+  const shouldSkip = manifest.gwdVersion === "2.28.0"
     && manifest.contentHash != null
     && manifest.contentHash === currentHash;
 

@@ -58,8 +58,8 @@ test("MILESTONE_ID_RE rejects non-milestone strings", () => {
 
 test("SLICE_BRANCH_RE captures milestone + slice without worktree prefix", () => {
   for (const { input, expectMid } of [
-    { input: "gsd/M001/S01", expectMid: "M001" },
-    { input: "gsd/M001-abc123/S01", expectMid: "M001-abc123" },
+    { input: "gwd/M001/S01", expectMid: "M001" },
+    { input: "gwd/M001-abc123/S01", expectMid: "M001-abc123" },
   ]) {
     const m = input.match(SLICE_BRANCH_RE);
     assert.ok(m, `should match ${input}`);
@@ -71,8 +71,8 @@ test("SLICE_BRANCH_RE captures milestone + slice without worktree prefix", () =>
 
 test("SLICE_BRANCH_RE captures worktree prefix when present", () => {
   for (const { input, expectMid } of [
-    { input: "gsd/worktree/M001/S01", expectMid: "M001" },
-    { input: "gsd/worktree/M001-abc123/S01", expectMid: "M001-abc123" },
+    { input: "gwd/worktree/M001/S01", expectMid: "M001" },
+    { input: "gwd/worktree/M001-abc123/S01", expectMid: "M001-abc123" },
   ]) {
     const m = input.match(SLICE_BRANCH_RE);
     assert.ok(m, `should match ${input}`);
@@ -83,9 +83,9 @@ test("SLICE_BRANCH_RE captures worktree prefix when present", () => {
 });
 
 test("SLICE_BRANCH_RE rejects malformed inputs", () => {
-  assert.ok(!SLICE_BRANCH_RE.test("gsd/S01"), "no milestone");
-  assert.ok(!SLICE_BRANCH_RE.test("main"), "non-gsd branch");
-  assert.ok(!SLICE_BRANCH_RE.test("gsd/M001"), "no slice");
+  assert.ok(!SLICE_BRANCH_RE.test("gwd/S01"), "no milestone");
+  assert.ok(!SLICE_BRANCH_RE.test("main"), "non-gwd branch");
+  assert.ok(!SLICE_BRANCH_RE.test("gwd/M001"), "no slice");
   assert.ok(!SLICE_BRANCH_RE.test("feature/M001/S01"), "wrong prefix");
 });
 

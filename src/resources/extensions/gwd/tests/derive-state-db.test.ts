@@ -22,7 +22,7 @@ import {
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-derive-db-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-derive-db-'));
   mkdirSync(join(base, '.gwd', 'milestones'), { recursive: true });
   return base;
 }
@@ -122,7 +122,7 @@ const REQUIREMENTS_CONTENT = `# Requirements
 
 describe('derive-state-db', async () => {
 
-  // ─── Test 1: DB-backed deriveState produces identical GSDState ─────────
+  // ─── Test 1: DB-backed deriveState produces identical GWDState ─────────
   test('derive-state-db: DB path matches file path', async () => {
     const base = createFixtureBase();
     try {

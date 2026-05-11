@@ -20,7 +20,7 @@ import { openDatabase, closeDatabase } from "../gwd-db.ts";
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function makeProjectDir(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-dbwriter-scope-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-dbwriter-scope-")));
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   return dir;
 }
@@ -163,7 +163,7 @@ describe("saveArtifactToDbByScope: worktree scope writes to project root .gwd/",
   let tmp: string;
 
   beforeEach(() => {
-    tmp = realpathSync(mkdtempSync(join(tmpdir(), "gsd-dbwriter-wt-scope-")));
+    tmp = realpathSync(mkdtempSync(join(tmpdir(), "gwd-dbwriter-wt-scope-")));
     // Create project .gwd directory
     mkdirSync(join(tmp, ".gwd"), { recursive: true });
   });

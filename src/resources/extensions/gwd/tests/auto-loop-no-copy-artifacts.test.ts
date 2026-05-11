@@ -21,7 +21,7 @@ function git(args: string[], cwd: string): void {
 }
 
 test("createAutoWorktree does NOT copy project-root .gwd/milestones into the worktree", (t) => {
-  const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-no-copy-")));
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-no-copy-")));
 
   // Initialize a real git repo with a real .gwd/ directory containing some
   // planning artifacts that the deleted copyPlanningArtifacts would have

@@ -19,8 +19,8 @@ function makeTmp(name: string): string {
 
 test("doctor does not touch task with checkbox AND summary both present", async () => {
   const base = makeTmp("doctor-ok");
-  const gsd = join(base, ".gwd");
-  const m = join(gsd, "milestones", "M001");
+  const gwd = join(base, ".gwd");
+  const m = join(gwd, "milestones", "M001");
   const s = join(m, "slices", "S01");
   const t = join(s, "tasks");
   mkdirSync(t, { recursive: true });

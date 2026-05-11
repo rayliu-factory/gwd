@@ -25,7 +25,7 @@ import {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeProjectDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-metrics-lock-na-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-metrics-lock-na-"));
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   return dir;
 }

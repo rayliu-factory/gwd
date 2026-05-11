@@ -8,15 +8,15 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test("plan-milestone prompt renders compact DB-backed planning guidance", async (t) => {
-  const previousGsdHome = process.env.GWD_HOME;
-  const providedGsdHome = process.env.GWD_TEST_HOME;
-  const isolatedHome = providedGsdHome ?? mkdtempSync(join(tmpdir(), "gsd-plan-milestone-render-"));
+  const previousGwdHome = process.env.GWD_HOME;
+  const providedGwdHome = process.env.GWD_TEST_HOME;
+  const isolatedHome = providedGwdHome ?? mkdtempSync(join(tmpdir(), "gwd-plan-milestone-render-"));
   const fixtureRoot = process.env.GWD_TEST_WORKSPACE_ROOT ?? process.cwd();
   process.env.GWD_HOME = isolatedHome;
   t.after(() => {
-    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = previousGsdHome;
-    if (!providedGsdHome) rmSync(isolatedHome, { recursive: true, force: true });
+    if (previousGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGwdHome;
+    if (!providedGwdHome) rmSync(isolatedHome, { recursive: true, force: true });
   });
 
   const { loadPrompt } = await import(`../prompt-loader.ts?test=${Date.now()}`);

@@ -39,7 +39,7 @@ const testCwd = process.cwd();
 
 test.before(() => {
   originalHome = process.env.HOME;
-  fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-fake-home-")));
+  fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gwd-fake-home-")));
   process.env.HOME = fakeHome;
   _clearGwdRootCache();
   _resetServiceCache();
@@ -75,7 +75,7 @@ function createTempRepo(): string {
   writeFileSync(join(dir, "README.md"), "# test\n");
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   writeFileSync(join(dir, ".gwd", "STATE.md"), "version: 1\n");
-  // In projects with tracked .gwd/ files (hasGitTrackedGsdFiles=true),
+  // In projects with tracked .gwd/ files (hasGitTrackedGwdFiles=true),
   // .gwd is NOT added to .gitignore. This means untracked files under
   // .gwd/ are visible to --include-untracked and get swept into the
   // stash, destroying queued milestone CONTEXT files (#2505).
@@ -86,7 +86,7 @@ function createTempRepo(): string {
   return dir;
 }
 
-function createTempRepoWithSymlinkedGsd(): { repo: string; stateDir: string } {
+function createTempRepoWithSymlinkedGwd(): { repo: string; stateDir: string } {
   const repo = realpathSync(mkdtempSync(join(tmpdir(), "wt-symlink-stash-test-")));
   const stateDir = realpathSync(mkdtempSync(join(tmpdir(), "wt-symlink-state-")));
   run("git init", repo);
@@ -284,7 +284,7 @@ test("#2505: mergeMilestoneToMain preserves queued CONTEXT files (not swept into
 });
 
 test("#2505: pre-merge stash handles symlinked .gwd without traversing it", () => {
-  const { repo, stateDir } = createTempRepoWithSymlinkedGsd();
+  const { repo, stateDir } = createTempRepoWithSymlinkedGwd();
   try {
     const wtPath = createAutoWorktree(repo, "M016");
     const normalizedPath = wtPath.replaceAll("\\", "/");

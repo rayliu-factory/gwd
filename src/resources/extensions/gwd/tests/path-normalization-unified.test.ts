@@ -34,7 +34,7 @@ function isCaseInsensitiveFs(dir: string): boolean {
 }
 
 function makeProjectDir(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-pathnorm-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-pathnorm-")));
   mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   return dir;
 }
@@ -76,7 +76,7 @@ describe("normalizeRealPath and tryRealpath produce identical results", () => {
 
 describe("normalizeRealPath: fallback for non-existent paths", () => {
   test("returns a resolved (absolute) path for a non-existent input", () => {
-    const ghost = join(tmpdir(), "gsd-pathnorm-ghost-does-not-exist-" + Date.now());
+    const ghost = join(tmpdir(), "gwd-pathnorm-ghost-does-not-exist-" + Date.now());
     const result = normalizeRealPath(ghost);
     // Must be a string, must be absolute, must not throw
     assert.equal(typeof result, "string");
@@ -84,7 +84,7 @@ describe("normalizeRealPath: fallback for non-existent paths", () => {
   });
 
   test("normalizeRealPath of a non-existent path is idempotent", () => {
-    const ghost = join(tmpdir(), "gsd-pathnorm-ghost2-" + Date.now());
+    const ghost = join(tmpdir(), "gwd-pathnorm-ghost2-" + Date.now());
     const first = normalizeRealPath(ghost);
     const second = normalizeRealPath(first);
     assert.equal(first, second);
@@ -125,7 +125,7 @@ describe("normalizeRealPath: case normalization on case-insensitive volumes", ()
 
   before(() => {
     // Detect FS case sensitivity once for the suite
-    const probe = mkdtempSync(join(tmpdir(), "gsd-ci-probe-"));
+    const probe = mkdtempSync(join(tmpdir(), "gwd-ci-probe-"));
     caseInsensitive = isCaseInsensitiveFs(probe);
     rmSync(probe, { recursive: true, force: true });
   });

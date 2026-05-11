@@ -28,7 +28,7 @@ import assert from 'node:assert/strict';
 // ─── Fixture Helpers ──────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-integration-mixed-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-integration-mixed-'));
   mkdirSync(join(base, '.gwd', 'milestones'), { recursive: true });
   return base;
 }
@@ -67,7 +67,7 @@ function run(command: string, cwd: string): string {
 }
 
 function createGitRepo(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-integration-git-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-integration-git-'));
   mkdirSync(join(base, '.gwd', 'milestones'), { recursive: true });
   run('git init -b main', base);
   run("git config user.name 'Integration Test'", base);
@@ -522,12 +522,12 @@ test('Group 6: Branch name helpers with new-format IDs', () => {
     // Test getSliceBranchName with new-format ID
     assert.deepStrictEqual(
       getSliceBranchName('M001-abc123', 'S01'),
-      'gsd/M001-abc123/S01',
-      'G6: getSliceBranchName returns gsd/M001-abc123/S01',
+      'gwd/M001-abc123/S01',
+      'G6: getSliceBranchName returns gwd/M001-abc123/S01',
     );
 
     // Test parseSliceBranch with new-format branch name
-    const parsed = parseSliceBranch('gsd/M001-abc123/S01');
+    const parsed = parseSliceBranch('gwd/M001-abc123/S01');
     assert.ok(parsed !== null, 'G6: parseSliceBranch returns non-null for new-format');
     assert.deepStrictEqual(parsed?.milestoneId, 'M001-abc123', 'G6: parsed milestoneId is M001-abc123');
     assert.deepStrictEqual(parsed?.sliceId, 'S01', 'G6: parsed sliceId is S01');

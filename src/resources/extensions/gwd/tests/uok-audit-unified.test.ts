@@ -28,7 +28,7 @@ function makeMockContext(entries: unknown[]): any {
 }
 
 test("unified audit plane bridges journal/activity/metrics/workflow logger into audit envelope log", () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-audit-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-uok-audit-"));
   setUnifiedAuditEnabled(true);
   try {
     emitJournalEvent(basePath, {
@@ -84,7 +84,7 @@ test("unified audit plane bridges journal/activity/metrics/workflow logger into 
 });
 
 test("unified audit bridge is disabled when toggle is off", () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-audit-off-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-uok-audit-off-"));
   setUnifiedAuditEnabled(false);
   try {
     emitJournalEvent(basePath, {

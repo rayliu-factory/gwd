@@ -16,7 +16,7 @@ import { closeDatabase, isDbAvailable, getDecisionById, SCHEMA_VERSION, _getAdap
 const _require = createRequire(import.meta.url);
 
 function makeTmpDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-ensure-db-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-ensure-db-'));
   return dir;
 }
 

@@ -27,15 +27,15 @@ import { tmpdir } from "node:os";
 // captured and restored in an after() hook to avoid leaking module-scope
 // env mutation into other suites if the runner ever moves to a shared
 // process model.
-const previousGsdHome = process.env.GWD_HOME;
+const previousGwdHome = process.env.GWD_HOME;
 process.env.GWD_HOME = process.env.GWD_HOME_TEST_OVERRIDE
-  ?? join(tmpdir(), `gsd-test-home-${process.pid}-${Date.now()}`);
+  ?? join(tmpdir(), `gwd-test-home-${process.pid}-${Date.now()}`);
 
 after(() => {
-  if (previousGsdHome === undefined) {
+  if (previousGwdHome === undefined) {
     delete process.env.GWD_HOME;
   } else {
-    process.env.GWD_HOME = previousGsdHome;
+    process.env.GWD_HOME = previousGwdHome;
   }
 });
 

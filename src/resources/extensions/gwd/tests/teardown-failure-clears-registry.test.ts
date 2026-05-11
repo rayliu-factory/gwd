@@ -53,9 +53,9 @@ function git(args: string[], cwd: string): void {
 }
 
 function createTempRepo(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-teardown-registry-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-teardown-registry-")));
   git(["init"], dir);
-  git(["config", "user.email", "test@gsd.test"], dir);
+  git(["config", "user.email", "test@gwd.test"], dir);
   git(["config", "user.name", "Test"], dir);
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   writeFileSync(join(dir, "README.md"), "# test\n");

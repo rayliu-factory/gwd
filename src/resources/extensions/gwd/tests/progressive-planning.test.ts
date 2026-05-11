@@ -22,7 +22,7 @@ import { resolveDispatch } from "../auto-dispatch.ts";
 import type { DispatchContext } from "../auto-dispatch.ts";
 
 function makeFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-adr011-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-adr011-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S02"), { recursive: true });
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
@@ -200,7 +200,7 @@ test("ADR-011: autoHealSketchFlags flips is_sketch=0 when PLAN file exists", asy
 
 test("ADR-011: schema v16 is idempotent — re-opening DB preserves is_sketch and sketch_scope columns", async (t) => {
   const originalCwd = process.cwd();
-  const base = mkdtempSync(join(tmpdir(), "gsd-adr011-schema-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-adr011-schema-"));
   t.after(() => {
     try { closeDatabase(); } catch { /* noop */ }
     // Restore cwd even though this test doesn't chdir — guards against
@@ -250,7 +250,7 @@ test("ADR-011: schema v16 is idempotent — re-opening DB preserves is_sketch an
 // (or vice versa) unless the caller explicitly intends the change.
 
 test("ADR-011 ON CONFLICT: omitted isSketch preserves existing is_sketch=1", async (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-adr011-conflict-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-adr011-conflict-"));
   t.after(() => {
     try { closeDatabase(); } catch { /* noop */ }
     rmSync(base, { recursive: true, force: true });
@@ -281,7 +281,7 @@ test("ADR-011 ON CONFLICT: omitted isSketch preserves existing is_sketch=1", asy
 });
 
 test("ADR-011 ON CONFLICT: explicit isSketch=false clears existing sketch flag", async (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-adr011-conflict-false-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-adr011-conflict-false-"));
   t.after(() => {
     try { closeDatabase(); } catch { /* noop */ }
     rmSync(base, { recursive: true, force: true });
@@ -308,7 +308,7 @@ test("ADR-011 ON CONFLICT: explicit isSketch=false clears existing sketch flag",
 });
 
 test("ADR-011 ON CONFLICT: isSketch=true upgrades existing non-sketch to sketch", async (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-adr011-conflict-true-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-adr011-conflict-true-"));
   t.after(() => {
     try { closeDatabase(); } catch { /* noop */ }
     rmSync(base, { recursive: true, force: true });
@@ -330,7 +330,7 @@ test("ADR-011 ON CONFLICT: isSketch=true upgrades existing non-sketch to sketch"
 });
 
 test("ADR-011 ON CONFLICT: empty-string sketchScope clears existing scope (not preserves it)", async (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-adr011-conflict-empty-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-adr011-conflict-empty-"));
   t.after(() => {
     try { closeDatabase(); } catch { /* noop */ }
     rmSync(base, { recursive: true, force: true });

@@ -25,7 +25,7 @@ import { handleCompleteSlice } from '../tools/complete-slice.ts';
 import type { CompleteSliceParams } from '../types.ts';
 
 function tempDbPath(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-blocked-gate-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-blocked-gate-'));
   return path.join(dir, 'test.db');
 }
 
@@ -35,7 +35,7 @@ function cleanupDb(dbPath: string): void {
 }
 
 function makeProject(): string {
-  const basePath = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-gate-proj-'));
+  const basePath = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-gate-proj-'));
   fs.mkdirSync(path.join(basePath, '.gwd', 'milestones', 'M001', 'slices', 'S01', 'tasks'), { recursive: true });
   fs.writeFileSync(
     path.join(basePath, '.gwd', 'milestones', 'M001', 'M001-ROADMAP.md'),

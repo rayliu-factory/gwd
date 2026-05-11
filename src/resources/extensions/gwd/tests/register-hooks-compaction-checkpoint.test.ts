@@ -11,7 +11,7 @@ import { closeDatabase, insertMilestone, insertSlice, openDatabase } from "../gw
 import { deriveState, invalidateStateCache } from "../state.ts";
 
 function createPlanningFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-compact-checkpoint-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-compact-checkpoint-"));
   const milestoneDir = join(base, ".gwd", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   mkdirSync(sliceDir, { recursive: true });

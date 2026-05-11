@@ -15,7 +15,7 @@ import { tmpdir } from "node:os";
 
 import { deriveState, invalidateStateCache } from "../state.ts";
 import { buildStateMarkdown, rebuildState } from "../doctor.ts";
-import { resolveGsdRootFile } from "../paths.ts";
+import { resolveGwdRootFile } from "../paths.ts";
 import {
   openDatabase,
   closeDatabase,
@@ -25,7 +25,7 @@ import {
 } from "../gwd-db.ts";
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-guided-state-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-guided-state-"));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }
@@ -76,7 +76,7 @@ describe("guided-flow STATE.md rebuild (#3475)", () => {
     await rebuildState(base);
 
     // Read the rebuilt STATE.md
-    const statePath = resolveGsdRootFile(base, "STATE");
+    const statePath = resolveGwdRootFile(base, "STATE");
     const rebuilt = readFileSync(statePath, "utf-8");
 
     // Should contain M010, NOT M008
@@ -84,7 +84,7 @@ describe("guided-flow STATE.md rebuild (#3475)", () => {
     assert.ok(!rebuilt.includes("M008"), "Rebuilt STATE.md should NOT reference stale M008");
   });
 
-  test("buildStateMarkdown produces correct active milestone from GSDState", async () => {
+  test("buildStateMarkdown produces correct active milestone from GWDState", async () => {
     base = createFixtureBase();
     openDatabase(":memory:");
 

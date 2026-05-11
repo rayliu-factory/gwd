@@ -90,7 +90,7 @@ describe("parallel-worker-lock-contention (#2184)", () => {
 
   // ─── Bug 1c: Two parallel workers acquire independent locks ──────────────
   test("Bug 1c: parallel workers use per-milestone lock files, not shared auto.lock", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-parallel-lock-"));
+    const base = mkdtempSync(join(tmpdir(), "gwd-parallel-lock-"));
     mkdirSync(join(base, ".gwd"), { recursive: true });
 
     try {
@@ -127,7 +127,7 @@ describe("parallel-worker-lock-contention (#2184)", () => {
 
   // ─── Bug 1d: crash-recovery uses per-milestone lock file ─────────────────
   test("Bug 1d: crash-recovery writeLock/readCrashLock uses per-milestone lock in parallel mode", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-parallel-crash-"));
+    const base = mkdtempSync(join(tmpdir(), "gwd-parallel-crash-"));
     mkdirSync(join(base, ".gwd"), { recursive: true });
 
     try {
@@ -155,25 +155,25 @@ describe("parallel-worker-lock-contention (#2184)", () => {
 
   // ─── Bug 3: syncProjectRootToWorktree skips same-path symlinks ───────────
   test("Bug 3: syncProjectRootToWorktree skips when .gwd resolves to same path (symlink)", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-symlink-sync-"));
-    const externalGsd = join(base, "external-gsd");
+    const base = mkdtempSync(join(tmpdir(), "gwd-symlink-sync-"));
+    const externalGwd = join(base, "external-gwd");
     const projectRoot = join(base, "project");
     const worktreePath = join(base, "worktree");
 
-    mkdirSync(externalGsd, { recursive: true });
+    mkdirSync(externalGwd, { recursive: true });
     mkdirSync(projectRoot, { recursive: true });
     mkdirSync(worktreePath, { recursive: true });
 
     // Create the external state directory with a milestone
-    mkdirSync(join(externalGsd, "milestones", "M001"), { recursive: true });
+    mkdirSync(join(externalGwd, "milestones", "M001"), { recursive: true });
     writeFileSync(
-      join(externalGsd, "milestones", "M001", "M001-ROADMAP.md"),
+      join(externalGwd, "milestones", "M001", "M001-ROADMAP.md"),
       "# Roadmap",
     );
 
     // Symlink both project and worktree .gwd to the same external directory
-    symlinkSync(externalGsd, join(projectRoot, ".gwd"));
-    symlinkSync(externalGsd, join(worktreePath, ".gwd"));
+    symlinkSync(externalGwd, join(projectRoot, ".gwd"));
+    symlinkSync(externalGwd, join(worktreePath, ".gwd"));
 
     try {
       // This should NOT throw ERR_FS_CP_EINVAL — it should skip silently
@@ -200,7 +200,7 @@ describe("parallel-worker-lock-contention (#2184)", () => {
 
   // ─── Bug 3b: sync still works when paths are different ───────────────────
   test("Bug 3b: syncProjectRootToWorktree copies when .gwd paths are different", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-diff-sync-"));
+    const base = mkdtempSync(join(tmpdir(), "gwd-diff-sync-"));
     const projectRoot = join(base, "project");
     const worktreePath = join(base, "worktree");
 

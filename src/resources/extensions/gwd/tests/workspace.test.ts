@@ -17,7 +17,7 @@ import { createWorkspace, scopeMilestone } from "../workspace.ts";
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function makeProjectDir(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-ws-test-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-ws-test-")));
   mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   return dir;
 }
@@ -60,7 +60,7 @@ describe("createWorkspace", () => {
   });
 
   test("follows symlinks — identityKey matches realpath of target", (t) => {
-    const linkParent = mkdtempSync(join(tmpdir(), "gsd-ws-link-"));
+    const linkParent = mkdtempSync(join(tmpdir(), "gwd-ws-link-"));
     const linkPath = join(linkParent, "project");
     t.after(() => {
       rmSync(linkParent, { recursive: true, force: true });
@@ -72,7 +72,7 @@ describe("createWorkspace", () => {
   });
 });
 
-describe("GsdWorkspace and MilestoneScope are frozen", () => {
+describe("GwdWorkspace and MilestoneScope are frozen", () => {
   let projectDir: string;
 
   beforeEach(() => {
@@ -121,15 +121,15 @@ describe("scopeMilestone path methods", () => {
   test("produces correct paths for a known milestone ID", () => {
     const ws = createWorkspace(projectDir);
     const scope = scopeMilestone(ws, MID);
-    const gsd = ws.contract.projectGwd;
+    const gwd = ws.contract.projectGwd;
 
     assert.equal(scope.milestoneId, MID);
-    assert.equal(scope.contextFile(), join(gsd, "milestones", MID, `${MID}-CONTEXT.md`));
-    assert.equal(scope.roadmapFile(), join(gsd, "milestones", MID, `${MID}-ROADMAP.md`));
-    assert.equal(scope.stateFile(), join(gsd, "STATE.md"));
+    assert.equal(scope.contextFile(), join(gwd, "milestones", MID, `${MID}-CONTEXT.md`));
+    assert.equal(scope.roadmapFile(), join(gwd, "milestones", MID, `${MID}-ROADMAP.md`));
+    assert.equal(scope.stateFile(), join(gwd, "STATE.md"));
     assert.equal(scope.dbPath(), ws.contract.projectDb);
-    assert.equal(scope.milestoneDir(), join(gsd, "milestones", MID));
-    assert.equal(scope.metaJson(), join(gsd, `${MID}-META.json`));
+    assert.equal(scope.milestoneDir(), join(gwd, "milestones", MID));
+    assert.equal(scope.metaJson(), join(gwd, `${MID}-META.json`));
   });
 
   test("two scopes from same workspace + same MID produce identical paths", () => {
@@ -153,7 +153,7 @@ describe("createWorkspace: contract.projectGwd is realpath-canonicalized when ba
 
   beforeEach(() => {
     projectDir = makeProjectDir();
-    linkParent = mkdtempSync(join(tmpdir(), "gsd-ws-symlink-"));
+    linkParent = mkdtempSync(join(tmpdir(), "gwd-ws-symlink-"));
     linkPath = join(linkParent, "project");
     symlinkSync(projectDir, linkPath, "junction");
   });

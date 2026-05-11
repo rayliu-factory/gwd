@@ -23,7 +23,7 @@ afterEach(() => {
 
 describe("stale slice row DB-authoritative boundary", () => {
   test("a stale SUMMARY.md projection does not make a DB-pending slice complete", async () => {
-    tempBase = mkdtempSync(join(tmpdir(), "gsd-stale-slice-"));
+    tempBase = mkdtempSync(join(tmpdir(), "gwd-stale-slice-"));
     const sliceDir = join(tempBase, ".gwd", "milestones", "M001", "slices", "S01");
     mkdirSync(sliceDir, { recursive: true });
     writeFileSync(join(sliceDir, "S01-SUMMARY.md"), "# S01 Summary\n", "utf-8");

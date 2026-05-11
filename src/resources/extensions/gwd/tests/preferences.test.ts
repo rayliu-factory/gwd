@@ -17,18 +17,18 @@ import {
   validatePreferences,
   applyModeDefaults,
   getIsolationMode,
-  getGlobalGSDPreferencesPath,
-  getProjectGSDPreferencesPath,
-  loadEffectiveGSDPreferences,
-  loadGlobalGSDPreferences,
-  loadProjectGSDPreferences,
+  getGlobalGWDPreferencesPath,
+  getProjectGWDPreferencesPath,
+  loadEffectiveGWDPreferences,
+  loadGlobalGWDPreferences,
+  loadProjectGWDPreferences,
   parsePreferencesMarkdown,
   renderPreferencesForSystemPrompt,
   _resetParseWarningFlag,
 } from "../preferences.ts";
 import { formatConfiguredModel, toPersistedModelId } from "../commands-prefs-wizard.ts";
 import { _resetLogs, peekLogs } from "../workflow-logger.ts";
-import type { GSDPreferences, GSDModelConfigV2, GSDPhaseModelConfig } from "../preferences.ts";
+import type { GWDPreferences, GWDModelConfigV2, GWDPhaseModelConfig } from "../preferences.ts";
 
 // ── Git preferences ──────────────────────────────────────────────────────────
 
@@ -273,17 +273,17 @@ test("disabled_model_providers rejects non-array values", () => {
   assert.ok(errors.some((e) => e.includes("disabled_model_providers must be an array of strings")));
 });
 
-test("loadEffectiveGSDPreferences preserves disabled_model_providers across merge layers", () => {
+test("loadEffectiveGWDPreferences preserves disabled_model_providers across merge layers", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-disabled-provider-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-disabled-provider-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-disabled-provider-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-disabled-provider-home-"));
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
-      join(tempGsdHome, "PREFERENCES.md"),
+      join(tempGwdHome, "PREFERENCES.md"),
       [
         "---",
         "version: 1",
@@ -307,10 +307,10 @@ test("loadEffectiveGSDPreferences preserves disabled_model_providers across merg
       "utf-8",
     );
 
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     assert.notEqual(loaded, null);
     assert.deepEqual(
       loaded!.preferences.disabled_model_providers,
@@ -318,10 +318,10 @@ test("loadEffectiveGSDPreferences preserves disabled_model_providers across merg
     );
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
@@ -467,11 +467,11 @@ test("parses OpenRouter model config with org/model IDs and fallbacks", () => {
   const content = `---\nversion: 1\nmodels:\n  research:\n    model: moonshotai/kimi-k2.5\n    fallbacks:\n      - qwen/qwen3.5-397b-a17b\n  planning:\n    model: deepseek/deepseek-r1-0528\n    fallbacks:\n      - moonshotai/kimi-k2.5\n      - deepseek/deepseek-v3.2\n  execution:\n    model: qwen/qwen3-coder\n    fallbacks:\n      - qwen/qwen3-coder-next\n---\n`;
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
-  const research = models.research as GSDPhaseModelConfig;
+  const models = prefs!.models as GWDModelConfigV2;
+  const research = models.research as GWDPhaseModelConfig;
   assert.equal(research.model, "moonshotai/kimi-k2.5");
   assert.deepEqual(research.fallbacks, ["qwen/qwen3.5-397b-a17b"]);
-  const execution = models.execution as GSDPhaseModelConfig;
+  const execution = models.execution as GWDPhaseModelConfig;
   assert.deepEqual(execution.fallbacks, ["qwen/qwen3-coder-next"]);
 });
 
@@ -479,8 +479,8 @@ test("parses model IDs with colons (OpenRouter :free, :exacto)", () => {
   const content = `---\nmodels:\n  execution:\n    model: qwen/qwen3-coder\n    fallbacks:\n      - qwen/qwen3-coder:free\n      - qwen/qwen3-coder:exacto\n---\n`;
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
-  const execution = models.execution as GSDPhaseModelConfig;
+  const models = prefs!.models as GWDModelConfigV2;
+  const execution = models.execution as GWDPhaseModelConfig;
   assert.deepEqual(execution.fallbacks, ["qwen/qwen3-coder:free", "qwen/qwen3-coder:exacto"]);
 });
 
@@ -488,7 +488,7 @@ test("parses legacy string-per-phase model config", () => {
   const content = `---\nmodels:\n  research: claude-opus-4-6\n  execution: claude-sonnet-4-6\n---\n`;
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
+  const models = prefs!.models as GWDModelConfigV2;
   assert.equal(models.research, "claude-opus-4-6");
   assert.equal(models.execution, "claude-sonnet-4-6");
 });
@@ -497,8 +497,8 @@ test("strips inline YAML comments from values", () => {
   const content = `---\nmodels:\n  execution:\n    model: qwen/qwen3-coder  # fast\n    fallbacks:\n      - minimax/minimax-m2.5  # backup\n---\n`;
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
-  const execution = models.execution as GSDPhaseModelConfig;
+  const models = prefs!.models as GWDModelConfigV2;
+  const execution = models.execution as GWDPhaseModelConfig;
   assert.equal(execution.model, "qwen/qwen3-coder");
   assert.deepEqual(execution.fallbacks, ["minimax/minimax-m2.5"]);
 });
@@ -507,8 +507,8 @@ test("handles Windows CRLF line endings", () => {
   const content = "---\r\nmodels:\r\n  execution:\r\n    model: qwen/qwen3-coder\r\n---\r\n";
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
-  const execution = models.execution as GSDPhaseModelConfig;
+  const models = prefs!.models as GWDModelConfigV2;
+  const execution = models.execution as GWDPhaseModelConfig;
   assert.equal(execution.model, "qwen/qwen3-coder");
 });
 
@@ -516,8 +516,8 @@ test("handles model config with explicit provider field", () => {
   const content = `---\nmodels:\n  execution:\n    model: claude-opus-4-6\n    provider: bedrock\n    fallbacks:\n      - claude-sonnet-4-6\n---\n`;
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
-  const execution = models.execution as GSDPhaseModelConfig;
+  const models = prefs!.models as GWDModelConfigV2;
+  const execution = models.execution as GWDPhaseModelConfig;
   assert.equal(execution.model, "claude-opus-4-6");
   assert.equal(execution.provider, "bedrock");
 });
@@ -648,17 +648,17 @@ test("experimental.rtk: false is accepted and stored", () => {
 });
 
 test("experimental.rtk: non-boolean produces error", () => {
-  const result = validatePreferences({ experimental: { rtk: "yes" } } as unknown as GSDPreferences);
+  const result = validatePreferences({ experimental: { rtk: "yes" } } as unknown as GWDPreferences);
   assert.ok(result.errors.some(e => e.includes("experimental.rtk")), `expected rtk error in: ${JSON.stringify(result.errors)}`);
 });
 
 test("experimental: non-object produces error", () => {
-  const result = validatePreferences({ experimental: true } as unknown as GSDPreferences);
+  const result = validatePreferences({ experimental: true } as unknown as GWDPreferences);
   assert.ok(result.errors.some(e => e.includes("experimental must be an object")));
 });
 
 test("experimental: unknown key produces warning", () => {
-  const result = validatePreferences({ experimental: { rtk: true, future_flag: true } } as unknown as GSDPreferences);
+  const result = validatePreferences({ experimental: { rtk: true, future_flag: true } } as unknown as GWDPreferences);
   assert.ok(result.warnings.some(w => w.includes("future_flag")), `expected unknown-key warning in: ${JSON.stringify(result.warnings)}`);
   assert.equal(result.preferences.experimental?.rtk, true);
 });
@@ -675,17 +675,17 @@ test("experimental.rtk parses correctly from preferences markdown", () => {
   assert.equal(prefs!.experimental?.rtk, true);
 });
 
-test("loadEffectiveGSDPreferences preserves experimental prefs across global+project merge", () => {
+test("loadEffectiveGWDPreferences preserves experimental prefs across global+project merge", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-prefs-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-prefs-home-"));
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
-      join(tempGsdHome, "preferences.md"),
+      join(tempGwdHome, "preferences.md"),
       [
         "---",
         "version: 1",
@@ -708,27 +708,27 @@ test("loadEffectiveGSDPreferences preserves experimental prefs across global+pro
       "utf-8",
     );
 
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     assert.notEqual(loaded, null);
     assert.equal(loaded!.preferences.experimental?.rtk, true);
     assert.equal(loaded!.preferences.git?.isolation, "none");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
-test("loadEffectiveGSDPreferences exposes slice_parallel prefs to runtime callers", () => {
+test("loadEffectiveGWDPreferences exposes slice_parallel prefs to runtime callers", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-slice-parallel-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-slice-parallel-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-slice-parallel-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-slice-parallel-home-"));
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
@@ -746,33 +746,33 @@ test("loadEffectiveGSDPreferences exposes slice_parallel prefs to runtime caller
       "utf-8",
     );
 
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     assert.notEqual(loaded, null);
     assert.equal(loaded!.preferences.slice_parallel?.enabled, true);
     assert.equal(loaded!.preferences.slice_parallel?.max_workers, 3);
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
-test("loadEffectiveGSDPreferences merges min_request_interval_ms with project overriding global (#2996)", () => {
+test("loadEffectiveGWDPreferences merges min_request_interval_ms with project overriding global (#2996)", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-rate-limit-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-rate-limit-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-rate-limit-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-rate-limit-home-"));
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
-      join(tempGsdHome, "PREFERENCES.md"),
+      join(tempGwdHome, "PREFERENCES.md"),
       [
         "---",
         "version: 1",
@@ -794,33 +794,33 @@ test("loadEffectiveGSDPreferences merges min_request_interval_ms with project ov
       "utf-8",
     );
 
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     assert.notEqual(loaded, null);
     assert.equal(loaded!.preferences.min_request_interval_ms, 100);
     assert.equal(loaded!.preferences.budget_ceiling, 45);
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
-test("loadEffectiveGSDPreferences does not inherit global planning_depth into fresh projects", () => {
+test("loadEffectiveGWDPreferences does not inherit global planning_depth into fresh projects", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-depth-global-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-depth-global-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-depth-global-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-depth-global-home-"));
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
-      join(tempGsdHome, "PREFERENCES.md"),
+      join(tempGwdHome, "PREFERENCES.md"),
       [
         "---",
         "version: 1",
@@ -831,33 +831,33 @@ test("loadEffectiveGSDPreferences does not inherit global planning_depth into fr
       "utf-8",
     );
 
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     assert.notEqual(loaded, null);
     assert.equal(loaded!.preferences.planning_depth, undefined);
     assert.equal(loaded!.preferences.language, "German", "other global preferences still carry over");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
-test("loadEffectiveGSDPreferences keeps project-local planning_depth explicit", () => {
+test("loadEffectiveGWDPreferences keeps project-local planning_depth explicit", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-depth-local-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-depth-local-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-depth-local-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-depth-local-home-"));
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
-      join(tempGsdHome, "PREFERENCES.md"),
+      join(tempGwdHome, "PREFERENCES.md"),
       ["---", "version: 1", "planning_depth: deep", "---"].join("\n"),
       "utf-8",
     );
@@ -867,60 +867,60 @@ test("loadEffectiveGSDPreferences keeps project-local planning_depth explicit", 
       "utf-8",
     );
 
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     assert.notEqual(loaded, null);
     assert.equal(loaded!.preferences.planning_depth, "light");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
 test("preferences paths use canonical uppercase filenames", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-canonical-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-canonical-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-prefs-canonical-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-prefs-canonical-home-"));
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
-    assert.equal(basename(getGlobalGSDPreferencesPath()), "PREFERENCES.md");
+    assert.equal(basename(getGlobalGWDPreferencesPath()), "PREFERENCES.md");
     assert.ok(
-      getProjectGSDPreferencesPath().endsWith("/.gwd/PREFERENCES.md")
-        || getProjectGSDPreferencesPath().endsWith("\\.gwd\\PREFERENCES.md"),
+      getProjectGWDPreferencesPath().endsWith("/.gwd/PREFERENCES.md")
+        || getProjectGWDPreferencesPath().endsWith("\\.gwd\\PREFERENCES.md"),
       "project preferences path should use .gwd/PREFERENCES.md",
     );
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
 test("explicit base path preference loading survives a deleted cwd (#4498)", (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-base-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-base-home-"));
-  const deletedCwd = mkdtempSync(join(tmpdir(), "gsd-prefs-deleted-cwd-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-prefs-base-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-prefs-base-home-"));
+  const deletedCwd = mkdtempSync(join(tmpdir(), "gwd-prefs-deleted-cwd-"));
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
     rmSync(deletedCwd, { recursive: true, force: true });
   });
 
@@ -931,28 +931,28 @@ test("explicit base path preference loading survives a deleted cwd (#4498)", (t)
     "utf-8",
   );
 
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(deletedCwd);
   rmSync(deletedCwd, { recursive: true, force: true });
 
-  const loaded = loadEffectiveGSDPreferences(tempProject);
+  const loaded = loadEffectiveGWDPreferences(tempProject);
   assert.notEqual(loaded, null);
   assert.equal(loaded!.preferences.language, "Swedish");
   assert.equal(getIsolationMode(tempProject), "worktree");
 });
 
-test("loadEffectiveGSDPreferences preserves context_window_override through token-profile defaults", (t) => {
+test("loadEffectiveGWDPreferences preserves context_window_override through token-profile defaults", (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-context-override-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-context-override-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-prefs-context-override-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-prefs-context-override-home-"));
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
   mkdirSync(join(tempProject, ".gwd"), { recursive: true });
@@ -961,10 +961,10 @@ test("loadEffectiveGSDPreferences preserves context_window_override through toke
     "---\ntoken_profile: burn-max\ncontext_window_override: 131072\n---\n",
     "utf-8",
   );
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
-  const loaded = loadEffectiveGSDPreferences(tempProject);
+  const loaded = loadEffectiveGWDPreferences(tempProject);
   assert.equal(loaded?.preferences.token_profile, "burn-max");
   assert.equal(loaded?.preferences.dynamic_routing?.enabled, false);
   assert.equal(loaded?.preferences.context_window_override, 131_072);
@@ -972,23 +972,23 @@ test("loadEffectiveGSDPreferences preserves context_window_override through toke
 
 test("uppercase PREFERENCES.md wins over legacy lowercase preferences.md", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-priority-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-priority-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-prefs-priority-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-prefs-priority-home-"));
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
-    writeFileSync(join(tempGsdHome, "preferences.md"), "---\nversion: 1\nmode: solo\n---\n", "utf-8");
-    writeFileSync(join(tempGsdHome, "PREFERENCES.md"), "---\nversion: 1\nmode: team\n---\n", "utf-8");
+    writeFileSync(join(tempGwdHome, "preferences.md"), "---\nversion: 1\nmode: solo\n---\n", "utf-8");
+    writeFileSync(join(tempGwdHome, "PREFERENCES.md"), "---\nversion: 1\nmode: team\n---\n", "utf-8");
     writeFileSync(join(tempProject, ".gwd", "preferences.md"), "---\nversion: 1\nlanguage: German\n---\n", "utf-8");
     writeFileSync(join(tempProject, ".gwd", "PREFERENCES.md"), "---\nversion: 1\nlanguage: Japanese\n---\n", "utf-8");
 
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
-    const globalPrefs = loadGlobalGSDPreferences();
-    const projectPrefs = loadProjectGSDPreferences();
+    const globalPrefs = loadGlobalGWDPreferences();
+    const projectPrefs = loadProjectGWDPreferences();
     assert.notEqual(globalPrefs, null);
     assert.notEqual(projectPrefs, null);
     assert.equal(globalPrefs!.preferences.mode, "team");
@@ -1001,10 +1001,10 @@ test("uppercase PREFERENCES.md wins over legacy lowercase preferences.md", () =>
     );
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
@@ -1150,17 +1150,17 @@ test("language: parses from markdown frontmatter", () => {
   assert.equal(prefs!.language, "Japanese");
 });
 
-test("language: project setting overrides global via loadEffectiveGSDPreferences", () => {
+test("language: project setting overrides global via loadEffectiveGWDPreferences", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-lang-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-lang-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-lang-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-lang-home-"));
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
-      join(tempGsdHome, "preferences.md"),
+      join(tempGwdHome, "preferences.md"),
       ["---", "version: 1", "language: Chinese", "---"].join("\n"),
       "utf-8",
     );
@@ -1171,32 +1171,32 @@ test("language: project setting overrides global via loadEffectiveGSDPreferences
       "utf-8",
     );
 
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     assert.notEqual(loaded, null);
     assert.equal(loaded!.preferences.language, "Japanese", "project language overrides global");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
 test("language: global setting used when project has none", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-lang-noproj-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-lang-nhome-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-lang-noproj-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-lang-nhome-"));
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
 
     writeFileSync(
-      join(tempGsdHome, "preferences.md"),
+      join(tempGwdHome, "preferences.md"),
       ["---", "version: 1", "language: German", "---"].join("\n"),
       "utf-8",
     );
@@ -1207,17 +1207,17 @@ test("language: global setting used when project has none", () => {
       "utf-8",
     );
 
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
-    const loaded = loadEffectiveGSDPreferences();
+    const loaded = loadEffectiveGWDPreferences();
     assert.notEqual(loaded, null);
     assert.equal(loaded!.preferences.language, "German", "global language carries over when project omits it");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });

@@ -20,9 +20,9 @@ function jsonResponse(body: unknown): Response {
   } as Response;
 }
 
-async function withTempGsdHome<T>(fn: (home: string) => T | Promise<T>): Promise<T> {
+async function withTempGwdHome<T>(fn: (home: string) => T | Promise<T>): Promise<T> {
   const oldHome = process.env.GWD_HOME;
-  const home = mkdtempSync(join(tmpdir(), "gsd-remote-home-"));
+  const home = mkdtempSync(join(tmpdir(), "gwd-remote-home-"));
   try {
     process.env.GWD_HOME = home;
     return await fn(home);
@@ -704,7 +704,7 @@ test("sanitizeError strips Telegram bot token patterns", () => {
 test("resolveRemoteConfig uses configured channel and existing environment token", async () => {
   const saved = process.env.SLACK_BOT_TOKEN;
   try {
-    await withTempGsdHome(() => {
+    await withTempGwdHome(() => {
       process.env.SLACK_BOT_TOKEN = "xoxb-existing";
       saveRemoteQuestionsConfig("slack", "C12345678");
       assert.deepEqual(resolveRemoteConfig(), {
@@ -753,7 +753,7 @@ test("resolveRemoteConfig returns null when preferences are absent (no env side-
 test("remote disconnect removes active env token and disables remote config", async () => {
   const saved = process.env.DISCORD_BOT_TOKEN;
   try {
-    await withTempGsdHome(async () => {
+    await withTempGwdHome(async () => {
       process.env.DISCORD_BOT_TOKEN = "discord-token";
       saveRemoteQuestionsConfig("discord", "12345678901234567");
       assert.equal(isRemoteConfigured(), true);

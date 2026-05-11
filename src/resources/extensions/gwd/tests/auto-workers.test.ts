@@ -18,7 +18,7 @@ import {
 } from "../db/auto-workers.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-auto-workers-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-auto-workers-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

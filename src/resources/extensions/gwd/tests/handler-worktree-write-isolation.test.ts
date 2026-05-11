@@ -15,14 +15,14 @@ import { mkdtempSync, mkdirSync, rmSync, realpathSync } from "node:fs";
 import { tmpdir, homedir } from "node:os";
 import { join } from "node:path";
 
-import { currentDirectoryRoot, projectRoot, withCommandCwd, GSDNoProjectError } from "../commands/context.ts";
+import { currentDirectoryRoot, projectRoot, withCommandCwd, GWDNoProjectError } from "../commands/context.ts";
 
 describe("handlers preserve worktree cwd via currentDirectoryRoot()", () => {
   let project: string;
   let worktree: string;
 
   beforeEach(() => {
-    project = realpathSync(mkdtempSync(join(tmpdir(), "gsd-wt-iso-")));
+    project = realpathSync(mkdtempSync(join(tmpdir(), "gwd-wt-iso-")));
     mkdirSync(join(project, ".gwd"), { recursive: true });
     mkdirSync(join(project, ".git"), { recursive: true });
     worktree = join(project, ".gwd", "worktrees", "M001");
@@ -43,10 +43,10 @@ describe("handlers preserve worktree cwd via currentDirectoryRoot()", () => {
     assert.equal(resolved, project, "projectRoot intentionally returns project, not worktree");
   });
 
-  test("currentDirectoryRoot() throws GSDNoProjectError when cwd is $HOME", async () => {
+  test("currentDirectoryRoot() throws GWDNoProjectError when cwd is $HOME", async () => {
     await assert.rejects(
       withCommandCwd(homedir(), async () => currentDirectoryRoot()),
-      (err: unknown) => err instanceof GSDNoProjectError,
+      (err: unknown) => err instanceof GWDNoProjectError,
     );
   });
 

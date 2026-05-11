@@ -35,8 +35,8 @@ test('worktree-symlink-removal removes the git-registered symlink target safely'
   // mimicking the external state directory layout (~/.gwd/projects/<hash>/).
   // Resolve tmpdir to handle macOS /tmp -> /private/var/... symlink.
   const realTmp = realpathSync(tmpdir());
-  const base = mkdtempSync(join(realTmp, "gsd-wt-symlink-test-"));
-  const externalState = mkdtempSync(join(realTmp, "gsd-wt-symlink-ext-"));
+  const base = mkdtempSync(join(realTmp, "gwd-wt-symlink-test-"));
+  const externalState = mkdtempSync(join(realTmp, "gwd-wt-symlink-ext-"));
   t.after(() => {
     rmSync(base, { recursive: true, force: true });
     rmSync(externalState, { recursive: true, force: true });

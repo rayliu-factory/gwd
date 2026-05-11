@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-// gsd-tools — Structured LLM tool tests
+// gwd-tools — Structured LLM tool tests
 //
 // Tests the three registered tools: gwd_decision_save, gwd_requirement_update, gwd_summary_save.
 // Each tool is tested via direct function invocation against an in-memory DB.
@@ -33,7 +33,7 @@ import type { Requirement } from '../types.ts';
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTmpDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-tools-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-tools-'));
   fs.mkdirSync(path.join(dir, '.gwd'), { recursive: true });
   return dir;
 }
@@ -50,7 +50,7 @@ function cleanupDir(dir: string): void {
  * execute logic pattern: check DB -> call writer -> return result.
  */
 
-describe('gsd-tools', () => {
+describe('gwd-tools', () => {
   test('gwd_decision_save', async () => {
     const tmpDir = makeTmpDir();
     try {

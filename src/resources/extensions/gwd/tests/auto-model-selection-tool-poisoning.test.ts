@@ -41,9 +41,9 @@ import {
 
 function makeTempProject(): { dir: string; cleanup: () => void; restoreEnv: () => void } {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const dir = mkdtempSync(join(tmpdir(), "gsd-policy-poison-"));
-  const home = mkdtempSync(join(tmpdir(), "gsd-policy-home-"));
+  const originalGwdHome = process.env.GWD_HOME;
+  const dir = mkdtempSync(join(tmpdir(), "gwd-policy-poison-"));
+  const home = mkdtempSync(join(tmpdir(), "gwd-policy-home-"));
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   // Empty PREFERENCES so default uok.model_policy.enabled = true applies.
   writeFileSync(join(dir, ".gwd", "PREFERENCES.md"), "---\n---\n", "utf-8");
@@ -57,8 +57,8 @@ function makeTempProject(): { dir: string; cleanup: () => void; restoreEnv: () =
     },
     restoreEnv: () => {
       process.chdir(originalCwd);
-      if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-      else process.env.GWD_HOME = originalGsdHome;
+      if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+      else process.env.GWD_HOME = originalGwdHome;
     },
   };
 }

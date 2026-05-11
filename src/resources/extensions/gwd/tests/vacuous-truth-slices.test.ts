@@ -22,7 +22,7 @@ import {
 } from "../gwd-db.ts";
 
 test("deriveStateFromDb does NOT skip to validating when slice array is empty (#2667)", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-vacuous-truth-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-vacuous-truth-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
 
   try {
@@ -72,7 +72,7 @@ test("deriveStateFromDb does NOT skip to validating when slice array is empty (#
 });
 
 test("deriveStateFromDb correctly reaches validating when all slices are done (#2667 guard)", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-vacuous-truth-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-vacuous-truth-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
 
   try {

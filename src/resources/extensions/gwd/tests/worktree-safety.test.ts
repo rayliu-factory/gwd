@@ -20,7 +20,7 @@ function runGit(args: string[], cwd: string): string {
 }
 
 function makeBaseRepo(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-wt-safety-repo-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-wt-safety-repo-"));
   runGit(["init", "-b", "main"], base);
   runGit(["config", "user.name", "Test User"], base);
   runGit(["config", "user.email", "test@example.com"], base);
@@ -36,7 +36,7 @@ describe("Worktree Safety module", () => {
   let unitRoot: string;
 
   beforeEach(() => {
-    root = mkdtempSync(join(tmpdir(), "gsd-worktree-safety-"));
+    root = mkdtempSync(join(tmpdir(), "gwd-worktree-safety-"));
     projectRoot = join(root, "project");
     unitRoot = join(projectRoot, ".gwd", "worktrees", "M001");
     mkdirSync(unitRoot, { recursive: true });

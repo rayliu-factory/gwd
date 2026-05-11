@@ -449,7 +449,7 @@ describe("MergeConflictError handling", () => {
     const err = new MergeConflictError(
       ["src/feature.ts", "src/utils.ts"],
       "squash",
-      "gsd/auto/M001",
+      "gwd/auto/M001",
       "main",
     );
 
@@ -457,7 +457,7 @@ describe("MergeConflictError handling", () => {
     assert.ok(err instanceof MergeConflictError, "should be a MergeConflictError");
     assert.deepEqual(err.conflictedFiles, ["src/feature.ts", "src/utils.ts"]);
     assert.equal(err.strategy, "squash");
-    assert.equal(err.branch, "gsd/auto/M001");
+    assert.equal(err.branch, "gwd/auto/M001");
     assert.equal(err.mainBranch, "main");
   });
 

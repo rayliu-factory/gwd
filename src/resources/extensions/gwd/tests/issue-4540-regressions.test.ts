@@ -25,7 +25,7 @@ const _require = createRequire(import.meta.url);
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
 function tmpDb(): { dir: string; dbPath: string } {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-4540-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-4540-"));
   return { dir, dbPath: join(dir, "gwd.db") };
 }
 
@@ -247,7 +247,7 @@ describe("Bug 1 — quality_gates migration repair (#4540)", () => {
 
 describe("Bug 2 — artifact-verification-retry journal event (#4540)", () => {
   test("emitJournalEvent accepts artifact-verification-retry event type", () => {
-    const basePath = mkdtempSync(join(tmpdir(), "gsd-journal-4540-"));
+    const basePath = mkdtempSync(join(tmpdir(), "gwd-journal-4540-"));
     try {
       mkdirSync(join(basePath, ".gwd"), { recursive: true });
       emitJournalEvent(basePath, {
@@ -266,7 +266,7 @@ describe("Bug 2 — artifact-verification-retry journal event (#4540)", () => {
   });
 
   test("artifact-verification-retry event carries attempt count", () => {
-    const basePath = mkdtempSync(join(tmpdir(), "gsd-journal-4540b-"));
+    const basePath = mkdtempSync(join(tmpdir(), "gwd-journal-4540b-"));
     try {
       mkdirSync(join(basePath, ".gwd"), { recursive: true });
       emitJournalEvent(basePath, {

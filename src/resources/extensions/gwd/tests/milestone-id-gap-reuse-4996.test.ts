@@ -19,7 +19,7 @@ import {
 import { clearReservedMilestoneIds, findMilestoneIds } from "../milestone-ids.ts";
 import { invalidateAllCaches } from "../cache.ts";
 
-function makeBase(prefix = "gsd-gap-4996-"): string {
+function makeBase(prefix = "gwd-gap-4996-"): string {
   const base = mkdtempSync(join(tmpdir(), prefix));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;

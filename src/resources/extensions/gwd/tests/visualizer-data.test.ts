@@ -37,7 +37,7 @@ test("computeCriticalPath follows milestone dependencies", () => {
 });
 
 test("loadVisualizerData hydrates milestones, captures, stats, and health fields", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-visualizer-data-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-visualizer-data-"));
   try {
     const msDir = join(base, ".gwd", "milestones", "M001");
     const sliceDir = join(msDir, "slices", "S01");

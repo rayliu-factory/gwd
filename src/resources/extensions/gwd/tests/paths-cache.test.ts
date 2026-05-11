@@ -13,7 +13,7 @@ describe('gsdRootCache key normalization', () => {
   let fakeHome: string;
   let savedHome: string | undefined;
   let savedUserProfile: string | undefined;
-  let savedGsdHome: string | undefined;
+  let savedGwdHome: string | undefined;
 
   beforeEach(() => {
     projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gwd-cache-norm-')));
@@ -23,7 +23,7 @@ describe('gsdRootCache key normalization', () => {
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
-    savedGsdHome = process.env.GWD_HOME;
+    savedGwdHome = process.env.GWD_HOME;
 
     // Point HOME and GWD_HOME at an unrelated temp dir to prevent ~/.gwd interference.
     process.env.HOME = fakeHome;
@@ -38,8 +38,8 @@ describe('gsdRootCache key normalization', () => {
     else process.env.HOME = savedHome;
     if (savedUserProfile === undefined) delete process.env.USERPROFILE;
     else process.env.USERPROFILE = savedUserProfile;
-    if (savedGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = savedGsdHome;
+    if (savedGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = savedGwdHome;
 
     clearPathCache();
     rmSync(projectDir, { recursive: true, force: true });
@@ -86,7 +86,7 @@ describe('clearPathCache() does NOT invalidate gsdRootCache (process-lifetime se
   let fakeHome: string;
   let savedHome: string | undefined;
   let savedUserProfile: string | undefined;
-  let savedGsdHome: string | undefined;
+  let savedGwdHome: string | undefined;
 
   beforeEach(() => {
     projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gwd-cache-clear-')));
@@ -96,7 +96,7 @@ describe('clearPathCache() does NOT invalidate gsdRootCache (process-lifetime se
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
-    savedGsdHome = process.env.GWD_HOME;
+    savedGwdHome = process.env.GWD_HOME;
 
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
@@ -110,8 +110,8 @@ describe('clearPathCache() does NOT invalidate gsdRootCache (process-lifetime se
     else process.env.HOME = savedHome;
     if (savedUserProfile === undefined) delete process.env.USERPROFILE;
     else process.env.USERPROFILE = savedUserProfile;
-    if (savedGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = savedGsdHome;
+    if (savedGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = savedGwdHome;
 
     _clearGwdRootCache();
     clearPathCache();

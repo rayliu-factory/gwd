@@ -9,7 +9,7 @@ import { handlePlanTask } from '../tools/plan-task.ts';
 import { parseTaskPlanFile } from '../files.ts';
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-plan-task-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-plan-task-'));
   mkdirSync(join(base, '.gwd', 'milestones', 'M001', 'slices', 'S02', 'tasks'), { recursive: true });
   return base;
 }

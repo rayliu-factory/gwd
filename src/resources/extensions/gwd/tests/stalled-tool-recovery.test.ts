@@ -76,7 +76,7 @@ function makeRecordingPi() {
 
 {
   console.log("\n=== execute-task timeout recovery trusts closed DB status ===");
-  const base = mkdtempSync(join(tmpdir(), "gsd-timeout-db-complete-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-timeout-db-complete-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
 
   try {
@@ -115,7 +115,7 @@ function makeRecordingPi() {
 
 {
   console.log("\n=== #1855: recoverTimedOutUnit succeeds with valid RecoveryContext ===");
-  const base = mkdtempSync(join(tmpdir(), "gsd-stalled-tool-test-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-stalled-tool-test-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   mkdirSync(join(base, ".gwd", "runtime", "units"), { recursive: true });
 

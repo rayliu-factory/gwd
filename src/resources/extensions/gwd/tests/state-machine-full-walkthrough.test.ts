@@ -34,7 +34,7 @@ import { clearPathCache } from "../paths.ts";
 const tempDirs: string[] = [];
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-walkthrough-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-walkthrough-"));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   tempDirs.push(base);
   return base;

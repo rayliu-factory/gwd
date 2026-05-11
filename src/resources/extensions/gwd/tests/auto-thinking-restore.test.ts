@@ -8,7 +8,7 @@ import { selectAndApplyModel } from "../auto-model-selection.ts";
 
 test("selectAndApplyModel restores captured thinking level after model selection", async (t) => {
   const originalCwd = process.cwd();
-  const base = mkdtempSync(join(tmpdir(), "gsd-thinking-restore-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-thinking-restore-"));
   const thinkingLevels: unknown[] = [];
   t.after(() => {
     process.chdir(originalCwd);

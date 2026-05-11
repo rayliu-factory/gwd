@@ -9,7 +9,7 @@
  * This solves the `npm link` branch-drift problem: without dist/resources/,
  * `initResources()` reads from src/resources/ which changes with git branch
  * switches, causing stale extensions to be synced to ~/.gwd/agent/ for ALL
- * projects using gsd.
+ * projects using gwd.
  */
 
 import { watch } from 'node:fs'

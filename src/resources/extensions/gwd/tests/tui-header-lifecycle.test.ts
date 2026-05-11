@@ -12,7 +12,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 
 import { setCompletionProgressWidget, updateProgressWidget } from "../auto-dashboard.ts";
-import type { GSDState } from "../types.ts";
+import type { GWDState } from "../types.ts";
 
 interface CapturedSetHeader {
   factory: ((tui: unknown, theme: unknown) => { render(width: number): string[]; invalidate(): void }) | undefined;
@@ -21,7 +21,7 @@ interface CapturedSetHeader {
 function makeTempDir(prefix: string): string {
   return join(
     tmpdir(),
-    `gsd-tui-lifecycle-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `gwd-tui-lifecycle-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
 }
 
@@ -29,12 +29,12 @@ function cleanup(dir: string): void {
   try { rmSync(dir, { recursive: true, force: true }); } catch { /* best-effort */ }
 }
 
-const baseState: GSDState = {
+const baseState: GWDState = {
   phase: "executing",
   activeMilestone: { id: "M001", title: "Milestone" },
   activeSlice: { id: "S01", title: "Slice" },
   activeTask: { id: "T01", title: "Task" },
-} as unknown as GSDState;
+} as unknown as GWDState;
 
 const baseAccessors = {
   getAutoStartTime: () => 0,
@@ -83,7 +83,7 @@ test("updateProgressWidget installs an EMPTY-rendering header (not undefined) â€
   assert.deepEqual(rendered, [], "empty header component must render zero lines so auto-mode actually suppresses the welcome banner");
 });
 
-test("updateProgressWidget clears the gsd-step wizard badge when auto-mode activates", (t) => {
+test("updateProgressWidget clears the gwd-step wizard badge when auto-mode activates", (t) => {
   const dir = makeTempDir("step-badge");
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   t.after(() => cleanup(dir));
@@ -106,8 +106,8 @@ test("updateProgressWidget clears the gsd-step wizard badge when auto-mode activ
   );
 
   assert.ok(
-    statusCalls.some(([key, value]) => key === "gsd-step" && value === undefined),
-    `expected setStatus("gsd-step", undefined) to be called; got ${JSON.stringify(statusCalls)}`,
+    statusCalls.some(([key, value]) => key === "gwd-step" && value === undefined),
+    `expected setStatus("gwd-step", undefined) to be called; got ${JSON.stringify(statusCalls)}`,
   );
 });
 
@@ -272,7 +272,7 @@ test("completion dashboard keeps final milestone roll-up in the progress widget"
     assert.match(output, /Users can see what shipped/);
     assert.match(output, /Keep completion closeout/);
     assert.match(output, /Verification/);
-    assert.match(output, /Files: src\/resources\/extensions\/gsd\/auto-dashboard\.ts/);
+    assert.match(output, /Files: src\/resources\/extensions\/gwd\/auto-dashboard\.ts/);
     assert.match(output, /Run totals 3\/3 slices/);
     assert.match(output, /100% cache hit/);
     assert.match(output, /\$21\.29/);

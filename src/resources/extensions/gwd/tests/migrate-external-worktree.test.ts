@@ -28,8 +28,8 @@ describe("migrate-external worktree guard (#2970)", () => {
   let worktreePath: string;
 
   before(() => {
-    base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-migrate-wt-")));
-    stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-state-")));
+    base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-migrate-wt-")));
+    stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-state-")));
     process.env.GWD_STATE_DIR = stateDir;
 
     // Create a git repo with a remote
@@ -45,7 +45,7 @@ describe("migrate-external worktree guard (#2970)", () => {
     worktreePath = join(base, ".gwd", "worktrees", "M001");
     run(`git worktree add -b milestone/M001 ${worktreePath}`, base);
 
-    // Populate worktree with a .gwd directory (simulating syncGsdStateToWorktree)
+    // Populate worktree with a .gwd directory (simulating syncGwdStateToWorktree)
     const worktreeGwd = join(worktreePath, ".gwd");
     mkdirSync(worktreeGwd, { recursive: true });
     writeFileSync(join(worktreeGwd, "PREFERENCES.md"), "# prefs\n", "utf-8");
@@ -82,7 +82,7 @@ describe("migrate-external worktree guard (#2970)", () => {
 
   test("migrateToExternalState still works on main repo", () => {
     // Create a fresh temp repo to test main repo migration path
-    const mainBase = realpathSync(mkdtempSync(join(tmpdir(), "gsd-migrate-main-")));
+    const mainBase = realpathSync(mkdtempSync(join(tmpdir(), "gwd-migrate-main-")));
     try {
       run("git init -b main", mainBase);
       run('git config user.name "Test"', mainBase);

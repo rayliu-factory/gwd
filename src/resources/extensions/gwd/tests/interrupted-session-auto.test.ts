@@ -23,7 +23,7 @@ import {
 import { normalizeRealPath } from "../paths.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-auto-interrupted-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-auto-interrupted-${randomUUID()}`);
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

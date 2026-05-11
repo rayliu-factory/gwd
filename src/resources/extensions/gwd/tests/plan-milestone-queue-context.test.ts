@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { buildPlanMilestonePrompt } from "../auto-prompts.ts";
 
 function createBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-plan-queue-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-plan-queue-"));
   mkdirSync(join(base, ".gwd", "milestones", "M010"), { recursive: true });
   return base;
 }

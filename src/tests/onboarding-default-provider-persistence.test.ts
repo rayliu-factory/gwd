@@ -47,7 +47,7 @@ function runOnboardingFlow(gsdHome: string, answers: string[]): void {
 }
 
 test("onboarding persists defaultProvider for OAuth flow", (t) => {
-  const gsdHome = mkdtempSync(join(tmpdir(), "gsd-onboarding-oauth-"))
+  const gsdHome = mkdtempSync(join(tmpdir(), "gwd-onboarding-oauth-"))
   t.after(() => rmSync(gsdHome, { recursive: true, force: true }))
 
   runOnboardingFlow(gsdHome, ["browser", "openai-codex"])
@@ -57,7 +57,7 @@ test("onboarding persists defaultProvider for OAuth flow", (t) => {
 })
 
 test("onboarding persists defaultProvider for API-key flow", (t) => {
-  const gsdHome = mkdtempSync(join(tmpdir(), "gsd-onboarding-api-key-"))
+  const gsdHome = mkdtempSync(join(tmpdir(), "gwd-onboarding-api-key-"))
   t.after(() => rmSync(gsdHome, { recursive: true, force: true }))
 
   runOnboardingFlow(gsdHome, ["api-key", "openai", "sk-test"])

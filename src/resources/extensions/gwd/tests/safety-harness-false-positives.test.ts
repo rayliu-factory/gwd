@@ -70,7 +70,7 @@ test("safety-harness-bug1: destructive commands are still blocked during queue m
 // ─── Bug 2: Non-persisted evidence ──────────────────────────────────────────
 
 test("safety-harness-bug2: evidence survives save/load round-trip (simulates session restart)", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-evidence-persist-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-evidence-persist-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   resetEvidence();
@@ -104,7 +104,7 @@ test("safety-harness-bug2: evidence survives save/load round-trip (simulates ses
 });
 
 test("safety-harness-bug2: loadEvidenceFromDisk returns empty array when no file exists (fresh unit)", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-evidence-nopersist-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-evidence-nopersist-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   resetEvidence();
@@ -119,7 +119,7 @@ test("safety-harness-bug2-race: bash evidence survives mid-unit reset between to
   // silently no-op'd, producing the "task complete with no bash calls" false positive.
   // Post-fix, register-hooks.ts persists at tool_call time too — so the entry survives
   // the reset via the disk round-trip.
-  const base = mkdtempSync(join(tmpdir(), "gsd-evidence-race-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-evidence-race-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   resetEvidence();
@@ -159,7 +159,7 @@ test("safety-harness: gwd_exec counts as execution evidence", () => {
 // ─── Bug 3: git diff HEAD~1 scope check ─────────────────────────────────────
 
 test("safety-harness-bug3: validateFileChanges works on initial commit (no HEAD~1)", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-initial-commit-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-initial-commit-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   execFileSync("git", ["init"], { cwd: base });
@@ -180,8 +180,8 @@ test("safety-harness-bug3: validateFileChanges works on initial commit (no HEAD~
 
 test("safety-harness-bug3: validateFileChanges works on shallow clone (shallow repo without full history)", (t) => {
   // Simulate shallow clone: create a repo, then clone it with depth=1
-  const origin = mkdtempSync(join(tmpdir(), "gsd-origin-"));
-  const shallow = mkdtempSync(join(tmpdir(), "gsd-shallow-"));
+  const origin = mkdtempSync(join(tmpdir(), "gwd-origin-"));
+  const shallow = mkdtempSync(join(tmpdir(), "gwd-shallow-"));
   t.after(() => {
     rmSync(origin, { recursive: true, force: true });
     rmSync(shallow, { recursive: true, force: true });
@@ -221,7 +221,7 @@ test("safety-harness-bug3: validateFileChanges works on shallow clone (shallow r
 });
 
 test("safety-harness-bug3: validateFileChanges works on merge commit", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-merge-commit-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-merge-commit-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   execFileSync("git", ["init", "-b", "main"], { cwd: base });
@@ -251,7 +251,7 @@ test("safety-harness-bug3: validateFileChanges works on merge commit", (t) => {
 });
 
 test("safety-harness: planned changed file avoids unexpected-file warning", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-planned-file-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-planned-file-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   execFileSync("git", ["init"], { cwd: base });

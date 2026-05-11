@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { execSync } from "node:child_process";
 
-import { repoIdentity, externalGsdRoot, ensureGsdSymlink, validateProjectId, readRepoMeta, isInheritedRepo } from "../repo-identity.ts";
+import { repoIdentity, externalGwdRoot, ensureGwdSymlink, validateProjectId, readRepoMeta, isInheritedRepo } from "../repo-identity.ts";
 /**
  * Normalize a path for reliable comparison on Windows CI runners.
  * `os.tmpdir()` may return the 8.3 short-path form (e.g. `C:\Users\RUNNER~1`)
@@ -28,8 +28,8 @@ describe('repo-identity-worktree', () => {
   let expectedExternalState: string;
 
   before(() => {
-    base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-repo-identity-")));
-    stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-state-")));
+    base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-repo-identity-")));
+    stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-state-")));
     process.env.GWD_STATE_DIR = stateDir;
 
     run("git init -b main", base);
@@ -43,7 +43,7 @@ describe('repo-identity-worktree', () => {
     worktreePath = join(base, ".gwd", "worktrees", "M001");
     run(`git worktree add -b milestone/M001 ${worktreePath}`, base);
 
-    expectedExternalState = externalGsdRoot(base);
+    expectedExternalState = externalGwdRoot(base);
   });
 
   after(() => {
@@ -53,31 +53,31 @@ describe('repo-identity-worktree', () => {
     rmSync(stateDir, { recursive: true, force: true });
   });
 
-test('ensureGsdSymlink points worktree at main repo external state dir', () => {
-    const mainState = ensureGsdSymlink(base);
-    assert.deepStrictEqual(mainState, realpathSync(join(base, ".gwd")), "ensureGsdSymlink(base) returns the current main repo .gwd target");
-    const worktreeState = ensureGsdSymlink(worktreePath);
+test('ensureGwdSymlink points worktree at main repo external state dir', () => {
+    const mainState = ensureGwdSymlink(base);
+    assert.deepStrictEqual(mainState, realpathSync(join(base, ".gwd")), "ensureGwdSymlink(base) returns the current main repo .gwd target");
+    const worktreeState = ensureGwdSymlink(worktreePath);
     assert.deepStrictEqual(worktreeState, expectedExternalState, "worktree symlink target matches main repo external state dir");
     assert.ok(existsSync(join(worktreePath, ".gwd")), "worktree .gwd exists");
     assert.ok(lstatSync(join(worktreePath, ".gwd")).isSymbolicLink(), "worktree .gwd is a symlink");
     assert.deepStrictEqual(realpathSync(join(worktreePath, ".gwd")), realpathSync(expectedExternalState), "worktree .gwd symlink resolves to main repo external state dir");
 });
 
-test('ensureGsdSymlink heals stale worktree symlinks', () => {
+test('ensureGwdSymlink heals stale worktree symlinks', () => {
     const staleState = join(stateDir, "projects", "stale-worktree-state");
     mkdirSync(staleState, { recursive: true });
     rmSync(join(worktreePath, ".gwd"), { recursive: true, force: true });
     symlinkSync(staleState, join(worktreePath, ".gwd"), "junction");
-    const healedState = ensureGsdSymlink(worktreePath);
+    const healedState = ensureGwdSymlink(worktreePath);
     assert.deepStrictEqual(healedState, expectedExternalState, "stale worktree symlink is repaired to canonical external state dir");
     assert.deepStrictEqual(realpathSync(join(worktreePath, ".gwd")), realpathSync(expectedExternalState), "healed worktree symlink resolves to canonical external state dir");
 });
 
-test('ensureGsdSymlink preserves worktree .gwd directories', () => {
+test('ensureGwdSymlink preserves worktree .gwd directories', () => {
     rmSync(join(worktreePath, ".gwd"), { recursive: true, force: true });
     mkdirSync(join(worktreePath, ".gwd", "milestones"), { recursive: true });
     writeFileSync(join(worktreePath, ".gwd", "milestones", "stale.txt"), "stale\n", "utf-8");
-    const preservedDirState = ensureGsdSymlink(worktreePath);
+    const preservedDirState = ensureGwdSymlink(worktreePath);
     assert.deepStrictEqual(preservedDirState, join(worktreePath, ".gwd"), "worktree .gwd directory is left in place for sync-based refresh");
     assert.ok(lstatSync(join(worktreePath, ".gwd")).isDirectory(), "worktree .gwd directory remains a directory");
     assert.ok(existsSync(join(worktreePath, ".gwd", "milestones", "stale.txt")), "existing worktree .gwd directory contents remain available for sync logic");
@@ -86,7 +86,7 @@ test('ensureGsdSymlink preserves worktree .gwd directories', () => {
 test('GWD_PROJECT_ID overrides computed repo hash', () => {
     process.env.GWD_PROJECT_ID = "my-project";
     assert.deepStrictEqual(repoIdentity(base), "my-project", "repoIdentity returns GWD_PROJECT_ID when set");
-    assert.deepStrictEqual(externalGsdRoot(base), join(stateDir, "projects", "my-project"), "externalGsdRoot uses GWD_PROJECT_ID");
+    assert.deepStrictEqual(externalGwdRoot(base), join(stateDir, "projects", "my-project"), "externalGwdRoot uses GWD_PROJECT_ID");
     delete process.env.GWD_PROJECT_ID;
 });
 
@@ -102,8 +102,8 @@ test('readRepoMeta returns null for malformed metadata', () => {
       assert.deepStrictEqual(readRepoMeta(malformedPath), null, "malformed repo-meta.json is treated as unknown metadata");
 });
 
-test('ensureGsdSymlink refreshes repo-meta gitRoot after repo move with fixed project id', () => {
-      const moveRepo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-repo-identity-move-")));
+test('ensureGwdSymlink refreshes repo-meta gitRoot after repo move with fixed project id', () => {
+      const moveRepo = realpathSync(mkdtempSync(join(tmpdir(), "gwd-repo-identity-move-")));
       run("git init -b main", moveRepo);
       run('git config user.name "Pi Test"', moveRepo);
       run('git config user.email "pi@example.com"', moveRepo);
@@ -112,15 +112,15 @@ test('ensureGsdSymlink refreshes repo-meta gitRoot after repo move with fixed pr
       run('git commit -m "chore: init move repo"', moveRepo);
 
       process.env.GWD_PROJECT_ID = "fixed-project";
-      const fixedExternal = ensureGsdSymlink(moveRepo);
+      const fixedExternal = ensureGwdSymlink(moveRepo);
       const before = readRepoMeta(fixedExternal);
       assert.ok(before !== null, "repo metadata exists before repo move");
       assert.deepStrictEqual(normalizePath(before!.gitRoot), normalizePath(moveRepo), "repo metadata tracks current git root before move");
 
-      const movedBaseRaw = join(tmpdir(), `gsd-repo-identity-moved-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+      const movedBaseRaw = join(tmpdir(), `gwd-repo-identity-moved-${Date.now()}-${Math.random().toString(36).slice(2)}`);
       renameSync(moveRepo, movedBaseRaw);
       const movedBase = realpathSync(movedBaseRaw);
-      const movedExternal = ensureGsdSymlink(movedBase);
+      const movedExternal = ensureGwdSymlink(movedBase);
       assert.deepStrictEqual(realpathSync(movedExternal), realpathSync(fixedExternal), "fixed project id keeps the same external state dir");
 
       const after = readRepoMeta(movedExternal);
@@ -133,7 +133,7 @@ test('ensureGsdSymlink refreshes repo-meta gitRoot after repo move with fixed pr
 });
 
 test('isInheritedRepo detects subdirectory of parent repo without .gwd (#1639)', () => {
-      const parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-inherited-parent-")));
+      const parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "gwd-inherited-parent-")));
       run("git init -b main", parentRepo);
       run('git config user.name "Pi Test"', parentRepo);
       run('git config user.email "pi@example.com"', parentRepo);
@@ -150,7 +150,7 @@ test('isInheritedRepo detects subdirectory of parent repo without .gwd (#1639)',
 
       assert.ok(!isInheritedRepo(parentRepo), "git root is not inherited");
 
-      const standaloneRepo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-inherited-standalone-")));
+      const standaloneRepo = realpathSync(mkdtempSync(join(tmpdir(), "gwd-inherited-standalone-")));
       run("git init -b main", standaloneRepo);
       run('git config user.name "Pi Test"', standaloneRepo);
       run('git config user.email "pi@example.com"', standaloneRepo);
@@ -161,7 +161,7 @@ test('isInheritedRepo detects subdirectory of parent repo without .gwd (#1639)',
 });
 
 test('subdirectory of parent repo gets unique identity after git init (#1639)', () => {
-      const parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-identity-parent-")));
+      const parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "gwd-identity-parent-")));
       run("git init -b main", parentRepo);
       run('git config user.name "Pi Test"', parentRepo);
       run('git config user.email "pi@example.com"', parentRepo);
@@ -184,8 +184,8 @@ test('subdirectory of parent repo gets unique identity after git init (#1639)', 
       rmSync(parentRepo, { recursive: true, force: true });
 });
 
-test('ensureGsdSymlink from subdirectory does not create .gwd in subdir when git-root .gwd exists (#2380)', () => {
-    const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-subdir-symlink-")));
+test('ensureGwdSymlink from subdirectory does not create .gwd in subdir when git-root .gwd exists (#2380)', () => {
+    const repo = realpathSync(mkdtempSync(join(tmpdir(), "gwd-subdir-symlink-")));
     run("git init -b main", repo);
     run('git config user.name "Pi Test"', repo);
     run('git config user.email "pi@example.com"', repo);
@@ -195,16 +195,16 @@ test('ensureGsdSymlink from subdirectory does not create .gwd in subdir when git
     run('git commit -m "init"', repo);
 
     // Set up .gwd symlink at the git root (normal project initialisation)
-    ensureGsdSymlink(repo);
-    assert.ok(existsSync(join(repo, ".gwd")), "root .gwd exists after ensureGsdSymlink");
+    ensureGwdSymlink(repo);
+    assert.ok(existsSync(join(repo, ".gwd")), "root .gwd exists after ensureGwdSymlink");
     assert.ok(lstatSync(join(repo, ".gwd")).isSymbolicLink(), "root .gwd is a symlink");
 
-    // Create a subdirectory and call ensureGsdSymlink from there
+    // Create a subdirectory and call ensureGwdSymlink from there
     const subdir = join(repo, "src", "lib");
     mkdirSync(subdir, { recursive: true });
-    ensureGsdSymlink(subdir);
+    ensureGwdSymlink(subdir);
 
-    // ensureGsdSymlink should NOT create a .gwd in the subdirectory
+    // ensureGwdSymlink should NOT create a .gwd in the subdirectory
     // because the git root already has a valid .gwd symlink.
     assert.ok(!existsSync(join(subdir, ".gwd")), "no .gwd created in subdirectory when git-root .gwd exists (#2380)");
     assert.ok(!existsSync(join(repo, "src", ".gwd")), "no .gwd created in intermediate directory");

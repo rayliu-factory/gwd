@@ -9,7 +9,7 @@ import { randomUUID } from "node:crypto";
 import { cleanStaleRuntimeUnits } from "../auto-worktree.ts";
 
 function makeBase(): string {
-  return join(tmpdir(), `gsd-clean-runtime-${randomUUID()}`);
+  return join(tmpdir(), `gwd-clean-runtime-${randomUUID()}`);
 }
 
 describe("auto-start cleanStaleRuntimeUnits DB gating (#4663)", () => {

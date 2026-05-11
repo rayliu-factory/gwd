@@ -1,7 +1,7 @@
 /**
- * GSD-2 e2e fake-LLM helpers.
+ * GWD-2 e2e fake-LLM helpers.
  *
- * Compose a JSONL transcript and run `gsd --print` against it. The fake
+ * Compose a JSONL transcript and run `gwd --print` against it. The fake
  * provider replays the transcript turn-by-turn (see
  * packages/pi-ai/src/providers/fake.ts).
  */
@@ -43,7 +43,7 @@ export interface TranscriptTurn {
  * and the OS will reclaim it.
  */
 export function writeTranscript(turns: TranscriptTurn[]): string {
-	const path = join(canonicalTmpdir(), `gsd-fake-llm-${process.pid}-${Date.now()}.jsonl`);
+	const path = join(canonicalTmpdir(), `gwd-fake-llm-${process.pid}-${Date.now()}.jsonl`);
 	const body = turns.map((t) => JSON.stringify(t)).join("\n") + "\n";
 	writeFileSync(path, body, "utf8");
 	return path;
@@ -59,7 +59,7 @@ export interface FakeRunOptions {
 }
 
 /**
- * Run `gsd --print` against a fake-LLM transcript. Sets the env var the
+ * Run `gwd --print` against a fake-LLM transcript. Sets the env var the
  * provider keys off, picks the fake model, and returns the spawn result.
  */
 export function runWithFakeLlm(transcriptPath: string, opts: FakeRunOptions): SpawnSyncResult {
@@ -67,7 +67,7 @@ export function runWithFakeLlm(transcriptPath: string, opts: FakeRunOptions): Sp
 		"--print",
 		opts.prompt,
 		"--model",
-		"gsd-fake-model",
+		"gwd-fake-model",
 		"--mode",
 		opts.mode ?? "text",
 		...(opts.extraArgs ?? []),

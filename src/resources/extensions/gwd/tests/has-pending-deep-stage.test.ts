@@ -16,17 +16,17 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 
 import { hasPendingDeepStage, shouldRunDeepProjectSetup } from "../auto-dispatch.ts";
-import type { GSDPreferences } from "../preferences.ts";
-import { loadEffectiveGSDPreferences } from "../preferences.ts";
+import type { GWDPreferences } from "../preferences.ts";
+import { loadEffectiveGWDPreferences } from "../preferences.ts";
 
 function makeBase(): string {
-  const base = join(tmpdir(), `gsd-deep-pending-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-deep-pending-${randomUUID()}`);
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
 
-const lightPrefs: GSDPreferences = { planning_depth: "light" } as GSDPreferences;
-const deepPrefs: GSDPreferences = { planning_depth: "deep" } as GSDPreferences;
+const lightPrefs: GWDPreferences = { planning_depth: "light" } as GWDPreferences;
+const deepPrefs: GWDPreferences = { planning_depth: "deep" } as GWDPreferences;
 
 test("hasPendingDeepStage: returns false when prefs is undefined (light by omission)", () => {
   const base = makeBase();
@@ -107,14 +107,14 @@ test("hasPendingDeepStage: returns true in deep mode when only some gates pass",
 // `planning_depth` was missing from KNOWN_PREFERENCE_KEYS, validatePreferences,
 // and mergePreferences, so it was stripped on every load. The deep-mode flow
 // silently never triggered because every dispatch saw planning_depth: undefined.
-test("loadEffectiveGSDPreferences: planning_depth survives the validate + merge pipeline", () => {
+test("loadEffectiveGWDPreferences: planning_depth survives the validate + merge pipeline", () => {
   const base = makeBase();
   try {
     writeFileSync(
       join(base, ".gwd", "PREFERENCES.md"),
       "---\nplanning_depth: deep\n---\n",
     );
-    const loaded = loadEffectiveGSDPreferences(base);
+    const loaded = loadEffectiveGWDPreferences(base);
     assert.equal(
       loaded?.preferences?.planning_depth,
       "deep",

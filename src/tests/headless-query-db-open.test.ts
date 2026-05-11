@@ -32,7 +32,7 @@ test("headless-query opens the DB before deriveState (#4123)", async () => {
         calls.push("statuses");
         return [{ milestoneId: "M001", pid: 123, state: "running", cost: 1.25, lastHeartbeat: 10 }];
       },
-      loadEffectiveGSDPreferences: () => ({ preferences: {} }),
+      loadEffectiveGWDPreferences: () => ({ preferences: {} }),
     } as any,
     (text) => {
       output += text;

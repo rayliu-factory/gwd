@@ -15,15 +15,15 @@ import {
   insertMilestone,
 } from "../gwd-db.ts";
 
-import type { GSDState } from "../types.ts";
+import type { GWDState } from "../types.ts";
 
-function makeBase(prefix = "gsd-precond-"): string {
+function makeBase(prefix = "gwd-precond-"): string {
   const base = mkdtempSync(join(tmpdir(), prefix));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }
 
-function makeMinimalState(): GSDState {
+function makeMinimalState(): GWDState {
   return {
     activeMilestone: null,
     activeSlice: null,

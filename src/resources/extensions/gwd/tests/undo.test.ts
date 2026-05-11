@@ -29,7 +29,7 @@ function makeTempDir(prefix: string): string {
 }
 
 test("handleUndo without --force only warns and leaves completed units intact", async () => {
-  const base = makeTempDir("gsd-undo-confirm");
+  const base = makeTempDir("gwd-undo-confirm");
   try {
     mkdirSync(join(base, ".gwd"), { recursive: true });
     mkdirSync(join(base, ".gwd", "activity"), { recursive: true });
@@ -68,7 +68,7 @@ test("handleUndo without --force only warns and leaves completed units intact", 
 });
 
 test("uncheckTaskInPlan flips a checked task back to unchecked", () => {
-  const base = makeTempDir("gsd-undo-plan");
+  const base = makeTempDir("gwd-undo-plan");
   try {
     const sliceDir = join(base, ".gwd", "milestones", "M001", "slices", "S01");
     mkdirSync(sliceDir, { recursive: true });
@@ -92,7 +92,7 @@ test("uncheckTaskInPlan flips a checked task back to unchecked", () => {
 });
 
 test("findCommitsForUnit reads the newest matching activity log and dedupes SHAs", () => {
-  const base = makeTempDir("gsd-undo-activity");
+  const base = makeTempDir("gwd-undo-activity");
   try {
     const activityDir = join(base, ".gwd", "activity");
     mkdirSync(activityDir, { recursive: true });
@@ -206,7 +206,7 @@ function setupTaskFixture(base: string): void {
 
 test("handleUndoTask without args shows usage", async () => {
   const { notifications, ctx } = makeCtx();
-  const base = makeTempDir("gsd-undo-task-usage");
+  const base = makeTempDir("gwd-undo-task-usage");
   try {
     await handleUndoTask("", ctx, {} as any, base);
     assert.equal(notifications.length, 1);
@@ -218,7 +218,7 @@ test("handleUndoTask without args shows usage", async () => {
 });
 
 test("handleUndoTask without --force shows confirmation", async () => {
-  const base = makeTempDir("gsd-undo-task-confirm");
+  const base = makeTempDir("gwd-undo-task-confirm");
   try {
     setupTaskFixture(base);
     const { notifications, ctx } = makeCtx();
@@ -236,7 +236,7 @@ test("handleUndoTask without --force shows confirmation", async () => {
 });
 
 test("handleUndoTask with --force resets task and re-renders plan", async () => {
-  const base = makeTempDir("gsd-undo-task-force");
+  const base = makeTempDir("gwd-undo-task-force");
   try {
     setupTaskFixture(base);
     const { notifications, ctx } = makeCtx();
@@ -267,7 +267,7 @@ test("handleUndoTask with --force resets task and re-renders plan", async () => 
 });
 
 test("handleUndoTask with non-existent task returns error", async () => {
-  const base = makeTempDir("gsd-undo-task-notfound");
+  const base = makeTempDir("gwd-undo-task-notfound");
   try {
     openDatabase(":memory:");
     insertMilestone({ id: "M001", title: "Test", status: "active" });
@@ -284,7 +284,7 @@ test("handleUndoTask with non-existent task returns error", async () => {
 });
 
 test("handleUndoTask accepts partial ID (T01) and resolves from state", async () => {
-  const base = makeTempDir("gsd-undo-task-partial");
+  const base = makeTempDir("gwd-undo-task-partial");
   try {
     setupTaskFixture(base);
 
@@ -371,7 +371,7 @@ function setupSliceFixture(base: string): void {
 
 test("handleResetSlice without args shows usage", async () => {
   const { notifications, ctx } = makeCtx();
-  const base = makeTempDir("gsd-reset-slice-usage");
+  const base = makeTempDir("gwd-reset-slice-usage");
   try {
     await handleResetSlice("", ctx, {} as any, base);
     assert.equal(notifications.length, 1);
@@ -383,7 +383,7 @@ test("handleResetSlice without args shows usage", async () => {
 });
 
 test("handleResetSlice without --force shows confirmation", async () => {
-  const base = makeTempDir("gsd-reset-slice-confirm");
+  const base = makeTempDir("gwd-reset-slice-confirm");
   try {
     setupSliceFixture(base);
     const { notifications, ctx } = makeCtx();
@@ -400,7 +400,7 @@ test("handleResetSlice without --force shows confirmation", async () => {
 });
 
 test("handleResetSlice with --force resets slice and all tasks", async () => {
-  const base = makeTempDir("gsd-reset-slice-force");
+  const base = makeTempDir("gwd-reset-slice-force");
   try {
     setupSliceFixture(base);
     const { notifications, ctx } = makeCtx();
@@ -446,7 +446,7 @@ test("handleResetSlice with --force resets slice and all tasks", async () => {
 });
 
 test("handleResetSlice with non-existent slice returns error", async () => {
-  const base = makeTempDir("gsd-reset-slice-notfound");
+  const base = makeTempDir("gwd-reset-slice-notfound");
   try {
     openDatabase(":memory:");
     insertMilestone({ id: "M001", title: "Test", status: "active" });

@@ -1,5 +1,5 @@
 /**
- * GSD2 — regression tests for #5187 and git-root anchor guard:
+ * GWD2 — regression tests for #5187 and git-root anchor guard:
  *
  * #5187: gsdRoot() must refuse to use the global GWD home (~/.gwd) as a
  * project .gwd directory when basePath resolves to $HOME. Paths under
@@ -23,15 +23,15 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
   let fakeHome: string;
   let savedHome: string | undefined;
   let savedUserProfile: string | undefined;
-  let savedGsdHome: string | undefined;
+  let savedGwdHome: string | undefined;
 
   beforeEach(() => {
-    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-home-guard-')));
+    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gwd-home-guard-')));
     mkdirSync(join(fakeHome, '.gwd'), { recursive: true });
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
-    savedGsdHome = process.env.GWD_HOME;
+    savedGwdHome = process.env.GWD_HOME;
 
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
@@ -45,8 +45,8 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
     else process.env.HOME = savedHome;
     if (savedUserProfile === undefined) delete process.env.USERPROFILE;
     else process.env.USERPROFILE = savedUserProfile;
-    if (savedGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = savedGsdHome;
+    if (savedGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = savedGwdHome;
 
     _clearGwdRootCache();
     rmSync(fakeHome, { recursive: true, force: true });
@@ -66,7 +66,7 @@ describe('gsdRoot() refuses ~/.gwd as project state when basePath is $HOME (#518
   });
 
   test('does NOT throw for an unrelated project directory that has its own .gwd', () => {
-    const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-home-guard-proj-')));
+    const projectDir = realpathSync(mkdtempSync(join(tmpdir(), 'gwd-home-guard-proj-')));
     mkdirSync(join(projectDir, '.gwd'), { recursive: true });
     _clearGwdRootCache();
     try {
@@ -83,11 +83,11 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gwd', ()
   let subDir: string;
   let savedHome: string | undefined;
   let savedUserProfile: string | undefined;
-  let savedGsdHome: string | undefined;
+  let savedGwdHome: string | undefined;
 
   beforeEach(() => {
     // Create a tmpdir that will act as both $HOME and a git repo root.
-    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gsd-anchor-guard-')));
+    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), 'gwd-anchor-guard-')));
     // Init a bare-minimum git repo so git rev-parse --show-toplevel returns fakeHome.
     spawnSync('git', ['init', fakeHome], { encoding: 'utf-8' });
     // Create ~/.gwd (the global home that must NOT be used for project subdirs).
@@ -98,7 +98,7 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gwd', ()
 
     savedHome = process.env.HOME;
     savedUserProfile = process.env.USERPROFILE;
-    savedGsdHome = process.env.GWD_HOME;
+    savedGwdHome = process.env.GWD_HOME;
 
     process.env.HOME = fakeHome;
     process.env.USERPROFILE = fakeHome;
@@ -112,8 +112,8 @@ describe('git-root anchor guard: subdir basePath must not resolve to ~/.gwd', ()
     else process.env.HOME = savedHome;
     if (savedUserProfile === undefined) delete process.env.USERPROFILE;
     else process.env.USERPROFILE = savedUserProfile;
-    if (savedGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = savedGsdHome;
+    if (savedGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = savedGwdHome;
 
     _clearGwdRootCache();
     rmSync(fakeHome, { recursive: true, force: true });

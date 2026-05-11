@@ -9,12 +9,12 @@ import { parsePlan } from "../../parsers-legacy.js";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
-function makeBase(): { base: string; gsd: string; mDir: string } {
-  const base = mkdtempSync(join(tmpdir(), "gsd-doctor-fp-"));
-  const gsd = join(base, ".gwd");
-  const mDir = join(gsd, "milestones", "M001");
+function makeBase(): { base: string; gwd: string; mDir: string } {
+  const base = mkdtempSync(join(tmpdir(), "gwd-doctor-fp-"));
+  const gwd = join(base, ".gwd");
+  const mDir = join(gwd, "milestones", "M001");
   mkdirSync(join(mDir, "slices"), { recursive: true });
-  return { base, gsd, mDir };
+  return { base, gwd, mDir };
 }
 
 function writeRoadmap(mDir: string, content: string): void {
@@ -39,15 +39,15 @@ describe('doctor false-positives (#3105)', async () => {
     // Simulate: a worktree dir that only contains .gwd/doctor-history.jsonl
     // (created by appendDoctorHistory writing to the worktree-scoped path).
     // The orphan check should NOT warn about this directory.
-    const { base, gsd } = makeBase();
-    writeRoadmap(join(gsd, "milestones", "M001"), `# M001: Test\n\n## Slices\n- [ ] **S01: Slice** \`risk:low\` \`depends:[]\`\n  > After this: done\n`);
-    writeSlice(join(gsd, "milestones", "M001"), "S01", "# S01: Slice\n\n**Goal:** G\n**Demo:** D\n\n## Tasks\n- [ ] **T01: Task** `est:10m`\n  Pending.\n");
+    const { base, gwd } = makeBase();
+    writeRoadmap(join(gwd, "milestones", "M001"), `# M001: Test\n\n## Slices\n- [ ] **S01: Slice** \`risk:low\` \`depends:[]\`\n  > After this: done\n`);
+    writeSlice(join(gwd, "milestones", "M001"), "S01", "# S01: Slice\n\n**Goal:** G\n**Demo:** D\n\n## Tasks\n- [ ] **T01: Task** `est:10m`\n  Pending.\n");
 
     // Create a worktree directory that only has .gwd/doctor-history.jsonl
-    const wtDir = join(gsd, "worktrees", "M042");
-    const wtGsdDir = join(wtDir, ".gwd");
-    mkdirSync(wtGsdDir, { recursive: true });
-    writeFileSync(join(wtGsdDir, "doctor-history.jsonl"), '{"ts":"2026-01-01","ok":true}\n');
+    const wtDir = join(gwd, "worktrees", "M042");
+    const wtGwdDir = join(wtDir, ".gwd");
+    mkdirSync(wtGwdDir, { recursive: true });
+    writeFileSync(join(wtGwdDir, "doctor-history.jsonl"), '{"ts":"2026-01-01","ok":true}\n');
 
     const result = await runGWDDoctor(base, { fix: false });
 

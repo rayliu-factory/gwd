@@ -11,7 +11,7 @@ test("handleExport --html --all generates reports for milestones missing from th
   // and the deduplication logic via loadReportsIndex + milestone filtering
   const { loadReportsIndex } = await import("../reports.js");
 
-  const tmp = join(tmpdir(), `gsd-export-all-test-${Date.now()}`);
+  const tmp = join(tmpdir(), `gwd-export-all-test-${Date.now()}`);
   const gsdDir = join(tmp, ".gwd");
   const reportsDir = join(gsdDir, "reports");
   mkdirSync(reportsDir, { recursive: true });
@@ -95,10 +95,10 @@ test("export completions include --html and --html --all", async () => {
   };
 
   registerGWDCommand(pi as any);
-  const gsd = commands.get("gwd");
-  assert.ok(gsd, "should register /gwd command");
+  const gwd = commands.get("gwd");
+  assert.ok(gwd, "should register /gwd command");
 
-  const completions = gsd.getArgumentCompletions("export --");
+  const completions = gwd.getArgumentCompletions("export --");
   const labels = completions.map((c: any) => c.label);
   assert.ok(labels.includes("--html"), "completions should include --html");
   assert.ok(labels.includes("--html --all"), "completions should include --html --all");

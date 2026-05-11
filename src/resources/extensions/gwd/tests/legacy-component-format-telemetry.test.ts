@@ -11,7 +11,7 @@ import { loadComponentFromAgentFile, loadComponentFromDir } from "../component-l
 import { getLegacyTelemetry, resetLegacyTelemetry } from "../legacy-telemetry.js";
 
 function makeTempDir(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-legacy-component-format-"));
+  return mkdtempSync(join(tmpdir(), "gwd-legacy-component-format-"));
 }
 
 test("legacy component telemetry counts successful skill and agent format loads", () => {
@@ -22,7 +22,7 @@ test("legacy component telemetry counts successful skill and agent format loads"
     const modernDir = join(dir, "modern-skill");
     mkdirSync(modernDir, { recursive: true });
     writeFileSync(join(modernDir, "component.yaml"), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: skill
 metadata:
   name: modern-skill

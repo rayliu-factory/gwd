@@ -15,21 +15,21 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 
 import { resolveDispatch, type DispatchContext } from "../auto-dispatch.ts";
-import type { GSDState } from "../types.ts";
-import type { GSDPreferences } from "../preferences.ts";
+import type { GWDState } from "../types.ts";
+import type { GWDPreferences } from "../preferences.ts";
 
 function makeIsolatedBase(): string {
-  const base = join(tmpdir(), `gsd-deep-integration-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-deep-integration-${randomUUID()}`);
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   return base;
 }
 
 function makeCtx(
   basePath: string,
-  prefs: GSDPreferences | undefined,
-  phase: GSDState["phase"] = "needs-discussion",
+  prefs: GWDPreferences | undefined,
+  phase: GWDState["phase"] = "needs-discussion",
 ): DispatchContext {
-  const state: GSDState = {
+  const state: GWDState = {
     phase,
     activeMilestone: { id: "M001", title: "Test" },
     activeSlice: null,
@@ -146,7 +146,7 @@ test("integration: deep mode + needs-discussion + nothing captured → capture p
   const base = makeIsolatedBase();
   t.after(() => { try { rmSync(base, { recursive: true, force: true }); } catch {} });
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "dispatch", `expected dispatch, got ${result.action}: ${JSON.stringify(result)}`);
   if (result.action === "dispatch") {
@@ -165,7 +165,7 @@ test("integration: deep mode + pre-planning + nothing captured → capture prefs
   const base = makeIsolatedBase();
   t.after(() => { try { rmSync(base, { recursive: true, force: true }); } catch {} });
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "pre-planning"));
   assert.strictEqual(result.action, "dispatch");
   if (result.action === "dispatch") {
@@ -181,7 +181,7 @@ test("integration: deep mode + prefs captured + no PROJECT.md → discuss-projec
 
   writePreferences(base);
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "dispatch");
   if (result.action === "dispatch") {
@@ -196,7 +196,7 @@ test("integration: deep mode + invalid PROJECT.md → discuss-project, not discu
   writePreferences(base);
   writeFileSync(join(base, ".gwd", "PROJECT.md"), "# Project\n");
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "dispatch");
   if (result.action === "dispatch") {
@@ -211,7 +211,7 @@ test("integration: deep mode + PROJECT.md + no REQUIREMENTS.md → discuss-requi
   writePreferences(base);
   writeValidProject(base);
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "dispatch");
   if (result.action === "dispatch") {
@@ -227,7 +227,7 @@ test("integration: deep mode + invalid REQUIREMENTS.md → discuss-requirements,
   writeValidProject(base);
   writeFileSync(join(base, ".gwd", "REQUIREMENTS.md"), "# Requirements\n");
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "dispatch");
   if (result.action === "dispatch") {
@@ -243,7 +243,7 @@ test("integration: deep mode + REQUIREMENTS.md + no research-decision → discus
   writeValidProject(base);
   writeValidRequirements(base);
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "dispatch");
   if (result.action === "dispatch") {
@@ -267,7 +267,7 @@ test("integration: deep mode + decision=research + research files missing → re
     JSON.stringify({ decision: "research", source: "research-decision" }),
   );
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "dispatch");
   if (result.action === "dispatch") {
@@ -289,7 +289,7 @@ test("integration: deep mode + research-project marker → stop, not discuss-mil
   );
   writeFileSync(join(base, ".gwd", "runtime", "research-project-inflight"), "{}\n");
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "stop");
   if (result.action === "stop") {
@@ -315,7 +315,7 @@ test("integration: deep mode + decision=research + dimension blocker → discuss
   }
   writeFileSync(join(base, ".gwd", "research", "PITFALLS-BLOCKER.md"), "# blocker\n");
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "dispatch");
   if (result.action === "dispatch") {
@@ -340,7 +340,7 @@ test("integration: deep mode + decision=skip → falls through to discuss-milest
     JSON.stringify({ decision: "skip" }),
   );
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "dispatch");
   if (result.action === "dispatch") {
@@ -365,7 +365,7 @@ test("integration: deep mode + decision=<garbage> repairs to skip and discusses 
     JSON.stringify({ decision: "garbage" }),
   );
 
-  const prefs = { planning_depth: "deep" } as GSDPreferences;
+  const prefs = { planning_depth: "deep" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "dispatch");
   if (result.action === "dispatch") {
@@ -397,7 +397,7 @@ test("integration: light mode + planning_depth=light + needs-discussion → disc
   const base = makeIsolatedBase();
   t.after(() => { try { rmSync(base, { recursive: true, force: true }); } catch {} });
 
-  const prefs = { planning_depth: "light" } as GSDPreferences;
+  const prefs = { planning_depth: "light" } as GWDPreferences;
   const result = await resolveDispatch(makeCtx(base, prefs, "needs-discussion"));
   assert.strictEqual(result.action, "dispatch");
   if (result.action === "dispatch") {

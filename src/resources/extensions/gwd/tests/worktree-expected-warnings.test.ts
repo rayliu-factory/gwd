@@ -17,7 +17,7 @@ describe("worktree expected-condition warning suppression (#3665)", () => {
   });
 
   test("resolveGitDir returns .git directory without reading it as a file", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-resolve-gitdir-"));
+    const base = mkdtempSync(join(tmpdir(), "gwd-resolve-gitdir-"));
     try {
       mkdirSync(join(base, ".git"), { recursive: true });
       assert.equal(resolveGitDir(base), join(base, ".git"));
@@ -27,7 +27,7 @@ describe("worktree expected-condition warning suppression (#3665)", () => {
   });
 
   test("resolveGitDir resolves worktree .git file targets", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-resolve-worktree-gitdir-"));
+    const base = mkdtempSync(join(tmpdir(), "gwd-resolve-worktree-gitdir-"));
     try {
       mkdirSync(join(base, ".gitdir"), { recursive: true });
       writeFileSync(join(base, ".git"), "gitdir: .gitdir\n");

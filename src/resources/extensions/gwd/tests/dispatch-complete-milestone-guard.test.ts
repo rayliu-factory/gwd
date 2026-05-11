@@ -12,7 +12,7 @@ import { DISPATCH_RULES, type DispatchContext } from "../auto-dispatch.ts";
 import { closeDatabase, insertMilestone, openDatabase } from "../gwd-db.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-complete-dispatch-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-complete-dispatch-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
   writeFileSync(join(base, ".gwd", "milestones", "M001", "ROADMAP.md"), "# M001\n\n## Slices\n\n- [x] **S01**: Done\n");
   writeFileSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "SUMMARY.md"), "# Summary\n");

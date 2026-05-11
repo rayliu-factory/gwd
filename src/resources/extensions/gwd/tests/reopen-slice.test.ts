@@ -19,7 +19,7 @@ import {
 import { handleReopenSlice } from '../tools/reopen-slice.ts';
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-reopen-slice-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-reopen-slice-'));
   mkdirSync(join(base, '.gwd', 'milestones', 'M001', 'slices', 'S01', 'tasks'), { recursive: true });
   return base;
 }

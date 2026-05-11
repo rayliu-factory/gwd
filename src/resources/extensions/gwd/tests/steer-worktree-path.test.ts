@@ -15,7 +15,7 @@ describe("steer worktree path resolution (#3476)", () => {
   let worktreePath: string;
 
   beforeEach(() => {
-    projectRoot = mkdtempSync(join(tmpdir(), "gsd-steer-wt-"));
+    projectRoot = mkdtempSync(join(tmpdir(), "gwd-steer-wt-"));
     mkdirSync(join(projectRoot, ".gwd"), { recursive: true });
 
     // Simulate a worktree with its own .gwd directory

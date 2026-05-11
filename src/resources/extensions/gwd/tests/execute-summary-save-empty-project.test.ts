@@ -11,7 +11,7 @@ import { markApprovalGateVerified, clearDiscussionFlowState } from "../bootstrap
 import { executeSummarySave } from "../tools/workflow-tool-executors.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-summary-save-empty-project-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-summary-save-empty-project-${randomUUID()}`);
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

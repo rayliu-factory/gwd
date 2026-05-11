@@ -24,7 +24,7 @@ import {
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-hook-test-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-hook-test-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;
 }

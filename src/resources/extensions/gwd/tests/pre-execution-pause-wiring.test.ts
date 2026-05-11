@@ -116,7 +116,7 @@ function setupTestEnvironment(): void {
   const milestonesDir = join(gsdDir, "milestones", "M001", "slices", "S01", "tasks");
   mkdirSync(milestonesDir, { recursive: true });
   
-  // Change cwd so loadEffectiveGSDPreferences finds our PREFERENCES.md
+  // Change cwd so loadEffectiveGWDPreferences finds our PREFERENCES.md
   process.chdir(tempDir);
   
   // Clear caches so it finds the new .gwd directory and preferences.

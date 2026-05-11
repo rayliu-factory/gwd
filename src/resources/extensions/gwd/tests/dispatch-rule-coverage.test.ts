@@ -1,6 +1,6 @@
 // gwd-2 / dispatch rule coverage canary test
 //
-// Iterates DISPATCH_RULES in order against representative GSDState stubs and
+// Iterates DISPATCH_RULES in order against representative GWDState stubs and
 // asserts that the first matching rule has the expected name and unitType
 // (mirroring auto-dispatch's first-match-wins semantics). The goal is a
 // canary: if a future PR adds a new rule in the wrong position and steals
@@ -14,11 +14,11 @@ import { tmpdir } from "node:os";
 
 import { DISPATCH_RULES } from "../auto-dispatch.ts";
 import type { DispatchContext, DispatchAction } from "../auto-dispatch.ts";
-import type { GSDState } from "../types.ts";
+import type { GWDState } from "../types.ts";
 
 // ─── State helpers ────────────────────────────────────────────────────────
 
-function makeState(overrides: Partial<GSDState> = {}): GSDState {
+function makeState(overrides: Partial<GWDState> = {}): GWDState {
   return {
     activeMilestone: { id: "M001", title: "Test Milestone" },
     activeSlice: null,
@@ -32,7 +32,7 @@ function makeState(overrides: Partial<GSDState> = {}): GSDState {
   };
 }
 
-function makeCtx(basePath: string, state: GSDState, mid = "M001"): DispatchContext {
+function makeCtx(basePath: string, state: GWDState, mid = "M001"): DispatchContext {
   return {
     basePath,
     mid,
@@ -107,7 +107,7 @@ function assertMatch(
 // ─── Tests ────────────────────────────────────────────────────────────────
 
 test("dispatch-rule-coverage: escalating-task → stop (info)", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-disp-cov-esc-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-disp-cov-esc-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   const ctx = makeCtx(
@@ -127,7 +127,7 @@ test("dispatch-rule-coverage: escalating-task → stop (info)", async (t) => {
 });
 
 test("dispatch-rule-coverage: pre-planning, no CONTEXT → discuss-milestone", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-disp-cov-disc-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-disp-cov-disc-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   // Bare milestone dir, no CONTEXT/RESEARCH/ROADMAP files.
@@ -147,7 +147,7 @@ test("dispatch-rule-coverage: pre-planning, no CONTEXT → discuss-milestone", a
 });
 
 test("dispatch-rule-coverage: pre-planning, has CONTEXT, no RESEARCH → research-milestone", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-disp-cov-res-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-disp-cov-res-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   writeMilestoneFile(tmp, "M001", "CONTEXT", "# Context\n");
@@ -166,7 +166,7 @@ test("dispatch-rule-coverage: pre-planning, has CONTEXT, no RESEARCH → researc
 });
 
 test("dispatch-rule-coverage: pre-planning, has CONTEXT + RESEARCH → plan-milestone", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-disp-cov-plan-m-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-disp-cov-plan-m-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   writeMilestoneFile(tmp, "M001", "CONTEXT", "# Context\n");
@@ -186,7 +186,7 @@ test("dispatch-rule-coverage: pre-planning, has CONTEXT + RESEARCH → plan-mile
 });
 
 test("dispatch-rule-coverage: planning with active slice and skip_research → plan-slice", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-disp-cov-plan-s-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-disp-cov-plan-s-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   writeMilestoneFile(tmp, "M001", "CONTEXT", "# Context\n");
@@ -217,7 +217,7 @@ test("dispatch-rule-coverage: planning with active slice and skip_research → p
 });
 
 test("dispatch-rule-coverage: executing with task plan present → execute-task", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-disp-cov-exec-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-disp-cov-exec-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   writeMilestoneFile(tmp, "M001", "CONTEXT", "# Context\n");
@@ -250,7 +250,7 @@ test("dispatch-rule-coverage: executing with task plan present → execute-task"
 });
 
 test("dispatch-rule-coverage: summarizing → complete-slice", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-disp-cov-sum-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-disp-cov-sum-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   // Rule "execution-entry phase (no context)" fires for summarizing if CONTEXT
@@ -277,7 +277,7 @@ test("dispatch-rule-coverage: summarizing → complete-slice", async (t) => {
 });
 
 test("dispatch-rule-coverage: complete phase → stop", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-disp-cov-done-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-disp-cov-done-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   const ctx = makeCtx(

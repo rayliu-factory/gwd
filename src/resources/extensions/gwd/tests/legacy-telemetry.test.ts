@@ -68,7 +68,7 @@ test("legacy telemetry emits one actionable diagnostic per counter", () => {
 test("legacy telemetry can persist an opt-in snapshot file", () => {
   const previousStderr = setStderrLoggingEnabled(false);
   const previousOutput = process.env.GWD_LEGACY_TELEMETRY_FILE;
-  const base = mkdtempSync(join(tmpdir(), "gsd-legacy-telemetry-file-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-legacy-telemetry-file-"));
   const outputPath = join(base, "runtime", "legacy-telemetry.json");
   try {
     resetLegacyTelemetry();
@@ -93,7 +93,7 @@ test("legacy telemetry can persist an opt-in snapshot file", () => {
 
 test("legacy telemetry can persist a zero-use snapshot for deletion gates", () => {
   const previousOutput = process.env.GWD_LEGACY_TELEMETRY_FILE;
-  const base = mkdtempSync(join(tmpdir(), "gsd-legacy-zero-telemetry-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-legacy-zero-telemetry-"));
   const outputPath = join(base, "legacy-telemetry.json");
   try {
     resetLegacyTelemetry();
@@ -120,7 +120,7 @@ test("legacy telemetry can persist a zero-use snapshot for deletion gates", () =
 });
 
 test("deriveState increments markdown fallback telemetry on explicit legacy fallback", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-legacy-telemetry-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-legacy-telemetry-"));
   const originalFallback = process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK;
   try {
     closeDatabase();

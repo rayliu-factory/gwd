@@ -15,21 +15,21 @@ import { tmpdir } from "node:os";
 import { syncWorktreeStateBack } from "../auto-worktree.ts";
 
 test("#2684: syncWorktreeStateBack does not overwrite project PREFERENCES.md", () => {
-  const mainBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-main-"));
-  const wtBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-worktree-"));
-  const mainGsd = join(mainBase, ".gwd");
-  const wtGsd = join(wtBase, ".gwd");
-  mkdirSync(mainGsd, { recursive: true });
-  mkdirSync(wtGsd, { recursive: true });
+  const mainBase = mkdtempSync(join(tmpdir(), "gwd-wt-prefs-main-"));
+  const wtBase = mkdtempSync(join(tmpdir(), "gwd-wt-prefs-worktree-"));
+  const mainGwd = join(mainBase, ".gwd");
+  const wtGwd = join(wtBase, ".gwd");
+  mkdirSync(mainGwd, { recursive: true });
+  mkdirSync(wtGwd, { recursive: true });
 
   try {
     const authoritative = "---\nversion: 1\n---\n\nmode: team\n";
-    writeFileSync(join(mainGsd, "PREFERENCES.md"), authoritative);
-    writeFileSync(join(wtGsd, "PREFERENCES.md"), "---\nversion: 1\n---\n\nmode: solo\n");
+    writeFileSync(join(mainGwd, "PREFERENCES.md"), authoritative);
+    writeFileSync(join(wtGwd, "PREFERENCES.md"), "---\nversion: 1\n---\n\nmode: solo\n");
 
     const result = syncWorktreeStateBack(mainBase, wtBase, "M001");
 
-    assert.equal(readFileSync(join(mainGsd, "PREFERENCES.md"), "utf-8"), authoritative);
+    assert.equal(readFileSync(join(mainGwd, "PREFERENCES.md"), "utf-8"), authoritative);
     assert.ok(!result.synced.includes("PREFERENCES.md"));
     assert.ok(!result.synced.includes("preferences.md"));
   } finally {
@@ -40,35 +40,35 @@ test("#2684: syncWorktreeStateBack does not overwrite project PREFERENCES.md", (
 
 // Phase C: copyPlanningArtifacts was deleted. Worktrees no longer
 // maintain a parallel .gwd/ projection; preference seeding is now
-// handled exclusively by syncGsdStateToWorktree() (covered below).
+// handled exclusively by syncGwdStateToWorktree() (covered below).
 
-test("syncGsdStateToWorktree copies canonical PREFERENCES.md", async () => {
+test("syncGwdStateToWorktree copies canonical PREFERENCES.md", async () => {
   // Functional test: create a mock source and destination, call the sync
-  const srcBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-src-"));
-  const dstBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-dst-"));
-  const srcGsd = join(srcBase, ".gwd");
-  const dstGsd = join(dstBase, ".gwd");
-  mkdirSync(srcGsd, { recursive: true });
-  mkdirSync(dstGsd, { recursive: true });
+  const srcBase = mkdtempSync(join(tmpdir(), "gwd-wt-prefs-src-"));
+  const dstBase = mkdtempSync(join(tmpdir(), "gwd-wt-prefs-dst-"));
+  const srcGwd = join(srcBase, ".gwd");
+  const dstGwd = join(dstBase, ".gwd");
+  mkdirSync(srcGwd, { recursive: true });
+  mkdirSync(dstGwd, { recursive: true });
 
   try {
     // Write a canonical PREFERENCES.md in source
     writeFileSync(
-      join(srcGsd, "PREFERENCES.md"),
+      join(srcGwd, "PREFERENCES.md"),
       "---\nversion: 1\n---\n\npost_unit_hooks:\n  - name: notify\n    command: echo done\n",
     );
 
-    // Import and call syncGsdStateToWorktree
-    const { syncGsdStateToWorktree } = await import("../auto-worktree.ts");
-    syncGsdStateToWorktree(srcBase, dstBase);
+    // Import and call syncGwdStateToWorktree
+    const { syncGwdStateToWorktree } = await import("../auto-worktree.ts");
+    syncGwdStateToWorktree(srcBase, dstBase);
 
     // Verify PREFERENCES.md was copied
     assert.ok(
-      existsSync(join(dstGsd, "PREFERENCES.md")),
+      existsSync(join(dstGwd, "PREFERENCES.md")),
       "PREFERENCES.md should be copied to worktree",
     );
 
-    const content = readFileSync(join(dstGsd, "PREFERENCES.md"), "utf-8");
+    const content = readFileSync(join(dstGwd, "PREFERENCES.md"), "utf-8");
     assert.ok(
       content.includes("post_unit_hooks"),
       "copied PREFERENCES.md should contain the hooks config",
@@ -79,24 +79,24 @@ test("syncGsdStateToWorktree copies canonical PREFERENCES.md", async () => {
   }
 });
 
-test("syncGsdStateToWorktree falls back to legacy lowercase preferences.md", async () => {
-  const srcBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-legacy-src-"));
-  const dstBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-legacy-dst-"));
-  const srcGsd = join(srcBase, ".gwd");
-  const dstGsd = join(dstBase, ".gwd");
-  mkdirSync(srcGsd, { recursive: true });
-  mkdirSync(dstGsd, { recursive: true });
+test("syncGwdStateToWorktree falls back to legacy lowercase preferences.md", async () => {
+  const srcBase = mkdtempSync(join(tmpdir(), "gwd-wt-prefs-legacy-src-"));
+  const dstBase = mkdtempSync(join(tmpdir(), "gwd-wt-prefs-legacy-dst-"));
+  const srcGwd = join(srcBase, ".gwd");
+  const dstGwd = join(dstBase, ".gwd");
+  mkdirSync(srcGwd, { recursive: true });
+  mkdirSync(dstGwd, { recursive: true });
 
   try {
     writeFileSync(
-      join(srcGsd, "preferences.md"),
+      join(srcGwd, "preferences.md"),
       "---\nversion: 1\n---\n\ngit:\n  auto_push: true\n",
     );
 
-    const { syncGsdStateToWorktree } = await import("../auto-worktree.ts");
-    const result = syncGsdStateToWorktree(srcBase, dstBase);
+    const { syncGwdStateToWorktree } = await import("../auto-worktree.ts");
+    const result = syncGwdStateToWorktree(srcBase, dstBase);
 
-    const copiedEntries = readdirSync(dstGsd)
+    const copiedEntries = readdirSync(dstGwd)
       .filter((name) => name === "PREFERENCES.md" || name === "preferences.md");
 
     assert.ok(

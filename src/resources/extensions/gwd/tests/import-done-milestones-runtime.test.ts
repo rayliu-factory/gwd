@@ -24,7 +24,7 @@ import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-import-done-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-import-done-'));
   mkdirSync(join(base, '.gwd', 'milestones'), { recursive: true });
   return base;
 }

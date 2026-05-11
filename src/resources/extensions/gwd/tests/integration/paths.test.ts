@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 import { gsdRoot, _clearGwdRootCache } from "../../paths.ts";
 /** Create a tmp dir and resolve symlinks + 8.3 short names (macOS /var→/private/var, Windows RUNNER~1→runneradmin). */
 function tmp(): string {
-  const p = mkdtempSync(join(tmpdir(), "gsd-paths-test-"));
+  const p = mkdtempSync(join(tmpdir(), "gwd-paths-test-"));
   try { return realpathSync.native(p); } catch { return p; }
 }
 

@@ -26,7 +26,7 @@ import { deriveStateFromDb } from '../state.ts';
 
 describe('needs-remediation revalidation guard (#3670)', () => {
   test('needs-remediation assessment blocks completion when every slice is done', async () => {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-needs-remediation-'));
+    const base = mkdtempSync(join(tmpdir(), 'gwd-needs-remediation-'));
     try {
       openDatabase(':memory:');
       insertMilestone({ id: 'M001', title: 'Needs remediation', status: 'active' });

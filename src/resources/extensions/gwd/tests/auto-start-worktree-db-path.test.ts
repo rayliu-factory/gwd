@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { resolveProjectRootDbPath } from "../bootstrap/dynamic-tools.ts";
 
 test("#3822: worktree bootstrap resolves the project-root DB path", (t) => {
-  const project = realpathSync(mkdtempSync(join(tmpdir(), "gsd-project-db-")));
+  const project = realpathSync(mkdtempSync(join(tmpdir(), "gwd-project-db-")));
   t.after(() => rmSync(project, { recursive: true, force: true }));
   const worktree = join(project, ".gwd", "worktrees", "M001");
   mkdirSync(worktree, { recursive: true });

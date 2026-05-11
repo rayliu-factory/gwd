@@ -378,7 +378,7 @@ describe('doctor-git', async () => {
     }
 
     // ─── Test 7: none-mode skips orphaned worktree check ───────────────
-    // NOTE: loadEffectiveGSDPreferences() resolves PROJECT_PREFERENCES_PATH
+    // NOTE: loadEffectiveGWDPreferences() resolves PROJECT_PREFERENCES_PATH
     // at module load time from process.cwd(). We write the prefs file to
     // the test runner's cwd .gwd/PREFERENCES.md and clean up afterwards.
     if (process.platform !== "win32") {
@@ -604,10 +604,10 @@ describe('doctor-git', async () => {
 
       // Move .gwd to an external location and replace with a symlink.
       // This simulates the ~/.gwd/projects/<hash> layout where .gwd is a symlink.
-      const externalGsd = join(realpathSync(mkdtempSync(join(tmpdir(), "doc-git-symlink-"))), "gsd-data");
-      cleanups.push(externalGsd);
-      renameSync(join(dir, ".gwd"), externalGsd);
-      symlinkSync(externalGsd, join(dir, ".gwd"));
+      const externalGwd = join(realpathSync(mkdtempSync(join(tmpdir(), "doc-git-symlink-"))), "gwd-data");
+      cleanups.push(externalGwd);
+      renameSync(join(dir, ".gwd"), externalGwd);
+      symlinkSync(externalGwd, join(dir, ".gwd"));
 
       // Create a real registered worktree under the (now symlinked) .gwd/worktrees/
       mkdirSync(join(dir, ".gwd", "worktrees"), { recursive: true });
@@ -702,11 +702,11 @@ describe('doctor-git', async () => {
       const dir = createRepoWithActiveMilestone();
       cleanups.push(dir);
 
-      // Create legacy gsd/M001/S01 branches
-      run("git branch gsd/M001/S01", dir);
-      run("git branch gsd/M001/S02", dir);
-      // Active quick branches share gsd/*/* shape and must NOT be deleted.
-      run("git branch gsd/quick/1-fix-typo", dir);
+      // Create legacy gwd/M001/S01 branches
+      run("git branch gwd/M001/S01", dir);
+      run("git branch gwd/M001/S02", dir);
+      // Active quick branches share gwd/*/* shape and must NOT be deleted.
+      run("git branch gwd/quick/1-fix-typo", dir);
 
       const detect = await runGWDDoctor(dir);
       const legacyIssues = detect.issues.filter(i => i.code === "legacy_slice_branches");
@@ -717,8 +717,8 @@ describe('doctor-git', async () => {
       assert.ok(fixed.fixesApplied.some(f => f.includes("legacy slice branch")), "fix deletes legacy branches");
 
       // Verify branches are gone
-      const remaining = run("git branch --list gsd/*/*", dir);
-      assert.deepStrictEqual(remaining, "gsd/quick/1-fix-typo", "quick branch preserved; legacy branches removed");
+      const remaining = run("git branch --list gwd/*/*", dir);
+      assert.deepStrictEqual(remaining, "gwd/quick/1-fix-typo", "quick branch preserved; legacy branches removed");
     });
     } else {
     }
@@ -749,16 +749,16 @@ describe('doctor-git', async () => {
       assert.ok(staleIssues[0]?.message.includes("minute"), "message mentions minutes");
       assert.ok(staleIssues[0]?.fixable === true, "stale uncommitted changes is fixable");
 
-      // Fix should create a gsd snapshot commit
+      // Fix should create a gwd snapshot commit
       const fixed = await runGWDDoctor(dir, { fix: true });
       assert.ok(
-        fixed.fixesApplied.some(f => f.includes("gsd snapshot")),
-        "fix creates a gsd snapshot commit",
+        fixed.fixesApplied.some(f => f.includes("gwd snapshot")),
+        "fix creates a gwd snapshot commit",
       );
 
-      // Verify the snapshot commit was created with the gsd snapshot tag
+      // Verify the snapshot commit was created with the gwd snapshot tag
       const log = run("git log -1 --oneline", dir);
-      assert.ok(log.includes("gsd snapshot"), "commit is tagged with gsd snapshot");
+      assert.ok(log.includes("gwd snapshot"), "commit is tagged with gwd snapshot");
     });
 
     // ─── Test: stale_uncommitted_changes NOT flagged when recent commit ──
@@ -802,7 +802,7 @@ describe('doctor-git', async () => {
 
         const fixed = await runGWDDoctor(dir, { fix: true });
         assert.ok(
-          !fixed.fixesApplied.some(f => f.includes("gsd snapshot")),
+          !fixed.fixesApplied.some(f => f.includes("gwd snapshot")),
           `git.snapshots:false suppresses snapshot fix (got: ${JSON.stringify(fixed.fixesApplied)})`,
         );
       } finally {

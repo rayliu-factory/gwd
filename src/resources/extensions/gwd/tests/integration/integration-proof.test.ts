@@ -95,7 +95,7 @@ import { invalidateAllCaches } from "../../cache.ts";
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTempDir(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-integration-proof-"));
+  return mkdtempSync(join(tmpdir(), "gwd-integration-proof-"));
 }
 
 function makeCtx(): { notifications: Array<{ message: string; level: string }>; ctx: any } {

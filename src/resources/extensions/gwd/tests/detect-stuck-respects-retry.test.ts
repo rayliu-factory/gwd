@@ -30,7 +30,7 @@ import { detectStuck } from "../auto/detect-stuck.ts";
 import type { WindowEntry } from "../auto/types.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-detect-stuck-retry-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-detect-stuck-retry-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

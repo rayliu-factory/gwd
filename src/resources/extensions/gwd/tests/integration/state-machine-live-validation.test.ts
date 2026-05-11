@@ -72,7 +72,7 @@ import { invalidateAllCaches } from "../../cache.ts";
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTempDir(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-live-validation-"));
+  return mkdtempSync(join(tmpdir(), "gwd-live-validation-"));
 }
 
 /**

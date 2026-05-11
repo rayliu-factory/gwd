@@ -1,4 +1,4 @@
-// GSD2 UOK Contract Versioning and DB Authority Tests
+// GWD2 UOK Contract Versioning and DB Authority Tests
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -150,7 +150,7 @@ test("uok contracts normalize legacy records without losing payload fields", () 
 });
 
 test("uok audit emission writes DB as authoritative before jsonl projection", (t) => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-db-audit-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-uok-db-audit-"));
   mkdirSync(join(basePath, ".gwd"), { recursive: true });
   t.after(() => {
     closeDatabase();
@@ -180,7 +180,7 @@ test("uok audit emission writes DB as authoritative before jsonl projection", (t
 });
 
 test("uok timeline prefers DB records over jsonl projection when DB is available", (t) => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-timeline-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-uok-timeline-"));
   const auditDir = join(basePath, ".gwd", "audit");
   mkdirSync(auditDir, { recursive: true });
   writeFileSync(

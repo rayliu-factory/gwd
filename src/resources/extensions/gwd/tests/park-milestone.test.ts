@@ -27,7 +27,7 @@ process.env.GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK = '1';
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-park-test-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-park-test-'));
   mkdirSync(join(base, '.gwd', 'milestones'), { recursive: true });
   return base;
 }

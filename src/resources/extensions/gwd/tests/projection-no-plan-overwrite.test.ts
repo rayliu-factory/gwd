@@ -21,7 +21,7 @@ import { renderAllProjections } from '../workflow-projections.ts'
 
 describe('renderAllProjections must not overwrite PLAN.md (#3651)', () => {
   it('preserves authoritative PLAN.md while rendering other projections', async () => {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-projection-plan-'))
+    const base = mkdtempSync(join(tmpdir(), 'gwd-projection-plan-'))
     const msDir = join(base, '.gwd', 'milestones', 'M001')
     const sliceDir = join(msDir, 'slices', 'S01')
     const planPath = join(sliceDir, 'S01-PLAN.md')

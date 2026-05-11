@@ -31,7 +31,7 @@ import { createWorkspace, scopeMilestone } from "../workspace.js";
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function makeProjectDir(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-metrics-scope-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-metrics-scope-")));
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   return dir;
 }

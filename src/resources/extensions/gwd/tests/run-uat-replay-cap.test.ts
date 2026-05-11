@@ -11,7 +11,7 @@ import { tmpdir } from "node:os";
 import { DISPATCH_RULES, getUatCount } from "../auto-dispatch.ts";
 
 function makeUatProject(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-uat-cap-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-uat-cap-"));
   const milestone = join(base, ".gwd", "milestones", "M001");
   mkdirSync(join(milestone, "slices", "S01"), { recursive: true });
   mkdirSync(join(milestone, "slices", "S02"), { recursive: true });

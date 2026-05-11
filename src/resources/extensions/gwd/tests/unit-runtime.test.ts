@@ -14,7 +14,7 @@ import { clearPathCache } from '../paths.ts';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-const base = mkdtempSync(join(tmpdir(), "gsd-unit-runtime-test-"));
+const base = mkdtempSync(join(tmpdir(), "gwd-unit-runtime-test-"));
 const tasksDir = join(base, ".gwd", "milestones", "M100", "slices", "S02", "tasks");
 mkdirSync(tasksDir, { recursive: true });
 writeFileSync(join(base, ".gwd", "STATE.md"), "## Next Action\nExecute T09 for S02: do the thing\n", "utf-8");
@@ -75,7 +75,7 @@ console.log("\n=== runtime record cleanup ===");
 
 console.log("\n=== execute-task durability trusts closed DB task status ===");
 {
-  const dbBase = mkdtempSync(join(tmpdir(), "gsd-unit-runtime-db-test-"));
+  const dbBase = mkdtempSync(join(tmpdir(), "gwd-unit-runtime-db-test-"));
   mkdirSync(join(dbBase, ".gwd", "milestones", "M300", "slices", "S01", "tasks"), { recursive: true });
   try {
     openDatabase(join(dbBase, ".gwd", "gwd.db"));
@@ -129,7 +129,7 @@ console.log("\n=== hook unit type sanitization (slash in unitType) ===");
 // ─── Must-have durability integration tests ───────────────────────────────
 
 // Create a separate temp base for must-have tests to avoid interference
-const mhBase = mkdtempSync(join(tmpdir(), "gsd-unit-runtime-mh-test-"));
+const mhBase = mkdtempSync(join(tmpdir(), "gwd-unit-runtime-mh-test-"));
 
 console.log("\n=== must-haves: all mentioned in summary ===");
 {

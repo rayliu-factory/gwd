@@ -20,7 +20,7 @@ import { handleReplanSlice } from '../tools/replan-slice.ts';
 import { parsePlan } from '../parsers-legacy.ts';
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-replan-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-replan-'));
   mkdirSync(join(base, '.gwd', 'milestones', 'M001', 'slices', 'S01', 'tasks'), { recursive: true });
   return base;
 }

@@ -18,7 +18,7 @@ import {
 } from "../auto-prompts.ts";
 
 function makeSliceContextFixture(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-slice-context-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-slice-context-"));
   const milestoneDir = join(base, ".gwd", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   mkdirSync(join(sliceDir, "tasks"), { recursive: true });

@@ -13,7 +13,7 @@ import { parse as parseYaml } from "yaml";
 import { setPlanningDepth } from "../planning-depth.ts";
 
 function makeBase(): string {
-  const base = join(tmpdir(), `gsd-planning-depth-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-planning-depth-${randomUUID()}`);
   mkdirSync(base, { recursive: true });
   return base;
 }

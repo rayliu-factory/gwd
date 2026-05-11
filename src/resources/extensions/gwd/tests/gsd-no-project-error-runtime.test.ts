@@ -1,10 +1,10 @@
 /**
- * Runtime regression — `projectRoot()` throws `GSDNoProjectError` when
+ * Runtime regression — `projectRoot()` throws `GWDNoProjectError` when
  * invoked outside a project directory (#4902).
  *
- * The deleted `gsd-no-project-error.test.ts` was a source-grep check.
+ * The deleted `gwd-no-project-error.test.ts` was a source-grep check.
  * This rewrite chdirs to $HOME, calls the real `projectRoot()`, and
- * asserts a `GSDNoProjectError` is thrown with the project-required
+ * asserts a `GWDNoProjectError` is thrown with the project-required
  * message.
  */
 
@@ -14,7 +14,7 @@ import * as os from 'node:os';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-import { projectRoot, GSDNoProjectError, withCommandCwd } from '../commands/context.ts';
+import { projectRoot, GWDNoProjectError, withCommandCwd } from '../commands/context.ts';
 
 const ORIGINAL_CWD = process.cwd();
 
@@ -22,15 +22,15 @@ after(() => {
   try { process.chdir(ORIGINAL_CWD); } catch { /* swallow */ }
 });
 
-describe('projectRoot() throws GSDNoProjectError outside a project (#4902)', () => {
-  test('throws GSDNoProjectError when cwd is $HOME', () => {
+describe('projectRoot() throws GWDNoProjectError outside a project (#4902)', () => {
+  test('throws GWDNoProjectError when cwd is $HOME', () => {
     const home = os.homedir();
     process.chdir(home);
     try {
       assert.throws(
         () => projectRoot(),
         (err: unknown) => {
-          assert.ok(err instanceof GSDNoProjectError, 'should throw GSDNoProjectError');
+          assert.ok(err instanceof GWDNoProjectError, 'should throw GWDNoProjectError');
           assert.match(
             (err as Error).message,
             /home directory|project directory/i,
@@ -45,7 +45,7 @@ describe('projectRoot() throws GSDNoProjectError outside a project (#4902)', () 
   });
 
   test('uses command ctx cwd even when process cwd is $HOME', async () => {
-    const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-command-cwd-'));
+    const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-command-cwd-'));
     fs.mkdirSync(path.join(projectDir, '.git'));
 
     process.chdir(os.homedir());
@@ -58,7 +58,7 @@ describe('projectRoot() throws GSDNoProjectError outside a project (#4902)', () 
     }
   });
 
-  test('throws GSDNoProjectError when cwd is the system tmpdir root', () => {
+  test('throws GWDNoProjectError when cwd is the system tmpdir root', () => {
     // Use realpath to dodge symlinks blocking the cwd
     const tmpRoot = fs.realpathSync(os.tmpdir());
     // Some systems make tmpdir a subdirectory; only run when it normalizes
@@ -67,7 +67,7 @@ describe('projectRoot() throws GSDNoProjectError outside a project (#4902)', () 
     // raw tmpdir root itself blocks. We just use it directly.
     process.chdir(tmpRoot);
     try {
-      // Behaviour: either we get a GSDNoProjectError (blocked tmpdir root) or
+      // Behaviour: either we get a GWDNoProjectError (blocked tmpdir root) or
       // we don't — but in the case where we don't (tmpdir is somehow allowed
       // as a project root on this machine), the test is vacuously satisfied
       // by the prior $HOME case. We assert the type-narrowing path instead:
@@ -75,8 +75,8 @@ describe('projectRoot() throws GSDNoProjectError outside a project (#4902)', () 
       try { projectRoot(); } catch (err) { threw = err; }
       if (threw !== null) {
         assert.ok(
-          threw instanceof GSDNoProjectError,
-          'if projectRoot throws, it must be a GSDNoProjectError (typed)',
+          threw instanceof GWDNoProjectError,
+          'if projectRoot throws, it must be a GWDNoProjectError (typed)',
         );
       }
     } finally {
@@ -85,11 +85,11 @@ describe('projectRoot() throws GSDNoProjectError outside a project (#4902)', () 
   });
 });
 
-describe('GSDNoProjectError shape (#4902)', () => {
-  test('GSDNoProjectError extends Error and carries its name', () => {
-    const err = new GSDNoProjectError('test reason');
+describe('GWDNoProjectError shape (#4902)', () => {
+  test('GWDNoProjectError extends Error and carries its name', () => {
+    const err = new GWDNoProjectError('test reason');
     assert.ok(err instanceof Error);
-    assert.equal(err.name, 'GSDNoProjectError');
+    assert.equal(err.name, 'GWDNoProjectError');
     assert.equal(err.message, 'test reason');
   });
 });

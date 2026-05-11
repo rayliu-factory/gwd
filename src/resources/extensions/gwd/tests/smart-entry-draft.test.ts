@@ -19,7 +19,7 @@ function writeDraftOnlyMilestone(base: string): void {
 }
 
 test("deriveState returns needs-discussion for draft-only milestone", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-smart-entry-draft-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-smart-entry-draft-"));
   try {
     writeDraftOnlyMilestone(base);
     const state = await deriveState(base);

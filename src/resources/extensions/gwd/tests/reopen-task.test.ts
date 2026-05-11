@@ -18,7 +18,7 @@ import {
 import { handleReopenTask } from '../tools/reopen-task.ts';
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-reopen-task-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-reopen-task-'));
   mkdirSync(join(base, '.gwd', 'milestones', 'M001', 'slices', 'S01', 'tasks'), { recursive: true });
   return base;
 }

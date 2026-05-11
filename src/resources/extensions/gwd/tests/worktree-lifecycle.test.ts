@@ -85,8 +85,8 @@ function makeDeps(
         this.gitConfig = gitConfig;
       }
     } as unknown as WorktreeLifecycleDeps["GitServiceImpl"],
-    loadEffectiveGSDPreferences: () => {
-      calls.push({ fn: "loadEffectiveGSDPreferences", args: [] });
+    loadEffectiveGWDPreferences: () => {
+      calls.push({ fn: "loadEffectiveGWDPreferences", args: [] });
       return { preferences: { git: {} } };
     },
     // Slice 7 widened WorktreeLifecycleDeps with merge/exit-side fields.
@@ -127,7 +127,7 @@ function makeCtx(): NotifyCtx & {
 }
 
 function makeDbBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-lifecycle-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-lifecycle-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
@@ -653,8 +653,8 @@ test("adoptOrphanWorktree falls back to base when getAutoWorktreePath returns nu
 
 test("adoptOrphanWorktree restores prior paths and cwd when the callback throws", () => {
   const originalCwd = process.cwd();
-  const base = mkdtempSync(join(tmpdir(), "gsd-orphan-rollback-base-"));
-  const worktree = mkdtempSync(join(tmpdir(), "gsd-orphan-rollback-wt-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-orphan-rollback-base-"));
+  const worktree = mkdtempSync(join(tmpdir(), "gwd-orphan-rollback-wt-"));
   const s = makeSession({
     basePath: "/prior",
     originalBasePath: originalCwd,

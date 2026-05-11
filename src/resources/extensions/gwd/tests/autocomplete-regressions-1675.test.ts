@@ -36,10 +36,10 @@ test("/gwd description includes discuss", () => {
   const pi = createMockPi();
   registerGWDCommand(pi as any);
 
-  const gsd = pi.commands.get("gwd");
-  assert.ok(gsd, "registerGWDCommand should register /gwd");
+  const gwd = pi.commands.get("gwd");
+  assert.ok(gwd, "registerGWDCommand should register /gwd");
   assert.ok(
-    gsd.description.includes("discuss"),
+    gwd.description.includes("discuss"),
     "description should include discuss",
   );
 });
@@ -48,16 +48,16 @@ test("/gwd description includes debug", () => {
   const pi = createMockPi();
   registerGWDCommand(pi as any);
 
-  const gsd = pi.commands.get("gwd");
-  assert.ok(gsd.description.includes("debug"), "description should include debug");
+  const gwd = pi.commands.get("gwd");
+  assert.ok(gwd.description.includes("debug"), "description should include debug");
 });
 
 test("/gwd next completions include --debug", () => {
   const pi = createMockPi();
   registerGWDCommand(pi as any);
 
-  const gsd = pi.commands.get("gwd");
-  const completions = gsd.getArgumentCompletions("next ");
+  const gwd = pi.commands.get("gwd");
+  const completions = gwd.getArgumentCompletions("next ");
   const debug = completions.find((c: any) => c.value === "next --debug");
   assert.ok(debug, "next --debug should appear in completions");
 });
@@ -66,8 +66,8 @@ test("/gwd debug completions include list|status|continue|--diagnose", () => {
   const pi = createMockPi();
   registerGWDCommand(pi as any);
 
-  const gsd = pi.commands.get("gwd");
-  const completions = gsd.getArgumentCompletions("debug ");
+  const gwd = pi.commands.get("gwd");
+  const completions = gwd.getArgumentCompletions("debug ");
   const values = completions.map((c: any) => c.value);
   for (const expected of ["debug list", "debug status", "debug continue", "debug --diagnose"]) {
     assert.ok(values.includes(expected), `missing completion: ${expected}`);
@@ -78,8 +78,8 @@ test("/gwd widget completions include full|small|min|off", () => {
   const pi = createMockPi();
   registerGWDCommand(pi as any);
 
-  const gsd = pi.commands.get("gwd");
-  const completions = gsd.getArgumentCompletions("widget ");
+  const gwd = pi.commands.get("gwd");
+  const completions = gwd.getArgumentCompletions("widget ");
   const values = completions.map((c: any) => c.value);
   for (const expected of ["widget full", "widget small", "widget min", "widget off"]) {
     assert.ok(values.includes(expected), `missing completion: ${expected}`);
@@ -90,8 +90,8 @@ test("/gwd logs completions still include debug after adding /gwd debug", () => 
   const pi = createMockPi();
   registerGWDCommand(pi as any);
 
-  const gsd = pi.commands.get("gwd");
-  const completions = gsd.getArgumentCompletions("logs ");
+  const gwd = pi.commands.get("gwd");
+  const completions = gwd.getArgumentCompletions("logs ");
   const values = completions.map((c: any) => c.value);
   assert.ok(values.includes("logs debug"), "logs debug completion should remain available");
 });

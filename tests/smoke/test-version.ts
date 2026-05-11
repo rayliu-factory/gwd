@@ -1,5 +1,5 @@
 /**
- * Smoke: `gsd --version` must match the repo's package.json exactly.
+ * Smoke: `gwd --version` must match the repo's package.json exactly.
  *
  * Defaults to the locally built binary (`dist/loader.js`) — never `npx`
  * — so the test exercises the artifact produced by the current

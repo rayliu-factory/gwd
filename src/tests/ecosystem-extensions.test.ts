@@ -14,7 +14,7 @@ import {
   mapAutoLoopPhase,
   updateSnapshot,
 } from "../resources/extensions/gwd/ecosystem/gwd-extension-api.js";
-import type { GSDState } from "../resources/extensions/gwd/types.js";
+import type { GWDState } from "../resources/extensions/gwd/types.js";
 
 // ─── Test fixtures ──────────────────────────────────────────────────────
 
@@ -66,7 +66,7 @@ function buildPiStub(): {
   return { pi, onCalls };
 }
 
-function buildState(overrides: Partial<GSDState> = {}): GSDState {
+function buildState(overrides: Partial<GWDState> = {}): GWDState {
   return {
     activeMilestone: { id: "M001", title: "Milestone One" },
     activeSlice: { id: "S01", title: "Slice One" },

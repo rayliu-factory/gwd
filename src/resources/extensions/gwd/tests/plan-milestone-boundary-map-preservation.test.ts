@@ -85,7 +85,7 @@ function planParams() {
 }
 
 test('#4402 plan-milestone preserves ## Boundary Map after post-mutation projections', async (t) => {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-4402-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-4402-'));
   mkdirSync(join(base, '.gwd', 'milestones', 'M001'), { recursive: true });
   openDatabase(join(base, '.gwd', 'gwd.db'));
 

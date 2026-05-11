@@ -8,7 +8,7 @@ import { listExecHistory, searchExecHistory } from '../exec-history.ts';
 import { executeExecSearch } from '../tools/exec-search-tool.ts';
 
 function freshBase(): string {
-  return mkdtempSync(join(tmpdir(), 'gsd-exec-history-'));
+  return mkdtempSync(join(tmpdir(), 'gwd-exec-history-'));
 }
 
 function cleanup(dir: string): void {

@@ -16,7 +16,7 @@ import type { ValidationError } from "../schemas/validate.ts";
 const FIXTURES_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "schemas", "__fixtures__");
 
 function tempBase(): string {
-  const base = join(tmpdir(), `gsd-validator-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-validator-${randomUUID()}`);
   mkdirSync(base, { recursive: true });
   return base;
 }

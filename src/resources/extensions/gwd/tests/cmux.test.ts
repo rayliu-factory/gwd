@@ -183,7 +183,7 @@ describe("createGridLayout", () => {
           return `surface-${nextId++}`;
         };
 
-        const rightCol = await createSplitFrom("gsd-surface", "right");
+        const rightCol = await createSplitFrom("gwd-surface", "right");
         surfaces.push(rightCol);
         if (count === 1) return surfaces;
 
@@ -191,7 +191,7 @@ describe("createGridLayout", () => {
         surfaces.push(bottomRight);
         if (count === 2) return surfaces;
 
-        const bottomLeft = await createSplitFrom("gsd-surface", "down");
+        const bottomLeft = await createSplitFrom("gwd-surface", "down");
         surfaces.push(bottomLeft);
         if (count === 3) return surfaces;
 
@@ -213,7 +213,7 @@ describe("createGridLayout", () => {
     const surfaces = await mock.createGridLayout(1);
     assert.equal(surfaces.length, 1);
     assert.deepEqual(mock.calls, [
-      { source: "gsd-surface", direction: "right" },
+      { source: "gwd-surface", direction: "right" },
     ]);
   });
 
@@ -222,19 +222,19 @@ describe("createGridLayout", () => {
     const surfaces = await mock.createGridLayout(2);
     assert.equal(surfaces.length, 2);
     assert.deepEqual(mock.calls, [
-      { source: "gsd-surface", direction: "right" },
+      { source: "gwd-surface", direction: "right" },
       { source: "surface-1", direction: "down" },
     ]);
   });
 
-  test("3 agents creates 2x2 grid (gsd + 3 agent surfaces)", async () => {
+  test("3 agents creates 2x2 grid (gwd + 3 agent surfaces)", async () => {
     const mock = makeMockClient();
     const surfaces = await mock.createGridLayout(3);
     assert.equal(surfaces.length, 3);
     assert.deepEqual(mock.calls, [
-      { source: "gsd-surface", direction: "right" },
+      { source: "gwd-surface", direction: "right" },
       { source: "surface-1", direction: "down" },
-      { source: "gsd-surface", direction: "down" },
+      { source: "gwd-surface", direction: "down" },
     ]);
   });
 
@@ -243,9 +243,9 @@ describe("createGridLayout", () => {
     const surfaces = await mock.createGridLayout(4);
     assert.equal(surfaces.length, 4);
     assert.deepEqual(mock.calls, [
-      { source: "gsd-surface", direction: "right" },
+      { source: "gwd-surface", direction: "right" },
       { source: "surface-1", direction: "down" },
-      { source: "gsd-surface", direction: "down" },
+      { source: "gwd-surface", direction: "down" },
       { source: "surface-2", direction: "down" },
     ]);
   });
@@ -297,7 +297,7 @@ describe("CmuxClient stdio isolation", () => {
       const calls = fs.readFileSync(logPath, "utf-8").trim().split("\n").map((line) => JSON.parse(line));
       const commandPrefixes = calls.map((call) => call.slice(0, 2));
       assert.ok(
-        commandPrefixes.some((prefix) => JSON.stringify(prefix) === JSON.stringify(["set-status", "gsd"])),
+        commandPrefixes.some((prefix) => JSON.stringify(prefix) === JSON.stringify(["set-status", "gwd"])),
         "set-status command should be invoked",
       );
       assert.ok(

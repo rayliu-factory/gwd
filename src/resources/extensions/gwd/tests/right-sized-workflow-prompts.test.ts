@@ -17,7 +17,7 @@ function git(cwd: string, args: string[]): string {
 }
 
 function makeRepo(files: Record<string, string>): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-right-size-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-right-size-"));
   git(base, ["init", "-b", "main"]);
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   writeFileSync(join(base, ".gwd", "milestones", "M001", "M001-CONTEXT.md"), "# Context\n\nTest milestone.");

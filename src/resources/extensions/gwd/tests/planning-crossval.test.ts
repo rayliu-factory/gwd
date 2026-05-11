@@ -29,7 +29,7 @@ const { assertEq, assertTrue, report } = createTestContext();
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-planning-crossval-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-planning-crossval-'));
   mkdirSync(join(base, '.gwd', 'milestones'), { recursive: true });
   return base;
 }

@@ -25,7 +25,7 @@ import {
 let basePath: string;
 
 function setupProject(): void {
-  basePath = mkdtempSync(join(tmpdir(), 'gsd-completed-at-'));
+  basePath = mkdtempSync(join(tmpdir(), 'gwd-completed-at-'));
   // Project structure with active milestone, one slice, one task whose
   // SUMMARY.md is already on disk — but the DB row is still "pending".
   mkdirSync(join(basePath, '.gwd', 'milestones', 'M001', 'slices', 'S01', 'tasks'), { recursive: true });

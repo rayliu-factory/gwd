@@ -8,7 +8,7 @@ import { deriveState } from '../state.ts';
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-deps-test-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-deps-test-'));
   mkdirSync(join(base, '.gwd', 'milestones'), { recursive: true });
   return base;
 }

@@ -8,14 +8,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test("complete milestone prompt renders compact verification and completion guidance", async (t) => {
-  const previousGsdHome = process.env.GWD_HOME;
-  const providedGsdHome = process.env.GWD_TEST_HOME;
-  const isolatedHome = providedGsdHome ?? mkdtempSync(join(tmpdir(), "gsd-complete-milestone-render-"));
+  const previousGwdHome = process.env.GWD_HOME;
+  const providedGwdHome = process.env.GWD_TEST_HOME;
+  const isolatedHome = providedGwdHome ?? mkdtempSync(join(tmpdir(), "gwd-complete-milestone-render-"));
   process.env.GWD_HOME = isolatedHome;
   t.after(() => {
-    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = previousGsdHome;
-    if (!providedGsdHome) rmSync(isolatedHome, { recursive: true, force: true });
+    if (previousGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGwdHome;
+    if (!providedGwdHome) rmSync(isolatedHome, { recursive: true, force: true });
   });
 
   const { loadPrompt } = await import(`../prompt-loader.ts?test=${Date.now()}`);

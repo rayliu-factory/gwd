@@ -1,4 +1,4 @@
-// GSD2 commands-extract-learnings tests
+// GWD2 commands-extract-learnings tests
 import { describe, it, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync, rmSync, readFileSync } from "node:fs";
@@ -63,7 +63,7 @@ describe("resolvePhaseArtifacts", () => {
   let tmpBase: string;
 
   beforeEach(() => {
-    tmpBase = join(tmpdir(), `gsd-learnings-test-${randomUUID()}`);
+    tmpBase = join(tmpdir(), `gwd-learnings-test-${randomUUID()}`);
     mkdirSync(tmpBase, { recursive: true });
   });
 
@@ -377,7 +377,7 @@ describe("extractProjectName", () => {
   let tmpBase: string;
 
   beforeEach(() => {
-    tmpBase = join(tmpdir(), `gsd-projname-test-${randomUUID()}`);
+    tmpBase = join(tmpdir(), `gwd-projname-test-${randomUUID()}`);
     mkdirSync(join(tmpBase, ".gwd"), { recursive: true });
   });
 

@@ -38,7 +38,7 @@ if (existsSync(workflowSrc)) {
 }
 
 process.stdout.write(
-  `Installed GSD resources for pi in ${piRoot}\n` +
+  `Installed GWD resources for pi in ${piRoot}\n` +
   `Copied: ${copied.join(', ')}\n` +
   `Extensions are now available under ${join(piAgentDir, 'extensions')}\n`
 )

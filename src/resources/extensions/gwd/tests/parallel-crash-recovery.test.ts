@@ -31,7 +31,7 @@ import {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function makeTempDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-crash-recovery-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-crash-recovery-"));
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   return dir;
 }

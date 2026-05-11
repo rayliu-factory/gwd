@@ -8,14 +8,14 @@ import { _scheduleAutoStartAfterIdleForTest } from "../guided-flow.ts";
 
 const gsdDir = resolve(import.meta.dirname, "..");
 
-function readGsdFile(relativePath: string): string {
+function readGwdFile(relativePath: string): string {
   return readFileSync(resolve(gsdDir, relativePath), "utf-8");
 }
 
 test("command entrypoints use startAutoDetached instead of awaiting startAuto (#3733)", () => {
-  const autoHandlerSrc = readGsdFile("commands/handlers/auto.ts");
-  const workflowHandlerSrc = readGsdFile("commands/handlers/workflow.ts");
-  const guidedFlowSrc = readGsdFile("guided-flow.ts");
+  const autoHandlerSrc = readGwdFile("commands/handlers/auto.ts");
+  const workflowHandlerSrc = readGwdFile("commands/handlers/workflow.ts");
+  const guidedFlowSrc = readGwdFile("guided-flow.ts");
 
   assert.ok(
     !autoHandlerSrc.includes("await startAuto("),
@@ -45,7 +45,7 @@ test("command entrypoints use startAutoDetached instead of awaiting startAuto (#
 });
 
 test("bare /gwd stays in the foreground smart-entry flow (#5125 regression)", () => {
-  const autoHandlerSrc = readGsdFile("commands/handlers/auto.ts");
+  const autoHandlerSrc = readGwdFile("commands/handlers/auto.ts");
   const bareCommandBranch = autoHandlerSrc.slice(
     autoHandlerSrc.indexOf('if (trimmed === "")'),
   );
@@ -65,8 +65,8 @@ test("bare /gwd stays in the foreground smart-entry flow (#5125 regression)", ()
 });
 
 test("auto bootstrap validates blocked directories before touching .gwd migration state", () => {
-  const autoSrc = readGsdFile("auto.ts");
-  const autoStartSrc = readGsdFile("auto-start.ts");
+  const autoSrc = readGwdFile("auto.ts");
+  const autoStartSrc = readGwdFile("auto-start.ts");
 
   const startAutoIdx = autoSrc.indexOf("export async function startAuto(");
   const startAutoBody = autoSrc.slice(startAutoIdx);
@@ -98,7 +98,7 @@ test("auto bootstrap validates blocked directories before touching .gwd migratio
 });
 
 test("fresh start registers the auto worker before bootstrap enters worktree flow (#5405)", () => {
-  const autoSrc = readGsdFile("auto.ts");
+  const autoSrc = readGwdFile("auto.ts");
   const startAutoIdx = autoSrc.indexOf("export async function startAuto(");
   const startAutoBody = autoSrc.slice(startAutoIdx);
 
@@ -115,7 +115,7 @@ test("fresh start registers the auto worker before bootstrap enters worktree flo
 });
 
 test("startAutoDetached reports failures asynchronously (#3733)", () => {
-  const autoSrc = readGsdFile("auto.ts");
+  const autoSrc = readGwdFile("auto.ts");
 
   assert.ok(
     autoSrc.includes("export function startAutoDetached"),
@@ -174,8 +174,8 @@ test("detached auto-start keeps a ref'ed handle until the run settles", async ()
 });
 
 test("detached auto-start preserves milestone lock across pause/stop cleanup (#3733)", () => {
-  const autoSrc = readGsdFile("auto.ts");
-  const sessionSrc = readGsdFile("auto/session.ts");
+  const autoSrc = readGwdFile("auto.ts");
+  const sessionSrc = readGwdFile("auto/session.ts");
 
   assert.ok(
     autoSrc.includes("milestoneLock?: string | null"),

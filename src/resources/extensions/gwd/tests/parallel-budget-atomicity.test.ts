@@ -36,12 +36,12 @@ import {
   readSessionStatus,
   removeSessionStatus,
 } from "../session-status-io.ts";
-import type { GSDPreferences } from "../preferences.ts";
+import type { GWDPreferences } from "../preferences.ts";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-budget-test-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-budget-test-${randomUUID()}`);
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
@@ -50,7 +50,7 @@ function cleanup(base: string): void {
   try { rmSync(base, { recursive: true, force: true }); } catch { /* */ }
 }
 
-function makePrefs(ceiling?: number): GSDPreferences {
+function makePrefs(ceiling?: number): GWDPreferences {
   return {
     parallel: {
       enabled: true,

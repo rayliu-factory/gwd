@@ -18,12 +18,12 @@ import {
   upsertMilestonePlanning,
 } from "../gwd-db.ts";
 import { invalidateAllCaches } from "../cache.ts";
-import type { GSDState } from "../types.ts";
+import type { GWDState } from "../types.ts";
 
 const COMPLETE_RULE = "completing-milestone → complete-milestone";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-skipped-validation-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-skipped-validation-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   writeFileSync(join(base, "app.js"), "export const shipped = true;\n");
   return base;
@@ -108,7 +108,7 @@ function findRule(name: string) {
 }
 
 function makeCtx(base: string): DispatchContext {
-  const state: GSDState = {
+  const state: GWDState = {
     phase: "completing-milestone",
     activeMilestone: { id: "M001", title: "Preference-skipped validation milestone" },
     activeSlice: null,

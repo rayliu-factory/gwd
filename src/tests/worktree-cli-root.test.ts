@@ -23,8 +23,8 @@ function makeRepo(): string {
   const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-worktree-cli-root-")));
   cleanupPaths.push(base);
   run("git init -b main", base);
-  run('git config user.name "GSD Test"', base);
-  run('git config user.email "gsd@example.com"', base);
+  run('git config user.name "GWD Test"', base);
+  run('git config user.email "gwd@example.com"', base);
   writeFileSync(join(base, "README.md"), "init\n", "utf-8");
   run("git add -A && git commit -m init", base);
   return base;
@@ -39,7 +39,7 @@ afterEach(() => {
   }
 });
 
-test("gsd -w from inside a worktree creates the next worktree at the project root", async () => {
+test("gwd -w from inside a worktree creates the next worktree at the project root", async () => {
   const base = makeRepo();
   const alpha = createWorktree(base, "alpha");
   process.chdir(alpha.path);

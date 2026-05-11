@@ -27,7 +27,7 @@ describe("saveArtifactToDbForWorkspace: path.relative containment guard", () => 
   let projectDir: string;
 
   beforeEach(() => {
-    tmp = mkdtempSync(join(tmpdir(), "gsd-path-contain-fw-"));
+    tmp = mkdtempSync(join(tmpdir(), "gwd-path-contain-fw-"));
     projectDir = makeProjectDir(tmp);
     openDatabase(join(projectDir, ".gwd", "gwd.db"));
   });
@@ -92,7 +92,7 @@ describe("saveArtifactToDbByScope: path.relative containment guard", () => {
   let projectDir: string;
 
   beforeEach(() => {
-    tmp = mkdtempSync(join(tmpdir(), "gsd-path-contain-bs-"));
+    tmp = mkdtempSync(join(tmpdir(), "gwd-path-contain-bs-"));
     projectDir = makeProjectDir(tmp);
     openDatabase(join(projectDir, ".gwd", "gwd.db"));
   });

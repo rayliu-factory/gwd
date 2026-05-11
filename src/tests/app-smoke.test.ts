@@ -434,7 +434,7 @@ test("deriveState returns pre-planning phase for empty .gwd/ directory", async (
 test("deriveState returns pre-planning phase when no .gwd/ directory exists", async (t) => {
   const { deriveState } = await import("../resources/extensions/gwd/state.ts");
   // Use a temp dir with no .gwd/ subdirectory at all
-  const tmp = mkdtempSync(join(tmpdir(), "gwd-state-nogsd-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-state-nogwd-"));
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
   // Should not throw — missing .gwd/ is a valid "no project" state

@@ -13,7 +13,7 @@ import {
 } from "../blocked-models.ts";
 
 function mkBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-blocked-models-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-blocked-models-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

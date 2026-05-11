@@ -24,7 +24,7 @@ import { parseContextDependsOn } from '../../files.ts';
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-reorder-e2e-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-reorder-e2e-'));
   mkdirSync(join(base, '.gwd', 'milestones'), { recursive: true });
   return base;
 }

@@ -16,8 +16,8 @@ import { registerQueryTools } from "../bootstrap/query-tools.ts";
 async function withDeletedCwd(fn: (projectRoot: string) => Promise<void> | void): Promise<void> {
   const previousCwd = process.cwd();
   const previousProjectRoot = process.env.GWD_PROJECT_ROOT;
-  const projectRoot = mkdtempSync(join(tmpdir(), "gsd-safe-cwd-project-"));
-  const removedCwd = mkdtempSync(join(tmpdir(), "gsd-removed-cwd-"));
+  const projectRoot = mkdtempSync(join(tmpdir(), "gwd-safe-cwd-project-"));
+  const removedCwd = mkdtempSync(join(tmpdir(), "gwd-removed-cwd-"));
 
   process.env.GWD_PROJECT_ROOT = projectRoot;
   process.chdir(removedCwd);

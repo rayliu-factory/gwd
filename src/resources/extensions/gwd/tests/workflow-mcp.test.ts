@@ -223,7 +223,7 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
   // can't pick up a configured Discord/Slack/Telegram channel from global
   // PREFERENCES.md and route ask_user_questions through a remote adapter
   // instead of MCP elicitation.
-  const isolatedGsdHome = mkdtempSync(join(tmpdir(), "gwd-workflow-home-"));
+  const isolatedGwdHome = mkdtempSync(join(tmpdir(), "gwd-workflow-home-"));
 
   const launch = detectWorkflowMcpLaunchConfig(projectRoot, {});
   assert.ok(launch, "expected a workflow MCP launch config");
@@ -266,7 +266,7 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
     env: {
       ...process.env,
       ...launch.env,
-      GWD_HOME: isolatedGsdHome,
+      GWD_HOME: isolatedGwdHome,
       DISCORD_BOT_TOKEN: "",
       SLACK_BOT_TOKEN: "",
       TELEGRAM_BOT_TOKEN: "",
@@ -396,14 +396,14 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
   } finally {
     await client.close().catch(() => {});
     rmSync(projectRoot, { recursive: true, force: true });
-    rmSync(isolatedGsdHome, { recursive: true, force: true });
+    rmSync(isolatedGwdHome, { recursive: true, force: true });
   }
 });
 
 test("workflow MCP ask_user_questions uses stdio elicitation round-trip", async () => {
   const projectRoot = mkdtempSync(join(tmpdir(), "gwd-workflow-elicit-"));
   mkdirSync(join(projectRoot, ".gwd"), { recursive: true });
-  const isolatedGsdHome = mkdtempSync(join(tmpdir(), "gwd-workflow-home-"));
+  const isolatedGwdHome = mkdtempSync(join(tmpdir(), "gwd-workflow-home-"));
 
   const launch = detectWorkflowMcpLaunchConfig(projectRoot, {});
   assert.ok(launch, "expected a workflow MCP launch config");
@@ -437,7 +437,7 @@ test("workflow MCP ask_user_questions uses stdio elicitation round-trip", async 
     env: {
       ...process.env,
       ...launch.env,
-      GWD_HOME: isolatedGsdHome,
+      GWD_HOME: isolatedGwdHome,
       DISCORD_BOT_TOKEN: "",
       SLACK_BOT_TOKEN: "",
       TELEGRAM_BOT_TOKEN: "",
@@ -493,7 +493,7 @@ test("workflow MCP ask_user_questions uses stdio elicitation round-trip", async 
   } finally {
     await client.close();
     rmSync(projectRoot, { recursive: true, force: true });
-    rmSync(isolatedGsdHome, { recursive: true, force: true });
+    rmSync(isolatedGwdHome, { recursive: true, force: true });
   }
 });
 

@@ -77,7 +77,7 @@ function makeDeps(
     GitServiceImpl: class {
       constructor() {}
     } as unknown as LegacyTestDeps["GitServiceImpl"],
-    loadEffectiveGSDPreferences: () => ({ preferences: { git: {} } }),
+    loadEffectiveGWDPreferences: () => ({ preferences: { git: {} } }),
     invalidateAllCaches: () => {},
     captureIntegrationBranch: () => {},
     enterBranchModeForMilestone: () => {},

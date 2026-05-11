@@ -15,11 +15,11 @@ import {
   autoImportMarkdownHierarchyIfDbMismatch,
   countMarkdownHierarchy,
 } from "../migration-auto-check.ts";
-import { writeGSDDirectory } from "../migrate/writer.ts";
-import type { GSDProject } from "../migrate/types.ts";
+import { writeGWDDirectory } from "../migrate/writer.ts";
+import type { GWDProject } from "../migrate/types.ts";
 
 function makeBase(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-migration-auto-check-"));
+  return mkdtempSync(join(tmpdir(), "gwd-migration-auto-check-"));
 }
 
 function cleanup(base: string): void {
@@ -27,7 +27,7 @@ function cleanup(base: string): void {
   rmSync(base, { recursive: true, force: true });
 }
 
-function projectFixture(): GSDProject {
+function projectFixture(): GWDProject {
   return {
     projectContent: "# Legacy Project\n",
     decisionsContent: "",
@@ -73,7 +73,7 @@ function projectFixture(): GSDProject {
 test("migration auto-check imports markdown hierarchy when DB is empty", async () => {
   const base = makeBase();
   try {
-    await writeGSDDirectory(projectFixture(), base);
+    await writeGWDDirectory(projectFixture(), base);
     assert.deepEqual(countMarkdownHierarchy(base), { milestones: 1, slices: 1, tasks: 1 });
 
     assert.equal(await ensureDbOpen(base), true);
@@ -93,7 +93,7 @@ test("migration auto-check imports markdown hierarchy when DB is empty", async (
 test("migration auto-check repairs DB hierarchy count mismatch", async () => {
   const base = makeBase();
   try {
-    await writeGSDDirectory(projectFixture(), base);
+    await writeGWDDirectory(projectFixture(), base);
     await autoImportMarkdownHierarchyIfDbMismatch(base);
 
     _getAdapter()!.prepare("DELETE FROM tasks WHERE milestone_id = ? AND slice_id = ? AND id = ?").run("M001", "S01", "T01");
@@ -113,7 +113,7 @@ test("migration auto-check repairs DB hierarchy count mismatch", async () => {
 test("migration auto-check leaves matching DB hierarchy alone", async () => {
   const base = makeBase();
   try {
-    await writeGSDDirectory(projectFixture(), base);
+    await writeGWDDirectory(projectFixture(), base);
     await autoImportMarkdownHierarchyIfDbMismatch(base);
 
     const result = await autoImportMarkdownHierarchyIfDbMismatch(base);

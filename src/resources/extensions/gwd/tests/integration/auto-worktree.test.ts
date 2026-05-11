@@ -20,7 +20,7 @@ import {
   enterAutoWorktree,
   getAutoWorktreeOriginalBase,
   getActiveAutoWorktreeContext,
-  syncGsdStateToWorktree,
+  syncGwdStateToWorktree,
   _resetAutoWorktreeOriginalBaseForTests,
 } from "../../auto-worktree.ts";
 
@@ -146,7 +146,7 @@ describe("auto-worktree lifecycle", () => {
 
   test("symlink-resolved auto worktree is detected after module state reset", () => {
     tempDir = createTempRepo();
-    const savedGsdHome = process.env.GWD_HOME;
+    const savedGwdHome = process.env.GWD_HOME;
     const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "auto-wt-home-")));
     const storage = join(fakeHome, ".gwd", "projects", "abc123def456");
     mkdirSync(join(storage, "milestones", "M001"), { recursive: true });
@@ -186,8 +186,8 @@ describe("auto-worktree lifecycle", () => {
       } catch {
         // Best-effort cleanup for partially-created temp worktrees.
       }
-      if (savedGsdHome === undefined) delete process.env.GWD_HOME;
-      else process.env.GWD_HOME = savedGsdHome;
+      if (savedGwdHome === undefined) delete process.env.GWD_HOME;
+      else process.env.GWD_HOME = savedGwdHome;
       rmSync(fakeHome, { recursive: true, force: true });
     }
   });
@@ -375,7 +375,7 @@ describe("auto-worktree lifecycle", () => {
     }
   });
 
-  test("#2791: mcp.json synced via syncGsdStateToWorktree (ROOT_STATE_FILES)", () => {
+  test("#2791: mcp.json synced via syncGwdStateToWorktree (ROOT_STATE_FILES)", () => {
     tempDir = createTempRepo();
     const msDir = join(tempDir, ".gwd", "milestones", "M003");
     mkdirSync(msDir, { recursive: true });
@@ -394,7 +394,7 @@ describe("auto-worktree lifecycle", () => {
       );
 
       // Sync should pick up the new mcp.json
-      const { synced } = syncGsdStateToWorktree(tempDir, wtPath);
+      const { synced } = syncGwdStateToWorktree(tempDir, wtPath);
 
       assert.ok(synced.includes("mcp.json"), "mcp.json should be in the synced list");
       assert.ok(
@@ -406,7 +406,7 @@ describe("auto-worktree lifecycle", () => {
     }
   });
 
-  test("#2482: throws GSDError when repo has no commits", () => {
+  test("#2482: throws GWDError when repo has no commits", () => {
     // Create a bare git init with no commits — HEAD is invalid
     tempDir = realpathSync(mkdtempSync(join(tmpdir(), "auto-wt-empty-")));
     run("git init", tempDir);
@@ -417,7 +417,7 @@ describe("auto-worktree lifecycle", () => {
       () => createAutoWorktree(tempDir, "M001"),
       (err: unknown) => {
         assert.ok(err instanceof Error, "should throw an Error");
-        assert.ok("code" in err, "should have a code property (GSDError)");
+        assert.ok("code" in err, "should have a code property (GWDError)");
         assert.strictEqual((err as { code: string }).code, "GWD_GIT_ERROR");
         assert.ok(
           err.message.includes("repository has no commits yet"),

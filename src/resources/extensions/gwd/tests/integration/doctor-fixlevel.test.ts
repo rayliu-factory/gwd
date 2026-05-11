@@ -30,8 +30,8 @@ function makeTmp(name: string): string {
  * reconciliation issue codes.
  */
 function buildScaffold(base: string) {
-  const gsd = join(base, ".gwd");
-  const m = join(gsd, "milestones", "M001");
+  const gwd = join(base, ".gwd");
+  const m = join(gwd, "milestones", "M001");
   const s = join(m, "slices", "S01", "tasks");
   mkdirSync(s, { recursive: true });
 
@@ -123,8 +123,8 @@ test("legacy roadmap fallback: future slices are treated as pending, active slic
   // Force the legacy parser branch.
   try { closeDatabase(); } catch { /* noop */ }
 
-  const gsd = join(tmp, ".gwd");
-  const m = join(gsd, "milestones", "M001");
+  const gwd = join(tmp, ".gwd");
+  const m = join(gwd, "milestones", "M001");
   const s01 = join(m, "slices", "S01", "tasks");
   mkdirSync(s01, { recursive: true });
 
@@ -184,8 +184,8 @@ test("db skipped slices do not report missing directories", async (t) => {
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  const gsd = join(tmp, ".gwd");
-  const m = join(gsd, "milestones", "M001");
+  const gwd = join(tmp, ".gwd");
+  const m = join(gwd, "milestones", "M001");
   mkdirSync(m, { recursive: true });
 
   writeFileSync(join(m, "M001-ROADMAP.md"), `# M001: Test
@@ -196,7 +196,7 @@ test("db skipped slices do not report missing directories", async (t) => {
   > Intentionally skipped
 `);
 
-  openDatabase(join(gsd, "gwd.db"));
+  openDatabase(join(gwd, "gwd.db"));
   insertMilestone({ id: "M001", title: "Test", status: "active" });
   insertSlice({ id: "S05", milestoneId: "M001", title: "Skipped Slice", status: "skipped", sequence: 5 });
 
@@ -232,8 +232,8 @@ test("fixLevel:all — delimiter_in_title still fixable", async (t) => {
   const tmp = makeTmp("delimiter-fix");
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
-  const gsd = join(tmp, ".gwd");
-  const m = join(gsd, "milestones", "M001");
+  const gwd = join(tmp, ".gwd");
+  const m = join(gwd, "milestones", "M001");
   const s = join(m, "slices", "S01", "tasks");
   mkdirSync(s, { recursive: true });
 

@@ -14,7 +14,7 @@ import {
 function makeTempDir(prefix: string): string {
   const dir = join(
     tmpdir(),
-    `gsd-notifications-handler-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `gwd-notifications-handler-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(dir, { recursive: true });
   mkdirSync(join(dir, ".gwd"), { recursive: true });

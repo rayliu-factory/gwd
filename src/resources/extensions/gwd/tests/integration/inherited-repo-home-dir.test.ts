@@ -37,12 +37,12 @@ function run(cmd: string, args: string[], cwd: string): string {
 describe("isInheritedRepo when git root is HOME (#2393)", () => {
   let fakeHome: string;
   let stateDir: string;
-  let origGsdHome: string | undefined;
-  let origGsdStateDir: string | undefined;
+  let origGwdHome: string | undefined;
+  let origGwdStateDir: string | undefined;
 
   beforeEach(() => {
     // Create a fake HOME that is itself a git repo (dotfile manager scenario).
-    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-home-repo-")));
+    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gwd-home-repo-")));
     run("git", ["init", "-b", "main"], fakeHome);
     run("git", ["config", "user.name", "Test"], fakeHome);
     run("git", ["config", "user.email", "test@example.com"], fakeHome);
@@ -56,17 +56,17 @@ describe("isInheritedRepo when git root is HOME (#2393)", () => {
 
     // Save and override env. Point GWD_HOME at fakeHome/.gwd so the
     // function recognizes it as the global state directory.
-    origGsdHome = process.env.GWD_HOME;
-    origGsdStateDir = process.env.GWD_STATE_DIR;
+    origGwdHome = process.env.GWD_HOME;
+    origGwdStateDir = process.env.GWD_STATE_DIR;
     process.env.GWD_HOME = join(fakeHome, ".gwd");
-    stateDir = mkdtempSync(join(tmpdir(), "gsd-state-"));
+    stateDir = mkdtempSync(join(tmpdir(), "gwd-state-"));
     process.env.GWD_STATE_DIR = stateDir;
   });
 
   afterEach(() => {
-    if (origGsdHome !== undefined) process.env.GWD_HOME = origGsdHome;
+    if (origGwdHome !== undefined) process.env.GWD_HOME = origGwdHome;
     else delete process.env.GWD_HOME;
-    if (origGsdStateDir !== undefined) process.env.GWD_STATE_DIR = origGsdStateDir;
+    if (origGwdStateDir !== undefined) process.env.GWD_STATE_DIR = origGwdStateDir;
     else delete process.env.GWD_STATE_DIR;
 
     rmSync(fakeHome, { recursive: true, force: true });
@@ -124,7 +124,7 @@ describe("isInheritedRepo with stale .gwd at parent git root", () => {
   let parentRepo: string;
 
   beforeEach(() => {
-    parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-stale-parent-")));
+    parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "gwd-stale-parent-")));
     run("git", ["init", "-b", "main"], parentRepo);
     run("git", ["config", "user.name", "Test"], parentRepo);
     run("git", ["config", "user.email", "test@example.com"], parentRepo);
@@ -146,12 +146,12 @@ describe("isInheritedRepo with stale .gwd at parent git root", () => {
     const projectDir = join(parentRepo, "my-project");
     mkdirSync(projectDir, { recursive: true });
 
-    // Without fix: isProjectGsd(join(root, ".gwd")) returns true because
+    // Without fix: isProjectGwd(join(root, ".gwd")) returns true because
     // the stale .gwd is a real directory that isn't the global GWD home,
     // causing isInheritedRepo to return false (false negative).
     //
     // The stale .gwd at parent is still treated as a "project .gwd" by
-    // isProjectGsd(), so the git root check at line 128 returns false.
+    // isProjectGwd(), so the git root check at line 128 returns false.
     // This is the expected behavior for that check — the defense-in-depth
     // fix in auto-start.ts handles this case by checking for local .git.
     //
@@ -170,7 +170,7 @@ describe("isInheritedRepo with stale .gwd at parent git root", () => {
     const projectDir = join(parentRepo, "my-project");
     mkdirSync(projectDir, { recursive: true });
 
-    const externalState = mkdtempSync(join(tmpdir(), "gsd-ext-state-"));
+    const externalState = mkdtempSync(join(tmpdir(), "gwd-ext-state-"));
     symlinkSync(externalState, join(projectDir, ".gwd"));
 
     // Before fix: the walk-up loop started at normalizedBase (projectDir),

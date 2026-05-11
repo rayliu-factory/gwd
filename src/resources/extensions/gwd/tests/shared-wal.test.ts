@@ -21,7 +21,7 @@ import assert from 'node:assert/strict';
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
 function createTmpDir(suffix: string): string {
-  return mkdtempSync(join(tmpdir(), `gsd-wal-${suffix}-`));
+  return mkdtempSync(join(tmpdir(), `gwd-wal-${suffix}-`));
 }
 
 function cleanup(dir: string): void {

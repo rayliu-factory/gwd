@@ -1,4 +1,4 @@
-// GSD2 — Regression test for deployed resource-loader resolution behavior
+// GWD2 — Regression test for deployed resource-loader resolution behavior
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";

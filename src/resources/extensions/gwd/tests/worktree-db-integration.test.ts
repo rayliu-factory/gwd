@@ -76,7 +76,7 @@ describe('worktree-db-integration', async () => {
 
       // Commit so createAutoWorktree can copy planning artifacts
       run("git add .", tempDir);
-      run('git commit -m "add gsd dir"', tempDir);
+      run('git commit -m "add gwd dir"', tempDir);
 
       // createAutoWorktree should copy the DB into the worktree
       const wtPath = createAutoWorktree(tempDir, "M004");

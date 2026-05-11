@@ -12,7 +12,7 @@ import { clearReservedMilestoneIds, findMilestoneIds } from "../milestone-ids.ts
 import { invalidateAllCaches } from "../cache.ts";
 import { closeDatabase, openDatabase } from "../gwd-db.ts";
 
-function makeBase(prefix = "gsd-deferred-dir-"): string {
+function makeBase(prefix = "gwd-deferred-dir-"): string {
   const base = mkdtempSync(join(tmpdir(), prefix));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;

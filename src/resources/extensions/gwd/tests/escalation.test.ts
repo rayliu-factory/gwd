@@ -36,7 +36,7 @@ import type { EscalationOption } from "../types.ts";
 // ─── Fixture helpers ──────────────────────────────────────────────────────
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-adr011-p2-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-adr011-p2-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;
 }

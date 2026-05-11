@@ -23,7 +23,7 @@ afterEach(() => {
 
 describe("clear stale pending auto-start (#3667)", () => {
   test("setPendingAutoStart defaults createdAt to Date.now()", (t) => {
-    const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-pending-autostart-")));
+    const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-pending-autostart-")));
     t.after(() => rmSync(base, { recursive: true, force: true }));
     mkdirSync(join(base, ".gwd"), { recursive: true });
     const before = Date.now();
@@ -37,7 +37,7 @@ describe("clear stale pending auto-start (#3667)", () => {
   });
 
   test("setPendingAutoStart preserves explicit createdAt for stale-entry checks", (t) => {
-    const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-pending-autostart-old-")));
+    const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-pending-autostart-old-")));
     t.after(() => rmSync(base, { recursive: true, force: true }));
     mkdirSync(join(base, ".gwd"), { recursive: true });
 

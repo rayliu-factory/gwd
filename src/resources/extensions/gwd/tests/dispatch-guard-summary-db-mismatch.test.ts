@@ -13,7 +13,7 @@ import { getPriorSliceCompletionBlocker } from "../dispatch-guard.ts";
 import { openDatabase, closeDatabase, insertMilestone, insertSlice } from "../gwd-db.ts";
 
 function setupRepo(): string {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-dispatch-guard-4663-"));
+  const repo = mkdtempSync(join(tmpdir(), "gwd-dispatch-guard-4663-"));
   mkdirSync(join(repo, ".gwd"), { recursive: true });
   openDatabase(join(repo, ".gwd", "gwd.db"));
   return repo;

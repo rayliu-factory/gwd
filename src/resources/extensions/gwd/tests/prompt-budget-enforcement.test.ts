@@ -20,7 +20,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // ─── Fixture helpers ──────────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-prompt-budget-test-"));
+  return mkdtempSync(join(tmpdir(), "gwd-prompt-budget-test-"));
 }
 
 function cleanup(base: string): void {

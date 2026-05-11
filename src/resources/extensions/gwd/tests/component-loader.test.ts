@@ -20,7 +20,7 @@ import {
 let testDir: string;
 
 function setupTestDir(): string {
-	const dir = join(tmpdir(), `gsd-component-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+	const dir = join(tmpdir(), `gwd-component-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 	mkdirSync(dir, { recursive: true });
 	return dir;
 }
@@ -46,7 +46,7 @@ describe('loadComponentFromDir (component.yaml)', () => {
 		const skillDir = join(testDir, 'my-skill');
 		mkdirSync(skillDir, { recursive: true });
 		writeFileSync(join(skillDir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: skill
 metadata:
   name: my-skill
@@ -74,7 +74,7 @@ spec:
 		const agentDir = join(testDir, 'my-agent');
 		mkdirSync(agentDir, { recursive: true });
 		writeFileSync(join(agentDir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: agent
 metadata:
   name: my-agent
@@ -106,7 +106,7 @@ spec:
 		const dir = join(testDir, 'code-review');
 		mkdirSync(dir, { recursive: true });
 		writeFileSync(join(dir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: skill
 metadata:
   name: code-review
@@ -144,7 +144,7 @@ spec:
 		const dir = join(testDir, 'bad-version');
 		mkdirSync(dir, { recursive: true });
 		writeFileSync(join(dir, 'component.yaml'), `
-apiVersion: gsd/v2
+apiVersion: gwd/v2
 kind: skill
 metadata:
   name: bad-version
@@ -163,7 +163,7 @@ spec:
 		const dir = join(testDir, 'no-name');
 		mkdirSync(dir, { recursive: true });
 		writeFileSync(join(dir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: skill
 metadata:
   description: "No name"
@@ -179,7 +179,7 @@ spec:
 		const dir = join(testDir, 'bad-metadata');
 		mkdirSync(dir, { recursive: true });
 		writeFileSync(join(dir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: skill
 metadata:
   name: BadName
@@ -208,7 +208,7 @@ spec:
 		const dir = join(testDir, 'missing-prompt');
 		mkdirSync(dir, { recursive: true });
 		writeFileSync(join(dir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: skill
 metadata:
   name: missing-prompt
@@ -226,7 +226,7 @@ spec:
 		const dir = join(testDir, 'workflow');
 		mkdirSync(dir, { recursive: true });
 		writeFileSync(join(dir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: pipeline
 metadata:
   name: workflow
@@ -306,7 +306,7 @@ No description.
 		const dir = join(testDir, 'dual-format');
 		mkdirSync(dir, { recursive: true });
 		writeFileSync(join(dir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: skill
 metadata:
   name: dual-format
@@ -423,7 +423,7 @@ Content.
 		const skill2Dir = join(testDir, 'skill-b');
 		mkdirSync(skill2Dir, { recursive: true });
 		writeFileSync(join(skill2Dir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: skill
 metadata:
   name: skill-b
@@ -445,7 +445,7 @@ spec:
 		const skillDir = join(testDir, 'my-skill');
 		mkdirSync(skillDir, { recursive: true });
 		writeFileSync(join(skillDir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: skill
 metadata:
   name: my-skill
@@ -458,7 +458,7 @@ spec:
 		const agentDir = join(testDir, 'my-agent');
 		mkdirSync(agentDir, { recursive: true });
 		writeFileSync(join(agentDir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: agent
 metadata:
   name: my-agent
@@ -544,7 +544,7 @@ Old format.
 		const scoutDir = join(testDir, 'scout');
 		mkdirSync(scoutDir, { recursive: true });
 		writeFileSync(join(scoutDir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: agent
 metadata:
   name: scout
@@ -564,7 +564,7 @@ spec:
 		const scoutDir = join(testDir, 'scout');
 		mkdirSync(scoutDir, { recursive: true });
 		writeFileSync(join(scoutDir, 'component.yaml'), `
-apiVersion: gsd/v1
+apiVersion: gwd/v1
 kind: agent
 metadata:
   name: scout

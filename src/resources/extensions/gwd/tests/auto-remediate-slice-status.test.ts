@@ -28,7 +28,7 @@ afterEach(() => {
 
 describe("DB-authoritative slice rogue detection", () => {
   test("complete-slice SUMMARY.md is reported as rogue without marking DB complete", (t) => {
-    const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-rogue-slice-")));
+    const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-rogue-slice-")));
     t.after(() => rmSync(base, { recursive: true, force: true }));
 
     mkdirSync(join(base, ".gwd"), { recursive: true });

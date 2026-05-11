@@ -1,4 +1,4 @@
-// GSD-2 — Extension Sort Tests
+// GWD-2 — Extension Sort Tests
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import test, { describe } from 'node:test'
@@ -95,7 +95,7 @@ describe('sortExtensionPaths', () => {
     const dir = makeTempDir()
     t.after(() => rmSync(dir, { recursive: true, force: true }))
 
-    const pathA = makeExtension(dir, 'test.a', ['gsd.nonexistent'])
+    const pathA = makeExtension(dir, 'test.a', ['gwd.nonexistent'])
 
     const result = sortExtensionPaths([pathA])
 
@@ -104,8 +104,8 @@ describe('sortExtensionPaths', () => {
     assert.equal(result.warnings.length, 1, 'one warning for missing dep')
     const w = result.warnings[0]
     assert.equal(w.declaringId, 'test.a')
-    assert.equal(w.missingId, 'gsd.nonexistent')
-    assert.equal(w.message, "Extension 'test.a' declares dependency 'gsd.nonexistent' which is not installed — loading anyway")
+    assert.equal(w.missingId, 'gwd.nonexistent')
+    assert.equal(w.message, "Extension 'test.a' declares dependency 'gwd.nonexistent' which is not installed — loading anyway")
   })
 
   test('Test 5: cycle — A depends on B, B depends on A → both loaded, cycle warnings emitted, appended alphabetically', (t) => {

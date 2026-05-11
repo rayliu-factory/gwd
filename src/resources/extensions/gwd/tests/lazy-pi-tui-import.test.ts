@@ -1,4 +1,4 @@
-// GSD2 — Shared barrel import behavior without TUI dependency loading
+// GWD2 — Shared barrel import behavior without TUI dependency loading
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 test("shared/mod.ts imports without resolving @gwd/pi-tui", () => {
-  const tmp = mkdtempSync(join(process.env.TMPDIR ?? "/tmp", "gsd-shared-mod-"));
+  const tmp = mkdtempSync(join(process.env.TMPDIR ?? "/tmp", "gwd-shared-mod-"));
   const loaderPath = join(tmp, "block-pi-tui-loader.mjs");
   writeFileSync(
     loaderPath,

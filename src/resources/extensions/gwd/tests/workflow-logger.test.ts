@@ -379,7 +379,7 @@ describe("workflow-logger", () => {
       t.after(() => { process.stderr.write = orig; });
 
       logError("intercept", "blocked");
-      assert.ok(written[0].includes("[gsd:intercept] ERROR: blocked"));
+      assert.ok(written[0].includes("[gwd:intercept] ERROR: blocked"));
     });
 
     test("includes serialized context in stderr output", (t) => {

@@ -1,4 +1,4 @@
-// GSD2 — Verify autoStartTime is carried through dashboard state
+// GWD2 — Verify autoStartTime is carried through dashboard state
 
 import test from "node:test";
 import assert from "node:assert/strict";

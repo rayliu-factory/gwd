@@ -64,7 +64,7 @@ export function getMarketplaceFixtures(testFileDir: string): { available: boolea
   }
 
   try {
-    const fixtureRoot = mkdtempSync(join(tmpdir(), 'gsd-marketplace-fixtures-'));
+    const fixtureRoot = mkdtempSync(join(tmpdir(), 'gwd-marketplace-fixtures-'));
     const clonedClaudeSkillsPath = join(fixtureRoot, 'claude_skills');
     const clonedClaudePluginsOfficialPath = join(fixtureRoot, 'claude-plugins-official');
 

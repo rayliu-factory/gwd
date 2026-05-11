@@ -29,25 +29,25 @@ import {
   insertMilestone,
   openDatabase,
 } from "../gwd-db.ts";
-import type { GSDPreferences } from "../preferences.ts";
-import type { GSDState } from "../types.ts";
+import type { GWDPreferences } from "../preferences.ts";
+import type { GWDState } from "../types.ts";
 
 function makeBase(): string {
-  const base = join(tmpdir(), `gsd-deep-project-loop-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-deep-project-loop-${randomUUID()}`);
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   writeFileSync(join(base, ".gwd", "PREFERENCES.md"), "---\nplanning_depth: deep\n---\n");
   return base;
 }
 
 function makeCommandBase(): string {
-  const base = join(tmpdir(), `gsd-deep-project-command-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-deep-project-command-${randomUUID()}`);
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
-  writeFileSync(join(base, "package.json"), '{"name":"gsd-command-test"}\n');
+  writeFileSync(join(base, "package.json"), '{"name":"gwd-command-test"}\n');
   return base;
 }
 
 function writeCommandGlobalDeepPrefs(base: string): void {
-  const home = join(base, ".test-gsd-home");
+  const home = join(base, ".test-gwd-home");
   mkdirSync(home, { recursive: true });
   writeFileSync(
     join(home, "PREFERENCES.md"),
@@ -56,17 +56,17 @@ function writeCommandGlobalDeepPrefs(base: string): void {
 }
 
 function makeUnbornCommandRepo(): string {
-  const base = join(tmpdir(), `gsd-deep-project-unborn-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-deep-project-unborn-${randomUUID()}`);
   mkdirSync(base, { recursive: true });
   execFileSync("git", ["init"], { cwd: base, stdio: "ignore" });
   execFileSync("git", ["symbolic-ref", "HEAD", "refs/heads/main"], { cwd: base, stdio: "ignore" });
   execFileSync("git", ["config", "user.email", "test@test.com"], { cwd: base });
   execFileSync("git", ["config", "user.name", "Test"], { cwd: base });
-  writeFileSync(join(base, "package.json"), '{"name":"gsd-unborn-command-test"}\n');
+  writeFileSync(join(base, "package.json"), '{"name":"gwd-unborn-command-test"}\n');
   return base;
 }
 
-function makeEmptyState(): GSDState {
+function makeEmptyState(): GWDState {
   return {
     phase: "pre-planning",
     activeMilestone: null,
@@ -79,7 +79,7 @@ function makeEmptyState(): GSDState {
   };
 }
 
-function makeNeedsDiscussionState(): GSDState {
+function makeNeedsDiscussionState(): GWDState {
   return {
     ...makeEmptyState(),
     phase: "needs-discussion",
@@ -88,7 +88,7 @@ function makeNeedsDiscussionState(): GSDState {
   };
 }
 
-function makeExecutingState(): GSDState {
+function makeExecutingState(): GWDState {
   return {
     ...makeEmptyState(),
     phase: "executing",
@@ -99,7 +99,7 @@ function makeExecutingState(): GSDState {
   };
 }
 
-function makePlanningState(): GSDState {
+function makePlanningState(): GWDState {
   return {
     ...makeEmptyState(),
     phase: "planning",
@@ -165,7 +165,7 @@ function makeCtx(sessionId = "test-session") {
 function makePi(messages: unknown[]) {
   let activeTools = [
     "ask_user_questions",
-    "mcp__gsd-workflow__ask_user_questions",
+    "mcp__gwd-workflow__ask_user_questions",
     "read",
     "write",
     "edit",
@@ -188,14 +188,14 @@ function makePi(messages: unknown[]) {
 
 async function runNewProjectCommand(base: string, command: string): Promise<unknown[]> {
   const previousCwd = process.cwd();
-  const previousGsdHome = process.env.GWD_HOME;
+  const previousGwdHome = process.env.GWD_HOME;
   const previousWorkflowPath = process.env.GWD_WORKFLOW_PATH;
   const previousProjectRoot = process.env.GWD_PROJECT_ROOT;
   const workflowPath = join(base, "GWD-WORKFLOW.md");
   writeFileSync(workflowPath, "# Test Workflow\n");
 
   try {
-    process.env.GWD_HOME = join(base, ".test-gsd-home");
+    process.env.GWD_HOME = join(base, ".test-gwd-home");
     process.env.GWD_WORKFLOW_PATH = workflowPath;
     delete process.env.GWD_PROJECT_ROOT;
     process.chdir(base);
@@ -206,8 +206,8 @@ async function runNewProjectCommand(base: string, command: string): Promise<unkn
     return messages;
   } finally {
     process.chdir(previousCwd);
-    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = previousGsdHome;
+    if (previousGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGwdHome;
     if (previousWorkflowPath === undefined) delete process.env.GWD_WORKFLOW_PATH;
     else process.env.GWD_WORKFLOW_PATH = previousWorkflowPath;
     if (previousProjectRoot === undefined) delete process.env.GWD_PROJECT_ROOT;
@@ -220,16 +220,16 @@ async function runNewProjectCommand(base: string, command: string): Promise<unkn
   }
 }
 
-async function runBareGsdCommand(base: string): Promise<unknown[]> {
+async function runBareGwdCommand(base: string): Promise<unknown[]> {
   const previousCwd = process.cwd();
-  const previousGsdHome = process.env.GWD_HOME;
+  const previousGwdHome = process.env.GWD_HOME;
   const previousWorkflowPath = process.env.GWD_WORKFLOW_PATH;
   const previousProjectRoot = process.env.GWD_PROJECT_ROOT;
   const workflowPath = join(base, "GWD-WORKFLOW.md");
   writeFileSync(workflowPath, "# Test Workflow\n");
 
   try {
-    process.env.GWD_HOME = join(base, ".test-gsd-home");
+    process.env.GWD_HOME = join(base, ".test-gwd-home");
     process.env.GWD_WORKFLOW_PATH = workflowPath;
     delete process.env.GWD_PROJECT_ROOT;
     process.chdir(base);
@@ -240,8 +240,8 @@ async function runBareGsdCommand(base: string): Promise<unknown[]> {
     return messages;
   } finally {
     process.chdir(previousCwd);
-    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = previousGsdHome;
+    if (previousGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGwdHome;
     if (previousWorkflowPath === undefined) delete process.env.GWD_WORKFLOW_PATH;
     else process.env.GWD_WORKFLOW_PATH = previousWorkflowPath;
     if (previousProjectRoot === undefined) delete process.env.GWD_PROJECT_ROOT;
@@ -338,7 +338,7 @@ test("deep project setup: pre-dispatch can run before the first milestone exists
         pi: {} as any,
         s,
         deps,
-        prefs: { planning_depth: "deep" } as GSDPreferences,
+        prefs: { planning_depth: "deep" } as GWDPreferences,
         iteration: 1,
         flowId: "test-flow",
         nextSeq: () => ++seq,
@@ -449,7 +449,7 @@ test("deep project setup: pre-dispatch takes precedence over an existing draft m
         pi: {} as any,
         s,
         deps,
-        prefs: { planning_depth: "deep" } as GSDPreferences,
+        prefs: { planning_depth: "deep" } as GWDPreferences,
         iteration: 1,
         flowId: "test-flow",
         nextSeq: () => ++seq,
@@ -496,7 +496,7 @@ test("deep project setup: pending setup does not rewrite executing state to PROJ
         pi: {} as any,
         s,
         deps,
-        prefs: { planning_depth: "deep", uok: { plan_v2: { enabled: false } } } as GSDPreferences,
+        prefs: { planning_depth: "deep", uok: { plan_v2: { enabled: false } } } as GWDPreferences,
         iteration: 1,
         flowId: "test-flow",
         nextSeq: () => ++seq,
@@ -550,7 +550,7 @@ test("deep project setup: pre-dispatch does not rewrite execution state to PROJE
         pi: {} as any,
         s,
         deps,
-        prefs: { planning_depth: "deep", uok: { plan_v2: { enabled: false } } } as GSDPreferences,
+        prefs: { planning_depth: "deep", uok: { plan_v2: { enabled: false } } } as GWDPreferences,
         iteration: 1,
         flowId: "test-flow",
         nextSeq: () => ++seq,
@@ -608,7 +608,7 @@ test("deep project setup: pending project research cannot dispatch PROJECT/S01",
         pi: {} as any,
         s,
         deps,
-        prefs: { planning_depth: "deep" } as GSDPreferences,
+        prefs: { planning_depth: "deep" } as GWDPreferences,
         iteration: 1,
         flowId: "test-flow",
         nextSeq: () => ++seq,
@@ -630,7 +630,7 @@ test("deep project setup: pending project research cannot dispatch PROJECT/S01",
       mid: result.data.mid,
       midTitle: result.data.midTitle,
       state: result.data.state,
-      prefs: { planning_depth: "deep" } as GSDPreferences,
+      prefs: { planning_depth: "deep" } as GWDPreferences,
       structuredQuestionsAvailable: "false",
     });
 
@@ -684,7 +684,7 @@ test("deep project setup: bare /gwd ignores global planning_depth without projec
   try {
     writeCommandGlobalDeepPrefs(base);
 
-    const messages = await runBareGsdCommand(base);
+    const messages = await runBareGwdCommand(base);
     const prefsPath = join(base, ".gwd", "PREFERENCES.md");
 
     if (existsSync(prefsPath)) {
@@ -729,10 +729,10 @@ test("deep project setup: new-project --deep creates a reachable HEAD in unborn 
 });
 
 test("deep project setup: new-project --deep uses cwd when nested inside a parent git repo", async () => {
-  const parent = join(tmpdir(), `gsd-deep-project-parent-${randomUUID()}`);
+  const parent = join(tmpdir(), `gwd-deep-project-parent-${randomUUID()}`);
   const child = join(parent, "nested-app");
   const previousCwd = process.cwd();
-  const previousGsdHome = process.env.GWD_HOME;
+  const previousGwdHome = process.env.GWD_HOME;
   const previousWorkflowPath = process.env.GWD_WORKFLOW_PATH;
   const previousProjectRoot = process.env.GWD_PROJECT_ROOT;
 
@@ -744,7 +744,7 @@ test("deep project setup: new-project --deep uses cwd when nested inside a paren
   writeFileSync(join(child, "GWD-WORKFLOW.md"), "# Test Workflow\n");
 
   try {
-    process.env.GWD_HOME = join(child, ".test-gsd-home");
+    process.env.GWD_HOME = join(child, ".test-gwd-home");
     process.env.GWD_WORKFLOW_PATH = join(child, "GWD-WORKFLOW.md");
     delete process.env.GWD_PROJECT_ROOT;
     process.chdir(child);
@@ -781,8 +781,8 @@ test("deep project setup: new-project --deep uses cwd when nested inside a paren
     assert.match(String((messages[1] as any).content), /REQUIREMENTS\.md/);
   } finally {
     process.chdir(previousCwd);
-    if (previousGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = previousGsdHome;
+    if (previousGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = previousGwdHome;
     if (previousWorkflowPath === undefined) delete process.env.GWD_WORKFLOW_PATH;
     else process.env.GWD_WORKFLOW_PATH = previousWorkflowPath;
     if (previousProjectRoot === undefined) delete process.env.GWD_PROJECT_ROOT;

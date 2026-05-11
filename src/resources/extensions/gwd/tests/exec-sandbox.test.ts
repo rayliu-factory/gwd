@@ -10,7 +10,7 @@ import { isContextModeEnabled } from '../preferences-types.ts';
 import { validatePreferences } from '../preferences-validation.ts';
 
 function freshBase(): string {
-  return mkdtempSync(join(tmpdir(), 'gsd-exec-test-'));
+  return mkdtempSync(join(tmpdir(), 'gwd-exec-test-'));
 }
 
 function cleanup(dir: string): void {

@@ -1,5 +1,5 @@
 /**
- * GSD2 — regression test for #5183: prompt consolidation.
+ * GWD2 — regression test for #5183: prompt consolidation.
  *
  * The PR removed `guided-execute-task.md` and `guided-complete-slice.md` and
  * routed `guided-flow.ts` callers to `buildExecuteTaskPrompt` /
@@ -39,7 +39,7 @@ describe("guided-flow → auto-prompts consolidation (#5183)", () => {
   let base: string;
 
   beforeEach(() => {
-    base = mkdtempSync(join(tmpdir(), "gsd-prompt-consolidation-"));
+    base = mkdtempSync(join(tmpdir(), "gwd-prompt-consolidation-"));
     const sliceDir = join(base, ".gwd", "milestones", MID, "slices", SID);
     const tasksDir = join(sliceDir, "tasks");
     mkdirSync(tasksDir, { recursive: true });

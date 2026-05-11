@@ -25,7 +25,7 @@ describe("checkSliceEvalReview", () => {
   let sliceDir: string;
 
   beforeEach(() => {
-    basePath = join(tmpdir(), `gsd-ship-eval-${randomUUID()}`);
+    basePath = join(tmpdir(), `gwd-ship-eval-${randomUUID()}`);
     sliceDir = join(basePath, ".gwd", "milestones", "M001", "slices", "S07");
     mkdirSync(sliceDir, { recursive: true });
   });

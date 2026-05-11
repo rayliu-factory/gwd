@@ -63,7 +63,7 @@ function mkBase(): string {
   // realpathSync to normalize the macOS /var → /private/var symlink so the
   // basePath we pass to setPendingGate matches what the workspace's
   // realpath-normalized projectRoot will resolve to.
-  const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-gate1a-pending-")));
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-gate1a-pending-")));
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   // CONTEXT.md (Gate 1) and STATE.md (Gate 2) both present so the only
   // possible blocker in these tests is the new Gate 1a.

@@ -60,7 +60,7 @@ removeIfContentMatches(join(piAgentDir, 'AGENTS.md'), join(resourcesDir, 'AGENTS
 removeIfContentMatches(join(piRoot, 'GWD-WORKFLOW.md'), join(resourcesDir, 'GWD-WORKFLOW.md'), 'GWD-WORKFLOW.md')
 
 process.stdout.write(
-  `Removed GSD resources from ${piRoot}\n` +
+  `Removed GWD resources from ${piRoot}\n` +
   `Removed: ${removed.length ? removed.join(', ') : '(nothing)'}\n` +
   (skipped.length ? `Skipped: ${skipped.join(', ')}\n` : '')
 )

@@ -91,7 +91,7 @@ import { clearPathCache } from "../../paths.ts";
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTempDir(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-edge-cases-"));
+  return mkdtempSync(join(tmpdir(), "gwd-edge-cases-"));
 }
 
 /**
@@ -255,7 +255,7 @@ function createMultiMilestoneFixture(): string {
 function buildDispatchCtx(
   base: string,
   mid: string,
-  stateOverrides: Partial<import("../../types.ts").GSDState> = {},
+  stateOverrides: Partial<import("../../types.ts").GWDState> = {},
 ): DispatchContext {
   return {
     basePath: base,

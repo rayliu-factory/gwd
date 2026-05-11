@@ -25,7 +25,7 @@ function writeCompleteMilestone(base: string): void {
 }
 
 test("deriveState reports the last completed milestone when all milestone slices are done", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-smart-entry-complete-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-smart-entry-complete-"));
   try {
     writeCompleteMilestone(base);
     const state = await deriveState(base);

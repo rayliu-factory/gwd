@@ -2,7 +2,7 @@
  * Tests for macOS numbered symlink variant cleanup (#2205).
  *
  * macOS can rename `.gwd` to `.gwd 2`, `.gwd 3`, etc. when a directory
- * already exists at the target path. ensureGsdSymlink() must detect and
+ * already exists at the target path. ensureGwdSymlink() must detect and
  * remove these numbered variants so the real `.gwd` symlink is always
  * the one in use.
  */
@@ -22,7 +22,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { execSync } from "node:child_process";
 
-import { ensureGsdSymlink, externalGsdRoot } from "../repo-identity.ts";
+import { ensureGwdSymlink, externalGwdRoot } from "../repo-identity.ts";
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 
@@ -32,8 +32,8 @@ function run(command: string, cwd: string): string {
 }
 
 describe('symlink-numbered-variants', async () => {
-  const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-symlink-variants-")));
-  const stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-state-variants-")));
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-symlink-variants-")));
+  const stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-state-variants-")));
 
   try {
     process.env.GWD_STATE_DIR = stateDir;
@@ -47,19 +47,19 @@ describe('symlink-numbered-variants', async () => {
     run("git add README.md", base);
     run('git commit -m "chore: init"', base);
 
-    const externalPath = externalGsdRoot(base);
+    const externalPath = externalGwdRoot(base);
 
     // ── Test: numbered variant directories are cleaned up ──────────────
-    console.log("\n=== ensureGsdSymlink removes numbered .gwd variants (#2205) ===");
+    console.log("\n=== ensureGwdSymlink removes numbered .gwd variants (#2205) ===");
     {
       // Simulate macOS creating numbered variants: ".gwd 2", ".gwd 3"
       mkdirSync(join(base, ".gwd 2"), { recursive: true });
       mkdirSync(join(base, ".gwd 3"), { recursive: true });
       mkdirSync(join(base, ".gwd 4"), { recursive: true });
 
-      const result = ensureGsdSymlink(base);
-      assert.deepStrictEqual(result, externalPath, "ensureGsdSymlink returns external path");
-      assert.ok(existsSync(join(base, ".gwd")), ".gwd exists after ensureGsdSymlink");
+      const result = ensureGwdSymlink(base);
+      assert.deepStrictEqual(result, externalPath, "ensureGwdSymlink returns external path");
+      assert.ok(existsSync(join(base, ".gwd")), ".gwd exists after ensureGwdSymlink");
       assert.ok(lstatSync(join(base, ".gwd")).isSymbolicLink(), ".gwd is a symlink");
 
       // The numbered variants must have been removed
@@ -69,7 +69,7 @@ describe('symlink-numbered-variants', async () => {
     }
 
     // ── Test: numbered variant symlinks are cleaned up ─────────────────
-    console.log("\n=== ensureGsdSymlink removes numbered symlink variants ===");
+    console.log("\n=== ensureGwdSymlink removes numbered symlink variants ===");
     {
       // Clean slate
       rmSync(join(base, ".gwd"), { recursive: true, force: true });
@@ -81,8 +81,8 @@ describe('symlink-numbered-variants', async () => {
       symlinkSync(externalPath, join(base, ".gwd 2"), "junction");
       symlinkSync(staleTarget, join(base, ".gwd 3"), "junction");
 
-      const result = ensureGsdSymlink(base);
-      assert.deepStrictEqual(result, externalPath, "ensureGsdSymlink returns external path when variants exist");
+      const result = ensureGwdSymlink(base);
+      assert.deepStrictEqual(result, externalPath, "ensureGwdSymlink returns external path when variants exist");
       assert.ok(existsSync(join(base, ".gwd")), ".gwd exists");
       assert.ok(lstatSync(join(base, ".gwd")).isSymbolicLink(), ".gwd is a symlink");
 
@@ -91,7 +91,7 @@ describe('symlink-numbered-variants', async () => {
     }
 
     // ── Test: real .gwd directory blocks symlink, but variants still cleaned ──
-    console.log("\n=== ensureGsdSymlink cleans variants even when .gwd is a real directory ===");
+    console.log("\n=== ensureGwdSymlink cleans variants even when .gwd is a real directory ===");
     {
       // Clean slate
       rmSync(join(base, ".gwd"), { recursive: true, force: true });
@@ -102,8 +102,8 @@ describe('symlink-numbered-variants', async () => {
       mkdirSync(join(base, ".gwd 2"), { recursive: true });
       mkdirSync(join(base, ".gwd 3"), { recursive: true });
 
-      const result = ensureGsdSymlink(base);
-      // When .gwd is a real directory, ensureGsdSymlink preserves it
+      const result = ensureGwdSymlink(base);
+      // When .gwd is a real directory, ensureGwdSymlink preserves it
       assert.deepStrictEqual(result, join(base, ".gwd"), "real .gwd directory preserved");
       assert.ok(lstatSync(join(base, ".gwd")).isDirectory(), ".gwd remains a directory");
 
@@ -113,7 +113,7 @@ describe('symlink-numbered-variants', async () => {
     }
 
     // ── Test: only numeric-suffixed variants are removed ───────────────
-    console.log("\n=== ensureGsdSymlink only removes .gwd + space + digit variants ===");
+    console.log("\n=== ensureGwdSymlink only removes .gwd + space + digit variants ===");
     {
       rmSync(join(base, ".gwd"), { recursive: true, force: true });
 
@@ -125,7 +125,7 @@ describe('symlink-numbered-variants', async () => {
       mkdirSync(join(base, ".gwd 2"), { recursive: true });
       mkdirSync(join(base, ".gwd 10"), { recursive: true });
 
-      ensureGsdSymlink(base);
+      ensureGwdSymlink(base);
 
       assert.ok(existsSync(join(base, ".gwd-backup")), ".gwd-backup is NOT removed");
       assert.ok(existsSync(join(base, ".gwd_old")), ".gwd_old is NOT removed");

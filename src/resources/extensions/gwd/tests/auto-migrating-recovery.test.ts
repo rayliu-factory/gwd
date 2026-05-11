@@ -14,7 +14,7 @@ import { recoverFailedMigration } from "../migrate-external.ts";
 // a leftover `.gwd.migrating` directory before acquiring the session lock.
 
 test("recoverFailedMigration renames .gwd.migrating to .gwd when .gwd is absent", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-migrating-recovery-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-migrating-recovery-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   const migratingPath = join(base, ".gwd.migrating");
@@ -28,7 +28,7 @@ test("recoverFailedMigration renames .gwd.migrating to .gwd when .gwd is absent"
 });
 
 test("recoverFailedMigration returns false when .gwd.migrating is absent (nothing to do)", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-migrating-noop-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-migrating-noop-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   const recovered = recoverFailedMigration(base);
@@ -36,7 +36,7 @@ test("recoverFailedMigration returns false when .gwd.migrating is absent (nothin
 });
 
 test("recoverFailedMigration returns false when both .gwd and .gwd.migrating exist (ambiguous)", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-migrating-ambig-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-migrating-ambig-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   mkdirSync(join(base, ".gwd"), { recursive: true });
@@ -49,7 +49,7 @@ test("recoverFailedMigration returns false when both .gwd and .gwd.migrating exi
 });
 
 test("recoverFailedMigration preserves contents of .gwd.migrating", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-migrating-contents-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-migrating-contents-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   const migratingPath = join(base, ".gwd.migrating");

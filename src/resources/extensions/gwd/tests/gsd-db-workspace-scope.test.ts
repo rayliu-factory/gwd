@@ -1,4 +1,4 @@
-// GWD-2 + gsd-db workspace-scoped connection cache tests
+// GWD-2 + gwd-db workspace-scoped connection cache tests
 
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
@@ -29,8 +29,8 @@ import {
  * Returns the realpath-normalised absolute path.
  */
 function makeProjectDir(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-db-ws-scope-")));
-  // hasGsdBootstrapArtifacts checks for .gwd/milestones or .gwd/PREFERENCES.md
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-db-ws-scope-")));
+  // hasGwdBootstrapArtifacts checks for .gwd/milestones or .gwd/PREFERENCES.md
   mkdirSync(join(dir, ".gwd", "milestones"), { recursive: true });
   return dir;
 }

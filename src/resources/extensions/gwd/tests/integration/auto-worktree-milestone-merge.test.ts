@@ -54,7 +54,7 @@ function createTempRepo(): string {
   return dir;
 }
 
-function createTempRepoWithExternalGsd(): { repo: string; externalState: string } {
+function createTempRepoWithExternalGwd(): { repo: string; externalState: string } {
   const realTmp = realpathSync(tmpdir());
   const repo = realpathSync(mkdtempSync(join(realTmp, "wt-ms-merge-ext-test-")));
   const externalState = realpathSync(mkdtempSync(join(realTmp, "wt-ms-merge-ext-state-")));
@@ -118,8 +118,8 @@ describe("auto-worktree-milestone-merge", { timeout: 300_000 }, () => {
     return d;
   }
 
-  function freshRepoWithExternalGsd(): { repo: string; externalState: string } {
-    const { repo, externalState } = createTempRepoWithExternalGsd();
+  function freshRepoWithExternalGwd(): { repo: string; externalState: string } {
+    const { repo, externalState } = createTempRepoWithExternalGwd();
     tempDirs.push(repo, externalState);
     return { repo, externalState };
   }
@@ -288,7 +288,7 @@ describe("auto-worktree-milestone-merge", { timeout: 300_000 }, () => {
   });
 
   test("external .gwd and local-only auto_push closeout without cleanup or push warnings", () => {
-    const { repo, externalState } = freshRepoWithExternalGsd();
+    const { repo, externalState } = freshRepoWithExternalGwd();
     const previousStderr = setStderrLoggingEnabled(false);
     drainLogs();
 
@@ -738,7 +738,7 @@ describe("auto-worktree-milestone-merge", { timeout: 300_000 }, () => {
   });
 
   test("#2156: mergeMilestoneToMain removes external-state worktrees using the milestone branch name", () => {
-    const { repo, externalState } = freshRepoWithExternalGsd();
+    const { repo, externalState } = freshRepoWithExternalGwd();
     const wtPath = createAutoWorktree(repo, "M215");
 
     addSliceToMilestone(repo, wtPath, "M215", "S01", "External cleanup", [

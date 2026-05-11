@@ -22,7 +22,7 @@ import {
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
 function tempDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "gsd-wt-test-"));
+  return fs.mkdtempSync(path.join(os.tmpdir(), "gwd-wt-test-"));
 }
 
 function seedMainDb(dbPath: string): void {

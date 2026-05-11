@@ -29,9 +29,9 @@ function git(args: string[], cwd: string): void {
 }
 
 function createTempRepo(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-teardown-parity-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-teardown-parity-")));
   git(["init"], dir);
-  git(["config", "user.email", "test@gsd.test"], dir);
+  git(["config", "user.email", "test@gwd.test"], dir);
   git(["config", "user.name", "Test"], dir);
   writeFileSync(join(dir, "README.md"), "# test\n");
   git(["add", "README.md"], dir);

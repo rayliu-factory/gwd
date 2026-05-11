@@ -12,7 +12,7 @@ import { syncWorktreeStateBack } from "../auto-worktree.ts";
 
 describe("syncWorktreeStateBack does not copy worktree milestone projections", () => {
   it("copies root diagnostics but leaves milestone markdown directories behind", () => {
-    const root = mkdtempSync(join(tmpdir(), "gsd-sync-back-"));
+    const root = mkdtempSync(join(tmpdir(), "gwd-sync-back-"));
     const main = join(root, "main");
     const worktree = join(root, "worktree");
     try {

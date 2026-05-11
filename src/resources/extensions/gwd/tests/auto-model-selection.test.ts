@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { resolvePreferredModelConfig, resolveModelId, selectAndApplyModel } from "../auto-model-selection.js";
-import { loadEffectiveGSDPreferences } from "../preferences.js";
+import { loadEffectiveGWDPreferences } from "../preferences.js";
 import {
   clearOllamaAppleSiliconRuntimeSuppressions,
   suppressOllamaAppleSiliconModelForRun,
@@ -20,9 +20,9 @@ function makeTempDir(prefix: string): string {
 
 test("resolvePreferredModelConfig synthesizes heavy routing ceiling when models section is absent", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-routing-project-");
-  const tempGsdHome = makeTempDir("gsd-routing-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-routing-project-");
+  const tempGwdHome = makeTempDir("gwd-routing-home-");
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
@@ -40,7 +40,7 @@ test("resolvePreferredModelConfig synthesizes heavy routing ceiling when models 
       ].join("\n"),
       "utf-8",
     );
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
     const config = resolvePreferredModelConfig("plan-slice", {
@@ -55,18 +55,18 @@ test("resolvePreferredModelConfig synthesizes heavy routing ceiling when models 
     });
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
 test("resolvePreferredModelConfig falls back to auto start model when heavy tier is absent", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-routing-project-");
-  const tempGsdHome = makeTempDir("gsd-routing-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-routing-project-");
+  const tempGwdHome = makeTempDir("gwd-routing-home-");
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
@@ -83,7 +83,7 @@ test("resolvePreferredModelConfig falls back to auto start model when heavy tier
       ].join("\n"),
       "utf-8",
     );
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
     const config = resolvePreferredModelConfig("execute-task", {
@@ -98,18 +98,18 @@ test("resolvePreferredModelConfig falls back to auto start model when heavy tier
     });
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
 test("resolvePreferredModelConfig keeps explicit phase models as the ceiling", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-routing-project-");
-  const tempGsdHome = makeTempDir("gsd-routing-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-routing-project-");
+  const tempGwdHome = makeTempDir("gwd-routing-home-");
 
   try {
     mkdirSync(join(tempProject, ".gwd"), { recursive: true });
@@ -127,7 +127,7 @@ test("resolvePreferredModelConfig keeps explicit phase models as the ceiling", (
       ].join("\n"),
       "utf-8",
     );
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
     const config = resolvePreferredModelConfig("plan-slice", {
@@ -142,18 +142,18 @@ test("resolvePreferredModelConfig keeps explicit phase models as the ceiling", (
     });
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
 test("selectAndApplyModel honors explicit phase models without downgrading (#3617)", async () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-routing-project-");
-  const tempGsdHome = makeTempDir("gsd-routing-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-routing-project-");
+  const tempGwdHome = makeTempDir("gwd-routing-home-");
   const setModelCalls: string[] = [];
   let beforeModelSelectCalled = false;
 
@@ -175,7 +175,7 @@ test("selectAndApplyModel honors explicit phase models without downgrading (#361
       ].join("\n"),
       "utf-8",
     );
-    process.env.GWD_HOME = tempGsdHome;
+    process.env.GWD_HOME = tempGwdHome;
     process.chdir(tempProject);
 
     const availableModels = [
@@ -221,27 +221,27 @@ test("selectAndApplyModel honors explicit phase models without downgrading (#361
     assert.equal(result.appliedModel?.id, "claude-opus-4-6");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   }
 });
 
 test("selectAndApplyModel escalates dynamic routing tier when retry metadata is provided", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-routing-retry-project-");
-  const tempGsdHome = makeTempDir("gsd-routing-retry-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-routing-retry-project-");
+  const tempGwdHome = makeTempDir("gwd-routing-retry-home-");
   const setModelCalls: string[] = [];
   const notifications: Array<{ message: string; level: string }> = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
   mkdirSync(join(tempProject, ".gwd"), { recursive: true });
@@ -261,7 +261,7 @@ test("selectAndApplyModel escalates dynamic routing tier when retry metadata is 
     ].join("\n"),
     "utf-8",
   );
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   const availableModels = [
@@ -368,7 +368,7 @@ test("resolveModelId: bare ID with claude-code as only provider still resolves",
 
 test("model change notify in selectAndApplyModel is gated behind verbose flag", async (t) => {
   const originalCwd = process.cwd();
-  const tempProject = makeTempDir("gsd-routing-verbose-project-");
+  const tempProject = makeTempDir("gwd-routing-verbose-project-");
   const notifications: Array<{ message: string; level: string }> = [];
   t.after(() => {
     process.chdir(originalCwd);
@@ -412,7 +412,7 @@ test("model change notify in selectAndApplyModel is gated behind verbose flag", 
 
 test("selectAndApplyModel re-applies captured thinking level after setModel success", async (t) => {
   const originalCwd = process.cwd();
-  const tempProject = makeTempDir("gsd-routing-thinking-project-");
+  const tempProject = makeTempDir("gwd-routing-thinking-project-");
   const thinkingLevels: unknown[] = [];
   t.after(() => {
     process.chdir(originalCwd);
@@ -459,22 +459,22 @@ test("selectAndApplyModel re-applies captured thinking level after setModel succ
 
 test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for standard work", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: string[] = [];
   const notifications: Array<{ message: string; level: string }> = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
   mkdirSync(join(tempProject, ".gwd"), { recursive: true });
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   const availableModels = [
@@ -517,21 +517,21 @@ test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for standar
 
 test("selectAndApplyModel keeps Ollama Apple profile routing enabled under burn-max for standard work", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: string[] = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
   mkdirSync(join(tempProject, ".gwd"), { recursive: true });
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   const availableModels = [
@@ -573,17 +573,17 @@ test("selectAndApplyModel keeps Ollama Apple profile routing enabled under burn-
 
 test("selectAndApplyModel keeps Ollama Apple profile routing with effective burn-max preferences", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: string[] = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
   mkdirSync(join(tempProject, ".gwd"), { recursive: true });
@@ -592,10 +592,10 @@ test("selectAndApplyModel keeps Ollama Apple profile routing with effective burn
     ["---", "token_profile: burn-max", "---"].join("\n"),
     "utf-8",
   );
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
-  const prefs = loadEffectiveGSDPreferences(tempProject)?.preferences;
+  const prefs = loadEffectiveGWDPreferences(tempProject)?.preferences;
   assert.equal(prefs?.dynamic_routing?.enabled, false);
 
   const availableModels = [
@@ -637,21 +637,21 @@ test("selectAndApplyModel keeps Ollama Apple profile routing with effective burn
 
 test("selectAndApplyModel applies context_window_override to Ollama Qwen request options", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: Array<{ model: any; options: unknown }> = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
   mkdirSync(join(tempProject, ".gwd"), { recursive: true });
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   const availableModels = [
@@ -705,21 +705,21 @@ test("selectAndApplyModel applies context_window_override to Ollama Qwen request
 
 test("selectAndApplyModel applies context_window_override to pinned Ollama Qwen start model", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: Array<{ model: any; options: unknown }> = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
   mkdirSync(join(tempProject, ".gwd"), { recursive: true });
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   const startModel = {
@@ -765,21 +765,21 @@ test("selectAndApplyModel applies context_window_override to pinned Ollama Qwen 
 
 test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for heavy work", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: string[] = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
   mkdirSync(join(tempProject, ".gwd"), { recursive: true });
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   const availableModels = [
@@ -821,22 +821,22 @@ test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for heavy w
 
 test("selectAndApplyModel falls back to 27B for heavy work when 35B tag is missing", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: string[] = [];
   const notifications: string[] = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
   mkdirSync(join(tempProject, ".gwd"), { recursive: true });
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   const result = await selectAndApplyModel(
@@ -875,23 +875,23 @@ test("selectAndApplyModel falls back to 27B for heavy work when 35B is suppresse
   clearOllamaAppleSiliconRuntimeSuppressions();
   suppressOllamaAppleSiliconModelForRun("ollama", "qwen3.6:35b-a3b-coding-nvfp4");
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: string[] = [];
   const notifications: string[] = [];
 
   t.after(() => {
     clearOllamaAppleSiliconRuntimeSuppressions();
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
   mkdirSync(join(tempProject, ".gwd"), { recursive: true });
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   const result = await selectAndApplyModel(
@@ -932,17 +932,17 @@ test("selectAndApplyModel falls back to 27B for heavy work when 35B is suppresse
 
 test("selectAndApplyModel does not synthesize Ollama Apple profile when dynamic_routing is explicit", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: string[] = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
   mkdirSync(join(tempProject, ".gwd"), { recursive: true });
@@ -951,7 +951,7 @@ test("selectAndApplyModel does not synthesize Ollama Apple profile when dynamic_
     ["---", "dynamic_routing:", "  enabled: false", "---"].join("\n"),
     "utf-8",
   );
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   await selectAndApplyModel(

@@ -1,8 +1,8 @@
 /**
- * GSD-2 Docker runtime e2e smoke.
+ * GWD-2 Docker runtime e2e smoke.
  *
  * Builds the `runtime-local` Dockerfile target from the *current source*
- * (via `npm pack` → COPY into the image) and runs `gsd --version` inside
+ * (via `npm pack` → COPY into the image) and runs `gwd --version` inside
  * the resulting container. Catches regressions where the published image
  * would refuse to start: missing system deps (git), broken postinstall,
  * platform-specific native binding failures, missing files in the npm
@@ -114,7 +114,7 @@ describe("docker runtime e2e", () => {
 		: "docker not available (set up Docker Desktop or run in CI to exercise this suite)";
 
 	test(
-		"`gsd --version` inside runtime-local container exits 0 with semver",
+		"`gwd --version` inside runtime-local container exits 0 with semver",
 		{ skip: skipReason ?? false, timeout: 900_000 },
 		(t) => {
 			const packed = packToRoot();

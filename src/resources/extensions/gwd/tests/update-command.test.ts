@@ -35,10 +35,10 @@ test("/gwd update appears in subcommand completions", () => {
   const pi = createMockPi();
   registerGWDCommand(pi as any);
 
-  const gsd = pi.commands.get("gwd");
-  assert.ok(gsd, "registerGWDCommand should register /gwd");
+  const gwd = pi.commands.get("gwd");
+  assert.ok(gwd, "registerGWDCommand should register /gwd");
 
-  const completions = gsd.getArgumentCompletions("update");
+  const completions = gwd.getArgumentCompletions("update");
   const updateEntry = completions.find((c: any) => c.value === "update");
   assert.ok(updateEntry, "update should appear in completions");
   assert.equal(updateEntry.label, "update");
@@ -48,16 +48,16 @@ test("/gwd update appears in help description", () => {
   const pi = createMockPi();
   registerGWDCommand(pi as any);
 
-  const gsd = pi.commands.get("gwd");
-  assert.ok(gsd?.description?.includes("update"), "description should mention update");
+  const gwd = pi.commands.get("gwd");
+  assert.ok(gwd?.description?.includes("update"), "description should mention update");
 });
 
 test("/gwd update is listed in completions with correct description", () => {
   const pi = createMockPi();
   registerGWDCommand(pi as any);
 
-  const gsd = pi.commands.get("gwd");
-  const completions = gsd.getArgumentCompletions("");
+  const gwd = pi.commands.get("gwd");
+  const completions = gwd.getArgumentCompletions("");
   const updateEntry = completions.find((c: any) => c.value === "update");
   assert.ok(updateEntry, "update should appear in full completion list");
   assert.ok(
@@ -70,8 +70,8 @@ test("/gwd codebase appears in top-level completions", () => {
   const pi = createMockPi();
   registerGWDCommand(pi as any);
 
-  const gsd = pi.commands.get("gwd");
-  const completions = gsd.getArgumentCompletions("code");
+  const gwd = pi.commands.get("gwd");
+  const completions = gwd.getArgumentCompletions("code");
   const codebaseEntry = completions.find((c: any) => c.value === "codebase");
   assert.ok(codebaseEntry, "codebase should appear in completions");
   assert.match(codebaseEntry.description, /codebase map cache/i);
@@ -81,6 +81,6 @@ test("/gwd codebase appears in help description", () => {
   const pi = createMockPi();
   registerGWDCommand(pi as any);
 
-  const gsd = pi.commands.get("gwd");
-  assert.ok(gsd?.description?.includes("codebase"), "description should mention codebase");
+  const gwd = pi.commands.get("gwd");
+  assert.ok(gwd?.description?.includes("codebase"), "description should mention codebase");
 });

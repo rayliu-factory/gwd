@@ -1,4 +1,4 @@
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Tests for the long-running refactor baseline metrics harness.
 
 import assert from "node:assert/strict";
@@ -346,7 +346,7 @@ test("hasProcessDocConflict flags obsolete state-authority language", () => {
   assert.equal(hasProcessDocConflict("DB is authoritative; markdown is a projection."), false);
   assert.equal(hasProcessDocConflict("Markdown files are the authoritative runtime state."), true);
   assert.equal(hasProcessDocConflict("The filesystem-authoritative model owns status."), true);
-  assert.equal(hasProcessDocConflict(".gsd/ROADMAP.md is the source of truth."), true);
+  assert.equal(hasProcessDocConflict(".gwd/ROADMAP.md is the source of truth."), true);
 });
 
 test("renderSummary includes key sections for human inspection", async () => {
@@ -356,7 +356,7 @@ test("renderSummary includes key sections for human inspection", async () => {
   const report = await collectBaseline(root);
   const summary = renderSummary(report);
 
-  assert.match(summary, /GSD-2 Refactor Baseline/);
+  assert.match(summary, /GWD-2 Refactor Baseline/);
   assert.match(summary, /Schema version: 1/);
   assert.match(summary, /Prompt metrics/);
   assert.match(summary, /dist-test metrics/);
@@ -392,7 +392,7 @@ test("writeJsonFile creates parent directories and writes parseable JSON", async
 });
 
 async function makeFixtureRoot(): Promise<string> {
-  const root = await mkdtemp(join(tmpdir(), "gsd-refactor-baseline-"));
+  const root = await mkdtemp(join(tmpdir(), "gwd-refactor-baseline-"));
   await mkdir(join(root, "src/resources/extensions/gwd/prompts"), { recursive: true });
   await mkdir(join(root, "src/tests/fixtures"), { recursive: true });
   return root;
@@ -432,7 +432,7 @@ async function writeContractsSurfaceFixtures(root: string): Promise<void> {
     "packages/mcp-server/src/types.ts",
     "src/web/bridge-service.ts",
     "web/lib/gwd-workspace-store.tsx",
-    "vscode-extension/src/gsd-client.ts",
+    "vscode-extension/src/gwd-client.ts",
   ];
   for (const file of files) {
     await mkdir(dirname(join(root, file)), { recursive: true });

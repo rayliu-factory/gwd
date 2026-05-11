@@ -49,7 +49,7 @@ function assertSelfMergeRefIsRejected(recordedIntegrationBranch: string): void {
   // Isolate from user's global preferences so prefs.main_branch can't
   // override the corrupt-metadata path under test.
   const originalHome = process.env.HOME;
-  const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-fake-home-")));
+  const fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gwd-fake-home-")));
   process.env.HOME = fakeHome;
   _clearGwdRootCache();
   _resetServiceCache();

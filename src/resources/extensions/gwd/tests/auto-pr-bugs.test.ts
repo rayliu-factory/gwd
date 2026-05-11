@@ -18,7 +18,7 @@ function makeTempDir(prefix: string): string {
 }
 
 test("#2302 createDraftPR passes head and base branch parameters to gh", (t) => {
-  const dir = makeTempDir("gsd-auto-pr-");
+  const dir = makeTempDir("gwd-auto-pr-");
   const bin = join(dir, "bin");
   const logPath = join(dir, "gh-args.json");
   t.after(() => rmSync(dir, { recursive: true, force: true }));

@@ -41,13 +41,13 @@ describe('requirements', () => {
     assert.deepStrictEqual(counts.blocked, 1, "counts blocked statuses");
   });
 
-  const base = mkdtempSync(join(tmpdir(), "gsd-requirements-test-"));
-  const gsd = join(base, ".gwd");
-  const mDir = join(gsd, "milestones", "M001");
+  const base = mkdtempSync(join(tmpdir(), "gwd-requirements-test-"));
+  const gwd = join(base, ".gwd");
+  const mDir = join(gwd, "milestones", "M001");
   const sDir = join(mDir, "slices", "S01");
   const tDir = join(sDir, "tasks");
   mkdirSync(tDir, { recursive: true });
-  writeFileSync(join(gsd, "REQUIREMENTS.md"), [
+  writeFileSync(join(gwd, "REQUIREMENTS.md"), [
     "# Requirements",
     "## Active",
     "### R001 — Missing owner",

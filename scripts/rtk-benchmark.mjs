@@ -29,7 +29,7 @@ function createFixture(projectDir) {
   mkdirSync(join(projectDir, 'src', 'components'), { recursive: true })
 
   writeFileSync(join(projectDir, 'package.json'), JSON.stringify({
-    name: 'gsd-rtk-benchmark',
+    name: 'gwd-rtk-benchmark',
     version: '1.0.0',
     scripts: {
       test: 'node test.js',
@@ -114,7 +114,7 @@ function main() {
     throw new Error('RTK binary path not resolved')
   }
 
-  const workspace = mkdtempSync(join(tmpdir(), 'gsd-rtk-benchmark-'))
+  const workspace = mkdtempSync(join(tmpdir(), 'gwd-rtk-benchmark-'))
   const homeDir = join(workspace, 'home')
   const projectDir = join(workspace, 'project')
   mkdirSync(homeDir, { recursive: true })

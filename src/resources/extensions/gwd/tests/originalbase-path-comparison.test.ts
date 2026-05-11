@@ -172,7 +172,7 @@ function makeDeps(overrides?: Partial<LegacyTestDeps>): LegacyTestDeps & { calls
     GitServiceImpl: class {
       constructor(_basePath: string, _gitConfig: unknown) {}
     } as unknown as LegacyTestDeps["GitServiceImpl"],
-    loadEffectiveGSDPreferences: () => ({ preferences: { git: {} } }),
+    loadEffectiveGWDPreferences: () => ({ preferences: { git: {} } }),
     invalidateAllCaches: () => { calls.push({ fn: "invalidateAllCaches", args: [] }); },
     captureIntegrationBranch: (_basePath: string, _mid: string | undefined) => {},
     enterBranchModeForMilestone: (_basePath: string, _milestoneId: string) => {},

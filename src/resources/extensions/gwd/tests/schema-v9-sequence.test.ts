@@ -17,7 +17,7 @@ import {
 } from '../gwd-db.ts';
 
 function makeTmp(): string {
-  return mkdtempSync(join(tmpdir(), 'gsd-v9-'));
+  return mkdtempSync(join(tmpdir(), 'gwd-v9-'));
 }
 
 function cleanup(base: string): void {

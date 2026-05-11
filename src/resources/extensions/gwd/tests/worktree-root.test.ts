@@ -8,7 +8,7 @@ import { resolveWorktreeProjectRoot } from "../worktree-root.ts";
 
 test("resolveWorktreeProjectRoot: explicit non-worktree cwd beats stale GWD_PROJECT_ROOT", (t) => {
   const previous = process.env.GWD_PROJECT_ROOT;
-  const dir = mkdtempSync(join(tmpdir(), "gsd-root-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-root-"));
   const projectDir = join(dir, "project");
   mkdirSync(projectDir);
   process.env.GWD_PROJECT_ROOT = "/Users/example";
@@ -27,7 +27,7 @@ test("resolveWorktreeProjectRoot: explicit non-worktree cwd beats stale GWD_PROJ
 
 test("resolveWorktreeProjectRoot: external GWD home is not treated as a project root", (t) => {
   const previous = process.env.GWD_HOME;
-  const dir = mkdtempSync(join(tmpdir(), "gsd-root-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-root-"));
   const fakeHome = join(dir, "home");
   const projectDir = join(fakeHome, "work", "project");
   mkdirSync(join(fakeHome, ".gwd"), { recursive: true });
@@ -50,7 +50,7 @@ test("resolveWorktreeProjectRoot: external GWD home is not treated as a project 
 
 test("resolveWorktreeProjectRoot: GWD_PROJECT_ROOT still anchors auto-worktree paths", (t) => {
   const previous = process.env.GWD_PROJECT_ROOT;
-  const dir = mkdtempSync(join(tmpdir(), "gsd-root-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-root-"));
   const projectDir = join(dir, "project");
   const worktreeDir = join(projectDir, ".gwd", "worktrees", "M001");
   mkdirSync(worktreeDir, { recursive: true });

@@ -12,11 +12,11 @@ function git(cwd: string, args: string[]): void {
 }
 
 test("quick task commit instruction does not ask agents to stage external .gwd quick files", { skip: process.platform === "win32" }, () => {
-  const tempRoot = realpathSync(mkdtempSync(join(tmpdir(), "gsd-quick-ext-")));
+  const tempRoot = realpathSync(mkdtempSync(join(tmpdir(), "gwd-quick-ext-")));
   const repo = join(tempRoot, "repo");
-  const externalGsd = join(tempRoot, "state");
+  const externalGwd = join(tempRoot, "state");
   mkdirSync(repo);
-  mkdirSync(externalGsd);
+  mkdirSync(externalGwd);
 
   const previousCwd = process.cwd();
   try {
@@ -26,7 +26,7 @@ test("quick task commit instruction does not ask agents to stage external .gwd q
     writeFileSync(join(repo, "README.md"), "# Test\n", "utf-8");
     git(repo, ["add", "README.md"]);
     git(repo, ["commit", "-m", "init"]);
-    symlinkSync(externalGsd, join(repo, ".gwd"), "dir");
+    symlinkSync(externalGwd, join(repo, ".gwd"), "dir");
 
     const instruction = buildQuickCommitInstruction(repo, join(repo, ".gwd"));
 

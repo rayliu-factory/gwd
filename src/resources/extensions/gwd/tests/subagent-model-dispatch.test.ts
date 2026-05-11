@@ -14,10 +14,10 @@ import {
 } from "../auto-prompts.ts";
 
 function writeReactiveFixture(repo: string): void {
-  const gsd = join(repo, ".gwd", "milestones", "M001", "slices", "S01");
-  mkdirSync(join(gsd, "tasks"), { recursive: true });
+  const gwd = join(repo, ".gwd", "milestones", "M001", "slices", "S01");
+  mkdirSync(join(gwd, "tasks"), { recursive: true });
   writeFileSync(
-    join(gsd, "S01-PLAN.md"),
+    join(gwd, "S01-PLAN.md"),
     [
       "# S01: Test Slice",
       "",
@@ -32,7 +32,7 @@ function writeReactiveFixture(repo: string): void {
     ].join("\n"),
   );
   writeFileSync(
-    join(gsd, "tasks", "T01-PLAN.md"),
+    join(gwd, "tasks", "T01-PLAN.md"),
     [
       "# T01: Task One",
       "",
@@ -76,7 +76,7 @@ test("reactive_execution subagent_model rejects empty string", () => {
 });
 
 test("buildReactiveExecutePrompt injects subagent model when provided", async (t) => {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-subagent-model-reactive-"));
+  const repo = mkdtempSync(join(tmpdir(), "gwd-subagent-model-reactive-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
   writeReactiveFixture(repo);
 
@@ -96,7 +96,7 @@ test("buildReactiveExecutePrompt injects subagent model when provided", async (t
 });
 
 test("buildReactiveExecutePrompt omits model instruction when subagentModel is omitted", async (t) => {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-subagent-model-none-"));
+  const repo = mkdtempSync(join(tmpdir(), "gwd-subagent-model-none-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
   writeReactiveFixture(repo);
 
@@ -113,7 +113,7 @@ test("buildReactiveExecutePrompt omits model instruction when subagentModel is o
 });
 
 test("buildParallelResearchSlicesPrompt injects subagent model for each slice", async (t) => {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-subagent-model-parallel-"));
+  const repo = mkdtempSync(join(tmpdir(), "gwd-subagent-model-parallel-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
   mkdirSync(join(repo, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
 
@@ -130,7 +130,7 @@ test("buildParallelResearchSlicesPrompt injects subagent model for each slice", 
 
 test("buildGateEvaluatePrompt uses nested context guidance and model instruction", async (t) => {
   const { closeDatabase, insertGateRow, insertMilestone, insertSlice, openDatabase } = await import("../gwd-db.ts");
-  const repo = mkdtempSync(join(tmpdir(), "gsd-subagent-model-gate-"));
+  const repo = mkdtempSync(join(tmpdir(), "gwd-subagent-model-gate-"));
   t.after(() => {
     try { closeDatabase(); } catch { /* noop */ }
     rmSync(repo, { recursive: true, force: true });

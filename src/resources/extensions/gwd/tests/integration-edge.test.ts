@@ -48,7 +48,7 @@ function generateDecisionsMarkdown(count: number): string {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('integration-edge: empty project', () => {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-int-edge-empty-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-int-edge-empty-'));
   const gsdDir = join(base, '.gwd');
   mkdirSync(gsdDir, { recursive: true });
 
@@ -105,7 +105,7 @@ test('integration-edge: empty project', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('integration-edge: partial migration', () => {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-int-edge-partial-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-int-edge-partial-'));
   const gsdDir = join(base, '.gwd');
   mkdirSync(gsdDir, { recursive: true });
 
@@ -159,7 +159,7 @@ test('integration-edge: partial migration', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('integration-edge: fallback mode', () => {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-int-edge-fallback-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-int-edge-fallback-'));
   const gsdDir = join(base, '.gwd');
   mkdirSync(gsdDir, { recursive: true });
 

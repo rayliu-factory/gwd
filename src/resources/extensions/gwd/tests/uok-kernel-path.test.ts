@@ -12,16 +12,16 @@ import { runAutoLoopWithUok } from "../uok/kernel.ts";
 import type { AutoSession } from "../auto/session.ts";
 import type { LoopDeps } from "../auto/loop-deps.ts";
 import { gsdRoot } from "../paths.ts";
-import type { GSDPreferences } from "../preferences.ts";
+import type { GWDPreferences } from "../preferences.ts";
 import { getLegacyTelemetry, resetLegacyTelemetry } from "../legacy-telemetry.ts";
 
 function makeBasePath(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-uok-kernel-"));
+  return mkdtempSync(join(tmpdir(), "gwd-uok-kernel-"));
 }
 
 function makeArgs(
   basePath: string,
-  preferences: GSDPreferences | undefined,
+  preferences: GWDPreferences | undefined,
 ): {
   ctx: ExtensionContext;
   pi: ExtensionAPI;
@@ -65,7 +65,7 @@ function makeArgs(
       autoStartTime: 1,
     } as unknown as AutoSession,
     deps: {
-      loadEffectiveGSDPreferences: () => ({ preferences }),
+      loadEffectiveGWDPreferences: () => ({ preferences }),
     } as unknown as LoopDeps,
     runKernelLoop: async (_ctx, _pi, _s, loopDeps): Promise<void> => {
       calls.kernel += 1;

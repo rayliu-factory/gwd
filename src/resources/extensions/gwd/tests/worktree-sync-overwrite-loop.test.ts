@@ -28,7 +28,7 @@ import { tmpdir } from "node:os";
 import { syncProjectRootToWorktree } from "../auto-worktree.ts";
 
 function createBase(name: string): string {
-  const base = mkdtempSync(join(tmpdir(), `gsd-wt-1886-${name}-`));
+  const base = mkdtempSync(join(tmpdir(), `gwd-wt-1886-${name}-`));
   mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
   return base;
 }

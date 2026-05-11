@@ -9,7 +9,7 @@ import { handleLogs } from "../commands-logs.ts";
 // ─── Test helpers ───────────────────────────────────────────────────────────
 
 function createTestDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-logs-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-logs-test-"));
   mkdirSync(join(dir, ".gwd", "activity"), { recursive: true });
   mkdirSync(join(dir, ".gwd", "debug"), { recursive: true });
   return dir;

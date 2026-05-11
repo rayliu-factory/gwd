@@ -12,7 +12,7 @@ import type { Override } from '../files.ts';
 const tempDirs: string[] = [];
 
 function makeTempDir(prefix: string): string {
-  const dir = mkdtempSync(join(tmpdir(), `gsd-overrides-test-${prefix}-`));
+  const dir = mkdtempSync(join(tmpdir(), `gwd-overrides-test-${prefix}-`));
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   tempDirs.push(dir);
   return dir;

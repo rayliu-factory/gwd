@@ -1,4 +1,4 @@
-// GWD-2 + gsd-db failed-open restore: previous workspace connection survives a failed openDatabaseByWorkspace
+// GWD-2 + gwd-db failed-open restore: previous workspace connection survives a failed openDatabaseByWorkspace
 
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
@@ -15,7 +15,7 @@ import {
   _getDbCache,
 } from "../gwd-db.ts";
 import { createWorkspace } from "../workspace.ts";
-import type { GsdWorkspace } from "../workspace.ts";
+import type { GwdWorkspace } from "../workspace.ts";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -31,8 +31,8 @@ describe("openDatabaseByWorkspace: restores previous connection on failure", () 
   let tmpB: string;
 
   beforeEach(() => {
-    tmpA = mkdtempSync(join(tmpdir(), "gsd-db-restore-a-"));
-    tmpB = mkdtempSync(join(tmpdir(), "gsd-db-restore-b-"));
+    tmpA = mkdtempSync(join(tmpdir(), "gwd-db-restore-a-"));
+    tmpB = mkdtempSync(join(tmpdir(), "gwd-db-restore-b-"));
     makeProjectDir(tmpA);
     makeProjectDir(tmpB);
   });
@@ -54,22 +54,22 @@ describe("openDatabaseByWorkspace: restores previous connection on failure", () 
     assert.ok(pathAfterA, "should have a DB path after opening A");
 
     // Attempt to open a workspace pointing to a completely non-existent directory
-    // ("/does-not-exist-gsd-test" cannot be created), which will cause openDatabase to throw.
+    // ("/does-not-exist-gwd-test" cannot be created), which will cause openDatabase to throw.
     const fakeWs = {
       identityKey: "fake-key-that-does-not-exist",
-      projectRoot: "/does-not-exist-gsd-test-ws-restore",
+      projectRoot: "/does-not-exist-gwd-test-ws-restore",
       worktreeRoot: null,
       mode: "project" as const,
       contract: {
-        projectRoot: "/does-not-exist-gsd-test-ws-restore",
-        workRoot: "/does-not-exist-gsd-test-ws-restore",
-        projectGwd: "/does-not-exist-gsd-test-ws-restore/.gwd",
-        projectDb: "/does-not-exist-gsd-test-ws-restore/.gwd/does-not-exist.db",
+        projectRoot: "/does-not-exist-gwd-test-ws-restore",
+        workRoot: "/does-not-exist-gwd-test-ws-restore",
+        projectGwd: "/does-not-exist-gwd-test-ws-restore/.gwd",
+        projectDb: "/does-not-exist-gwd-test-ws-restore/.gwd/does-not-exist.db",
         worktreeGwd: null,
         isWorktree: false,
       },
-      lockRoot: "/does-not-exist-gsd-test-ws-restore",
-    } satisfies GsdWorkspace;
+      lockRoot: "/does-not-exist-gwd-test-ws-restore",
+    } satisfies GwdWorkspace;
 
     // This should throw because the path is invalid
     assert.throws(
@@ -89,19 +89,19 @@ describe("openDatabaseByWorkspace: restores previous connection on failure", () 
 
     const fakeWs = {
       identityKey: "fake-key-cache-test",
-      projectRoot: "/does-not-exist-gsd-cache-test",
+      projectRoot: "/does-not-exist-gwd-cache-test",
       worktreeRoot: null,
       mode: "project" as const,
       contract: {
-        projectRoot: "/does-not-exist-gsd-cache-test",
-        workRoot: "/does-not-exist-gsd-cache-test",
-        projectGwd: "/does-not-exist-gsd-cache-test/.gwd",
-        projectDb: "/does-not-exist-gsd-cache-test/.gwd/no.db",
+        projectRoot: "/does-not-exist-gwd-cache-test",
+        workRoot: "/does-not-exist-gwd-cache-test",
+        projectGwd: "/does-not-exist-gwd-cache-test/.gwd",
+        projectDb: "/does-not-exist-gwd-cache-test/.gwd/no.db",
         worktreeGwd: null,
         isWorktree: false,
       },
-      lockRoot: "/does-not-exist-gsd-cache-test",
-    } satisfies GsdWorkspace;
+      lockRoot: "/does-not-exist-gwd-cache-test",
+    } satisfies GwdWorkspace;
 
     assert.throws(() => openDatabaseByWorkspace(fakeWs));
 

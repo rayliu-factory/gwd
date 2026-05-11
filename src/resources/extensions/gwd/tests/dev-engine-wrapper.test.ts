@@ -78,7 +78,7 @@ describe("DevWorkflowEngine", () => {
     const engine = new DevWorkflowEngine();
 
     // Create a minimal temp .gwd structure for deriveState
-    const tempDir = mkdtempSync(join(tmpdir(), "gsd-engine-test-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "gwd-engine-test-"));
     mkdirSync(join(tempDir, ".gwd", "milestones"), { recursive: true });
 
     t.after(() => rmSync(tempDir, { recursive: true, force: true }));

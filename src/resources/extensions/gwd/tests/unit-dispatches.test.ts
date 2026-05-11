@@ -27,7 +27,7 @@ import {
 } from "../db/unit-dispatches.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-dispatches-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-dispatches-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

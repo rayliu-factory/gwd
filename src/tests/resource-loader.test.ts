@@ -44,22 +44,22 @@ test("getExtensionKey normalizes top-level .ts and .js entry names to the same k
     "ask-user-questions",
   );
   assert.equal(
-    getExtensionKey("/tmp/extensions/gsd/index.js", extensionsDir),
-    "gsd",
+    getExtensionKey("/tmp/extensions/gwd/index.js", extensionsDir),
+    "gwd",
   );
 });
 
 test("hasStaleCompiledExtensionSiblings detects installed format drift against the bundled root", async (t) => {
   const { hasStaleCompiledExtensionSiblings } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-resource-loader-"));
   const extensionsDir = join(tmp, "extensions");
   const bundledDir = join(tmp, "bundled");
 
   t.after(() => { rmSync(tmp, { recursive: true, force: true }); });
 
   mkdirSync(bundledDir, { recursive: true });
-  mkdirSync(join(extensionsDir, "gsd"), { recursive: true });
-  writeFileSync(join(extensionsDir, "gsd", "index.ts"), "export {};\n");
+  mkdirSync(join(extensionsDir, "gwd"), { recursive: true });
+  writeFileSync(join(extensionsDir, "gwd", "index.ts"), "export {};\n");
   assert.equal(hasStaleCompiledExtensionSiblings(extensionsDir, bundledDir), false);
 
   writeFileSync(join(bundledDir, "ask-user-questions.js"), "export {};\n");
@@ -75,19 +75,19 @@ test("hasStaleCompiledExtensionSiblings detects installed format drift against t
 
 test("hasStaleCompiledExtensionSiblings detects nested bundled extension format drift", async (t) => {
   const { hasStaleCompiledExtensionSiblings } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-nested-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-resource-loader-nested-"));
   const extensionsDir = join(tmp, "extensions");
   const bundledDir = join(tmp, "bundled");
 
   t.after(() => { rmSync(tmp, { recursive: true, force: true }); });
 
-  mkdirSync(join(extensionsDir, "gsd", "auto"), { recursive: true });
-  mkdirSync(join(bundledDir, "gsd", "auto"), { recursive: true });
+  mkdirSync(join(extensionsDir, "gwd", "auto"), { recursive: true });
+  mkdirSync(join(bundledDir, "gwd", "auto"), { recursive: true });
 
-  writeFileSync(join(extensionsDir, "gsd", "index.ts"), "export {};\n");
-  writeFileSync(join(extensionsDir, "gsd", "auto", "phases.ts"), "export {};\n");
-  writeFileSync(join(bundledDir, "gsd", "index.js"), "export {};\n");
-  writeFileSync(join(bundledDir, "gsd", "auto", "phases.js"), "export {};\n");
+  writeFileSync(join(extensionsDir, "gwd", "index.ts"), "export {};\n");
+  writeFileSync(join(extensionsDir, "gwd", "auto", "phases.ts"), "export {};\n");
+  writeFileSync(join(bundledDir, "gwd", "index.js"), "export {};\n");
+  writeFileSync(join(bundledDir, "gwd", "auto", "phases.js"), "export {};\n");
 
   assert.equal(
     hasStaleCompiledExtensionSiblings(extensionsDir, bundledDir),
@@ -97,7 +97,7 @@ test("hasStaleCompiledExtensionSiblings detects nested bundled extension format 
 });
 
 test("buildResourceLoader excludes duplicate top-level pi extensions when bundled resources use .js", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-home-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-resource-loader-home-"));
   const piExtensionsDir = join(tmp, ".pi", "agent", "extensions");
   const fakeAgentDir = join(tmp, ".gwd", "agent");
   const restoreHomeEnv = overrideHomeEnv(tmp);
@@ -128,7 +128,7 @@ test("buildResourceLoader excludes duplicate top-level pi extensions when bundle
 });
 
 test("buildResourceLoader includes caller-provided additional extension paths", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-cli-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-resource-loader-cli-"));
   const fakeAgentDir = join(tmp, ".gwd", "agent");
   const cliExtensionPath = join(tmp, "cli-extension.ts");
   const restoreHomeEnv = overrideHomeEnv(tmp);
@@ -155,7 +155,7 @@ test("buildResourceLoader includes caller-provided additional extension paths", 
 
 test("initResources manifest tracks all bundled extension subdirectories including remote-questions (#2367)", async () => {
   const { initResources } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-manifest-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-resource-loader-manifest-"));
   const fakeAgentDir = join(tmp, "agent");
 
   try {
@@ -188,7 +188,7 @@ test("initResources manifest tracks all bundled extension subdirectories includi
 
 test("initResources prunes stale top-level extension siblings next to bundled compiled extensions", async (t) => {
   const { initResources } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-sync-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-resource-loader-sync-"));
   const fakeAgentDir = join(tmp, "agent");
   const bundledTsPath = join(fakeAgentDir, "extensions", "ask-user-questions.ts");
   const bundledJsPath = join(fakeAgentDir, "extensions", "ask-user-questions.js");
@@ -232,14 +232,14 @@ test("initResources prunes stale top-level extension siblings next to bundled co
 
 test("pruneRemovedBundledExtensions removes stale subdirectory extensions not in current bundle", async () => {
   const { initResources } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-prune-dirs-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-resource-loader-prune-dirs-"));
   const fakeAgentDir = join(tmp, "agent");
 
   try {
     // First sync — seeds the agent dir and writes the manifest.
     initResources(fakeAgentDir, join(tmp, "skills"));
 
-    // Simulate a stale subdirectory extension left from a previous GSD version.
+    // Simulate a stale subdirectory extension left from a previous GWD version.
     // This mirrors the mcporter scenario: it was bundled before, synced to
     // ~/.gwd/agent/extensions/, then removed from the bundle in a newer version.
     const staleExtDir = join(fakeAgentDir, "extensions", "mcporter");
@@ -258,8 +258,8 @@ test("pruneRemovedBundledExtensions removes stale subdirectory extensions not in
       "manifest should contain installedExtensionDirs array",
     );
 
-    // Bump the manifest version to force a re-sync (simulates upgrading GSD).
-    manifest.gsdVersion = "0.0.0-force-resync";
+    // Bump the manifest version to force a re-sync (simulates upgrading GWD).
+    manifest.gwdVersion = "0.0.0-force-resync";
     manifest.contentHash = "0000000000000000";
     writeFileSync(manifestPath, JSON.stringify(manifest));
 

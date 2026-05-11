@@ -57,7 +57,7 @@ function mkPi(cap: MockCapture, opts: { sendThrows?: boolean } = {}): any {
 }
 
 function mkBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-4573-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-4573-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   return base;
 }

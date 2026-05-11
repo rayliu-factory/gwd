@@ -126,7 +126,7 @@ function parseMap(mapPath) {
     const rawPath = cols[0];
     const rawSystems = cols[1] || '';
 
-    // Skip bold section headers like **GSD Extension (Core Workflow Engine)**
+    // Skip bold section headers like **GWD Extension (Core Workflow Engine)**
     if (rawPath.startsWith('**') || rawPath === '') continue;
 
     // Clean up path — remove parenthetical notes like "(50+ files)"
@@ -161,7 +161,7 @@ function normalizePath(filePath) {
  * Check if a changed file matches a map entry pattern.
  * Supports:
  *   - Exact suffix match:  src/cli.ts  matches  src/cli.ts
- *   - Glob prefix match:   gsd/auto/*  matches  gsd/auto/anything.ts
+ *   - Glob prefix match:   gwd/auto/*  matches  gwd/auto/anything.ts
  *   - Wildcard extension:  *.tsx       matches  any .tsx
  */
 function fileMatchesPattern(filePath, pattern) {
@@ -275,7 +275,7 @@ function renderConsole(report) {
   const { changedFiles, systemsPerFile, unmatchedFiles, systemRisks, risk } = report;
 
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log(' GSD2 PR Risk Report');
+  console.log(' GWD2 PR Risk Report');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
   console.log(`Overall Risk: ${TIER_EMOJI[risk]} ${risk.toUpperCase()}`);

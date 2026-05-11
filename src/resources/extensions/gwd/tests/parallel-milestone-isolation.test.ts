@@ -24,7 +24,7 @@ import { claimMilestoneLease } from "../db/milestone-leases.ts";
 import { recordDispatchClaim } from "../db/unit-dispatches.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-parallel-iso-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-parallel-iso-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

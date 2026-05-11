@@ -1,5 +1,5 @@
 /**
- * GSD-2 e2e harness: process spawning.
+ * GWD-2 e2e harness: process spawning.
  *
  * Wraps child_process.spawn with the conventions every e2e test needs:
  * - canonical TMPDIR (resolves macOS /var vs /private/var symlink mismatch)
@@ -37,7 +37,7 @@ export function canonicalTmpdir(): string {
 }
 
 export interface E2eEnv {
-	/** Override binary path. Defaults to GWD_SMOKE_BINARY or "gsd". */
+	/** Override binary path. Defaults to GWD_SMOKE_BINARY or "gwd". */
 	binary?: string;
 	/** Working directory for the spawned process. */
 	cwd: string;
@@ -49,17 +49,17 @@ export interface E2eEnv {
 
 /**
  * Allocate a fresh per-process HOME under the canonical tmpdir. Each
- * spawned `gsd` writes to `~/.gwd/agent/extensions/...` for resource
+ * spawned `gwd` writes to `~/.gwd/agent/extensions/...` for resource
  * setup; sharing the host HOME causes ENOTEMPTY races when multiple
  * spawns interleave on a CI runner. Re-using the same isolated HOME
- * across spawns inside one test process is fine — gsd's own setup
+ * across spawns inside one test process is fine — gwd's own setup
  * is idempotent within a single owner — but we must not share with
  * the runner's actual home.
  */
 let _isolatedHome: string | undefined;
 function isolatedHome(): string {
 	if (_isolatedHome) return _isolatedHome;
-	const dir = join(canonicalTmpdir(), `gsd-e2e-home-${process.pid}-${Date.now()}`);
+	const dir = join(canonicalTmpdir(), `gwd-e2e-home-${process.pid}-${Date.now()}`);
 	mkdirSync(dir, { recursive: true });
 	_isolatedHome = dir;
 	return dir;
@@ -68,7 +68,7 @@ function isolatedHome(): string {
 /**
  * Build the env for an e2e child process. Strips GWD_* vars from the host
  * (so a developer's local config does not leak into a test), points HOME
- * at an isolated tmp dir (so per-user gsd state can't race against the
+ * at an isolated tmp dir (so per-user gwd state can't race against the
  * runner's real home), and forces deterministic flags.
  */
 export function buildE2eEnv(extra: Record<string, string> = {}): NodeJS.ProcessEnv {
@@ -81,7 +81,7 @@ export function buildE2eEnv(extra: Record<string, string> = {}): NodeJS.ProcessE
 	base.GWD_NON_INTERACTIVE = "1";
 	// Keep TMPDIR canonical for the child too.
 	base.TMPDIR = canonicalTmpdir();
-	// Per-process isolated HOME so gsd's resource-extension setup
+	// Per-process isolated HOME so gwd's resource-extension setup
 	// (~/.gwd/agent/extensions) cannot race against the runner's real
 	// home. Caller can override via `extra.HOME` if needed.
 	base.HOME = isolatedHome();
@@ -99,27 +99,27 @@ export interface SpawnSyncResult {
 }
 
 /**
- * Resolve the binary + argv for invoking the gsd CLI.
+ * Resolve the binary + argv for invoking the gwd CLI.
  *
  * GWD_SMOKE_BINARY=path/to/loader.js → spawn `node path/to/loader.js ...`
- * (default "gsd")                    → spawn `gsd ...`
+ * (default "gwd")                    → spawn `gwd ...`
  *
  * Mirrors the convention used by tests/live-regression/run.ts.
  */
-export function resolveGsdInvocation(args: string[], binaryOverride?: string): {
+export function resolveGwdInvocation(args: string[], binaryOverride?: string): {
 	command: string;
 	argv: string[];
 } {
-	const binary = binaryOverride ?? process.env.GWD_SMOKE_BINARY ?? "gsd";
-	if (binary === "gsd") {
-		return { command: "gsd", argv: args };
+	const binary = binaryOverride ?? process.env.GWD_SMOKE_BINARY ?? "gwd";
+	if (binary === "gwd") {
+		return { command: "gwd", argv: args };
 	}
 	return { command: process.execPath, argv: [binary, ...args] };
 }
 
 /** Synchronous spawn. Use for short, deterministic CLI calls (`--version`, etc). */
 export function gsdSync(args: string[], env: E2eEnv): SpawnSyncResult {
-	const { command, argv } = resolveGsdInvocation(args, env.binary);
+	const { command, argv } = resolveGwdInvocation(args, env.binary);
 	const result = spawnSync(command, argv, {
 		cwd: env.cwd,
 		encoding: "utf8",
@@ -153,11 +153,11 @@ export interface AsyncChild {
 }
 
 /**
- * Spawn the gsd CLI as a long-running child. Caller is responsible for
+ * Spawn the gwd CLI as a long-running child. Caller is responsible for
  * calling `.kill()` (typically via t.after).
  */
 export function gsdAsync(args: string[], env: E2eEnv, opts: SpawnOptions = {}): AsyncChild {
-	const { command, argv } = resolveGsdInvocation(args, env.binary);
+	const { command, argv } = resolveGwdInvocation(args, env.binary);
 	const child = spawn(command, argv, {
 		cwd: env.cwd,
 		stdio: ["pipe", "pipe", "pipe"],

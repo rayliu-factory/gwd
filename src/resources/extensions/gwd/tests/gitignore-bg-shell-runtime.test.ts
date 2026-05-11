@@ -18,7 +18,7 @@ import * as path from 'node:path';
 import { ensureGitignore } from '../gitignore.ts';
 
 function makeTmpRepo(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-gitignore-bg-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-gitignore-bg-'));
 }
 
 function cleanup(dir: string): void {

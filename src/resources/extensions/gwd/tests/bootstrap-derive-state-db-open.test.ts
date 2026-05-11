@@ -13,7 +13,7 @@ afterEach(() => {
 
 describe("bootstrap deriveState DB guards (#3844)", () => {
   test("ensureDbOpen creates and opens the project DB when .gwd exists", async (t) => {
-    const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-ensure-db-")));
+    const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-ensure-db-")));
     t.after(() => rmSync(base, { recursive: true, force: true }));
     mkdirSync(join(base, ".gwd"), { recursive: true });
 

@@ -26,7 +26,7 @@ function scaffoldProject(t: { after: (fn: () => void) => void }): {
   base: string;
   planPath: string;
 } {
-  const base = mkdtempSync(join(tmpdir(), "gsd-verify-artifact-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-verify-artifact-"));
   t.after(() => {
     closeDatabase();
     rmSync(base, { recursive: true, force: true });

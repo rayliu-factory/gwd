@@ -1,6 +1,6 @@
-// gwd-2 (GSD2) + db migration `:memory:` integration tests
+// gwd-2 (GWD2) + db migration `:memory:` integration tests
 //
-// Covers the gap left by the FakeAdapter unit tests for the gsd-db split
+// Covers the gap left by the FakeAdapter unit tests for the gwd-db split
 // (PR #5308): those assert SQL strings, not that DDL actually executes.
 // These tests open a real node:sqlite `:memory:` database, run the schema
 // helpers, and verify the resulting schema via PRAGMA introspection.

@@ -9,7 +9,7 @@ import { buildSourceFilePaths } from "../auto-prompts.ts";
 // Regression test for #4416: the fallback string must not mention `rg` because
 // auto-mode runs on systems where ripgrep is not installed (e.g. Windows).
 test("buildSourceFilePaths fallback does not reference rg or ripgrep", (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-prompts-fallback-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-prompts-fallback-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   // No GWD files exist in tmp — forces the fallback branch.
@@ -23,7 +23,7 @@ test("buildSourceFilePaths fallback does not reference rg or ripgrep", (t) => {
 });
 
 test("buildSourceFilePaths with sid also produces rg-free fallback", (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-prompts-fallback-sid-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-prompts-fallback-sid-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   const result = buildSourceFilePaths(tmp, "M001", "S01");

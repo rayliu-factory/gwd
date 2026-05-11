@@ -56,7 +56,7 @@ test("mapInitPrefsToWizardShape — omits defaults to keep YAML clean", () => {
 });
 
 test("writePreferencesFile — writes valid frontmatter from prefill", async () => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-init-prefs-routing-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-init-prefs-routing-"));
   const path = join(tmp, "PREFERENCES.md");
 
   try {
@@ -90,7 +90,7 @@ test("writePreferencesFile — writes valid frontmatter from prefill", async () 
 });
 
 test("writePreferencesFile — preserves existing markdown body", async () => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-init-prefs-routing-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-init-prefs-routing-"));
   const path = join(tmp, "PREFERENCES.md");
   const customBody = "\n# My Custom Notes\n\nUser-edited content here.\n";
 
@@ -110,7 +110,7 @@ test("writePreferencesFile — preserves existing markdown body", async () => {
 });
 
 test("writePreferencesFile — falls back to default body for new files", async () => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-init-prefs-routing-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-init-prefs-routing-"));
   const path = join(tmp, "PREFERENCES.md");
   const initBody = "\n# Init body marker\n";
 
@@ -124,7 +124,7 @@ test("writePreferencesFile — falls back to default body for new files", async 
 });
 
 test("handlePrefsWizard — Advanced config writes min_request_interval_ms", async () => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-init-prefs-routing-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-init-prefs-routing-"));
   const path = join(tmp, "PREFERENCES.md");
 
   try {
@@ -224,12 +224,12 @@ test("init — preferences path is basePath-derived, not cwd-derived (#4457 revi
     /projectPrefsPath\s*=\s*join\(gsdRoot\(basePath\),\s*"PREFERENCES\.md"\)/,
     "init must derive the project preferences path from basePath",
   );
-  // And neither write site should call getProjectGSDPreferencesPath() (which
+  // And neither write site should call getProjectGWDPreferencesPath() (which
   // resolves from process.cwd()).
   assert.doesNotMatch(
     src,
-    /getProjectGSDPreferencesPath\s*\(/,
-    "init must not use the cwd-derived getProjectGSDPreferencesPath()",
+    /getProjectGWDPreferencesPath\s*\(/,
+    "init must not use the cwd-derived getProjectGWDPreferencesPath()",
   );
 });
 
@@ -247,7 +247,7 @@ test("handlePrefsWizard — accepts pathOverride to target a non-cwd location", 
   );
   assert.match(
     src,
-    /opts\?\.pathOverride[\s\S]*?\?\?[\s\S]*?(getProjectGSDPreferencesPath|getGlobalGSDPreferencesPath)/,
+    /opts\?\.pathOverride[\s\S]*?\?\?[\s\S]*?(getProjectGWDPreferencesPath|getGlobalGWDPreferencesPath)/,
     "handlePrefsWizard must honor opts.pathOverride before falling back to scope-derived path",
   );
 });

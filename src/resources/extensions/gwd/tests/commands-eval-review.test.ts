@@ -114,7 +114,7 @@ describe("parseEvalReviewArgs", () => {
 // ─── SLICE_ID_PATTERN export ──────────────────────────────────────────────────
 
 describe("SLICE_ID_PATTERN", () => {
-  it("matches the canonical /^S\\d+$/ shape used elsewhere in the gsd extension", () => {
+  it("matches the canonical /^S\\d+$/ shape used elsewhere in the gwd extension", () => {
     assert.ok(SLICE_ID_PATTERN.test("S01"));
     assert.ok(SLICE_ID_PATTERN.test("S99"));
     assert.ok(!SLICE_ID_PATTERN.test("s01"));
@@ -130,7 +130,7 @@ describe("detectEvalReviewState", () => {
   let basePath: string;
 
   beforeEach(() => {
-    basePath = join(tmpdir(), `gsd-eval-review-test-${randomUUID()}`);
+    basePath = join(tmpdir(), `gwd-eval-review-test-${randomUUID()}`);
     mkdirSync(basePath, { recursive: true });
   });
 
@@ -223,7 +223,7 @@ describe("buildEvalReviewContext", () => {
   let sliceDir: string;
 
   beforeEach(() => {
-    basePath = join(tmpdir(), `gsd-eval-ctx-test-${randomUUID()}`);
+    basePath = join(tmpdir(), `gwd-eval-ctx-test-${randomUUID()}`);
     sliceDir = join(basePath, ".gwd", "milestones", "M001", "slices", "S07");
     mkdirSync(sliceDir, { recursive: true });
     process.chdir(basePath);
@@ -445,7 +445,7 @@ describe("findEvalReviewFile", () => {
   let basePath: string;
 
   beforeEach(() => {
-    basePath = join(tmpdir(), `gsd-find-eval-${randomUUID()}`);
+    basePath = join(tmpdir(), `gwd-find-eval-${randomUUID()}`);
     mkdirSync(join(basePath, ".gwd", "milestones", "M001", "slices", "S07"), { recursive: true });
   });
 

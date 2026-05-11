@@ -62,7 +62,7 @@ function mkPi(cap: MockCapture): any {
  * Create a minimal temp tree with a .gwd/milestones/M001 directory.
  */
 function mkBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-gate1b-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-gate1b-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   return base;
 }

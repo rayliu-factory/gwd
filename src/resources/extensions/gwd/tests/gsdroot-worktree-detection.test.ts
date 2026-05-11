@@ -7,7 +7,7 @@
  * project .gwd.
  *
  * The bug: when a git worktree lives at /project/.gwd/worktrees/M008/,
- * probeGsdRoot() runs `git rev-parse --show-toplevel` which can return the
+ * probeGwdRoot() runs `git rev-parse --show-toplevel` which can return the
  * main project root (not the worktree root) depending on git version and
  * worktree setup. The walk-up then finds /project/.gwd and returns that
  * instead of the worktree's own .gwd path.

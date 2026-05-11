@@ -98,14 +98,14 @@ const REQUIREMENTS_MD = `# Requirements
 // ═══════════════════════════════════════════════════════════════════════════
 
 function createFixtureTree(baseDir: string): void {
-  const gsd = path.join(baseDir, '.gwd');
-  fs.mkdirSync(gsd, { recursive: true });
-  fs.writeFileSync(path.join(gsd, 'DECISIONS.md'), DECISIONS_MD);
-  fs.writeFileSync(path.join(gsd, 'REQUIREMENTS.md'), REQUIREMENTS_MD);
-  fs.writeFileSync(path.join(gsd, 'PROJECT.md'), '# Test Project\nA test project.');
+  const gwd = path.join(baseDir, '.gwd');
+  fs.mkdirSync(gwd, { recursive: true });
+  fs.writeFileSync(path.join(gwd, 'DECISIONS.md'), DECISIONS_MD);
+  fs.writeFileSync(path.join(gwd, 'REQUIREMENTS.md'), REQUIREMENTS_MD);
+  fs.writeFileSync(path.join(gwd, 'PROJECT.md'), '# Test Project\nA test project.');
 
   // Create milestone hierarchy
-  const m001 = path.join(gsd, 'milestones', 'M001');
+  const m001 = path.join(gwd, 'milestones', 'M001');
   fs.mkdirSync(m001, { recursive: true });
   fs.writeFileSync(path.join(m001, 'M001-ROADMAP.md'), '# M001 Roadmap\nTest roadmap content.');
   fs.writeFileSync(path.join(m001, 'M001-CONTEXT.md'), '# M001 Context\nTest context.');
@@ -252,7 +252,7 @@ test('md-importer: parseRequirementsSections', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('md-importer: migrateFromMarkdown orchestrator', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-import-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-import-test-'));
   createFixtureTree(tmpDir);
 
   try {
@@ -304,7 +304,7 @@ test('md-importer: migrateFromMarkdown orchestrator', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('md-importer: idempotent re-import', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-idemp-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-idemp-test-'));
   createFixtureTree(tmpDir);
 
   try {
@@ -337,7 +337,7 @@ test('md-importer: idempotent re-import', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('md-importer: missing file handling', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-empty-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-empty-test-'));
   // Create empty .gwd/ with no files
   fs.mkdirSync(path.join(tmpDir, '.gwd'), { recursive: true });
 
@@ -378,7 +378,7 @@ test('md-importer: schema v1→v2 migration', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('md-importer: round-trip fidelity', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-roundtrip-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-roundtrip-test-'));
   createFixtureTree(tmpDir);
 
   try {

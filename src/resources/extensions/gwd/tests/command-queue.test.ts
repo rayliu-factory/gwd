@@ -15,7 +15,7 @@ import {
 } from "../db/command-queue.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-cmd-q-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-cmd-q-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

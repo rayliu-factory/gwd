@@ -10,7 +10,7 @@ import { closeDatabase, openDatabase } from "../gwd-db.ts";
 test("/gwd inspect opens existing database when it was not yet opened in session", async (t) => {
   closeDatabase();
 
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "gsd-inspect-db-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "gwd-inspect-db-"));
   const prevCwd = process.cwd();
 
   t.after(() => {

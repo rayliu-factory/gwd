@@ -16,7 +16,7 @@ import {
 import { parseWorkflowOverridesOnly } from "../commands/handlers/workflow.ts";
 
 const tmpDirs: string[] = [];
-let savedGsdHome: string | undefined;
+let savedGwdHome: string | undefined;
 
 function makeTmpBase(): string {
   const dir = mkdtempSync(join(tmpdir(), "wf-install-test-"));
@@ -25,13 +25,13 @@ function makeTmpBase(): string {
 }
 
 beforeEach(() => {
-  savedGsdHome = process.env.GWD_HOME;
+  savedGwdHome = process.env.GWD_HOME;
   process.env.GWD_HOME = makeTmpBase();
 });
 
 afterEach(() => {
-  if (savedGsdHome === undefined) delete process.env.GWD_HOME;
-  else process.env.GWD_HOME = savedGsdHome;
+  if (savedGwdHome === undefined) delete process.env.GWD_HOME;
+  else process.env.GWD_HOME = savedGwdHome;
   for (const d of tmpDirs) {
     try { rmSync(d, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 }); } catch { /* ignore */ }
   }

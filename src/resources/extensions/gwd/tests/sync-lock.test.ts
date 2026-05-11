@@ -9,7 +9,7 @@ import * as os from 'node:os';
 import { acquireSyncLock, releaseSyncLock } from '../sync-lock.ts';
 
 function tempDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-sync-lock-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-sync-lock-'));
 }
 
 function cleanupDir(dirPath: string): void {

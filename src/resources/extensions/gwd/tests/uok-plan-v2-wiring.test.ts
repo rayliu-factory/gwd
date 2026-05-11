@@ -11,7 +11,7 @@ import {
   insertTask,
   openDatabase,
 } from "../gwd-db.ts";
-import type { GSDState, Phase } from "../types.ts";
+import type { GWDState, Phase } from "../types.ts";
 import {
   ensurePlanV2Graph,
   hasFinalizedMilestoneContext,
@@ -31,7 +31,7 @@ const TASK_ID = "T01";
 const tempDirs = new Set<string>();
 
 function createBasePath(): string {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-planv2-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-uok-planv2-"));
   mkdirSync(join(basePath, ".gwd", "milestones", MILESTONE_ID), { recursive: true });
   tempDirs.add(basePath);
   return basePath;
@@ -69,7 +69,7 @@ function seedGraphRows(): void {
   });
 }
 
-function buildState(phase: Phase): GSDState {
+function buildState(phase: Phase): GWDState {
   return {
     phase,
     activeMilestone: { id: MILESTONE_ID, title: "Milestone" },

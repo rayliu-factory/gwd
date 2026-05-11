@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { syncStateToProjectRoot } from "../auto-worktree.ts";
 
 test("#2313: syncStateToProjectRoot copies metrics and completed-units to the project root", () => {
-  const root = mkdtempSync(join(tmpdir(), "gsd-sync-metrics-"));
+  const root = mkdtempSync(join(tmpdir(), "gwd-sync-metrics-"));
   const projectRoot = join(root, "project");
   const worktree = join(root, "worktree");
   mkdirSync(join(projectRoot, ".gwd"), { recursive: true });
@@ -35,7 +35,7 @@ test("#2313: syncStateToProjectRoot copies metrics and completed-units to the pr
 });
 
 test("#2313: functional — completed-units archive creates milestone-specific file", () => {
-  const tmpBase = mkdtempSync(join(tmpdir(), "gsd-completed-units-"));
+  const tmpBase = mkdtempSync(join(tmpdir(), "gwd-completed-units-"));
   const gsdDir = join(tmpBase, ".gwd");
   mkdirSync(gsdDir, { recursive: true });
 

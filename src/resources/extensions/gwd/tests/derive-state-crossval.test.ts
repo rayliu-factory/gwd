@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 // derive-state-crossval.test.ts — Cross-validation: deriveStateFromDb() vs _deriveStateImpl()
-// Proves both paths produce field-identical GSDState across 7 fixture scenarios,
+// Proves both paths produce field-identical GWDState across 7 fixture scenarios,
 // plus an auto-migration round-trip test.
 
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -21,12 +21,12 @@ import {
   insertTask,
 } from '../gwd-db.ts';
 import { migrateFromMarkdown, migrateHierarchyToDb } from '../md-importer.ts';
-import type { GSDState } from '../types.ts';
+import type { GWDState } from '../types.ts';
 
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-crossval-'));
+  const base = mkdtempSync(join(tmpdir(), 'gwd-crossval-'));
   mkdirSync(join(base, '.gwd', 'milestones'), { recursive: true });
   return base;
 }
@@ -42,10 +42,10 @@ function cleanup(base: string): void {
 }
 
 /**
- * Compare every GSDState field between DB and filesystem derivation.
+ * Compare every GWDState field between DB and filesystem derivation.
  * prefix identifies the scenario in assertion messages.
  */
-function assertStatesEqual(dbState: GSDState, fileState: GSDState, prefix: string): void {
+function assertStatesEqual(dbState: GWDState, fileState: GWDState, prefix: string): void {
   // Phase
   assert.deepStrictEqual(dbState.phase, fileState.phase, `${prefix}: phase`);
 

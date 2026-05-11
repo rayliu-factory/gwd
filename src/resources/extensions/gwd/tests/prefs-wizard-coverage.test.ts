@@ -92,7 +92,7 @@ test("prefs wizard save path preserves every known preference key", async () => 
   const missingSamples = [...KNOWN_PREFERENCE_KEYS].filter((key) => !(key in PREF_SAMPLE_VALUES));
   assert.deepEqual(missingSamples, [], "test fixture must cover every known preference key");
 
-  const dir = mkdtempSync(join(tmpdir(), "gsd-prefs-wizard-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-prefs-wizard-"));
   const prefsPath = join(dir, "PREFERENCES.md");
   const choices = ["── Save & Exit ──"];
   const ctx = {

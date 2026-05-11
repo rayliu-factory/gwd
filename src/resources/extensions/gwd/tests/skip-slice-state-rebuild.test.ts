@@ -19,7 +19,7 @@ import {
 } from "../gwd-db.ts";
 
 test("gwd_skip_slice marks a slice skipped and refreshes STATE.md", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-skip-slice-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-skip-slice-"));
   const tools = new Map<string, any>();
   const pi = { registerTool: (tool: any) => tools.set(tool.name, tool) };
 

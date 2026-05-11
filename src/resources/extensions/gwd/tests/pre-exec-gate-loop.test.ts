@@ -36,7 +36,7 @@ import { invalidateAllCaches } from "../cache.ts";
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeTempBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-4551-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-4551-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01"), { recursive: true });
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;

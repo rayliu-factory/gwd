@@ -116,7 +116,7 @@ async function runFinalizeWithDeps(s: AutoSession, depsOverrides: Record<string,
 }
 
 test("runFinalize clears currentUnit after successful finalize", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-finalize-current-unit-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-finalize-current-unit-"));
   const s = new AutoSession();
   s.basePath = base;
   s.currentUnit = {
@@ -136,7 +136,7 @@ test("runFinalize clears currentUnit after successful finalize", async () => {
 });
 
 test("runFinalize marks unit runtime finalized after successful finalize", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-finalize-runtime-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-finalize-runtime-"));
   const s = new AutoSession();
   const startedAt = Date.now();
   s.basePath = base;
@@ -159,7 +159,7 @@ test("runFinalize marks unit runtime finalized after successful finalize", async
 });
 
 test("runFinalize merges a verified complete-milestone immediately and only once", async (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-finalize-merge-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-finalize-merge-"));
   t.after(() => {
     rmSync(base, { recursive: true, force: true });
   });

@@ -4,20 +4,20 @@ import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const ownsGsdHome = process.env.GWD_HOME_TEST_OVERRIDE === undefined;
-const previousGsdHome = process.env.GWD_HOME;
-const synthesizedGsdHome = join(tmpdir(), `gsd-test-home-${process.pid}-${Date.now()}`);
+const ownsGwdHome = process.env.GWD_HOME_TEST_OVERRIDE === undefined;
+const previousGwdHome = process.env.GWD_HOME;
+const synthesizedGwdHome = join(tmpdir(), `gwd-test-home-${process.pid}-${Date.now()}`);
 process.env.GWD_HOME = process.env.GWD_HOME_TEST_OVERRIDE
-  ?? synthesizedGsdHome;
+  ?? synthesizedGwdHome;
 
 after(() => {
-  if (ownsGsdHome) {
-    rmSync(synthesizedGsdHome, { recursive: true, force: true });
+  if (ownsGwdHome) {
+    rmSync(synthesizedGwdHome, { recursive: true, force: true });
   }
-  if (previousGsdHome === undefined) {
+  if (previousGwdHome === undefined) {
     delete process.env.GWD_HOME;
   } else {
-    process.env.GWD_HOME = previousGsdHome;
+    process.env.GWD_HOME = previousGwdHome;
   }
 });
 
@@ -174,8 +174,8 @@ test("direct dispatch redirects to the canonical milestone worktree before newSe
   invalidateStateCache();
 
   const originalCwd = process.cwd();
-  const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-direct-base-")));
-  const drifted = realpathSync(mkdtempSync(join(tmpdir(), "gsd-direct-drift-")));
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-direct-base-")));
+  const drifted = realpathSync(mkdtempSync(join(tmpdir(), "gwd-direct-drift-")));
   writeMilestone(base);
   const worktreeRoot = makeLiveMilestoneWorktree(base);
 
@@ -211,7 +211,7 @@ test("direct dispatch redirects to the canonical milestone worktree before newSe
 });
 
 test("worktree-aware prompt builders include the explicit working directory", async (t) => {
-  const base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-prompt-base-")));
+  const base = realpathSync(mkdtempSync(join(tmpdir(), "gwd-prompt-base-")));
   writeMilestone(base);
   t.after(() => rmSync(base, { recursive: true, force: true }));
 

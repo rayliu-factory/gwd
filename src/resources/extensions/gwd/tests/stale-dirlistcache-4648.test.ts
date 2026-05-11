@@ -12,7 +12,7 @@ import { handleAgentEnd } from "../bootstrap/agent-end-recovery.ts";
 import { resolveMilestoneFile, clearPathCache } from "../paths.ts";
 
 function mkBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-4648-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-4648-"));
   mkdirSync(join(base, ".gwd", "milestones", "M001"), { recursive: true });
   return base;
 }

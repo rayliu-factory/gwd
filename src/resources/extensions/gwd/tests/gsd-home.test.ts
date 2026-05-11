@@ -9,18 +9,18 @@ import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 
 describe("gsdHome", () => {
-  let savedGsdHome: string | undefined;
+  let savedGwdHome: string | undefined;
   let gsdHome: () => string;
 
   beforeEach(async () => {
-    savedGsdHome = process.env.GWD_HOME;
+    savedGwdHome = process.env.GWD_HOME;
     const mod = await import("../gwd-home.js");
-    gsdHome = mod.gsdHome;
+    gsdHome = mod.gwdHome;
   });
 
   afterEach(() => {
-    if (savedGsdHome !== undefined) {
-      process.env.GWD_HOME = savedGsdHome;
+    if (savedGwdHome !== undefined) {
+      process.env.GWD_HOME = savedGwdHome;
     } else {
       delete process.env.GWD_HOME;
     }

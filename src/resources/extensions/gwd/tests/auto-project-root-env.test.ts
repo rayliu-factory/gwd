@@ -39,7 +39,7 @@ test("auto-mode project-root env restore deletes GWD_PROJECT_ROOT when it was in
 });
 
 test("cleanupAfterLoopExit restores captured GWD_PROJECT_ROOT", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-project-root-env-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-project-root-env-"));
   const previousCwd = process.cwd();
   const previousProjectRoot = process.env.GWD_PROJECT_ROOT;
 

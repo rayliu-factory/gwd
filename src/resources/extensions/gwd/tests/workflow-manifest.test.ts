@@ -22,7 +22,7 @@ import {
 } from '../workflow-manifest.ts';
 
 function tempDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-manifest-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-manifest-'));
 }
 
 function tempDbPath(base: string): string {

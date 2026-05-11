@@ -45,7 +45,7 @@ import assert from 'node:assert/strict';
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTmpDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-renderer-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gwd-renderer-'));
   fs.mkdirSync(path.join(dir, '.gwd'), { recursive: true });
   return dir;
 }

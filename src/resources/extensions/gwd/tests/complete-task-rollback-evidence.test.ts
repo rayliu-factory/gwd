@@ -17,7 +17,7 @@ import { clearPathCache } from "../paths.js";
 import { clearParseCache } from "../files.js";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-ct-rollback-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-ct-rollback-${randomUUID()}`);
   // Create the full tasks directory so the success path works
   mkdirSync(join(base, ".gwd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;

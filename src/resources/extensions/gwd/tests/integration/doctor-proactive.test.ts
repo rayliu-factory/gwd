@@ -379,7 +379,7 @@ describe('doctor-proactive', async () => {
         const result = await preDispatchHealthGate(dir);
         assert.ok(result.proceed, "gate proceeds when snapshots are disabled");
         assert.ok(
-          !result.fixesApplied.some(f => f.includes("gsd snapshot")),
+          !result.fixesApplied.some(f => f.includes("gwd snapshot")),
           `no snapshot fix reported when git.snapshots:false (got: ${JSON.stringify(result.fixesApplied)})`,
         );
       } finally {

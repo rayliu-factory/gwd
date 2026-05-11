@@ -20,7 +20,7 @@ import { registerQueryTools } from '../bootstrap/query-tools.ts';
 
 describe('query-tools ensureDbOpen usage (#3672)', () => {
   test('gwd_milestone_status opens the workspace DB before querying', async () => {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-query-tools-'));
+    const base = mkdtempSync(join(tmpdir(), 'gwd-query-tools-'));
     const dbPath = join(base, '.gwd', 'gwd.db');
     const tools: Record<string, any> = {};
     const originalCwd = process.cwd();

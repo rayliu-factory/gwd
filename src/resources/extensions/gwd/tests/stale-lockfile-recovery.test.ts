@@ -22,7 +22,7 @@ afterEach(() => {
 
 describe("stale lockfile auto-recovery (#3668)", () => {
   test("acquireSessionLock removes an orphan proper-lockfile directory before acquiring", () => {
-    tempBase = mkdtempSync(join(tmpdir(), "gsd-stale-lock-"));
+    tempBase = mkdtempSync(join(tmpdir(), "gwd-stale-lock-"));
     const gsdDir = join(tempBase, ".gwd");
     mkdirSync(join(gsdDir, "auto.lock.lock"), { recursive: true });
     writeFileSync(

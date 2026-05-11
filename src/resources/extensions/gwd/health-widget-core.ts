@@ -29,7 +29,7 @@ export function detectHealthWidgetProjectState(basePath: string): HealthWidgetPr
   if (!existsSync(gsdRoot(basePath))) return "none";
 
   const { state } = detectProjectState(basePath);
-  return state === "v2-gsd" ? "active" : "initialized";
+  return state === "v2-gwd" ? "active" : "initialized";
 }
 
 function formatCost(n: number): string {

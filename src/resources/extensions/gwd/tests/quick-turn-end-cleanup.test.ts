@@ -18,7 +18,7 @@ function git(cwd: string, args: string[]): string {
 
 describe("quick task turn_end cleanup (#2668)", () => {
   it("turn_end handler runs cleanupQuickBranch and removes quick-return state", async () => {
-    const repo = mkdtempSync(join(tmpdir(), "gsd-quick-cleanup-"));
+    const repo = mkdtempSync(join(tmpdir(), "gwd-quick-cleanup-"));
     const oldCwd = process.cwd();
     try {
       git(repo, ["init", "-b", "main"]);

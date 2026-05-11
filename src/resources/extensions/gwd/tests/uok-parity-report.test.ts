@@ -22,7 +22,7 @@ test("uok parity report summarizes paths, statuses, and fallback use", () => {
 });
 
 test("uok parity report writes runtime report artifact", (t) => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-parity-"));
+  const basePath = mkdtempSync(join(tmpdir(), "gwd-uok-parity-"));
   t.after(() => {
     rmSync(basePath, { recursive: true, force: true });
   });

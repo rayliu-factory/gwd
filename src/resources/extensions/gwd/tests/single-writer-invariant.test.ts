@@ -29,7 +29,7 @@ const ALLOWLIST = new Set([
   "unit-ownership.ts",
 ]);
 
-/** Walk the gsd extension dir and return all .ts files outside tests/. */
+/** Walk the gwd extension dir and return all .ts files outside tests/. */
 function walkTsFiles(root: string): string[] {
   const out: string[] = [];
   const stack: string[] = [root];
@@ -77,7 +77,7 @@ const EXEC_WRITE_RE = /\.exec\s*\(\s*[`'"][^`'"]*\b(INSERT|UPDATE|DELETE|REPLACE
 
 test("no module outside gwd-db.ts issues raw write SQL against the engine DB", () => {
   const files = walkTsFiles(gsdDir);
-  assert.ok(files.length >= 20, `Expected at least 20 .ts files under gsd/, found ${files.length}`);
+  assert.ok(files.length >= 20, `Expected at least 20 .ts files under gwd/, found ${files.length}`);
 
   const violations: Violation[] = [];
 
@@ -166,7 +166,7 @@ test("gwd-db.ts exports the expected single-writer wrappers", async () => {
   }
 });
 
-test("the invariant test touches every .ts module under gsd/ (sanity check)", () => {
+test("the invariant test touches every .ts module under gwd/ (sanity check)", () => {
   const files = walkTsFiles(gsdDir);
   // Rough sanity: ensure we're not accidentally walking an empty tree
   assert.ok(files.length >= 30, `Expected to scan at least 30 .ts files, scanned ${files.length}`);

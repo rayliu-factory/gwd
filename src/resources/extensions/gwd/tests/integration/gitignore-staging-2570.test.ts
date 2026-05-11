@@ -2,7 +2,7 @@
  * gitignore-staging-2570.test.ts — Regression tests for #2570.
  *
  * Verifies that:
- * 1. isGsdGitignored() detects when .gwd is covered by .gitignore
+ * 1. isGwdGitignored() detects when .gwd is covered by .gitignore
  * 2. The rethink prompt uses {{commitInstruction}} instead of hardcoded git add .gwd/
  * 3. rethink.ts passes the correct commitInstruction based on gitignore state
  *
@@ -22,8 +22,8 @@ import {
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-// Dynamic import — isGsdGitignored is the function under test (may not exist yet during TDD red phase)
-const { isGsdGitignored } = await import("../../gitignore.ts");
+// Dynamic import — isGwdGitignored is the function under test (may not exist yet during TDD red phase)
+const { isGwdGitignored } = await import("../../gitignore.ts");
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 
@@ -32,7 +32,7 @@ function git(dir: string, ...args: string[]): string {
 }
 
 function makeTempRepo(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-staging-2570-"));
+  const dir = mkdtempSync(join(tmpdir(), "gwd-staging-2570-"));
   git(dir, "init");
   git(dir, "config", "user.email", "test@test.com");
   git(dir, "config", "user.name", "Test");
@@ -51,40 +51,40 @@ function cleanup(dir: string): void {
   }
 }
 
-// ─── isGsdGitignored ─────────────────────────────────────────────────
+// ─── isGwdGitignored ─────────────────────────────────────────────────
 
-test("isGsdGitignored returns true when .gwd is in .gitignore (#2570)", (t) => {
+test("isGwdGitignored returns true when .gwd is in .gitignore (#2570)", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
   writeFileSync(join(dir, ".gitignore"), ".gwd\n");
-  assert.equal(isGsdGitignored(dir), true);
+  assert.equal(isGwdGitignored(dir), true);
 });
 
-test("isGsdGitignored returns true when .gwd/ (with slash) is in .gitignore", (t) => {
+test("isGwdGitignored returns true when .gwd/ (with slash) is in .gitignore", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
   writeFileSync(join(dir, ".gitignore"), ".gwd/\n");
   // Create .gwd directory so git check-ignore can match the directory-only pattern
   mkdirSync(join(dir, ".gwd"), { recursive: true });
-  assert.equal(isGsdGitignored(dir), true);
+  assert.equal(isGwdGitignored(dir), true);
 });
 
-test("isGsdGitignored returns false when .gwd is NOT in .gitignore", (t) => {
+test("isGwdGitignored returns false when .gwd is NOT in .gitignore", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
   writeFileSync(join(dir, ".gitignore"), "node_modules/\n");
-  assert.equal(isGsdGitignored(dir), false);
+  assert.equal(isGwdGitignored(dir), false);
 });
 
-test("isGsdGitignored returns false when no .gitignore exists", (t) => {
+test("isGwdGitignored returns false when no .gitignore exists", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
   // No .gitignore — default
-  assert.equal(isGsdGitignored(dir), false);
+  assert.equal(isGwdGitignored(dir), false);
 });
 
 // ─── rethink.md prompt template ─────────────────────────────────────

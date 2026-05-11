@@ -12,7 +12,7 @@ import { AutoSession } from "../auto/session.ts";
 import { postUnitPreVerification } from "../auto-post-unit.ts";
 
 test("postUnitPreVerification rebuilds STATE.md after a completed unit", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-post-unit-state-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-post-unit-state-"));
   try {
     const sliceDir = join(base, ".gwd", "milestones", "M001", "slices", "S01");
     mkdirSync(sliceDir, { recursive: true });

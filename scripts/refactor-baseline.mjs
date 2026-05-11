@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Project/App: GSD-2
+// Project/App: GWD-2
 // File Purpose: Read-only baseline metrics harness for the long-running refactor program.
 
 import { createHash } from "node:crypto";
@@ -48,7 +48,7 @@ const CONTRACT_SURFACES = [
   },
   {
     surface: "vscode",
-    path: "vscode-extension/src/gsd-client.ts",
+    path: "vscode-extension/src/gwd-client.ts",
   },
 ];
 
@@ -598,7 +598,7 @@ export function countLegacyContractImports(value) {
 export function hasProcessDocConflict(content) {
   return /markdown\s+(?:files?\s+)?(?:are|is)\s+(?:the\s+)?authoritative/i.test(content)
     || /filesystem[-\s]+authoritative/i.test(content)
-    || /\.gsd\/[^\n]*(?:source of truth|authoritative source)/i.test(content);
+    || /\.gwd\/[^\n]*(?:source of truth|authoritative source)/i.test(content);
 }
 
 export function metricSafeLabel(label) {
@@ -643,7 +643,7 @@ export async function timeCommand(root, spec) {
 
 export function renderSummary(report) {
   const lines = [
-    "GSD-2 Refactor Baseline",
+    "GWD-2 Refactor Baseline",
     `Generated: ${report.generatedAt}`,
     `Root: ${report.root}`,
     `Schema version: ${report.schemaVersion}`,

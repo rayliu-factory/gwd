@@ -29,7 +29,7 @@ import {
 } from "../interrupted-session.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-paused-session-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-paused-session-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
@@ -112,7 +112,7 @@ test("readPausedSessionMetadata returns null when DB is unavailable", () => {
   // No openDatabase call — DB is closed.
   try { closeDatabase(); } catch { /* noop */ }
   // Use a tmpdir-style base; the function should handle DB-unavailable gracefully.
-  const base = mkdtempSync(join(tmpdir(), "gsd-paused-no-db-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-paused-no-db-"));
   try {
     assert.equal(readPausedSessionMetadata(base), null);
   } finally {

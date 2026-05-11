@@ -17,7 +17,7 @@ import { randomUUID } from 'node:crypto';
 import { installEpipeGuard } from "../bootstrap/register-extension.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-test-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-test-${randomUUID()}`);
   mkdirSync(join(base, '.gwd'), { recursive: true });
   return base;
 }
@@ -25,7 +25,7 @@ function makeTmpBase(): string {
 describe('register-extension crash handler secondary fixes (#3348)', () => {
   test('writeCrashLog is exported and writes a file to the crash directory', async () => {
     // Dynamic import so GWD_HOME can be pointed at a temp dir without polluting ~/.gwd
-    const tmpHome = join(tmpdir(), `gsd-crash-test-${randomUUID()}`);
+    const tmpHome = join(tmpdir(), `gwd-crash-test-${randomUUID()}`);
     const origHome = process.env.GWD_HOME;
     process.env.GWD_HOME = tmpHome;
     try {
@@ -64,7 +64,7 @@ describe('register-extension crash handler secondary fixes (#3348)', () => {
     );
     assert.ok(listener, '_gsdEpipeGuard should be registered');
 
-    const tmpHome = join(tmpdir(), `gsd-crash-exit-test-${randomUUID()}`);
+    const tmpHome = join(tmpdir(), `gwd-crash-exit-test-${randomUUID()}`);
     const origHome = process.env.GWD_HOME;
     const originalExit = process.exit;
     let exitCode: number | string | null | undefined;
@@ -94,7 +94,7 @@ describe('register-extension crash handler secondary fixes (#3348)', () => {
     const { writeCrashLog } = await import('../bootstrap/crash-log.ts');
     const origHome = process.env.GWD_HOME;
     // Point at a path that will fail to mkdir (e.g. a file that exists as non-dir)
-    const tmpFile = join(tmpdir(), `gsd-not-a-dir-${randomUUID()}`);
+    const tmpFile = join(tmpdir(), `gwd-not-a-dir-${randomUUID()}`);
     // Don't create it — mkdirSync with bad path should be caught internally
     process.env.GWD_HOME = join(tmpFile, 'nested', 'deeply');
     try {

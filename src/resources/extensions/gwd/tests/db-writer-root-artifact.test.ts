@@ -24,7 +24,7 @@ import { openDatabase, closeDatabase } from "../gwd-db.ts";
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeProjectDir(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-dbwriter-root-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gwd-dbwriter-root-")));
   mkdirSync(join(dir, ".gwd"), { recursive: true });
   return dir;
 }
@@ -157,7 +157,7 @@ describe("saveArtifactToDbByScope: empty milestoneId throws defensive error", ()
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  test("scope with empty milestoneId throws GSDError mentioning saveArtifactToDbForWorkspace", async () => {
+  test("scope with empty milestoneId throws GWDError mentioning saveArtifactToDbForWorkspace", async () => {
     const ws = createWorkspace(tmp);
     const emptyScope = scopeMilestone(ws, "");
     const opts = {

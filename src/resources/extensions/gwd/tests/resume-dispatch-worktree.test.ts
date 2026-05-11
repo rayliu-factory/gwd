@@ -17,7 +17,7 @@ import { randomUUID } from "node:crypto";
 import { resolvePausedResumeBasePath } from "../worktree-lifecycle.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-resume-wt-${randomUUID()}`);
+  const base = join(tmpdir(), `gwd-resume-wt-${randomUUID()}`);
   mkdirSync(join(base, ".gwd", "runtime"), { recursive: true });
   return base;
 }
