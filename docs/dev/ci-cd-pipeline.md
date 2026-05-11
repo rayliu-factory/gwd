@@ -42,10 +42,10 @@ npx gwd-pi@latest    # or just: npx gwd-pi
 
 ```bash
 # Test candidate
-docker run --rm -v $(pwd):/workspace ghcr.io/gwd-build/gwd-pi:next --version
+docker run --rm -v $(pwd):/workspace ghcr.io/rayliu-factory/gwd-pi:next --version
 
 # Stable
-docker run --rm -v $(pwd):/workspace ghcr.io/gwd-build/gwd-pi:latest --version
+docker run --rm -v $(pwd):/workspace ghcr.io/rayliu-factory/gwd-pi:latest --version
 ```
 
 ### Checking if a Fix Landed
@@ -132,9 +132,9 @@ If a broken version reaches production:
 npm dist-tag add gwd-pi@<previous-good-version> latest
 
 # Roll back Docker
-docker pull ghcr.io/gwd-build/gwd-pi:<previous-good-version>
-docker tag ghcr.io/gwd-build/gwd-pi:<previous-good-version> ghcr.io/gwd-build/gwd-pi:latest
-docker push ghcr.io/gwd-build/gwd-pi:latest
+docker pull ghcr.io/rayliu-factory/gwd-pi:<previous-good-version>
+docker tag ghcr.io/rayliu-factory/gwd-pi:<previous-good-version> ghcr.io/rayliu-factory/gwd-pi:latest
+docker push ghcr.io/rayliu-factory/gwd-pi:latest
 ```
 
 For `@dev` or `@next` rollbacks, the next successful merge will overwrite the tag automatically.
@@ -150,14 +150,14 @@ For `@dev` or `@next` rollbacks, the next successful merge will overwrite the ta
 | Secret: `ANTHROPIC_API_KEY` | Prod environment only |
 | Secret: `OPENAI_API_KEY` | Prod environment only |
 | Variable: `RUN_LIVE_TESTS` | `false` (set to `true` to enable live LLM tests) |
-| GHCR | Enabled for the `gwd-build` org |
+| GHCR | Enabled for the `rayliu-factory` org |
 
 ### Docker Images
 
 | Image | Base | Purpose | Tags |
 |-------|------|---------|------|
-| `ghcr.io/gwd-build/gwd-ci-builder` | `node:24-bookworm` | CI build environment with Rust toolchain | `:latest`, `:<date>` |
-| `ghcr.io/gwd-build/gwd-pi` | `node:24-slim` | User-facing runtime | `:latest`, `:next`, `:v<version>` |
+| `ghcr.io/rayliu-factory/gwd-ci-builder` | `node:24-bookworm` | CI build environment with Rust toolchain | `:latest`, `:<date>` |
+| `ghcr.io/rayliu-factory/gwd-pi` | `node:24-slim` | User-facing runtime | `:latest`, `:next`, `:v<version>` |
 
 The CI builder image is rebuilt automatically when the `Dockerfile` changes. It eliminates ~3-5 min of toolchain setup per CI run.
 

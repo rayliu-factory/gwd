@@ -1,12 +1,12 @@
-# GWD-2 — VS Code Extension
+# GWD — VS Code Extension
 
-Control the [GWD-2 coding agent](https://github.com/gwd-build/gwd-2) directly from VS Code. Run autonomous coding sessions, chat with `@gwd`, monitor agent activity in real-time, review and accept/reject changes, and manage your workflow — all without leaving the editor.
+Control the [GWD coding agent](https://github.com/rayliu-factory/gwd) directly from VS Code. Run autonomous coding sessions, chat with `@gwd`, monitor agent activity in real-time, review and accept/reject changes, and manage your workflow — all without leaving the editor.
 
 ![GWD Extension Overview](docs/images/overview.png)
 
 ## Requirements
 
-- **GWD-2** installed globally: `npm install -g gwd-pi`
+- **GWD** installed globally: `npm install -g gwd-pi`
 - **Node.js** >= 22.0.0
 - **Git** installed and on PATH
 - **VS Code** >= 1.95.0
@@ -197,6 +197,6 @@ The extension spawns `gwd --mode rpc` and communicates over JSON-RPC via stdin/s
 
 ## Links
 
-- [GWD Documentation](https://github.com/gwd-build/gwd-2/tree/main/docs)
-- [Getting Started](https://github.com/gwd-build/gwd-2/blob/main/docs/getting-started.md)
-- [Issue Tracker](https://github.com/gwd-build/gwd-2/issues)
+- [GWD Documentation](https://github.com/rayliu-factory/gwd/tree/main/docs)
+- [Getting Started](https://github.com/rayliu-factory/gwd/blob/main/docs/user-docs/getting-started.md)
+- [Issue Tracker](https://github.com/rayliu-factory/gwd/issues)
