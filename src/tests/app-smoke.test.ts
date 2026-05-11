@@ -73,7 +73,7 @@ test("loader sets all 4 GWD_ env vars and PI_PACKAGE_DIR", async (t) => {
     process.exit(0);
   `;
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-loader-test-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-loader-test-"));
   const scriptPath = join(tmp, "check-env.ts");
   writeFileSync(scriptPath, script);
 
@@ -199,7 +199,7 @@ test("gsd update bypasses the managed-resource-mismatch gate; non-update command
   const { getNewerManagedResourceVersion } = await import("../resource-loader.ts");
   const { shouldBypassManagedResourceMismatchGate } = await import("../cli-policy.ts");
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-update-bypass-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-update-bypass-"));
   const fakeAgentDir = join(tmp, "agent");
   mkdirSync(fakeAgentDir, { recursive: true });
 
@@ -237,7 +237,7 @@ test("gsd update bypasses the managed-resource-mismatch gate; non-update command
 test("managed resource skew ignores dev/build suffixes on the same release line", async (t) => {
   const { getNewerManagedResourceVersion } = await import("../resource-loader.ts");
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-version-normalize-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-version-normalize-"));
   const fakeAgentDir = join(tmp, "agent");
   mkdirSync(fakeAgentDir, { recursive: true });
 
@@ -271,7 +271,7 @@ test("managed resource skew ignores dev/build suffixes on the same release line"
 
 test("initResources syncs extensions, agents, and skills to target dir", async (t) => {
   const { initResources, readManagedResourceVersion } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resources-test-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-resources-test-"));
   const fakeAgentDir = join(tmp, "agent");
 
   initResources(fakeAgentDir);
@@ -299,7 +299,7 @@ test("initResources syncs extensions, agents, and skills to target dir", async (
 
 test("initResources skips copy when managed version matches current version", async (t) => {
   const { initResources, readManagedResourceVersion } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resources-skip-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-resources-skip-"));
   const fakeAgentDir = join(tmp, "agent");
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
@@ -337,7 +337,7 @@ test("loadStoredEnvKeys hydrates process.env from auth.json", async (t) => {
   const { loadStoredEnvKeys } = await import("../wizard.ts");
   const { AuthStorage } = await import("@gwd/pi-coding-agent");
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-wizard-test-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-wizard-test-"));
   const authPath = join(tmp, "auth.json");
   writeFileSync(authPath, JSON.stringify({
     brave: { type: "api_key", key: "test-brave-key" },
@@ -386,7 +386,7 @@ test("loadStoredEnvKeys does not overwrite existing env vars", async (t) => {
   const { loadStoredEnvKeys } = await import("../wizard.ts");
   const { AuthStorage } = await import("@gwd/pi-coding-agent");
 
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-wizard-nooverwrite-"));
+  const tmp = mkdtempSync(join(tmpdir(), "gwd-wizard-nooverwrite-"));
   const authPath = join(tmp, "auth.json");
   writeFileSync(authPath, JSON.stringify({
     brave: { type: "api_key", key: "stored-key" },

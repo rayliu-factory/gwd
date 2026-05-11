@@ -114,7 +114,7 @@ test("RTK session stats fall back to the managed RTK path when GWD_RTK_PATH is u
   const fake = createFakeRtk({
     "gain --all --format json": { stdout: summary(6, 900, 500, 400) },
   });
-  const managedHome = mkdtempSync(join(tmpdir(), "gsd-rtk-home-"));
+  const managedHome = mkdtempSync(join(tmpdir(), "gwd-rtk-home-"));
   const managedDir = join(managedHome, "agent", "bin");
   const managedPath = join(managedDir, process.platform === "win32" ? "rtk.cmd" : "rtk");
   mkdirSync(managedDir, { recursive: true });
