@@ -3,14 +3,14 @@ title: "Working in teams"
 description: "Multi-user workflows with unique milestone IDs, push branches, and shared planning artifacts."
 ---
 
-GSD supports multi-user workflows where several developers work on the same repository concurrently.
+GWD supports multi-user workflows where several developers work on the same repository concurrently.
 
 ## Setup
 
 ### 1. Set team mode
 
 ```yaml
-# .gsd/PREFERENCES.md (project-level, committed to git)
+# .gwd/PREFERENCES.md (project-level, committed to git)
 ---
 version: 1
 mode: team
@@ -25,19 +25,19 @@ Share planning artifacts while keeping runtime files local:
 
 ```bash
 # Runtime / ephemeral (per-developer)
-.gsd/completed-units*.json
-.gsd/state-manifest.json
-.gsd/STATE.md
-.gsd/metrics.json
-.gsd/activity/
-.gsd/runtime/
-.gsd/worktrees/
-.gsd/gsd.db*
-.gsd/journal/
-.gsd/doctor-history.jsonl
-.gsd/event-log.jsonl
-.gsd/milestones/**/continue.md
-.gsd/milestones/**/*-CONTINUE.md
+.gwd/completed-units*.json
+.gwd/state-manifest.json
+.gwd/STATE.md
+.gwd/metrics.json
+.gwd/activity/
+.gwd/runtime/
+.gwd/worktrees/
+.gwd/gwd.db*
+.gwd/journal/
+.gwd/doctor-history.jsonl
+.gwd/event-log.jsonl
+.gwd/milestones/**/continue.md
+.gwd/milestones/**/*-CONTINUE.md
 ```
 
 **Shared** (committed): preferences, PROJECT.md, REQUIREMENTS.md, DECISIONS.md, milestones.
@@ -47,20 +47,20 @@ Share planning artifacts while keeping runtime files local:
 ### 3. Commit
 
 ```bash
-git add .gsd/PREFERENCES.md
-git commit -m "chore: enable GSD team workflow"
+git add .gwd/PREFERENCES.md
+git commit -m "chore: enable GWD team workflow"
 ```
 
 ## `commit_docs: false`
 
-For teams where only some members use GSD:
+For teams where only some members use GWD:
 
 ```yaml
 git:
   commit_docs: false
 ```
 
-Adds `.gsd/` to `.gitignore` entirely. The developer gets structured planning without affecting teammates.
+Adds `.gwd/` to `.gitignore` entirely. The developer gets structured planning without affecting teammates.
 
 ## Parallel development
 
@@ -73,4 +73,4 @@ depends_on: [M001-eh88as]
 ---
 ```
 
-GSD enforces that dependent milestones complete before starting downstream work.
+GWD enforces that dependent milestones complete before starting downstream work.

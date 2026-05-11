@@ -1,123 +1,123 @@
 ---
 title: "Commands reference"
-description: "Every GSD command, keyboard shortcut, and CLI flag."
+description: "Every GWD command, keyboard shortcut, and CLI flag."
 ---
 
 ## Session commands
 
 | Command | Description |
 |---------|-------------|
-| `/gsd` | Step mode — execute one unit at a time, pause between each |
-| `/gsd next` | Explicit step mode (same as `/gsd`) |
-| `/gsd auto` | Autonomous mode — research, plan, execute, commit, repeat |
-| `/gsd quick` | Execute a quick task with GSD guarantees without full planning overhead |
-| `/gsd stop` | Stop auto mode gracefully |
-| `/gsd pause` | Pause auto mode (preserves state, `/gsd auto` to resume) |
-| `/gsd steer` | Hard-steer plan documents during execution |
-| `/gsd discuss` | Discuss architecture and decisions (works alongside auto mode) |
-| `/gsd rethink` | Conversational project reorganization |
-| `/gsd mcp` | MCP server status and connectivity |
-| `/gsd status` | Progress dashboard |
-| `/gsd widget` | Cycle dashboard widget: full / small / min / off |
-| `/gsd queue` | Queue and reorder future milestones (safe during auto mode) |
-| `/gsd capture` | Fire-and-forget thought capture (works during auto mode) |
-| `/gsd triage` | Manually trigger triage of pending captures |
-| `/gsd debug` | Create and inspect persistent /gsd debug sessions |
-| `/gsd debug list` | List persisted debug sessions |
-| `/gsd debug status <slug>` | Show status for one debug session slug |
-| `/gsd debug continue <slug>` | Resume an existing debug session slug |
-| `/gsd debug --diagnose` | Inspect malformed artifacts and session health (`--diagnose [<slug> | <issue text>]`) |
-| `/gsd dispatch` | Dispatch a specific phase directly |
-| `/gsd history` | View execution history (supports `--cost`, `--phase`, `--model` filters) |
-| `/gsd forensics` | Full-access debugger for auto-mode failures |
-| `/gsd cleanup` | Clean up GSD state files and stale worktrees |
-| `/gsd visualize` | Open workflow visualizer |
-| `/gsd export --html` | Generate self-contained HTML report |
-| `/gsd export --html --all` | Generate reports for all milestones |
-| `/gsd update` | Update GSD to the latest version in-session |
-| `/gsd knowledge` | Add persistent project knowledge |
-| `/gsd fast` | Toggle service tier for supported models |
-| `/gsd rate` | Rate last unit's model tier (over/ok/under) |
-| `/gsd changelog` | Show categorized release notes |
-| `/gsd logs` | Browse activity logs, debug logs, and metrics |
-| `/gsd remote` | Control remote auto-mode |
-| `/gsd help` | Categorized command reference |
+| `/gwd` | Step mode — execute one unit at a time, pause between each |
+| `/gwd next` | Explicit step mode (same as `/gwd`) |
+| `/gwd auto` | Autonomous mode — research, plan, execute, commit, repeat |
+| `/gwd quick` | Execute a quick task with GWD guarantees without full planning overhead |
+| `/gwd stop` | Stop auto mode gracefully |
+| `/gwd pause` | Pause auto mode (preserves state, `/gwd auto` to resume) |
+| `/gwd steer` | Hard-steer plan documents during execution |
+| `/gwd discuss` | Discuss architecture and decisions (works alongside auto mode) |
+| `/gwd rethink` | Conversational project reorganization |
+| `/gwd mcp` | MCP server status and connectivity |
+| `/gwd status` | Progress dashboard |
+| `/gwd widget` | Cycle dashboard widget: full / small / min / off |
+| `/gwd queue` | Queue and reorder future milestones (safe during auto mode) |
+| `/gwd capture` | Fire-and-forget thought capture (works during auto mode) |
+| `/gwd triage` | Manually trigger triage of pending captures |
+| `/gwd debug` | Create and inspect persistent /gwd debug sessions |
+| `/gwd debug list` | List persisted debug sessions |
+| `/gwd debug status <slug>` | Show status for one debug session slug |
+| `/gwd debug continue <slug>` | Resume an existing debug session slug |
+| `/gwd debug --diagnose` | Inspect malformed artifacts and session health (`--diagnose [<slug> | <issue text>]`) |
+| `/gwd dispatch` | Dispatch a specific phase directly |
+| `/gwd history` | View execution history (supports `--cost`, `--phase`, `--model` filters) |
+| `/gwd forensics` | Full-access debugger for auto-mode failures |
+| `/gwd cleanup` | Clean up GWD state files and stale worktrees |
+| `/gwd visualize` | Open workflow visualizer |
+| `/gwd export --html` | Generate self-contained HTML report |
+| `/gwd export --html --all` | Generate reports for all milestones |
+| `/gwd update` | Update GWD to the latest version in-session |
+| `/gwd knowledge` | Add persistent project knowledge |
+| `/gwd fast` | Toggle service tier for supported models |
+| `/gwd rate` | Rate last unit's model tier (over/ok/under) |
+| `/gwd changelog` | Show categorized release notes |
+| `/gwd logs` | Browse activity logs, debug logs, and metrics |
+| `/gwd remote` | Control remote auto-mode |
+| `/gwd help` | Categorized command reference |
 
 ## Configuration and diagnostics
 
 | Command | Description |
 |---------|-------------|
-| `/gsd prefs` | Model selection, timeouts, budget ceiling |
-| `/gsd mode` | Switch workflow mode (solo/team) |
-| `/gsd config` | Re-run the provider setup wizard |
-| `/gsd keys` | API key manager — list, add, remove, test, rotate |
-| `/gsd doctor` | Runtime health checks with auto-fix |
-| `/gsd inspect` | Show SQLite DB diagnostics |
-| `/gsd init` | Project init wizard |
-| `/gsd setup` | Global setup status and configuration |
-| `/gsd skill-health` | Skill lifecycle dashboard |
-| `/gsd hooks` | Show configured post-unit and pre-dispatch hooks |
-| `/gsd run-hook` | Manually trigger a specific hook |
-| `/gsd migrate` | Migrate a v1 `.planning` directory to `.gsd` format |
+| `/gwd prefs` | Model selection, timeouts, budget ceiling |
+| `/gwd mode` | Switch workflow mode (solo/team) |
+| `/gwd config` | Re-run the provider setup wizard |
+| `/gwd keys` | API key manager — list, add, remove, test, rotate |
+| `/gwd doctor` | Runtime health checks with auto-fix |
+| `/gwd inspect` | Show SQLite DB diagnostics |
+| `/gwd init` | Project init wizard |
+| `/gwd setup` | Global setup status and configuration |
+| `/gwd skill-health` | Skill lifecycle dashboard |
+| `/gwd hooks` | Show configured post-unit and pre-dispatch hooks |
+| `/gwd run-hook` | Manually trigger a specific hook |
+| `/gwd migrate` | Import a `.planning` directory into `.gwd` |
 
 ## Milestone management
 
 | Command | Description |
 |---------|-------------|
-| `/gsd new-project [--deep]` | Bootstrap a new project; `--deep` enables staged project-level discovery |
-| `/gsd new-milestone [--deep]` | Create a new milestone; `--deep` opts the project into deep planning mode |
-| `/gsd skip` | Prevent a unit from auto-mode dispatch |
-| `/gsd undo` | Revert last completed unit |
-| `/gsd undo-task` | Reset a specific task's completion state |
-| `/gsd reset-slice` | Reset a slice and all its tasks |
-| `/gsd park` | Park a milestone — skip without deleting |
-| `/gsd unpark` | Reactivate a parked milestone |
+| `/gwd new-project [--deep]` | Bootstrap a new project; `--deep` enables staged project-level discovery |
+| `/gwd new-milestone [--deep]` | Create a new milestone; `--deep` opts the project into deep planning mode |
+| `/gwd skip` | Prevent a unit from auto-mode dispatch |
+| `/gwd undo` | Revert last completed unit |
+| `/gwd undo-task` | Reset a specific task's completion state |
+| `/gwd reset-slice` | Reset a slice and all its tasks |
+| `/gwd park` | Park a milestone — skip without deleting |
+| `/gwd unpark` | Reactivate a parked milestone |
 
 ## Parallel orchestration
 
 | Command | Description |
 |---------|-------------|
-| `/gsd parallel start` | Analyze eligibility, confirm, and start workers |
-| `/gsd parallel status` | Show all workers with state, progress, and cost |
-| `/gsd parallel stop [MID]` | Stop all workers or a specific one |
-| `/gsd parallel pause [MID]` | Pause all or a specific worker |
-| `/gsd parallel resume [MID]` | Resume paused workers |
-| `/gsd parallel merge [MID]` | Merge completed milestones to main |
+| `/gwd parallel start` | Analyze eligibility, confirm, and start workers |
+| `/gwd parallel status` | Show all workers with state, progress, and cost |
+| `/gwd parallel stop [MID]` | Stop all workers or a specific one |
+| `/gwd parallel pause [MID]` | Pause all or a specific worker |
+| `/gwd parallel resume [MID]` | Resume paused workers |
+| `/gwd parallel merge [MID]` | Merge completed milestones to main |
 
 ## Workflow templates
 
 | Command | Description |
 |---------|-------------|
-| `/gsd start` | Start a workflow template (bugfix, spike, feature, hotfix, refactor, etc.) |
-| `/gsd start resume` | Resume an in-progress workflow |
-| `/gsd templates` | List available workflow templates |
-| `/gsd templates info <name>` | Show detailed template info |
+| `/gwd start` | Start a workflow template (bugfix, spike, feature, hotfix, refactor, etc.) |
+| `/gwd start resume` | Resume an in-progress workflow |
+| `/gwd templates` | List available workflow templates |
+| `/gwd templates info <name>` | Show detailed template info |
 
 ## Custom workflows
 
 | Command | Description |
 |---------|-------------|
-| `/gsd workflow new` | Create a new workflow definition |
-| `/gsd workflow run <name>` | Create a run and start auto-mode |
-| `/gsd workflow list` | List workflow runs |
-| `/gsd workflow validate <name>` | Validate a workflow definition |
-| `/gsd workflow pause` | Pause custom workflow auto-mode |
-| `/gsd workflow resume` | Resume paused custom workflow auto-mode |
+| `/gwd workflow new` | Create a new workflow definition |
+| `/gwd workflow run <name>` | Create a run and start auto-mode |
+| `/gwd workflow list` | List workflow runs |
+| `/gwd workflow validate <name>` | Validate a workflow definition |
+| `/gwd workflow pause` | Pause custom workflow auto-mode |
+| `/gwd workflow resume` | Resume paused custom workflow auto-mode |
 
 ## Extensions
 
 | Command | Description |
 |---------|-------------|
-| `/gsd extensions list` | List all extensions and their status. User-installed entries show `[user]` plus the install source |
-| `/gsd extensions enable <id>` | Enable a disabled extension |
-| `/gsd extensions disable <id>` | Disable an extension |
-| `/gsd extensions info <id>` | Show extension details |
-| `/gsd extensions install <spec>` | Install a user extension. `<spec>` is an npm package, a git URL, or a local path. Restart GSD to activate. (v2.78) |
-| `/gsd extensions uninstall <id>` | Remove a user-installed extension. Warns if other extensions depend on it. (v2.78) |
-| `/gsd extensions update [id]` | Update a single user-installed npm extension to its latest version, or all of them when `id` is omitted. Git/local installs are skipped — reinstall to update. (v2.78) |
-| `/gsd extensions validate <path>` | Validate an extension package directory against the manifest schema before publishing or installing. (v2.78) |
+| `/gwd extensions list` | List all extensions and their status. User-installed entries show `[user]` plus the install source |
+| `/gwd extensions enable <id>` | Enable a disabled extension |
+| `/gwd extensions disable <id>` | Disable an extension |
+| `/gwd extensions info <id>` | Show extension details |
+| `/gwd extensions install <spec>` | Install a user extension. `<spec>` is an npm package, a git URL, or a local path. Restart GWD to activate. (v2.78) |
+| `/gwd extensions uninstall <id>` | Remove a user-installed extension. Warns if other extensions depend on it. (v2.78) |
+| `/gwd extensions update [id]` | Update a single user-installed npm extension to its latest version, or all of them when `id` is omitted. Git/local installs are skipped — reinstall to update. (v2.78) |
+| `/gwd extensions validate <path>` | Validate an extension package directory against the manifest schema before publishing or installing. (v2.78) |
 
-Install sources are auto-detected: a `git`/`http(s)` URL or `.git` suffix triggers `git clone`; a path that exists on disk is copied locally; everything else is fetched via `npm pack`. Installed extensions land in `~/.gsd/extensions/<id>/` and the registry records the source so `update` can re-fetch.
+Install sources are auto-detected: a `git`/`http(s)` URL or `.git` suffix triggers `git clone`; a path that exists on disk is copied locally; everything else is fetched via `npm pack`. Installed extensions land in `~/.gwd/extensions/<id>/` and the registry records the source so `update` can re-fetch.
 
 ## Keyboard shortcuts
 
@@ -137,31 +137,31 @@ In terminals without Kitty keyboard protocol support (macOS Terminal.app, JetBra
 
 | Flag | Description |
 |------|-------------|
-| `gsd` | Start a new interactive session |
-| `gsd --continue` (`-c`) | Resume the most recent session |
-| `gsd --model <id>` | Override the default model |
-| `gsd --print "msg"` (`-p`) | Single-shot prompt mode (no TUI) |
-| `gsd --mode <text\|json\|rpc\|mcp>` | Output mode for non-interactive use |
-| `gsd --list-models [search]` | List available models and exit |
-| `gsd --web [path]` | Start browser-based web interface |
-| `gsd --worktree` (`-w`) `[name]` | Start session in a git worktree |
-| `gsd --no-session` | Disable session persistence |
-| `gsd --extension <path>` | Load an additional extension |
-| `gsd --version` (`-v`) | Print version and exit |
-| `gsd sessions` | Interactive session picker |
-| `gsd config` | Set up global API keys |
-| `gsd update` | Update GSD to the latest version |
+| `gwd` | Start a new interactive session |
+| `gwd --continue` (`-c`) | Resume the most recent session |
+| `gwd --model <id>` | Override the default model |
+| `gwd --print "msg"` (`-p`) | Single-shot prompt mode (no TUI) |
+| `gwd --mode <text\|json\|rpc\|mcp>` | Output mode for non-interactive use |
+| `gwd --list-models [search]` | List available models and exit |
+| `gwd --web [path]` | Start browser-based web interface |
+| `gwd --worktree` (`-w`) `[name]` | Start session in a git worktree |
+| `gwd --no-session` | Disable session persistence |
+| `gwd --extension <path>` | Load an additional extension |
+| `gwd --version` (`-v`) | Print version and exit |
+| `gwd sessions` | Interactive session picker |
+| `gwd config` | Set up global API keys |
+| `gwd update` | Update GWD to the latest version |
 
 ## Headless mode
 
-`gsd headless` runs commands without a TUI — designed for CI, cron jobs, and scripted automation.
+`gwd headless` runs commands without a TUI — designed for CI, cron jobs, and scripted automation.
 
 ```bash
-gsd headless              # run auto mode
-gsd headless next         # run a single unit
-gsd headless query        # instant JSON snapshot (~50ms, no LLM)
-gsd headless --timeout 600000 auto   # with timeout
-gsd headless new-milestone --context brief.md --auto
+gwd headless              # run auto mode
+gwd headless next         # run a single unit
+gwd headless query        # instant JSON snapshot (~50ms, no LLM)
+gwd headless --timeout 600000 auto   # with timeout
+gwd headless new-milestone --context brief.md --auto
 ```
 
 | Flag | Description |
@@ -175,20 +175,20 @@ gsd headless new-milestone --context brief.md --auto
 
 **Exit codes:** `0` = complete, `1` = error/timeout, `2` = blocked.
 
-### `gsd headless query`
+### `gwd headless query`
 
 Returns a JSON snapshot of the project state — no LLM session, instant response.
 
 ```bash
-gsd headless query | jq '.state.phase'      # "executing"
-gsd headless query | jq '.next'              # next dispatch action
-gsd headless query | jq '.cost.total'        # total spend
+gwd headless query | jq '.state.phase'      # "executing"
+gwd headless query | jq '.next'              # next dispatch action
+gwd headless query | jq '.cost.total'        # total spend
 ```
 
 ## MCP server mode
 
 ```bash
-gsd --mode mcp
+gwd --mode mcp
 ```
 
-Runs GSD as a Model Context Protocol server over stdin/stdout, exposing all tools to external AI clients (Claude Desktop, VS Code Copilot, etc.).
+Runs GWD as a Model Context Protocol server over stdin/stdout, exposing all tools to external AI clients (Claude Desktop, VS Code Copilot, etc.).

@@ -26,7 +26,7 @@ Two separate mechanisms serve different purposes:
 
 ```json
 {
-  "name": "@gsd/extension-breakout",
+  "name": "@gwd/extension-breakout",
   "type": "module",
   "pi": {
     "extensions": ["src/index.ts"]
@@ -38,7 +38,7 @@ Two separate mechanisms serve different purposes:
 
 Both files are needed for a packaged extension. They serve different registries: `package.json` → runtime loader, `extension-manifest.json` → capability registry.
 
-**Convention directories (no `package.json` needed):** for single-file extensions without npm dependencies, drop `.ts` files directly in `~/.gsd/agent/extensions/` — the runtime auto-discovers them. `extension-manifest.json` is still recommended even then.
+**Convention directories (no `package.json` needed):** for single-file extensions without npm dependencies, drop `.ts` files directly in `~/.gwd/agent/extensions/` — the runtime auto-discovers them. `extension-manifest.json` is still recommended even then.
 
 ### Installing Packages
 
@@ -72,7 +72,7 @@ If no `pi` manifest exists, pi auto-discovers:
 
 ### Dependencies
 
-- List `@gsd/pi-ai`, `@gsd/pi-coding-agent`, `@gsd/pi-tui`, `@sinclair/typebox` in `peerDependencies` with `"*"` — they're bundled by pi.
+- List `@gwd/pi-ai`, `@gwd/pi-coding-agent`, `@gwd/pi-tui`, `@sinclair/typebox` in `peerDependencies` with `"*"` — they're bundled by pi.
 - Other npm deps go in `dependencies`. Pi runs `npm install` on package installation.
 
 ---

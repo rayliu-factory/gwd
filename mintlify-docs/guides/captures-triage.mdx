@@ -3,18 +3,18 @@ title: "Captures and triage"
 description: "Fire-and-forget thought capture during auto-mode with automated triage."
 ---
 
-Captures let you fire-and-forget thoughts during auto-mode execution. Instead of pausing to steer, capture ideas, bugs, or scope changes and let GSD triage them at natural seams between tasks.
+Captures let you fire-and-forget thoughts during auto-mode execution. Instead of pausing to steer, capture ideas, bugs, or scope changes and let GWD triage them at natural seams between tasks.
 
 ## Quick start
 
 While auto-mode is running (or any time):
 
 ```
-/gsd capture "add rate limiting to the API endpoints"
-/gsd capture "the auth flow should support OAuth, not just JWT"
+/gwd capture "add rate limiting to the API endpoints"
+/gwd capture "the auth flow should support OAuth, not just JWT"
 ```
 
-Captures are appended to `.gsd/CAPTURES.md` and triaged automatically between tasks.
+Captures are appended to `.gwd/CAPTURES.md` and triaged automatically between tasks.
 
 ## How it works
 
@@ -24,10 +24,10 @@ capture → triage → confirm → resolve → resume
 
 <Steps>
   <Step title="Capture">
-    `/gsd capture "thought"` appends to `.gsd/CAPTURES.md` with a timestamp and unique ID.
+    `/gwd capture "thought"` appends to `.gwd/CAPTURES.md` with a timestamp and unique ID.
   </Step>
   <Step title="Triage">
-    At natural seams between tasks, GSD classifies each capture.
+    At natural seams between tasks, GWD classifies each capture.
   </Step>
   <Step title="Confirm">
     You're shown the proposed resolution. Plan-modifying resolutions require confirmation.
@@ -55,7 +55,7 @@ capture → triage → confirm → resolve → resume
 Trigger triage at any time:
 
 ```
-/gsd triage
+/gwd triage
 ```
 
 Useful when you've accumulated several captures and want to process them before the next natural seam.
@@ -72,4 +72,4 @@ Capture context is automatically injected into:
 
 ## Worktree awareness
 
-Captures resolve to the **original project root's** `.gsd/CAPTURES.md`, not the worktree's local copy. Captures from a steering terminal are visible to the auto-mode session running in a worktree.
+Captures resolve to the **original project root's** `.gwd/CAPTURES.md`, not the worktree's local copy. Captures from a steering terminal are visible to the auto-mode session running in a worktree.

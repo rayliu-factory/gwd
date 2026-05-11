@@ -1,4 +1,4 @@
-# GSD2 File System Map
+# GWD File System Map
 # Maps every source file to its system/subsystem labels
 
 ---
@@ -13,13 +13,13 @@
 | **AST** | Abstract Syntax Tree search/rewrite via tree-sitter + ast-grep |
 | **Async Jobs** | Background bash job management |
 | **Auth / OAuth** | Authentication, OAuth flows, token storage |
-| **Auto Engine** | GSD autonomous execution loop, dispatch, supervision |
+| **Auto Engine** | GWD autonomous execution loop, dispatch, supervision |
 | **Bg Shell** | Background process / interactive shell management |
 | **Browser Tools** | Playwright-based browser automation extension |
 | **Build System** | Scripts for build, packaging, version management, CI |
 | **CLI** | Command-line entry points and argument parsing |
 | **CMux** | Tmux/multiplexer session integration |
-| **Commands** | GSD slash/sub-command routing and handlers |
+| **Commands** | GWD slash/sub-command routing and handlers |
 | **Compaction** | Context token reduction and summarization |
 | **Config** | Paths, defaults, models, preferences, constants |
 | **Context7** | Library documentation fetching extension |
@@ -28,7 +28,7 @@
 | **Extension Registry** | Extension discovery, manifests, enable/disable |
 | **Extensions** | Extension loader, runner, project trust, hooks |
 | **File Search** | grep, glob, fd — file and content discovery |
-| **GSD Workflow** | Core GSD planning/execution workflow engine |
+| **GWD Workflow** | Core GWD planning/execution workflow engine |
 | **Google Search** | Web search via Google API |
 | **Headless Mode** | Non-interactive / scripted command execution |
 | **Image Processing** | Image decode, resize, encode, clipboard images |
@@ -71,7 +71,7 @@
 
 | File | System Label(s) | Description |
 |------|-----------------|-------------|
-| src/app-paths.ts | Config | App directory paths (GSD_HOME, sessions, web PID, prefs) |
+| src/app-paths.ts | Config | App directory paths (GWD_HOME, sessions, web PID, prefs) |
 | src/app-paths.js | Config | Compiled JS version |
 | src/bundled-extension-paths.ts | Extension Registry | Serializes/parses bundled extension directory paths |
 | src/bundled-resource-path.ts | Loader/Bootstrap, Extension Registry | Resolves bundled raw resource files from package root |
@@ -84,21 +84,21 @@
 | src/headless-events.ts | Headless Mode | Event classification, terminal detection, idle timeouts |
 | src/headless-query.ts | Headless Mode, CLI | Read-only snapshot query (state, dispatch preview, costs) |
 | src/headless-ui.ts | Headless Mode | Extension UI auto-response, progress formatting |
-| src/headless.ts | Headless Mode | Orchestrator for /gsd subcommands without TUI via RPC |
+| src/headless.ts | Headless Mode | Orchestrator for /gwd subcommands without TUI via RPC |
 | src/help-text.ts | CLI | Generates help text for all subcommands |
 | src/loader.ts | Loader/Bootstrap | Fast-path startup, extension discovery/validation, env setup |
 | src/logo.ts | CLI | ASCII logo rendering for welcome screen and loader |
 | src/mcp-server.ts | MCP Server/Client | Native MCP server over stdin/stdout for external AI clients |
-| src/models-resolver.ts | Config, Auth/OAuth | Resolves models.json with fallback from Pi to GSD |
+| src/models-resolver.ts | Config, Auth/OAuth | Resolves models.json with fallback from Pi to GWD |
 | src/onboarding.ts | Onboarding | First-run wizard — LLM auth, OAuth, API keys, tool setup |
-| src/pi-migration.ts | Config, Auth/OAuth | Migrates provider credentials from Pi auth.json to GSD |
+| src/pi-migration.ts | Config, Auth/OAuth | Migrates provider credentials from Pi auth.json to GWD |
 | src/project-sessions.ts | State Machine, CLI | Session-per-project directory paths from project CWD |
 | src/remote-questions-config.ts | Config, Onboarding | Saves remote questions (Discord, Slack, Telegram) config |
 | src/resource-loader.ts | Loader/Bootstrap, Extension Registry | Initializes, syncs, validates bundled resources |
 | src/startup-timings.ts | CLI, Build System | Optional startup timing instrumentation |
 | src/tool-bootstrap.ts | Loader/Bootstrap | Manages fd/rg availability, falls back to built-in |
 | src/update-check.ts | CLI | Checks npm registry for new versions (cached) |
-| src/update-cmd.ts | CLI | Executes npm install to update gsd-pi package |
+| src/update-cmd.ts | CLI | Executes npm install to update gwd-pi package |
 | src/web-mode.ts | Web Mode | Launches/manages web server process (PID tracking, browser) |
 | src/welcome-screen.ts | CLI | Welcome panel — logo, version, model info |
 | src/wizard.ts | Onboarding, Config | Loads env keys from auth.json → hydrates process.env |
@@ -112,8 +112,8 @@
 | src/web/auto-dashboard-service.ts | Web Mode, Auto Engine | Loads auto-mode dashboard state (active, paused, costs) |
 | src/web/bridge-service.ts | Web Mode, State Machine | Central hub spawning RPC sessions, managing session state |
 | src/web/captures-service.ts | Web Mode | Loads knowledge capture entries via child process bridge |
-| src/web/cleanup-service.ts | Web Mode | Collects GSD branches and snapshot refs for cleanup |
-| src/web/cli-entry.ts | Web Mode, CLI | Builds/resolves GSD CLI entry points for RPC/interactive |
+| src/web/cleanup-service.ts | Web Mode | Collects GWD branches and snapshot refs for cleanup |
+| src/web/cli-entry.ts | Web Mode, CLI | Builds/resolves GWD CLI entry points for RPC/interactive |
 | src/web/doctor-service.ts | Web Mode, Doctor/Diagnostics | Runs diagnostics, returns fixer operations |
 | src/web/export-service.ts | Web Mode | Generates exported project reports (markdown/JSON) |
 | src/web/forensics-service.ts | Web Mode, Doctor/Diagnostics | Loads forensic report data (traces, metrics, issues) |
@@ -464,98 +464,98 @@
 
 ## src/resources/extensions/ — Extension Subsystems
 
-### GSD Extension (Core Workflow Engine)
+### GWD Extension (Core Workflow Engine)
 
 | File | System Label(s) | Description |
 |------|-----------------|-------------|
-| gsd/index.ts | GSD Workflow | Main GSD extension bootstrap and registration |
-| gsd/auto.ts | Auto Engine | Automatic workflow execution and loop management |
-| gsd/auto-dashboard.ts | Auto Engine, Web Mode | Real-time dashboard for auto-run progress |
-| gsd/auto-worktree.ts | Auto Engine, Worktree | Automatic worktree creation and branch management |
-| gsd/auto-recovery.ts | Auto Engine | Recovery for crashed/stalled workflows |
-| gsd/auto-start.ts | Auto Engine | Initialization sequence for automatic execution |
-| gsd/auto-worktree-sync.ts | Auto Engine, Worktree | State sync between worktrees and main |
-| gsd/auto-model-selection.ts | Auto Engine, Model System | Intelligent LLM model routing |
-| gsd/auto-direct-dispatch.ts | Auto Engine | Direct command dispatching without planning |
-| gsd/auto-dispatch.ts | Auto Engine | Task queueing and priority-based dispatch |
-| gsd/auto-timeout-recovery.ts | Auto Engine | Timeout handling and recovery |
-| gsd/auto-post-unit.ts | Auto Engine | Post-unit milestone completion processing |
-| gsd/auto-unit-closeout.ts | Auto Engine | Unit finalization and archiving |
-| gsd/auto-verification.ts | Auto Engine | Post-execution verification |
-| gsd/auto-timers.ts | Auto Engine | Timeout and deadline management |
-| gsd/auto-loop.ts | Auto Engine, State Machine | Execution loop state and cycle management |
-| gsd/auto-supervisor.ts | Auto Engine | Supervision and oversight of autonomous runs |
-| gsd/auto-budget.ts | Auto Engine | Token/cost budgeting and tracking |
-| gsd/auto-observability.ts | Auto Engine | Observability hooks and telemetry |
-| gsd/auto-tool-tracking.ts | Auto Engine | Tool usage instrumentation |
-| gsd/doctor.ts | Doctor/Diagnostics | Health check and system diagnostics |
-| gsd/doctor-checks.ts | Doctor/Diagnostics | Individual diagnostic checks |
-| gsd/doctor-providers.ts | Doctor/Diagnostics | Diagnostic data source providers |
-| gsd/doctor-format.ts | Doctor/Diagnostics | Diagnostic output formatting |
-| gsd/state.ts | State Machine | Milestone and workflow state management |
-| gsd/history.ts | State Machine | State history and versioning |
-| gsd/json-persistence.ts | State Machine | JSON-based persistence layer |
-| gsd/memory-store.ts | State Machine | In-memory state storage |
-| gsd/reactive-graph.ts | State Machine | Reactive dependency graph for state |
-| gsd/routing-history.ts | State Machine | History of routing decisions |
-| gsd/cache.ts | State Machine | Caching layer for performance |
-| gsd/model-router.ts | Model System | LLM model selection and routing logic |
-| gsd/worktree.ts | Worktree | Worktree creation and management |
-| gsd/worktree-manager.ts | Worktree | Higher-level worktree orchestration |
-| gsd/worktree-resolver.ts | Worktree | Worktree path and reference resolution |
-| gsd/unit-runtime.ts | Auto Engine | Unit-level execution runtime |
-| gsd/activity-log.ts | GSD Workflow | Activity tracking and logging |
-| gsd/debug-logger.ts | GSD Workflow | Debug output and verbose logging |
-| gsd/commands.ts | Commands | Main command dispatcher |
-| gsd/commands-handlers.ts | Commands | Command-specific handlers |
-| gsd/commands-bootstrap.ts | Commands | Bootstrap and initialization commands |
-| gsd/commands-config.ts | Commands, Config | Configuration management commands |
-| gsd/commands-extensions.ts | Commands, Extensions | Extension discovery and management |
-| gsd/commands-inspect.ts | Commands, Doctor/Diagnostics | Database and state inspection tools |
-| gsd/commands-logs.ts | Commands | Log viewing and filtering |
-| gsd/commands-workflow-templates.ts | Commands, GSD Workflow | Workflow template management |
-| gsd/commands-cmux.ts | Commands, CMux | Tmux/cmux integration commands |
-| gsd/exit-command.ts | Commands | Exit and cleanup commands |
-| gsd/undo.ts | Commands | Undo and rollback functionality |
-| gsd/kill.ts | Commands | Process termination and cleanup |
-| gsd/worktree-command.ts | Commands, Worktree | Worktree subcommands |
-| gsd/namespaced-resolver.ts | GSD Workflow | Namespace and scoped resource resolution |
-| gsd/error-utils.ts | GSD Workflow | Error handling and formatting |
-| gsd/errors.ts | GSD Workflow | Error type definitions |
-| gsd/diff-context.ts | GSD Workflow | Diff-based context extraction |
-| gsd/memory-extractor.ts | GSD Workflow | Memory and context extraction from state |
-| gsd/structured-data-formatter.ts | GSD Workflow | Structured output formatting |
-| gsd/export-html.ts | GSD Workflow | HTML export of milestone reports |
-| gsd/reports.ts | GSD Workflow | Report generation and summaries |
-| gsd/notifications.ts | GSD Workflow | User notification and messaging |
-| gsd/triage-ui.ts | GSD Workflow | Triage interface for issue categorization |
-| gsd/guided-flow.ts | GSD Workflow | User-guided workflow orchestration |
-| gsd/env-utils.ts | GSD Workflow | Environment variable utilities |
-| gsd/git-constants.ts | GSD Workflow | Git-related constants and paths |
-| gsd/milestone-id-utils.ts | GSD Workflow | Milestone ID generation and parsing |
-| gsd/resource-version.ts | GSD Workflow | Resource versioning helpers |
-| gsd/atomic-write.ts | GSD Workflow | Atomic file write operations |
-| gsd/captures.ts | GSD Workflow | Artifact capture and storage |
-| gsd/changelog.ts | GSD Workflow | Changelog generation |
-| gsd/claude-import.ts | GSD Workflow | Claude API/resource importing |
-| gsd/collision-diagnostics.ts | Doctor/Diagnostics | Collision detection and diagnostics |
-| gsd/prompt-loader.ts | GSD Workflow | Prompt template loading |
-| gsd/file-watcher.ts | GSD Workflow | File system change monitoring |
-| gsd/parallel-eligibility.ts | GSD Workflow | Parallel execution eligibility checks |
-| gsd/plugin-importer.ts | GSD Workflow, Extensions | Custom plugin/extension importing |
-| gsd/verification-gate.ts | GSD Workflow | Pre-execution verification checks |
-| gsd/preference-models.ts | Config, Model System | Model preference configuration |
-| gsd/preferences-skills.ts | Config, Skills | Skill preference configuration |
-| gsd/post-unit-hooks.ts | GSD Workflow | Post-unit execution hooks |
-| gsd/skill-telemetry.ts | Skills | Skill usage and performance telemetry |
-| gsd/bootstrap/* | GSD Workflow, Loader/Bootstrap | Extension initialization and hook registration |
-| gsd/auto/* | Auto Engine | Auto-execution engine components |
-| gsd/commands/* | Commands | Command routing and handling |
-| gsd/templates/* | GSD Workflow | Output templates and formatters |
-| gsd/prompts/* | GSD Workflow | System prompts and instructions |
-| gsd/workflow-templates/* | GSD Workflow | Workflow starter templates and registry |
-| gsd/skills/* | Skills | Integrated skill configurations |
-| gsd/migrate/* | Migration | Data migration and upgrade tools |
+| gwd/index.ts | GWD Workflow | Main GWD extension bootstrap and registration |
+| gwd/auto.ts | Auto Engine | Automatic workflow execution and loop management |
+| gwd/auto-dashboard.ts | Auto Engine, Web Mode | Real-time dashboard for auto-run progress |
+| gwd/auto-worktree.ts | Auto Engine, Worktree | Automatic worktree creation and branch management |
+| gwd/auto-recovery.ts | Auto Engine | Recovery for crashed/stalled workflows |
+| gwd/auto-start.ts | Auto Engine | Initialization sequence for automatic execution |
+| gwd/auto-worktree-sync.ts | Auto Engine, Worktree | State sync between worktrees and main |
+| gwd/auto-model-selection.ts | Auto Engine, Model System | Intelligent LLM model routing |
+| gwd/auto-direct-dispatch.ts | Auto Engine | Direct command dispatching without planning |
+| gwd/auto-dispatch.ts | Auto Engine | Task queueing and priority-based dispatch |
+| gwd/auto-timeout-recovery.ts | Auto Engine | Timeout handling and recovery |
+| gwd/auto-post-unit.ts | Auto Engine | Post-unit milestone completion processing |
+| gwd/auto-unit-closeout.ts | Auto Engine | Unit finalization and archiving |
+| gwd/auto-verification.ts | Auto Engine | Post-execution verification |
+| gwd/auto-timers.ts | Auto Engine | Timeout and deadline management |
+| gwd/auto-loop.ts | Auto Engine, State Machine | Execution loop state and cycle management |
+| gwd/auto-supervisor.ts | Auto Engine | Supervision and oversight of autonomous runs |
+| gwd/auto-budget.ts | Auto Engine | Token/cost budgeting and tracking |
+| gwd/auto-observability.ts | Auto Engine | Observability hooks and telemetry |
+| gwd/auto-tool-tracking.ts | Auto Engine | Tool usage instrumentation |
+| gwd/doctor.ts | Doctor/Diagnostics | Health check and system diagnostics |
+| gwd/doctor-checks.ts | Doctor/Diagnostics | Individual diagnostic checks |
+| gwd/doctor-providers.ts | Doctor/Diagnostics | Diagnostic data source providers |
+| gwd/doctor-format.ts | Doctor/Diagnostics | Diagnostic output formatting |
+| gwd/state.ts | State Machine | Milestone and workflow state management |
+| gwd/history.ts | State Machine | State history and versioning |
+| gwd/json-persistence.ts | State Machine | JSON-based persistence layer |
+| gwd/memory-store.ts | State Machine | In-memory state storage |
+| gwd/reactive-graph.ts | State Machine | Reactive dependency graph for state |
+| gwd/routing-history.ts | State Machine | History of routing decisions |
+| gwd/cache.ts | State Machine | Caching layer for performance |
+| gwd/model-router.ts | Model System | LLM model selection and routing logic |
+| gwd/worktree.ts | Worktree | Worktree creation and management |
+| gwd/worktree-manager.ts | Worktree | Higher-level worktree orchestration |
+| gwd/worktree-resolver.ts | Worktree | Worktree path and reference resolution |
+| gwd/unit-runtime.ts | Auto Engine | Unit-level execution runtime |
+| gwd/activity-log.ts | GWD Workflow | Activity tracking and logging |
+| gwd/debug-logger.ts | GWD Workflow | Debug output and verbose logging |
+| gwd/commands.ts | Commands | Main command dispatcher |
+| gwd/commands-handlers.ts | Commands | Command-specific handlers |
+| gwd/commands-bootstrap.ts | Commands | Bootstrap and initialization commands |
+| gwd/commands-config.ts | Commands, Config | Configuration management commands |
+| gwd/commands-extensions.ts | Commands, Extensions | Extension discovery and management |
+| gwd/commands-inspect.ts | Commands, Doctor/Diagnostics | Database and state inspection tools |
+| gwd/commands-logs.ts | Commands | Log viewing and filtering |
+| gwd/commands-workflow-templates.ts | Commands, GWD Workflow | Workflow template management |
+| gwd/commands-cmux.ts | Commands, CMux | Tmux/cmux integration commands |
+| gwd/exit-command.ts | Commands | Exit and cleanup commands |
+| gwd/undo.ts | Commands | Undo and rollback functionality |
+| gwd/kill.ts | Commands | Process termination and cleanup |
+| gwd/worktree-command.ts | Commands, Worktree | Worktree subcommands |
+| gwd/namespaced-resolver.ts | GWD Workflow | Namespace and scoped resource resolution |
+| gwd/error-utils.ts | GWD Workflow | Error handling and formatting |
+| gwd/errors.ts | GWD Workflow | Error type definitions |
+| gwd/diff-context.ts | GWD Workflow | Diff-based context extraction |
+| gwd/memory-extractor.ts | GWD Workflow | Memory and context extraction from state |
+| gwd/structured-data-formatter.ts | GWD Workflow | Structured output formatting |
+| gwd/export-html.ts | GWD Workflow | HTML export of milestone reports |
+| gwd/reports.ts | GWD Workflow | Report generation and summaries |
+| gwd/notifications.ts | GWD Workflow | User notification and messaging |
+| gwd/triage-ui.ts | GWD Workflow | Triage interface for issue categorization |
+| gwd/guided-flow.ts | GWD Workflow | User-guided workflow orchestration |
+| gwd/env-utils.ts | GWD Workflow | Environment variable utilities |
+| gwd/git-constants.ts | GWD Workflow | Git-related constants and paths |
+| gwd/milestone-id-utils.ts | GWD Workflow | Milestone ID generation and parsing |
+| gwd/resource-version.ts | GWD Workflow | Resource versioning helpers |
+| gwd/atomic-write.ts | GWD Workflow | Atomic file write operations |
+| gwd/captures.ts | GWD Workflow | Artifact capture and storage |
+| gwd/changelog.ts | GWD Workflow | Changelog generation |
+| gwd/claude-import.ts | GWD Workflow | Claude API/resource importing |
+| gwd/collision-diagnostics.ts | Doctor/Diagnostics | Collision detection and diagnostics |
+| gwd/prompt-loader.ts | GWD Workflow | Prompt template loading |
+| gwd/file-watcher.ts | GWD Workflow | File system change monitoring |
+| gwd/parallel-eligibility.ts | GWD Workflow | Parallel execution eligibility checks |
+| gwd/plugin-importer.ts | GWD Workflow, Extensions | Custom plugin/extension importing |
+| gwd/verification-gate.ts | GWD Workflow | Pre-execution verification checks |
+| gwd/preference-models.ts | Config, Model System | Model preference configuration |
+| gwd/preferences-skills.ts | Config, Skills | Skill preference configuration |
+| gwd/post-unit-hooks.ts | GWD Workflow | Post-unit execution hooks |
+| gwd/skill-telemetry.ts | Skills | Skill usage and performance telemetry |
+| gwd/bootstrap/* | GWD Workflow, Loader/Bootstrap | Extension initialization and hook registration |
+| gwd/auto/* | Auto Engine | Auto-execution engine components |
+| gwd/commands/* | Commands | Command routing and handling |
+| gwd/templates/* | GWD Workflow | Output templates and formatters |
+| gwd/prompts/* | GWD Workflow | System prompts and instructions |
+| gwd/workflow-templates/* | GWD Workflow | Workflow starter templates and registry |
+| gwd/skills/* | Skills | Integrated skill configurations |
+| gwd/migrate/* | Migration | Data migration and upgrade tools |
 
 ### Other Extensions
 
@@ -641,8 +641,8 @@
 | shared/interview-ui.ts | TUI Components | Interview-style questionnaire UI |
 | shared/confirm-ui.ts | TUI Components | Confirmation dialog UI |
 | shared/terminal.ts | TUI Components | Terminal operations and formatting |
-| shared/format-utils.ts | GSD Workflow | String formatting utilities |
-| shared/sanitize.ts | GSD Workflow | Input sanitization |
+| shared/format-utils.ts | GWD Workflow | String formatting utilities |
+| shared/sanitize.ts | GWD Workflow | Input sanitization |
 | shared/frontmatter.ts | Config | YAML frontmatter parsing |
 
 ### src/resources/agents/
@@ -662,7 +662,7 @@
 | react-best-practices/ | Skills | React development patterns (62 files) |
 | userinterface-wiki/ | Skills | UI/UX guidelines and component reference (155 files) |
 | create-skill/ | Skills | Skill creation scaffolding and templates (25 files) |
-| create-gsd-extension/ | Skills, Extensions | GSD extension scaffolding (22 files) |
+| create-gwd-extension/ | Skills, Extensions | GWD extension scaffolding (22 files) |
 | code-optimizer/ | Skills | Performance optimization techniques (16 files) |
 | agent-browser/ | Skills, Browser Tools | Browser automation guidance (11 files) |
 | github-workflows/ | Skills | GitHub Actions workflow patterns (10 files) |
@@ -688,64 +688,64 @@
 |------|-----------------|-------------|
 | web/app/layout.tsx | Web UI | Root Next.js layout with theme provider and font |
 | web/app/page.tsx | Web UI | Entry page loading GSDAppShell |
-| web/components/gsd/app-shell.tsx | Web UI | Main app shell — sidebar, panels, terminal, commands |
-| web/components/gsd/sidebar.tsx | Web UI | Multi-panel sidebar with milestone explorer |
-| web/components/gsd/status-bar.tsx | Web UI | Status bar with workspace state and metrics |
+| web/components/gwd/app-shell.tsx | Web UI | Main app shell — sidebar, panels, terminal, commands |
+| web/components/gwd/sidebar.tsx | Web UI | Multi-panel sidebar with milestone explorer |
+| web/components/gwd/status-bar.tsx | Web UI | Status bar with workspace state and metrics |
 
 ### Main Views
 
 | File | System Label(s) | Description |
 |------|-----------------|-------------|
-| web/components/gsd/dashboard.tsx | Web UI | Dashboard with workflow actions and metrics |
-| web/components/gsd/chat-mode.tsx | Web UI | Chat interface for agent interaction |
-| web/components/gsd/projects-view.tsx | Web UI | Project browser and selector |
-| web/components/gsd/files-view.tsx | Web UI | File browser and explorer |
-| web/components/gsd/activity-view.tsx | Web UI | Activity log and history view |
-| web/components/gsd/roadmap.tsx | Web UI, GSD Workflow | Milestone roadmap visualization |
-| web/components/gsd/visualizer-view.tsx | Web UI, Doctor/Diagnostics | Workflow visualization |
-| web/components/gsd/project-welcome.tsx | Web UI | Welcome screen for new projects |
-| web/components/gsd/knowledge-captures-panel.tsx | Web UI | Knowledge and capture management |
+| web/components/gwd/dashboard.tsx | Web UI | Dashboard with workflow actions and metrics |
+| web/components/gwd/chat-mode.tsx | Web UI | Chat interface for agent interaction |
+| web/components/gwd/projects-view.tsx | Web UI | Project browser and selector |
+| web/components/gwd/files-view.tsx | Web UI | File browser and explorer |
+| web/components/gwd/activity-view.tsx | Web UI | Activity log and history view |
+| web/components/gwd/roadmap.tsx | Web UI, GWD Workflow | Milestone roadmap visualization |
+| web/components/gwd/visualizer-view.tsx | Web UI, Doctor/Diagnostics | Workflow visualization |
+| web/components/gwd/project-welcome.tsx | Web UI | Welcome screen for new projects |
+| web/components/gwd/knowledge-captures-panel.tsx | Web UI | Knowledge and capture management |
 
 ### Terminal
 
 | File | System Label(s) | Description |
 |------|-----------------|-------------|
-| web/components/gsd/terminal.tsx | Web UI | Terminal widget with input mode handling |
-| web/components/gsd/shell-terminal.tsx | Web UI | Shell terminal with PTY integration |
-| web/components/gsd/main-session-terminal.tsx | Web UI | Main session terminal display |
-| web/components/gsd/dual-terminal.tsx | Web UI | Side-by-side terminal layout |
+| web/components/gwd/terminal.tsx | Web UI | Terminal widget with input mode handling |
+| web/components/gwd/shell-terminal.tsx | Web UI | Shell terminal with PTY integration |
+| web/components/gwd/main-session-terminal.tsx | Web UI | Main session terminal display |
+| web/components/gwd/dual-terminal.tsx | Web UI | Side-by-side terminal layout |
 
 ### Commands & Dialogs
 
 | File | System Label(s) | Description |
 |------|-----------------|-------------|
-| web/components/gsd/command-surface.tsx | Web UI, Commands | Command palette and slash command dispatcher |
-| web/components/gsd/remaining-command-panels.tsx | Web UI, Commands | History, undo, export, cleanup panels |
-| web/components/gsd/diagnostics-panels.tsx | Web UI, Doctor/Diagnostics | Doctor, forensics, skill health panels |
-| web/components/gsd/settings-panels.tsx | Web UI, Config | Settings and preferences panels |
-| web/components/gsd/guided-dialog.tsx | Web UI | Generic guided dialog component |
-| web/components/gsd/update-banner.tsx | Web UI | Update notification banner |
-| web/components/gsd/scope-badge.tsx | Web UI | Scope badge indicator |
-| web/components/gsd/loading-skeletons.tsx | Web UI | Loading skeleton placeholders |
-| web/components/gsd/code-editor.tsx | Web UI | Code editor display component |
-| web/components/gsd/file-content-viewer.tsx | Web UI | File content viewer and previewer |
-| web/components/gsd/focused-panel.tsx | Web UI | Focused panel layout component |
+| web/components/gwd/command-surface.tsx | Web UI, Commands | Command palette and slash command dispatcher |
+| web/components/gwd/remaining-command-panels.tsx | Web UI, Commands | History, undo, export, cleanup panels |
+| web/components/gwd/diagnostics-panels.tsx | Web UI, Doctor/Diagnostics | Doctor, forensics, skill health panels |
+| web/components/gwd/settings-panels.tsx | Web UI, Config | Settings and preferences panels |
+| web/components/gwd/guided-dialog.tsx | Web UI | Generic guided dialog component |
+| web/components/gwd/update-banner.tsx | Web UI | Update notification banner |
+| web/components/gwd/scope-badge.tsx | Web UI | Scope badge indicator |
+| web/components/gwd/loading-skeletons.tsx | Web UI | Loading skeleton placeholders |
+| web/components/gwd/code-editor.tsx | Web UI | Code editor display component |
+| web/components/gwd/file-content-viewer.tsx | Web UI | File content viewer and previewer |
+| web/components/gwd/focused-panel.tsx | Web UI | Focused panel layout component |
 
 ### Onboarding
 
 | File | System Label(s) | Description |
 |------|-----------------|-------------|
-| web/components/gsd/onboarding-gate.tsx | Web UI, Onboarding | Gate and orchestration for onboarding flow |
-| web/components/gsd/onboarding/step-welcome.tsx | Web UI, Onboarding | Welcome step |
-| web/components/gsd/onboarding/step-mode.tsx | Web UI, Onboarding | User mode selection step |
-| web/components/gsd/onboarding/step-provider.tsx | Web UI, Onboarding | LLM provider selection step |
-| web/components/gsd/onboarding/step-authenticate.tsx | Web UI, Onboarding, Auth/OAuth | Authentication step |
-| web/components/gsd/onboarding/step-dev-root.tsx | Web UI, Onboarding | Dev root directory selection step |
-| web/components/gsd/onboarding/step-project.tsx | Web UI, Onboarding | Project selection step |
-| web/components/gsd/onboarding/step-remote.tsx | Web UI, Onboarding | Remote configuration step |
-| web/components/gsd/onboarding/step-optional.tsx | Web UI, Onboarding | Optional settings step |
-| web/components/gsd/onboarding/step-ready.tsx | Web UI, Onboarding | Ready confirmation step |
-| web/components/gsd/onboarding/wizard-stepper.tsx | Web UI, Onboarding | Stepper progress indicator |
+| web/components/gwd/onboarding-gate.tsx | Web UI, Onboarding | Gate and orchestration for onboarding flow |
+| web/components/gwd/onboarding/step-welcome.tsx | Web UI, Onboarding | Welcome step |
+| web/components/gwd/onboarding/step-mode.tsx | Web UI, Onboarding | User mode selection step |
+| web/components/gwd/onboarding/step-provider.tsx | Web UI, Onboarding | LLM provider selection step |
+| web/components/gwd/onboarding/step-authenticate.tsx | Web UI, Onboarding, Auth/OAuth | Authentication step |
+| web/components/gwd/onboarding/step-dev-root.tsx | Web UI, Onboarding | Dev root directory selection step |
+| web/components/gwd/onboarding/step-project.tsx | Web UI, Onboarding | Project selection step |
+| web/components/gwd/onboarding/step-remote.tsx | Web UI, Onboarding | Remote configuration step |
+| web/components/gwd/onboarding/step-optional.tsx | Web UI, Onboarding | Optional settings step |
+| web/components/gwd/onboarding/step-ready.tsx | Web UI, Onboarding | Ready confirmation step |
+| web/components/gwd/onboarding/wizard-stepper.tsx | Web UI, Onboarding | Stepper progress indicator |
 
 ### API Routes
 
@@ -771,8 +771,8 @@
 | web/app/api/undo/route.ts | API Routes, Commands | Undo operation |
 | web/app/api/cleanup/route.ts | API Routes, Commands | Cleanup operation |
 | web/app/api/export-data/route.ts | API Routes, Commands | Data export |
-| web/app/api/knowledge/route.ts | API Routes, GSD Workflow | Knowledge base |
-| web/app/api/hooks/route.ts | API Routes, GSD Workflow | Git hooks management |
+| web/app/api/knowledge/route.ts | API Routes, GWD Workflow | Knowledge base |
+| web/app/api/hooks/route.ts | API Routes, GWD Workflow | Git hooks management |
 | web/app/api/inspect/route.ts | API Routes, Doctor/Diagnostics | Inspection and analysis |
 | web/app/api/doctor/route.ts | API Routes, Doctor/Diagnostics | Doctor diagnostic tool |
 | web/app/api/forensics/route.ts | API Routes, Doctor/Diagnostics | Forensics analysis |
@@ -781,7 +781,7 @@
 | web/app/api/preferences/route.ts | API Routes, Config | User preferences |
 | web/app/api/settings-data/route.ts | API Routes, Config | Settings data |
 | web/app/api/dev-mode/route.ts | API Routes, Config | Development mode toggle |
-| web/app/api/captures/route.ts | API Routes, GSD Workflow | Knowledge captures |
+| web/app/api/captures/route.ts | API Routes, GWD Workflow | Knowledge captures |
 | web/app/api/browse-directories/route.ts | API Routes | Directory browsing |
 | web/app/api/files/route.ts | API Routes, Tool System | File system access |
 | web/app/api/git/route.ts | API Routes, Tool System | Git operations |
@@ -796,17 +796,17 @@
 | File | System Label(s) | Description |
 |------|-----------------|-------------|
 | web/lib/auth.ts | Auth/OAuth | Client-side auth token management from URL fragment |
-| web/lib/gsd-workspace-store.tsx | State Machine | Global workspace state store with external store |
+| web/lib/gwd-workspace-store.tsx | State Machine | Global workspace state store with external store |
 | web/lib/project-store-manager.tsx | State Machine | Multi-project store manager with SSE lifecycle |
 | web/lib/shutdown-gate.ts | State Machine | Graceful shutdown coordination |
 | web/lib/browser-slash-command-dispatch.ts | Commands | Slash command dispatch |
-| web/lib/workflow-actions.ts | GSD Workflow | Primary workflow action derivation logic |
-| web/lib/workflow-action-execution.ts | GSD Workflow | Workflow action execution handler |
+| web/lib/workflow-actions.ts | GWD Workflow | Primary workflow action derivation logic |
+| web/lib/workflow-action-execution.ts | GWD Workflow | Workflow action execution handler |
 | web/lib/command-surface-contract.ts | Commands | Command surface request/response contract types |
 | web/lib/pty-manager.ts | Web UI | Server-side PTY spawning and session management |
 | web/lib/pty-chat-parser.ts | Web UI | PTY output parsing for chat display |
 | web/lib/remaining-command-types.ts | Web UI | Browser-safe types for command surfaces |
-| web/lib/knowledge-captures-types.ts | GSD Workflow | Knowledge entry and captures types |
+| web/lib/knowledge-captures-types.ts | GWD Workflow | Knowledge entry and captures types |
 | web/lib/diagnostics-types.ts | Doctor/Diagnostics | Diagnostics panel types |
 | web/lib/settings-types.ts | Config | Settings and preferences types |
 | web/lib/visualizer-types.ts | Doctor/Diagnostics | Workflow visualizer types |
@@ -831,8 +831,8 @@
 | File | System Label(s) | Description |
 |------|-----------------|-------------|
 | vscode-extension/src/extension.ts | VS Code Extension | Extension activation, client management, command registration |
-| vscode-extension/src/gsd-client.ts | VS Code Extension, MCP Server/Client | RPC client for GSD agent communication |
-| vscode-extension/src/chat-participant.ts | VS Code Extension | Chat participant for @gsd command |
+| vscode-extension/src/gwd-client.ts | VS Code Extension, MCP Server/Client | RPC client for GWD agent communication |
+| vscode-extension/src/chat-participant.ts | VS Code Extension | Chat participant for @gwd command |
 | vscode-extension/src/sidebar.ts | VS Code Extension | Sidebar webview provider with status display |
 
 ---
@@ -869,7 +869,7 @@
 | native/crates/engine/src/ps.rs | Native/Rust Tools | Cross-platform process tree management |
 | native/crates/engine/src/clipboard.rs | Native/Rust Tools | Clipboard read/write for text and images |
 | native/crates/engine/src/json_parse.rs | Text Processing, Native/Rust Tools | Streaming JSON parser with partial recovery |
-| native/crates/engine/src/gsd_parser.rs | GSD Workflow, Native/Rust Tools | .gsd/ directory file parser (markdown, frontmatter) |
+| native/crates/engine/src/gwd_parser.rs | GWD Workflow, Native/Rust Tools | .gwd/ directory file parser (markdown, frontmatter) |
 | native/crates/engine/src/ttsr.rs | TTSR, Native/Rust Tools | TTSR regex engine with compiled RegexSet |
 | native/crates/engine/src/stream_process.rs | Text Processing, Native/Rust Tools | Bash stream processor (UTF-8, ANSI strip, binary) |
 | native/crates/engine/src/xxhash.rs | Native/Rust Tools | xxHash32 for hashline edit tool |
@@ -946,16 +946,16 @@
 | scripts/validate-pack.js | Build System | Package validation (Node.js) |
 | scripts/install-pi-global.js | Build System | Global installation helper |
 | scripts/uninstall-pi-global.js | Build System | Global uninstallation helper |
-| scripts/install-hooks.sh | Build System, GSD Workflow | Git hook installer |
+| scripts/install-hooks.sh | Build System, GWD Workflow | Git hook installer |
 | scripts/secret-scan.sh | Build System, Auth/OAuth | Secret scanning for credentials |
 | scripts/docs-prompt-injection-scan.sh | Build System | Prompt injection detection in docs |
 | scripts/check-skill-references.mjs | Build System, Skills | Skill reference validator |
 | scripts/preview-dashboard.ts | Web Mode | Dashboard preview server |
 | scripts/ci_monitor.cjs | Build System | CI monitoring dashboard |
-| scripts/recover-gsd-1364.sh | Build System, Migration | Recovery script for issue #1364 |
-| scripts/recover-gsd-1364.ps1 | Build System, Migration | Recovery script for issue #1364 (PowerShell) |
-| scripts/recover-gsd-1668.sh | Build System, Migration | Recovery script for issue #1668 |
-| scripts/recover-gsd-1668.ps1 | Build System, Migration | Recovery script for issue #1668 (PowerShell) |
+| scripts/recover-gwd-1364.sh | Build System, Migration | Recovery script for issue #1364 |
+| scripts/recover-gwd-1364.ps1 | Build System, Migration | Recovery script for issue #1364 (PowerShell) |
+| scripts/recover-gwd-1668.sh | Build System, Migration | Recovery script for issue #1668 |
+| scripts/recover-gwd-1668.ps1 | Build System, Migration | Recovery script for issue #1668 (PowerShell) |
 
 ---
 
@@ -971,44 +971,44 @@ Quick lookup: which files are part of each system?
 | **AST** | native/crates/ast/*, packages/native/src/ast/ |
 | **Async Jobs** | src/resources/extensions/async-jobs/* |
 | **Auth / OAuth** | pi-ai/src/utils/oauth/*, src/web/web-auth-storage.ts, core/auth-storage.ts, src/pi-migration.ts, aws-auth/index.ts, web/lib/auth.ts |
-| **Auto Engine** | src/resources/extensions/gsd/auto*.ts, gsd/auto-loop.ts, gsd/auto-supervisor.ts, gsd/unit-runtime.ts |
+| **Auto Engine** | src/resources/extensions/gwd/auto*.ts, gwd/auto-loop.ts, gwd/auto-supervisor.ts, gwd/unit-runtime.ts |
 | **Bg Shell** | src/resources/extensions/bg-shell/* |
 | **Browser Tools** | src/resources/extensions/browser-tools/* |
 | **Build System** | scripts/*, native/crates/engine/build.rs |
 | **CLI** | src/cli.ts, src/cli-web-branch.ts, src/help-text.ts, src/update*.ts, pi-coding-agent/src/cli.ts, src/worktree-cli.ts |
 | **CMux** | src/resources/extensions/cmux/index.ts |
-| **Commands** | gsd/commands*.ts, gsd/exit-command.ts, gsd/undo.ts, gsd/kill.ts, pi-coding-agent/src/core/slash-commands.ts |
+| **Commands** | gwd/commands*.ts, gwd/exit-command.ts, gwd/undo.ts, gwd/kill.ts, pi-coding-agent/src/core/slash-commands.ts |
 | **Compaction** | pi-coding-agent/src/core/compaction*.ts, core/compaction/* |
 | **Config** | src/app-paths.ts, src/models-resolver.ts, src/remote-questions-config.ts, src/wizard.ts, core/defaults.ts, core/constants.ts, config.ts |
 | **Context7** | src/resources/extensions/context7/index.ts |
-| **Doctor / Diagnostics** | gsd/doctor*.ts, gsd/collision-diagnostics.ts, core/diagnostics.ts, web/lib/diagnostics-types.ts, web/app/api/doctor/*, forensics/* |
-| **Event System** | pi-coding-agent/src/core/event-bus.ts, gsd/auto-observability.ts |
+| **Doctor / Diagnostics** | gwd/doctor*.ts, gwd/collision-diagnostics.ts, core/diagnostics.ts, web/lib/diagnostics-types.ts, web/app/api/doctor/*, forensics/* |
+| **Event System** | pi-coding-agent/src/core/event-bus.ts, gwd/auto-observability.ts |
 | **Extension Registry** | src/extension-discovery.ts, src/extension-registry.ts, src/bundled-extension-paths.ts |
 | **Extensions** | pi-coding-agent/src/core/extensions/*, src/resource-loader.ts |
 | **File Search** | native/crates/engine/src/grep.rs, glob.rs, fd.rs, fs_cache.rs, packages/native/src/grep/*, fd/*, core/tools/grep.ts, find.ts |
-| **GSD Workflow** | src/resources/extensions/gsd/* (non-auto), gsd/reports.ts, gsd/notifications.ts, gsd/prompts/*, gsd/workflow-templates/* |
+| **GWD Workflow** | src/resources/extensions/gwd/* (non-auto), gwd/reports.ts, gwd/notifications.ts, gwd/prompts/*, gwd/workflow-templates/* |
 | **Google Search** | src/resources/extensions/google-search/index.ts |
 | **Headless Mode** | src/headless*.ts |
 | **Image Processing** | native/crates/engine/src/image.rs, packages/native/src/image/*, utils/image-*.ts, web/lib/image-utils.ts |
 | **Integration Tests** | tests/**/* |
-| **Loader / Bootstrap** | src/loader.ts, src/resource-loader.ts, src/tool-bootstrap.ts, src/bundled-resource-path.ts, gsd/bootstrap/* |
+| **Loader / Bootstrap** | src/loader.ts, src/resource-loader.ts, src/tool-bootstrap.ts, src/bundled-resource-path.ts, gwd/bootstrap/* |
 | **LSP** | pi-coding-agent/src/core/lsp/* |
 | **Mac Tools** | src/resources/extensions/mac-tools/* |
-| **MCP Server/Client** | src/mcp-server.ts, src/resources/extensions/mcp-client/index.ts, vscode-extension/src/gsd-client.ts, modes/rpc/* |
+| **MCP Server/Client** | src/mcp-server.ts, src/resources/extensions/mcp-client/index.ts, vscode-extension/src/gwd-client.ts, modes/rpc/* |
 | **Memory Extension** | pi-coding-agent/src/resources/extensions/memory/* |
-| **Migration** | gsd/migrate/*, src/pi-migration.ts, pi-coding-agent/src/migrations.ts, scripts/recover-*.sh |
+| **Migration** | gwd/migrate/*, src/pi-migration.ts, pi-coding-agent/src/migrations.ts, scripts/recover-*.sh |
 | **Modes** | pi-coding-agent/src/modes/* |
-| **Model System** | pi-coding-agent/src/core/model-*.ts, pi-ai/src/models*.ts, pi-ai/src/api-registry.ts, gsd/model-router.ts |
+| **Model System** | pi-coding-agent/src/core/model-*.ts, pi-ai/src/models*.ts, pi-ai/src/api-registry.ts, gwd/model-router.ts |
 | **Native / Rust Tools** | native/crates/engine/src/* |
 | **Node.js Bindings** | packages/native/src/* |
-| **Onboarding** | src/onboarding.ts, src/wizard.ts, web/components/gsd/onboarding/*, web/app/api/onboarding/* |
+| **Onboarding** | src/onboarding.ts, src/wizard.ts, web/components/gwd/onboarding/*, web/app/api/onboarding/* |
 | **Permissions** | core/extensions/project-trust.ts, core/auth-storage.ts |
 | **Remote Questions** | src/resources/extensions/remote-questions/* |
 | **Search the Web** | src/resources/extensions/search-the-web/* |
 | **Session Management** | pi-coding-agent/src/core/session-manager.ts, core/settings-manager.ts, web/app/api/session/* |
-| **Skills** | src/resources/skills/*, gsd/skill-telemetry.ts, gsd/preferences-skills.ts, core/skills.ts |
+| **Skills** | src/resources/skills/*, gwd/skill-telemetry.ts, gwd/preferences-skills.ts, core/skills.ts |
 | **Slash Commands** | src/resources/extensions/slash-commands/* |
-| **State Machine** | gsd/state.ts, gsd/history.ts, gsd/json-persistence.ts, gsd/memory-store.ts, gsd/reactive-graph.ts, core/agent-session.ts, web/lib/gsd-workspace-store.tsx |
+| **State Machine** | gwd/state.ts, gwd/history.ts, gwd/json-persistence.ts, gwd/memory-store.ts, gwd/reactive-graph.ts, core/agent-session.ts, web/lib/gwd-workspace-store.tsx |
 | **Studio App** | studio/* |
 | **Subagent** | src/resources/extensions/subagent/*, src/resources/agents/* |
 | **Syntax Highlighting** | native/crates/engine/src/highlight.rs, packages/native/src/highlight/* |
@@ -1021,4 +1021,4 @@ Quick lookup: which files are part of each system?
 | **VS Code Extension** | vscode-extension/src/* |
 | **Web Mode** | src/web/*.ts, src/web-mode.ts |
 | **Web UI** | web/app/*.tsx, web/components/*, web/hooks/*, web/lib/* |
-| **Worktree** | src/worktree-cli.ts, src/worktree-name-gen.ts, gsd/worktree*.ts, tests/repro-worktree-bug/* |
+| **Worktree** | src/worktree-cli.ts, src/worktree-name-gen.ts, gwd/worktree*.ts, tests/repro-worktree-bug/* |

@@ -1,17 +1,17 @@
 # Captures & Triage
 
-Captures let you fire-and-forget thoughts during auto-mode execution. Instead of pausing auto mode to steer, capture ideas, bugs, or scope changes and let GSD triage them at natural seams between tasks.
+Captures let you fire-and-forget thoughts during auto-mode execution. Instead of pausing auto mode to steer, capture ideas, bugs, or scope changes and let GWD triage them at natural seams between tasks.
 
 ## Quick Start
 
 While auto mode is running (or any time):
 
 ```
-/gsd capture "add rate limiting to the API endpoints"
-/gsd capture "the auth flow should support OAuth, not just JWT"
+/gwd capture "add rate limiting to the API endpoints"
+/gwd capture "the auth flow should support OAuth, not just JWT"
 ```
 
-Captures are appended to `.gsd/CAPTURES.md` and triaged automatically between tasks.
+Captures are appended to `.gwd/CAPTURES.md` and triaged automatically between tasks.
 
 ## How It Works
 
@@ -20,7 +20,7 @@ Capture → Triage → Confirm → Resolve → Resume
 ```
 
 1. **Capture** — your thought is saved with a timestamp
-2. **Triage** — between tasks, GSD classifies each capture
+2. **Triage** — between tasks, GWD classifies each capture
 3. **Confirm** — you see the proposed resolution and approve or adjust
 4. **Resolve** — the resolution is applied
 5. **Resume** — auto mode continues
@@ -44,7 +44,7 @@ Plan-modifying resolutions (inject, replan) require your confirmation.
 Trigger triage manually at any time:
 
 ```
-/gsd triage
+/gwd triage
 ```
 
 Useful when you've accumulated several captures and want to process them before the next natural seam.

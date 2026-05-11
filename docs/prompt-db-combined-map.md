@@ -1,4 +1,4 @@
-# GSD-2 Prompt ↔ Database Combined Map
+# GWD Prompt ↔ Database Combined Map
 
 > How each prompt in the pipeline reads and writes the database, and which DB state drives which prompt to fire.
 
@@ -12,7 +12,7 @@ See also:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                         gsd.db (SQLite WAL)                         │
+│                         gwd.db (SQLite WAL)                         │
 │                                                                     │
 │  milestones  slices  tasks  quality_gates  workers  unit_dispatches │
 │  memories  artifacts  decisions  requirements  runtime_kv  ...      │
@@ -34,11 +34,11 @@ See also:
                        ▼
                    LLM runs
                        │
-                       ▼ calls gsd_* tools
+                       ▼ calls gwd_* tools
               bootstrap/db-tools.ts
                        │
                        ▼
-              gsd-db.ts  (typed write API)
+              gwd-db.ts  (typed write API)
                        │
                  transaction()
                        │
@@ -208,12 +208,12 @@ One task's full DB journey from creation to completion:
 
 ```
 plan-milestone prompt fires
-  └─► gsd_plan_milestone tool
+  └─► gwd_plan_milestone tool
         └─► INSERT INTO slices (milestone_id, id, title, status='pending', is_sketch=1, sequence)
         └─► INSERT INTO tasks (milestone_id, slice_id, id, title, status='pending', description, sequence)
 
 refine-slice prompt fires (if is_sketch=1)
-  └─► gsd_plan_slice tool
+  └─► gwd_plan_slice tool
         └─► UPDATE slices SET is_sketch=0, goal, success_criteria, proof_level, ...
         └─► INSERT INTO tasks (full task plans for this slice)
         └─► UPDATE tasks SET full_plan_md, description, estimate, files, verify, ...
@@ -224,7 +224,7 @@ execute-task prompt fires
   └─► (reads) memories FTS → relevant knowledge
   └─► (reads) quality_gates WHERE status='pending' → gates to close
   └─► LLM executes the task
-  └─► gsd_task_complete tool
+  └─► gwd_task_complete tool
         └─► UPDATE tasks SET
               status='complete',
               one_liner, narrative, verification_result,
@@ -237,14 +237,14 @@ execute-task prompt fires
         └─► Toggle checkbox in S##-PLAN.md
 
 complete-slice prompt fires (after all tasks complete)
-  └─► gsd_slice_complete tool
+  └─► gwd_slice_complete tool
         └─► UPDATE slices SET status='complete', full_summary_md, full_uat_md, completed_at
         └─► UPDATE tasks SET status='skipped' WHERE status='pending' (cascade)
         └─► Write S##-SUMMARY.md, S##-UAT.md to disk
         └─► Toggle checkpoint in ROADMAP.md
 
 complete-milestone prompt fires (after all slices complete)
-  └─► gsd_complete_milestone tool
+  └─► gwd_complete_milestone tool
         └─► UPDATE milestones SET status='closed', completed_at
         └─► Write M##-SUMMARY.md to disk
 ```
@@ -274,11 +274,11 @@ later execute-task / plan-slice / research-slice prompts
 
 Every prompt that writes an artifact (e.g. `guided-discuss-project` writing
 `artifacts (PROJECT)`, `complete-slice` writing the slice summary) flows through
-`insertArtifact` in `gsd-db.ts`, which now computes and persists a SHA-256 of
+`insertArtifact` in `gwd-db.ts`, which now computes and persists a SHA-256 of
 `full_content` alongside the row:
 
 ```
-prompt → gsd_summary_save tool → insertArtifact({...})
+prompt → gwd_summary_save tool → insertArtifact({...})
   └─► content_hash = createHash('sha256').update(full_content).digest('hex')   ← V27
   └─► INSERT OR REPLACE INTO artifacts (..., content_hash) VALUES (..., :hash)
 ```
@@ -316,7 +316,7 @@ command broadcast
 
 unit completes
   └─► UPDATE unit_dispatches SET status='done'|'failed', ended_at, exit_reason, error_summary
-  └─► (all further state from gsd_task_complete, gsd_slice_complete, etc.)
+  └─► (all further state from gwd_task_complete, gwd_slice_complete, etc.)
 ```
 
 ---
@@ -351,9 +351,9 @@ unit completes
 
 | Invariant | Where Enforced |
 |-----------|---------------|
-| Single-writer: all DB writes through `gsd-db.ts` typed API | structural test `single-writer-invariant.test.ts` |
-| Cascade on slice complete: pending tasks → skipped | `gsd_slice_complete` transaction |
-| Cascade on milestone reopen: all slices → in_progress, tasks → pending | `gsd_milestone_reopen` transaction |
+| Single-writer: all DB writes through `gwd-db.ts` typed API | structural test `single-writer-invariant.test.ts` |
+| Cascade on slice complete: pending tasks → skipped | `gwd_slice_complete` transaction |
+| Cascade on milestone reopen: all slices → in_progress, tasks → pending | `gwd_milestone_reopen` transaction |
 | No nested transactions | `db-transaction.ts` depth counter |
 | Workspace isolation: one DB per project root, shared across worktrees via WAL | `db-connection-cache.ts` identityKey |
 | Coordination: one active dispatch per unit_id at a time | `idx_unit_dispatches_active_per_unit` unique partial index |

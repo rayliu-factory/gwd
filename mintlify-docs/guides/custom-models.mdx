@@ -3,7 +3,7 @@ title: "Custom models"
 description: "Add custom providers and models (Ollama, vLLM, LM Studio, proxies) via models.json."
 ---
 
-Define custom models and providers in `~/.gsd/agent/models.json`. This lets you add models not in the default registry — self-hosted endpoints, fine-tuned models, proxies, or new provider releases.
+Define custom models and providers in `~/.gwd/agent/models.json`. This lets you add models not in the default registry — self-hosted endpoints, fine-tuned models, proxies, or new provider releases.
 
 The file reloads each time you open `/model` — no restart needed.
 
@@ -123,4 +123,4 @@ For providers with partial OpenAI compatibility, use the `compat` field at provi
 
 | Extension | Provider | Models | Install |
 |-----------|----------|--------|---------|
-| [`pi-dashscope`](https://www.npmjs.com/package/pi-dashscope) | Alibaba DashScope | Qwen3, GLM-5, MiniMax M2.5, Kimi K2.5 | `gsd install npm:pi-dashscope` |
+| [`pi-dashscope`](https://www.npmjs.com/package/pi-dashscope) | Alibaba DashScope | Qwen3, GLM-5, MiniMax M2.5, Kimi K2.5 | `gwd install npm:pi-dashscope` |

@@ -52,29 +52,29 @@ A manifest that fails this check is treated as missing — the extension loads w
 
 ## Tier Rules
 
-| Tier | Ships with GSD | Can be disabled | Load source |
+| Tier | Ships with GWD | Can be disabled | Load source |
 |------|---------------|-----------------|-------------|
 | `core` | Yes | **No** — `disableExtension()` returns an error | Built-in `src/resources/extensions/` |
 | `bundled` | Yes | Yes | Built-in `src/resources/extensions/` |
-| `community` | No | Yes | `~/.gsd/agent/extensions/` or `.gsd/extensions/` |
+| `community` | No | Yes | `~/.gwd/agent/extensions/` or `.gwd/extensions/` |
 
 ### Core
 
-Reserved for foundational functionality that GSD cannot operate without. Core extensions cannot be disabled — attempting to disable one returns:
+Reserved for foundational functionality that GWD cannot operate without. Core extensions cannot be disabled — attempting to disable one returns:
 
 ```
-Cannot disable "gsd" — it is a core extension.
+Cannot disable "gwd" — it is a core extension.
 ```
 
 ### Bundled
 
-The default tier for new features that ship with GSD. Users can disable bundled extensions via `gsd extensions disable <id>`.
+The default tier for new features that ship with GWD. Users can disable bundled extensions via `gwd extensions disable <id>`.
 
 ### Community
 
 User-installed extensions loaded from:
-- `~/.gsd/agent/extensions/<name>/` — global (all projects)
-- `.gsd/extensions/<name>/` — project-local
+- `~/.gwd/agent/extensions/<name>/` — global (all projects)
+- `.gwd/extensions/<name>/` — project-local
 
 Community extensions should always use `"tier": "community"` in their manifest.
 
@@ -82,13 +82,13 @@ Community extensions should always use `"tier": "community"` in their manifest.
 
 ## Platform Constraint
 
-The `requires.platform` field is a semver range constraint checked against the running GSD version.
+The `requires.platform` field is a semver range constraint checked against the running GWD version.
 
 ```json
 "requires": { "platform": ">=2.29.0" }
 ```
 
-If the running GSD version does not satisfy the constraint, the extension will not load.
+If the running GWD version does not satisfy the constraint, the extension will not load.
 
 ---
 
@@ -108,7 +108,7 @@ The `provides` object declares what capabilities the extension registers at runt
 | Key | Type | Description |
 |-----|------|-------------|
 | `tools` | `string[]` | Tool names registered via `pi.registerTool()`. These become callable by the LLM. |
-| `commands` | `string[]` | Slash commands registered via `pi.registerCommand()`. User-facing (`/jobs`, `/gsd`). |
+| `commands` | `string[]` | Slash commands registered via `pi.registerCommand()`. User-facing (`/jobs`, `/gwd`). |
 | `hooks` | `string[]` | Lifecycle hooks the extension listens to (e.g. `session_start`, `session_switch`). |
 | `shortcuts` | `string[]` | Keyboard shortcuts the extension binds (e.g. `Ctrl+Alt+G`). |
 
@@ -184,23 +184,23 @@ The registry (`registry.json`) tracks enable/disable state separately from manif
 
 ## Complete Examples
 
-### Core — GSD Workflow
+### Core — GWD Workflow
 
 ```json
 {
-  "id": "gsd",
-  "name": "GSD Workflow",
+  "id": "gwd",
+  "name": "GWD Workflow",
   "version": "1.0.0",
-  "description": "Core GSD workflow engine — milestone planning, execution, and tracking",
+  "description": "Core GWD workflow engine — milestone planning, execution, and tracking",
   "tier": "core",
   "requires": { "platform": ">=2.29.0" },
   "provides": {
     "tools": [
       "bash", "write", "read", "edit",
-      "gsd_decision_save", "gsd_summary_save",
-      "gsd_requirement_update", "gsd_milestone_generate_id"
+      "gwd_decision_save", "gwd_summary_save",
+      "gwd_requirement_update", "gwd_milestone_generate_id"
     ],
-    "commands": ["gsd", "kill", "worktree", "exit"],
+    "commands": ["gwd", "kill", "worktree", "exit"],
     "hooks": ["session_start", "session_switch"],
     "shortcuts": ["Ctrl+Alt+G"]
   }

@@ -1,20 +1,20 @@
 # 配置
 
-GSD 偏好设置保存在 `~/.gsd/PREFERENCES.md`（全局）或 `.gsd/PREFERENCES.md`（项目级）中。可以通过 `/gsd prefs` 进行交互式管理。
+GWD 偏好设置保存在 `~/.gwd/PREFERENCES.md`（全局）或 `.gwd/PREFERENCES.md`（项目级）中。可以通过 `/gwd prefs` 进行交互式管理。
 
-## `/gsd prefs` 命令
+## `/gwd prefs` 命令
 
 | 命令 | 说明 |
 |------|------|
-| `/gsd prefs` | 打开全局偏好设置向导（默认） |
-| `/gsd prefs global` | 全局偏好设置交互向导（`~/.gsd/PREFERENCES.md`） |
-| `/gsd prefs project` | 项目偏好设置交互向导（`.gsd/PREFERENCES.md`） |
-| `/gsd prefs status` | 显示当前偏好文件、合并后的值以及 skill 解析状态 |
-| `/gsd prefs wizard` | `/gsd prefs global` 的别名 |
-| `/gsd prefs setup` | `/gsd prefs wizard` 的别名；若偏好文件不存在会自动创建 |
-| `/gsd prefs import-claude` | 将 Claude marketplace plugins 和 skills 以命名空间化的 GSD 组件形式导入 |
-| `/gsd prefs import-claude global` | 导入到全局作用域 |
-| `/gsd prefs import-claude project` | 导入到项目作用域 |
+| `/gwd prefs` | 打开全局偏好设置向导（默认） |
+| `/gwd prefs global` | 全局偏好设置交互向导（`~/.gwd/PREFERENCES.md`） |
+| `/gwd prefs project` | 项目偏好设置交互向导（`.gwd/PREFERENCES.md`） |
+| `/gwd prefs status` | 显示当前偏好文件、合并后的值以及 skill 解析状态 |
+| `/gwd prefs wizard` | `/gwd prefs global` 的别名 |
+| `/gwd prefs setup` | `/gwd prefs wizard` 的别名；若偏好文件不存在会自动创建 |
+| `/gwd prefs import-claude` | 将 Claude marketplace plugins 和 skills 以命名空间化的 GWD 组件形式导入 |
+| `/gwd prefs import-claude global` | 导入到全局作用域 |
+| `/gwd prefs import-claude project` | 导入到项目作用域 |
 
 ## 偏好文件格式
 
@@ -42,8 +42,8 @@ token_profile: balanced
 
 | 作用域 | 路径 | 适用范围 |
 |--------|------|----------|
-| 全局 | `~/.gsd/PREFERENCES.md` | 所有项目 |
-| 项目 | `.gsd/PREFERENCES.md` | 仅当前项目 |
+| 全局 | `~/.gwd/PREFERENCES.md` | 所有项目 |
+| 项目 | `.gwd/PREFERENCES.md` | 仅当前项目 |
 
 **合并规则：**
 
@@ -51,13 +51,13 @@ token_profile: balanced
 - **数组字段**（`always_use_skills` 等）：拼接，顺序为全局在前、项目在后
 - **对象字段**（`models`、`git`、`auto_supervisor`）：浅合并，项目级按 key 覆盖
 
-<a id="global-api-keys-gsd-config"></a>
-## 全局 API Keys（`/gsd config`）
+<a id="global-api-keys-gwd-config"></a>
+## 全局 API Keys（`/gwd config`）
 
-工具 API keys 会全局保存在 `~/.gsd/agent/auth.json` 中，并自动应用到所有项目。只需用 `/gsd config` 配置一次，无需在每个项目里维护 `.env`。
+工具 API keys 会全局保存在 `~/.gwd/agent/auth.json` 中，并自动应用到所有项目。只需用 `/gwd config` 配置一次，无需在每个项目里维护 `.env`。
 
 ```bash
-/gsd config
+/gwd config
 ```
 
 这会打开一个交互式向导，显示哪些 key 已配置、哪些仍缺失。你可以选择一个工具并输入相应的 key。
@@ -72,7 +72,7 @@ token_profile: balanced
 
 ### 工作方式
 
-1. `/gsd config` 会把 keys 保存到 `~/.gsd/agent/auth.json`
+1. `/gwd config` 会把 keys 保存到 `~/.gwd/agent/auth.json`
 2. 每次会话启动时，`loadToolApiKeys()` 都会读取该文件并设置环境变量
 3. 这些 keys 对所有项目生效，无需单独配置
 4. 环境变量（例如 `export BRAVE_API_KEY=...`）优先级高于保存下来的 keys
@@ -80,19 +80,19 @@ token_profile: balanced
 
 ## MCP Servers
 
-GSD 可以连接配置在项目文件中的外部 MCP servers。这适合接入本地工具、内部 API、自托管服务，或者那些未作为 GSD 原生扩展内置的集成。
+GWD 可以连接配置在项目文件中的外部 MCP servers。这适合接入本地工具、内部 API、自托管服务，或者那些未作为 GWD 原生扩展内置的集成。
 
 ### 配置文件位置
 
-GSD 会从以下项目本地路径读取 MCP client 配置：
+GWD 会从以下项目本地路径读取 MCP client 配置：
 
 - `.mcp.json`
-- `.gsd/mcp.json`
+- `.gwd/mcp.json`
 
 如果两个文件都存在，会按 server 名称做合并，先找到的定义优先。通常建议：
 
 - 把你愿意提交到仓库的共享 MCP 配置放在 `.mcp.json`
-- 把仅本机使用、不希望共享的 MCP 配置放在 `.gsd/mcp.json`
+- 把仅本机使用、不希望共享的 MCP 配置放在 `.gwd/mcp.json`
 
 ### 支持的 transport
 
@@ -132,7 +132,7 @@ GSD 会从以下项目本地路径读取 MCP client 配置：
 
 ### 验证一个 server
 
-添加配置后，可以在 GSD 会话中这样验证：
+添加配置后，可以在 GWD 会话中这样验证：
 
 ```text
 mcp_servers
@@ -142,7 +142,7 @@ mcp_call(server="my-server", tool="<tool_name>", args={...})
 
 推荐验证顺序：
 
-1. `mcp_servers`：确认 GSD 能看到配置文件并正确解析 server 条目
+1. `mcp_servers`：确认 GWD 能看到配置文件并正确解析 server 条目
 2. `mcp_discover`：确认 server 进程能启动，并能响应 `tools/list`
 3. `mcp_call`：确认至少有一个真实 tool 可以成功调用
 
@@ -150,20 +150,20 @@ mcp_call(server="my-server", tool="<tool_name>", args={...})
 
 - 尽量为本地可执行文件和脚本使用绝对路径
 - 对于 `stdio` servers，优先在 MCP 配置里显式设置需要的环境变量，而不是依赖交互式 shell profile
-- GSD 和 `gsd-mcp-server` 都会自动加载保存在 `~/.gsd/agent/auth.json` 中的 model / tool keys，因此 MCP 配置可以安全地通过 `${ENV_VAR}` 占位符引用这些值，而不必提交原始凭据
+- GWD 和 `gwd-mcp-server` 都会自动加载保存在 `~/.gwd/agent/auth.json` 中的 model / tool keys，因此 MCP 配置可以安全地通过 `${ENV_VAR}` 占位符引用这些值，而不必提交原始凭据
 - 如果某个 server 是团队共享且适合提交到仓库，通常更适合放在 `.mcp.json`
-- 如果某个 server 依赖本机路径、个人服务或本地 secrets，更适合放在 `.gsd/mcp.json`
+- 如果某个 server 依赖本机路径、个人服务或本地 secrets，更适合放在 `.gwd/mcp.json`
 
 ## 环境变量
 
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
-| `GSD_HOME` | `~/.gsd` | 全局 GSD 目录。除非单独覆盖，否则其它路径都从这里派生。影响偏好、skills、sessions 以及项目状态。（v2.39） |
-| `GSD_PROJECT_ID` | （自动哈希） | 覆盖自动生成的项目身份哈希。这样项目状态会写入 `$GSD_HOME/projects/<GSD_PROJECT_ID>/`，而不是计算出的哈希目录。适用于 CI/CD 或多个克隆共享状态。（v2.39） |
-| `GSD_STATE_DIR` | `$GSD_HOME` | 项目状态根目录。控制 `projects/<repo-hash>/` 的创建位置。对项目状态的优先级高于 `GSD_HOME`。 |
-| `GSD_CODING_AGENT_DIR` | `$GSD_HOME/agent` | agent 目录，包含托管资源、扩展和 auth。对 agent 相关路径的优先级高于 `GSD_HOME`。 |
-| `GSD_ALLOWED_COMMAND_PREFIXES` | （内置列表） | 允许用于 `!command` 值解析的命令前缀，逗号分隔。会覆盖 settings.json 中的 `allowedCommandPrefixes`。见 [自定义模型：命令允许列表](custom-models.md#command-allowlist)。 |
-| `GSD_FETCH_ALLOWED_URLS` | （无） | 对 `fetch_page` URL block 免检的 hostnames，逗号分隔。会覆盖 settings.json 中的 `fetchAllowedUrls`。见 [URL Blocking](#url-blocking-fetch_page)。 |
+| `GWD_HOME` | `~/.gwd` | 全局 GWD 目录。除非单独覆盖，否则其它路径都从这里派生。影响偏好、skills、sessions 以及项目状态。（v2.39） |
+| `GWD_PROJECT_ID` | （自动哈希） | 覆盖自动生成的项目身份哈希。这样项目状态会写入 `$GWD_HOME/projects/<GWD_PROJECT_ID>/`，而不是计算出的哈希目录。适用于 CI/CD 或多个克隆共享状态。（v2.39） |
+| `GWD_STATE_DIR` | `$GWD_HOME` | 项目状态根目录。控制 `projects/<repo-hash>/` 的创建位置。对项目状态的优先级高于 `GWD_HOME`。 |
+| `GWD_CODING_AGENT_DIR` | `$GWD_HOME/agent` | agent 目录，包含托管资源、扩展和 auth。对 agent 相关路径的优先级高于 `GWD_HOME`。 |
+| `GWD_ALLOWED_COMMAND_PREFIXES` | （内置列表） | 允许用于 `!command` 值解析的命令前缀，逗号分隔。会覆盖 settings.json 中的 `allowedCommandPrefixes`。见 [自定义模型：命令允许列表](custom-models.md#command-allowlist)。 |
+| `GWD_FETCH_ALLOWED_URLS` | （无） | 对 `fetch_page` URL block 免检的 hostnames，逗号分隔。会覆盖 settings.json 中的 `fetchAllowedUrls`。见 [URL Blocking](#url-blocking-fetch_page)。 |
 
 ## 全部设置
 
@@ -193,13 +193,13 @@ models:
 
 ### 自定义 Model 定义（`models.json`）
 
-你可以在 `~/.gsd/agent/models.json` 里定义自定义 models 和 providers。这允许你添加默认注册表里没有的 models，适合自托管 endpoints（Ollama、vLLM、LM Studio）、微调模型、代理，或者刚发布的新 provider。
+你可以在 `~/.gwd/agent/models.json` 里定义自定义 models 和 providers。这允许你添加默认注册表里没有的 models，适合自托管 endpoints（Ollama、vLLM、LM Studio）、微调模型、代理，或者刚发布的新 provider。
 
-GSD 读取 `models.json` 的顺序如下：
+GWD 读取 `models.json` 的顺序如下：
 
-1. `~/.gsd/agent/models.json`：主位置（GSD）
+1. `~/.gwd/agent/models.json`：主位置（GWD）
 2. `~/.pi/agent/models.json`：回退位置（Pi）
-3. 如果两者都不存在，则创建 `~/.gsd/agent/models.json`
+3. 如果两者都不存在，则创建 `~/.gwd/agent/models.json`
 
 **本地 models（Ollama）的快速示例：**
 
@@ -235,15 +235,15 @@ models:
     provider: bedrock    # 可选：固定到某个 provider
 ```
 
-当某个 model 切换失败（provider 不可用、被限流、额度耗尽）时，GSD 会自动尝试 `fallbacks` 列表中的下一个 model。
+当某个 model 切换失败（provider 不可用、被限流、额度耗尽）时，GWD 会自动尝试 `fallbacks` 列表中的下一个 model。
 
 ### Community Provider Extensions
 
-对于 GSD 未内置的 providers，社区扩展可以添加完整 provider 支持，包括正确的 model 定义、thinking format 配置以及交互式 API key 设置。
+对于 GWD 未内置的 providers，社区扩展可以添加完整 provider 支持，包括正确的 model 定义、thinking format 配置以及交互式 API key 设置。
 
 | 扩展 | Provider | Models | 安装命令 |
 |------|----------|--------|----------|
-| [`pi-dashscope`](https://www.npmjs.com/package/pi-dashscope) | Alibaba DashScope（ModelStudio） | Qwen3、GLM-5、MiniMax M2.5、Kimi K2.5 | `gsd install npm:pi-dashscope` |
+| [`pi-dashscope`](https://www.npmjs.com/package/pi-dashscope) | Alibaba DashScope（ModelStudio） | Qwen3、GLM-5、MiniMax M2.5、Kimi K2.5 | `gwd install npm:pi-dashscope` |
 
 对于 DashScope models，更推荐使用社区扩展而不是内置的 `alibaba-coding-plan` provider，因为前者会走正确的 OpenAI-compatible endpoint，并包含适配 thinking mode 的 per-model compatibility flags。
 
@@ -294,11 +294,11 @@ reactive_execution:
 | `isolation_mode` | string | `same-tree` | 执行隔离模式。当前只支持 `same-tree`。 |
 | `subagent_model` | string | `models.subagent` fallback | reactive task subagents 的可选 model override。 |
 
-省略 `enabled` 时，GSD 使用默认开启语义，只有至少 3 个 ready tasks 时才尝试并行批次。显式设置 `enabled: true` 时，会使用早期 opt-in 语义下的 2 个 ready tasks 阈值。
+省略 `enabled` 时，GWD 使用默认开启语义，只有至少 3 个 ready tasks 时才尝试并行批次。显式设置 `enabled: true` 时，会使用早期 opt-in 语义下的 2 个 ready tasks 阈值。
 
 ### `skill_discovery`
 
-控制 GSD 在自动模式中如何发现并应用 skills。
+控制 GWD 在自动模式中如何发现并应用 skills。
 
 | 值 | 行为 |
 |----|------|
@@ -392,7 +392,7 @@ verification_max_retries: 2       # 最大重试次数（默认：2）
 
 **允许特定内部主机：**
 
-如果你确实需要 agent 访问内网 URL（例如自托管文档、VPN 后的内部 API），可以在全局设置 `~/.gsd/agent/settings.json` 中添加 `fetchAllowedUrls`：
+如果你确实需要 agent 访问内网 URL（例如自托管文档、VPN 后的内部 API），可以在全局设置 `~/.gwd/agent/settings.json` 中添加 `fetchAllowedUrls`：
 
 ```json
 {
@@ -400,10 +400,10 @@ verification_max_retries: 2       # 最大重试次数（默认：2）
 }
 ```
 
-或者设置 `GSD_FETCH_ALLOWED_URLS` 环境变量（逗号分隔）。环境变量优先级高于 settings.json：
+或者设置 `GWD_FETCH_ALLOWED_URLS` 环境变量（逗号分隔）。环境变量优先级高于 settings.json：
 
 ```bash
-export GSD_FETCH_ALLOWED_URLS="internal-docs.company.com,192.168.1.50"
+export GWD_FETCH_ALLOWED_URLS="internal-docs.company.com,192.168.1.50"
 ```
 
 被允许的 hostname 会绕过 blocklist 检查。但协议限制依然有效，也就是说 `file://` 和 `ftp://` 仍然不能加入 allowlist。
@@ -418,7 +418,7 @@ export GSD_FETCH_ALLOWED_URLS="internal-docs.company.com,192.168.1.50"
 auto_report: true    # 默认：true
 ```
 
-报告会以自包含 HTML 文件的形式写入 `.gsd/reports/`，所有 CSS / JS 都内嵌。
+报告会以自包含 HTML 文件的形式写入 `.gwd/reports/`，所有 CSS / JS 都内嵌。
 
 ### `unique_milestone_ids`
 
@@ -444,9 +444,9 @@ git:
   main_branch: main           # 主分支名称
   merge_strategy: squash      # worktree 分支合并方式："squash" 或 "merge"
   isolation: none             # git isolation："none"（默认）、"worktree" 或 "branch"
-  commit_docs: true           # 是否把 .gsd/ 产物提交到 git（设为 false 时仅保留本地）
-  manage_gitignore: true      # 设为 false 时，GSD 不再修改 .gitignore
-  worktree_post_create: .gsd/hooks/post-worktree-create  # worktree 创建后执行的脚本
+  commit_docs: true           # 是否把 .gwd/ 产物提交到 git（设为 false 时仅保留本地）
+  manage_gitignore: true      # 设为 false 时，GWD 不再修改 .gitignore
+  worktree_post_create: .gwd/hooks/post-worktree-create  # worktree 创建后执行的脚本
   auto_pr: false              # milestone 完成时自动创建 PR（要求 push_branches）
   pr_target_branch: develop   # 自动创建 PR 的目标分支（默认：main branch）
 ```
@@ -462,8 +462,8 @@ git:
 | `main_branch` | string | `"main"` | 主分支名称 |
 | `merge_strategy` | string | `"squash"` | worktree 分支合并方式：`"squash"`（合并为单个提交）或 `"merge"`（保留单独提交） |
 | `isolation` | string | `"none"` | 自动模式隔离方式：`"none"`（无隔离，直接提交到当前分支）、`"worktree"`（独立目录）或 `"branch"`（直接在项目根目录工作，适合子模块多的仓库）。`worktree` 要求有已提交的 `HEAD`；零提交仓库会临时按 `none` 运行，直到第一次提交存在 |
-| `commit_docs` | boolean | `true` | 是否把 `.gsd/` planning 产物提交到 git。设为 `false` 则仅保留本地 |
-| `manage_gitignore` | boolean | `true` | 设为 `false` 后，GSD 将完全不修改 `.gitignore`，不会添加基础规则，也不会做自愈 |
+| `commit_docs` | boolean | `true` | 是否把 `.gwd/` planning 产物提交到 git。设为 `false` 则仅保留本地 |
+| `manage_gitignore` | boolean | `true` | 设为 `false` 后，GWD 将完全不修改 `.gitignore`，不会添加基础规则，也不会做自愈 |
 | `worktree_post_create` | string | （无） | worktree 创建后执行的脚本。环境变量中会传入 `SOURCE_DIR` 和 `WORKTREE_DIR` |
 | `auto_pr` | boolean | `false` | milestone 完成时自动创建 pull request。要求 `auto_push: true` 且已安装认证 `gh` CLI |
 | `pr_target_branch` | string | （main branch） | 自动创建 PR 的目标分支，例如 `develop`、`qa`。未设置时默认回退到 `main_branch` |
@@ -474,7 +474,7 @@ git:
 
 ```yaml
 git:
-  worktree_post_create: .gsd/hooks/post-worktree-create
+  worktree_post_create: .gwd/hooks/post-worktree-create
 ```
 
 脚本会收到两个环境变量：
@@ -482,7 +482,7 @@ git:
 - `SOURCE_DIR`：原始项目根目录
 - `WORKTREE_DIR`：新创建的 worktree 路径
 
-示例 hook（`.gsd/hooks/post-worktree-create`）：
+示例 hook（`.gwd/hooks/post-worktree-create`）：
 
 ```bash
 #!/bin/bash
@@ -492,7 +492,7 @@ cp "$SOURCE_DIR/.env.local" "$WORKTREE_DIR/.env.local" 2>/dev/null || true
 ln -sf "$SOURCE_DIR/assets" "$WORKTREE_DIR/assets"
 ```
 
-路径既可以是绝对路径，也可以相对项目根目录。脚本有 30 秒超时限制。失败不会中断流程，GSD 会记录告警后继续。
+路径既可以是绝对路径，也可以相对项目根目录。脚本有 30 秒超时限制。失败不会中断流程，GWD 会记录告警后继续。
 
 <a id="gitauto_pr"></a>
 #### `git.auto_pr`
@@ -513,22 +513,22 @@ git:
 
 **工作方式：**
 
-1. milestone 完成后，GSD 先把 worktree squash merge 回主分支
+1. milestone 完成后，GWD 先把 worktree squash merge 回主分支
 2. 如果 `auto_push: true`，把主分支推送到远程
 3. 把 milestone 分支推送到远程
 4. 通过 `gh pr create` 从 milestone 分支向 `pr_target_branch` 创建 PR
 
-如果没有设置 `pr_target_branch`，PR 会默认指向 `main_branch`（或者自动检测出的主分支）。PR 创建失败不会中断流程，GSD 会记录日志后继续。
+如果没有设置 `pr_target_branch`，PR 会默认指向 `main_branch`（或者自动检测出的主分支）。PR 创建失败不会中断流程，GWD 会记录日志后继续。
 
 ### `github`（v2.39）
 
-GitHub 同步配置。启用后，GSD 会自动把 milestones、slices 和 tasks 同步到 GitHub Issues、PRs 和 Milestones。
+GitHub 同步配置。启用后，GWD 会自动把 milestones、slices 和 tasks 同步到 GitHub Issues、PRs 和 Milestones。
 
 ```yaml
 github:
   enabled: true
   repo: "owner/repo"              # 省略时从 git remote 自动检测
-  labels: [gsd, auto-generated]   # 应用到创建出的 issues / PRs 的标签
+  labels: [gwd, auto-generated]   # 应用到创建出的 issues / PRs 的标签
   project: "Project ID"           # 可选的 GitHub Project board
 ```
 
@@ -542,7 +542,7 @@ github:
 **要求：**
 
 - 已安装并认证 `gh` CLI（`gh auth login`）
-- 同步映射会保存在 `.gsd/.github-sync.json`
+- 同步映射会保存在 `.gwd/.github-sync.json`
 - 具备速率限制感知：当 GitHub API rate limit 偏低时会跳过同步
 
 **命令：**
@@ -552,7 +552,7 @@ github:
 
 ### `notifications`
 
-控制 GSD 在自动模式中发出哪些通知：
+控制 GWD 在自动模式中发出哪些通知：
 
 ```yaml
 notifications:
@@ -564,7 +564,7 @@ notifications:
   on_attention: true          # 需要人工介入时通知
 ```
 
-**macOS 通知方式：** GSD 会优先使用 [`terminal-notifier`](https://github.com/julienXX/terminal-notifier)，不可用时回退到 `osascript`。建议安装 `terminal-notifier`，获得更稳定的通知体验：
+**macOS 通知方式：** GWD 会优先使用 [`terminal-notifier`](https://github.com/julienXX/terminal-notifier)，不可用时回退到 `osascript`。建议安装 `terminal-notifier`，获得更稳定的通知体验：
 
 ```bash
 brew install terminal-notifier
@@ -682,13 +682,13 @@ custom_instructions:
   - "Prefer functional patterns over classes"
 ```
 
-如果是项目特有知识（模式、坑点、经验），请优先放到 `.gsd/KNOWLEDGE.md` 中，因为它会自动注入每个 agent prompt。你也可以通过 `/gsd knowledge rule|pattern|lesson <description>` 添加。
+如果是项目特有知识（模式、坑点、经验），请优先放到 `.gwd/KNOWLEDGE.md` 中，因为它会自动注入每个 agent prompt。你也可以通过 `/gwd knowledge rule|pattern|lesson <description>` 添加。
 
 ### `RUNTIME.md`：运行时上下文（v2.39）
 
-你可以在 `.gsd/RUNTIME.md` 中声明项目级运行时上下文。这个文件会内联进 task execution prompt，让 agent 能准确知道运行环境，而不必靠猜测路径或 URL。
+你可以在 `.gwd/RUNTIME.md` 中声明项目级运行时上下文。这个文件会内联进 task execution prompt，让 agent 能准确知道运行环境，而不必靠猜测路径或 URL。
 
-**位置：** `.gsd/RUNTIME.md`
+**位置：** `.gwd/RUNTIME.md`
 
 **示例：**
 
@@ -741,7 +741,7 @@ context_management:
 
 ### `service_tier`（v2.42）
 
-OpenAI 支持模型的 service tier 偏好。可通过 `/gsd fast` 切换。
+OpenAI 支持模型的 service tier 偏好。可通过 `/gwd fast` 切换。
 
 | 值 | 行为 |
 |----|------|
@@ -755,7 +755,7 @@ service_tier: priority
 
 ### `forensics_dedup`（v2.43）
 
-可选启用：在 `/gsd forensics` 提交 issue 之前，先搜索现有 issues 和 PRs。会额外消耗一些 AI tokens。
+可选启用：在 `/gwd forensics` 提交 issue 之前，先搜索现有 issues 和 PRs。会额外消耗一些 AI tokens。
 
 ```yaml
 forensics_dedup: true    # 默认：false
@@ -856,7 +856,7 @@ notifications:
 auto_visualize: true
 
 # Service tier
-service_tier: priority         # "priority" or "flex" (for /gsd fast)
+service_tier: priority         # "priority" or "flex" (for /gwd fast)
 
 # Diagnostics
 forensics_dedup: true          # deduplicate before filing forensics issues

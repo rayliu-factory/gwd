@@ -1,17 +1,17 @@
 # Environment Variables
 
-## GSD Configuration
+## GWD Configuration
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `GSD_HOME` | `~/.gsd` | Global GSD directory. All paths derive from this unless individually overridden. |
-| `GSD_PROJECT_ID` | (auto-hash) | Override automatic project identity hash. Useful for CI/CD or sharing state across repo clones. |
-| `GSD_STATE_DIR` | `$GSD_HOME` | Per-project state root. Controls where `projects/<repo-hash>/` directories are created. |
-| `GSD_CODING_AGENT_DIR` | `$GSD_HOME/agent` | Agent directory for extensions, auth, and managed resources. |
-| `GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK` | (unset) | Set to literal `1` only for tests or explicit recovery workflows that must derive state from rendered markdown when the database is unavailable. Normal runtime treats the database as authoritative and refuses silent markdown fallback. |
-| `GSD_FETCH_ALLOWED_URLS` | (none) | Comma-separated hostnames exempt from internal URL blocking. |
-| `GSD_ALLOWED_COMMAND_PREFIXES` | (built-in) | Comma-separated command prefixes allowed for value resolution. |
-| `GSD_WEB_PROJECT_CWD` | — | Default project path for `gsd --web` when `?project=` is not specified. |
+| `GWD_HOME` | `~/.gwd` | Global GWD directory. All paths derive from this unless individually overridden. |
+| `GWD_PROJECT_ID` | (auto-hash) | Override automatic project identity hash. Useful for CI/CD or sharing state across repo clones. |
+| `GWD_STATE_DIR` | `$GWD_HOME` | Per-project state root. Controls where `projects/<repo-hash>/` directories are created. |
+| `GWD_CODING_AGENT_DIR` | `$GWD_HOME/agent` | Agent directory for extensions, auth, and managed resources. |
+| `GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK` | (unset) | Set to literal `1` only for tests or explicit recovery workflows that must derive state from rendered markdown when the database is unavailable. Normal runtime treats the database as authoritative and refuses silent markdown fallback. |
+| `GWD_FETCH_ALLOWED_URLS` | (none) | Comma-separated hostnames exempt from internal URL blocking. |
+| `GWD_ALLOWED_COMMAND_PREFIXES` | (built-in) | Comma-separated command prefixes allowed for value resolution. |
+| `GWD_WEB_PROJECT_CWD` | — | Default project path for `gwd --web` when `?project=` is not specified. |
 | `PI_TOKEN_AUDIT` | (unset) | Set to literal `1` to emit metadata-only provider-boundary prompt/tool audit JSONL on stderr. Other values are ignored. |
 | `PI_TOKEN_TELEMETRY` | (unset) | Set to literal `1` to emit opt-in per-call token telemetry as JSONL on stderr. Other values are ignored. |
 
@@ -60,8 +60,8 @@
 Set `PI_TOKEN_AUDIT=1` to emit metadata-only audit records for each provider attempt. Audit output is for prompt-size investigation: it reports section sizes, message/tool counts, cache-neutral character totals, and largest message/tool summaries after context transforms and final tool filtering. It does not log raw prompt text, tool result text, user text, system prompt text, or tool schemas.
 
 ```bash
-PI_TOKEN_AUDIT=1 gsd headless --json auto \
-  > gsd-events.jsonl \
+PI_TOKEN_AUDIT=1 gwd headless --json auto \
+  > gwd-events.jsonl \
   2> token-audit.jsonl
 ```
 
@@ -73,12 +73,12 @@ Set `PI_TOKEN_TELEMETRY=1` to emit raw token and prompt-cache telemetry for each
 
 ```bash
 # Capture telemetry separately from headless JSONL events
-PI_TOKEN_TELEMETRY=1 gsd headless --json auto \
-  > gsd-events.jsonl \
+PI_TOKEN_TELEMETRY=1 gwd headless --json auto \
+  > gwd-events.jsonl \
   2> token-telemetry.jsonl
 
 # Capture telemetry from an interactive session
-PI_TOKEN_TELEMETRY=1 gsd 2> token-telemetry.jsonl
+PI_TOKEN_TELEMETRY=1 gwd 2> token-telemetry.jsonl
 ```
 
 Each line is one JSON object:
@@ -102,9 +102,9 @@ Records are per attempt, not per user turn. A retrying call can emit one line fo
 The `fetch_page` tool blocks requests to private/internal networks by default (SSRF protection). To allow specific internal hosts:
 
 ```bash
-export GSD_FETCH_ALLOWED_URLS="internal-docs.company.com,192.168.1.50"
+export GWD_FETCH_ALLOWED_URLS="internal-docs.company.com,192.168.1.50"
 ```
 
-Or set `fetchAllowedUrls` in `~/.gsd/agent/settings.json`.
+Or set `fetchAllowedUrls` in `~/.gwd/agent/settings.json`.
 
 Blocked by default: private IP ranges, cloud metadata endpoints, localhost, non-HTTP protocols, IPv6 private ranges.

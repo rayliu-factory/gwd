@@ -1,12 +1,12 @@
-# GSD 文档
+# GWD 文档
 
-欢迎使用 GSD 文档。这里涵盖了从快速开始到高级配置、自动模式内部机制，以及如何基于 Pi SDK 扩展 GSD 的内容。
+欢迎使用 GWD 文档。这里涵盖了从快速开始到高级配置、自动模式内部机制，以及如何基于 Pi SDK 扩展 GWD 的内容。
 
 > 本目录是主文档的简体中文翻译。目前优先覆盖 `docs/user-docs/` 这套用户手册；如中英文内容有差异，请以英文原文为准。
 
 ## 用户文档
 
-用于安装、配置和日常使用 GSD 的指南。文件位于 [`user-docs/`](./user-docs/)。
+用于安装、配置和日常使用 GWD 的指南。文件位于 [`user-docs/`](./user-docs/)。
 
 | 指南 | 说明 |
 |------|------|
@@ -26,7 +26,7 @@
 | [并行编排](./user-docs/parallel-orchestration.md) | 通过隔离的工作线程和协调机制同时运行多个 milestones |
 | [团队协作](./user-docs/working-in-teams.md) | 唯一 milestone ID、`.gitignore` 设置和共享规划产物 |
 | [技能](./user-docs/skills.md) | 内置技能、技能发现和自定义技能编写 |
-| [从 v1 迁移](./user-docs/migration.md) | 将 `.planning` 目录迁移到新的 `.gsd` 格式 |
-| [故障排查](./user-docs/troubleshooting.md) | 常见问题、`/gsd doctor`、`/gsd forensics` 和恢复流程 |
-| [Web 界面](./user-docs/web-interface.md) | 通过 `gsd --web` 使用基于浏览器的项目管理界面 |
+| [导入 `.planning` 项目](./user-docs/migration.md) | 将 `.planning` 目录导入 `.gwd` |
+| [故障排查](./user-docs/troubleshooting.md) | 常见问题、`/gwd doctor`、`/gwd forensics` 和恢复流程 |
+| [Web 界面](./user-docs/web-interface.md) | 通过 `gwd --web` 使用基于浏览器的项目管理界面 |
 | [VS Code 扩展](../../vscode-extension/README.md) | 聊天参与者、侧边栏仪表板以及 VS Code 的 RPC 集成 |

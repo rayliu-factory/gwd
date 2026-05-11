@@ -1,6 +1,6 @@
-# GSD-2 e2e tests
+# GWD e2e tests
 
-End-to-end tests that spawn the **real built** `gsd` binary as a child process
+End-to-end tests that spawn the **real built** `gwd` binary as a child process
 and exercise it through realistic flows.
 
 These exist to catch regressions that mock-heavy unit/integration tests can't:
@@ -14,7 +14,7 @@ chmod +x dist/loader.js
 GWD_SMOKE_BINARY="$(pwd)/dist/loader.js" npm run test:e2e
 ```
 
-If `GWD_SMOKE_BINARY` is not set, the suite falls back to whatever `gsd`
+If `GWD_SMOKE_BINARY` is not set, the suite falls back to whatever `gwd`
 resolves on PATH (matching the convention used by `tests/live-regression`).
 
 ### Docker e2e (separate suite)
@@ -59,7 +59,7 @@ describe("my feature", () => {
 ## Harness contracts (`_shared/`)
 
 - **`spawn.ts`** — `gsdSync` / `gsdAsync` wrappers. Both:
-  - Resolve `GWD_SMOKE_BINARY` → `node <path>` vs PATH `gsd` automatically.
+  - Resolve `GWD_SMOKE_BINARY` → `node <path>` vs PATH `gwd` automatically.
   - Strip every `GWD_*` env var inherited from the host (prevents local
     config leaking into CI).
   - Set `TMPDIR` to the canonical (realpath) tmpdir to avoid the macOS
@@ -79,7 +79,7 @@ describe("my feature", () => {
 - ❌ Reading source files and grepping with regex — see "No source-grep
   tests" in [CONTRIBUTING.md](../../CONTRIBUTING.md). E2e is the wrong layer
   for that anyway.
-- ❌ Spawning `gsd` directly with `child_process.spawn` — bypasses the
+- ❌ Spawning `gwd` directly with `child_process.spawn` — bypasses the
   env-stripping and TMPDIR fix. Always go through `gsdSync` / `gsdAsync`.
 - ❌ Asserting on raw ANSI-coded output. Use `result.stdoutClean`.
 - ❌ Calling real LLM/network APIs. Future phases land a fake-LLM provider
@@ -96,7 +96,7 @@ describe("my feature", () => {
 - ✅ Phase 7 (migration smoke)
 - ✅ B (docker runtime smoke against current source)
 - ✅ D (Windows smoke coverage — non-blocking inside the portability job)
-- Dropped: `gsd undo` e2e. Schema rollback is not a shipped feature.
+- Dropped: `gwd undo` e2e. Schema rollback is not a shipped feature.
 - Dropped: Studio launch-only e2e. Studio is retired from the CI e2e process.
 
 The suite now covers the originally planned shipped CLI/runtime surfaces. Add

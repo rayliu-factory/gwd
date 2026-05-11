@@ -1,6 +1,6 @@
-# GSD-2 Long-Running Refactor Plan-Of-Plans
+# GWD Long-Running Refactor Plan-Of-Plans
 
-Project/App: GSD-2
+Project/App: GWD
 File Purpose: Complete phase-by-phase implementation roadmap for reducing complexity, token usage, build/test time, and app/process drift without a big-bang rewrite.
 
 **Status:** Replanned - SRC-first execution
@@ -10,7 +10,7 @@ File Purpose: Complete phase-by-phase implementation roadmap for reducing comple
 
 ## Objective
 
-Create a decision-complete implementation roadmap for the long-running GSD-2 refactor. This document plans the full program before implementation starts. It is not a mandate to execute every phase at the same time.
+Create a decision-complete implementation roadmap for the long-running GWD refactor. This document plans the full program before implementation starts. It is not a mandate to execute every phase at the same time.
 
 The refactor should:
 
@@ -29,9 +29,9 @@ The previous execution spent too much time migrating web, VS Code, daemon, and o
 **Do now:**
 
 1. Finish only the contract work required to stabilize `src/` runtime fixtures and prevent drift in source-owned RPC/headless/auto behavior.
-2. Move immediately into Phase 2 token/context reduction under `src/resources/extensions/gsd/**`, `src/headless*.ts`, and source-owned prompt/context builders.
+2. Move immediately into Phase 2 token/context reduction under `src/resources/extensions/gwd/**`, `src/headless*.ts`, and source-owned prompt/context builders.
 3. Pull Phase 4 workflow-kernel work ahead of broad app-surface consolidation once prompt lanes and fixtures are stable.
-4. Pull Phase 5 DB split directly after the kernel boundary, because `src/resources/extensions/gsd/gsd-db.ts` and state derivation are core complexity hotspots.
+4. Pull Phase 5 DB split directly after the kernel boundary, because `src/resources/extensions/gwd/gwd-db.ts` and state derivation are core complexity hotspots.
 5. Keep Phase 3 build/test speed scoped to `src` test compile and source verification loops.
 
 **Stop doing for now:**
@@ -46,8 +46,8 @@ The previous execution spent too much time migrating web, VS Code, daemon, and o
 1. Phase 0: complete and keep as the safety gate.
 2. Phase 1A: close `src`-owned contract fixture gaps only.
 3. Phase 2: token and context reduction in `src`.
-4. Phase 4: workflow kernel extraction in `src/resources/extensions/gsd`.
-5. Phase 5: DB split in `src/resources/extensions/gsd`.
+4. Phase 4: workflow kernel extraction in `src/resources/extensions/gwd`.
+5. Phase 5: DB split in `src/resources/extensions/gwd`.
 6. Phase 3: source-scoped build/test speed work, interleaved only when it accelerates the current `src` phase.
 7. Phase 7: process consolidation after runtime simplification.
 8. Phase 8: telemetry-gated cleanup.
@@ -97,7 +97,7 @@ The previous execution spent too much time migrating web, VS Code, daemon, and o
    - rendered skill count and skill catalog chars
    - context/tool/system/user-message chars where available
    - build/test command wall time
-   - startup phase timing when `GSD_STARTUP_TIMING=1`
+   - startup phase timing when `GWD_STARTUP_TIMING=1`
    - `dist-test` file count and byte size
 2. Add fixtures for representative current behavior:
    - RPC JSONL state/stats/bash/UI events
@@ -161,15 +161,15 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 
 **Owned areas:**
 
-- New `packages/contracts` workspace package named `@gsd-build/contracts`.
+- New `packages/contracts` workspace package named `@gwd-build/contracts`.
 - Runtime RPC protocol types.
-- `@gsd-build/rpc-client` compatibility exports when required by source tests.
+- `@gwd-build/rpc-client` compatibility exports when required by source tests.
 - `src/headless*.ts`, `src/headless-events.ts`, `src/web/bridge-service.ts` only where source-owned runtime fixtures depend on them.
-- `src/resources/extensions/gsd/**` contract fixtures.
+- `src/resources/extensions/gwd/**` contract fixtures.
 
 **Implementation plan:**
 
-1. Create `@gsd-build/contracts` with:
+1. Create `@gwd-build/contracts` with:
    - thinking levels including all currently supported levels
    - RPC command/event/response envelopes
    - session state and session stats
@@ -178,15 +178,15 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
    - MCP blocker request/response shapes
    - workflow tool registry metadata: canonical name, aliases, schema id, executor id, write policy, audit metadata
 2. Move only stable public DTOs first. Do not move implementation services into the contracts package.
-3. Make runtime RPC and `@gsd-build/rpc-client` import or re-export canonical contracts.
+3. Make runtime RPC and `@gwd-build/rpc-client` import or re-export canonical contracts.
 4. Add golden JSONL fixtures for source-owned runtime/headless/auto behavior.
 5. Stop Phase 1A when `src` fixtures are stable. Defer MCP/web/VS Code/Studio/daemon DTO migration unless required by source tests.
 
 **Implemented so far:**
 
-- Created `packages/contracts` as `@gsd-build/contracts`.
+- Created `packages/contracts` as `@gwd-build/contracts`.
 - Added canonical RPC constants and DTOs for commands, responses, v2 events, session state, session stats, bash results, and extension UI request/response payloads.
-- Migrated runtime RPC and `@gsd-build/rpc-client` to re-export the shared RPC contracts.
+- Migrated runtime RPC and `@gwd-build/rpc-client` to re-export the shared RPC contracts.
 - Added Phase 1 fixture coverage with `src/tests/contracts-rpc-fixtures.test.ts`.
 - Updated the web parity contract test to assert retry state through the shared `RpcSessionState` type instead of reading RPC type source text.
 
@@ -227,11 +227,11 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 
 **Owned areas:**
 
-- `src/resources/extensions/gsd/prompts/**`.
-- `src/resources/extensions/gsd/auto-prompts.ts`.
-- `src/resources/extensions/gsd/auto-context.ts` and adjacent source context builders if present.
+- `src/resources/extensions/gwd/prompts/**`.
+- `src/resources/extensions/gwd/auto-prompts.ts`.
+- `src/resources/extensions/gwd/auto-context.ts` and adjacent source context builders if present.
 - Skill filtering and skill catalog rendering under `src`.
-- GSD prompt builders and `UnitContextManifest` under `src`.
+- GWD prompt builders and `UnitContextManifest` under `src`.
 - Context budget enforcement under `src`.
 - Prompt telemetry and golden prompt fixtures.
 
@@ -241,7 +241,7 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
    - stable system kernel
    - unit-specific instructions
    - volatile retrieved context
-2. Wire existing `skillFilter` through session and GSD unit context so only relevant skills render by default.
+2. Wire existing `skillFilter` through session and GWD unit context so only relevant skills render by default.
 3. Keep explicitly requested skills visible even if automatic filtering would omit them.
 4. Make `UnitContextManifest` the source of truth for artifacts, tools, skills, memory, and budgets.
 5. Enforce budgets in `composeUnitContext`:
@@ -292,7 +292,7 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 
 **Exit gate:** 40% prompt-size reduction target is met on representative fixtures with no loss of required sections or acceptance criteria.
 
-**Closeout status (2026-05-04):** Phase 2 source-owned golden fixtures now enforce the exit gate in `src/tests/prompt-golden-fixtures.test.ts`. Representative fixture total dropped from 45,247 chars at the SRC-first Phase 2 start baseline to 16,548 chars, a 63.4% reduction, while retaining required markers for `gsd_plan_slice`, `gsd_task_complete`, `gsd_slice_complete`, verification evidence, blocker handling, and summary sections. The regression gate runs through `npm run baseline:refactor:gate`.
+**Closeout status (2026-05-04):** Phase 2 source-owned golden fixtures now enforce the exit gate in `src/tests/prompt-golden-fixtures.test.ts`. Representative fixture total dropped from 45,247 chars at the SRC-first Phase 2 start baseline to 16,548 chars, a 63.4% reduction, while retaining required markers for `gwd_plan_slice`, `gwd_task_complete`, `gwd_slice_complete`, verification evidence, blocker handling, and summary sections. The regression gate runs through `npm run baseline:refactor:gate`.
 
 ## Phase 3: Build/Test Speed Plan
 
@@ -408,7 +408,7 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 
 **Exit gate:** Auto pause/resume/recovery/worktree/milestone tests pass through the facade and pure kernel tests cover dispatch decisions.
 
-**Closeout status (2026-05-04):** Phase 4 SRC-first workflow-kernel extraction is closed. `auto/loop.ts` remains the compatibility facade, while repeated loop responsibilities now sit behind small source-owned adapters for phase/journal/turn reporting, session-lock validation, worker heartbeat, memory pressure, dispatch claims, dispatch ledger settling, sidecar queue dequeue, sidecar/custom-engine iteration data, unit dispatch, request timestamp resolution, iteration completion cleanup, custom verify retry persistence, custom-engine dispatch outcomes, verify outcomes, reconcile handling, and reconcile outcomes. Pure kernel decisions are covered in `src/resources/extensions/gsd/tests/workflow-kernel.test.ts`; side-effect adapters have direct `node:test` coverage; facade behavior is covered by `src/resources/extensions/gsd/tests/auto-loop.test.ts` and `src/resources/extensions/gsd/tests/custom-engine-loop-integration.test.ts`. Latest gate used targeted adapter tests, custom-engine integration, `auto-loop`, `npm run test:changed:src -- --since HEAD~1`, and `npm run baseline:refactor:gate`.
+**Closeout status (2026-05-04):** Phase 4 SRC-first workflow-kernel extraction is closed. `auto/loop.ts` remains the compatibility facade, while repeated loop responsibilities now sit behind small source-owned adapters for phase/journal/turn reporting, session-lock validation, worker heartbeat, memory pressure, dispatch claims, dispatch ledger settling, sidecar queue dequeue, sidecar/custom-engine iteration data, unit dispatch, request timestamp resolution, iteration completion cleanup, custom verify retry persistence, custom-engine dispatch outcomes, verify outcomes, reconcile handling, and reconcile outcomes. Pure kernel decisions are covered in `src/resources/extensions/gwd/tests/workflow-kernel.test.ts`; side-effect adapters have direct `node:test` coverage; facade behavior is covered by `src/resources/extensions/gwd/tests/auto-loop.test.ts` and `src/resources/extensions/gwd/tests/custom-engine-loop-integration.test.ts`. Latest gate used targeted adapter tests, custom-engine integration, `auto-loop`, `npm run test:changed:src -- --since HEAD~1`, and `npm run baseline:refactor:gate`.
 
 ## Phase 5: DB Split Plan
 
@@ -476,7 +476,7 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 
 **Exit gate:** Migration, state derivation, dependency lookup, and single-writer tests pass with compatibility exports intact.
 
-**Closeout status (2026-05-04):** Phase 5 SRC-first DB split is closed for this merge stack. `gsd-db.ts` remains the compatibility facade while provider loading, adapter wrapping, workspace connection caching, open-status state, transaction running, schema metadata/version helpers, runtime KV schema, coordination schema, verification-evidence schema, memory FTS schema, base schema DDL, migration backup/control/DDL steps, and row mappers for decision/requirement, task/slice, milestone/artifact, lightweight query, and verification evidence now live in focused source-owned modules. Verification coverage includes DB provider/adapter/cache/open-state/transaction/schema/migration helper tests, `gsd-db.test.ts`, `derive-state-db.test.ts`, `derive-state-db-disk-reconcile.test.ts`, and single-writer guardrail coverage.
+**Closeout status (2026-05-04):** Phase 5 SRC-first DB split is closed for this merge stack. `gwd-db.ts` remains the compatibility facade while provider loading, adapter wrapping, workspace connection caching, open-status state, transaction running, schema metadata/version helpers, runtime KV schema, coordination schema, verification-evidence schema, memory FTS schema, base schema DDL, migration backup/control/DDL steps, and row mappers for decision/requirement, task/slice, milestone/artifact, lightweight query, and verification evidence now live in focused source-owned modules. Verification coverage includes DB provider/adapter/cache/open-state/transaction/schema/migration helper tests, `gwd-db.test.ts`, `derive-state-db.test.ts`, `derive-state-db-disk-reconcile.test.ts`, and single-writer guardrail coverage.
 
 ## Phase 6: App Surface Plan - Deferred
 
@@ -496,7 +496,7 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 2. Split web workspace store into store slices while preserving the public hook behavior.
 3. Make web routes and bridge services delegate to shared contracts and services instead of importing deep runtime internals.
 4. Move MCP workflow tool registration toward the shared workflow registry metadata.
-5. Move VS Code DTO parsing to `@gsd-build/contracts`.
+5. Move VS Code DTO parsing to `@gwd-build/contracts`.
 6. Decide Studio role:
    - either wire it to the same contracts
    - or mark it explicitly as prototype/non-runtime until wired
@@ -541,7 +541,7 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 
 **Owned areas:**
 
-- `/gsd ship`.
+- `/gwd ship`.
 - `git.auto_pr`.
 - GitHub sync PR generation.
 - PR evidence generation.
@@ -551,7 +551,7 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 **Implementation plan:**
 
 1. Create one PR evidence generator used by:
-   - `/gsd ship`
+   - `/gwd ship`
    - `git.auto_pr`
    - GitHub sync
 2. Evidence generator must include:
@@ -583,7 +583,7 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 | Area | Required tests |
 | --- | --- |
 | PR evidence | generated body includes required sections for each change type |
-| Ship paths | `/gsd ship`, `git.auto_pr`, GitHub sync call shared generator |
+| Ship paths | `/gwd ship`, `git.auto_pr`, GitHub sync call shared generator |
 | Docs examples | command examples match actual supported flows |
 | Process classification | task size maps to expected planning/execution path |
 
@@ -602,7 +602,7 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 
 **Exit gate:** Generated PR bodies satisfy template, linked issue, tests, and AI disclosure requirements.
 
-**Closeout status (2026-05-04):** Phase 7 SRC-first process consolidation is closed. `/gsd ship`, `git.auto_pr`, and GitHub sync PR body generation now use the shared `buildPrEvidence` generator with TL;DR, linked issue, tests run, change type, rollback/compatibility, and AI disclosure sections. GitHub sync slice PRs and swarm lane PRs reuse the same generator through their existing formatter surface. Process routing now has one canonical recommended path for hotfix, bugfix, small feature, large feature, and architecture-change work, surfaced in `/gsd start` and `/gsd templates` help. Baseline reporting now emits the Phase 7 dashboard fields: `process.prGeneratorConsumers`, `process.prBodiesMissingIssue`, `process.prBodiesMissingTests`, `process.docsConflictCount`, and `process.shipPathCount`; the current scan reports three shared PR evidence consumers, zero missing issue/test evidence flags, and zero DB-vs-markdown docs conflicts. Verification used targeted PR evidence, GitHub sync formatter, process path, workflow template, changed-src, and `npm run baseline:refactor:gate` tests.
+**Closeout status (2026-05-04):** Phase 7 SRC-first process consolidation is closed. `/gwd ship`, `git.auto_pr`, and GitHub sync PR body generation now use the shared `buildPrEvidence` generator with TL;DR, linked issue, tests run, change type, rollback/compatibility, and AI disclosure sections. GitHub sync slice PRs and swarm lane PRs reuse the same generator through their existing formatter surface. Process routing now has one canonical recommended path for hotfix, bugfix, small feature, large feature, and architecture-change work, surfaced in `/gwd start` and `/gwd templates` help. Baseline reporting now emits the Phase 7 dashboard fields: `process.prGeneratorConsumers`, `process.prBodiesMissingIssue`, `process.prBodiesMissingTests`, `process.docsConflictCount`, and `process.shipPathCount`; the current scan reports three shared PR evidence consumers, zero missing issue/test evidence flags, and zero DB-vs-markdown docs conflicts. Verification used targeted PR evidence, GitHub sync formatter, process path, workflow template, changed-src, and `npm run baseline:refactor:gate` tests.
 
 ## Phase 8: Legacy Cleanup Plan
 
@@ -641,7 +641,7 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 - Wired `legacy.componentFormatUsed` to successful legacy `SKILL.md` and agent `.md` component loads.
 - Wired `legacy.providerDefaultUsed` to canonical provider-default model fallback selection.
 - Added one-warning-per-counter diagnostics through the shared legacy telemetry layer.
-- Added opt-in snapshot persistence via `GSD_LEGACY_TELEMETRY_FILE` so representative runs can produce deletion-gate evidence without hardcoded local paths.
+- Added opt-in snapshot persistence via `GWD_LEGACY_TELEMETRY_FILE` so representative runs can produce deletion-gate evidence without hardcoded local paths.
 - Added explicit zero-use snapshot flushing so representative runs can produce deletion-gate evidence even when no legacy counters increment.
 - Added `npm run legacy:cleanup:gate -- --file <snapshot>` to block deletion PRs when any Phase 8 counter is missing or nonzero.
 - Added `npm run legacy:cleanup:evidence -- --file <snapshot>` to run representative checks, write a zero-use snapshot if no legacy path is touched, and then apply the cleanup gate.
@@ -650,8 +650,8 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 
 - Markdown state fallback: migrate projects to DB-authoritative state and keep markdown as projection/manual reference only. Do not remove fallback until `legacy.markdownFallbackUsed` stays at zero on representative runs.
 - Legacy workflow engines/templates: move active workflows to `auto-milestone` templates and keep legacy aliases documented until `legacy.workflowEngineUsed` is zero.
-- UOK fallback/parity wrappers: resolve blockers that require `legacy_fallback` or `GSD_UOK_FORCE_LEGACY`; removal is allowed only after kernel path telemetry shows no fallback use.
-- MCP tool aliases: update agents and prompts to canonical `gsd_*` tool names before alias removal. Alias wrappers now count actual alias execution.
+- UOK fallback/parity wrappers: resolve blockers that require `legacy_fallback` or `GWD_UOK_FORCE_LEGACY`; removal is allowed only after kernel path telemetry shows no fallback use.
+- MCP tool aliases: update agents and prompts to canonical `gwd_*` tool names before alias removal. Alias wrappers now count actual alias execution.
 - Legacy component formats: migrate installed skills and agents to `component.yaml` plus `SKILL.md` or `AGENT.md` entry files before removing legacy loaders.
 - Provider defaults: configure explicit provider-aware model preferences or available model registries before removing canonical provider-default fallbacks.
 
@@ -694,7 +694,7 @@ Baseline usage is documented in `docs/dev/refactor-baseline-runbook.md`.
 | --- | --- | --- |
 | 0 | metrics scripts, test fixtures, docs for baseline command | implementation refactors in auto/DB/web |
 | 1A | `packages/contracts`, source-owned RPC/headless/auto fixtures | prompt builder rewrites that change payload shape |
-| 2 | `src/resources/extensions/gsd/prompts/**`, `src/resources/extensions/gsd/*context*`, skill filtering, GSD prompt/context compiler | workflow kernel side-effect moves |
+| 2 | `src/resources/extensions/gwd/prompts/**`, `src/resources/extensions/gwd/*context*`, skill filtering, GWD prompt/context compiler | workflow kernel side-effect moves |
 | 3 | source build/test scripts and `dist-test` lifecycle | test fixture schema moves from Phase 1A without coordination |
 | 4 | auto-mode kernel/facade/adapters | DB module moves and prompt compiler churn in same files |
 | 5 | DB internals and repositories | workflow kernel changes that depend on DB private functions |

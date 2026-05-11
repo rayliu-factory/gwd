@@ -1,37 +1,37 @@
 # Headless & CI Mode
 
-`gsd headless` runs GSD commands without a terminal UI — designed for CI pipelines, cron jobs, and scripted automation.
+`gwd headless` runs GWD commands without a terminal UI — designed for CI pipelines, cron jobs, and scripted automation.
 
 ## Basic Usage
 
 ```bash
 # Run auto mode
-gsd headless
+gwd headless
 
 # Run a single unit
-gsd headless next
+gwd headless next
 
 # With timeout for CI
-gsd headless --timeout 600000 auto
+gwd headless --timeout 600000 auto
 
 # Force a specific phase
-gsd headless dispatch plan
+gwd headless dispatch plan
 
 # Stream all events as JSONL
-gsd headless --json auto
+gwd headless --json auto
 ```
 
 ## Creating Milestones Headlessly
 
 ```bash
 # From a context file
-gsd headless new-milestone --context brief.md --auto
+gwd headless new-milestone --context brief.md --auto
 
 # From inline text
-gsd headless new-milestone --context-text "Build a REST API with auth"
+gwd headless new-milestone --context-text "Build a REST API with auth"
 
 # Pipe from stdin
-echo "Build a CLI tool" | gsd headless new-milestone --context -
+echo "Build a CLI tool" | gwd headless new-milestone --context -
 ```
 
 ## CLI Flags
@@ -56,27 +56,27 @@ echo "Build a CLI tool" | gsd headless new-milestone --context -
 
 ## Instant State Query
 
-`gsd headless query` returns a JSON snapshot of project state — no AI session, instant response (~50ms):
+`gwd headless query` returns a JSON snapshot of project state — no AI session, instant response (~50ms):
 
 ```bash
-gsd headless query | jq '.state.phase'
+gwd headless query | jq '.state.phase'
 # "executing"
 
-gsd headless query | jq '.next'
+gwd headless query | jq '.next'
 # {"action":"dispatch","unitType":"execute-task","unitId":"M001/S01/T03"}
 
-gsd headless query | jq '.cost.total'
+gwd headless query | jq '.cost.total'
 # 4.25
 ```
 
-Any `/gsd` subcommand works as a positional argument: `gsd headless status`, `gsd headless doctor`, etc.
+Any `/gwd` subcommand works as a positional argument: `gwd headless status`, `gwd headless doctor`, etc.
 
 ## MCP Server Mode
 
-`gsd --mode mcp` runs GSD as a Model Context Protocol server over stdin/stdout, exposing all GSD tools to external AI clients:
+`gwd --mode mcp` runs GWD as a Model Context Protocol server over stdin/stdout, exposing all GWD tools to external AI clients:
 
 ```bash
-gsd --mode mcp
+gwd --mode mcp
 ```
 
 Compatible with Claude Desktop, VS Code Copilot, and any MCP host.

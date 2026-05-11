@@ -1,10 +1,10 @@
 # Auto Mode
 
-Auto mode is GSD's autonomous execution engine. Run `/gsd auto`, walk away, come back to built software with clean git history.
+Auto mode is GWD's autonomous execution engine. Run `/gwd auto`, walk away, come back to built software with clean git history.
 
 ## How It Works
 
-Auto mode is a **state machine driven by the GSD database at the project root**. It derives the next unit of work from the authoritative SQLite state, creates a fresh agent session, injects a focused prompt with all relevant context pre-inlined, and lets the LLM execute. When the LLM finishes, auto mode persists the result to the database, refreshes markdown projections such as `STATE.md`, and dispatches the next unit.
+Auto mode is a **state machine driven by the GWD database at the project root**. It derives the next unit of work from the authoritative SQLite state, creates a fresh agent session, injects a focused prompt with all relevant context pre-inlined, and lets the LLM execute. When the LLM finishes, auto mode persists the result to the database, refreshes markdown projections such as `STATE.md`, and dispatches the next unit.
 
 ### The Loop
 
@@ -24,19 +24,19 @@ Plan (with integrated research) → Execute (per task) → Complete → Reassess
 
 ### Idempotent Milestone Completion
 
-Milestone completion is safe to retry. If a `complete-milestone` unit is redispatched after the database already marks the milestone as closed, GSD treats the call as successful instead of returning an error. The existing summary projection is left intact, no duplicate completion event is appended, and the tool response includes `alreadyComplete: true` in its details so operators and integrations can distinguish a retry from the first completion.
+Milestone completion is safe to retry. If a `complete-milestone` unit is redispatched after the database already marks the milestone as closed, GWD treats the call as successful instead of returning an error. The existing summary projection is left intact, no duplicate completion event is appended, and the tool response includes `alreadyComplete: true` in its details so operators and integrations can distinguish a retry from the first completion.
 
 ### State Authority
 
-The SQLite database is the runtime source of truth for milestones, slices, tasks, requirements, decisions, summaries, and completion status. Markdown files in `.gsd/` are rendered projections for review, prompts, and git-friendly history; editing a projection does not override the database unless a command imports or saves that change through GSD.
+The SQLite database is the runtime source of truth for milestones, slices, tasks, requirements, decisions, summaries, and completion status. Markdown files in `.gwd/` are rendered projections for review, prompts, and git-friendly history; editing a projection does not override the database unless a command imports or saves that change through GWD.
 
-In worktree mode, the project-root database and project-root `.gsd/` state remain authoritative. Worktree markdown projections are useful diagnostics, but they are not synced back as runtime state. If the database is unavailable, runtime state derivation refuses to silently rebuild from markdown. The legacy markdown derivation path is only enabled when `GSD_ALLOW_MARKDOWN_DERIVE_FALLBACK=1`, which exists for tests and explicit recovery scenarios.
+In worktree mode, the project-root database and project-root `.gwd/` state remain authoritative. Worktree markdown projections are useful diagnostics, but they are not synced back as runtime state. If the database is unavailable, runtime state derivation refuses to silently rebuild from markdown. The legacy markdown derivation path is only enabled when `GWD_ALLOW_MARKDOWN_DERIVE_FALLBACK=1`, which exists for tests and explicit recovery scenarios.
 
 ### Single-Host Runtime Constraint
 
 Phase C coordination is single-host only. Auto mode and parallel coordination rely on the project-root SQLite database running in WAL mode on local disk for worker heartbeats, milestone leases, dispatch claims, cancellation requests, and command handoff.
 
-That means multiple terminals or worker processes can safely coordinate against the same project on one machine, but sharing `.gsd/gsd.db*` across machines or over network filesystems is unsupported. If you need cross-host orchestration, use an external coordinator instead of trying to stretch the local SQLite/WAL runtime.
+That means multiple terminals or worker processes can safely coordinate against the same project on one machine, but sharing `.gwd/gwd.db*` across machines or over network filesystems is unsupported. If you need cross-host orchestration, use an external coordinator instead of trying to stretch the local SQLite/WAL runtime.
 
 ### Deep Planning Mode
 
@@ -46,7 +46,7 @@ For projects that need more up-front discovery, enable deep planning mode in pro
 planning_depth: deep
 ```
 
-You can also opt in when starting project setup with `/gsd new-project --deep` or `/gsd new-milestone --deep`; GSD writes the project `.gsd/PREFERENCES.md` setting for you.
+You can also opt in when starting project setup with `/gwd new-project --deep` or `/gwd new-milestone --deep`; GWD writes the project `.gwd/PREFERENCES.md` setting for you.
 
 Deep mode keeps the normal slice execution loop, but first runs a one-time staged discovery flow before milestone-level planning:
 
@@ -56,16 +56,16 @@ Workflow Preferences -> Project Context -> Requirements -> Research Decision -> 
 
 | Artifact | When it appears | Purpose |
 |----------|-----------------|---------|
-| `.gsd/PREFERENCES.md` | `--deep` / `workflow-preferences` | Holds `planning_depth: deep` and captured workflow settings |
-| `.gsd/PROJECT.md` | `discuss-project` | Project vision, users, anti-goals, constraints, and rough milestone sequence |
-| `.gsd/REQUIREMENTS.md` | `discuss-requirements` | Capability contract using `R###` requirements grouped by Active, Validated, Deferred, and Out of Scope |
-| `.gsd/runtime/research-decision.json` | `research-decision` | Records `research` or `skip`; this unit only asks the question and writes the marker |
-| `.gsd/research/STACK.md`, `FEATURES.md`, `ARCHITECTURE.md`, `PITFALLS.md` | `research-project`, only when the decision is `research` | Four parallel project-level research outputs for stack, feature norms, architecture, and pitfalls |
-| `.gsd/milestones/<MID>/M###-CONTEXT.md` and `M###-ROADMAP.md` | Normal milestone discussion/planning | Milestone-specific context and executable roadmap |
+| `.gwd/PREFERENCES.md` | `--deep` / `workflow-preferences` | Holds `planning_depth: deep` and captured workflow settings |
+| `.gwd/PROJECT.md` | `discuss-project` | Project vision, users, anti-goals, constraints, and rough milestone sequence |
+| `.gwd/REQUIREMENTS.md` | `discuss-requirements` | Capability contract using `R###` requirements grouped by Active, Validated, Deferred, and Out of Scope |
+| `.gwd/runtime/research-decision.json` | `research-decision` | Records `research` or `skip`; this unit only asks the question and writes the marker |
+| `.gwd/research/STACK.md`, `FEATURES.md`, `ARCHITECTURE.md`, `PITFALLS.md` | `research-project`, only when the decision is `research` | Four parallel project-level research outputs for stack, feature norms, architecture, and pitfalls |
+| `.gwd/milestones/<MID>/M###-CONTEXT.md` and `M###-ROADMAP.md` | Normal milestone discussion/planning | Milestone-specific context and executable roadmap |
 
-`REQUIREMENTS.md` is rendered from the requirements stored in the GSD database. Agents should save individual requirements with `gsd_requirement_save`; a final `gsd_summary_save` for `REQUIREMENTS` will fail if no active requirement rows exist instead of treating caller-supplied markdown as canonical.
+`REQUIREMENTS.md` is rendered from the requirements stored in the GWD database. Agents should save individual requirements with `gwd_requirement_save`; a final `gwd_summary_save` for `REQUIREMENTS` will fail if no active requirement rows exist instead of treating caller-supplied markdown as canonical.
 
-Project research is informational, not binding. It cross-checks the requirements and surfaces table stakes, risks, and omissions; any new commitment should be added to `.gsd/REQUIREMENTS.md` before planning depends on it.
+Project research is informational, not binding. It cross-checks the requirements and surfaces table stakes, risks, and omissions; any new commitment should be added to `.gwd/REQUIREMENTS.md` before planning depends on it.
 
 ## Key Properties
 
@@ -75,7 +75,7 @@ Every task, research phase, and planning step gets a clean context window. No ac
 
 ### Runtime Tool Policy
 
-Each auto-mode unit has a `UnitContextManifest` with a `ToolsPolicy`, and GSD enforces that policy before tool calls execute. Execution units use `all` mode and may edit project files, run shell commands, and dispatch subagents. Most planning and discussion units use `planning` mode: they can read broadly, write planning artifacts under `.gsd/`, run only read-only shell commands, and cannot dispatch subagents. Selected planning and closeout units use `planning-dispatch` mode, which keeps the same source-write and bash restrictions but allows `subagent` dispatch for isolated recon, planning, or review work. Documentation units use `docs` mode, which keeps the same restrictions but also allows writes to the manifest's explicit documentation globs such as `docs/**`, top-level `README*.md`, `CHANGELOG.md`, and top-level `*.md`.
+Each auto-mode unit has a `UnitContextManifest` with a `ToolsPolicy`, and GWD enforces that policy before tool calls execute. Execution units use `all` mode and may edit project files, run shell commands, and dispatch subagents. Most planning and discussion units use `planning` mode: they can read broadly, write planning artifacts under `.gwd/`, run only read-only shell commands, and cannot dispatch subagents. Selected planning and closeout units use `planning-dispatch` mode, which keeps the same source-write and bash restrictions but allows `subagent` dispatch for isolated recon, planning, or review work. Documentation units use `docs` mode, which keeps the same restrictions but also allows writes to the manifest's explicit documentation globs such as `docs/**`, top-level `README*.md`, `CHANGELOG.md`, and top-level `*.md`.
 
 Writes outside those allowed paths, unsafe bash commands, and subagent dispatch from non-dispatch planning units are blocked with a hard policy error instead of relying on prompt compliance. In `planning-dispatch` units, prompts steer the parent agent toward read-only specialists such as `scout`, `planner`, `researcher`, `reviewer`, `security`, or `tester`; implementation-tier agents still belong in `execute-task`.
 
@@ -87,10 +87,10 @@ Common block reasons and operator actions:
 
 | Block reason | What it means | Remediation |
 |--------------|---------------|-------------|
-| State reconciliation blocker | The authoritative database snapshot is already blocked, or state derivation found existing blockers. | Inspect `/gsd status`, `STATE.md`, and the database-backed blocker message; resolve the blocker or run the appropriate GSD recovery command before retrying `/gsd auto`. |
+| State reconciliation blocker | The authoritative database snapshot is already blocked, or state derivation found existing blockers. | Inspect `/gwd status`, `STATE.md`, and the database-backed blocker message; resolve the blocker or run the appropriate GWD recovery command before retrying `/gwd auto`. |
 | `unknown-unit-type` | The dispatch decision selected a unit with no registered `UnitContextManifest`. | Fix the unit registration or manifest mapping. Retrying without a code/config fix will select the same invalid unit. |
-| `missing-closeout-tool` | A closeout unit such as task, slice, milestone, UAT, or gate completion has no required workflow tool available. | Restore the missing `gsd_*` workflow tool registration or update the unit manifest/tool contract so the unit can durably save its result. |
-| `root-missing` / `root-not-directory` | A source-writing unit would run from a missing or invalid unit root. | Recreate or repair the milestone worktree/root, or clear an incorrect `GSD_UNIT_ROOT`, before launching another source-writing unit. |
+| `missing-closeout-tool` | A closeout unit such as task, slice, milestone, UAT, or gate completion has no required workflow tool available. | Restore the missing `gwd_*` workflow tool registration or update the unit manifest/tool contract so the unit can durably save its result. |
+| `root-missing` / `root-not-directory` | A source-writing unit would run from a missing or invalid unit root. | Recreate or repair the milestone worktree/root, or clear an incorrect `GWD_UNIT_ROOT`, before launching another source-writing unit. |
 | `git-metadata-missing` | A source-writing unit root exists but is not a git worktree or repository root. | Run the unit from the project root or milestone worktree with valid `.git` metadata; recreate the worktree if it was deleted or partially copied. |
 
 Recovery classification now treats deterministic policy, tool-schema, stale-worker, and invalid-worktree failures as non-transient stops. Provider failures still use provider-specific transient classification and may retry automatically, while verification drift and unknown runtime failures escalate for inspection because repeating the same dispatch can preserve the drift.
@@ -112,9 +112,9 @@ The amount of context inlined is controlled by your [token profile](./token-opti
 
 ### Context Mode
 
-Context Mode is enabled by default for auto-mode runs. Eligible auto-mode units receive manifest-driven guidance to preserve the conversation window: use `gsd_exec` for noisy codebase scans, builds, tests, and diagnostics; use `gsd_exec_search` before repeating a prior sandboxed run; and use `gsd_resume` after compaction or session resume to read a prior compaction snapshot from `.gsd/last-snapshot.md` when one exists.
+Context Mode is enabled by default for auto-mode runs. Eligible auto-mode units receive manifest-driven guidance to preserve the conversation window: use `gwd_exec` for noisy codebase scans, builds, tests, and diagnostics; use `gwd_exec_search` before repeating a prior sandboxed run; and use `gwd_resume` after compaction or session resume to read a prior compaction snapshot from `.gwd/last-snapshot.md` when one exists.
 
-`gsd_exec` writes capped stdout/stderr and metadata under `.gsd/exec/`; output may be truncated. It then returns only a short digest to the agent. This keeps large command output out of the LLM context while preserving exact evidence on disk. To opt out of Context Mode guidance, snapshot injection, `gsd_exec`, `gsd_exec_search`, and `gsd_resume`, set:
+`gwd_exec` writes capped stdout/stderr and metadata under `.gwd/exec/`; output may be truncated. It then returns only a short digest to the agent. This keeps large command output out of the LLM context while preserving exact evidence on disk. To opt out of Context Mode guidance, snapshot injection, `gwd_exec`, `gwd_exec_search`, and `gwd_resume`, set:
 
 ```yaml
 context_mode:
@@ -125,10 +125,10 @@ You can also tune sandbox behavior with `context_mode.exec_timeout_ms`, `context
 
 ### Git Isolation
 
-GSD isolates milestone work using one of three modes (configured via `git.isolation` in preferences):
+GWD isolates milestone work using one of three modes (configured via `git.isolation` in preferences):
 
 - **`none`** (default): Work happens directly on your current branch. No worktree, no milestone branch. Ideal for hot-reload workflows where file isolation breaks dev tooling.
-- **`worktree`**: Each milestone runs in its own git worktree at `.gsd/worktrees/<MID>/` on a `milestone/<MID>` branch. Worktree mode requires at least one commit; in a zero-commit repo with no committed `HEAD`, GSD temporarily runs as `none` until the first commit exists. All slice work commits sequentially, and the milestone is squash-merged to main as one clean commit.
+- **`worktree`**: Each milestone runs in its own git worktree at `.gwd/worktrees/<MID>/` on a `milestone/<MID>` branch. Worktree mode requires at least one commit; in a zero-commit repo with no committed `HEAD`, GWD temporarily runs as `none` until the first commit exists. All slice work commits sequentially, and the milestone is squash-merged to main as one clean commit.
 - **`branch`**: Work happens in the project root on a `milestone/<MID>` branch. Useful for submodule-heavy repos where worktrees don't work well.
 
 See [Git Strategy](./git-strategy.md) for details.
@@ -139,13 +139,13 @@ When your project has independent milestones, you can run them simultaneously. E
 
 ### Crash Recovery
 
-Auto mode persists worker state, unit-dispatch state, and paused-session metadata in the project-root SQLite database. If the session dies, the next `/gsd auto` reconstructs the interrupted unit from DB-backed runtime state, reads the surviving session file, synthesizes a recovery briefing from every tool call that made it to disk, and resumes with full context.
+Auto mode persists worker state, unit-dispatch state, and paused-session metadata in the project-root SQLite database. If the session dies, the next `/gwd auto` reconstructs the interrupted unit from DB-backed runtime state, reads the surviving session file, synthesizes a recovery briefing from every tool call that made it to disk, and resumes with full context.
 
-**Headless auto-restart (v2.26):** When running `gsd headless auto`, crashes trigger automatic restart with exponential backoff (5s → 10s → 30s cap, default 3 attempts). Configure with `--max-restarts N`. SIGINT/SIGTERM bypasses restart. Combined with crash recovery, this enables true overnight "run until done" execution.
+**Headless auto-restart (v2.26):** When running `gwd headless auto`, crashes trigger automatic restart with exponential backoff (5s → 10s → 30s cap, default 3 attempts). Configure with `--max-restarts N`. SIGINT/SIGTERM bypasses restart. Combined with crash recovery, this enables true overnight "run until done" execution.
 
 ### Provider Error Recovery
 
-GSD classifies provider errors and auto-resumes when safe:
+GWD classifies provider errors and auto-resumes when safe:
 
 | Error type | Examples | Action |
 |-----------|----------|--------|
@@ -157,11 +157,11 @@ No manual intervention needed for transient errors — the session pauses briefl
 
 ### Incremental Memory (v2.26)
 
-GSD maintains a `KNOWLEDGE.md` file — an append-only register of project-specific rules, patterns, and lessons learned. The agent reads it at the start of every unit and appends to it when discovering recurring issues, non-obvious patterns, or rules that future sessions should follow. This gives auto-mode cross-session memory that survives context window boundaries.
+GWD maintains a `KNOWLEDGE.md` file — an append-only register of project-specific rules, patterns, and lessons learned. The agent reads it at the start of every unit and appends to it when discovering recurring issues, non-obvious patterns, or rules that future sessions should follow. This gives auto-mode cross-session memory that survives context window boundaries.
 
 ### Context Pressure Monitor (v2.26)
 
-When context usage reaches 70%, GSD sends a wrap-up signal to the agent, nudging it to finish durable output (commit, write summaries) before the context window fills. This prevents sessions from hitting the hard context limit mid-task with no artifacts written.
+When context usage reaches 70%, GWD sends a wrap-up signal to the agent, nudging it to finish durable output (commit, write summaries) before the context window fills. This prevents sessions from hitting the hard context limit mid-task with no artifacts written.
 
 ### Meaningful Commit Messages (v2.26)
 
@@ -169,28 +169,28 @@ Commits are generated from task summaries — not generic "complete task" messag
 
 ### Stuck Detection (v2.39)
 
-GSD uses a sliding-window analysis to detect stuck loops. Instead of a simple "same unit dispatched twice" counter, the detector examines recent dispatch history for repeated patterns — catching cycles like A→B→A→B as well as single-unit repeats. On detection, GSD retries once with a deep diagnostic prompt. If it fails again, auto mode stops so you can intervene.
+GWD uses a sliding-window analysis to detect stuck loops. Instead of a simple "same unit dispatched twice" counter, the detector examines recent dispatch history for repeated patterns — catching cycles like A→B→A→B as well as single-unit repeats. On detection, GWD retries once with a deep diagnostic prompt. If it fails again, auto mode stops so you can intervene.
 
 The sliding-window approach reduces false positives on legitimate retries (e.g., verification failures that self-correct) while catching genuine stuck loops faster.
 
 ### Artifact Verification Retries
 
-After each unit, GSD verifies that the expected artifact exists on disk. If the artifact is missing, auto mode re-dispatches the unit with explicit failure context and records an `artifact-verification-retry` journal event.
+After each unit, GWD verifies that the expected artifact exists on disk. If the artifact is missing, auto mode re-dispatches the unit with explicit failure context and records an `artifact-verification-retry` journal event.
 
-Artifact verification retries are capped at 3 attempts. If the expected artifact is still missing after those retries, GSD pauses auto mode with an "Artifact still missing..." error instead of relying on loop detection or an unbounded dispatch counter.
+Artifact verification retries are capped at 3 attempts. If the expected artifact is still missing after those retries, GWD pauses auto mode with an "Artifact still missing..." error instead of relying on loop detection or an unbounded dispatch counter.
 
 ### Post-Mortem Investigation (v2.40)
 
-`/gsd forensics` is a full-access GSD debugger for post-mortem analysis of auto-mode failures. It provides:
+`/gwd forensics` is a full-access GWD debugger for post-mortem analysis of auto-mode failures. It provides:
 
 - **Anomaly detection** — structured identification of stuck loops, cost spikes, timeouts, missing artifacts, and crashes with severity levels
 - **Unit traces** — last 10 unit executions with error details and execution times
 - **Metrics analysis** — cost, token counts, and execution time breakdowns
-- **Doctor integration** — includes structural health issues from `/gsd doctor`
+- **Doctor integration** — includes structural health issues from `/gwd doctor`
 - **LLM-guided investigation** — an agent session with full tool access to investigate root causes
 
 ```
-/gsd forensics [optional problem description]
+/gwd forensics [optional problem description]
 ```
 
 See [Troubleshooting](./troubleshooting.md) for more on diagnosing issues.
@@ -250,13 +250,13 @@ Auto-mode pauses before each slice, presenting the slice context for discussion.
 
 ### HTML Reports (v2.26)
 
-After a milestone completes, GSD auto-generates a self-contained HTML report in `.gsd/reports/`. Reports include project summary, progress tree, slice dependency graph (SVG DAG), cost/token metrics with bar charts, execution timeline, changelog, and knowledge base. No external dependencies — all CSS and JS are inlined.
+After a milestone completes, GWD auto-generates a self-contained HTML report in `.gwd/reports/`. Reports include project summary, progress tree, slice dependency graph (SVG DAG), cost/token metrics with bar charts, execution timeline, changelog, and knowledge base. No external dependencies — all CSS and JS are inlined.
 
 ```yaml
 auto_report: true    # enabled by default
 ```
 
-Generate manually anytime with `/gsd export --html`, or generate reports for all milestones at once with `/gsd export --html --all` (v2.28).
+Generate manually anytime with `/gwd export --html`, or generate reports for all milestones at once with `/gwd export --html --all` (v2.28).
 
 ### Failure Recovery (v2.28)
 
@@ -276,7 +276,7 @@ This linear flow is easier to debug, uses less memory (no recursive call stack),
 
 ### Real-Time Health Visibility (v2.40)
 
-Doctor issues (from `/gsd doctor`) now surface in real time across three places:
+Doctor issues (from `/gwd doctor`) now surface in real time across three places:
 
 - **Dashboard widget** — health indicator with issue count and severity
 - **Workflow visualizer** — issues shown in the status panel
@@ -299,7 +299,7 @@ See [Configuration](./configuration.md) for skill routing preferences.
 ### Start
 
 ```
-/gsd auto
+/gwd auto
 ```
 
 ### Pause
@@ -309,7 +309,7 @@ Press **Escape**. The conversation is preserved. You can interact with the agent
 ### Resume
 
 ```
-/gsd auto
+/gwd auto
 ```
 
 Auto mode derives the latest database state and picks up where it left off.
@@ -317,7 +317,7 @@ Auto mode derives the latest database state and picks up where it left off.
 ### Stop
 
 ```
-/gsd stop
+/gwd stop
 ```
 
 Stops auto mode gracefully. Can be run from a different terminal.
@@ -325,7 +325,7 @@ Stops auto mode gracefully. Can be run from a different terminal.
 ### Steer
 
 ```
-/gsd steer
+/gwd steer
 ```
 
 Hard-steer plan documents during execution without stopping the pipeline. Changes are picked up at the next phase boundary.
@@ -333,7 +333,7 @@ Hard-steer plan documents during execution without stopping the pipeline. Change
 ### Capture
 
 ```
-/gsd capture "add rate limiting to API endpoints"
+/gwd capture "add rate limiting to API endpoints"
 ```
 
 Fire-and-forget thought capture. Captures are triaged automatically between tasks. See [Captures & Triage](./captures-triage.md).
@@ -341,7 +341,7 @@ Fire-and-forget thought capture. Captures are triaged automatically between task
 ### Visualize
 
 ```
-/gsd visualize
+/gwd visualize
 ```
 
 Open the workflow visualizer — interactive tabs for progress, dependencies, metrics, and timeline. See [Workflow Visualizer](./visualizer.md).
@@ -359,13 +359,13 @@ When Telegram is configured as your remote channel, you can control auto-mode an
 | `/budget` | Token usage and cost for the current session |
 | `/log [n]` | Last `n` activity log entries (default: 5) |
 
-GSD polls for incoming Telegram commands every ~5 seconds while auto-mode is active. Commands are only available during active auto-mode sessions.
+GWD polls for incoming Telegram commands every ~5 seconds while auto-mode is active. Commands are only available during active auto-mode sessions.
 
 See [Remote Questions — Telegram Commands](./remote-questions.md#telegram-commands) for the full command reference and setup instructions.
 
 ## Dashboard
 
-`Ctrl+Alt+G` or `/gsd status` shows real-time progress:
+`Ctrl+Alt+G` or `/gwd status` shows real-time progress:
 
 - Current milestone, slice, and task
 - Auto mode elapsed time and phase
@@ -393,7 +393,7 @@ When enabled, auto-mode automatically selects cheaper models for simple units (s
 
 ## Reactive Task Execution
 
-Reactive task execution is enabled by default. During task execution, GSD derives a dependency graph from the IO annotations in task plans. When at least three ready tasks can be considered safely, tasks that do not conflict (no shared file reads/writes) are dispatched in parallel via subagents, while dependent tasks wait for their predecessors to complete.
+Reactive task execution is enabled by default. During task execution, GWD derives a dependency graph from the IO annotations in task plans. When at least three ready tasks can be considered safely, tasks that do not conflict (no shared file reads/writes) are dispatched in parallel via subagents, while dependent tasks wait for their predecessors to complete.
 
 ```yaml
 reactive_execution:

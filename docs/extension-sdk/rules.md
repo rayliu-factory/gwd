@@ -1,8 +1,8 @@
 # Rules
 
-// GSD-2 Extension SDK — Non-negotiable rules, gotchas, and contribution requirements
+// GWD Extension SDK — Non-negotiable rules, gotchas, and contribution requirements
 
-Non-negotiable rules, common gotchas, and contribution requirements for GSD-2 extensions. Violating any non-negotiable rule will block your PR.
+Non-negotiable rules, common gotchas, and contribution requirements for GWD extensions. Violating any non-negotiable rule will block your PR.
 
 ---
 
@@ -14,7 +14,7 @@ Non-negotiable rules, common gotchas, and contribution requirements for GSD-2 ex
 
 ```typescript
 // CORRECT
-import { StringEnum } from "@gsd/pi-ai";
+import { StringEnum } from "@gwd/pi-ai";
 const Status = StringEnum(["pending", "active", "done"] as const);
 
 // WRONG — breaks Google Gemini
@@ -23,10 +23,10 @@ const Status = Type.Union([Type.Literal("pending"), Type.Literal("active"), Type
 
 ### 2. Truncate tool output
 
-Large tool output causes context overflow. Enforce a maximum of **50 KB / 2000 lines**. Use the truncation helpers from `@gsd/pi-coding-agent`:
+Large tool output causes context overflow. Enforce a maximum of **50 KB / 2000 lines**. Use the truncation helpers from `@gwd/pi-coding-agent`:
 
 ```typescript
-import { truncateHead, truncateTail } from "@gsd/pi-coding-agent";
+import { truncateHead, truncateTail } from "@gwd/pi-coding-agent";
 
 const output = truncateTail(rawOutput, { maxBytes: 50_000, maxLines: 2000 });
 ```
@@ -40,15 +40,15 @@ Never import theme directly. Use the `theme` parameter provided by `ctx.ui.custo
 ctx.ui.custom((tui, theme, kb, done) => { /* use theme here */ });
 
 // WRONG
-import { theme } from "@gsd/pi-tui";
+import { theme } from "@gwd/pi-tui";
 ```
 
 ### 4. Lines must not exceed `width` in `render()`
 
-Use `truncateToWidth()` from `@gsd/pi-tui` to enforce line width:
+Use `truncateToWidth()` from `@gwd/pi-tui` to enforce line width:
 
 ```typescript
-import { truncateToWidth } from "@gsd/pi-tui";
+import { truncateToWidth } from "@gwd/pi-tui";
 
 render(width: number) {
   return truncateToWidth(this.label, width);
@@ -166,8 +166,8 @@ Every bundled extension PR must include:
 | Use this tier | When |
 |---------------|------|
 | **core** | Foundational system — cannot be disabled. RFC required. |
-| **bundled** | Ships with GSD, user can disable. Default for new features. |
-| **community** | User-installed. Lives in `~/.gsd/agent/extensions/`. |
+| **bundled** | Ships with GWD, user can disable. Default for new features. |
+| **community** | User-installed. Lives in `~/.gwd/agent/extensions/`. |
 
 ### Promoting Community to Bundled
 

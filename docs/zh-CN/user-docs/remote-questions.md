@@ -1,13 +1,13 @@
 # 远程提问
 
-在无头自动模式下运行时，远程提问允许 GSD 通过 Slack、Discord 或 Telegram 请求用户输入。当 GSD 遇到需要人工判断的决策点时，它会把问题发到你配置好的频道，并轮询等待响应。
+在无头自动模式下运行时，远程提问允许 GWD 通过 Slack、Discord 或 Telegram 请求用户输入。当 GWD 遇到需要人工判断的决策点时，它会把问题发到你配置好的频道，并轮询等待响应。
 
 ## 设置
 
 ### Discord
 
 ```
-/gsd remote discord
+/gwd remote discord
 ```
 
 配置向导会：
@@ -17,7 +17,7 @@
 3. 列出 bot 当前加入的服务器（或让你选择）
 4. 列出所选服务器中的文本频道
 5. 发送一条测试消息以确认权限
-6. 把配置保存到 `~/.gsd/PREFERENCES.md`
+6. 把配置保存到 `~/.gwd/PREFERENCES.md`
 
 **Bot 要求：**
 
@@ -32,7 +32,7 @@
 ### Slack
 
 ```
-/gsd remote slack
+/gwd remote slack
 ```
 
 配置向导会：
@@ -52,7 +52,7 @@
 ### Telegram
 
 ```
-/gsd remote telegram
+/gwd remote telegram
 ```
 
 配置向导会：
@@ -71,7 +71,7 @@
 
 ## 配置
 
-远程提问配置保存在 `~/.gsd/PREFERENCES.md`：
+远程提问配置保存在 `~/.gwd/PREFERENCES.md`：
 
 ```yaml
 remote_questions:
@@ -83,13 +83,13 @@ remote_questions:
 
 ## 工作原理
 
-1. GSD 在自动模式过程中遇到一个决策点
+1. GWD 在自动模式过程中遇到一个决策点
 2. 问题会以富文本 embed（Discord）或 Block Kit 消息（Slack）的形式发送到你配置的频道
-3. GSD 按设定的间隔轮询响应
+3. GWD 按设定的间隔轮询响应
 4. 你可以通过以下方式回复：
    - **添加数字表情回应**（1️⃣、2️⃣ 等），适用于单问题提示
    - **回复消息内容**，可以是数字（`1`）、逗号分隔数字（`1,3`）或自由文本
-5. GSD 读取到响应后继续执行
+5. GWD 读取到响应后继续执行
 6. 提示消息上会追加一个 ✅ 反应，表示已收到
 
 ### 响应格式
@@ -107,17 +107,17 @@ remote_questions:
 
 ### 超时
 
-如果在 `timeout_minutes` 内没有收到响应，提示会超时，GSD 将带着超时结果继续执行。LLM 会根据当前上下文处理超时，通常是做一个保守默认选择，或者暂停自动模式。
+如果在 `timeout_minutes` 内没有收到响应，提示会超时，GWD 将带着超时结果继续执行。LLM 会根据当前上下文处理超时，通常是做一个保守默认选择，或者暂停自动模式。
 
 ## 命令
 
 | 命令 | 说明 |
 |------|------|
-| `/gsd remote` | 显示远程提问菜单和当前状态 |
-| `/gsd remote slack` | 配置 Slack 集成 |
-| `/gsd remote discord` | 配置 Discord 集成 |
-| `/gsd remote status` | 显示当前配置和最近一次提示状态 |
-| `/gsd remote disconnect` | 移除远程提问配置 |
+| `/gwd remote` | 显示远程提问菜单和当前状态 |
+| `/gwd remote slack` | 配置 Slack 集成 |
+| `/gwd remote discord` | 配置 Discord 集成 |
+| `/gwd remote status` | 显示当前配置和最近一次提示状态 |
+| `/gwd remote disconnect` | 移除远程提问配置 |
 
 ## Discord 与 Slack 功能对比
 

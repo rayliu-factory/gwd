@@ -1,26 +1,26 @@
 ---
 title: "Getting started"
-description: "Install GSD, configure your LLM provider, and run your first autonomous session."
+description: "Install GWD, configure your LLM provider, and run your first autonomous session."
 ---
 
 ## Install
 
 ```bash
-npm install -g gsd-pi
+npm install -g gwd-pi
 ```
 
 Requires Node.js 22+ and Git.
 
 <Note>
-**`command not found: gsd`?** Your shell may not have npm's global bin directory in `$PATH`. Run `npm prefix -g` to find it, then add `$(npm prefix -g)/bin` to your PATH. See [troubleshooting](/guides/troubleshooting) for details.
+**`command not found: gwd`?** Your shell may not have npm's global bin directory in `$PATH`. Run `npm prefix -g` to find it, then add `$(npm prefix -g)/bin` to your PATH. See [troubleshooting](/guides/troubleshooting) for details.
 </Note>
 
-GSD checks for updates every 24 hours. Update in-session with `/gsd update`.
+GWD checks for updates every 24 hours. Update in-session with `/gwd update`.
 
 ## First launch
 
 ```bash
-gsd
+gwd
 ```
 
 On first launch, a setup wizard walks you through:
@@ -31,24 +31,24 @@ On first launch, a setup wizard walks you through:
 Re-run the wizard anytime:
 
 ```bash
-gsd config
+gwd config
 ```
 
 ### Set up API keys
 
-For non-Anthropic models, you may need a search API key. Run `/gsd config` to set keys globally — they're saved to `~/.gsd/agent/auth.json` and apply to all projects.
+For non-Anthropic models, you may need a search API key. Run `/gwd config` to set keys globally — they're saved to `~/.gwd/agent/auth.json` and apply to all projects.
 
 ### Set up MCP servers
 
-To connect GSD to local or external MCP servers, add project-local config in `.mcp.json` or `.gsd/mcp.json`. See [configuration](/guides/configuration) for examples. Use `/gsd mcp` to verify connectivity.
+To connect GWD to local or external MCP servers, add project-local config in `.mcp.json` or `.gwd/mcp.json`. See [configuration](/guides/configuration) for examples. Use `/gwd mcp` to verify connectivity.
 
 ### Offline mode
 
-GSD works fully offline with local models (Ollama, vLLM, LM Studio). Configure a [custom model](/guides/custom-models) and GSD handles the rest — no internet connection required.
+GWD works fully offline with local models (Ollama, vLLM, LM Studio). Configure a [custom model](/guides/custom-models) and GWD handles the rest — no internet connection required.
 
 ## Choose a model
 
-GSD auto-selects a default model after login. Switch anytime:
+GWD auto-selects a default model after login. Switch anytime:
 
 ```
 /model
@@ -60,18 +60,18 @@ Or configure per-phase models in [preferences](/guides/configuration).
 
 <Tabs>
   <Tab title="Step mode">
-    Type `/gsd` inside a session. GSD executes one unit at a time, pausing between each with a wizard showing what completed and what's next.
+    Type `/gwd` inside a session. GWD executes one unit at a time, pausing between each with a wizard showing what completed and what's next.
 
-    - **No `.gsd/` directory** → starts a discussion to capture your project vision
+    - **No `.gwd/` directory** → starts a discussion to capture your project vision
     - **Milestone exists, no roadmap** → discuss or research the milestone
     - **Roadmap exists, slices pending** → plan the next slice or execute a task
     - **Mid-task** → resume where you left off
   </Tab>
   <Tab title="Auto mode">
-    Type `/gsd auto` and walk away. GSD autonomously researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete.
+    Type `/gwd auto` and walk away. GWD autonomously researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete.
 
     ```
-    /gsd auto
+    /gwd auto
     ```
 
     See [auto mode](/guides/auto-mode) for the full details.
@@ -85,24 +85,24 @@ The recommended workflow: auto mode in one terminal, steering from another.
 **Terminal 1 — let it build:**
 
 ```bash
-gsd
-/gsd auto
+gwd
+/gwd auto
 ```
 
 **Terminal 2 — steer while it works:**
 
 ```bash
-gsd
-/gsd discuss    # talk through architecture decisions
-/gsd status     # check progress
-/gsd queue      # queue the next milestone
+gwd
+/gwd discuss    # talk through architecture decisions
+/gwd status     # check progress
+/gwd queue      # queue the next milestone
 ```
 
-Both terminals read and write the same `.gsd/` files. Decisions in terminal 2 are picked up at the next phase boundary automatically.
+Both terminals read and write the same `.gwd/` files. Decisions in terminal 2 are picked up at the next phase boundary automatically.
 
 ## Project structure
 
-GSD organizes work into a hierarchy:
+GWD organizes work into a hierarchy:
 
 ```
 Milestone  →  a shippable version (4-10 slices)
@@ -110,11 +110,11 @@ Milestone  →  a shippable version (4-10 slices)
     Task   →  one context-window-sized unit of work
 ```
 
-All state lives on disk in `.gsd/`:
+All state lives on disk in `.gwd/`:
 
 <Accordion title="Directory structure">
 ```
-.gsd/
+.gwd/
   PROJECT.md          — what the project is right now
   REQUIREMENTS.md     — requirement contract (active/validated/deferred)
   DECISIONS.md        — append-only architectural decisions
@@ -139,49 +139,49 @@ All state lives on disk in `.gsd/`:
 ## Resume a session
 
 ```bash
-gsd --continue    # or gsd -c
+gwd --continue    # or gwd -c
 ```
 
 Resumes the most recent session. To pick from all saved sessions:
 
 ```bash
-gsd sessions
+gwd sessions
 ```
 
 ## VS Code extension
 
-GSD is also available as a VS Code extension (publisher: FluxLabs). It provides:
+GWD is also available as a VS Code extension (publisher: FluxLabs). It provides:
 
-- **`@gsd` chat participant** — talk to the agent in VS Code Chat
+- **`@gwd` chat participant** — talk to the agent in VS Code Chat
 - **Sidebar dashboard** — connection status, model info, token usage, quick actions
 - **Full command palette** — start/stop agent, switch models, export sessions
 
-The CLI (`gsd-pi`) must be installed first — the extension connects to it via RPC.
+The CLI (`gwd-pi`) must be installed first — the extension connects to it via RPC.
 
 ## Web interface
 
 ```bash
-gsd --web
+gwd --web
 ```
 
 A browser-based dashboard with real-time progress and multi-project support. See [web interface](/guides/web-interface) for details.
 
 ## Troubleshooting
 
-### `gsd` runs `git svn dcommit` instead of GSD
+### `gwd` runs `git svn dcommit` instead of GWD
 
-The [oh-my-zsh git plugin](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git) defines `alias gsd='git svn dcommit'`.
+The [oh-my-zsh git plugin](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git) defines `alias gwd='git svn dcommit'`.
 
 **Option 1** — Remove the alias in `~/.zshrc` (after the `source $ZSH/oh-my-zsh.sh` line):
 
 ```bash
-unalias gsd 2>/dev/null
+unalias gwd 2>/dev/null
 ```
 
 **Option 2** — Use the alternative binary name:
 
 ```bash
-gsd-cli
+gwd-cli
 ```
 
-Both `gsd` and `gsd-cli` point to the same binary.
+Both `gwd` and `gwd-cli` point to the same binary.

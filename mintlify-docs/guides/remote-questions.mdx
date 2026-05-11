@@ -3,14 +3,14 @@ title: "Remote questions"
 description: "Discord, Slack, and Telegram integration for headless auto-mode."
 ---
 
-Remote questions allow GSD to ask for user input via Slack, Discord, or Telegram when running in headless auto-mode. When GSD encounters a decision point, it posts the question to your configured channel and polls for a response.
+Remote questions allow GWD to ask for user input via Slack, Discord, or Telegram when running in headless auto-mode. When GWD encounters a decision point, it posts the question to your configured channel and polls for a response.
 
 ## Setup
 
 <Tabs>
   <Tab title="Discord">
     ```
-    /gsd remote discord
+    /gwd remote discord
     ```
 
     The setup wizard validates your bot token, picks a server and channel, sends a test message, and saves the config.
@@ -21,7 +21,7 @@ Remote questions allow GSD to ask for user input via Slack, Discord, or Telegram
   </Tab>
   <Tab title="Slack">
     ```
-    /gsd remote slack
+    /gwd remote slack
     ```
 
     The setup wizard validates your bot token, picks a channel, sends a test message, and saves the config.
@@ -32,7 +32,7 @@ Remote questions allow GSD to ask for user input via Slack, Discord, or Telegram
   </Tab>
   <Tab title="Telegram">
     ```
-    /gsd remote telegram
+    /gwd remote telegram
     ```
 
     The setup wizard validates your bot token, prompts for a chat ID, sends a test message, and saves the config.
@@ -55,11 +55,11 @@ remote_questions:
 
 ## How it works
 
-1. GSD encounters a decision point during auto-mode
+1. GWD encounters a decision point during auto-mode
 2. The question is posted to your channel as a rich embed (Discord) or Block Kit message (Slack)
-3. GSD polls for a response at the configured interval
+3. GWD polls for a response at the configured interval
 4. You respond by reacting with a number emoji or replying with text
-5. GSD picks up the response and continues
+5. GWD picks up the response and continues
 6. A check reaction confirms receipt
 
 ### Response formats
@@ -76,9 +76,9 @@ If no response within `timeout_minutes`, the LLM makes a conservative default ch
 
 | Command | Description |
 |---------|-------------|
-| `/gsd remote` | Show menu and current status |
-| `/gsd remote slack` | Set up Slack |
-| `/gsd remote discord` | Set up Discord |
-| `/gsd remote telegram` | Set up Telegram |
-| `/gsd remote status` | Show current config and last prompt status |
-| `/gsd remote disconnect` | Remove configuration |
+| `/gwd remote` | Show menu and current status |
+| `/gwd remote slack` | Set up Slack |
+| `/gwd remote discord` | Set up Discord |
+| `/gwd remote telegram` | Set up Telegram |
+| `/gwd remote status` | Show current config and last prompt status |
+| `/gwd remote disconnect` | Remove configuration |

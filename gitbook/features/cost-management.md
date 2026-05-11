@@ -1,12 +1,12 @@
 # Cost Management
 
-GSD tracks token usage and cost for every unit of work during auto mode. This data powers the dashboard, budget enforcement, and cost projections.
+GWD tracks token usage and cost for every unit of work during auto mode. This data powers the dashboard, budget enforcement, and cost projections.
 
 ## Viewing Costs
 
-**Dashboard:** Press `Ctrl+Alt+G` or type `/gsd status` for real-time cost breakdown.
+**Dashboard:** Press `Ctrl+Alt+G` or type `/gwd status` for real-time cost breakdown.
 
-**Visualizer:** `/gsd visualize` → Metrics tab for detailed charts.
+**Visualizer:** `/gwd visualize` → Metrics tab for detailed charts.
 
 **Aggregations:**
 - By phase (research, planning, execution, completion, reassessment)
@@ -36,7 +36,7 @@ budget_enforcement: pause    # default when ceiling is set
 
 ## Cost Projections
 
-Once at least two slices have completed, GSD projects the remaining cost:
+Once at least two slices have completed, GWD projects the remaining cost:
 
 ```
 Projected remaining: $12.40 ($6.20/slice avg × 2 remaining)
@@ -44,7 +44,7 @@ Projected remaining: $12.40 ($6.20/slice avg × 2 remaining)
 
 ## Budget Pressure
 
-When approaching the budget ceiling, GSD automatically uses cheaper models:
+When approaching the budget ceiling, GWD automatically uses cheaper models:
 
 | Budget Used | Effect |
 |------------|--------|
@@ -66,9 +66,9 @@ This spreads your budget across remaining work instead of exhausting it early.
 ## Tips
 
 - Start with `balanced` profile and a generous `budget_ceiling` to establish baseline costs
-- Check `/gsd status` after a few slices to see per-slice cost averages
+- Check `/gwd status` after a few slices to see per-slice cost averages
 - Switch to `budget` for well-understood, repetitive work
 - Use `quality` only when architectural decisions are being made
 - Use per-phase model selection to save: Opus for planning, Sonnet for execution
 - Enable `dynamic_routing` for automatic model downgrading on simple tasks
-- Use `/gsd visualize` → Metrics tab to see where your budget is going
+- Use `/gwd visualize` → Metrics tab to see where your budget is going

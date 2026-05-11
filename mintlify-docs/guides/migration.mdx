@@ -1,23 +1,23 @@
 ---
-title: "Migration from v1"
-description: "Migrate .planning directories from the original GSD to GSD-2's .gsd format."
+title: "Import .planning Projects"
+description: "Import legacy .planning directories into GWD's .gwd format."
 ---
 
-If you have projects with `.planning` directories from the original Get Shit Done (v1), you can migrate them to GSD-2's `.gsd` format.
+If you have a project with a legacy `.planning` directory, import it into GWD's `.gwd` format.
 
-## Running the migration
+## Running the import
 
 ```bash
 # From within the project directory
-/gsd migrate
+/gwd migrate
 
 # Or specify a path
-/gsd migrate ~/projects/my-old-project
+/gwd migrate ~/projects/my-old-project
 ```
 
 ## What gets migrated
 
-The migration tool:
+The import tool:
 
 - Parses `PROJECT.md`, `ROADMAP.md`, `REQUIREMENTS.md`, phase directories, plans, summaries, and research
 - Maps phases → slices, plans → tasks, milestones → milestones
@@ -28,7 +28,7 @@ The migration tool:
 
 ## Supported formats
 
-The migration handles various v1 format variations:
+The import handles these `.planning` format variations:
 
 - Milestone-sectioned roadmaps with `<details>` blocks
 - Bold phase entries
@@ -36,12 +36,12 @@ The migration handles various v1 format variations:
 - Decimal phase numbering
 - Duplicate phase numbers across milestones
 
-## Post-migration
+## Post-import
 
 Verify the output:
 
 ```
-/gsd doctor
+/gwd doctor
 ```
 
-This checks `.gsd/` integrity and flags any structural issues.
+This checks `.gwd/` integrity and flags any structural issues.

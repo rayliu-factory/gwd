@@ -1,6 +1,6 @@
 # Token Optimization
 
-GSD's token optimization system can reduce token usage by 40-60% without sacrificing output quality. It has three pillars: **token profiles**, **context compression**, and **complexity-based task routing**.
+GWD's token optimization system can reduce token usage by 40-60% without sacrificing output quality. It has three pillars: **token profiles**, **context compression**, and **complexity-based task routing**.
 
 ## Token Profiles
 
@@ -58,7 +58,7 @@ Each profile controls how much context is pre-loaded into AI prompts:
 
 ## Complexity-Based Task Routing
 
-GSD classifies each task by complexity and routes it to an appropriate model:
+GWD classifies each task by complexity and routes it to an appropriate model:
 
 | Complexity | Indicators | Model Level |
 |-----------|------------|-------------|
@@ -86,14 +86,14 @@ models:
 
 ## Adaptive Learning
 
-GSD tracks success and failure of tier assignments over time. If a model tier's failure rate exceeds 20% for a given task type, future tasks of that type are bumped to a higher tier.
+GWD tracks success and failure of tier assignments over time. If a model tier's failure rate exceeds 20% for a given task type, future tasks of that type are bumped to a higher tier.
 
 Submit manual feedback with:
 
 ```
-/gsd rate over    # model was overpowered — use cheaper next time
-/gsd rate ok      # model was appropriate
-/gsd rate under   # model was too weak — use stronger next time
+/gwd rate over    # model was overpowered — use cheaper next time
+/gwd rate ok      # model was appropriate
+/gwd rate under   # model was too weak — use stronger next time
 ```
 
 ## Observation Masking

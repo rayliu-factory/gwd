@@ -1,13 +1,13 @@
 # Working in Teams
 
-GSD supports multi-user workflows where several developers work on the same repository concurrently.
+GWD supports multi-user workflows where several developers work on the same repository concurrently.
 
 ## Quick Setup
 
 The simplest way: set team mode in your project preferences.
 
 ```yaml
-# .gsd/PREFERENCES.md (committed to git)
+# .gwd/PREFERENCES.md (committed to git)
 ---
 version: 1
 mode: team
@@ -32,24 +32,24 @@ Share planning artifacts while keeping runtime files local:
 
 ```bash
 # Runtime files (per-developer, gitignore these)
-.gsd/auto.lock
-.gsd/completed-units.json
-.gsd/STATE.md
-.gsd/gsd.db*
-.gsd/metrics.json
-.gsd/activity/
-.gsd/runtime/
-.gsd/worktrees/
-.gsd/milestones/**/continue.md
-.gsd/milestones/**/*-CONTINUE.md
+.gwd/auto.lock
+.gwd/completed-units.json
+.gwd/STATE.md
+.gwd/gwd.db*
+.gwd/metrics.json
+.gwd/activity/
+.gwd/runtime/
+.gwd/worktrees/
+.gwd/milestones/**/continue.md
+.gwd/milestones/**/*-CONTINUE.md
 ```
 
 **What gets shared** (committed to git):
-- `.gsd/PREFERENCES.md` — project preferences
-- `.gsd/PROJECT.md` — living project description
-- `.gsd/REQUIREMENTS.md` — requirement contract
-- `.gsd/DECISIONS.md` — architectural decisions
-- `.gsd/milestones/` — roadmaps, plans, summaries, research
+- `.gwd/PREFERENCES.md` — project preferences
+- `.gwd/PROJECT.md` — living project description
+- `.gwd/REQUIREMENTS.md` — requirement contract
+- `.gwd/DECISIONS.md` — architectural decisions
+- `.gwd/milestones/` — roadmaps, plans, summaries, research
 
 **What stays local** (gitignored):
 - Database files, lock files, metrics, state projections, activity logs, worktrees
@@ -57,26 +57,26 @@ Share planning artifacts while keeping runtime files local:
 ## Commit the Config
 
 ```bash
-git add .gsd/PREFERENCES.md
-git commit -m "chore: enable GSD team workflow"
+git add .gwd/PREFERENCES.md
+git commit -m "chore: enable GWD team workflow"
 ```
 
-## Keeping `.gsd/` Local
+## Keeping `.gwd/` Local
 
-For teams where only some members use GSD:
+For teams where only some members use GWD:
 
 ```yaml
 git:
   commit_docs: false
 ```
 
-This gitignores `.gsd/` entirely. You get structured planning without affecting teammates.
+This gitignores `.gwd/` entirely. You get structured planning without affecting teammates.
 
 ## Parallel Development
 
 Multiple developers can run auto mode simultaneously on different milestones. Each developer:
 
-- Gets their own worktree (`.gsd/worktrees/<MID>/`)
+- Gets their own worktree (`.gwd/worktrees/<MID>/`)
 - Works on a unique `milestone/<MID>` branch
 - Squash-merges to main independently
 
@@ -89,4 +89,4 @@ depends_on: [M001-eh88as]
 ---
 ```
 
-GSD enforces that dependent milestones complete before starting downstream work.
+GWD enforces that dependent milestones complete before starting downstream work.

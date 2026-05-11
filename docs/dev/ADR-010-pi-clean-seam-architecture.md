@@ -9,32 +9,32 @@
 
 ## Context
 
-GSD vendors four packages from [pi-mono](https://github.com/badlogic/pi-mono) (an open-source coding agent framework) by copying their source directly into `/packages/`:
+GWD vendors four packages from [pi-mono](https://github.com/badlogic/pi-mono) (an open-source coding agent framework) by copying their source directly into `/packages/`:
 
 | Package | Role | Current version |
 |---|---|---|
-| `@gsd/pi-agent-core` | Core agent loop and types | 0.57.1 |
-| `@gsd/pi-ai` | Multi-provider LLM API | 0.57.1 |
-| `@gsd/pi-tui` | Terminal UI framework | 0.57.1 |
-| `@gsd/pi-coding-agent` | Coding agent, tools, extension system | 2.74.0 |
+| `@gwd/pi-agent-core` | Core agent loop and types | 0.57.1 |
+| `@gwd/pi-ai` | Multi-provider LLM API | 0.57.1 |
+| `@gwd/pi-tui` | Terminal UI framework | 0.57.1 |
+| `@gwd/pi-coding-agent` | Coding agent, tools, extension system | 2.74.0 |
 
-Vendoring was chosen over npm dependencies to allow GSD to modify the upstream packages freely. However, over time, GSD has written substantial original logic directly inside `pi-coding-agent` — approximately 79 files including:
+Vendoring was chosen over npm dependencies to allow GWD to modify the upstream packages freely. However, over time, GWD has written substantial original logic directly inside `pi-coding-agent` — approximately 79 files including:
 
-- `agent-session.ts` (98KB) — the primary GSD session orchestrator
+- `agent-session.ts` (98KB) — the primary GWD session orchestrator
 - `compaction/` — context window management
 - `modes/interactive/`, `modes/rpc/`, `modes/print/` — all three run modes
 - `cli/` — CLI argument parsing and utilities
 - `sdk.ts` — the `createAgentSession()` factory
 
-This GSD-authored code is mixed in with upstream pi code inside the same package. The pi packages are currently 10 versions behind upstream (0.57.1 vs 0.67.2), with a breaking API change from v0.65.0 (`session_switch`/`session_fork` removal) unresolved. The primary obstacle to applying updates is that there is no reliable way to distinguish GSD files from pi files without reading them individually.
+This GWD-authored code is mixed in with upstream pi code inside the same package. The pi packages are currently 10 versions behind upstream (0.57.1 vs 0.67.2), with a breaking API change from v0.65.0 (`session_switch`/`session_fork` removal) unresolved. The primary obstacle to applying updates is that there is no reliable way to distinguish GWD files from pi files without reading them individually.
 
 ### Why not move to npm dependencies now?
 
 Pi-mono does publish to npm as `@mariozechner/pi-*`. Moving to npm dependencies would eliminate vendoring entirely, but it is blocked by:
 
-1. `@gsd/native` bindings are imported directly inside the vendored pi-tui and pi-coding-agent source — the upstream npm packages do not have these imports
+1. `@gwd/native` bindings are imported directly inside the vendored pi-tui and pi-coding-agent source — the upstream npm packages do not have these imports
 2. ~50 direct source modification commits to the vendored packages since March 2026 would need to be evaluated individually
-3. The upstream extension API (~25 events) is a subset of GSD's extension system (~50+ events) — the delta would need to be re-architected before the move
+3. The upstream extension API (~25 events) is a subset of GWD's extension system (~50+ events) — the delta would need to be re-architected before the move
 
 Moving to npm is a valid Phase 2. This ADR covers Phase 1: establishing a clean seam without changing the vendoring approach.
 
@@ -42,44 +42,44 @@ Moving to npm is a valid Phase 2. This ADR covers Phase 1: establishing a clean 
 
 ## Decision
 
-Introduce two new workspace packages that own all GSD-authored code currently living inside `pi-coding-agent`. The vendored pi packages become close-to-upstream source copies. GSD code depends on pi; pi code does not depend on GSD.
+Introduce two new workspace packages that own all GWD-authored code currently living inside `pi-coding-agent`. The vendored pi packages become close-to-upstream source copies. GWD code depends on pi; pi code does not depend on GWD.
 
 ### New package structure
 
 ```
 packages/
-  pi-agent-core/          # vendored upstream — no GSD modifications
-  pi-ai/                  # vendored upstream — no GSD modifications
-  pi-tui/                 # vendored upstream — no GSD modifications
+  pi-agent-core/          # vendored upstream — no GWD modifications
+  pi-ai/                  # vendored upstream — no GWD modifications
+  pi-tui/                 # vendored upstream — no GWD modifications
   pi-coding-agent/        # vendored upstream + extension system (pi-typed, stays here)
-  gsd-agent-core/         # NEW — GSD session orchestration layer
-  gsd-agent-modes/        # NEW — GSD run modes and CLI layer
+  gwd-agent-core/         # NEW — GWD session orchestration layer
+  gwd-agent-modes/        # NEW — GWD run modes and CLI layer
 ```
 
 ### Dependency graph
 
 ```
-gsd-pi (binary)
-  └── @gsd/agent-modes
-        ├── @gsd/agent-core
-        │     ├── @gsd/pi-coding-agent
-        │     ├── @gsd/pi-agent-core
-        │     └── @gsd/pi-ai
-        └── @gsd/pi-coding-agent
-              ├── @gsd/pi-agent-core
-              ├── @gsd/pi-ai
-              └── @gsd/pi-tui
+gwd-pi (binary)
+  └── @gwd/agent-modes
+        ├── @gwd/agent-core
+        │     ├── @gwd/pi-coding-agent
+        │     ├── @gwd/pi-agent-core
+        │     └── @gwd/pi-ai
+        └── @gwd/pi-coding-agent
+              ├── @gwd/pi-agent-core
+              ├── @gwd/pi-ai
+              └── @gwd/pi-tui
 ```
 
-Arrows point in one direction only. No cycles. The vendored pi packages have no knowledge of `@gsd/agent-core` or `@gsd/agent-modes`.
+Arrows point in one direction only. No cycles. The vendored pi packages have no knowledge of `@gwd/agent-core` or `@gwd/agent-modes`.
 
 ---
 
 ## Package Specifications
 
-### `@gsd/agent-core` (`packages/gsd-agent-core/`)
+### `@gwd/agent-core` (`packages/gwd-agent-core/`)
 
-**Purpose:** GSD's session orchestration layer. Owns the `AgentSession` class, compaction, bash execution, system prompt construction, and the `createAgentSession()` factory that wires everything together.
+**Purpose:** GWD's session orchestration layer. Owns the `AgentSession` class, compaction, bash execution, system prompt construction, and the `createAgentSession()` factory that wires everything together.
 
 **Public API surface (exported from `index.ts`):**
 
@@ -108,8 +108,8 @@ export { BlobStore } from './blob-store.js'
 | `compaction/compaction.ts` | Context window orchestration |
 | `compaction/branch-summarization.ts` | Summarization on fork |
 | `compaction/utils.ts` | Shared compaction utilities |
-| `system-prompt.ts` | GSD system prompt construction |
-| `bash-executor.ts` | Bash runtime with GSD integration |
+| `system-prompt.ts` | GWD system prompt construction |
+| `bash-executor.ts` | Bash runtime with GWD integration |
 | `fallback-resolver.ts` | Model fallback strategy |
 | `lifecycle-hooks.ts` | Phase hook system |
 | `image-overflow-recovery.ts` | Context overflow recovery |
@@ -119,13 +119,13 @@ export { BlobStore } from './blob-store.js'
 | `blob-store.ts` | External binary data management |
 | `export-html/` | Session HTML export |
 
-**Key dependency note:** `agent-session.ts` imports pi types directly (`Agent`, `AgentEvent`, `AgentMessage`, `AgentState`, `AgentTool`, `ThinkingLevel` from `@gsd/pi-agent-core`; `Model`, `Message` from `@gsd/pi-ai`). This is intentional — GSD's session layer is pi-typed, not abstracting over pi. This makes the seam a clear seam, not an abstraction.
+**Key dependency note:** `agent-session.ts` imports pi types directly (`Agent`, `AgentEvent`, `AgentMessage`, `AgentState`, `AgentTool`, `ThinkingLevel` from `@gwd/pi-agent-core`; `Model`, `Message` from `@gwd/pi-ai`). This is intentional — GWD's session layer is pi-typed, not abstracting over pi. This makes the seam a clear seam, not an abstraction.
 
 ---
 
-### `@gsd/agent-modes` (`packages/gsd-agent-modes/`)
+### `@gwd/agent-modes` (`packages/gwd-agent-modes/`)
 
-**Purpose:** GSD's run-mode and CLI layer. Assembles the agent session (from `@gsd/agent-core`) with a specific interface: interactive TUI, headless RPC server, or print output. Contains the `main()` entry point logic invoked by the `gsd` binary.
+**Purpose:** GWD's run-mode and CLI layer. Assembles the agent session (from `@gwd/agent-core`) with a specific interface: interactive TUI, headless RPC server, or print output. Contains the `main()` entry point logic invoked by the `gwd` binary.
 
 **Public API surface (exported from `index.ts`):**
 
@@ -134,7 +134,7 @@ export { runInteractiveMode } from './modes/interactive/index.js'
 export { runRpcMode, RpcMode } from './modes/rpc/index.js'
 export { runPrintMode } from './modes/print/index.js'
 export { RpcClient } from './modes/rpc/rpc-client.js'
-export { parseArgs, GsdArgs } from './cli/args.js'
+export { parseArgs, GwdArgs } from './cli/args.js'
 export { main } from './main.js'
 ```
 
@@ -163,30 +163,30 @@ After the migration, `pi-coding-agent` contains:
 - **Upstream agent infrastructure** — auth storage, model registry, upstream session manager
 - **Extension system** (`src/core/extensions/`) — loader, runner, types, wrapper
 
-The extension system remains here because it is legitimately pi-typed. Extensions subscribe to pi events (`session_start`, `tool_execution_start`, `model_select`, etc.) and receive pi types in their handlers. Moving the extension system out of `pi-coding-agent` would require re-expressing those types in GSD terms, which is the abstraction-layer work explicitly out of scope for this phase.
+The extension system remains here because it is legitimately pi-typed. Extensions subscribe to pi events (`session_start`, `tool_execution_start`, `model_select`, etc.) and receive pi types in their handlers. Moving the extension system out of `pi-coding-agent` would require re-expressing those types in GWD terms, which is the abstraction-layer work explicitly out of scope for this phase.
 
 **Required update to extension loader:**
 
-`src/core/extensions/loader.ts` maintains a `STATIC_BUNDLED_MODULES` map of packages that extensions can import at runtime. After the migration, `@gsd/agent-core` and `@gsd/agent-modes` must be added to this map so that extensions importing those packages continue to resolve correctly in compiled Bun binaries:
+`src/core/extensions/loader.ts` maintains a `STATIC_BUNDLED_MODULES` map of packages that extensions can import at runtime. After the migration, `@gwd/agent-core` and `@gwd/agent-modes` must be added to this map so that extensions importing those packages continue to resolve correctly in compiled Bun binaries:
 
 ```typescript
 // Before (current)
 const STATIC_BUNDLED_MODULES = {
-  "@gsd/pi-agent-core": _bundledPiAgentCore,
-  "@gsd/pi-ai": _bundledPiAi,
-  "@gsd/pi-tui": _bundledPiTui,
-  "@gsd/pi-coding-agent": _bundledPiCodingAgent,
+  "@gwd/pi-agent-core": _bundledPiAgentCore,
+  "@gwd/pi-ai": _bundledPiAi,
+  "@gwd/pi-tui": _bundledPiTui,
+  "@gwd/pi-coding-agent": _bundledPiCodingAgent,
   // ...
 }
 
 // After
 const STATIC_BUNDLED_MODULES = {
-  "@gsd/pi-agent-core": _bundledPiAgentCore,
-  "@gsd/pi-ai": _bundledPiAi,
-  "@gsd/pi-tui": _bundledPiTui,
-  "@gsd/pi-coding-agent": _bundledPiCodingAgent,
-  "@gsd/agent-core": _bundledGsdAgentCore,     // NEW
-  "@gsd/agent-modes": _bundledGsdAgentModes,   // NEW
+  "@gwd/pi-agent-core": _bundledPiAgentCore,
+  "@gwd/pi-ai": _bundledPiAi,
+  "@gwd/pi-tui": _bundledPiTui,
+  "@gwd/pi-coding-agent": _bundledPiCodingAgent,
+  "@gwd/agent-core": _bundledGwdAgentCore,     // NEW
+  "@gwd/agent-modes": _bundledGwdAgentModes,   // NEW
   // ...
 }
 ```
@@ -197,9 +197,9 @@ const STATIC_BUNDLED_MODULES = {
 
 1. Download the new pi-mono release for the four vendored packages
 2. Copy the upstream source into `packages/pi-agent-core/`, `pi-ai/`, `pi-tui/`, `pi-coding-agent/`
-   - Do not touch `packages/gsd-agent-core/` or `packages/gsd-agent-modes/`
+   - Do not touch `packages/gwd-agent-core/` or `packages/gwd-agent-modes/`
 3. Run `tsc --noEmit` (or the build) across the workspace
-4. Fix type errors in `@gsd/agent-core` and `@gsd/agent-modes` only
+4. Fix type errors in `@gwd/agent-core` and `@gwd/agent-modes` only
 5. If upstream changed the extension event API, fix extension system integration in `pi-coding-agent/src/core/extensions/`
 
 Steps 2-5 are scoped to known files. No archaeology required.
@@ -210,9 +210,9 @@ Steps 2-5 are scoped to known files. No archaeology required.
 
 | Issue | Location | Fix |
 |---|---|---|
-| Internal-path import of `AgentSessionEvent` | `src/web/bridge-service.ts` | Import from `@gsd/agent-core` public export |
-| `clearQueue()` not in typed public API | `AgentSession` | Add to public interface in `@gsd/agent-core/index.ts` |
-| `buildSessionContext()` on `SessionManager` | Used by GSD code, not publicly exported | Evaluate: re-export from `@gsd/agent-core` or remove dependency |
+| Internal-path import of `AgentSessionEvent` | `src/web/bridge-service.ts` | Import from `@gwd/agent-core` public export |
+| `clearQueue()` not in typed public API | `AgentSession` | Add to public interface in `@gwd/agent-core/index.ts` |
+| `buildSessionContext()` on `SessionManager` | Used by GWD code, not publicly exported | Evaluate: re-export from `@gwd/agent-core` or remove dependency |
 | Deprecated `session_switch`, `session_fork`, `session_directory` usage | 2+ files in `pi-coding-agent` | Migrate to `session_start` with `reason` field (required for v0.65.0 compat) — can be done as part of or after clean seam work |
 
 ---
@@ -221,10 +221,10 @@ Steps 2-5 are scoped to known files. No archaeology required.
 
 ### Positive
 
-- Pi updates are scoped: type errors from a pi update surface only in the two new GSD packages, not scattered across mixed source
-- The module system enforces the boundary: a pi file importing `@gsd/agent-core` is a compiler error, not a convention violation
+- Pi updates are scoped: type errors from a pi update surface only in the two new GWD packages, not scattered across mixed source
+- The module system enforces the boundary: a pi file importing `@gwd/agent-core` is a compiler error, not a convention violation
 - Phase 2 (moving pi packages to npm) becomes a package.json change rather than a file archaeology project
-- Headless/RPC consumers can depend on `@gsd/agent-core` without pulling in the TUI layer
+- Headless/RPC consumers can depend on `@gwd/agent-core` without pulling in the TUI layer
 
 ### Negative
 
@@ -234,25 +234,25 @@ Steps 2-5 are scoped to known files. No archaeology required.
 
 ### Neutral
 
-- End-user install experience (`npm install -g gsd-pi@latest`) is unchanged
-- Extension authors see no change — the extension API surface remains in `@gsd/pi-coding-agent`
-- GSD packages continue to use pi types directly — no new abstraction layer
+- End-user install experience (`npm install -g gwd-pi@latest`) is unchanged
+- Extension authors see no change — the extension API surface remains in `@gwd/pi-coding-agent`
+- GWD packages continue to use pi types directly — no new abstraction layer
 
 ---
 
 ## Alternatives Considered
 
-### Single `@gsd/agent` package
+### Single `@gwd/agent` package
 
 Move everything into one package instead of two. Simpler dependency graph but creates a large package where session logic and TUI logic share a build unit. Rejected because headless/RPC use cases would pull in the TUI unnecessarily, and the two concerns have meaningfully different consumers.
 
 ### Directory convention within `pi-coding-agent` (no new packages)
 
-Add a `src/gsd/` subdirectory inside `pi-coding-agent` to clearly mark GSD files without creating new packages. Fastest to implement but the seam is a convention, not enforced by the module system. A future accidental cross-import would not be caught by the compiler. Rejected because the enforcement value of proper packages is worth the modest extra setup.
+Add a `src/gwd/` subdirectory inside `pi-coding-agent` to clearly mark GWD files without creating new packages. Fastest to implement but the seam is a convention, not enforced by the module system. A future accidental cross-import would not be caught by the compiler. Rejected because the enforcement value of proper packages is worth the modest extra setup.
 
 ### Move to npm dependencies now (Phase 2 first)
 
-Take `@mariozechner/pi-*` from npm and skip vendoring entirely. Blocked by `@gsd/native` imports baked into the vendored source, ~50 direct source modification commits, and the upstream extension API gap. Deferred to Phase 2.
+Take `@mariozechner/pi-*` from npm and skip vendoring entirely. Blocked by `@gwd/native` imports baked into the vendored source, ~50 direct source modification commits, and the upstream extension API gap. Deferred to Phase 2.
 
 ---
 
@@ -261,11 +261,11 @@ Take `@mariozechner/pi-*` from npm and skip vendoring entirely. Blocked by `@gsd
 The migration should proceed in this order to maintain a working build at each step:
 
 1. **Audit** — identify all imports of `pi-coding-agent` internal paths (non-index) and document them
-2. **Create packages** — scaffold `gsd-agent-core` and `gsd-agent-modes` with `package.json` and empty `index.ts`
+2. **Create packages** — scaffold `gwd-agent-core` and `gwd-agent-modes` with `package.json` and empty `index.ts`
 3. **Move files in batches** — start with leaf files (no downstream dependents within pi-coding-agent), work toward `agent-session.ts` last
 4. **Fix imports incrementally** — TypeScript will identify broken imports after each batch
 5. **Update extension loader** — add new packages to virtual module map
 6. **Update build script** — insert new packages in dependency order
-7. **Verify** — full build, existing tests pass, `gsd --version` works
+7. **Verify** — full build, existing tests pass, `gwd --version` works
 
 The pi update to v0.67.2 (and the deprecated API migration) can be done as a follow-on once the clean seam is in place, since that work will be dramatically simpler with the new structure.

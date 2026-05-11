@@ -74,7 +74,7 @@ Override which model is used for each tier. When omitted, the router uses a buil
 - **Standard:** `claude-sonnet-4-6`, `gpt-4o`, `gpt-4.1`, `gpt-5.1-codex-max`, `gemini-2.5-pro`, `deepseek-chat`
 - **Heavy:** `claude-opus-4-6`, `claude-opus-4-7`, `gpt-5`, `gpt-5-pro`, `gpt-5.1`, `gpt-5.2`, `gpt-5.2-codex`, `gpt-5.3-codex`, `gpt-5.4`, `gpt-5.5`, `o1`, `o3`, `o4-mini`
 
-Token profiles use the same tier mapping. `budget`, `balanced`, and `quality` declare per-phase tier intentions, then GSD resolves those tiers against the models currently available from your configured providers. This means a profile can resolve to OpenAI, Gemini, Anthropic, or another provider-specific model instead of hardcoding Claude-family defaults.
+Token profiles use the same tier mapping. `budget`, `balanced`, and `quality` declare per-phase tier intentions, then GWD resolves those tiers against the models currently available from your configured providers. This means a profile can resolve to OpenAI, Gemini, Anthropic, or another provider-specific model instead of hardcoding Claude-family defaults.
 
 ### `escalate_on_failure`
 
@@ -119,7 +119,7 @@ Each model has a built-in **capability profile** — a 7-dimension score (0–10
 | `longContext` | Handling large codebases and long documents |
 | `instruction` | Following structured instructions precisely |
 
-**Built-in profiles** ship for the Claude 4.6/4.7 family, the OpenAI GPT-4.x and GPT-5.x lines (including GPT-5.5, added v2.78), the o-series reasoning models (`o1`, `o3`, `o4-mini`, `o4-mini-deep-research`), Gemini 2.0/2.5, and `deepseek-chat`. The full table lives in `src/resources/extensions/gsd/model-router.ts` (`MODEL_CAPABILITY_PROFILES`).
+**Built-in profiles** ship for the Claude 4.6/4.7 family, the OpenAI GPT-4.x and GPT-5.x lines (including GPT-5.5, added v2.78), the o-series reasoning models (`o1`, `o3`, `o4-mini`, `o4-mini-deep-research`), Gemini 2.0/2.5, and `deepseek-chat`. The full table lives in `src/resources/extensions/gwd/model-router.ts` (`MODEL_CAPABILITY_PROFILES`).
 
 Models without a built-in profile receive **uniform scores of 50** across all dimensions. This is a cold-start policy — unknown models compete but don't have an advantage. From the user's perspective, routing behaves the same as before capability scoring was introduced for those models.
 
@@ -276,7 +276,7 @@ For `execute-task` units, the classifier analyzes the task plan:
 
 ### Adaptive Learning
 
-The routing history (`.gsd/routing-history.json`) tracks success/failure per tier per unit type. If a tier's failure rate exceeds 20% for a given pattern, future classifications are bumped up. User feedback (`over`/`under`/`ok`) is weighted 2× vs automatic outcomes.
+The routing history (`.gwd/routing-history.json`) tracks success/failure per tier per unit type. If a tier's failure rate exceeds 20% for a given pattern, future classifications are bumped up. User feedback (`over`/`under`/`ok`) is weighted 2× vs automatic outcomes.
 
 ## Interaction with Token Profiles
 

@@ -3,11 +3,11 @@
 **Status:** Accepted
 **Date:** 2026-03-27
 **Deciders:** Jeremy McSpadden
-**Related:** ADR-004 (capability-aware model routing), ADR-003 (pipeline simplification), [Issue #2790](https://github.com/gsd-build/gsd-2/issues/2790)
+**Related:** ADR-004 (capability-aware model routing), ADR-003 (pipeline simplification), [Issue #2790](https://github.com/rayliu-factory/gwd/issues/2790)
 
 ## Context
 
-PR #2755 lands capability-aware model routing (ADR-004), extending the router from a one-dimensional complexity-tier system to a two-dimensional system that scores models across 7 capability dimensions. GSD can now intelligently pick the best model for a task from a heterogeneous pool.
+PR #2755 lands capability-aware model routing (ADR-004), extending the router from a one-dimensional complexity-tier system to a two-dimensional system that scores models across 7 capability dimensions. GWD can now intelligently pick the best model for a task from a heterogeneous pool.
 
 But model selection is only one piece of the multi-model puzzle. The system faces structural gaps as users configure diverse provider pools:
 
@@ -63,5 +63,5 @@ Introduce a provider capability registry and tool compatibility layer that integ
 | `packages/pi-ai/src/providers/transform-messages.ts` | Cross-provider normalization |
 | `packages/pi-ai/src/types.ts` | Core types |
 | `packages/pi-coding-agent/src/core/extensions/types.ts` | ToolDefinition, ExtensionAPI |
-| `src/resources/extensions/gsd/model-router.ts` | Capability scoring (ADR-004) |
-| `src/resources/extensions/gsd/auto-model-selection.ts` | Model selection orchestration |
+| `src/resources/extensions/gwd/model-router.ts` | Capability scoring (ADR-004) |
+| `src/resources/extensions/gwd/auto-model-selection.ts` | Model selection orchestration |

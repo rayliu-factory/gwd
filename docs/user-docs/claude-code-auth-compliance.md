@@ -10,12 +10,12 @@ Anthropic's current public guidance draws a hard line:
 - Third-party tools should prefer API key authentication through Claude Console or a supported cloud provider.
 - Apps that misrepresent their identity, route third-party traffic against subscription limits, or otherwise violate Anthropic terms are explicitly prohibited.
 
-For GSD2, the safe path is:
+For GWD, the safe path is:
 
 1. Treat local Claude Code as an external authenticated runtime.
-2. Never ask GSD users to sign into Claude subscriptions through GSD-managed Anthropic OAuth.
-3. Never exchange Claude.ai subscription OAuth into a bearer token and call Anthropic APIs as if GSD were Claude Code.
-4. If GSD needs direct Anthropic API access, require a Claude Console API key, Bedrock, Vertex, or another explicitly supported provider path.
+2. Never ask GWD users to sign into Claude subscriptions through GWD-managed Anthropic OAuth.
+3. Never exchange Claude.ai subscription OAuth into a bearer token and call Anthropic APIs as if GWD were Claude Code.
+4. If GWD needs direct Anthropic API access, require a Claude Console API key, Bedrock, Vertex, or another explicitly supported provider path.
 
 ## What Anthropic Explicitly Allows
 
@@ -23,7 +23,7 @@ For GSD2, the safe path is:
 
 Anthropic's help center says Claude Pro/Max users should install Claude Code, run `claude`, and "log in with the same credentials you use for Claude." It also says this connects the subscription directly to Claude Code, and that `/login` is the way to switch account types. The Team/Enterprise article gives the same flow for org accounts.
 
-Implication for GSD2:
+Implication for GWD:
 
 - Letting users authenticate inside the real `claude` CLI is aligned with Anthropic's documented flow.
 - Detecting `claude auth status` and routing work through the local CLI or official Claude Code SDK is the lowest-risk pattern.
@@ -38,18 +38,18 @@ Anthropic's Claude Code docs say supported auth types include Claude.ai credenti
 4. `apiKeyHelper`
 5. subscription OAuth from `/login`
 
-Implication for GSD2:
+Implication for GWD:
 
-- If GSD2 shells out to or embeds Claude Code, it should respect Claude Code's own credential selection instead of inventing a parallel Anthropic OAuth flow.
+- If GWD shells out to or embeds Claude Code, it should respect Claude Code's own credential selection instead of inventing a parallel Anthropic OAuth flow.
 - `apiKeyHelper` is the clean enterprise escape hatch when an org wants dynamic short-lived keys without handing raw API keys to the tool.
 
 ### 3. Anthropic commercial usage is available through API keys and supported cloud providers
 
 Anthropic's commercial terms govern API keys and related Anthropic services for customer-built products, including products made available to end users. The authentication docs for teams recommend Claude for Teams/Enterprise, Claude Console, Bedrock, Vertex, or Microsoft Foundry.
 
-Implication for GSD2:
+Implication for GWD:
 
-- If GSD2 is acting as a product for users, direct Anthropic access should be through commercial auth paths, not subscription-token reuse.
+- If GWD is acting as a product for users, direct Anthropic access should be through commercial auth paths, not subscription-token reuse.
 
 ## What Anthropic Explicitly Warns Against
 
@@ -65,13 +65,13 @@ Anthropic's consumer terms add two more constraints:
 - Users may not share account login info, API keys, or account credentials with anyone else.
 - Except when accessing services via an Anthropic API key or where Anthropic explicitly permits it, users may not access the services through automated or non-human means.
 
-Implication for GSD2:
+Implication for GWD:
 
-- A GSD-managed Anthropic OAuth flow for subscription accounts is high risk.
-- Reusing user Claude subscription credentials inside GSD's own API client is high risk.
-- Any flow that makes Anthropic believe requests come from Claude Code when they actually come from GSD infrastructure is out of bounds.
+- A GWD-managed Anthropic OAuth flow for subscription accounts is high risk.
+- Reusing user Claude subscription credentials inside GWD's own API client is high risk.
+- Any flow that makes Anthropic believe requests come from Claude Code when they actually come from GWD infrastructure is out of bounds.
 
-## Current GSD2 Findings
+## Current GWD Findings
 
 ### Low-risk / aligned pieces
 
@@ -84,7 +84,7 @@ Implication for GSD2:
 - `src/cli.ts`
   Migrates users from `anthropic` to `claude-code` when the local CLI is available.
 
-These are directionally correct because GSD is using the user's own local Claude Code installation as the authenticated Anthropic surface.
+These are directionally correct because GWD is using the user's own local Claude Code installation as the authenticated Anthropic surface.
 
 ### Medium/high-risk pieces — RESOLVED
 
@@ -96,7 +96,7 @@ All Anthropic OAuth code paths have been removed:
 - `packages/daemon/src/orchestrator.ts` — **Updated.** OAuth token refresh removed; requires `ANTHROPIC_API_KEY` env var.
 - `packages/pi-ai/src/providers/anthropic.ts` — **Updated.** OAuth client branch removed; `isOAuthToken` always returns false.
 
-## Recommended Policy For GSD2
+## Recommended Policy For GWD
 
 Adopt this as the repo rule:
 
@@ -104,10 +104,10 @@ Adopt this as the repo rule:
   - the `claude` CLI
   - Claude Code SDK when it is backed by the local authenticated Claude Code install
   - other Anthropic-documented native flows
-- GSD2 must not implement its own Anthropic subscription OAuth flow for end users.
-- GSD2 must not persist Anthropic subscription OAuth tokens for later API use.
-- GSD2 must not send Anthropic API traffic using subscription OAuth tokens obtained by GSD.
-- GSD2 may support Anthropic direct access only via:
+- GWD must not implement its own Anthropic subscription OAuth flow for end users.
+- GWD must not persist Anthropic subscription OAuth tokens for later API use.
+- GWD must not send Anthropic API traffic using subscription OAuth tokens obtained by GWD.
+- GWD may support Anthropic direct access only via:
   - `ANTHROPIC_API_KEY`
   - Claude Console API keys stored in auth storage
   - `apiKeyHelper`
@@ -122,8 +122,8 @@ Adopt this as the repo rule:
 2. Change web onboarding so Anthropic is API-key only.
 3. Keep `claude-code` as the recommended path when `claude auth status` succeeds.
 4. Add explicit UI copy:
-   - "Claude subscription users: sign into the local Claude Code app/CLI, not GSD."
-5. Block migrations or code paths that convert Anthropic OAuth credentials into API auth for GSD-managed requests.
+   - "Claude subscription users: sign into the local Claude Code app/CLI, not GWD."
+5. Block migrations or code paths that convert Anthropic OAuth credentials into API auth for GWD-managed requests.
 
 This is the fastest path to align the repo with Anthropic's published guidance.
 
@@ -157,12 +157,12 @@ This is the best long-term UX because it separates:
 
 ## Decision Rule
 
-If a proposed GSD2 feature needs Anthropic access, ask one question:
+If a proposed GWD feature needs Anthropic access, ask one question:
 
-"Is GSD calling Anthropic as GSD, or is GSD delegating to the user's already-authenticated local Claude Code runtime?"
+"Is GWD calling Anthropic as GWD, or is GWD delegating to the user's already-authenticated local Claude Code runtime?"
 
-- If GSD is calling Anthropic as GSD: require API key or supported cloud auth.
-- If GSD is delegating to local Claude Code: acceptable, as long as GSD does not intercept, mint, or replay subscription credentials itself.
+- If GWD is calling Anthropic as GWD: require API key or supported cloud auth.
+- If GWD is delegating to local Claude Code: acceptable, as long as GWD does not intercept, mint, or replay subscription credentials itself.
 
 ## Sources Reviewed
 

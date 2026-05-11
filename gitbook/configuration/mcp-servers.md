@@ -1,13 +1,13 @@
 # MCP Servers
 
-GSD can connect to external MCP (Model Context Protocol) servers for local tools, internal APIs, self-hosted services, or integrations not built in as native extensions.
+GWD can connect to external MCP (Model Context Protocol) servers for local tools, internal APIs, self-hosted services, or integrations not built in as native extensions.
 
 ## Configuration Files
 
-GSD reads MCP config from these project-local paths:
+GWD reads MCP config from these project-local paths:
 
 - `.mcp.json` — repo-shared config (safe to commit)
-- `.gsd/mcp.json` — local-only config (not shared)
+- `.gwd/mcp.json` — local-only config (not shared)
 
 If both exist, server names are merged and the first definition found wins.
 
@@ -51,9 +51,9 @@ If both exist, server names are merged and the first definition found wins.
 
 ## Verifying a Server
 
-After adding config, verify from a GSD session:
+After adding config, verify from a GWD session:
 
-1. `mcp_servers` — confirms GSD sees the config
+1. `mcp_servers` — confirms GWD sees the config
 2. `mcp_discover(server="my-server")` — confirms the server starts and responds
 3. `mcp_call(server="my-server", tool="<tool>", args={...})` — confirms a real tool call works
 
@@ -61,7 +61,7 @@ After adding config, verify from a GSD session:
 
 - Use **absolute paths** for executables and scripts
 - Set required **environment variables** directly in the MCP config's `env` block
-- Configure MCP server runtime variables such as `GSD_WORKFLOW_EXECUTORS_MODULE`, `GSD_WORKFLOW_WRITE_GATE_MODULE`, `GSD_WORKFLOW_PROJECT_ROOT`, `GSD_CLI_PATH`, `NODE_OPTIONS`, `NODE_PATH`, `PATH`, `LD_PRELOAD`, and `DYLD_INSERT_LIBRARIES` in the operator environment or MCP config; `secure_env_collect` refuses to set them from a tool call
+- Configure MCP server runtime variables such as `GWD_WORKFLOW_EXECUTORS_MODULE`, `GWD_WORKFLOW_WRITE_GATE_MODULE`, `GWD_WORKFLOW_PROJECT_ROOT`, `GWD_CLI_PATH`, `NODE_OPTIONS`, `NODE_PATH`, `PATH`, `LD_PRELOAD`, and `DYLD_INSERT_LIBRARIES` in the operator environment or MCP config; `secure_env_collect` refuses to set them from a tool call
 - `secure_env_collect` hydrates accepted local dotenv writes into the current MCP server process, but Vercel and Convex pushes are remote-only and are not added to `process.env`
-- Use `.mcp.json` for team-shared servers; `.gsd/mcp.json` for machine-local ones
-- If a server depends on local paths or personal secrets, keep it in `.gsd/mcp.json`
+- Use `.mcp.json` for team-shared servers; `.gwd/mcp.json` for machine-local ones
+- If a server depends on local paths or personal secrets, keep it in `.gwd/mcp.json`

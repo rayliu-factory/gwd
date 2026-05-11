@@ -4,9 +4,9 @@
 
 **Goal:** Build an Ollama-only Apple Silicon safety profile that routes Qwen3.6 MLX NVFP4 27B/35B models without exhausting a 48GB Mac.
 
-**Architecture:** Exact Ollama tag metadata will cap the two MLX NVFP4 Qwen3.6 tags at 64K and pass safe Ollama options. GSD auto-mode will synthesize an Ollama-only routing preset when the user has not configured explicit model routing, then suppress the 35B model for the current run after local resource failures.
+**Architecture:** Exact Ollama tag metadata will cap the two MLX NVFP4 Qwen3.6 tags at 64K and pass safe Ollama options. GWD auto-mode will synthesize an Ollama-only routing preset when the user has not configured explicit model routing, then suppress the 35B model for the current run after local resource failures.
 
-**Tech Stack:** TypeScript, Node test runner, GSD extension runtime, Ollama native `/api/chat` provider, existing GSD model router and context budget modules.
+**Tech Stack:** TypeScript, Node test runner, GWD extension runtime, Ollama native `/api/chat` provider, existing GWD model router and context budget modules.
 
 ---
 
@@ -14,14 +14,14 @@
 
 - Modify `src/resources/extensions/ollama/model-capabilities.ts`: add exact tag capability matching before broad family matching.
 - Modify `src/resources/extensions/ollama/tests/ollama-discovery.test.ts`: cover exact MLX NVFP4 tag metadata and broad `qwen3.6` fallback behavior.
-- Create `src/resources/extensions/gsd/ollama-apple-silicon-profile.ts`: central constants, preset resolution, fallback policy, session-scoped 35B suppression, and local resource error matching.
-- Create `src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts`: pure tests for preset activation, preference opt-out, fallback policy, suppression, and resource error classification.
-- Modify `src/resources/extensions/gsd/auto-model-selection.ts`: call the preset resolver, inject the synthesized routing config, and apply preset fallback rules.
-- Modify `src/resources/extensions/gsd/tests/auto-model-selection.test.ts`: integration coverage for 27B standard routing, 35B heavy routing, explicit preference opt-out, missing 35B fallback, and suppression.
-- Modify `src/resources/extensions/gsd/context-budget.ts`: keep `context_window_override` authoritative over discovered model metadata.
-- Modify `src/resources/extensions/gsd/tests/context-budget.test.ts`: cover 64K Qwen MLX budgeting and override behavior.
-- Modify `src/resources/extensions/gsd/bootstrap/agent-end-recovery.ts`: intercept 35B Ollama local resource failures before generic transient handling and retry the current unit on 27B.
-- Modify `src/resources/extensions/gsd/auto.ts`: clear Ollama Apple Silicon runtime suppression on fresh auto start and stop.
+- Create `src/resources/extensions/gwd/ollama-apple-silicon-profile.ts`: central constants, preset resolution, fallback policy, session-scoped 35B suppression, and local resource error matching.
+- Create `src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts`: pure tests for preset activation, preference opt-out, fallback policy, suppression, and resource error classification.
+- Modify `src/resources/extensions/gwd/auto-model-selection.ts`: call the preset resolver, inject the synthesized routing config, and apply preset fallback rules.
+- Modify `src/resources/extensions/gwd/tests/auto-model-selection.test.ts`: integration coverage for 27B standard routing, 35B heavy routing, explicit preference opt-out, missing 35B fallback, and suppression.
+- Modify `src/resources/extensions/gwd/context-budget.ts`: keep `context_window_override` authoritative over discovered model metadata.
+- Modify `src/resources/extensions/gwd/tests/context-budget.test.ts`: cover 64K Qwen MLX budgeting and override behavior.
+- Modify `src/resources/extensions/gwd/bootstrap/agent-end-recovery.ts`: intercept 35B Ollama local resource failures before generic transient handling and retry the current unit on 27B.
+- Modify `src/resources/extensions/gwd/auto.ts`: clear Ollama Apple Silicon runtime suppression on fresh auto start and stop.
 - Modify `docs/user-docs/providers.md`: document the safe Ollama Qwen3.6 Apple Silicon profile and the exact model tags.
 
 ---
@@ -82,7 +82,7 @@ Append these tests inside `describe("discoverModels — context window resolutio
 Run:
 
 ```bash
-node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/ollama/tests/ollama-discovery.test.ts
+node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/ollama/tests/ollama-discovery.test.ts
 ```
 
 Expected: FAIL. The first two new tests should receive `contextWindow: 1048576` from the broad `qwen3.6` family entry instead of `65536`.
@@ -131,7 +131,7 @@ export function getModelCapabilities(modelName: string): ModelCapability {
 Run:
 
 ```bash
-node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/ollama/tests/ollama-discovery.test.ts
+node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/ollama/tests/ollama-discovery.test.ts
 ```
 
 Expected: PASS.
@@ -150,12 +150,12 @@ git commit -m "feat: cap Ollama Qwen MLX tags at safe context"
 ### Task 2: Ollama Apple Silicon Profile Module
 
 **Files:**
-- Create: `src/resources/extensions/gsd/ollama-apple-silicon-profile.ts`
-- Test: `src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts`
+- Create: `src/resources/extensions/gwd/ollama-apple-silicon-profile.ts`
+- Test: `src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts`
 
 - [ ] **Step 1: Write failing pure tests for preset behavior**
 
-Create `src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts`:
+Create `src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts`:
 
 ```ts
 import test from "node:test";
@@ -343,14 +343,14 @@ test("isOllamaAppleSiliconResourceFailure matches local 35B resource failures on
 Run:
 
 ```bash
-node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts
+node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts
 ```
 
 Expected: FAIL with module not found for `../ollama-apple-silicon-profile.ts`.
 
 - [ ] **Step 3: Implement the profile module**
 
-Create `src/resources/extensions/gsd/ollama-apple-silicon-profile.ts`:
+Create `src/resources/extensions/gwd/ollama-apple-silicon-profile.ts`:
 
 ```ts
 import type { DynamicRoutingConfig, RoutingDecision } from "./model-router.js";
@@ -484,7 +484,7 @@ export function isOllamaAppleSiliconResourceFailure(
 Run:
 
 ```bash
-node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts
+node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts
 ```
 
 Expected: PASS.
@@ -494,7 +494,7 @@ Expected: PASS.
 Run:
 
 ```bash
-git add src/resources/extensions/gsd/ollama-apple-silicon-profile.ts src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts
+git add src/resources/extensions/gwd/ollama-apple-silicon-profile.ts src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts
 git commit -m "feat: add Ollama Qwen Apple Silicon profile"
 ```
 
@@ -503,33 +503,33 @@ git commit -m "feat: add Ollama Qwen Apple Silicon profile"
 ### Task 3: Auto-Mode Model Selection Integration
 
 **Files:**
-- Modify: `src/resources/extensions/gsd/model-router.ts`
-- Modify: `src/resources/extensions/gsd/auto-model-selection.ts`
-- Modify: `src/resources/extensions/gsd/tests/auto-model-selection.test.ts`
+- Modify: `src/resources/extensions/gwd/model-router.ts`
+- Modify: `src/resources/extensions/gwd/auto-model-selection.ts`
+- Modify: `src/resources/extensions/gwd/tests/auto-model-selection.test.ts`
 
 - [ ] **Step 1: Add failing auto-selection tests for the preset**
 
-Append these tests to `src/resources/extensions/gsd/tests/auto-model-selection.test.ts`:
+Append these tests to `src/resources/extensions/gwd/tests/auto-model-selection.test.ts`:
 
 ```ts
 test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for standard work", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: string[] = [];
   const notifications: Array<{ message: string; level: string }> = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
-  process.env.GWD_HOME = tempGsdHome;
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   const availableModels = [
@@ -572,21 +572,21 @@ test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for standar
 
 test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for heavy work", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: string[] = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
-  process.env.GWD_HOME = tempGsdHome;
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   const availableModels = [
@@ -628,22 +628,22 @@ test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for heavy w
 
 test("selectAndApplyModel falls back to 27B for heavy work when 35B tag is missing", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: string[] = [];
   const notifications: string[] = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
-  process.env.GWD_HOME = tempGsdHome;
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   const result = await selectAndApplyModel(
@@ -680,26 +680,26 @@ test("selectAndApplyModel falls back to 27B for heavy work when 35B tag is missi
 
 test("selectAndApplyModel does not synthesize Ollama Apple profile when dynamic_routing is explicit", async (t) => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GWD_HOME;
-  const tempProject = makeTempDir("gsd-ollama-apple-profile-");
-  const tempGsdHome = makeTempDir("gsd-ollama-apple-home-");
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-ollama-apple-profile-");
+  const tempGwdHome = makeTempDir("gwd-ollama-apple-home-");
   const setModelCalls: string[] = [];
 
   t.after(() => {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GWD_HOME;
-    else process.env.GWD_HOME = originalGsdHome;
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
     rmSync(tempProject, { recursive: true, force: true });
-    rmSync(tempGsdHome, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
   });
 
-  mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
   writeFileSync(
-    join(tempProject, ".gsd", "PREFERENCES.md"),
+    join(tempProject, ".gwd", "PREFERENCES.md"),
     ["---", "dynamic_routing:", "  enabled: false", "---"].join("\n"),
     "utf-8",
   );
-  process.env.GWD_HOME = tempGsdHome;
+  process.env.GWD_HOME = tempGwdHome;
   process.chdir(tempProject);
 
   await selectAndApplyModel(
@@ -741,14 +741,14 @@ test("selectAndApplyModel does not synthesize Ollama Apple profile when dynamic_
 Run:
 
 ```bash
-node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gsd/tests/auto-model-selection.test.ts
+node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gwd/tests/auto-model-selection.test.ts
 ```
 
 Expected: FAIL because the preset is not wired into `selectAndApplyModel`.
 
 - [ ] **Step 3: Add Qwen MLX model tier entries**
 
-In `src/resources/extensions/gsd/model-router.ts`, add these entries to `MODEL_CAPABILITY_TIER`:
+In `src/resources/extensions/gwd/model-router.ts`, add these entries to `MODEL_CAPABILITY_TIER`:
 
 ```ts
   "qwen3.6:27b-coding-nvfp4": "standard",
@@ -759,7 +759,7 @@ Place the 27B entry with standard-tier models and the 35B entry with heavy-tier 
 
 - [ ] **Step 4: Wire the preset into model selection**
 
-In `src/resources/extensions/gsd/auto-model-selection.ts`, add imports:
+In `src/resources/extensions/gwd/auto-model-selection.ts`, add imports:
 
 ```ts
 import {
@@ -830,7 +830,7 @@ Place that adjustment after the hook/non-hook selection branch and before `if (r
 Run:
 
 ```bash
-node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gsd/tests/auto-model-selection.test.ts
+node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gwd/tests/auto-model-selection.test.ts
 ```
 
 Expected: PASS.
@@ -840,7 +840,7 @@ Expected: PASS.
 Run:
 
 ```bash
-git add src/resources/extensions/gsd/model-router.ts src/resources/extensions/gsd/auto-model-selection.ts src/resources/extensions/gsd/tests/auto-model-selection.test.ts
+git add src/resources/extensions/gwd/model-router.ts src/resources/extensions/gwd/auto-model-selection.ts src/resources/extensions/gwd/tests/auto-model-selection.test.ts
 git commit -m "feat: route Ollama Qwen MLX profile in auto mode"
 ```
 
@@ -849,12 +849,12 @@ git commit -m "feat: route Ollama Qwen MLX profile in auto mode"
 ### Task 4: Context Budget Override Preservation
 
 **Files:**
-- Modify: `src/resources/extensions/gsd/context-budget.ts`
-- Test: `src/resources/extensions/gsd/tests/context-budget.test.ts`
+- Modify: `src/resources/extensions/gwd/context-budget.ts`
+- Test: `src/resources/extensions/gwd/tests/context-budget.test.ts`
 
 - [ ] **Step 1: Add failing context-window override tests**
 
-Append these tests inside `describe("context-budget: resolveExecutorContextWindow", () => { ... })` in `src/resources/extensions/gsd/tests/context-budget.test.ts`:
+Append these tests inside `describe("context-budget: resolveExecutorContextWindow", () => { ... })` in `src/resources/extensions/gwd/tests/context-budget.test.ts`:
 
 ```ts
   it("uses the 64K context window from the configured Ollama Qwen MLX executor model", () => {
@@ -888,14 +888,14 @@ Append these tests inside `describe("context-budget: resolveExecutorContextWindo
 Run:
 
 ```bash
-node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gsd/tests/context-budget.test.ts
+node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gwd/tests/context-budget.test.ts
 ```
 
 Expected: FAIL. The new `context_window_override` test should receive `65536` from the configured model instead of `131072`.
 
 - [ ] **Step 3: Make context_window_override authoritative**
 
-In `src/resources/extensions/gsd/context-budget.ts`, add `context_window_override` to `MinimalPreferences`:
+In `src/resources/extensions/gwd/context-budget.ts`, add `context_window_override` to `MinimalPreferences`:
 
 ```ts
 export interface MinimalPreferences {
@@ -921,7 +921,7 @@ Do not pass the override through `resolveEffectiveContextWindow`; the override i
 Run:
 
 ```bash
-node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gsd/tests/context-budget.test.ts
+node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gwd/tests/context-budget.test.ts
 ```
 
 Expected: PASS.
@@ -931,7 +931,7 @@ Expected: PASS.
 Run:
 
 ```bash
-git add src/resources/extensions/gsd/context-budget.ts src/resources/extensions/gsd/tests/context-budget.test.ts
+git add src/resources/extensions/gwd/context-budget.ts src/resources/extensions/gwd/tests/context-budget.test.ts
 git commit -m "fix: preserve context window override for local models"
 ```
 
@@ -940,14 +940,14 @@ git commit -m "fix: preserve context window override for local models"
 ### Task 5: 35B Resource-Failure Fallback And Runtime Reset
 
 **Files:**
-- Modify: `src/resources/extensions/gsd/bootstrap/agent-end-recovery.ts`
-- Modify: `src/resources/extensions/gsd/auto.ts`
-- Modify: `src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts`
-- Modify: `src/resources/extensions/gsd/tests/provider-errors.test.ts`
+- Modify: `src/resources/extensions/gwd/bootstrap/agent-end-recovery.ts`
+- Modify: `src/resources/extensions/gwd/auto.ts`
+- Modify: `src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts`
+- Modify: `src/resources/extensions/gwd/tests/provider-errors.test.ts`
 
 - [ ] **Step 1: Add a focused pure test for suppression reset**
 
-Append this test to `src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts`:
+Append this test to `src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts`:
 
 ```ts
 test("clearOllamaAppleSiliconRuntimeSuppressions restores 35B routing after a prior suppression", () => {
@@ -969,7 +969,7 @@ test("clearOllamaAppleSiliconRuntimeSuppressions restores 35B routing after a pr
 
 - [ ] **Step 2: Add provider-error source checks for recovery integration**
 
-Append this source-level regression test to `src/resources/extensions/gsd/tests/provider-errors.test.ts`:
+Append this source-level regression test to `src/resources/extensions/gwd/tests/provider-errors.test.ts`:
 
 ```ts
 test("agent-end recovery handles Ollama Apple Silicon 35B resource failures before generic transient return", async () => {
@@ -996,14 +996,14 @@ test("agent-end recovery handles Ollama Apple Silicon 35B resource failures befo
 Run:
 
 ```bash
-node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts src/resources/extensions/gsd/tests/provider-errors.test.ts
+node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts src/resources/extensions/gwd/tests/provider-errors.test.ts
 ```
 
 Expected: FAIL because `agent-end-recovery.ts` does not yet call `isOllamaAppleSiliconResourceFailure`.
 
 - [ ] **Step 4: Integrate local resource fallback in agent-end recovery**
 
-In `src/resources/extensions/gsd/bootstrap/agent-end-recovery.ts`, add imports:
+In `src/resources/extensions/gwd/bootstrap/agent-end-recovery.ts`, add imports:
 
 ```ts
 import {
@@ -1035,7 +1035,7 @@ After `const cls = classifyError(rawErrorMsg, explicitRetryAfterMs);`, insert:
             "warning",
           );
           pi.sendMessage(
-            { customType: "gsd-auto-timeout-recovery", content: "Continue execution on the 27B Ollama fallback.", display: false },
+            { customType: "gwd-auto-timeout-recovery", content: "Continue execution on the 27B Ollama fallback.", display: false },
             { triggerTurn: true },
           );
           return;
@@ -1053,7 +1053,7 @@ This block must stay before the existing `if (isTransient(cls) && cls.kind !== "
 
 - [ ] **Step 5: Clear runtime suppression on fresh auto start and stop**
 
-In `src/resources/extensions/gsd/auto.ts`, add this import:
+In `src/resources/extensions/gwd/auto.ts`, add this import:
 
 ```ts
 import { clearOllamaAppleSiliconRuntimeSuppressions } from "./ollama-apple-silicon-profile.js";
@@ -1085,7 +1085,7 @@ In `stopAuto`, immediately after `if (pi) clearToolBaseline(pi);`, add:
 Run:
 
 ```bash
-node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts src/resources/extensions/gsd/tests/provider-errors.test.ts
+node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts src/resources/extensions/gwd/tests/provider-errors.test.ts
 ```
 
 Expected: PASS.
@@ -1095,7 +1095,7 @@ Expected: PASS.
 Run:
 
 ```bash
-git add src/resources/extensions/gsd/bootstrap/agent-end-recovery.ts src/resources/extensions/gsd/auto.ts src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts src/resources/extensions/gsd/tests/provider-errors.test.ts
+git add src/resources/extensions/gwd/bootstrap/agent-end-recovery.ts src/resources/extensions/gwd/auto.ts src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts src/resources/extensions/gwd/tests/provider-errors.test.ts
 git commit -m "feat: fallback Ollama Qwen 35B resource failures"
 ```
 
@@ -1130,7 +1130,7 @@ When both tags are installed and no explicit `models` or `dynamic_routing` prefe
 
 Both tags are registered with a 64K effective context and `keep_alive: "0"` so Ollama unloads the active model after each request. This trades speed for memory safety and avoids keeping 27B and 35B resident at the same time.
 
-The 64K context is a safe execution envelope, not a promise that a large repository fits into one prompt. Large repositories should still be handled through smaller slices, targeted file reads, and verification-focused task plans. To opt into a larger context, set `context_window_override` in `.gsd/PREFERENCES.md`; this can increase memory pressure.
+The 64K context is a safe execution envelope, not a promise that a large repository fits into one prompt. Large repositories should still be handled through smaller slices, targeted file reads, and verification-focused task plans. To opt into a larger context, set `context_window_override` in `.gwd/PREFERENCES.md`; this can increase memory pressure.
 ```
 
 - [ ] **Step 2: Check the docs mention the exact tags and override path**
@@ -1164,7 +1164,7 @@ git commit -m "docs: document Ollama Qwen Apple Silicon profile"
 Run:
 
 ```bash
-node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/ollama/tests/ollama-discovery.test.ts src/resources/extensions/gsd/tests/ollama-apple-silicon-profile.test.ts src/resources/extensions/gsd/tests/auto-model-selection.test.ts src/resources/extensions/gsd/tests/context-budget.test.ts src/resources/extensions/gsd/tests/provider-errors.test.ts
+node --import ./src/resources/extensions/gwd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/ollama/tests/ollama-discovery.test.ts src/resources/extensions/gwd/tests/ollama-apple-silicon-profile.test.ts src/resources/extensions/gwd/tests/auto-model-selection.test.ts src/resources/extensions/gwd/tests/context-budget.test.ts src/resources/extensions/gwd/tests/provider-errors.test.ts
 ```
 
 Expected: PASS.

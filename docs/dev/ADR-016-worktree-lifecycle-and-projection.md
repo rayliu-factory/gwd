@@ -2,15 +2,15 @@
 
 **Status:** Accepted
 **Date:** 2026-05-08
-**Author:** GSD architecture review
+**Author:** GWD architecture review
 **Related:** ADR-014 (deep Auto Orchestration module), ADR-015 (runtime invariant modules), ADR-001 (branchless worktree architecture)
 
 ## Context
 
 Worktree handling currently lives in two places:
 
-- `src/resources/extensions/gsd/worktree-resolver.ts` — a class facade that wraps `s.basePath`/`s.originalBasePath` mutation and the merge-or-teardown lifecycle. Constructor takes a 28-field dependency interface (`WorktreeResolverDeps`).
-- `src/resources/extensions/gsd/auto-worktree.ts` — 2,500+ lines of function exports owning worktree create/enter/teardown/merge plus a separate set of state-sync helpers (`syncProjectRootToWorktree`, `syncStateToProjectRoot`, `syncWorktreeStateBack`, etc.).
+- `src/resources/extensions/gwd/worktree-resolver.ts` — a class facade that wraps `s.basePath`/`s.originalBasePath` mutation and the merge-or-teardown lifecycle. Constructor takes a 28-field dependency interface (`WorktreeResolverDeps`).
+- `src/resources/extensions/gwd/auto-worktree.ts` — 2,500+ lines of function exports owning worktree create/enter/teardown/merge plus a separate set of state-sync helpers (`syncProjectRootToWorktree`, `syncStateToProjectRoot`, `syncWorktreeStateBack`, etc.).
 
 The boundary between the two is unclear. `WorktreeResolver` is meant to centralise `s.basePath` mutation, but it delegates lifecycle work back to functions in `auto-worktree.ts` via 28 injected callbacks. Parallel orchestration paths (`parallel-orchestrator.ts`, `slice-parallel-orchestrator.ts`, `parallel-merge.ts`, `auto-post-unit.ts`) bypass `WorktreeResolver` entirely and call `auto-worktree.ts` exports directly. The discipline `WorktreeResolver` enforces (lease claim, no-double-chdir, single owner of `s.basePath` writes) is therefore enforced **only on the single-loop auto path**. A seam respected by one of two callers is not a real seam.
 
@@ -66,7 +66,7 @@ interface WorktreeStateProjection {
 
 All verbs are `MilestoneScope`-typed only. The legacy path-string variants (`syncProjectRootToWorktree(projectRoot, worktreePath, milestoneId)` and equivalents) and their `*ByScope` aliases are retired together with the helpers they wrap.
 
-Each verb's Implementation owns its direction's bug-hardened rules. `projectRootToWorktree` owns: identity-key safety check, additive milestone copy (#1886), ASSESSMENT verdict force-overwrite (#2821), `completed-units.json` forward-sync, WAL/SHM cleanup (#2478), `.gsd` symlink edge case (#2184). `projectWorktreeToRoot` owns the worktree → root rules (project root authoritative for diagnostics; markdown projections do not flow back; non-fatal sync). `finalizeProjectionForMerge` owns the post-merge final-capture rules and returns `{ synced: string[] }`, where `synced` lists the file classes captured during the final projection.
+Each verb's Implementation owns its direction's bug-hardened rules. `projectRootToWorktree` owns: identity-key safety check, additive milestone copy (#1886), ASSESSMENT verdict force-overwrite (#2821), `completed-units.json` forward-sync, WAL/SHM cleanup (#2478), `.gwd` symlink edge case (#2184). `projectWorktreeToRoot` owns the worktree → root rules (project root authoritative for diagnostics; markdown projections do not flow back; non-fatal sync). `finalizeProjectionForMerge` owns the post-merge final-capture rules and returns `{ synced: string[] }`, where `synced` lists the file classes captured during the final projection.
 
 ### Dependency direction
 

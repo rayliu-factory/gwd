@@ -1,6 +1,6 @@
 # Table of contents
 
-* [What is GSD?](README.md)
+* [What is GWD?](README.md)
 
 ## Getting Started
 
@@ -10,7 +10,7 @@
 
 ## Core Concepts
 
-* [How GSD Organizes Work](core-concepts/project-structure.md)
+* [How GWD Organizes Work](core-concepts/project-structure.md)
 * [Step Mode](core-concepts/step-mode.md)
 * [Auto Mode](core-concepts/auto-mode.md)
 
@@ -47,4 +47,4 @@
 * [CLI Flags](reference/cli-flags.md)
 * [Environment Variables](reference/environment-variables.md)
 * [Troubleshooting](reference/troubleshooting.md)
-* [Migration from v1](reference/migration.md)
+* [Import `.planning` Projects](reference/migration.md)

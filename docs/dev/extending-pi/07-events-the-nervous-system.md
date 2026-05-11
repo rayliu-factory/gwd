@@ -116,8 +116,8 @@ await pi.emitExtensionEvent({
 // Returns { cancel: true, reason } | { message: "..." } | undefined
 ```
 
-The GSD extension provides typed wrapper helpers in
-`src/resources/extensions/gsd/hook-emitter.ts` (`emitBeforeCommit`,
+The GWD extension provides typed wrapper helpers in
+`src/resources/extensions/gwd/hook-emitter.ts` (`emitBeforeCommit`,
 `emitVerifyResult`, `emitBudgetThreshold`, etc.) for call sites that don't
 have direct access to the `pi` API.
 
@@ -135,7 +135,7 @@ pi.on("event_name", async (event, ctx: ExtensionContext) => {
 ### Type Narrowing for Tool Events
 
 ```typescript
-import { isToolCallEventType, isToolResultEventType } from "@gsd/pi-coding-agent";
+import { isToolCallEventType, isToolResultEventType } from "@gwd/pi-coding-agent";
 
 pi.on("tool_call", async (event, ctx) => {
   if (isToolCallEventType("bash", event)) {
