@@ -245,6 +245,31 @@ describe("context-budget: resolveExecutorContextWindow", () => {
     assert.equal(result, 200_000);
   });
 
+  it("uses the 64K context window from the configured Ollama Qwen MLX executor model", () => {
+    const registry = makeRegistry([
+      makeModel("qwen3.6:27b-coding-nvfp4", "ollama", 65_536),
+    ]);
+    const prefs: MinimalPreferences = {
+      models: { execution: "ollama/qwen3.6:27b-coding-nvfp4" },
+    };
+
+    const result = resolveExecutorContextWindow(registry, prefs);
+    assert.equal(result, 65_536);
+  });
+
+  it("context_window_override wins over discovered Ollama Qwen MLX context metadata", () => {
+    const registry = makeRegistry([
+      makeModel("qwen3.6:27b-coding-nvfp4", "ollama", 65_536),
+    ]);
+    const prefs: MinimalPreferences = {
+      context_window_override: 131_072,
+      models: { execution: "ollama/qwen3.6:27b-coding-nvfp4" },
+    };
+
+    const result = resolveExecutorContextWindow(registry, prefs);
+    assert.equal(result, 131_072);
+  });
+
   it("falls back to sessionContextWindow when executor model not found", () => {
     const registry = makeRegistry([
       makeModel("claude-opus-4-6", "anthropic", 200_000),

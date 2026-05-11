@@ -108,6 +108,7 @@ export interface MinimalModelRegistry {
 }
 
 export interface MinimalPreferences {
+  context_window_override?: number;
   models?: {
     execution?: string | { model: string; fallbacks?: string[] };
   };
@@ -222,6 +223,10 @@ export function resolveExecutorContextWindow(
   sessionContextWindow?: number,
   sessionProvider?: string,
 ): number {
+  if (preferences?.context_window_override !== undefined && preferences.context_window_override > 0) {
+    return preferences.context_window_override;
+  }
+
   // Step 1: Try configured executor model
   if (preferences?.models?.execution && registry) {
     const executionConfig = preferences.models.execution;
