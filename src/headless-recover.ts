@@ -16,7 +16,7 @@
  *
  * Exit codes:
  *   0 — recovery succeeded
- *   1 — `.gsd/` missing, DB could not be opened, or migration threw
+ *   1 — `.gwd/` missing, DB could not be opened, or migration threw
  */
 
 import { createJiti } from '@mariozechner/jiti'
@@ -66,9 +66,9 @@ export interface RecoverResult {
 }
 
 export async function handleRecover(basePath: string): Promise<RecoverResult> {
-  const gsdDir = join(basePath, '.gsd')
-  if (!existsSync(gsdDir)) {
-    process.stderr.write(`[headless] recover: no .gsd/ directory at ${basePath}\n`)
+  const gwdDir = join(basePath, '.gwd')
+  if (!existsSync(gwdDir)) {
+    process.stderr.write(`[headless] recover: no .gwd/ directory at ${basePath}\n`)
     return { exitCode: 1 }
   }
 

@@ -47,7 +47,7 @@ test("gsd -w from inside a worktree creates the next worktree at the project roo
   await handleWorktreeFlag("beta");
 
   const expected = worktreePath(base, "beta");
-  const nested = join(alpha.path, ".gsd", "worktrees", "beta");
+  const nested = join(alpha.path, ".gwd", "worktrees", "beta");
   assert.equal(process.env.GWD_CLI_WORKTREE_BASE, base);
   assert.equal(process.env.GWD_CLI_WORKTREE, "beta");
   assert.equal(process.cwd(), expected);

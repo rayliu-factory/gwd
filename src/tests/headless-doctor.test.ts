@@ -42,8 +42,8 @@ import { normalizeRealPath } from "../resources/extensions/gwd/paths.ts";
 
 function makeStaleLockFixture(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-headless-doctor-"));
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  mkdirSync(join(base, ".gwd", "milestones"), { recursive: true });
+  openDatabase(join(base, ".gwd", "gwd.db"));
   insertMilestone({ id: "M001", title: "Test Milestone", status: "active" });
   const workerId = registerAutoWorker({ projectRootRealpath: normalizeRealPath(base) });
   const lease = claimMilestoneLease(workerId, "M001");

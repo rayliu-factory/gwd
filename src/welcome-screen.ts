@@ -23,7 +23,7 @@ interface GsdState {
 
 function readGsdState(): GsdState | undefined {
   try {
-    const raw = readFileSync(join(process.cwd(), '.gsd', 'STATE.md'), 'utf-8')
+    const raw = readFileSync(join(process.cwd(), '.gwd', 'STATE.md'), 'utf-8')
     const state: GsdState = {}
     const milestone = raw.match(/^\*\*Active Milestone:\*\*\s*(.+)$/m)
     if (milestone) state.milestone = milestone[1].trim()
@@ -46,7 +46,7 @@ function readGsdState(): GsdState | undefined {
 function countMcpServers(): number {
   const configPaths = [
     join(process.cwd(), '.mcp.json'),
-    join(process.cwd(), '.gsd', 'mcp.json'),
+    join(process.cwd(), '.gwd', 'mcp.json'),
   ]
   const seen = new Set<string>()
   for (const p of configPaths) {

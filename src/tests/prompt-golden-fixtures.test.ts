@@ -96,12 +96,12 @@ async function loadPromptBuilders(base: string): Promise<{
 
 function makePromptFixtureRoot(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-prompt-golden-"));
-  const sliceDir = join(base, ".gsd", "milestones", "M001", "slices", "S01");
+  const sliceDir = join(base, ".gwd", "milestones", "M001", "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
   mkdirSync(tasksDir, { recursive: true });
 
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"),
+    join(base, ".gwd", "milestones", "M001", "M001-ROADMAP.md"),
     [
       "# M001 Roadmap",
       "",

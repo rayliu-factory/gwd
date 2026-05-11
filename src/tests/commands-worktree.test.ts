@@ -11,7 +11,7 @@ function mkStatus(over: Partial<WorktreeStatus>): WorktreeStatus {
   const name = over.name ?? "feat-x";
   return {
     name,
-    path: `/repo/.gsd/worktrees/${name}`,
+    path: `/repo/.gwd/worktrees/${name}`,
     branch: `gsd/${name}`,
     exists: true,
     filesChanged: 0,
@@ -33,7 +33,7 @@ test("clean worktree shows (clean) badge and no diff line", () => {
   const out = formatWorktreeList([mkStatus({ name: "alpha" })]);
   assert.match(out, /alpha \(clean\)/);
   assert.match(out, /branch\s+gsd\/alpha/);
-  assert.match(out, /path\s+\/repo\/\.gsd/);
+  assert.match(out, /path\s+\/repo\/\.gwd/);
   assert.doesNotMatch(out, /diff\s+/);
 });
 

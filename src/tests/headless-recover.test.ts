@@ -40,7 +40,7 @@ import { invalidateStateCache } from "../resources/extensions/gwd/state.ts";
 
 function makeMarkdownFixture(): string {
   const base = mkdtempSync(join(tmpdir(), "gsd-headless-recover-"));
-  const mDir = join(base, ".gsd", "milestones", "M001");
+  const mDir = join(base, ".gwd", "milestones", "M001");
   const sDir = join(mDir, "slices", "S01");
   mkdirSync(join(sDir, "tasks"), { recursive: true });
 
@@ -83,7 +83,7 @@ test("headless recover: imports markdown hierarchy into authoritative DB", async
   });
 
   const opened = await ensureDbOpen(base);
-  assert.ok(opened, "ensureDbOpen should succeed when .gsd/ exists");
+  assert.ok(opened, "ensureDbOpen should succeed when .gwd/ exists");
   assert.ok(isDbAvailable(), "DB should be open after ensureDbOpen");
 
   const counts = transaction(() => {
