@@ -54,7 +54,7 @@ export function dispatchOneshot(
   });
 
   pi.sendMessage(
-    { customType: "gsd-workflow-oneshot", content: prompt, display: false },
+    { customType: "gwd-workflow-oneshot", content: prompt, display: false },
     { triggerTurn: true },
   );
 }
@@ -98,7 +98,7 @@ export function dispatchMarkdownPhase(
   });
 
   pi.sendMessage(
-    { customType: "gsd-workflow-template", content: prompt, display: false },
+    { customType: "gwd-workflow-template", content: prompt, display: false },
     { triggerTurn: true },
   );
 

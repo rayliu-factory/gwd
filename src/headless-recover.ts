@@ -10,7 +10,7 @@
  * reconcile DB state from markdown without launching an LLM session or a
  * TTY-bound interactive runtime.
  *
- * Output: `gsd-recover: recovered <N>M/<N>S/<N>T hierarchy\n` to stderr on
+ * Output: `gwd-recover: recovered <N>M/<N>S/<N>T hierarchy\n` to stderr on
  * success — same marker emitted by handleRecover (commands-maintenance.ts)
  * so callers can distinguish the success path from a silent no-op.
  *
@@ -102,7 +102,7 @@ export async function handleRecover(basePath: string): Promise<RecoverResult> {
   modules.invalidateStateCache()
 
   process.stderr.write(
-    `gsd-recover: recovered ${counts.milestones}M/${counts.slices}S/${counts.tasks}T hierarchy\n`,
+    `gwd-recover: recovered ${counts.milestones}M/${counts.slices}S/${counts.tasks}T hierarchy\n`,
   )
   return { exitCode: 0 }
 }

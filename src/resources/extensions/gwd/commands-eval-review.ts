@@ -710,7 +710,7 @@ export async function handleEvalReview(
   );
 
   pi.sendMessage(
-    { customType: "gsd-eval-review", content: prompt, display: false },
+    { customType: "gwd-eval-review", content: prompt, display: false },
     { triggerTurn: true },
   );
 }

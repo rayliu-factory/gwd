@@ -311,7 +311,7 @@ export async function handleSteer(change: string, ctx: ExtensionCommandContext, 
 
   if (isAutoActive()) {
     pi.sendMessage({
-      customType: "gsd-hard-steer",
+      customType: "gwd-hard-steer",
       content: [
         "HARD STEER — User override registered.",
         "",
@@ -327,7 +327,7 @@ export async function handleSteer(change: string, ctx: ExtensionCommandContext, 
     ctx.ui.notify(`Override registered (${overrideLoc}): "${change}". Will be applied before next task dispatch.`, "info");
   } else {
     pi.sendMessage({
-      customType: "gsd-hard-steer",
+      customType: "gwd-hard-steer",
       content: [
         "HARD STEER — User override registered.",
         "",

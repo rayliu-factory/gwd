@@ -83,7 +83,7 @@ test("preflightCleanRoot — dirty tree warns user and auto-stashes", () => {
 
     // The stash entry must exist
     const stashList = run("git stash list", repo);
-    assert.ok(stashList.includes("gsd-preflight-stash"), "stash entry must be named gsd-preflight-stash");
+    assert.ok(stashList.includes("gwd-preflight-stash"), "stash entry must be named gwd-preflight-stash");
   } finally {
     try { rmSync(repo, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }); } catch { /* ignore */ }
   }
@@ -232,7 +232,7 @@ test("postflightPopStash restores the matching GWD stash, not stash@{0}", () => 
     assert.equal(content.replace(/\r\n/g, "\n"), "# target stash\n");
     const stashList = run("git stash list", repo);
     assert.ok(stashList.includes("unrelated newer stash"), "unrelated newer stash must remain");
-    assert.ok(!stashList.includes("gsd-preflight-stash [gsd-preflight-stash:M006"), "target stash should be consumed");
+    assert.ok(!stashList.includes("gwd-preflight-stash [gwd-preflight-stash:M006"), "target stash should be consumed");
   } finally {
     try { rmSync(repo, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }); } catch { /* ignore */ }
   }
@@ -247,7 +247,7 @@ test("postflightPopStash restores the exact preflight marker when another same-m
     assert.ok(preflight.stashMarker, "preflight must expose exact stash marker");
 
     writeFileSync(join(repo, "same-milestone.txt"), "newer same milestone stash\n");
-    run('git stash push --include-untracked -m "gsd-preflight-stash [gsd-preflight-stash:M007:other]"', repo);
+    run('git stash push --include-untracked -m "gwd-preflight-stash [gwd-preflight-stash:M007:other]"', repo);
 
     const postflight = postflightPopStash(repo, "M007", preflight.stashMarker, () => {});
     assert.equal(postflight.needsManualRecovery, false, "exact marker restore must not need manual recovery");
@@ -255,7 +255,7 @@ test("postflightPopStash restores the exact preflight marker when another same-m
     const content = readFileSync(join(repo, "README.md"), "utf-8");
     assert.equal(content.replace(/\r\n/g, "\n"), "# target stash\n");
     const stashList = run("git stash list", repo);
-    assert.ok(stashList.includes("gsd-preflight-stash:M007:other"), "newer same-milestone stash must remain");
+    assert.ok(stashList.includes("gwd-preflight-stash:M007:other"), "newer same-milestone stash must remain");
     assert.ok(!stashList.includes(preflight.stashMarker), "exact target stash should be consumed");
   } finally {
     try { rmSync(repo, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }); } catch { /* ignore */ }
@@ -266,7 +266,7 @@ test("postflightPopStash falls back to milestone marker prefix when exact marker
   const repo = createTempRepo();
   try {
     writeFileSync(join(repo, "README.md"), "# fallback stash\n");
-    run('git stash push --include-untracked -m "gsd-preflight-stash [gsd-preflight-stash:M008:fallback]"', repo);
+    run('git stash push --include-untracked -m "gwd-preflight-stash [gwd-preflight-stash:M008:fallback]"', repo);
 
     const postflight = postflightPopStash(repo, "M008", undefined, () => {});
     assert.equal(postflight.needsManualRecovery, false, "fallback marker restore must not need manual recovery");
@@ -274,7 +274,7 @@ test("postflightPopStash falls back to milestone marker prefix when exact marker
     const content = readFileSync(join(repo, "README.md"), "utf-8");
     assert.equal(content.replace(/\r\n/g, "\n"), "# fallback stash\n");
     const stashList = run("git stash list", repo);
-    assert.ok(!stashList.includes("gsd-preflight-stash:M008:fallback"), "fallback stash should be consumed");
+    assert.ok(!stashList.includes("gwd-preflight-stash:M008:fallback"), "fallback stash should be consumed");
   } finally {
     try { rmSync(repo, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }); } catch { /* ignore */ }
   }

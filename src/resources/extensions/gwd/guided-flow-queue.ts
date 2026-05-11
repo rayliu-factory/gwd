@@ -206,7 +206,7 @@ export async function showQueueAdd(
 
   pi.sendMessage(
     {
-      customType: "gsd-queue",
+      customType: "gwd-queue",
       content: prompt,
       display: false,
     },

@@ -687,7 +687,7 @@
 | File | System Label(s) | Description |
 |------|-----------------|-------------|
 | web/app/layout.tsx | Web UI | Root Next.js layout with theme provider and font |
-| web/app/page.tsx | Web UI | Entry page loading GSDAppShell |
+| web/app/page.tsx | Web UI | Entry page loading GWDAppShell |
 | web/components/gwd/app-shell.tsx | Web UI | Main app shell — sidebar, panels, terminal, commands |
 | web/components/gwd/sidebar.tsx | Web UI | Multi-panel sidebar with milestone explorer |
 | web/components/gwd/status-bar.tsx | Web UI | Status bar with workspace state and metrics |

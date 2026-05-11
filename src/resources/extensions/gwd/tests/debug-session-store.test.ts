@@ -19,7 +19,7 @@ import {
 } from "../debug-session-store.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-debug-session-store-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-debug-session-store-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }

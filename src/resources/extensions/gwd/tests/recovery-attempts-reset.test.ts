@@ -25,7 +25,7 @@ const { assertEq, assertTrue, report } = createTestContext();
 
 // ═══ Setup ════════════════════════════════════════════════════════════════════
 
-const base = mkdtempSync(join(tmpdir(), "gsd-recovery-reset-test-"));
+const base = mkdtempSync(join(tmpdir(), "gwd-recovery-reset-test-"));
 mkdirSync(join(base, ".gwd", "runtime", "units"), { recursive: true });
 
 try {

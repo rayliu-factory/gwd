@@ -66,7 +66,7 @@ export async function handleRethink(
   });
 
   pi.sendMessage(
-    { customType: "gsd-rethink", content, display: false },
+    { customType: "gwd-rethink", content, display: false },
     { triggerTurn: true },
   );
 }

@@ -114,7 +114,7 @@ describe("#4573 maybeHandleReadyPhraseWithoutFiles", () => {
       });
       assert.equal(handled, true);
       assert.equal(cap.messages.length, 1);
-      assert.equal(cap.messages[0].payload.customType, "gsd-ready-no-files");
+      assert.equal(cap.messages[0].payload.customType, "gwd-ready-no-files");
       assert.equal(cap.messages[0].options.triggerTurn, true);
       assert.ok(
         cap.notifies.some((n) => /rejected/.test(n.msg)),
@@ -568,7 +568,7 @@ describe("#4573 maybeHandleEmptyIntentTurn", () => {
       );
       assert.equal(handled, true);
       assert.equal(cap.messages.length, 1);
-      assert.equal(cap.messages[0].payload.customType, "gsd-empty-turn-recovery");
+      assert.equal(cap.messages[0].payload.customType, "gwd-empty-turn-recovery");
     } finally {
       clearPendingAutoStart();
     }

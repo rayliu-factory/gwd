@@ -113,7 +113,7 @@ function dispatchReview(
 
   pi.sendMessage(
     {
-      customType: "gsd-migrate-review",
+      customType: "gwd-migrate-review",
       content: prompt,
       display: false,
     },

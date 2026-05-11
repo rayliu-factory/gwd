@@ -14,7 +14,7 @@ import { registerHooks } from "../bootstrap/register-hooks.ts";
 function makeTempDir(prefix: string): string {
   const dir = join(
     tmpdir(),
-    `gsd-health-widget-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `gwd-health-widget-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(dir, { recursive: true });
   return dir;
@@ -232,7 +232,7 @@ test("session_start bootstraps the health widget alongside notifications", async
     model: null,
   } as any);
 
-  assert.ok(widgets.includes("gsd-health"), "health widget is bootstrapped");
+  assert.ok(widgets.includes("gwd-health"), "health widget is bootstrapped");
   assert.ok(
     statuses.some((k) => k.includes("notifications")),
     "notification status chip is registered",

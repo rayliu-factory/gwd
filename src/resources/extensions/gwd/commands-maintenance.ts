@@ -533,7 +533,7 @@ export async function handleRecover(ctx: ExtensionCommandContext, basePath: stri
     }
 
     process.stderr.write(
-      `gsd-recover: recovered ${counts.milestones}M/${counts.slices}S/${counts.tasks}T hierarchy\n`,
+      `gwd-recover: recovered ${counts.milestones}M/${counts.slices}S/${counts.tasks}T hierarchy\n`,
     );
     ctx.ui.notify(lines.join("\n"), "success");
   } catch (err) {

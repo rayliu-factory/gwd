@@ -1364,7 +1364,7 @@ const JS = `
   });
 })();
 (function(){
-  var saved=JSON.parse(localStorage.getItem('gsd-collapsed')||'{}');
+  var saved=JSON.parse(localStorage.getItem('gwd-collapsed')||'{}');
   document.querySelectorAll('section[id]').forEach(function(sec){
     var h2=sec.querySelector('h2');
     if(!h2)return;
@@ -1380,7 +1380,7 @@ const JS = `
       toggleSection(sec,collapsed);
       btn.textContent=collapsed?'+':'-';
       saved[sec.id]=collapsed;
-      localStorage.setItem('gsd-collapsed',JSON.stringify(saved));
+      localStorage.setItem('gwd-collapsed',JSON.stringify(saved));
     });
   });
   function toggleSection(sec,hide){
@@ -1395,13 +1395,13 @@ const JS = `
   if(!hr)return;
   var btn=document.createElement('button');
   btn.className='theme-toggle';
-  btn.textContent=localStorage.getItem('gsd-theme')==='light'?'Dark':'Light';
-  if(localStorage.getItem('gsd-theme')==='light')document.documentElement.classList.add('light-theme');
+  btn.textContent=localStorage.getItem('gwd-theme')==='light'?'Dark':'Light';
+  if(localStorage.getItem('gwd-theme')==='light')document.documentElement.classList.add('light-theme');
   btn.addEventListener('click',function(){
     document.documentElement.classList.toggle('light-theme');
     var isLight=document.documentElement.classList.contains('light-theme');
     btn.textContent=isLight?'Dark':'Light';
-    localStorage.setItem('gsd-theme',isLight?'light':'dark');
+    localStorage.setItem('gwd-theme',isLight?'light':'dark');
   });
   hr.prepend(btn);
 })();

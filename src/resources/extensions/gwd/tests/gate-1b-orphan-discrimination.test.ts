@@ -120,8 +120,8 @@ describe("Gate 1b orphan discrimination in checkAutoStartAfterDiscuss", () => {
     );
     assert.equal(
       cap.messages[0].payload.customType,
-      "gsd-plan-milestone-blocked-recovery",
-      "recovery message must have customType gsd-plan-milestone-blocked-recovery",
+      "gwd-plan-milestone-blocked-recovery",
+      "recovery message must have customType gwd-plan-milestone-blocked-recovery",
     );
     assert.equal(
       cap.messages[0].options.triggerTurn,

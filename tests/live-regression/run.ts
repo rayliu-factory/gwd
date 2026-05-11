@@ -213,7 +213,7 @@ function recover(dir: string): void {
     `gsd headless recover should succeed for fixture, got ${result.code}: ${result.stderr}`,
   );
   assert(
-    result.stderr.includes("gsd-recover: recovered"),
+    result.stderr.includes("gwd-recover: recovered"),
     `gsd headless recover should reach success path, got stderr: ${result.stderr}`,
   );
 }

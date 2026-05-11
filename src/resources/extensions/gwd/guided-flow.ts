@@ -620,7 +620,7 @@ export function checkAutoStartAfterDiscuss(): boolean {
       try {
         pi.sendMessage(
           {
-            customType: "gsd-plan-milestone-blocked-recovery",
+            customType: "gwd-plan-milestone-blocked-recovery",
             content:
               `Milestone ${milestoneId} has ${contextFile} on disk but its DB row is still ` +
               `"queued". The gwd_plan_milestone tool was previously blocked by the ` +
@@ -882,7 +882,7 @@ export function maybeHandleReadyPhraseWithoutFiles(event: { messages: any[] }): 
 
   try {
     pi.sendMessage(
-      { customType: "gsd-ready-no-files", content: nudge, display: false },
+      { customType: "gwd-ready-no-files", content: nudge, display: false },
       { triggerTurn: true },
     );
   } catch (e) {
@@ -994,7 +994,7 @@ export function maybeHandleEmptyIntentTurn(
 
   try {
     pi.sendMessage(
-      { customType: "gsd-empty-turn-recovery", content: nudge, display: false },
+      { customType: "gwd-empty-turn-recovery", content: nudge, display: false },
       { triggerTurn: true },
     );
   } catch (e) {

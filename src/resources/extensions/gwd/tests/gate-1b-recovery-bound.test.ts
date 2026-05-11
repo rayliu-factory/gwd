@@ -101,7 +101,7 @@ describe("Gate 1b recovery bound (H1)", () => {
     assert.equal(resultOne, false, "call 1: must return false");
     assert.equal(cap.messages.length, 1, "call 1: exactly one sendMessage");
     assert.equal(cap.messages[0].options.triggerTurn, true, "call 1: triggerTurn must be true");
-    assert.equal(cap.messages[0].payload.customType, "gsd-plan-milestone-blocked-recovery");
+    assert.equal(cap.messages[0].payload.customType, "gwd-plan-milestone-blocked-recovery");
 
     const entryAfterOne = _getPendingAutoStart(base);
     assert.ok(entryAfterOne, "entry must still exist after call 1");

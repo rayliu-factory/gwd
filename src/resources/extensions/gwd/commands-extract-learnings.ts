@@ -487,7 +487,7 @@ export async function handleExtractLearnings(
   ctx.ui.notify(`Extracting learnings for ${milestoneId}: "${milestoneName}"...`, "info");
 
   pi.sendMessage(
-    { customType: "gsd-extract-learnings", content: prompt, display: false },
+    { customType: "gwd-extract-learnings", content: prompt, display: false },
     { triggerTurn: true },
   );
 }

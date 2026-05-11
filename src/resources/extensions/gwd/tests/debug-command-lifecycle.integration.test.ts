@@ -41,7 +41,7 @@ interface MockCtx {
 }
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-debug-lifecycle-int-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-debug-lifecycle-int-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
@@ -249,7 +249,7 @@ test("/gwd debug --diagnose <issue> dispatches find_root_cause_only goal and rec
 
     assert.equal(calls.length, 1, "should dispatch exactly one message");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-diagnose");
+    assert.equal(call.payload.customType, "gwd-debug-diagnose");
     assert.match(call.payload.content, /find_root_cause_only/);
     assert.match(call.payload.content, /auth token rotation breaks sessions/i);
     assert.equal(call.options.triggerTurn, true);
@@ -284,7 +284,7 @@ test("/gwd debug continue <slug> dispatches find_and_fix goal scoped to target s
 
     assert.equal(calls.length, 1, "should dispatch exactly one message");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-continue");
+    assert.equal(call.payload.customType, "gwd-debug-continue");
     assert.match(call.payload.content, /find_and_fix/);
     // Content must reference the target slug, not the other session.
     assert.match(call.payload.content, /race-condition-in-payment-handler/);
@@ -421,7 +421,7 @@ test("/gwd debug S03: checkpoint resume dispatches enriched payload via debug-se
 
     assert.equal(calls.length, 1, "should dispatch exactly one message");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-continue");
+    assert.equal(call.payload.customType, "gwd-debug-continue");
     // debug-session-manager template marker (absent from debug-diagnose)
     assert.match(call.payload.content, /Structured Return Protocol/);
     // Checkpoint context embedded
@@ -461,7 +461,7 @@ test("/gwd debug S03: TDD gate pending dispatches find_root_cause_only with TDD 
 
     assert.equal(calls.length, 1, "should dispatch exactly one message");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-continue");
+    assert.equal(call.payload.customType, "gwd-debug-continue");
     // Active goal must be find_root_cause_only (not find_and_fix)
     assert.match(call.payload.content, /## Goal\s+`find_root_cause_only`/);
     assert.doesNotMatch(call.payload.content, /## Goal\s+`find_and_fix`/);
@@ -508,7 +508,7 @@ test("/gwd debug S03: TDD gate red dispatches find_and_fix and advances phase to
 
     assert.equal(calls.length, 1, "should dispatch exactly one message");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-continue");
+    assert.equal(call.payload.customType, "gwd-debug-continue");
     assert.match(call.payload.content, /## Goal\s+`find_and_fix`/);
     assert.match(call.payload.content, /## TDD Gate/);
     assert.match(call.payload.content, /phase: red/);
@@ -550,7 +550,7 @@ test("/gwd debug S03: backward compat — legacy session without checkpoint/TDD 
 
     assert.equal(calls.length, 1, "should dispatch exactly one message");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-continue");
+    assert.equal(call.payload.customType, "gwd-debug-continue");
     // debug-diagnose template: no Structured Return Protocol, no checkpoint/TDD sections
     assert.doesNotMatch(call.payload.content, /Structured Return Protocol/);
     assert.doesNotMatch(call.payload.content, /## Active Checkpoint/);
@@ -594,7 +594,7 @@ test("/gwd debug S03: round-trip — checkpoint with userResponse dispatches res
 
     assert.equal(calls.length, 1, "should dispatch exactly one message");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-continue");
+    assert.equal(call.payload.customType, "gwd-debug-continue");
     // userResponse embedded in DATA_START/DATA_END security wrapper
     assert.match(call.payload.content, /DATA_START/);
     assert.match(call.payload.content, /Confirmed on staging/);
@@ -653,7 +653,7 @@ test("/gwd debug S04: specialist review round-trip through continue dispatch", a
 
     assert.equal(calls.length, 1, "should dispatch exactly one message");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-continue");
+    assert.equal(call.payload.customType, "gwd-debug-continue");
     // debug-session-manager template marker confirms correct template was used
     assert.match(call.payload.content, /Structured Return Protocol/);
     // Specialist context embedded in payload
@@ -700,7 +700,7 @@ test("/gwd debug S04: backward compat — session without specialistReview conti
 
     assert.equal(calls.length, 1, "should dispatch exactly one message");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-continue");
+    assert.equal(call.payload.customType, "gwd-debug-continue");
     // debug-session-manager template is still used (checkpoint triggers it)
     assert.match(call.payload.content, /Structured Return Protocol/);
     // No specialist context section in payload (template's own Specialist Dispatch docs don't count)
@@ -803,7 +803,7 @@ test("/gwd debug S05: full happy-path lifecycle — start → list → status �
 
     assert.equal(calls.length, 1, "should dispatch exactly one message on continue");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-continue");
+    assert.equal(call.payload.customType, "gwd-debug-continue");
     assert.match(call.payload.content, /find_and_fix/);
     assert.equal(call.options.triggerTurn, true);
 
@@ -842,7 +842,7 @@ test("/gwd debug S05: diagnose-only full lifecycle — start → status(mode=dia
 
     assert.equal(calls.length, 1, "should dispatch exactly one message on diagnose-start");
     const diagnoseCall = calls[0];
-    assert.equal(diagnoseCall.payload.customType, "gsd-debug-diagnose");
+    assert.equal(diagnoseCall.payload.customType, "gwd-debug-diagnose");
     assert.match(diagnoseCall.payload.content, /find_root_cause_only/);
     assert.match(diagnoseCall.payload.content, /Memory leak in worker pool/i);
     assert.equal(diagnoseCall.options.triggerTurn, true);
@@ -866,7 +866,7 @@ test("/gwd debug S05: diagnose-only full lifecycle — start → status(mode=dia
 
     assert.equal(calls.length, 1, "should dispatch exactly one message on continue");
     const continueCall = calls[0];
-    assert.equal(continueCall.payload.customType, "gsd-debug-continue");
+    assert.equal(continueCall.payload.customType, "gwd-debug-continue");
     // debug-diagnose template: no Structured Return Protocol (that marker is debug-session-manager only)
     assert.doesNotMatch(continueCall.payload.content, /Structured Return Protocol/);
     assert.match(continueCall.payload.content, /find_and_fix/);
@@ -998,7 +998,7 @@ test("/gwd debug S05: combined checkpoint + specialist review + TDD gate — all
 
     assert.equal(calls.length, 1, "should dispatch exactly one message");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-continue");
+    assert.equal(call.payload.customType, "gwd-debug-continue");
     // debug-session-manager template marker
     assert.match(call.payload.content, /Structured Return Protocol/);
     // Active Checkpoint section
@@ -1145,7 +1145,7 @@ test("/gwd debug S05: TDD gate green-phase continue dispatches find_and_fix with
 
     assert.equal(calls.length, 1, "should dispatch exactly one message");
     const call = calls[0];
-    assert.equal(call.payload.customType, "gsd-debug-continue");
+    assert.equal(call.payload.customType, "gwd-debug-continue");
     // find_and_fix goal for green phase
     assert.match(call.payload.content, /## Goal\s+`find_and_fix`/);
     // TDD Gate section with green phase
@@ -1220,7 +1220,7 @@ test("/gwd debug S05: dispatch failure resilience — sendMessage throws, sessio
 
     assert.equal(retryCalls.length, 1, "retry should dispatch exactly one message");
     const retryCall = retryCalls[0];
-    assert.equal(retryCall.payload.customType, "gsd-debug-continue");
+    assert.equal(retryCall.payload.customType, "gwd-debug-continue");
     assert.equal(retryCall.options.triggerTurn, true);
   } finally {
     process.chdir(saved);

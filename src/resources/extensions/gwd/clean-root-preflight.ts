@@ -35,7 +35,7 @@ export interface PostflightResult {
 }
 
 function findPreflightStashRef(basePath: string, milestoneId: string, stashMarker?: string): string | null {
-  const markerPrefix = `gsd-preflight-stash:${milestoneId}:`;
+  const markerPrefix = `gwd-preflight-stash:${milestoneId}:`;
   let fallbackRef: string | null = null;
   try {
     const list = execFileSync("git", ["stash", "list", "--format=%gd%x00%s"], {
@@ -63,7 +63,7 @@ function findPreflightStashRef(basePath: string, milestoneId: string, stashMarke
  *
  * Dirty tree path:
  *  1. Emits a warning notification via the provided `notify` callback.
- *  2. Runs `git stash push --include-untracked -m "gsd-preflight-stash"`.
+ *  2. Runs `git stash push --include-untracked -m "gwd-preflight-stash"`.
  *  3. Returns stashPushed=true so the caller knows to call postflightPopStash.
  *
  * Any stash error is logged but does NOT throw — the merge proceeds regardless.
@@ -93,8 +93,8 @@ export function preflightCleanRoot(
 
   // Push the stash
   try {
-    const stashMarker = `gsd-preflight-stash:${milestoneId}:${process.pid}:${Date.now()}:${process.hrtime.bigint().toString(36)}`;
-    execFileSync("git", ["stash", "push", "--include-untracked", "-m", `gsd-preflight-stash [${stashMarker}]`], {
+    const stashMarker = `gwd-preflight-stash:${milestoneId}:${process.pid}:${Date.now()}:${process.hrtime.bigint().toString(36)}`;
+    execFileSync("git", ["stash", "push", "--include-untracked", "-m", `gwd-preflight-stash [${stashMarker}]`], {
       cwd: basePath,
       stdio: ["ignore", "pipe", "pipe"],
       encoding: "utf-8",

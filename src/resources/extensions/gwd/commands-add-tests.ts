@@ -127,7 +127,7 @@ export async function handleAddTests(
     });
 
     pi.sendMessage(
-      { customType: "gsd-add-tests", content: prompt, display: false },
+      { customType: "gwd-add-tests", content: prompt, display: false },
       { triggerTurn: true },
     );
   } catch (err) {

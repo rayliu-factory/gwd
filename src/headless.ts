@@ -369,11 +369,11 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
   // suite) get the same diagnostic without a TTY.
   if (options.command === 'doctor') {
     const wantsJson = options.json || options.commandArgs.includes('--json')
-    const { runGSDDoctor } = await import('./resources/extensions/gwd/doctor.js')
+    const { runGWDDoctor } = await import('./resources/extensions/gwd/doctor.js')
     const { formatDoctorReport, formatDoctorReportJson } = await import('./resources/extensions/gwd/doctor-format.js')
     let exitCode = 1
     try {
-      const report = await runGSDDoctor(process.cwd())
+      const report = await runGWDDoctor(process.cwd())
       const out = wantsJson ? formatDoctorReportJson(report) : formatDoctorReport(report)
       process.stdout.write(`${out}\n`)
       exitCode = report.ok ? 0 : 1
@@ -833,7 +833,7 @@ async function runHeadlessOnce(options: HeadlessOptions, restartCount: number): 
   // v2 protocol negotiation — attempt init for structured completion events
   let v2Enabled = false
   try {
-    await client.init({ clientId: 'gsd-headless' })
+    await client.init({ clientId: 'gwd-headless' })
     v2Enabled = true
   } catch {
     process.stderr.write('[headless] Warning: v2 init failed, falling back to v1 string-matching\n')

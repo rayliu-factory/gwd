@@ -36,18 +36,18 @@ The current right-side PTY session remains:
 
 ### Left pane today
 
-The left pane is currently `web/components/gsd/terminal.tsx`, which is **not** the native TUI. It is a browser-native summary / interaction surface backed by:
+The left pane is currently `web/components/gwd/terminal.tsx`, which is **not** the native TUI. It is a browser-native summary / interaction surface backed by:
 
 - `/api/boot`
 - `/api/session/events`
 - `/api/session/command`
-- `web/lib/gsd-workspace-store.tsx`
+- `web/lib/gwd-workspace-store.tsx`
 
-It renders bridge state, transcript summaries, tool activity, and an input box, but not the real pi/GSD terminal UI.
+It renders bridge state, transcript summaries, tool activity, and an input box, but not the real pi/GWD terminal UI.
 
 ### Right pane today
 
-The right pane is `web/components/gsd/shell-terminal.tsx`, backed by:
+The right pane is `web/components/gwd/shell-terminal.tsx`, backed by:
 
 - `node-pty`
 - `/api/terminal/stream`
@@ -146,7 +146,7 @@ There must be **one main AgentSession**, not one per surface.
 
 ## 4. Replace the left pane with a native-TUI browser terminal
 
-In `web/components/gsd/dual-terminal.tsx`, replace the current left browser summary terminal with a new component that renders the real native TUI attached to the main session.
+In `web/components/gwd/dual-terminal.tsx`, replace the current left browser summary terminal with a new component that renders the real native TUI attached to the main session.
 
 ### Desired component behavior
 
@@ -230,7 +230,7 @@ Create the transport layer for the left pane.
 
 - browser-terminal host inside the main bridge runtime
 - new API routes under something like `web/app/api/bridge-terminal/*`
-- new browser component under `web/components/gsd/`
+- new browser component under `web/components/gwd/`
 
 ### Deliverable
 
@@ -263,7 +263,7 @@ Swap Power User Mode left pane from browser summary terminal to the native TUI t
 
 ### Likely files
 
-- `web/components/gsd/dual-terminal.tsx`
+- `web/components/gwd/dual-terminal.tsx`
 - new left terminal component
 
 ### Deliverable
@@ -280,7 +280,7 @@ Ensure left-TUI-originated changes immediately update browser-native surfaces.
 
 - `packages/pi-coding-agent/src/core/agent-session.ts`
 - `src/web/bridge-service.ts`
-- `web/lib/gsd-workspace-store.tsx`
+- `web/lib/gwd-workspace-store.tsx`
 
 ### Deliverable
 
@@ -397,19 +397,19 @@ The right-pane PTY path should remain independent. Reusing PTY-specific assumpti
 - `packages/pi-tui/src/tui.ts`
 
 ### Web left-pane UI
-- `web/components/gsd/dual-terminal.tsx`
-- new bridge-native terminal component under `web/components/gsd/`
+- `web/components/gwd/dual-terminal.tsx`
+- new bridge-native terminal component under `web/components/gwd/`
 
 ### Existing right-pane UI to keep stable
-- `web/components/gsd/shell-terminal.tsx`
+- `web/components/gwd/shell-terminal.tsx`
 - `web/lib/pty-manager.ts`
 - `web/app/api/terminal/*`
 
 ### Browser sync surfaces
-- `web/lib/gsd-workspace-store.tsx`
-- `web/components/gsd/chat-mode.tsx`
-- `web/components/gsd/dashboard.tsx`
-- `web/components/gsd/command-surface.tsx`
+- `web/lib/gwd-workspace-store.tsx`
+- `web/components/gwd/chat-mode.tsx`
+- `web/components/gwd/dashboard.tsx`
+- `web/components/gwd/command-surface.tsx`
 
 ## Final architecture rule
 

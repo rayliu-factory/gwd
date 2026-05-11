@@ -1241,7 +1241,7 @@ export async function bootstrapAutoSession(
     }
 
     ctx.ui.setStatus("gsd-auto", s.stepMode ? "next" : "auto");
-    ctx.ui.setWidget("gsd-health", undefined);
+    ctx.ui.setWidget("gwd-health", undefined);
     const modeLabel = s.stepMode ? "Step-mode" : "Auto-mode";
     const pendingCount = (state.registry ?? []).filter(
       (m) => m.status !== "complete" && m.status !== "parked",

@@ -9,7 +9,7 @@ import { createDebugSession, debugSessionArtifactPath, updateDebugSession } from
 import { loadPrompt } from "../prompt-loader.ts";
 
 function makeBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-debug-command-"));
+  const base = mkdtempSync(join(tmpdir(), "gwd-debug-command-"));
   mkdirSync(join(base, ".gwd"), { recursive: true });
   return base;
 }
@@ -161,7 +161,7 @@ describe("handleDebug lifecycle", () => {
       assert.match(ctx.notifications[0].message, /Debug session started: login-fails-on-safari/);
       assert.match(ctx.notifications[0].message, /dispatchMode=find_and_fix/);
       assert.equal(dispatched.length, 1);
-      assert.equal(dispatched[0].msg.customType, "gsd-debug-start");
+      assert.equal(dispatched[0].msg.customType, "gwd-debug-start");
       assert.equal(dispatched[0].msg.display, false);
       assert.equal(dispatched[0].options.triggerTurn, true);
       assert.match(dispatched[0].msg.content, /`find_and_fix`/);
@@ -431,7 +431,7 @@ describe("handleDebug lifecycle", () => {
       // Exactly one dispatch was emitted
       assert.equal(dispatched.length, 1);
       const dispatch = dispatched[0];
-      assert.equal(dispatch.customType, "gsd-debug-diagnose");
+      assert.equal(dispatch.customType, "gwd-debug-diagnose");
       assert.equal(dispatch.display, false);
       // Goal line must carry root-cause-only value
       assert.match(dispatch.content, /`find_root_cause_only`/);
@@ -491,7 +491,7 @@ describe("handleDebug lifecycle", () => {
       // Exactly one dispatch for the targeted slug
       assert.equal(dispatched.length, 1);
       const dispatch = dispatched[0];
-      assert.equal(dispatch.customType, "gsd-debug-continue");
+      assert.equal(dispatch.customType, "gwd-debug-continue");
       assert.equal(dispatch.display, false);
       // Goal line must carry find-and-fix value
       assert.match(dispatch.content, /`find_and_fix`/);
@@ -644,7 +644,7 @@ describe("handleDebug lifecycle", () => {
 
       assert.equal(dispatched.length, 1);
       const dispatch = dispatched[0];
-      assert.equal(dispatch.customType, "gsd-debug-continue");
+      assert.equal(dispatch.customType, "gwd-debug-continue");
       assert.equal(dispatch.display, false);
       // Uses debug-session-manager template (has structured return headers)
       assert.match(dispatch.content, /## CHECKPOINT REACHED/);
@@ -763,7 +763,7 @@ describe("handleDebug lifecycle", () => {
 
       assert.equal(dispatched.length, 1);
       const dispatch = dispatched[0];
-      assert.equal(dispatch.customType, "gsd-debug-continue");
+      assert.equal(dispatch.customType, "gwd-debug-continue");
       // Plain continue uses debug-diagnose — no structured return headers like ## TDD CHECKPOINT
       assert.match(dispatch.content, /`find_and_fix`/);
       assert.doesNotMatch(dispatch.content, /## Active Checkpoint/);

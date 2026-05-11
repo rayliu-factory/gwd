@@ -161,7 +161,7 @@ export function startUnitSupervision(sctx: SupervisionContext): void {
     const softTrigger = getInFlightToolCount() === 0;
     pi.sendMessage(
       {
-        customType: "gsd-auto-wrapup",
+        customType: "gwd-auto-wrapup",
         display: s.verbose,
         content: [
           "**TIME BUDGET WARNING — keep going only if progress is real.**",
@@ -335,7 +335,7 @@ export function startUnitSupervision(sctx: SupervisionContext): void {
     const contextTrigger = getInFlightToolCount() === 0;
     pi.sendMessage(
       {
-        customType: "gsd-auto-wrapup",
+        customType: "gwd-auto-wrapup",
         display: s.verbose,
         content: [
           "**CONTEXT BUDGET WARNING — wrap up this unit now.**",

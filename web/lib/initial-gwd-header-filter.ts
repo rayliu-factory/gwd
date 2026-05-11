@@ -6,7 +6,7 @@ export type InitialGwdHeaderFilterResult =
 const MIN_LOGO_LINES = 6
 const MAX_HEADER_PROBE_LINES = 16
 const MAX_HEADER_PROBE_CHARS = 4096
-const TITLE_PATTERN = /Get Work Done v\d+\.\d+\.\d+/i
+const TITLE_PATTERN = /Get Work Done\s+v\d+\.\d+\.\d+/i
 
 interface IndexedVisibleText {
   plainText: string
@@ -128,12 +128,16 @@ export function filterInitialGwdHeader(raw: string): InitialGwdHeaderFilterResul
     return { status: 'needs-more', text: '' }
   }
 
-  if (titleLineIndex < MIN_LOGO_LINES) {
+  const precedingLogoLines = lines
+    .slice(0, titleLineIndex)
+    .filter((line) => !isBlank(line))
+    .slice(-MIN_LOGO_LINES)
+
+  if (precedingLogoLines.length < MIN_LOGO_LINES) {
     return { status: 'passthrough', text: raw }
   }
 
-  const logoLines = lines.slice(titleLineIndex - MIN_LOGO_LINES, titleLineIndex)
-  if (logoLines.length !== MIN_LOGO_LINES || !logoLines.every(isLogoLine)) {
+  if (!precedingLogoLines.every(isLogoLine)) {
     return { status: 'passthrough', text: raw }
   }
 

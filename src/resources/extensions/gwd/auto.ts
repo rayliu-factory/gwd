@@ -2356,7 +2356,7 @@ export async function startAuto(
     registerSigtermHandler(lockBase());
 
     ctx.ui.setStatus("gsd-auto", s.stepMode ? "next" : "auto");
-    ctx.ui.setWidget("gsd-health", undefined);
+    ctx.ui.setWidget("gwd-health", undefined);
     ctx.ui.notify(
       s.stepMode ? "Step-mode resumed." : "Auto-mode resumed.",
       "info",
@@ -2691,7 +2691,7 @@ export async function dispatchHookUnit(
     promptLength: hookPrompt.length,
   });
   pi.sendMessage(
-    { customType: "gsd-auto", content: hookPrompt, display: true },
+    { customType: "gwd-auto", content: hookPrompt, display: true },
     { triggerTurn: true },
   );
 

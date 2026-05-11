@@ -431,7 +431,7 @@ async function writeContractsSurfaceFixtures(root: string): Promise<void> {
     "packages/rpc-client/src/rpc-types.ts",
     "packages/mcp-server/src/types.ts",
     "src/web/bridge-service.ts",
-    "web/lib/gsd-workspace-store.tsx",
+    "web/lib/gwd-workspace-store.tsx",
     "vscode-extension/src/gsd-client.ts",
   ];
   for (const file of files) {

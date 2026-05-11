@@ -719,7 +719,7 @@ async function handleMerge(
     // Dispatch to the LLM
     pi.sendMessage(
       {
-        customType: "gsd-worktree-merge",
+        customType: "gwd-worktree-merge",
         content: prompt,
         display: false,
       },

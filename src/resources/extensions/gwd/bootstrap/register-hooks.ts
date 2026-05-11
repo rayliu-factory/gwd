@@ -454,7 +454,7 @@ export function registerHooks(
     await installWelcomeHeader(ctx);
     await loadToolApiKeysForSession();
     if (isAutoActive()) {
-      ctx.ui.setWidget("gsd-health", undefined);
+      ctx.ui.setWidget("gwd-health", undefined);
     }
   });
 
@@ -483,7 +483,7 @@ export function registerHooks(
       const { initHealthWidget } = await import("../health-widget.js");
       initHealthWidget(ctx);
     } else {
-      ctx.ui.setWidget("gsd-health", undefined);
+      ctx.ui.setWidget("gwd-health", undefined);
     }
   });
 

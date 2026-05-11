@@ -369,7 +369,7 @@ async function restorePreflightStashOrStop(
 /**
  * Run a milestone merge surrounded by preflight stash + always-on postflight
  * pop. The previous code popped the stash only after a successful merge, which
- * leaked `gsd-preflight-stash:M00x:*` entries whenever `mergeAndExit` threw —
+ * leaked `gwd-preflight-stash:M00x:*` entries whenever `mergeAndExit` threw —
  * leaving the user's pre-merge working tree silently stashed away after a
  * merge-conflict or other merge error. This helper restores the stash on
  * every exit path, then surfaces the merge or stash failure (in priority

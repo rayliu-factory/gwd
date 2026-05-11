@@ -893,7 +893,7 @@ test("autoLoop stops before success notification when postflight stash restore n
     },
     preflightCleanRoot: () => ({
       stashPushed: true,
-      stashMarker: "gsd-preflight-stash:M001:test",
+      stashMarker: "gwd-preflight-stash:M001:test",
       summary: "stashed",
     }),
     postflightPopStash: () => ({
@@ -961,7 +961,7 @@ test("autoLoop marks transition merge complete before postflight recovery stop",
     },
     preflightCleanRoot: () => ({
       stashPushed: true,
-      stashMarker: "gsd-preflight-stash:M001:test",
+      stashMarker: "gwd-preflight-stash:M001:test",
       summary: "stashed",
     }),
     postflightPopStash: () => ({

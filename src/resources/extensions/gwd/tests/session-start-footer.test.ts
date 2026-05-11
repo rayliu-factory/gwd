@@ -1,7 +1,7 @@
 /**
  * session-start-footer.test.ts
  *
- * Verifies that register-hooks.ts suppresses the gsd-health widget (not the
+ * Verifies that register-hooks.ts suppresses the gwd-health widget (not the
  * built-in footer) when isAutoActive() is true, and that setFooter is never
  * called by the extension in either session_start or session_switch.
  *
@@ -68,7 +68,7 @@ test("session_start handler guards initHealthWidget with !isAutoActive()", () =>
   );
 });
 
-test("session_switch toggles gsd-health from runtime auto state without touching the footer", async (t) => {
+test("session_switch toggles gwd-health from runtime auto state without touching the footer", async (t) => {
   const dir = join(
     tmpdir(),
     `gsd-session-switch-widget-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -130,9 +130,9 @@ test("session_switch toggles gsd-health from runtime auto state without touching
   autoSession.active = true;
   await sessionSwitch!({ reason: "resume" }, ctx);
   assert.deepEqual(
-    widgetCalls.filter((call) => call.key === "gsd-health").map((call) => call.value),
+    widgetCalls.filter((call) => call.key === "gwd-health").map((call) => call.value),
     [undefined],
-    "session_switch should hide gsd-health when auto is active",
+    "session_switch should hide gwd-health when auto is active",
   );
   assert.equal(setFooterCallCount, 0, "session_switch must not call setFooter when auto is active");
 
@@ -140,13 +140,13 @@ test("session_switch toggles gsd-health from runtime auto state without touching
   autoSession.active = false;
   await sessionSwitch!({ reason: "resume" }, ctx);
   const healthWidgetValues = widgetCalls
-    .filter((call) => call.key === "gsd-health")
+    .filter((call) => call.key === "gwd-health")
     .map((call) => call.value);
 
-  assert.ok(healthWidgetValues.length >= 2, "session_switch should initialize gsd-health when auto is inactive");
+  assert.ok(healthWidgetValues.length >= 2, "session_switch should initialize gwd-health when auto is inactive");
   assert.ok(
     healthWidgetValues.every((value) => value !== undefined),
-    "session_switch must not hide gsd-health when auto is inactive",
+    "session_switch must not hide gwd-health when auto is inactive",
   );
   assert.ok(Array.isArray(healthWidgetValues[0]), "initHealthWidget should publish initial health lines");
   assert.equal(typeof healthWidgetValues.at(-1), "function", "initHealthWidget should register the live widget factory");
@@ -155,7 +155,7 @@ test("session_switch toggles gsd-health from runtime auto state without touching
 
 // ─── Behavioral test: neither setFooter nor health suppression when auto inactive ─
 
-test("session_start does NOT call setFooter or suppress gsd-health when isAutoActive() is false", async (t) => {
+test("session_start does NOT call setFooter or suppress gwd-health when isAutoActive() is false", async (t) => {
   const dir = join(
     tmpdir(),
     `gsd-footer-test-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -195,7 +195,7 @@ test("session_start does NOT call setFooter or suppress gsd-health when isAutoAc
       setWorkingMessage: () => {},
       onTerminalInput: () => () => {},
       setWidget: (key: string, value: unknown) => {
-        if (key === "gsd-health" && value === undefined) healthWidgetHideCount++;
+        if (key === "gwd-health" && value === undefined) healthWidgetHideCount++;
       },
     },
     sessionManager: { getSessionId: () => null },
@@ -203,7 +203,7 @@ test("session_start does NOT call setFooter or suppress gsd-health when isAutoAc
   } as any);
 
   assert.equal(setFooterCallCount, 0, "setFooter must NOT be called when isAutoActive() is false");
-  assert.equal(healthWidgetHideCount, 0, "gsd-health must NOT be hidden when isAutoActive() is false");
+  assert.equal(healthWidgetHideCount, 0, "gwd-health must NOT be hidden when isAutoActive() is false");
 });
 
 test("session_start installs the welcome screen as the TUI header", async (t) => {

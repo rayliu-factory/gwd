@@ -44,7 +44,7 @@ const CONTRACT_SURFACES = [
   },
   {
     surface: "webStore",
-    path: "web/lib/gsd-workspace-store.tsx",
+    path: "web/lib/gwd-workspace-store.tsx",
   },
   {
     surface: "vscode",

@@ -5,12 +5,12 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { resolveLocalBinaryPath } from "../../packages/pi-coding-agent/src/core/lsp/config.ts";
 import { encodeCwd } from "../resources/extensions/subagent/isolation.ts";
-import { buildGsdClientSpawnPlan } from "../../vscode-extension/src/gsd-client-spawn.ts";
+import { buildGwdClientSpawnPlan } from "../../vscode-extension/src/gwd-client-spawn.ts";
 
 function makeTempDir(prefix: string): string {
 	const dir = path.join(
 		os.tmpdir(),
-		`gsd-windows-portability-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+		`gwd-windows-portability-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
 	);
 	mkdirSync(dir, { recursive: true });
 	return dir;
@@ -55,8 +55,8 @@ test("encodeCwd produces a filesystem-safe token for Windows paths", () => {
 });
 
 test("VS Code RPC launch plan uses shell mode for Windows command shims", () => {
-	const plan = buildGsdClientSpawnPlan("gsd.cmd", "C:\\repo", { PATH: "C:\\Windows\\System32" }, "win32");
-	assert.equal(plan.command, "gsd.cmd");
+	const plan = buildGwdClientSpawnPlan("gwd.cmd", "C:\\repo", { PATH: "C:\\Windows\\System32" }, "win32");
+	assert.equal(plan.command, "gwd.cmd");
 	assert.deepEqual(plan.args, ["--mode", "rpc"]);
 	assert.equal(plan.options.cwd, "C:\\repo");
 	assert.equal(plan.options.shell, true);

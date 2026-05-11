@@ -141,7 +141,7 @@ export async function handleDebug(args: string, ctx: ExtensionCommandContext, pi
             specialistContext: "",
           });
           pi.sendMessage(
-            { customType: "gsd-debug-start", content: prompt, display: false },
+            { customType: "gwd-debug-start", content: prompt, display: false },
             { triggerTurn: true },
           );
         } catch (err) {
@@ -380,7 +380,7 @@ export async function handleDebug(args: string, ctx: ExtensionCommandContext, pi
           }
           const prompt = loadPrompt(dispatchTemplate, promptVars);
           pi.sendMessage(
-            { customType: "gsd-debug-continue", content: prompt, display: false },
+            { customType: "gwd-debug-continue", content: prompt, display: false },
             { triggerTurn: true },
           );
         } catch (err) {
@@ -433,7 +433,7 @@ export async function handleDebug(args: string, ctx: ExtensionCommandContext, pi
             workingDirectory: basePath,
           });
           pi.sendMessage(
-            { customType: "gsd-debug-diagnose", content: prompt, display: false },
+            { customType: "gwd-debug-diagnose", content: prompt, display: false },
             { triggerTurn: true },
           );
         } catch (err) {

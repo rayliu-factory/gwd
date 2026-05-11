@@ -288,7 +288,7 @@ export async function handleQuick(
 
   pi.sendMessage(
     {
-      customType: "gsd-quick-task",
+      customType: "gwd-quick-task",
       content: prompt,
       display: false,
     },

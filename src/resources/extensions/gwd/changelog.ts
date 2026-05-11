@@ -207,7 +207,7 @@ export async function handleChangelog(
   ].join("\n");
 
   pi.sendMessage(
-    { customType: "gsd-changelog", content: prompt, display: true },
+    { customType: "gwd-changelog", content: prompt, display: true },
     { triggerTurn: true },
   );
 }

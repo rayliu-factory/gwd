@@ -16,7 +16,7 @@ import { formatMergeResults, mergeAllCompleted, mergeCompletedMilestone } from "
 import { loadEffectiveGSDPreferences, resolveParallelConfig } from "../../preferences.js";
 import { projectRoot } from "../context.js";
 function emitParallelMessage(pi: ExtensionAPI, content: string): void {
-  pi.sendMessage({ customType: "gsd-parallel", content, display: true });
+  pi.sendMessage({ customType: "gwd-parallel", content, display: true });
 }
 
 export async function handleParallelCommand(trimmed: string, _ctx: ExtensionCommandContext, pi: ExtensionAPI): Promise<boolean> {

@@ -199,7 +199,7 @@ export async function runUnit(
   let result: UnitResult;
   try {
     pi.sendMessage(
-      { customType: "gsd-auto", content: prompt, display: s.verbose },
+      { customType: "gwd-auto", content: prompt, display: s.verbose },
       { triggerTurn: true },
     );
 

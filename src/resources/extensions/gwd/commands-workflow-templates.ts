@@ -246,7 +246,7 @@ export async function handleStart(
     });
 
     pi.sendMessage(
-      { customType: "gsd-workflow-template", content: prompt, display: false },
+      { customType: "gwd-workflow-template", content: prompt, display: false },
       { triggerTurn: true },
     );
     return;
@@ -416,7 +416,7 @@ export async function handleStart(
       // Trigger /gwd init by dispatching to the handler
       pi.sendMessage(
         {
-          customType: "gsd-workflow-template",
+          customType: "gwd-workflow-template",
           content: "The user wants to start a full GWD project. Run `/gwd init` to bootstrap the project, then `/gwd auto` to begin execution.",
           display: false,
         },
@@ -513,7 +513,7 @@ export async function handleStart(
 
   pi.sendMessage(
     {
-      customType: "gsd-workflow-template",
+      customType: "gwd-workflow-template",
       content: prompt,
       display: false,
     },
@@ -678,7 +678,7 @@ export function dispatchMarkdownPhasePlugin(
   });
 
   pi.sendMessage(
-    { customType: "gsd-workflow-template", content: prompt, display: false },
+    { customType: "gwd-workflow-template", content: prompt, display: false },
     { triggerTurn: true },
   );
 }

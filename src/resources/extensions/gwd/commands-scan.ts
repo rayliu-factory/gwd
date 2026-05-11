@@ -116,7 +116,7 @@ export async function handleScan(
     });
 
     pi.sendMessage(
-      { customType: "gsd-scan", content: prompt, display: false },
+      { customType: "gwd-scan", content: prompt, display: false },
       { triggerTurn: true },
     );
   } catch (err) {
