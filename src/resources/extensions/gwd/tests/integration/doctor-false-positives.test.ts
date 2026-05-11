@@ -4,7 +4,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync, readdirSync 
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-import { runGSDDoctor } from "../../doctor.js";
+import { runGWDDoctor } from "../../doctor.js";
 import { parsePlan } from "../../parsers-legacy.js";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -49,7 +49,7 @@ describe('doctor false-positives (#3105)', async () => {
     mkdirSync(wtGsdDir, { recursive: true });
     writeFileSync(join(wtGsdDir, "doctor-history.jsonl"), '{"ts":"2026-01-01","ok":true}\n');
 
-    const result = await runGSDDoctor(base, { fix: false });
+    const result = await runGWDDoctor(base, { fix: false });
 
     // Should NOT produce worktree_directory_orphaned for a dir that only has doctor history
     const orphanIssues = result.issues.filter(
@@ -102,7 +102,7 @@ Found a blocker, resolved it in-task.
 - log
 `);
 
-    const result = await runGSDDoctor(base, { fix: false });
+    const result = await runGWDDoctor(base, { fix: false });
 
     // Should NOT produce blocker_discovered_no_replan when all tasks are done
     const blockerIssues = result.issues.filter(i => i.code === "blocker_discovered_no_replan");
@@ -152,7 +152,7 @@ Found blocker, but T02 is still pending.
 - log
 `);
 
-    const result = await runGSDDoctor(base, { fix: false });
+    const result = await runGWDDoctor(base, { fix: false });
 
     const blockerIssues = result.issues.filter(i => i.code === "blocker_discovered_no_replan");
     assert.ok(blockerIssues.length > 0,
@@ -229,7 +229,7 @@ Found blocker, but T02 is still pending.
     writeFileSync(join(sDir, "tasks", "T01-SUMMARY.md"), "---\nstatus: done\ncompleted_at: 2026-01-01T00:00:00Z\n---\n# T01\nDone.\n");
     writeFileSync(join(sDir, "tasks", "T02-SUMMARY.md"), "---\nstatus: done\ncompleted_at: 2026-01-01T00:00:00Z\n---\n# T02\nDone.\n");
 
-    const result = await runGSDDoctor(base, { fix: false });
+    const result = await runGWDDoctor(base, { fix: false });
 
     // T02 should NOT be flagged as "not in plan"
     const notInPlan = result.issues.filter(

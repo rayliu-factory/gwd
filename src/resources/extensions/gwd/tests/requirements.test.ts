@@ -5,7 +5,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { deriveState } from "../state.ts";
-import { runGSDDoctor } from "../doctor.ts";
+import { runGWDDoctor } from "../doctor.ts";
 
 describe('requirements', () => {
   test('requirement counts parser', () => {
@@ -91,14 +91,14 @@ describe('requirements', () => {
   });
 
   test('doctor flags orphaned active requirement', async () => {
-    const report = await runGSDDoctor(base);
+    const report = await runGWDDoctor(base);
     assert.ok(report.issues.some(issue => issue.code === "active_requirement_missing_owner"), "doctor flags missing owner");
   });
 
   // #4414: active_requirement_missing_owner is a planning-hygiene signal,
   // not a correctness blocker — severity must be warning, not error.
   test('#4414: active_requirement_missing_owner is a warning, not an error', async () => {
-    const report = await runGSDDoctor(base);
+    const report = await runGWDDoctor(base);
     const issue = report.issues.find(i => i.code === "active_requirement_missing_owner");
     assert.ok(issue, "issue is present");
     assert.equal(issue!.severity, "warning", "severity downgraded so doctor report.ok is not flipped to false");

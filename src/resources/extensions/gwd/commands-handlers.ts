@@ -18,7 +18,7 @@ import {
   formatDoctorIssuesForPrompt,
   formatDoctorReport,
   formatDoctorReportJson,
-  runGSDDoctor,
+  runGWDDoctor,
   selectDoctorScope,
   filterDoctorIssues,
 } from "./doctor.js";
@@ -123,7 +123,7 @@ export async function handleDoctor(args: string, ctx: ExtensionCommandContext, p
   const { jsonMode, dryRun, fixFlag, includeBuild, includeTests, mode, requestedScope } = parseDoctorArgs(args);
   const scope = await selectDoctorScope(projectRoot(), requestedScope);
   const effectiveScope = mode === "audit" ? requestedScope : scope;
-  const report = await runGSDDoctor(projectRoot(), {
+  const report = await runGWDDoctor(projectRoot(), {
     fix: mode === "fix" || mode === "heal" || dryRun || fixFlag,
     dryRun,
     scope: effectiveScope,

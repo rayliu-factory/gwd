@@ -22,7 +22,7 @@ import {
   formatCost, formatTokenCount, type UnitMetrics, type MetricsLedger,
 } from "./metrics.js";
 import { readCrashLock, isLockProcessAlive, formatCrashInfo, type LockData } from "./crash-recovery.js";
-import { runGSDDoctor, formatDoctorIssuesForPrompt, type DoctorIssue } from "./doctor.js";
+import { runGWDDoctor, formatDoctorIssuesForPrompt, type DoctorIssue } from "./doctor.js";
 import { verifyExpectedArtifact } from "./auto-recovery.js";
 import { deriveState } from "./state.js";
 import { isAutoActive } from "./auto.js";
@@ -99,7 +99,7 @@ interface DbCompletionCounts {
 }
 
 interface ForensicReport {
-  gsdVersion: string;
+  gwdVersion: string;
   timestamp: string;
   basePath: string;
   activeMilestone: string | null;
@@ -301,7 +301,7 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
   // 6. Run doctor
   let doctorIssues: DoctorIssue[] = [];
   try {
-    const report = await runGSDDoctor(basePath, { scope: undefined });
+    const report = await runGWDDoctor(basePath, { scope: undefined });
     doctorIssues = report.issues;
   } catch { /* doctor failure is non-fatal */ }
 
@@ -324,7 +324,7 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
   // 8. GWD version — use GWD_VERSION env var set by the loader at startup.
   // Extensions run from ~/.gwd/agent/extensions/gwd/ at runtime, so path-traversal
   // from import.meta.url would resolve to ~/package.json (wrong on every system).
-  const gsdVersion = process.env.GWD_VERSION || "unknown";
+  const gwdVersion = process.env.GWD_VERSION || "unknown";
 
   // 9. Scan journal for flow timeline and structured events
   const journalSummary = scanJournalForForensics(basePath);
@@ -353,7 +353,7 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
   detectJournalAnomalies(journalSummary, anomalies);
 
   return {
-    gsdVersion,
+    gwdVersion,
     timestamp: new Date().toISOString(),
     basePath,
     activeMilestone,
@@ -959,7 +959,7 @@ function saveForensicReport(basePath: string, report: ForensicReport, problemDes
     `# GWD Forensic Report`,
     ``,
     `**Generated:** ${report.timestamp}`,
-    `**GWD Version:** ${report.gsdVersion}`,
+    `**GWD Version:** ${report.gwdVersion}`,
     `**Active Milestone:** ${report.activeMilestone ?? "none"}`,
     `**Active Slice:** ${report.activeSlice ?? "none"}`,
     `**Active Worktree:** ${report.activeWorktree ?? "none"}`,
@@ -1279,7 +1279,7 @@ function formatReportForPrompt(report: ForensicReport): string {
   } else {
     sections.push(`### Completed Keys: ${report.completedKeys.length}`);
   }
-  sections.push(`### GWD Version: ${report.gsdVersion}`);
+  sections.push(`### GWD Version: ${report.gwdVersion}`);
   sections.push(`### Active Milestone: ${report.activeMilestone ?? "none"}`);
   sections.push(`### Active Slice: ${report.activeSlice ?? "none"}`);
   if (report.activeWorktree) {

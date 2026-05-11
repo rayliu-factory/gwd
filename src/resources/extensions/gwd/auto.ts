@@ -111,7 +111,7 @@ import {
   restoreHookState,
   clearPersistedHookState,
 } from "./post-unit-hooks.js";
-import { runGSDDoctor, rebuildState } from "./doctor.js";
+import { runGWDDoctor, rebuildState } from "./doctor.js";
 import {
   preDispatchHealthGate,
   recordHealthSnapshot,
@@ -2379,7 +2379,7 @@ export async function startAuto(
       });
     }
     try {
-      const report = await runGSDDoctor(s.basePath, { fix: true });
+      const report = await runGWDDoctor(s.basePath, { fix: true });
       if (report.fixesApplied.length > 0) {
         ctx.ui.notify(
           `Resume: applied ${report.fixesApplied.length} fix(es) to state.`,

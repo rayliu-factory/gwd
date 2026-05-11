@@ -14,7 +14,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { execSync } from "node:child_process";
 
-import { runGSDDoctor } from "../../doctor.ts";
+import { runGWDDoctor } from "../../doctor.ts";
 function run(cmd: string, cwd: string): string {
   return execSync(cmd, { cwd, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" }).trim();
 }
@@ -76,16 +76,16 @@ describe('doctor-runtime', async () => {
         `INSERT INTO workers (worker_id, host, pid, started_at, version, last_heartbeat_at, status, project_root_realpath)
          VALUES (:w, 'test-host', 9999999, '2026-03-10T00:00:00Z', 'test', '1970-01-01T00:00:00.000Z', 'active', :root)`,
       ).run({ ":w": `test-fake-${randomUUID().slice(0, 8)}`, ":root": dir });
-      // Leave DB open — runGSDDoctor's readCrashLock relies on the
+      // Leave DB open — runGWDDoctor's readCrashLock relies on the
       // currently-open DB connection (it does not open one of its own).
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const lockIssues = detect.issues.filter(i => i.code === "stale_crash_lock");
       assert.ok(lockIssues.length > 0, "detects stale crash lock");
       assert.ok(lockIssues[0]?.message.includes("9999999"), "message includes PID");
       assert.ok(lockIssues[0]?.fixable === true, "stale lock is fixable");
 
-      const fixed = await runGSDDoctor(dir, { fix: true });
+      const fixed = await runGWDDoctor(dir, { fix: true });
       assert.ok(
         fixed.fixesApplied.some(f => f.includes("cleared stale")),
         `fix clears stale lock (got: ${fixed.fixesApplied.join(", ")})`,
@@ -102,7 +102,7 @@ describe('doctor-runtime', async () => {
       const dir = createMinimalProject();
       cleanups.push(dir);
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const lockIssues = detect.issues.filter(i => i.code === "stale_crash_lock");
       assert.deepStrictEqual(lockIssues.length, 0, "no stale lock issue when no lock file exists");
     });
@@ -122,12 +122,12 @@ describe('doctor-runtime', async () => {
       };
       writeFileSync(join(dir, ".gwd", "hook-state.json"), JSON.stringify(hookState, null, 2));
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const hookIssues = detect.issues.filter(i => i.code === "stale_hook_state");
       assert.ok(hookIssues.length > 0, "detects stale hook state");
       assert.ok(hookIssues[0]?.message.includes("2 residual cycle count"), "message includes count");
 
-      const fixed = await runGSDDoctor(dir, { fix: true });
+      const fixed = await runGWDDoctor(dir, { fix: true });
       assert.ok(fixed.fixesApplied.some(f => f.includes("cleared stale hook-state.json")), "fix clears hook state");
 
       // Verify the file was cleaned
@@ -145,13 +145,13 @@ describe('doctor-runtime', async () => {
       const counterPath = join(runtimeDir, "uat-count-M001-S01.json");
       writeFileSync(counterPath, JSON.stringify({ count: 7, updatedAt: "2026-04-30T00:00:00.000Z" }));
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const uatIssues = detect.issues.filter(i => i.code === "uat_retry_exhausted");
       assert.ok(uatIssues.length > 0, "detects exhausted UAT retry counter");
       assert.equal(uatIssues[0]?.unitId, "M001/S01", "issue is scoped to the stuck slice");
       assert.ok(uatIssues[0]?.fixable === true, "exhausted UAT counter is fixable");
 
-      const fixed = await runGSDDoctor(dir, { fix: true });
+      const fixed = await runGWDDoctor(dir, { fix: true });
       assert.ok(
         fixed.fixesApplied.some(f => f.includes("reset exhausted run-uat retry counter for M001/S01")),
         "fix resets the UAT retry counter",
@@ -170,7 +170,7 @@ describe('doctor-runtime', async () => {
       const assessmentPath = join(dir, ".gwd", "milestones", "M001", "slices", "S01", "S01-ASSESSMENT.md");
       writeFileSync(assessmentPath, "---\nverdict: PASS\n---\n# UAT Result\n");
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const uatIssues = detect.issues.filter(i => i.code === "uat_retry_exhausted");
       assert.deepStrictEqual(uatIssues.length, 0, "does not flag stale counter when ASSESSMENT already has a verdict");
     });
@@ -187,7 +187,7 @@ describe('doctor-runtime', async () => {
         writeFileSync(join(activityDir, `${String(i).padStart(3, "0")}-execute-task-M001-S01-T01.jsonl`), `{"test":${i}}\n`);
       }
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const bloatIssues = detect.issues.filter(i => i.code === "activity_log_bloat");
       assert.ok(bloatIssues.length > 0, "detects activity log bloat");
       assert.ok(bloatIssues[0]?.message.includes("510 files"), "message includes file count");
@@ -202,13 +202,13 @@ describe('doctor-runtime', async () => {
       const stateFilePath = join(dir, ".gwd", "STATE.md");
       assert.ok(!existsSync(stateFilePath), "STATE.md does not exist initially");
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const stateIssues = detect.issues.filter(i => i.code === "state_file_missing");
       assert.ok(stateIssues.length > 0, "detects missing STATE.md");
       assert.ok(stateIssues[0]?.fixable === true, "missing STATE.md is fixable");
       assert.deepStrictEqual(stateIssues[0]?.severity, "warning", "missing STATE.md is a warning (derived file)");
 
-      const fixed = await runGSDDoctor(dir, { fix: true });
+      const fixed = await runGWDDoctor(dir, { fix: true });
       assert.ok(fixed.fixesApplied.some(f => f.includes("created STATE.md")), "fix creates STATE.md");
       assert.ok(existsSync(stateFilePath), "STATE.md exists after fix");
 
@@ -243,12 +243,12 @@ describe('doctor-runtime', async () => {
 None
 `);
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const staleIssues = detect.issues.filter(i => i.code === "state_file_stale");
       assert.ok(staleIssues.length > 0, "detects stale STATE.md");
       assert.ok(staleIssues[0]?.message.includes("idle"), "message references old phase");
 
-      const fixed = await runGSDDoctor(dir, { fix: true });
+      const fixed = await runGWDDoctor(dir, { fix: true });
       assert.ok(fixed.fixesApplied.some(f => f.includes("rebuilt STATE.md")), "fix rebuilds STATE.md");
 
       // Verify updated content matches derived state
@@ -270,12 +270,12 @@ None
 .env
 `);
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const gitignoreIssues = detect.issues.filter(i => i.code === "gitignore_missing_patterns");
       assert.ok(gitignoreIssues.length > 0, "detects missing gitignore patterns");
       assert.ok(gitignoreIssues[0]?.message.includes(".gwd"), "message lists missing .gwd pattern");
 
-      const fixed = await runGSDDoctor(dir, { fix: true });
+      const fixed = await runGWDDoctor(dir, { fix: true });
       assert.ok(fixed.fixesApplied.some(f => f.includes("added missing GWD runtime patterns")), "fix adds patterns");
 
       // Verify .gwd entry was added (external state symlink)
@@ -296,7 +296,7 @@ None
 node_modules/
 `);
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const gitignoreIssues = detect.issues.filter(i => i.code === "gitignore_missing_patterns");
       assert.deepStrictEqual(gitignoreIssues.length, 0, "no missing patterns when blanket .gwd/ present");
     });
@@ -318,11 +318,11 @@ node_modules/
 
       writeFileSync(join(dir, ".gitignore"), "node_modules/\n");
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const symlinkIssues = detect.issues.filter(i => i.code === "symlinked_gwd_unignored");
       assert.ok(symlinkIssues.length > 0, "detects symlinked .gwd without gitignore entry");
 
-      const fixed = await runGSDDoctor(dir, { fix: true });
+      const fixed = await runGWDDoctor(dir, { fix: true });
       assert.ok(
         fixed.fixesApplied.some(f => f.includes(".gitignore")),
         "fix updates .gitignore",
@@ -346,12 +346,12 @@ node_modules/
       ];
       writeFileSync(join(dir, ".gwd", "completed-units.json"), JSON.stringify(completedKeys));
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const orphanIssues = detect.issues.filter(i => i.code === "orphaned_completed_units");
       assert.ok(orphanIssues.length > 0, "detects orphaned completed-unit keys");
       assert.ok(orphanIssues[0]?.message.includes("2 completed-unit key"), "message includes count");
 
-      const fixed = await runGSDDoctor(dir, { fix: true });
+      const fixed = await runGWDDoctor(dir, { fix: true });
       assert.ok(fixed.fixesApplied.some(f => f.includes("removed") && f.includes("orphaned")), "fix removes orphaned keys");
 
       // Verify keys were cleaned
@@ -376,7 +376,7 @@ node_modules/
       ];
       writeFileSync(join(dir, ".gwd", "completed-units.json"), JSON.stringify(completedKeys));
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const orphanIssues = detect.issues.filter(i => i.code === "orphaned_completed_units");
 
       // Only the plain "execute-task/M001/S01/T99" should be flagged, not the hooks.
@@ -409,13 +409,13 @@ node_modules/
       const lockDir = join(dir, ".gwd.lock");
       mkdirSync(lockDir, { recursive: true });
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const strandedIssues = detect.issues.filter(i => i.code === "stranded_lock_directory");
       assert.ok(strandedIssues.length > 0, "detects stranded lock directory");
       assert.ok(strandedIssues[0]?.message.includes("lock directory"), "message describes stranded lock directory");
       assert.ok(strandedIssues[0]?.fixable === true, "stranded lock dir is fixable");
 
-      const fixed = await runGSDDoctor(dir, { fix: true });
+      const fixed = await runGWDDoctor(dir, { fix: true });
       assert.ok(
         fixed.fixesApplied.some(f => f.includes("removed stranded lock directory")),
         "fix removes stranded lock directory",
@@ -442,7 +442,7 @@ node_modules/
          VALUES (:w, 'test-host', 1, :now, 'test', :now, 'active', :root)`,
       ).run({ ":w": `test-fake-${randomUUID().slice(0, 8)}`, ":now": new Date().toISOString(), ":root": dir });
 
-      const detect = await runGSDDoctor(dir);
+      const detect = await runGWDDoctor(dir);
       const strandedIssues = detect.issues.filter(i => i.code === "stranded_lock_directory");
       assert.deepStrictEqual(strandedIssues.length, 0, "live lock holder: stranded_lock_directory NOT detected");
     });
@@ -466,7 +466,7 @@ node_modules/
       writeFileSync(join(dir, ".gwd", "completed-units.json"), JSON.stringify(completedKeys));
 
       // fixLevel="task" — the level used by auto-post-unit after every task
-      const taskLevelFix = await runGSDDoctor(dir, { fix: true, fixLevel: "task" });
+      const taskLevelFix = await runGWDDoctor(dir, { fix: true, fixLevel: "task" });
       const taskLevelOrphan = taskLevelFix.issues.filter(i => i.code === "orphaned_completed_units");
       assert.ok(taskLevelOrphan.length > 0, "orphaned_completed_units detected at task fixLevel");
 
@@ -479,7 +479,7 @@ node_modules/
       );
 
       // fixLevel="all" (explicit manual doctor) — fix SHOULD apply
-      const allLevelFix = await runGSDDoctor(dir, { fix: true, fixLevel: "all" });
+      const allLevelFix = await runGWDDoctor(dir, { fix: true, fixLevel: "all" });
       assert.ok(
         allLevelFix.fixesApplied.some(f => f.includes("orphaned")),
         "orphaned-units fix applied at fixLevel=all (manual doctor)",

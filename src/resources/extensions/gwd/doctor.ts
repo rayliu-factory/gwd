@@ -34,7 +34,7 @@ export { computeProgressScore, computeProgressScoreWithContext, formatProgressLi
  *   and confusing the LLM agent that reads and writes these files.
  * - "\u2013" (en dash, U+2013): visually similar to em dash; same ambiguity risk.
  * - "/" (forward slash, U+002F): used as the path separator in unit IDs (M001/S01)
- *   and git branch names (gsd/M001/S01). A slash in a title can break path resolution.
+ *   and git branch names (gwd/M001/S01). A slash in a title can break path resolution.
  */
 const TITLE_DELIMITER_RE = /[\u2014\u2013\/]/; // em dash, en dash, forward slash
 
@@ -329,7 +329,7 @@ export async function readDoctorHistory(basePath: string, lastN = 50): Promise<D
   } catch { return []; }
 }
 
-export async function runGSDDoctor(basePath: string, options?: { fix?: boolean; dryRun?: boolean; scope?: string; fixLevel?: "task" | "all"; isolationMode?: "none" | "worktree" | "branch"; includeBuild?: boolean; includeTests?: boolean }): Promise<DoctorReport> {
+export async function runGWDDoctor(basePath: string, options?: { fix?: boolean; dryRun?: boolean; scope?: string; fixLevel?: "task" | "all"; isolationMode?: "none" | "worktree" | "branch"; includeBuild?: boolean; includeTests?: boolean }): Promise<DoctorReport> {
   const issues: DoctorIssue[] = [];
   const fixesApplied: string[] = [];
   const fix = options?.fix === true;

@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import { runGSDDoctor } from "../../doctor.ts";
+import { runGWDDoctor } from "../../doctor.ts";
 
 function run(cmd: string, cwd: string): string {
   return execSync(cmd, { cwd, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" }).trim();
@@ -79,7 +79,7 @@ test("doctor removes orphaned milestone worktree when cwd uses a symlink alias",
   symlinkSync(dir, alias);
   process.chdir(join(alias, ".gwd", "worktrees", "M001"));
 
-  const fixed = await runGSDDoctor(dir, { fix: true, isolationMode: "worktree" });
+  const fixed = await runGWDDoctor(dir, { fix: true, isolationMode: "worktree" });
   assert.ok(
     fixed.fixesApplied.some(f => f.includes("removed orphaned worktree")),
     `removes orphaned worktree even when cwd uses a symlink alias (got: ${JSON.stringify(fixed.fixesApplied)})`,

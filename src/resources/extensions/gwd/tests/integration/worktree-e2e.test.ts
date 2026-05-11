@@ -21,7 +21,7 @@ import {
 } from "../../auto-worktree.ts";
 import { getSliceBranchName } from "../../worktree.ts";
 import { abortAndReset } from "../../git-self-heal.ts";
-import { runGSDDoctor } from "../../doctor.ts";
+import { runGWDDoctor } from "../../doctor.ts";
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 
@@ -220,13 +220,13 @@ Completed.
       run("git worktree add -b milestone/M001 .gwd/worktrees/M001", repo);
 
       // Detect
-      const detect = await runGSDDoctor(repo, { isolationMode: "worktree" });
+      const detect = await runGWDDoctor(repo, { isolationMode: "worktree" });
       const orphanIssues = detect.issues.filter(i => i.code === "orphaned_auto_worktree");
       assert.ok(orphanIssues.length > 0, "doctor detects orphaned worktree");
       assert.deepStrictEqual(orphanIssues[0]?.unitId, "M001", "orphaned worktree unitId is M001");
 
       // Fix
-      const fixed = await runGSDDoctor(repo, { fix: true, isolationMode: "worktree" });
+      const fixed = await runGWDDoctor(repo, { fix: true, isolationMode: "worktree" });
       assert.ok(
         fixed.fixesApplied.some(f => f.includes("removed orphaned worktree")),
         "doctor fix removes orphaned worktree",

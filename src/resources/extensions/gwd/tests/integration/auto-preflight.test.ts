@@ -4,7 +4,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-import { runGSDDoctor, selectDoctorScope, filterDoctorIssues } from "../../doctor.js";
+import { runGWDDoctor, selectDoctorScope, filterDoctorIssues } from "../../doctor.js";
 
 test("auto-preflight scopes to active milestone, ignoring historical", async (t) => {
   const tmpBase = mkdtempSync(join(tmpdir(), "gsd-auto-preflight-test-"));
@@ -28,11 +28,11 @@ test("auto-preflight scopes to active milestone, ignoring historical", async (t)
   const scope = await selectDoctorScope(tmpBase);
   assert.equal(scope, "M009/S01", "active scope selected instead of historical milestone");
 
-  const scopedReport = await runGSDDoctor(tmpBase, { fix: false, scope });
+  const scopedReport = await runGWDDoctor(tmpBase, { fix: false, scope });
   const scopedBlocking = filterDoctorIssues(scopedReport.issues, { scope, includeWarnings: false });
   assert.equal(scopedBlocking.length, 0, "no blocking issues in active scope");
 
-  const historicalReport = await runGSDDoctor(tmpBase, { fix: false });
+  const historicalReport = await runGWDDoctor(tmpBase, { fix: false });
   const historicalWarnings = historicalReport.issues.filter(issue => issue.unitId.startsWith("M001/S01") && issue.severity === "warning");
   assert.equal(historicalWarnings.length, 0, "completed historical milestone produces no checkbox/file-mismatch warnings");
 });
