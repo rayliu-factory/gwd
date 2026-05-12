@@ -70,6 +70,6 @@ After pinning:
 
 ```bash
 node --version   # v24.x.x
-npm install -g gwd-pi
+npm install -g @appfiex-rayliu/gwd
 gwd --version
 ```

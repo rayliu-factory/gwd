@@ -435,7 +435,7 @@ export function reconcileMergedNodeModules(
   // Symlink entries from the hoisted node_modules (external deps)
   try {
     for (const entry of readdirSync(hoisted, { withFileTypes: true })) {
-      // Skip the gwd-pi package itself and dotfiles
+      // Skip the package itself and dotfiles
       if (entry.name === basename(packageRoot)) continue
       if (entry.name.startsWith('.')) continue
       try { symlinkSync(join(hoisted, entry.name), join(agentNodeModules, entry.name), 'junction'); linkedCount++ } catch { /* skip individual */ }

@@ -44,7 +44,7 @@ git --version    # 应输出 2.20+
 **第 4 步：安装 GWD：**
 
 ```bash
-npm install -g gwd-pi
+npm install -g @appfiex-rayliu/gwd
 ```
 
 **第 5 步：设置你的 LLM provider：**
@@ -116,7 +116,7 @@ git --version    # 应输出 2.20+
 **第 4 步：安装 GWD：**
 
 ```powershell
-npm install -g gwd-pi
+npm install -g @appfiex-rayliu/gwd
 ```
 
 **第 5 步：设置你的 LLM provider：**
@@ -220,7 +220,7 @@ git --version    # 应输出 2.20+
 **第 3 步：安装 GWD：**
 
 ```bash
-npm install -g gwd-pi
+npm install -g @appfiex-rayliu/gwd
 ```
 
 **第 4 步：设置你的 LLM provider：**
@@ -263,7 +263,7 @@ gwd --version     # 输出已安装版本
 > npm config set prefix '~/.npm-global'
 > echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
 > source ~/.bashrc
-> npm install -g gwd-pi
+> npm install -g @appfiex-rayliu/gwd
 > ```
 
 ---
@@ -402,7 +402,7 @@ GWD 也提供 VS Code 扩展。你可以从扩展市场安装（publisher: FluxL
 - **侧边栏仪表板**：显示连接状态、模型信息、Token 使用量
 - **完整命令面板**：启动 / 停止 agent、切换模型、导出会话
 
-CLI（`gwd-pi`）需要先安装好，扩展会通过 RPC 与其连接。
+GWD npm 包（`@appfiex-rayliu/gwd`）需要先安装好，扩展会通过 RPC 连接到 `gwd` CLI。
 
 ---
 
@@ -439,7 +439,7 @@ gwd sessions
 GWD 每 24 小时检查一次更新，并在启动时提示。你也可以手动更新：
 
 ```bash
-npm update -g gwd-pi
+npm update -g @appfiex-rayliu/gwd
 ```
 
 或者在会话中执行：
@@ -456,7 +456,7 @@ npm update -g gwd-pi
 |------|----------|
 | `command not found: gwd` | 把 npm 全局 bin 目录加入 PATH（见上面的系统说明） |
 | `gwd` 实际执行了 `git svn dcommit` | oh-my-zsh 冲突，执行 `unalias gwd` 或改用 `gwd-cli` |
-| `npm install -g gwd-pi` 权限错误 | 修复 npm prefix（见 Linux 说明）或改用 nvm |
+| `npm install -g @appfiex-rayliu/gwd` 权限错误 | 修复 npm prefix（见 Linux 说明）或改用 nvm |
 | 无法连接到 LLM | 用 `gwd config` 检查 API key，并确认网络可用 |
 | `gwd` 启动时卡住 | 检查 Node.js 版本：`node --version`（需要 22+） |
 

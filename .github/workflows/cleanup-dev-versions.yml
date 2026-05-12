@@ -24,7 +24,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          PACKAGE="gwd-pi"
+          PACKAGE="@appfiex-rayliu/gwd"
           MAX_AGE_DAYS=30
           CUTOFF=$(date -u -d "-${MAX_AGE_DAYS} days" +%s 2>/dev/null || date -u -v-${MAX_AGE_DAYS}d +%s)
 

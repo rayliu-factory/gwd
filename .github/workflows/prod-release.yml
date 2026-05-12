@@ -103,10 +103,10 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
-          OUTPUT=$(npm publish 2>&1) && echo "$OUTPUT" || {
+          OUTPUT=$(npm publish --access public 2>&1) && echo "$OUTPUT" || {
             if echo "$OUTPUT" | grep -q "cannot publish over the previously published"; then
               echo "Version already published — promoting to latest"
-              npm dist-tag add "gwd-pi@${RELEASE_VERSION}" latest
+              npm dist-tag add "@appfiex-rayliu/gwd@${RELEASE_VERSION}" latest
             else
               echo "$OUTPUT"
               exit 1
@@ -139,7 +139,7 @@ jobs:
           NOTES=$(cat /tmp/release-notes.md)
           curl -s -X POST "$DISCORD_WEBHOOK" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg c "**GWD v${RELEASE_VERSION} Released**\n\n${NOTES}\n\n\`npm i gwd-pi@${RELEASE_VERSION}\`" '{content:$c}')"
+            -d "$(jq -n --arg c "**GWD v${RELEASE_VERSION} Released**\n\n${NOTES}\n\n\`npm i @appfiex-rayliu/gwd@${RELEASE_VERSION}\`" '{content:$c}')"
 
       - name: Log in to GHCR
         uses: docker/login-action@v4

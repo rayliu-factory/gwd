@@ -117,7 +117,7 @@ if (!existsSync(appRoot)) {
 // GWD_CODING_AGENT_DIR — tells pi's getAgentDir() to return ~/.gwd/agent/
 process.env.GWD_CODING_AGENT_DIR = agentDir
 
-// GWD_PKG_ROOT — absolute path to the gwd-pi package root. Used by deployed extensions
+// GWD_PKG_ROOT — absolute path to the @appfiex-rayliu/gwd package root. Used by deployed extensions
 // (e.g. auto.ts resume path) to import modules like resource-loader.js that live
 // in the package tree, not in the deployed ~/.gwd/agent/ tree.
 process.env.GWD_PKG_ROOT = gwdRoot

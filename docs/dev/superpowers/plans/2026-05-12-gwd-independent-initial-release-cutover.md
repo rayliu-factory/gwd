@@ -412,7 +412,7 @@ Verify `src/namespace.ts` exactly reflects the active constants:
 export const PRODUCT_SHORT_NAME = "gwd";
 export const PRODUCT_DISPLAY_NAME = "GWD";
 export const PRODUCT_FULL_NAME = "Get Work Done";
-export const PRODUCT_PACKAGE_NAME = "gwd-pi";
+export const PRODUCT_PACKAGE_NAME = "@appfiex-rayliu/gwd";
 export const GLOBAL_STATE_DIR_NAME = ".gwd";
 export const PROJECT_STATE_DIR_NAME = ".gwd";
 export const RUNTIME_DB_FILE_NAME = "gwd.db";
@@ -854,7 +854,7 @@ const replacements = [
   ["Get Shit Done", "Get Work Done"],
   ["gsd-pi", "gwd-pi"],
   ["npm install -g gsd", "npm install -g gwd"],
-  ["npm install -g gwd-pi", "npm install -g gwd-pi"],
+  ["npm install -g @appfiex-rayliu/gwd", "npm install -g @appfiex-rayliu/gwd"],
   ["`gsd`", "`gwd`"],
   ["`/gsd", "`/gwd"],
   [" /gsd", " /gwd"],
@@ -906,7 +906,7 @@ Open `README.md` and replace the old product opening with GWD initial-release po
 GWD is a standalone CLI built on the Pi SDK. It manages project state, agent sessions, workflow tools, model routing, git isolation, recovery, and verification from one command-line entry point.
 
 ```bash
-npm install -g gwd-pi@latest
+npm install -g @appfiex-rayliu/gwd@latest
 gwd
 ```
 ```
@@ -1278,7 +1278,7 @@ Run:
 ```bash
 node <<'NODE'
 const pkg = require("./package.json");
-if (pkg.name !== "gwd-pi") throw new Error(`root package name is ${pkg.name}`);
+if (pkg.name !== "@appfiex-rayliu/gwd") throw new Error(`root package name is ${pkg.name}`);
 if (pkg.version !== "0.0.1") throw new Error(`root version is ${pkg.version}`);
 if (pkg.repository.url !== "https://github.com/rayliu-factory/gwd.git") throw new Error(`repo is ${pkg.repository.url}`);
 console.log(`${pkg.name}@${pkg.version} -> ${pkg.repository.url}`);
@@ -1288,7 +1288,7 @@ NODE
 Expected:
 
 ```text
-gwd-pi@0.0.1 -> https://github.com/rayliu-factory/gwd.git
+@appfiex-rayliu/gwd@0.0.1 -> https://github.com/rayliu-factory/gwd.git
 ```
 
 - [ ] **Step 8: Commit final verification fixes**

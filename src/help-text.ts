@@ -19,7 +19,7 @@ const SUBCOMMAND_HELP: Record<string, string> = {
     '',
     'Update GWD to the latest version.',
     '',
-    'Equivalent to: npm install -g gwd-pi@latest',
+    'Equivalent to: npm install -g @appfiex-rayliu/gwd@latest',
   ].join('\n'),
 
   sessions: [

@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install GWD globally — version controlled via build arg
 ARG GWD_VERSION=latest
-RUN npm install -g gwd-pi@${GWD_VERSION}
+RUN npm install -g @appfiex-rayliu/gwd@${GWD_VERSION}
 
 # Create non-root user for sandbox isolation
 RUN groupadd --gid 1000 gwd \

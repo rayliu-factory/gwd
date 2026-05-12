@@ -1,7 +1,7 @@
 export const PRODUCT_SHORT_NAME = "gwd";
 export const PRODUCT_DISPLAY_NAME = "GWD";
 export const PRODUCT_FULL_NAME = "Get Work Done";
-export const PRODUCT_PACKAGE_NAME = "gwd-pi";
+export const PRODUCT_PACKAGE_NAME = "@appfiex-rayliu/gwd";
 export const GLOBAL_STATE_DIR_NAME = ".gwd";
 export const PROJECT_STATE_DIR_NAME = ".gwd";
 export const RUNTIME_DB_FILE_NAME = "gwd.db";

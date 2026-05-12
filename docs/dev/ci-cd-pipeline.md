@@ -9,7 +9,7 @@ PR merged to main
         │
         ▼
    ┌─────────┐    ci.yml passes (build, test, typecheck)
-   │   DEV   │    → publishes gwd-pi@<version>-dev.<sha> with @dev tag
+   │   DEV   │    → publishes @appfiex-rayliu/gwd@<version>-dev.<sha> with @dev tag
    └────┬────┘
         ▼ (automatic if green)
    ┌─────────┐    CLI smoke tests + LLM fixture replay
@@ -29,13 +29,13 @@ Every merged PR is immediately installable:
 
 ```bash
 # Latest dev build (bleeding edge, every merged PR)
-npx gwd-pi@dev
+npx @appfiex-rayliu/gwd@dev
 
 # Test candidate (passed smoke + fixture tests)
-npx gwd-pi@next
+npx @appfiex-rayliu/gwd@next
 
 # Stable production release
-npx gwd-pi@latest    # or just: npx gwd-pi
+npx @appfiex-rayliu/gwd@latest    # or just: npx @appfiex-rayliu/gwd
 ```
 
 ### Using Docker
@@ -51,10 +51,10 @@ docker run --rm -v $(pwd):/workspace ghcr.io/rayliu-factory/gwd-pi:latest --vers
 ### Checking if a Fix Landed
 
 1. Find the PR's merge commit SHA (first 7 chars)
-2. Check if it's in `@dev`: `npm view gwd-pi@dev version`
+2. Check if it's in `@dev`: `npm view @appfiex-rayliu/gwd@dev version`
    - If the version ends in `-dev.<your-sha>`, your PR is in dev
-3. Check if it promoted to `@next`: `npm view gwd-pi@next version`
-4. Check if it's in production: `npm view gwd-pi@latest version`
+3. Check if it promoted to `@next`: `npm view @appfiex-rayliu/gwd@next version`
+4. Check if it's in production: `npm view @appfiex-rayliu/gwd@latest version`
 
 ## For Maintainers
 
@@ -129,7 +129,7 @@ If a broken version reaches production:
 
 ```bash
 # Roll back npm
-npm dist-tag add gwd-pi@<previous-good-version> latest
+npm dist-tag add @appfiex-rayliu/gwd@<previous-good-version> latest
 
 # Roll back Docker
 docker pull ghcr.io/rayliu-factory/gwd-pi:<previous-good-version>

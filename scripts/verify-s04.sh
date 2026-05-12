@@ -106,7 +106,7 @@ echo "--- tarball pack ---"
 # ----------------------------------------------------------------
 # Note: prepublishOnly triggers a build here (expected).
 npm pack --silent 2>/dev/null || npm pack 2>&1 | tail -5
-TARBALL=$(ls gwd-pi-*.tgz 2>/dev/null | head -1 || true)
+TARBALL=$(ls appfiex-rayliu-gwd-*.tgz 2>/dev/null | head -1 || true)
 if [ -n "$TARBALL" ] && [ -f "$TARBALL" ]; then
   pass "5 — tarball produced: $TARBALL"
 else

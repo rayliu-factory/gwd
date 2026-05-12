@@ -22,7 +22,7 @@ export function registerChatParticipant(
 				await client.start();
 			} catch (err) {
 				const msg = err instanceof Error ? err.message : String(err);
-				response.markdown(`**Failed to start GWD agent:** ${msg}\n\nMake sure \`gwd\` is installed (\`npm install -g gwd-pi\`) and try again.`);
+				response.markdown(`**Failed to start GWD agent:** ${msg}\n\nMake sure \`gwd\` is installed (\`npm install -g @appfiex-rayliu/gwd\`) and try again.`);
 				return;
 			}
 		}

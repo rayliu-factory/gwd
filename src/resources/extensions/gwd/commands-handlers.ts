@@ -36,7 +36,8 @@ import {
   scopeGwdWorkflowToolsForDispatch,
 } from "./bootstrap/register-hooks.js";
 
-const UPDATE_REGISTRY_URL = "https://registry.npmjs.org/gwd-pi/latest";
+const NPM_PACKAGE = "@appfiex-rayliu/gwd";
+const UPDATE_REGISTRY_URL = `https://registry.npmjs.org/${encodeURIComponent(NPM_PACKAGE)}/latest`;
 const UPDATE_FETCH_TIMEOUT_MS = 5000;
 
 // Detects a bun-installed gwd via `process.argv[1]`. Mirrors isBunInstall in
@@ -455,7 +456,6 @@ function compareSemverLocal(a: string, b: string): number {
 export async function handleUpdate(ctx: ExtensionCommandContext): Promise<void> {
   const { execSync } = await import("node:child_process");
 
-  const NPM_PACKAGE = "gwd-pi";
   const current = process.env.GWD_VERSION || "0.0.0";
 
   ctx.ui.notify(`Current version: v${current}\nChecking npm registry...`, "info");

@@ -59,7 +59,7 @@ packages/
 ### Dependency graph
 
 ```
-gwd-pi (binary)
+@appfiex-rayliu/gwd (gwd binary)
   └── @gwd/agent-modes
         ├── @gwd/agent-core
         │     ├── @gwd/pi-coding-agent
@@ -234,7 +234,7 @@ Steps 2-5 are scoped to known files. No archaeology required.
 
 ### Neutral
 
-- End-user install experience (`npm install -g gwd-pi@latest`) is unchanged
+- End-user install experience (`npm install -g @appfiex-rayliu/gwd@latest`) is unchanged
 - Extension authors see no change — the extension API surface remains in `@gwd/pi-coding-agent`
 - GWD packages continue to use pi types directly — no new abstraction layer
 

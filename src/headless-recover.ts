@@ -1,4 +1,4 @@
-// gwd-pi — Headless Recover entrypoint
+// @appfiex-rayliu/gwd — Headless Recover entrypoint
 /**
  * Headless Recover — `gwd headless recover`
  *

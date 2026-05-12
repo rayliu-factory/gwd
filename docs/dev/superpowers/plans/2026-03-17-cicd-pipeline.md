@@ -136,7 +136,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install GWD globally — version is controlled by the build arg
 ARG GWD_VERSION=latest
-RUN npm install -g gwd-pi@${GWD_VERSION}
+RUN npm install -g @appfiex-rayliu/gwd@${GWD_VERSION}
 
 # Default working directory for user projects
 WORKDIR /workspace
@@ -227,7 +227,7 @@ if (failed > 0) process.exit(1);
 // tests/smoke/test-version.ts
 // Verifies that `gwd --version` outputs valid semver-like string.
 // When GWD_SMOKE_BINARY is set (CI), uses that binary directly.
-// Otherwise falls back to npx gwd-pi.
+// Otherwise falls back to npx @appfiex-rayliu/gwd.
 
 import { execFileSync } from "child_process";
 
@@ -1037,7 +1037,7 @@ jobs:
         run: |
           mkdir /tmp/smoke-test && cd /tmp/smoke-test
           npm init -y
-          npm install gwd-pi@dev
+          npm install @appfiex-rayliu/gwd@dev
           npx gwd --version
 
   # ─── TEST STAGE ────────────────────────────────────────────
@@ -1059,7 +1059,7 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Install published dev package globally
-        run: npm install -g gwd-pi@dev
+        run: npm install -g @appfiex-rayliu/gwd@dev
 
       - name: Install dev dependencies for test runners
         run: npm ci
@@ -1073,7 +1073,7 @@ jobs:
         run: npm run test:fixtures
 
       - name: Promote to @next
-        run: npm dist-tag add gwd-pi@${{ needs.dev-publish.outputs.dev-version }} next
+        run: npm dist-tag add @appfiex-rayliu/gwd@${{ needs.dev-publish.outputs.dev-version }} next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -1117,7 +1117,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Promote to @latest
-        run: npm dist-tag add gwd-pi@${{ needs.dev-publish.outputs.dev-version }} latest
+        run: npm dist-tag add @appfiex-rayliu/gwd@${{ needs.dev-publish.outputs.dev-version }} latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -1140,7 +1140,7 @@ jobs:
         run: |
           mkdir /tmp/prod-smoke && cd /tmp/prod-smoke
           npm init -y
-          npm install gwd-pi@latest
+          npm install @appfiex-rayliu/gwd@latest
           npx gwd --version
 
   # ─── CI BUILDER IMAGE (conditional) ────────────────────────
@@ -1222,7 +1222,7 @@ jobs:
 
       - name: Remove old dev versions
         run: |
-          VERSIONS=$(npm view gwd-pi versions --json 2>/dev/null || echo "[]")
+          VERSIONS=$(npm view @appfiex-rayliu/gwd versions --json 2>/dev/null || echo "[]")
 
           DEV_VERSIONS=$(echo "$VERSIONS" | node -e "
             const stdin = require('fs').readFileSync('/dev/stdin', 'utf8');
@@ -1242,7 +1242,7 @@ jobs:
           THIRTY_DAYS_MS=2592000000
 
           for VERSION in $DEV_VERSIONS; do
-            PUBLISH_TIME=$(npm view "gwd-pi@$VERSION" time --json 2>/dev/null || echo "")
+            PUBLISH_TIME=$(npm view "@appfiex-rayliu/gwd@$VERSION" time --json 2>/dev/null || echo "")
 
             if [ -n "$PUBLISH_TIME" ]; then
               AGE_MS=$(node -e "
@@ -1251,10 +1251,10 @@ jobs:
               " 2>/dev/null || echo "0")
 
               if [ "$AGE_MS" -gt "$THIRTY_DAYS_MS" ]; then
-                echo "Unpublishing gwd-pi@$VERSION"
-                npm unpublish "gwd-pi@$VERSION" || echo "Failed to unpublish $VERSION"
+                echo "Unpublishing @appfiex-rayliu/gwd@$VERSION"
+                npm unpublish "@appfiex-rayliu/gwd@$VERSION" || echo "Failed to unpublish $VERSION"
               else
-                echo "Keeping gwd-pi@$VERSION (within 30 days)"
+                echo "Keeping @appfiex-rayliu/gwd@$VERSION (within 30 days)"
               fi
             fi
           done

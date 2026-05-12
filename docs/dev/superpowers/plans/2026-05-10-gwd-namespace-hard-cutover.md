@@ -246,7 +246,7 @@ Change the top of `package.json` to:
 
 ```json
 {
-  "name": "gwd-pi",
+  "name": "@appfiex-rayliu/gwd",
   "version": "2.81.0",
   "description": "GWD — Get Work Done coding agent",
   "license": "MIT",
@@ -1002,7 +1002,7 @@ Update Docker naming to:
 ```dockerfile
 # Image: ghcr.io/gwd-build/gwd-pi
 ARG GWD_VERSION=latest
-RUN npm install -g gwd-pi@${GWD_VERSION}
+RUN npm install -g @appfiex-rayliu/gwd@${GWD_VERSION}
 ENTRYPOINT ["gwd"]
 ```
 
@@ -1030,7 +1030,7 @@ Update current install/setup/usage instructions in `README.md`, `VISION.md`, `gi
 ```text
 GWD
 Get Work Done
-npm install -g gwd-pi
+npm install -g @appfiex-rayliu/gwd
 gwd
 /gwd
 .gwd

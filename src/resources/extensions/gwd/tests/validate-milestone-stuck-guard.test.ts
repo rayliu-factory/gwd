@@ -1,4 +1,4 @@
-// gwd-pi — Regression tests for the validate-milestone stuck-loop guard (#4094)
+// @appfiex-rayliu/gwd — Regression tests for the validate-milestone stuck-loop guard (#4094)
 
 import { describe, test, mock, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";

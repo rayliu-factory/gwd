@@ -28,7 +28,7 @@ GWD's code is clearly separated from pi's code at the module system level. The v
 | Zero GWD business logic in vendored pi packages | `pi-coding-agent/src/` contains no files that import from `@gwd/` packages (except the extension system's bundled module map) |
 | Module boundary is compiler-enforced | TypeScript `paths` config or package `exports` prevents pi packages from importing GWD packages |
 | Applying a pi-mono update is scoped | Updating pi packages produces type errors only in `@gwd/agent-core` and `@gwd/agent-modes` — no changes required in pi package source files |
-| Install experience is unchanged | `npm install -g gwd-pi@latest` produces an identical binary from the user's perspective |
+| Install experience is unchanged | `npm install -g @appfiex-rayliu/gwd@latest` produces an identical binary from the user's perspective |
 | Existing extensions continue to work | All built-in GWD extensions load and execute without modification |
 | Build time does not regress significantly | Full build completes within 120% of current baseline |
 
@@ -68,7 +68,7 @@ Must contain:
 
 ### R2 — New package: `@gwd/agent-modes`
 
-A new workspace package at `packages/gwd-agent-modes/` that owns all run-mode and CLI code. It depends on `@gwd/agent-core`, `@gwd/pi-coding-agent`, and `@gwd/pi-tui`. It is the layer the top-level `gwd-pi` binary entry point assembles.
+A new workspace package at `packages/gwd-agent-modes/` that owns all run-mode and CLI code. It depends on `@gwd/agent-core`, `@gwd/pi-coding-agent`, and `@gwd/pi-tui`. It is the layer the top-level `gwd` binary entry point assembles.
 
 Must contain:
 - `modes/interactive/` (full TUI interactive mode and all components)
@@ -98,7 +98,7 @@ The workspace build script must be updated to build packages in dependency order
 2. `@gwd/pi-coding-agent`
 3. `@gwd/agent-core`
 4. `@gwd/agent-modes`
-5. `gwd-pi` (top-level binary)
+5. `@appfiex-rayliu/gwd` (top-level package)
 
 ### R6 — No change to the extension loader's public interface
 

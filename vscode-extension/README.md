@@ -6,14 +6,14 @@ Control the [GWD coding agent](https://github.com/rayliu-factory/gwd) directly f
 
 ## Requirements
 
-- **GWD** installed globally: `npm install -g gwd-pi`
+- **GWD** installed globally: `npm install -g @appfiex-rayliu/gwd`
 - **Node.js** >= 22.0.0
 - **Git** installed and on PATH
 - **VS Code** >= 1.95.0
 
 ## Quick Start
 
-1. Install GWD: `npm install -g gwd-pi`
+1. Install GWD: `npm install -g @appfiex-rayliu/gwd`
 2. Install this extension
 3. Open a project folder in VS Code
 4. Click the **GWD icon** in the Activity Bar (left sidebar)

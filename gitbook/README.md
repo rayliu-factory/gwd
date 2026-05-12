@@ -38,7 +38,7 @@ You can stay hands-on with **step mode** (reviewing each step) or let GWD run au
 
 ```bash
 # Install
-npm install -g gwd-pi
+npm install -g @appfiex-rayliu/gwd
 
 # Launch
 gwd

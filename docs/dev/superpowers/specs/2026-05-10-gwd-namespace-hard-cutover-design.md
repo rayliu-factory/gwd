@@ -34,7 +34,7 @@ The canonical namespace is:
 | --- | --- |
 | Brand | GWD / Get Work Done |
 | CLI | `gwd` |
-| Root npm package | `gwd-pi` |
+| Root npm package | `@appfiex-rayliu/gwd` |
 | Package scopes | `@gwd/*`, `@gwd-build/*` |
 | Project state directory | `.gwd/` |
 | Global state directory | `~/.gwd/` |

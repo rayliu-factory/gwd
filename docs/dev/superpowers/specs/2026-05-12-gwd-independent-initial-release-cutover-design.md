@@ -12,7 +12,7 @@ This design supersedes the earlier May 10 GWD namespace hard-cutover design wher
 
 - Make `rayliu-factory/gwd` the canonical repository path for active package, docs, Docker, CI, native-package, and extension metadata.
 - Set active release metadata to version `0.0.1` for the initial independent GWD release.
-- Make `GWD`, `Get Work Done`, `gwd`, `gwd-pi`, `@gwd/*`, and `@gwd-build/*` the active product identity.
+- Make `GWD`, `Get Work Done`, `gwd`, `@appfiex-rayliu/gwd`, `@gwd/*`, and `@gwd-build/*` the active product identity.
 - Use `gwd`, `/gwd`, `gwd_*`, `GWD_*`, `.gwd/`, `~/.gwd/`, and `gwd.db` for all active runtime surfaces.
 - Rename active extension, test, prompt, template, package-script, and resource paths that currently encode `gsd`.
 - Update all current README, Markdown, and MDX docs so user-facing and contributor-facing instructions describe GWD, not GSD.
@@ -40,7 +40,7 @@ The canonical active namespace is:
 | Repository | `rayliu-factory/gwd` |
 | Release version | `0.0.1` |
 | CLI | `gwd` |
-| Root npm package | `gwd-pi` |
+| Root npm package | `@appfiex-rayliu/gwd` |
 | Package scopes | `@gwd/*`, `@gwd-build/*`, `@gwd-extensions/*` |
 | Project state directory | `.gwd/` |
 | Global state directory | `~/.gwd/` |
@@ -117,7 +117,7 @@ The audit should ignore `node_modules`, build output, generated test output, and
 
 The active runtime flow after the cutover is:
 
-1. The user installs `gwd-pi@0.0.1`.
+1. The user installs `@appfiex-rayliu/gwd@0.0.1`.
 2. The user runs `gwd`.
 3. The loader initializes global state under `~/.gwd`.
 4. The loader discovers the bundled `gwd` workflow extension.

@@ -4,7 +4,7 @@ End-to-end workflow: take a product idea or specification, produce working softw
 
 ## Prerequisites
 
-- `gwd` CLI installed (`npm install -g gwd-pi`)
+- `gwd` CLI installed (`npm install -g @appfiex-rayliu/gwd`)
 - A directory for the project (can be empty)
 - Git initialized in the directory
 

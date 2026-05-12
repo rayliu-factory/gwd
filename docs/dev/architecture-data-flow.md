@@ -6,7 +6,7 @@ If you need a shorter overview first, read [Architecture Overview](./architectur
 
 ## Naming Note
 
-The product is packaged as `gwd-pi` and exposes the `gwd` CLI. Current user and contributor docs should use GWD names, `/gwd` commands, `.gwd/` project state, and `GWD_*` environment variables.
+The product is packaged as `@appfiex-rayliu/gwd` and exposes the `gwd` CLI. Current user and contributor docs should use GWD names, `/gwd` commands, `.gwd/` project state, and `GWD_*` environment variables.
 
 One path detail matters: the current path contract resolves the workflow database to `.gwd/gwd.db` through `resolveGwdPathContract()` in `src/resources/extensions/gwd/paths.ts`. Trust the path contract and tests when docs, comments, or older plans disagree.
 

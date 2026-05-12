@@ -44,7 +44,7 @@ git --version    # should print 2.20+
 **Step 4 — Install GWD:**
 
 ```bash
-npm install -g gwd-pi
+npm install -g @appfiex-rayliu/gwd
 ```
 
 **Step 5 — Set up your LLM provider:**
@@ -116,7 +116,7 @@ git --version    # should print 2.20+
 **Step 4 — Install GWD:**
 
 ```powershell
-npm install -g gwd-pi
+npm install -g @appfiex-rayliu/gwd
 ```
 
 **Step 5 — Set up your LLM provider:**
@@ -220,7 +220,7 @@ git --version    # should print 2.20+
 **Step 3 — Install GWD:**
 
 ```bash
-npm install -g gwd-pi
+npm install -g @appfiex-rayliu/gwd
 ```
 
 **Step 4 — Set up your LLM provider:**
@@ -263,7 +263,7 @@ Inside the session, type `/model` to confirm your LLM is connected.
 > npm config set prefix '~/.npm-global'
 > echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
 > source ~/.bashrc
-> npm install -g gwd-pi
+> npm install -g @appfiex-rayliu/gwd
 > ```
 
 ---
@@ -403,7 +403,7 @@ GWD is also available as a VS Code extension. Install from the marketplace (publ
 - **Sidebar dashboard** — connection status, model info, token usage
 - **Full command palette** — start/stop agent, switch models, export sessions
 
-The CLI (`gwd-pi`) must be installed first — the extension connects to it via RPC.
+The GWD npm package (`@appfiex-rayliu/gwd`) must be installed first — the extension connects to the `gwd` CLI via RPC.
 
 ---
 
@@ -440,7 +440,7 @@ gwd sessions
 GWD checks for updates every 24 hours and prompts at startup. You can also update manually:
 
 ```bash
-npm update -g gwd-pi
+npm update -g @appfiex-rayliu/gwd
 ```
 
 Or from within a session:

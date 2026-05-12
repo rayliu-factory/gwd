@@ -3,13 +3,13 @@
 /**
  * GWD Interactive Installer
  *
- * Entry point for `npx gwd-pi` or `npx gwd-pi@latest`.
+ * Postinstall entry point for the published GWD npm package.
  * When invoked directly (not as a postinstall hook), runs the visual
- * installer with full terminal access — banner, spinners, progress.
+ * installer with full terminal access: banner, spinners, progress.
  *
  * If GWD is already installed and the user runs `gwd`, this script
  * is NOT invoked — the normal loader.js handles that via the "gwd" bin.
- * This script only fires for `npx gwd-pi` (the package name bin).
+ * This script does not own the `gwd` CLI bin; the normal loader.js does.
  */
 
 import { execSync, spawnSync, exec as execCb } from 'child_process'
@@ -24,8 +24,8 @@ import { createInterface } from 'readline'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-// packageRoot is always relative to this script — it's the gwd-pi package directory.
-// This is correct whether running as postinstall (inside node_modules/gwd-pi) or
+// packageRoot is always relative to this script: it is the package directory.
+// This is correct whether running as postinstall (inside node_modules/@appfiex-rayliu/gwd) or
 // via npx (inside a transient cache), since __dirname resolves to the script's location.
 const IS_POSTINSTALL = !!process.env.npm_lifecycle_event
 const packageRoot = resolve(__dirname, '..')
@@ -46,9 +46,11 @@ const c = supportsColor
 // ── Version ────────────────────────────────────────────────────────────────
 
 let gwdVersion = '0.0.0'
+let packageName = '@appfiex-rayliu/gwd'
 try {
   const pkg = JSON.parse(readFileSync(join(packageRoot, 'package.json'), 'utf-8'))
   gwdVersion = pkg.version || '0.0.0'
+  packageName = pkg.name || packageName
 } catch { /* ignore */ }
 
 if (HAS_VERSION) {
@@ -61,8 +63,8 @@ if (HAS_HELP) {
   ${c.bold}GWD Installer${c.reset} ${c.dim}v${gwdVersion}${c.reset}
 
   ${c.yellow}Usage:${c.reset}
-    npx gwd-pi@latest          Install GWD globally (recommended)
-    npx gwd-pi@latest --local  Install GWD to current project
+    npm install -g ${packageName}@latest       Install GWD globally
+    npm install ${packageName}@latest          Install GWD to current project
 
   ${c.yellow}Options:${c.reset}
     ${c.cyan}--local${c.reset}     Install to current directory instead of globally
@@ -166,11 +168,11 @@ const managedBinaryPath = join(managedBinDir, platform() === 'win32' ? 'rtk.exe'
 // ── Step: npm install -g ───────────────────────────────────────────────────
 
 async function installGlobally() {
-  startSpinner('Installing gwd-pi globally...             ')
+  startSpinner(`Installing ${packageName} globally...        `)
   try {
     const result = await new Promise((res) => {
       execCb(
-        `npm install -g gwd-pi@${gwdVersion}`,
+        `npm install -g ${packageName}@${gwdVersion}`,
         { timeout: 300_000 },
         (error, stdout, stderr) => {
           res({ ok: !error, stdout: stdout || '', stderr: stderr || '', error })
@@ -185,11 +187,11 @@ async function installGlobally() {
         .filter(l => !l.includes('npm warn') && !l.includes('npm WARN') && l.trim())
         .slice(-3)
         .join('; ')
-      printFail('Global install failed', meaningful || 'run npm install -g gwd-pi manually')
+      printFail('Global install failed', meaningful || `run npm install -g ${packageName} manually`)
       return false
     }
 
-    printStep('Installed globally', 'npm install -g gwd-pi')
+    printStep('Installed globally', `npm install -g ${packageName}`)
     return true
   } catch (err) {
     stopSpinner()
@@ -199,11 +201,11 @@ async function installGlobally() {
 }
 
 async function installLocally() {
-  startSpinner('Installing gwd-pi locally...              ')
+  startSpinner(`Installing ${packageName} locally...         `)
   try {
     const result = await new Promise((res) => {
       execCb(
-        `npm install gwd-pi@${gwdVersion}`,
+        `npm install ${packageName}@${gwdVersion}`,
         { cwd: process.cwd(), timeout: 300_000 },
         (error, stdout, stderr) => {
           res({ ok: !error, stdout: stdout || '', stderr: stderr || '', error })
@@ -218,11 +220,11 @@ async function installLocally() {
         .filter(l => !l.includes('npm warn') && !l.includes('npm WARN') && l.trim())
         .slice(-3)
         .join('; ')
-      printFail('Local install failed', meaningful || 'run npm install gwd-pi manually')
+      printFail('Local install failed', meaningful || `run npm install ${packageName} manually`)
       return false
     }
 
-    printStep('Installed locally', 'npm install gwd-pi')
+    printStep('Installed locally', `npm install ${packageName}`)
     return true
   } catch (err) {
     stopSpinner()
@@ -297,7 +299,7 @@ function sha256File(filePath) {
 }
 
 async function downloadToFile(url, destination) {
-  const response = await fetch(url, { headers: { 'User-Agent': 'gwd-pi-installer' } })
+  const response = await fetch(url, { headers: { 'User-Agent': 'gwd-installer' } })
   if (!response.ok) throw new Error(`download failed (${response.status})`)
   if (!response.body) throw new Error('no response body')
   const output = createWriteStream(destination)
@@ -358,7 +360,7 @@ async function installRtk() {
 
   try {
     const checksumsResponse = await fetch(`${releaseBase}/checksums.txt`, {
-      headers: { 'User-Agent': 'gwd-pi-installer' },
+      headers: { 'User-Agent': 'gwd-installer' },
     })
     if (!checksumsResponse.ok) throw new Error(`checksums fetch failed (${checksumsResponse.status})`)
 
