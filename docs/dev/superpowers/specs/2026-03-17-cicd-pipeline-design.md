@@ -80,7 +80,7 @@ The `-dev.` prerelease identifier is distinct from the existing `-next.` convent
 
 ### Native Binary Strategy for Dev Publishes
 
-Dev versions (`@dev` tag) use the native binaries from the most recent stable `build-native.yml` release. The `optionalDependencies` in `package.json` use `>=` ranges, so a `-dev.` version of `gwd-pi` resolves the latest stable `@gwd-build/engine-*` packages from the registry.
+Dev versions (`@dev` tag) use the native binaries from the most recent stable `build-native.yml` release. The `optionalDependencies` in `package.json` use `>=` ranges, so a `-dev.` version of `gwd-pi` resolves the latest stable `@appfiex-rayliu/gwd-engine-*` packages from the registry.
 
 If a PR modifies Rust native crate code (`native/` directory), the dev publish will bundle stale native binaries. This is acceptable because:
 - Native crate changes are infrequent and always accompanied by a `v*` tag release

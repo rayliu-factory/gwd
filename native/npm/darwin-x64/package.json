@@ -1,5 +1,5 @@
 {
-  "name": "@gwd-build/engine-darwin-x64",
+  "name": "@appfiex-rayliu/gwd-engine-darwin-x64",
   "version": "0.0.1",
   "description": "GWD native engine binary for macOS Intel",
   "os": [
@@ -15,6 +15,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rayliu-factory/gwd.git"
+    "url": "git+https://github.com/rayliu-factory/gwd.git"
   }
 }

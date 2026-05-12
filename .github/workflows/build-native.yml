@@ -155,7 +155,7 @@ jobs:
         run: |
           unset NODE_AUTH_TOKEN
           for platform in darwin-arm64 darwin-x64 linux-x64-gnu linux-arm64-gnu win32-x64-msvc; do
-            echo "Publishing @gwd-build/engine-${platform}..."
+            echo "Publishing @appfiex-rayliu/gwd-engine-${platform}..."
             cd "native/npm/${platform}"
             OUTPUT=$(npm publish --access public ${{ steps.version-check.outputs.tag_flag }} 2>&1) && echo "$OUTPUT" || {
               if echo "$OUTPUT" | grep -q "cannot publish over the previously published"; then
@@ -177,7 +177,7 @@ jobs:
           for attempt in $(seq 1 5); do
             FAILED=0
             for platform in darwin-arm64 darwin-x64 linux-x64-gnu linux-arm64-gnu win32-x64-msvc; do
-              PKG="@gwd-build/engine-${platform}"
+              PKG="@appfiex-rayliu/gwd-engine-${platform}"
               PUBLISHED=$(npm view "${PKG}@${VERSION}" version 2>/dev/null || echo "")
               if [ "${PUBLISHED}" != "${VERSION}" ]; then
                 FAILED=1
@@ -191,7 +191,7 @@ jobs:
             if [ "$attempt" = "5" ]; then
               echo "::error::One or more platform packages not found after 5 attempts. Aborting."
               for platform in darwin-arm64 darwin-x64 linux-x64-gnu linux-arm64-gnu win32-x64-msvc; do
-                PKG="@gwd-build/engine-${platform}"
+                PKG="@appfiex-rayliu/gwd-engine-${platform}"
                 PUBLISHED=$(npm view "${PKG}@${VERSION}" version 2>/dev/null || echo "")
                 if [ "${PUBLISHED}" = "${VERSION}" ]; then
                   echo "  ✓ ${PKG}@${VERSION}"
