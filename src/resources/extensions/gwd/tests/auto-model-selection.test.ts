@@ -803,6 +803,7 @@ test("selectAndApplyModel does not synthesize vLLM Metal profile when dynamic_ro
 
   assert.equal(setModelCalls[0]?.model.provider, "vllm-metal-35b");
   assert.equal(setModelCalls[0]?.model.id, VLLM_METAL_QWEN36_35B_A3B_FP8);
+  assert.equal(setModelCalls[0]?.model.contextWindow, 128_000);
   assert.equal(result.routing?.tier, "standard");
 });
 

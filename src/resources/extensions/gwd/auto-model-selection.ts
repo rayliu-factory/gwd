@@ -131,11 +131,17 @@ function reapplyThinkingLevel(
 function applyLocalProfileContext<T extends Model<Api>>(
   model: T,
   prefs: GWDPreferences | undefined,
+  applyVllmMetalContextTarget: boolean,
 ): T {
-  return applyVllmMetalQwen36ContextTarget(
-    applyOllamaAppleSiliconContextOverride(model, prefs),
-    prefs,
-  );
+  const ollamaAdjusted = applyOllamaAppleSiliconContextOverride(model, prefs);
+  return applyVllmMetalContextTarget
+    ? applyVllmMetalQwen36ContextTarget(ollamaAdjusted, prefs)
+    : ollamaAdjusted;
+}
+
+function hasValidContextWindowOverride(prefs: GWDPreferences | undefined): boolean {
+  const override = prefs?.context_window_override;
+  return override !== undefined && Number.isFinite(override) && override > 0;
 }
 
 export function resolvePreferredModelConfig(
@@ -270,6 +276,7 @@ export async function selectAndApplyModel(
         vllmMetalQwen36Preset?.modelConfig ??
         resolvePreferredModelConfig(unitType, autoModeStartModel, isAutoMode)
       );
+  const applyVllmMetalContextTarget = vllmMetalQwen36Preset !== undefined || hasValidContextWindowOverride(prefs);
   let routing: { tier: string; modelDowngraded: boolean } | null = null;
   let appliedModel: Model<Api> | null = null;
 
@@ -593,7 +600,7 @@ export async function selectAndApplyModel(
         }
       }
 
-      const modelToApply = applyLocalProfileContext(model, prefs);
+      const modelToApply = applyLocalProfileContext(model, prefs, applyVllmMetalContextTarget);
       const ok = await pi.setModel(modelToApply, { persist: false });
       if (ok) {
         appliedModel = modelToApply;
@@ -666,14 +673,14 @@ export async function selectAndApplyModel(
         m => m.provider === autoModeStartModel.provider && m.id === autoModeStartModel.id,
       );
       if (startModel) {
-        const startModelToApply = applyLocalProfileContext(startModel, prefs);
+        const startModelToApply = applyLocalProfileContext(startModel, prefs, applyVllmMetalContextTarget);
         const ok = await pi.setModel(startModelToApply, { persist: false });
         if (!ok) {
           const byId = availableModels.find(
             m => m.id === autoModeStartModel.id && !isModelBlocked(basePath, m.provider, m.id),
           );
           if (byId) {
-            const fallbackModelToApply = applyLocalProfileContext(byId, prefs);
+            const fallbackModelToApply = applyLocalProfileContext(byId, prefs, applyVllmMetalContextTarget);
             const fallbackOk = await pi.setModel(fallbackModelToApply, { persist: false });
             if (fallbackOk) {
               appliedModel = fallbackModelToApply;

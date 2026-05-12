@@ -169,6 +169,15 @@ export function adjustVllmMetalQwen36Fallbacks<T extends RoutingDecision>(
   preset: VllmMetalQwen36Preset | undefined,
 ): T {
   if (!preset) return decision;
+  if (decision.tier !== "heavy" && decision.modelId !== preset.defaultModelId) {
+    return {
+      ...decision,
+      modelId: preset.defaultModelId,
+      fallbacks: [],
+      wasDowngraded: true,
+      reason: "vLLM Metal Qwen3.6 profile routes non-heavy work to 27B",
+    };
+  }
   if (decision.modelId === preset.heavyModelId && preset.heavyModelId !== preset.defaultModelId) {
     return { ...decision, fallbacks: [preset.defaultModelId] };
   }

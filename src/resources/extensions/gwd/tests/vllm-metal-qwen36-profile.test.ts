@@ -177,6 +177,20 @@ test("adjustVllmMetalQwen36Fallbacks lets heavy fall back only to 27B and blocks
     "vllm-metal-27b/Qwen/Qwen3.6-27B-FP8",
   ]);
 
+  const standardDecision = {
+    ...heavyDecision,
+    tier: "standard",
+    wasDowngraded: false,
+    reason: "configured model is unknown",
+  } satisfies RoutingDecision;
+  assert.deepEqual(adjustVllmMetalQwen36Fallbacks(standardDecision, preset), {
+    ...standardDecision,
+    modelId: "vllm-metal-27b/Qwen/Qwen3.6-27B-FP8",
+    fallbacks: [],
+    wasDowngraded: true,
+    reason: "vLLM Metal Qwen3.6 profile routes non-heavy work to 27B",
+  });
+
   const defaultDecision = {
     ...heavyDecision,
     modelId: "vllm-metal-27b/Qwen/Qwen3.6-27B-FP8",
