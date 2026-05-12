@@ -13,7 +13,12 @@ import { join } from "node:path";
 import { classifyError, isTransient, isTransientNetworkError } from "../error-classifier.ts";
 import { pauseAutoForProviderError } from "../provider-error-pause.ts";
 import { resumeAutoAfterProviderDelay } from "../bootstrap/provider-error-resume.ts";
-import { handleAgentEnd, MAX_TRANSIENT_AUTO_RESUMES, resetTransientRetryState } from "../bootstrap/agent-end-recovery.ts";
+import {
+  _resetProviderRetryStateForTest,
+  handleAgentEnd,
+  MAX_TRANSIENT_AUTO_RESUMES,
+  resetTransientRetryState,
+} from "../bootstrap/agent-end-recovery.ts";
 import { _setAutoActiveForTest } from "../auto.ts";
 import { _resetPendingResolve } from "../auto/resolve.ts";
 import { autoSession } from "../auto-runtime-state.ts";
@@ -414,6 +419,83 @@ test("agent-end recovery does not suppress vllm-metal Qwen3.6 35B for non-resour
     await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
 
     assert.equal(harness.setModelCalls.length, 0);
+    assert.equal(harness.sendMessageCalls.length, 0);
+    const preset = resolveVllmMetalQwen36Preset({
+      isAutoMode: true,
+      prefs: undefined,
+      availableModels: [vllm27BModel, vllm35BModel],
+      autoModeStartModel: { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+      currentProvider: "vllm-metal-27b",
+    });
+    assert.ok(preset);
+    assert.equal(preset.routingConfig.tier_models?.heavy, "vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8");
+  } finally {
+    cleanupVllmMetalAgentEndTest();
+  }
+});
+
+test("agent-end recovery falls through to provider pause when vllm-metal Qwen3.6 27B fallback switch fails", async () => {
+  cleanupVllmMetalAgentEndTest();
+  try {
+    _setAutoActiveForTest(true);
+    const harness = makeVllmMetal35BResourceFailureHarness({ setModelResult: false });
+
+    await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+    assert.deepEqual(harness.setModelCalls, [
+      { model: vllm27BModel, options: { persist: false } },
+    ]);
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /failed to switch to Qwen3\.6 27B fallback/.test(message),
+      ),
+      "warning should mention failure to switch to 27B fallback",
+    );
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /Auto-mode paused due to provider error: model load failed: out of memory/.test(message),
+      ),
+      "failed recovery should fall through to generic provider pause",
+    );
+    assert.equal(harness.sendMessageCalls.length, 0);
+    const preset = resolveVllmMetalQwen36Preset({
+      isAutoMode: true,
+      prefs: undefined,
+      availableModels: [vllm27BModel, vllm35BModel],
+      autoModeStartModel: { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+      currentProvider: "vllm-metal-27b",
+    });
+    assert.ok(preset);
+    assert.equal(preset.routingConfig.tier_models?.heavy, "vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8");
+  } finally {
+    cleanupVllmMetalAgentEndTest();
+  }
+});
+
+test("agent-end recovery falls through to provider pause when vllm-metal Qwen3.6 27B fallback is unavailable", async () => {
+  cleanupVllmMetalAgentEndTest();
+  try {
+    _setAutoActiveForTest(true);
+    const harness = makeVllmMetal35BResourceFailureHarness({
+      availableModels: [vllm35BModel],
+      setModelResult: true,
+    });
+
+    await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+    assert.equal(harness.setModelCalls.length, 0);
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /Qwen3\.6 27B is not available for fallback/.test(message),
+      ),
+      "warning should mention unavailable 27B fallback",
+    );
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /Auto-mode paused due to provider error: model load failed: out of memory/.test(message),
+      ),
+      "missing recovery fallback should fall through to generic provider pause",
+    );
     assert.equal(harness.sendMessageCalls.length, 0);
     const preset = resolveVllmMetalQwen36Preset({
       isAutoMode: true,
@@ -1048,6 +1130,67 @@ test("MAX_TRANSIENT_AUTO_RESUMES is at least 8 for sustained overload resilience
     MAX_TRANSIENT_AUTO_RESUMES >= 8,
     `MAX_TRANSIENT_AUTO_RESUMES must be >= 8 for sustained overload resilience, got ${MAX_TRANSIENT_AUTO_RESUMES}`,
   );
+});
+
+test("sustained rate-limit auto-resumes stop at MAX_TRANSIENT_AUTO_RESUMES across delayed resumes", async () => {
+  const originalSetTimeout = globalThis.setTimeout;
+  const timers: Array<{ delay: number }> = [];
+  const notifications: Array<{ message: string; level: string }> = [];
+
+  globalThis.setTimeout = ((...args: Parameters<typeof setTimeout>) => {
+    const delay = args[1];
+    timers.push({ delay: Number(delay ?? 0) });
+    return { unref() {} } as NodeJS.Timeout;
+  }) as unknown as typeof setTimeout;
+
+  try {
+    _resetProviderRetryStateForTest();
+    cleanupVllmMetalAgentEndTest();
+
+    const ctx = {
+      model: { provider: "openai", id: "gpt-5-test" },
+      modelRegistry: { getAvailable: () => [] },
+      sessionManager: { getSessionFile: () => null },
+      ui: {
+        notify: (message: string, level = "info") => {
+          notifications.push({ message, level });
+        },
+        setStatus: () => {},
+        setWidget: () => {},
+      },
+    };
+    const pi = {
+      setModel: async () => false,
+      sendMessage: () => {},
+    };
+    const event = {
+      messages: [
+        {
+          stopReason: "error",
+          errorMessage: "HTTP 429 Too Many Requests",
+        },
+      ],
+    };
+
+    for (let attempt = 0; attempt < MAX_TRANSIENT_AUTO_RESUMES + 1; attempt += 1) {
+      _setAutoActiveForTest(true);
+      await handleAgentEnd(pi as any, event as any, ctx as any);
+      resetTransientRetryState();
+    }
+
+    assert.equal(timers.length, MAX_TRANSIENT_AUTO_RESUMES);
+    assert.ok(
+      notifications.some(({ message, level }) =>
+        level === "warning" &&
+        message === `Transient provider errors persisted after ${MAX_TRANSIENT_AUTO_RESUMES} auto-resume attempts. Pausing for manual review.`,
+      ),
+      "rate-limit loop should stop auto-resuming after the bounded attempt count",
+    );
+  } finally {
+    globalThis.setTimeout = originalSetTimeout;
+    _resetProviderRetryStateForTest();
+    cleanupVllmMetalAgentEndTest();
+  }
 });
 
 // ── Stream idle timeout / partial response (#4558) ──────────────────────────

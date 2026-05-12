@@ -65,12 +65,18 @@ function isObjectRecord(value: unknown): value is Record<string, unknown> {
 export const MAX_TRANSIENT_AUTO_RESUMES = 8;
 
 /**
- * Reset the module-level retry state so a resumed auto-session starts fresh.
- * Called by provider-error-resume.ts before startAuto() — without this, the
- * consecutiveTransientCount accumulates across pause/resume cycles and locks
- * out auto-resume after MAX_TRANSIENT_AUTO_RESUMES total (not consecutive) errors.
+ * Reset same-model retry cursors before a delayed provider-error resume.
+ *
+ * The consecutive transient count intentionally survives delayed resumes so
+ * repeated provider-side overload/rate-limit failures still trip
+ * MAX_TRANSIENT_AUTO_RESUMES. Successful agent turns reset the whole state.
  */
 export function resetTransientRetryState(): void {
+  retryState.networkRetryCount = 0;
+  retryState.currentRetryModelId = undefined;
+}
+
+export function _resetProviderRetryStateForTest(): void {
   resetRetryState(retryState);
 }
 
@@ -433,7 +439,6 @@ export async function handleAgentEnd(
           "warning",
         );
       }
-      return;
     }
 
     // ── 1a. Unsupported-model: provider rejected this model for the current

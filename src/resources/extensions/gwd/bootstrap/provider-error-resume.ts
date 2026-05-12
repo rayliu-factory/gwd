@@ -45,9 +45,9 @@ export async function resumeAutoAfterProviderDelay(
     return "missing-base";
   }
 
-  // Reset provider-error retry state before restarting. Session-creation
-  // timeout state intentionally survives delayed resumes so the bounded
-  // auto-resume limit cannot be reset into an infinite pause/resume loop.
+  // Reset the same-model/network retry cursor before restarting. The bounded
+  // provider-delay count intentionally survives delayed resumes so repeated
+  // transient provider failures cannot reset into an infinite pause/resume loop.
   deps.resetTransientRetryState();
 
   await deps.startAuto(
