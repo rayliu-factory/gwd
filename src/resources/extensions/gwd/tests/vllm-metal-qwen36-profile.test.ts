@@ -1,10 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import type { RoutingDecision } from "../model-router.ts";
 
 import {
   VLLM_METAL_QWEN36_27B_FP8,
   VLLM_METAL_QWEN36_35B_A3B_FP8,
   VLLM_METAL_CONTEXT_TARGET,
+  adjustVllmMetalQwen36Fallbacks,
   applyVllmMetalQwen36ContextTarget,
   clearVllmMetalQwen36RuntimeSuppressions,
   isLocalVllmMetalBaseUrl,
@@ -146,6 +148,41 @@ test("35B suppression routes heavy to 27B until cleared", () => {
   });
   assert.ok(restored);
   assert.equal(restored.routingConfig.tier_models?.heavy, "vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8");
+});
+
+test("adjustVllmMetalQwen36Fallbacks lets heavy fall back only to 27B and blocks 27B upward fallback", () => {
+  clearVllmMetalQwen36RuntimeSuppressions();
+  const preset = resolveVllmMetalQwen36Preset({
+    isAutoMode: true,
+    prefs: undefined,
+    availableModels: [qwen27, qwen35],
+    autoModeStartModel: { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+    currentProvider: "vllm-metal-27b",
+  });
+  assert.ok(preset);
+
+  const heavyDecision = {
+    modelId: "vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8",
+    fallbacks: [
+      "vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8",
+      "vllm-metal-27b/Qwen/Qwen3.6-27B-FP8",
+      "some-upward-fallback",
+    ],
+    tier: "heavy",
+    wasDowngraded: false,
+    reason: "test",
+    selectionMethod: "tier-only",
+  } satisfies RoutingDecision;
+  assert.deepEqual(adjustVllmMetalQwen36Fallbacks(heavyDecision, preset).fallbacks, [
+    "vllm-metal-27b/Qwen/Qwen3.6-27B-FP8",
+  ]);
+
+  const defaultDecision = {
+    ...heavyDecision,
+    modelId: "vllm-metal-27b/Qwen/Qwen3.6-27B-FP8",
+    fallbacks: ["vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8"],
+  };
+  assert.deepEqual(adjustVllmMetalQwen36Fallbacks(defaultDecision, preset).fallbacks, []);
 });
 
 test("resource failure classification is narrow to local 35B-A3B models", () => {

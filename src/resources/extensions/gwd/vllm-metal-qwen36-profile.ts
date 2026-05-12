@@ -40,11 +40,11 @@ function key(provider: string, id: string): string {
   return `${provider.toLowerCase()}/${id.toLowerCase()}`;
 }
 
-export function matchesVllmMetalQwen36_27B(id: string | undefined): boolean {
+export function matchesVllmMetalQwen36_27B(id: string | undefined): id is string {
   return typeof id === "string" && /^Qwen\/Qwen3\.6-27B(?:$|-)/.test(id);
 }
 
-export function matchesVllmMetalQwen36_35BA3B(id: string | undefined): boolean {
+export function matchesVllmMetalQwen36_35BA3B(id: string | undefined): id is string {
   return typeof id === "string" && /^Qwen\/Qwen3\.6-35B-A3B(?:$|-)/.test(id);
 }
 
@@ -201,7 +201,10 @@ export function isVllmMetalQwen36ResourceFailure(
   const errorMessage = model ? idOrErrorMessage : maybeErrorMessage;
   const eligible = model
     ? isEligible35B(model)
-    : isLegacyVllmMetal35B(modelOrProvider, idOrErrorMessage);
+    : isLegacyVllmMetal35B(
+      typeof modelOrProvider === "string" ? modelOrProvider : undefined,
+      idOrErrorMessage,
+    );
   if (!eligible || !errorMessage) return false;
   return RESOURCE_RE.test(errorMessage);
 }
