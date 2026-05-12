@@ -155,6 +155,24 @@ test("resource failure classification is narrow to local 35B-A3B models", () => 
     "RuntimeError: out of memory while loading model",
   ), true);
   assert.equal(isVllmMetalQwen36ResourceFailure(
+    qwen35,
+    "RuntimeError: out of memory while loading model",
+  ), true);
+  assert.equal(isVllmMetalQwen36ResourceFailure(
+    {
+      provider: "openai-compatible",
+      id: VLLM_METAL_QWEN36_35B_A3B_FP8,
+      api: "openai-completions",
+      baseUrl: "https://api.example.com/v1",
+    },
+    "RuntimeError: out of memory while loading model",
+  ), false);
+  assert.equal(isVllmMetalQwen36ResourceFailure(
+    "openai-compatible",
+    VLLM_METAL_QWEN36_35B_A3B_FP8,
+    "RuntimeError: out of memory while loading model",
+  ), false);
+  assert.equal(isVllmMetalQwen36ResourceFailure(
     "vllm-metal-35b",
     VLLM_METAL_QWEN36_35B_A3B_FP8,
     "invalid request: tool schema is unsupported",

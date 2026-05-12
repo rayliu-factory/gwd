@@ -181,11 +181,27 @@ export function adjustVllmMetalQwen36Fallbacks<T extends RoutingDecision>(
 const RESOURCE_RE =
   /\b(?:oom|out of memory)\b|failed to allocate|cannot allocate|\ballocation(?: failed)?\b|insufficient memory|\bmodel load(?: error| failed| failure)?\b|failed to load model|runner process.*(?:terminated|exited|failed)|worker.*(?:terminated|exited|failed)/i;
 
+function isLegacyVllmMetal35B(provider: string | undefined, id: string | undefined): boolean {
+  return typeof provider === "string" && provider.toLowerCase().startsWith("vllm-metal") &&
+    matchesVllmMetalQwen36_35BA3B(id);
+}
+
+export function isVllmMetalQwen36ResourceFailure(model: ModelLike, errorMessage: string): boolean;
 export function isVllmMetalQwen36ResourceFailure(
   provider: string | undefined,
   id: string | undefined,
   errorMessage: string,
+): boolean;
+export function isVllmMetalQwen36ResourceFailure(
+  modelOrProvider: ModelLike | string | undefined,
+  idOrErrorMessage: string | undefined,
+  maybeErrorMessage?: string,
 ): boolean {
-  if (!provider || !matchesVllmMetalQwen36_35BA3B(id)) return false;
+  const model = typeof modelOrProvider === "object" && modelOrProvider !== null ? modelOrProvider : undefined;
+  const errorMessage = model ? idOrErrorMessage : maybeErrorMessage;
+  const eligible = model
+    ? isEligible35B(model)
+    : isLegacyVllmMetal35B(modelOrProvider, idOrErrorMessage);
+  if (!eligible || !errorMessage) return false;
   return RESOURCE_RE.test(errorMessage);
 }
