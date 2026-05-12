@@ -97,6 +97,7 @@ export const MODEL_CAPABILITY_TIER: Record<string, ComplexityTier> = {
   "gemini-2.5-pro": "standard",
   "deepseek-chat": "standard",
   "qwen3.6:27b-coding-nvfp4": "standard",
+  "Qwen3.6-27B-FP8": "standard",
 
   // Heavy-tier models (most capable)
   "claude-opus-4-6": "heavy",
@@ -116,6 +117,7 @@ export const MODEL_CAPABILITY_TIER: Record<string, ComplexityTier> = {
   "o4-mini": "heavy",
   "o4-mini-deep-research": "heavy",
   "qwen3.6:35b-a3b-coding-nvfp4": "heavy",
+  "Qwen3.6-35B-A3B-FP8": "heavy",
 };
 
 // ─── Cost Table (per 1K input tokens, approximate USD) ───────────────────────
@@ -153,6 +155,8 @@ const MODEL_COST_PER_1K_INPUT: Record<string, number> = {
   "gemini-2.0-flash": 0.0001,
   "gemini-2.5-pro": 0.00125,
   "deepseek-chat": 0.00014,
+  "Qwen3.6-27B-FP8": 0,
+  "Qwen3.6-35B-A3B-FP8": 0,
 };
 
 // ─── Capability Profiles Data Table ──────────────────────────────────────────
@@ -213,6 +217,8 @@ export const MODEL_CAPABILITY_PROFILES: Record<string, ModelCapabilities> = {
   // ── Ollama / Qwen ─────────────────────────────────────────────────────────
   "qwen3.6:27b-coding-nvfp4":     { coding: 80, debugging: 76, research: 60, reasoning: 78, speed: 45, longContext: 68, instruction: 78 },
   "qwen3.6:35b-a3b-coding-nvfp4": { coding: 88, debugging: 84, research: 65, reasoning: 86, speed: 30, longContext: 70, instruction: 84 },
+  "Qwen3.6-27B-FP8":              { coding: 80, debugging: 76, research: 60, reasoning: 78, speed: 45, longContext: 68, instruction: 78 },
+  "Qwen3.6-35B-A3B-FP8":          { coding: 88, debugging: 84, research: 65, reasoning: 86, speed: 30, longContext: 70, instruction: 84 },
 };
 
 // ─── Base Task Requirements Data Table ───────────────────────────────────────
