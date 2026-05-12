@@ -39,6 +39,7 @@ Full documentation is in the [`docs/`](./docs/) directory:
 - **[Getting Started](./docs/user-docs/getting-started.md)** — install, first run, basic usage
 - **[Auto Mode](./docs/user-docs/auto-mode.md)** — autonomous execution deep-dive
 - **[Configuration](./docs/user-docs/configuration.md)** — all preferences, models, git, and hooks
+- **[Provider Setup](./docs/user-docs/providers.md)** — configure Ollama, vLLM Metal TurboQuant, LM Studio, and SGLang
 - **[Custom Models](./docs/user-docs/custom-models.md)** — add custom providers (Ollama, vLLM, LM Studio, proxies)
 - **[Token Optimization](./docs/user-docs/token-optimization.md)** — profiles, context compression, complexity routing
 - **[Cost Management](./docs/user-docs/cost-management.md)** — budgets, tracking, projections

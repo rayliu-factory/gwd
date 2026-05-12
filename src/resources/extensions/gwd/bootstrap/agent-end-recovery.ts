@@ -29,6 +29,13 @@ import {
   isOllamaAppleSiliconResourceFailure,
   suppressOllamaAppleSiliconModelForRun,
 } from "../ollama-apple-silicon-profile.js";
+import {
+  applyVllmMetalQwen36ContextTarget,
+  isLocalVllmMetalBaseUrl,
+  isVllmMetalQwen36ResourceFailure,
+  matchesVllmMetalQwen36_27B,
+  suppressVllmMetalQwen36ModelForRun,
+} from "../vllm-metal-qwen36-profile.js";
 import { resolveProjectRoot } from "../worktree.js";
 import { clearDiscussionFlowState } from "./write-gate.js";
 import { resumeAutoAfterProviderDelay } from "./provider-error-resume.js";
@@ -58,12 +65,18 @@ function isObjectRecord(value: unknown): value is Record<string, unknown> {
 export const MAX_TRANSIENT_AUTO_RESUMES = 8;
 
 /**
- * Reset the module-level retry state so a resumed auto-session starts fresh.
- * Called by provider-error-resume.ts before startAuto() — without this, the
- * consecutiveTransientCount accumulates across pause/resume cycles and locks
- * out auto-resume after MAX_TRANSIENT_AUTO_RESUMES total (not consecutive) errors.
+ * Reset same-model retry cursors before a delayed provider-error resume.
+ *
+ * The consecutive transient count intentionally survives delayed resumes so
+ * repeated provider-side overload/rate-limit failures still trip
+ * MAX_TRANSIENT_AUTO_RESUMES. Successful agent turns reset the whole state.
  */
 export function resetTransientRetryState(): void {
+  retryState.networkRetryCount = 0;
+  retryState.currentRetryModelId = undefined;
+}
+
+export function _resetProviderRetryStateForTest(): void {
   resetRetryState(retryState);
 }
 
@@ -385,6 +398,44 @@ export async function handleAgentEnd(
       } else {
         ctx.ui.notify(
           "Ollama Apple Silicon profile: qwen3.6:35b-a3b-coding-nvfp4 hit local resource limits, but qwen3.6:27b-coding-nvfp4 is not available for fallback.",
+          "warning",
+        );
+      }
+    }
+
+    if (isVllmMetalQwen36ResourceFailure(ctx.model as any, rawErrorMsg)) {
+      const currentProvider = ctx.model?.provider;
+      const currentId = ctx.model?.id;
+      const availableModels = ctx.modelRegistry.getAvailable();
+      const fallback = availableModels.find((model: any) =>
+        matchesVllmMetalQwen36_27B(model.id) &&
+        isLocalVllmMetalBaseUrl(model.baseUrl),
+      );
+
+      if (fallback) {
+        const prefs = loadEffectiveGWDPreferences(resolveAgentEndBasePath())?.preferences;
+        const fallbackToApply = applyVllmMetalQwen36ContextTarget(fallback, prefs);
+        const ok = await pi.setModel(fallbackToApply, { persist: false });
+        if (ok) {
+          suppressVllmMetalQwen36ModelForRun(currentProvider, currentId);
+          setCurrentDispatchedModelId({ provider: fallbackToApply.provider, id: fallbackToApply.id });
+          ctx.ui.notify(
+            "vLLM Metal Qwen3.6 profile: retrying on Qwen3.6 27B and suppressing 35B-A3B for this run after local resource failure.",
+            "warning",
+          );
+          pi.sendMessage(
+            { customType: "gwd-auto-timeout-recovery", content: "Retry the interrupted unit on the Qwen3.6 27B vLLM Metal fallback.", display: false },
+            { triggerTurn: true },
+          );
+          return;
+        }
+        ctx.ui.notify(
+          "vLLM Metal Qwen3.6 profile: failed to switch to Qwen3.6 27B fallback after 35B-A3B resource failure.",
+          "warning",
+        );
+      } else {
+        ctx.ui.notify(
+          "vLLM Metal Qwen3.6 profile: Qwen3.6 27B is not available for fallback after 35B-A3B resource failure.",
           "warning",
         );
       }

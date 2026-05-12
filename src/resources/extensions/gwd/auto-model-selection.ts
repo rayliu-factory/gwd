@@ -25,6 +25,11 @@ import {
   applyOllamaAppleSiliconContextOverride,
   resolveOllamaAppleSiliconPreset,
 } from "./ollama-apple-silicon-profile.js";
+import {
+  adjustVllmMetalQwen36Fallbacks,
+  applyVllmMetalQwen36ContextTarget,
+  resolveVllmMetalQwen36Preset,
+} from "./vllm-metal-qwen36-profile.js";
 
 /**
  * Thrown when the model-policy gate rejects every candidate model for a unit
@@ -121,6 +126,22 @@ function reapplyThinkingLevel(
 ): void {
   if (!level) return;
   pi.setThinkingLevel(level);
+}
+
+function applyLocalProfileContext<T extends Model<Api>>(
+  model: T,
+  prefs: GWDPreferences | undefined,
+  applyVllmMetalContextTarget: boolean,
+): T {
+  const ollamaAdjusted = applyOllamaAppleSiliconContextOverride(model, prefs);
+  return applyVllmMetalContextTarget
+    ? applyVllmMetalQwen36ContextTarget(ollamaAdjusted, prefs)
+    : ollamaAdjusted;
+}
+
+function hasValidContextWindowOverride(prefs: GWDPreferences | undefined): boolean {
+  const override = prefs?.context_window_override;
+  return override !== undefined && Number.isFinite(override) && override > 0;
 }
 
 export function resolvePreferredModelConfig(
@@ -227,9 +248,35 @@ export async function selectAndApplyModel(
       "warning",
     );
   }
+  const vllmMetalQwen36Preset = effectiveSessionModelOverride
+    ? undefined
+    : resolveVllmMetalQwen36Preset({
+        isAutoMode,
+        prefs,
+        basePath,
+        availableModels,
+        autoModeStartModel,
+        currentProvider: ctx.model?.provider,
+      });
+  if (vllmMetalQwen36Preset?.missingHeavyModel && verbose) {
+    ctx.ui.notify(
+      "vLLM Metal Qwen3.6 profile: 35B-A3B endpoint is not available; heavy work will use Qwen3.6 27B.",
+      "info",
+    );
+  } else if (vllmMetalQwen36Preset?.heavySuppressed) {
+    ctx.ui.notify(
+      "vLLM Metal Qwen3.6 profile: 35B-A3B is suppressed for this run after a local resource failure; heavy work will use Qwen3.6 27B.",
+      "warning",
+    );
+  }
   const modelConfig = effectiveSessionModelOverride
     ? undefined
-    : (ollamaAppleSiliconPreset?.modelConfig ?? resolvePreferredModelConfig(unitType, autoModeStartModel, isAutoMode));
+    : (
+        ollamaAppleSiliconPreset?.modelConfig ??
+        vllmMetalQwen36Preset?.modelConfig ??
+        resolvePreferredModelConfig(unitType, autoModeStartModel, isAutoMode)
+      );
+  const applyVllmMetalContextTarget = vllmMetalQwen36Preset !== undefined || hasValidContextWindowOverride(prefs);
   let routing: { tier: string; modelDowngraded: boolean } | null = null;
   let appliedModel: Model<Api> | null = null;
 
@@ -268,6 +315,7 @@ export async function selectAndApplyModel(
     const routingConfig = {
       ...resolveDynamicRoutingConfig(),
       ...(ollamaAppleSiliconPreset?.routingConfig ?? {}),
+      ...(vllmMetalQwen36Preset?.routingConfig ?? {}),
     };
     if (!isAutoMode) {
       routingConfig.enabled = false;
@@ -275,7 +323,7 @@ export async function selectAndApplyModel(
     // burn-max defaults to quality-first dispatch (no downgrade routing).
     // The Ollama Apple Silicon preset is a memory-safety router, not a cost
     // downgrade; keep it enabled so standard work stays on 27B.
-    if (prefs?.token_profile === "burn-max" && !ollamaAppleSiliconPreset) {
+    if (prefs?.token_profile === "burn-max" && !ollamaAppleSiliconPreset && !vllmMetalQwen36Preset) {
       routingConfig.enabled = false;
     }
     if (modelConfig.source === "explicit") {
@@ -310,7 +358,10 @@ export async function selectAndApplyModel(
           unitType,
           taskMetadata: taskMetadataForPolicy,
           currentProvider: ctx.model?.provider,
-          allowCrossProvider: routingConfig.cross_provider !== false,
+          // The vLLM Metal profile exposes 27B and 35B as separate local
+          // provider IDs because each endpoint has its own base URL. Treat
+          // those profile endpoints as one local routing group for policy.
+          allowCrossProvider: vllmMetalQwen36Preset ? true : routingConfig.cross_provider !== false,
           requiredTools,
         },
       );
@@ -470,6 +521,7 @@ export async function selectAndApplyModel(
         if (ollamaAppleSiliconPreset) {
           routingResult = adjustOllamaAppleSiliconFallbacks(routingResult);
         }
+        routingResult = adjustVllmMetalQwen36Fallbacks(routingResult, vllmMetalQwen36Preset);
 
         if (routingResult.wasDowngraded) {
           effectiveModelConfig = {
@@ -548,7 +600,7 @@ export async function selectAndApplyModel(
         }
       }
 
-      const modelToApply = applyOllamaAppleSiliconContextOverride(model, prefs);
+      const modelToApply = applyLocalProfileContext(model, prefs, applyVllmMetalContextTarget);
       const ok = await pi.setModel(modelToApply, { persist: false });
       if (ok) {
         appliedModel = modelToApply;
@@ -621,14 +673,14 @@ export async function selectAndApplyModel(
         m => m.provider === autoModeStartModel.provider && m.id === autoModeStartModel.id,
       );
       if (startModel) {
-        const startModelToApply = applyOllamaAppleSiliconContextOverride(startModel, prefs);
+        const startModelToApply = applyLocalProfileContext(startModel, prefs, applyVllmMetalContextTarget);
         const ok = await pi.setModel(startModelToApply, { persist: false });
         if (!ok) {
           const byId = availableModels.find(
             m => m.id === autoModeStartModel.id && !isModelBlocked(basePath, m.provider, m.id),
           );
           if (byId) {
-            const fallbackModelToApply = applyOllamaAppleSiliconContextOverride(byId, prefs);
+            const fallbackModelToApply = applyLocalProfileContext(byId, prefs, applyVllmMetalContextTarget);
             const fallbackOk = await pi.setModel(fallbackModelToApply, { persist: false });
             if (fallbackOk) {
               appliedModel = fallbackModelToApply;

@@ -5,6 +5,7 @@
 ## 目录
 
 - [最小示例](#minimal-example)
+- [Apple Silicon vLLM Metal Qwen3.6 TurboQuant](#vllm-metal-qwen36-turboquant-on-apple-silicon)
 - [完整示例](#full-example)
 - [支持的 API](#supported-apis)
 - [Provider 配置](#provider-configuration)
@@ -60,6 +61,106 @@
     }
   }
 }
+```
+
+<a id="vllm-metal-qwen36-turboquant-on-apple-silicon"></a>
+## Apple Silicon vLLM Metal Qwen3.6 TurboQuant
+
+对于默认的 48GB Apple Silicon 配置，先在端口 `8000` 启动 `vllm-metal`，GWD 会自动发现 `Qwen/Qwen3.6-27B*`：
+
+```bash
+VLLM_METAL_USE_PAGED_ATTENTION=1 vllm serve Qwen/Qwen3.6-27B-FP8 \
+  --host 127.0.0.1 \
+  --port 8000 \
+  --max-model-len 196608 \
+  --reasoning-parser qwen3 \
+  --additional-config '{"turboquant": true, "k_quant": "q8_0", "v_quant": "q3_0"}'
+```
+
+GWD 会把 27B endpoint 作为默认 executor。如果你额外运行单独的 35B-A3B endpoint，auto-mode 只会把 heavy phase 路由到它；遇到本机资源或 model load 失败时，会回退到 27B。
+
+如果使用自定义端口，请在 `~/.gwd/agent/models.json` 显式定义 provider：
+
+```json
+{
+  "providers": {
+    "vllm-metal-27b": {
+      "baseUrl": "http://127.0.0.1:8100/v1",
+      "api": "openai-completions",
+      "apiKey": "vllm",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsUsageInStreaming": false,
+        "thinkingFormat": "qwen"
+      },
+      "models": [
+        {
+          "id": "Qwen/Qwen3.6-27B-FP8",
+          "name": "Qwen3.6 27B FP8 (vLLM Metal TurboQuant)",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 196608,
+          "maxTokens": 16384,
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 }
+        }
+      ]
+    }
+  }
+}
+```
+
+如果要把 heavy phase 路由到单独的 35B-A3B server，请再添加第二个 provider：
+
+```json
+{
+  "providers": {
+    "vllm-metal-27b": {
+      "baseUrl": "http://127.0.0.1:8100/v1",
+      "api": "openai-completions",
+      "apiKey": "vllm",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsUsageInStreaming": false,
+        "thinkingFormat": "qwen"
+      },
+      "models": [
+        {
+          "id": "Qwen/Qwen3.6-27B-FP8",
+          "contextWindow": 196608,
+          "maxTokens": 16384
+        }
+      ]
+    },
+    "vllm-metal-35b": {
+      "baseUrl": "http://127.0.0.1:8101/v1",
+      "api": "openai-completions",
+      "apiKey": "vllm",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsUsageInStreaming": false,
+        "thinkingFormat": "qwen"
+      },
+      "models": [
+        {
+          "id": "Qwen/Qwen3.6-35B-A3B-FP8",
+          "contextWindow": 196608,
+          "maxTokens": 16384
+        }
+      ]
+    }
+  }
+}
+```
+
+GWD 不会替你启动 `vllm-metal`。TurboQuant 必须在 server 启动时启用。请让 `contextWindow` 与 server 的 `--max-model-len` 保持一致，或在项目里覆盖：
+
+```md
+---
+context_window_override: 131072
+---
 ```
 
 <a id="full-example"></a>
@@ -313,12 +414,12 @@ export GWD_ALLOWED_COMMAND_PREFIXES="pass,op,sops,doppler"
 | `requiresToolResultName` | tool result message 中是否必须包含 `name` |
 | `requiresAssistantAfterToolResult` | tool result 之后、user message 之前是否需要插入 assistant message |
 | `requiresThinkingAsText` | 是否把 thinking block 转成纯文本 |
-| `thinkingFormat` | 使用 `reasoning_effort`、`zai`、`qwen` 或 `qwen-chat-template` 的 thinking 参数格式 |
+| `thinkingFormat` | 使用 `reasoning_effort`、`zai` 或 `qwen` 的 thinking 参数格式 |
 | `supportsStrictMode` | 是否在 tool definitions 中包含 `strict` 字段 |
 | `openRouterRouting` | 传给 OpenRouter 的路由配置，用于 model/provider 选择 |
 | `vercelGatewayRouting` | Vercel AI Gateway 的路由配置，用于 provider 选择（`only`、`order`） |
 
-`qwen` 使用顶层 `enable_thinking`。对于要求 `chat_template_kwargs.enable_thinking` 的本地 Qwen-compatible server，请使用 `qwen-chat-template`。
+`qwen` 会为 Qwen-compatible server 使用顶层 `enable_thinking`。
 
 示例：
 

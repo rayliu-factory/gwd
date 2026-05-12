@@ -454,6 +454,78 @@ Replace `your-model-name` with the model identifier shown in LM Studio's server 
 
 The model `id` must match the `--model` flag you passed to `vllm serve`.
 
+#### Apple Silicon vLLM Metal TurboQuant Qwen3.6 Profile
+
+On a 48GB Apple Silicon machine, GWD auto-mode can detect a local `vllm-metal` server running Qwen3.6 with TurboQuant KV cache compression. GWD does not start `vllm-metal` and does not enable TurboQuant per request; TurboQuant is part of the server startup command.
+
+Start the default 27B executor on port `8000`:
+
+```bash
+VLLM_METAL_USE_PAGED_ATTENTION=1 vllm serve Qwen/Qwen3.6-27B-FP8 \
+  --host 127.0.0.1 \
+  --port 8000 \
+  --max-model-len 196608 \
+  --reasoning-parser qwen3 \
+  --additional-config '{"turboquant": true, "k_quant": "q8_0", "v_quant": "q3_0"}'
+```
+
+When GWD sees `Qwen/Qwen3.6-27B*` on `http://127.0.0.1:8000/v1` or `http://localhost:8000/v1`, auto-mode applies a 196608-token effective context target and uses 27B for light, standard, and heavy work.
+
+An optional separate 35B-A3B endpoint can be used only for heavy phases:
+
+```bash
+VLLM_METAL_USE_PAGED_ATTENTION=1 vllm serve Qwen/Qwen3.6-35B-A3B-FP8 \
+  --host 127.0.0.1 \
+  --port 8001 \
+  --max-model-len 196608 \
+  --reasoning-parser qwen3 \
+  --additional-config '{"turboquant": true, "k_quant": "q8_0", "v_quant": "q3_0"}'
+```
+
+Running both endpoints at the same time is supported, but the default recommendation for a 48GB machine is to run only the 27B endpoint. If the 35B-A3B endpoint hits a local resource or model-load failure, GWD suppresses it for the current auto run and retries the interrupted unit on 27B.
+
+GWD automatically probes these local OpenAI-compatible base URLs:
+
+- `http://127.0.0.1:8000/v1`
+- `http://localhost:8000/v1`
+- `http://127.0.0.1:8001/v1`
+- `http://localhost:8001/v1`
+
+For custom ports, add explicit providers to `~/.gwd/agent/models.json`:
+
+```json
+{
+  "providers": {
+    "vllm-metal-27b": {
+      "baseUrl": "http://127.0.0.1:8100/v1",
+      "api": "openai-completions",
+      "apiKey": "vllm",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsUsageInStreaming": false,
+        "thinkingFormat": "qwen"
+      },
+      "models": [
+        {
+          "id": "Qwen/Qwen3.6-27B-FP8",
+          "contextWindow": 196608,
+          "maxTokens": 16384
+        }
+      ]
+    }
+  }
+}
+```
+
+Keep `contextWindow` aligned with the server's `--max-model-len`. If you start `vllm-metal` with a lower context because of memory pressure, either lower the model entry or set a project override:
+
+```md
+---
+context_window_override: 131072
+---
+```
+
 ### SGLang
 
 ```json
@@ -549,7 +621,7 @@ For Qwen-compatible servers, use `thinkingFormat` to enable thinking mode:
 }
 ```
 
-Use `"qwen-chat-template"` instead if the server requires `chat_template_kwargs.enable_thinking`.
+GWD currently supports top-level `enable_thinking` for Qwen-compatible servers through `"qwen"`.
 
 For the full reference on `compat` fields, `modelOverrides`, value resolution, and advanced configuration, see [Custom Models](./custom-models.md).
 

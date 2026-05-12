@@ -333,6 +333,21 @@ async function applyCompactionThresholdOverride(ctx: ExtensionContext): Promise<
   }
 }
 
+async function applyVllmMetalQwen36Autodiscovery(ctx: ExtensionContext): Promise<void> {
+  try {
+    const { discoverAndRegisterVllmMetalQwen36Providers } = await import("../vllm-metal-autodetect.js");
+    await discoverAndRegisterVllmMetalQwen36Providers({
+      registerProvider: (name, config) => ctx.modelRegistry.registerProvider(name, config),
+      unregisterProvider: (name) => ctx.modelRegistry.unregisterProvider(name),
+    });
+  } catch (err) {
+    safetyLogWarning(
+      "bootstrap",
+      `vllm-metal autodiscovery skipped: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
+}
+
 function clearDeferredApprovalGate(basePath?: string): void {
   if (!basePath || deferredApprovalGate?.basePath === basePath) {
     deferredApprovalGate = null;
@@ -437,6 +452,7 @@ export function registerHooks(
     await resetAskUserQuestionsTurnCache();
     await syncServiceTierStatus(ctx);
     await applyDisabledModelProviderPolicy(ctx);
+    await applyVllmMetalQwen36Autodiscovery(ctx);
     await applyCompactionThresholdOverride(ctx);
     // Skip MCP auto-prep when running inside an auto-worktree (see session_switch below).
     const { isInAutoWorktree } = await import("../auto-worktree.js");
@@ -468,6 +484,7 @@ export function registerHooks(
     clearDiscussionFlowState(basePath);
     await syncServiceTierStatus(ctx);
     await applyDisabledModelProviderPolicy(ctx);
+    await applyVllmMetalQwen36Autodiscovery(ctx);
     await applyCompactionThresholdOverride(ctx);
     // Skip MCP auto-prep when running inside an auto-worktree. The worktree
     // already has .mcp.json from createAutoWorktree, and re-running the writer

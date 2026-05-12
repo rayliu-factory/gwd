@@ -13,7 +13,12 @@ import { join } from "node:path";
 import { classifyError, isTransient, isTransientNetworkError } from "../error-classifier.ts";
 import { pauseAutoForProviderError } from "../provider-error-pause.ts";
 import { resumeAutoAfterProviderDelay } from "../bootstrap/provider-error-resume.ts";
-import { handleAgentEnd, MAX_TRANSIENT_AUTO_RESUMES, resetTransientRetryState } from "../bootstrap/agent-end-recovery.ts";
+import {
+  _resetProviderRetryStateForTest,
+  handleAgentEnd,
+  MAX_TRANSIENT_AUTO_RESUMES,
+  resetTransientRetryState,
+} from "../bootstrap/agent-end-recovery.ts";
 import { _setAutoActiveForTest } from "../auto.ts";
 import { _resetPendingResolve } from "../auto/resolve.ts";
 import { autoSession } from "../auto-runtime-state.ts";
@@ -27,6 +32,12 @@ import {
   clearOllamaAppleSiliconRuntimeSuppressions,
   resolveOllamaAppleSiliconPreset,
 } from "../ollama-apple-silicon-profile.ts";
+import {
+  VLLM_METAL_QWEN36_27B_FP8,
+  VLLM_METAL_QWEN36_35B_A3B_FP8,
+  clearVllmMetalQwen36RuntimeSuppressions,
+  resolveVllmMetalQwen36Preset,
+} from "../vllm-metal-qwen36-profile.ts";
 // Zero-import module — imported by path rather than through the package
 // barrel to avoid pulling the full AgentSession / @gwd/pi-ai dep graph into
 // this unit test (see #4837).
@@ -37,9 +48,29 @@ const ollama27BModel = { provider: "ollama", id: OLLAMA_QWEN36_27B_NVFP4, api: "
 const ollama35BModel = { provider: "ollama", id: OLLAMA_QWEN36_35B_A3B_NVFP4, api: "ollama-chat" };
 const ollamaAppleSiliconModels = [ollama27BModel, ollama35BModel];
 const ollama35BResourceFailure = "llama runner process has terminated: out of memory";
+const vllm27BModel = {
+  provider: "vllm-metal-27b",
+  id: VLLM_METAL_QWEN36_27B_FP8,
+  api: "openai-completions",
+  baseUrl: "http://127.0.0.1:8000/v1",
+  contextWindow: 196_608,
+};
+const vllm35BModel = {
+  provider: "vllm-metal-35b",
+  id: VLLM_METAL_QWEN36_35B_A3B_FP8,
+  api: "openai-completions",
+  baseUrl: "http://127.0.0.1:8001/v1",
+  contextWindow: 196_608,
+};
 
 function cleanupOllamaAppleSiliconAgentEndTest(): void {
   clearOllamaAppleSiliconRuntimeSuppressions();
+  _resetPendingResolve();
+  autoSession.reset();
+}
+
+function cleanupVllmMetalAgentEndTest(): void {
+  clearVllmMetalQwen36RuntimeSuppressions();
   _resetPendingResolve();
   autoSession.reset();
 }
@@ -102,6 +133,62 @@ function makeOllama35BResourceFailureHarness(input: {
       {
         stopReason: "error",
         errorMessage: ollama35BResourceFailure,
+      },
+    ],
+  };
+
+  return { ctx, pi, event, notifications, setModelCalls, sendMessageCalls };
+}
+
+function makeVllmMetal35BResourceFailureHarness(input: {
+  availableModels?: Array<{
+    provider: string;
+    id: string;
+    api?: string;
+    baseUrl?: string;
+    contextWindow?: number;
+  }>;
+  setModelResult: boolean;
+  rawErrorMsg?: string;
+  content?: unknown;
+}) {
+  const notifications: Array<{ message: string; level: string }> = [];
+  const setModelCalls: Array<{ model: unknown; options: unknown }> = [];
+  const sendMessageCalls: Array<{ message: unknown; options: unknown }> = [];
+
+  const ctx = {
+    model: vllm35BModel,
+    modelRegistry: {
+      getAvailable: () => input.availableModels ?? [vllm27BModel, vllm35BModel],
+    },
+    sessionManager: {
+      getSessionFile: () => null,
+    },
+    ui: {
+      notify: (message: string, level = "info") => {
+        notifications.push({ message, level });
+      },
+      setStatus: () => {},
+      setWidget: () => {},
+    },
+  };
+
+  const pi = {
+    setModel: async (model: unknown, options: unknown) => {
+      setModelCalls.push({ model, options });
+      return input.setModelResult;
+    },
+    sendMessage: (message: unknown, options: unknown) => {
+      sendMessageCalls.push({ message, options });
+    },
+  };
+
+  const event = {
+    messages: [
+      {
+        stopReason: "error",
+        errorMessage: input.rawErrorMsg ?? "model load failed: out of memory",
+        content: input.content,
       },
     ],
   };
@@ -249,6 +336,223 @@ test("agent-end recovery does not suppress Ollama Apple Silicon 35B when 27B fal
   } finally {
     cleanupOllamaAppleSiliconAgentEndTest();
   }
+});
+
+test("agent-end recovery switches vllm-metal Qwen3.6 35B resource failures to 27B and suppresses 35B after success", async () => {
+  cleanupVllmMetalAgentEndTest();
+  try {
+    _setAutoActiveForTest(true);
+    const harness = makeVllmMetal35BResourceFailureHarness({ setModelResult: true });
+
+    await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+    assert.deepEqual(harness.setModelCalls, [
+      { model: vllm27BModel, options: { persist: false } },
+    ]);
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /vLLM Metal Qwen3\.6 profile: retrying on Qwen3\.6 27B and suppressing 35B-A3B/.test(message),
+      ),
+      "warning should mention retrying on 27B and suppressing 35B-A3B",
+    );
+    assert.deepEqual(harness.sendMessageCalls, [
+      {
+        message: {
+          customType: "gwd-auto-timeout-recovery",
+          content: "Retry the interrupted unit on the Qwen3.6 27B vLLM Metal fallback.",
+          display: false,
+        },
+        options: { triggerTurn: true },
+      },
+    ]);
+    const preset = resolveVllmMetalQwen36Preset({
+      isAutoMode: true,
+      prefs: undefined,
+      availableModels: [vllm27BModel, vllm35BModel],
+      autoModeStartModel: { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+      currentProvider: "vllm-metal-27b",
+    });
+    assert.ok(preset);
+    assert.equal(preset.routingConfig.tier_models?.heavy, "vllm-metal-27b/Qwen/Qwen3.6-27B-FP8");
+  } finally {
+    cleanupVllmMetalAgentEndTest();
+  }
+});
+
+test("agent-end recovery classifies vllm-metal Qwen3.6 resource failures from raw error metadata, not display text", async () => {
+  cleanupVllmMetalAgentEndTest();
+  try {
+    _setAutoActiveForTest(true);
+    const harness = makeVllmMetal35BResourceFailureHarness({
+      setModelResult: true,
+      rawErrorMsg: "error",
+      content: [{ type: "text", text: "model load failed: out of memory" }],
+    });
+
+    await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+    assert.equal(harness.setModelCalls.length, 0);
+    assert.equal(harness.sendMessageCalls.length, 0);
+    const preset = resolveVllmMetalQwen36Preset({
+      isAutoMode: true,
+      prefs: undefined,
+      availableModels: [vllm27BModel, vllm35BModel],
+      autoModeStartModel: { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+      currentProvider: "vllm-metal-27b",
+    });
+    assert.ok(preset);
+    assert.equal(preset.routingConfig.tier_models?.heavy, "vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8");
+  } finally {
+    cleanupVllmMetalAgentEndTest();
+  }
+});
+
+test("agent-end recovery does not suppress vllm-metal Qwen3.6 35B for non-resource errors", async () => {
+  cleanupVllmMetalAgentEndTest();
+  try {
+    _setAutoActiveForTest(true);
+    const harness = makeVllmMetal35BResourceFailureHarness({
+      setModelResult: true,
+      rawErrorMsg: "invalid request: unsupported tool schema",
+    });
+
+    await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+    assert.equal(harness.setModelCalls.length, 0);
+    assert.equal(harness.sendMessageCalls.length, 0);
+    const preset = resolveVllmMetalQwen36Preset({
+      isAutoMode: true,
+      prefs: undefined,
+      availableModels: [vllm27BModel, vllm35BModel],
+      autoModeStartModel: { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+      currentProvider: "vllm-metal-27b",
+    });
+    assert.ok(preset);
+    assert.equal(preset.routingConfig.tier_models?.heavy, "vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8");
+  } finally {
+    cleanupVllmMetalAgentEndTest();
+  }
+});
+
+test("agent-end recovery falls through to provider pause when vllm-metal Qwen3.6 27B fallback switch fails", async () => {
+  cleanupVllmMetalAgentEndTest();
+  try {
+    _setAutoActiveForTest(true);
+    const harness = makeVllmMetal35BResourceFailureHarness({ setModelResult: false });
+
+    await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+    assert.deepEqual(harness.setModelCalls, [
+      { model: vllm27BModel, options: { persist: false } },
+    ]);
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /failed to switch to Qwen3\.6 27B fallback/.test(message),
+      ),
+      "warning should mention failure to switch to 27B fallback",
+    );
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /Auto-mode paused due to provider error: model load failed: out of memory/.test(message),
+      ),
+      "failed recovery should fall through to generic provider pause",
+    );
+    assert.equal(harness.sendMessageCalls.length, 0);
+    const preset = resolveVllmMetalQwen36Preset({
+      isAutoMode: true,
+      prefs: undefined,
+      availableModels: [vllm27BModel, vllm35BModel],
+      autoModeStartModel: { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+      currentProvider: "vllm-metal-27b",
+    });
+    assert.ok(preset);
+    assert.equal(preset.routingConfig.tier_models?.heavy, "vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8");
+  } finally {
+    cleanupVllmMetalAgentEndTest();
+  }
+});
+
+test("agent-end recovery falls through to provider pause when vllm-metal Qwen3.6 27B fallback is unavailable", async () => {
+  cleanupVllmMetalAgentEndTest();
+  try {
+    _setAutoActiveForTest(true);
+    const harness = makeVllmMetal35BResourceFailureHarness({
+      availableModels: [vllm35BModel],
+      setModelResult: true,
+    });
+
+    await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+    assert.equal(harness.setModelCalls.length, 0);
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /Qwen3\.6 27B is not available for fallback/.test(message),
+      ),
+      "warning should mention unavailable 27B fallback",
+    );
+    assert.ok(
+      harness.notifications.some(({ message, level }) =>
+        level === "warning" && /Auto-mode paused due to provider error: model load failed: out of memory/.test(message),
+      ),
+      "missing recovery fallback should fall through to generic provider pause",
+    );
+    assert.equal(harness.sendMessageCalls.length, 0);
+    const preset = resolveVllmMetalQwen36Preset({
+      isAutoMode: true,
+      prefs: undefined,
+      availableModels: [vllm27BModel, vllm35BModel],
+      autoModeStartModel: { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+      currentProvider: "vllm-metal-27b",
+    });
+    assert.ok(preset);
+    assert.equal(preset.routingConfig.tier_models?.heavy, "vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8");
+  } finally {
+    cleanupVllmMetalAgentEndTest();
+  }
+});
+
+test("agent-end recovery applies context_window_override to vllm-metal Qwen3.6 fallback", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = mkdtempSync(join(tmpdir(), "gwd-vllm-agent-context-project-"));
+  const tempGwdHome = mkdtempSync(join(tmpdir(), "gwd-vllm-agent-context-home-"));
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
+    cleanupVllmMetalAgentEndTest();
+  });
+
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
+  writeFileSync(
+    join(tempProject, ".gwd", "PREFERENCES.md"),
+    "---\ncontext_window_override: 131072\n---\n",
+    "utf-8",
+  );
+  process.env.GWD_HOME = tempGwdHome;
+  process.chdir(tempProject);
+
+  cleanupVllmMetalAgentEndTest();
+  _setAutoActiveForTest(true);
+  const fallbackModel = {
+    provider: "vllm-metal-27b",
+    id: VLLM_METAL_QWEN36_27B_FP8,
+    api: "openai-completions",
+    baseUrl: "http://127.0.0.1:8000/v1",
+    contextWindow: 128_000,
+  };
+  const harness = makeVllmMetal35BResourceFailureHarness({
+    availableModels: [fallbackModel, vllm35BModel],
+    setModelResult: true,
+  });
+
+  await handleAgentEnd(harness.pi as any, harness.event as any, harness.ctx as any);
+
+  const applied = harness.setModelCalls[0]?.model as typeof fallbackModel | undefined;
+  assert.equal(applied?.contextWindow, 131_072);
 });
 
 // ── classifyError ────────────────────────────────────────────────────────────
@@ -826,6 +1130,67 @@ test("MAX_TRANSIENT_AUTO_RESUMES is at least 8 for sustained overload resilience
     MAX_TRANSIENT_AUTO_RESUMES >= 8,
     `MAX_TRANSIENT_AUTO_RESUMES must be >= 8 for sustained overload resilience, got ${MAX_TRANSIENT_AUTO_RESUMES}`,
   );
+});
+
+test("sustained rate-limit auto-resumes stop at MAX_TRANSIENT_AUTO_RESUMES across delayed resumes", async () => {
+  const originalSetTimeout = globalThis.setTimeout;
+  const timers: Array<{ delay: number }> = [];
+  const notifications: Array<{ message: string; level: string }> = [];
+
+  globalThis.setTimeout = ((...args: Parameters<typeof setTimeout>) => {
+    const delay = args[1];
+    timers.push({ delay: Number(delay ?? 0) });
+    return { unref() {} } as NodeJS.Timeout;
+  }) as unknown as typeof setTimeout;
+
+  try {
+    _resetProviderRetryStateForTest();
+    cleanupVllmMetalAgentEndTest();
+
+    const ctx = {
+      model: { provider: "openai", id: "gpt-5-test" },
+      modelRegistry: { getAvailable: () => [] },
+      sessionManager: { getSessionFile: () => null },
+      ui: {
+        notify: (message: string, level = "info") => {
+          notifications.push({ message, level });
+        },
+        setStatus: () => {},
+        setWidget: () => {},
+      },
+    };
+    const pi = {
+      setModel: async () => false,
+      sendMessage: () => {},
+    };
+    const event = {
+      messages: [
+        {
+          stopReason: "error",
+          errorMessage: "HTTP 429 Too Many Requests",
+        },
+      ],
+    };
+
+    for (let attempt = 0; attempt < MAX_TRANSIENT_AUTO_RESUMES + 1; attempt += 1) {
+      _setAutoActiveForTest(true);
+      await handleAgentEnd(pi as any, event as any, ctx as any);
+      resetTransientRetryState();
+    }
+
+    assert.equal(timers.length, MAX_TRANSIENT_AUTO_RESUMES);
+    assert.ok(
+      notifications.some(({ message, level }) =>
+        level === "warning" &&
+        message === `Transient provider errors persisted after ${MAX_TRANSIENT_AUTO_RESUMES} auto-resume attempts. Pausing for manual review.`,
+      ),
+      "rate-limit loop should stop auto-resuming after the bounded attempt count",
+    );
+  } finally {
+    globalThis.setTimeout = originalSetTimeout;
+    _resetProviderRetryStateForTest();
+    cleanupVllmMetalAgentEndTest();
+  }
 });
 
 // ── Stream idle timeout / partial response (#4558) ──────────────────────────

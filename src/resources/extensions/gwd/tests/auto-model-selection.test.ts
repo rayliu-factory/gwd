@@ -13,6 +13,10 @@ import {
   clearOllamaAppleSiliconRuntimeSuppressions,
   suppressOllamaAppleSiliconModelForRun,
 } from "../ollama-apple-silicon-profile.js";
+import {
+  VLLM_METAL_QWEN36_27B_FP8,
+  VLLM_METAL_QWEN36_35B_A3B_FP8,
+} from "../vllm-metal-qwen36-profile.js";
 
 function makeTempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix));
@@ -455,6 +459,352 @@ test("selectAndApplyModel re-applies captured thinking level after setModel succ
   );
 
   assert.deepEqual(thinkingLevels, [{ effort: "high" }]);
+});
+
+test("selectAndApplyModel auto-synthesizes vLLM Metal Qwen profile with 196608 context for standard work", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-vllm-metal-profile-");
+  const tempGwdHome = makeTempDir("gwd-vllm-metal-home-");
+  const setModelCalls: Array<{ model: any; options: unknown }> = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
+  process.env.GWD_HOME = tempGwdHome;
+  process.chdir(tempProject);
+
+  const availableModels = [
+    {
+      id: VLLM_METAL_QWEN36_27B_FP8,
+      provider: "vllm-metal-27b",
+      api: "openai-completions",
+      baseUrl: "http://127.0.0.1:8000/v1",
+      contextWindow: 128_000,
+    },
+  ];
+
+  const result = await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => availableModels },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: availableModels[0],
+    } as any,
+    {
+      setModel: async (model: any, options: unknown) => {
+        setModelCalls.push({ model, options });
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "execute-task",
+    "M001/S01/T01",
+    tempProject,
+    undefined,
+    false,
+    { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+    undefined,
+    true,
+  );
+
+  assert.equal(setModelCalls[0]?.model.provider, "vllm-metal-27b");
+  assert.equal(setModelCalls[0]?.model.id, VLLM_METAL_QWEN36_27B_FP8);
+  assert.equal(setModelCalls[0]?.model.contextWindow, 196_608);
+  assert.equal(result.appliedModel?.contextWindow, 196_608);
+  assert.equal(result.routing?.tier, "standard");
+});
+
+test("selectAndApplyModel routes vLLM Metal heavy work to separate 35B endpoint with 196608 context", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-vllm-metal-profile-");
+  const tempGwdHome = makeTempDir("gwd-vllm-metal-home-");
+  const setModelCalls: Array<{ model: any; options: unknown }> = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
+  process.env.GWD_HOME = tempGwdHome;
+  process.chdir(tempProject);
+
+  const availableModels = [
+    {
+      id: VLLM_METAL_QWEN36_27B_FP8,
+      provider: "vllm-metal-27b",
+      api: "openai-completions",
+      baseUrl: "http://127.0.0.1:8000/v1",
+      contextWindow: 128_000,
+    },
+    {
+      id: VLLM_METAL_QWEN36_35B_A3B_FP8,
+      provider: "vllm-metal-35b",
+      api: "openai-completions",
+      baseUrl: "http://127.0.0.1:8001/v1",
+      contextWindow: 128_000,
+    },
+  ];
+
+  const result = await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => availableModels },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: availableModels[0],
+    } as any,
+    {
+      setModel: async (model: any, options: unknown) => {
+        setModelCalls.push({ model, options });
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "replan-slice",
+    "M001/S01",
+    tempProject,
+    undefined,
+    false,
+    { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+    undefined,
+    true,
+  );
+
+  assert.equal(setModelCalls[0]?.model.provider, "vllm-metal-35b");
+  assert.equal(setModelCalls[0]?.model.id, VLLM_METAL_QWEN36_35B_A3B_FP8);
+  assert.equal(setModelCalls[0]?.model.contextWindow, 196_608);
+  assert.equal(result.appliedModel?.contextWindow, 196_608);
+  assert.equal(result.routing?.tier, "heavy");
+});
+
+test("selectAndApplyModel lets context_window_override win for vLLM Metal Qwen profile", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-vllm-metal-profile-");
+  const tempGwdHome = makeTempDir("gwd-vllm-metal-home-");
+  const setModelCalls: Array<{ model: any; options: unknown }> = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
+  process.env.GWD_HOME = tempGwdHome;
+  process.chdir(tempProject);
+
+  const availableModels = [
+    {
+      id: VLLM_METAL_QWEN36_27B_FP8,
+      provider: "vllm-metal-27b",
+      api: "openai-completions",
+      baseUrl: "http://127.0.0.1:8000/v1",
+      contextWindow: 128_000,
+    },
+  ];
+
+  await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => availableModels },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: availableModels[0],
+    } as any,
+    {
+      setModel: async (model: any, options: unknown) => {
+        setModelCalls.push({ model, options });
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "execute-task",
+    "M001/S01/T01",
+    tempProject,
+    { context_window_override: 131_072 } as any,
+    false,
+    { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+    undefined,
+    true,
+  );
+
+  assert.equal(setModelCalls[0]?.model.contextWindow, 131_072);
+});
+
+test("selectAndApplyModel keeps vLLM Metal profile routing enabled under burn-max for standard work", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-vllm-metal-profile-");
+  const tempGwdHome = makeTempDir("gwd-vllm-metal-home-");
+  const setModelCalls: Array<{ model: any; options: unknown }> = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
+  process.env.GWD_HOME = tempGwdHome;
+  process.chdir(tempProject);
+
+  const availableModels = [
+    {
+      id: VLLM_METAL_QWEN36_27B_FP8,
+      provider: "vllm-metal-27b",
+      api: "openai-completions",
+      baseUrl: "http://127.0.0.1:8000/v1",
+      contextWindow: 128_000,
+    },
+    {
+      id: VLLM_METAL_QWEN36_35B_A3B_FP8,
+      provider: "vllm-metal-35b",
+      api: "openai-completions",
+      baseUrl: "http://127.0.0.1:8001/v1",
+      contextWindow: 128_000,
+    },
+  ];
+
+  const result = await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => availableModels },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: availableModels[1],
+    } as any,
+    {
+      setModel: async (model: any, options: unknown) => {
+        setModelCalls.push({ model, options });
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "execute-task",
+    "M001/S01/T01",
+    tempProject,
+    { token_profile: "burn-max" } as any,
+    false,
+    { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+    undefined,
+    true,
+  );
+
+  assert.equal(setModelCalls[0]?.model.provider, "vllm-metal-27b");
+  assert.equal(setModelCalls[0]?.model.id, VLLM_METAL_QWEN36_27B_FP8);
+  assert.equal(result.routing?.tier, "standard");
+});
+
+test("selectAndApplyModel does not synthesize vLLM Metal profile when dynamic_routing is explicit", async (t) => {
+  const originalCwd = process.cwd();
+  const originalGwdHome = process.env.GWD_HOME;
+  const tempProject = makeTempDir("gwd-vllm-metal-profile-");
+  const tempGwdHome = makeTempDir("gwd-vllm-metal-home-");
+  const setModelCalls: Array<{ model: any; options: unknown }> = [];
+
+  t.after(() => {
+    process.chdir(originalCwd);
+    if (originalGwdHome === undefined) delete process.env.GWD_HOME;
+    else process.env.GWD_HOME = originalGwdHome;
+    rmSync(tempProject, { recursive: true, force: true });
+    rmSync(tempGwdHome, { recursive: true, force: true });
+  });
+
+  mkdirSync(join(tempProject, ".gwd"), { recursive: true });
+  writeFileSync(
+    join(tempProject, ".gwd", "PREFERENCES.md"),
+    [
+      "---",
+      "dynamic_routing:",
+      "  enabled: true",
+      "  hooks: false",
+      "  budget_pressure: false",
+      "  tier_models:",
+      "    standard: vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8",
+      "    heavy: vllm-metal-35b/Qwen/Qwen3.6-35B-A3B-FP8",
+      "---",
+    ].join("\n"),
+    "utf-8",
+  );
+  process.env.GWD_HOME = tempGwdHome;
+  process.chdir(tempProject);
+
+  const prefs = loadEffectiveGWDPreferences(tempProject)?.preferences;
+
+  const availableModels = [
+    {
+      id: VLLM_METAL_QWEN36_27B_FP8,
+      provider: "vllm-metal-27b",
+      api: "openai-completions",
+      baseUrl: "http://127.0.0.1:8000/v1",
+      contextWindow: 128_000,
+    },
+    {
+      id: VLLM_METAL_QWEN36_35B_A3B_FP8,
+      provider: "vllm-metal-35b",
+      api: "openai-completions",
+      baseUrl: "http://127.0.0.1:8001/v1",
+      contextWindow: 128_000,
+    },
+  ];
+
+  const result = await selectAndApplyModel(
+    {
+      modelRegistry: { getAvailable: () => availableModels },
+      sessionManager: { getSessionId: () => "test-session" },
+      ui: { notify: () => {} },
+      model: availableModels[0],
+    } as any,
+    {
+      setModel: async (model: any, options: unknown) => {
+        setModelCalls.push({ model, options });
+        return true;
+      },
+      emitBeforeModelSelect: async () => undefined,
+      getActiveTools: () => [],
+      emitAdjustToolSet: async () => undefined,
+      setActiveTools: () => {},
+    } as any,
+    "execute-task",
+    "M001/S01/T01",
+    tempProject,
+    prefs,
+    false,
+    { provider: "vllm-metal-27b", id: VLLM_METAL_QWEN36_27B_FP8 },
+    undefined,
+    true,
+  );
+
+  assert.equal(setModelCalls[0]?.model.provider, "vllm-metal-35b");
+  assert.equal(setModelCalls[0]?.model.id, VLLM_METAL_QWEN36_35B_A3B_FP8);
+  assert.equal(setModelCalls[0]?.model.contextWindow, 128_000);
+  assert.equal(result.routing?.tier, "standard");
 });
 
 test("selectAndApplyModel auto-synthesizes Ollama Qwen Apple profile for standard work", async (t) => {
