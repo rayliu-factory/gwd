@@ -100,6 +100,9 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.publish == 'true'
     runs-on: ubuntu-latest
     name: Publish platform packages
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - uses: actions/checkout@v6
@@ -108,7 +111,7 @@ jobs:
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
-          cache: "npm"
+          package-manager-cache: false
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -140,10 +143,17 @@ jobs:
             echo "Stable release: ${VERSION} → publishing with --tag latest (default)"
           fi
 
-      - name: Publish platform packages
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Verify npm trusted publishing source
         run: |
+          if [ "${GITHUB_REPOSITORY}" != "rayliu-factory/gwd" ]; then
+            echo "::error::npm trusted publishing is configured for rayliu-factory/gwd, got ${GITHUB_REPOSITORY}"
+            exit 1
+          fi
+          echo "Using npm trusted publishing source ${GITHUB_REPOSITORY}/${GITHUB_WORKFLOW}"
+
+      - name: Publish platform packages
+        run: |
+          unset NODE_AUTH_TOKEN
           for platform in darwin-arm64 darwin-x64 linux-x64-gnu linux-arm64-gnu win32-x64-msvc; do
             echo "Publishing @gwd-build/engine-${platform}..."
             cd "native/npm/${platform}"
@@ -210,9 +220,8 @@ jobs:
         run: npm run validate-pack
 
       - name: Publish main package
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          unset NODE_AUTH_TOKEN
           # --ignore-scripts: skip prepublishOnly since we built explicitly above
           OUTPUT=$(npm publish --ignore-scripts ${{ steps.version-check.outputs.tag_flag }} 2>&1) && echo "$OUTPUT" || {
             if echo "$OUTPUT" | grep -q "cannot publish over the previously published\|You cannot publish over"; then
