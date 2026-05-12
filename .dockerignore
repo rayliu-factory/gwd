@@ -53,4 +53,4 @@ bun.lock
 *.tgz
 # Allow the npm pack output for the runtime-local Dockerfile target,
 # which is exercised by tests/e2e/docker/runtime.e2e.test.ts.
-!gwd-pi-*.tgz
+!appfiex-rayliu-gwd-*.tgz
