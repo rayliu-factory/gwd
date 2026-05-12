@@ -44,7 +44,7 @@ It checks:
 
 ### `command not found: gwd` after install
 
-**Symptoms:** `npm install -g gwd-pi` succeeds but `gwd` isn't found.
+**Symptoms:** `npm install -g @appfiex-rayliu/gwd` succeeds but `gwd` isn't found.
 
 **Cause:** npm's global bin directory isn't in your shell's `$PATH`.
 
@@ -60,14 +60,14 @@ echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-**Workaround:** Run `npx gwd-pi` or `$(npm prefix -g)/bin/gwd` directly.
+**Workaround:** Run `npx @appfiex-rayliu/gwd` or `$(npm prefix -g)/bin/gwd` directly.
 
 **Common causes:**
 - **Homebrew Node** — `/opt/homebrew/bin` should be in PATH but sometimes isn't if Homebrew init is missing from your shell profile
 - **Version manager (nvm, fnm, mise)** — global bin is version-specific; ensure your version manager initializes in your shell config
 - **oh-my-zsh** — the `gitfast` plugin aliases `gwd` to `git svn dcommit`. Check with `alias gwd` and unalias if needed
 
-### `npm install -g gwd-pi` fails
+### `npm install -g @appfiex-rayliu/gwd` fails
 
 **Common causes:**
 - Missing workspace packages — fixed in v2.10.4+

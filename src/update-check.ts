@@ -10,7 +10,7 @@ const CACHE_FILE = join(appRoot, '.update-check')
 const NPM_PACKAGE_NAME = PRODUCT_PACKAGE_NAME
 const CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000 // 24 hours
 const FETCH_TIMEOUT_MS = 5000
-const DEFAULT_REGISTRY_URL = `https://registry.npmjs.org/${NPM_PACKAGE_NAME}/latest`
+const DEFAULT_REGISTRY_URL = `https://registry.npmjs.org/${encodeURIComponent(NPM_PACKAGE_NAME)}/latest`
 
 interface UpdateCheckCache {
   lastCheck: number

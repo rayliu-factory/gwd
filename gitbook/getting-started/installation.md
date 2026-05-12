@@ -3,7 +3,7 @@
 ## Install GWD
 
 ```bash
-npm install -g gwd-pi
+npm install -g @appfiex-rayliu/gwd
 ```
 
 Requires **Node.js 22.0.0 or later** (24 LTS recommended) and **Git**.
@@ -57,7 +57,7 @@ The extension provides:
 - **Sidebar dashboard** — connection status, model info, token usage, quick actions
 - **Full command palette** — start/stop agent, switch models, export sessions
 
-The CLI (`gwd-pi`) must be installed first — the extension connects to it via RPC.
+The GWD npm package (`@appfiex-rayliu/gwd`) must be installed first — the extension connects to the `gwd` CLI via RPC.
 
 ## Web Interface
 

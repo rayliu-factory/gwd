@@ -1,4 +1,4 @@
-// Project/App Name: gwd-pi · headless doctor wiring (#4929)
+// Project/App Name: @appfiex-rayliu/gwd · headless doctor wiring (#4929)
 //
 // Regression test for the live-regression assertion added in #4904
 // ("gwd doctor surfaces actionable guidance about the stale lock").

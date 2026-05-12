@@ -45,7 +45,7 @@
 
 ### 安装后出现 `command not found: gwd`
 
-**症状：** `npm install -g gwd-pi` 成功，但系统找不到 `gwd`。
+**症状：** `npm install -g @appfiex-rayliu/gwd` 成功，但系统找不到 `gwd`。
 
 **原因：** npm 的全局 bin 目录没有加入 shell 的 `$PATH`。
 
@@ -61,7 +61,7 @@ echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-**临时方案：** 直接执行 `npx gwd-pi`，或使用 `$(npm prefix -g)/bin/gwd`。
+**临时方案：** 直接执行 `npx @appfiex-rayliu/gwd`，或使用 `$(npm prefix -g)/bin/gwd`。
 
 **常见原因：**
 
@@ -69,7 +69,7 @@ source ~/.zshrc
 - **版本管理器（nvm、fnm、mise）**：全局 bin 路径是按版本区分的，需确保版本管理器正确初始化
 - **oh-my-zsh**：`gitfast` 插件会把 `gwd` alias 到 `git svn dcommit`。可通过 `alias gwd` 检查，并在需要时取消 alias
 
-### `npm install -g gwd-pi` 失败
+### `npm install -g @appfiex-rayliu/gwd` 失败
 
 **常见原因：**
 

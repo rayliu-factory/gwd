@@ -62,7 +62,7 @@ test("namespace constants use GWD hard-cutover values", () => {
   assert.equal(PRODUCT_SHORT_NAME, "gwd");
   assert.equal(PRODUCT_DISPLAY_NAME, "GWD");
   assert.equal(PRODUCT_FULL_NAME, "Get Work Done");
-  assert.equal(PRODUCT_PACKAGE_NAME, "gwd-pi");
+  assert.equal(PRODUCT_PACKAGE_NAME, "@appfiex-rayliu/gwd");
   assert.equal(GLOBAL_STATE_DIR_NAME, ".gwd");
   assert.equal(PROJECT_STATE_DIR_NAME, ".gwd");
   assert.equal(RUNTIME_DB_FILE_NAME, "gwd.db");

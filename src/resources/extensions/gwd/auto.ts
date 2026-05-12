@@ -2367,7 +2367,7 @@ export async function startAuto(
     restoreHookState(s.basePath);
     // Re-sync managed resources on resume so long-lived auto sessions pick up
     // bundled extension updates before resume-time verification/state logic runs.
-    // GWD_PKG_ROOT is set by loader.ts and points to the gwd-pi package root.
+    // GWD_PKG_ROOT is set by loader.ts and points to the @appfiex-rayliu/gwd package root.
     // The relative import ("../../../resource-loader.js") only works from the source
     // tree; deployed extensions live at ~/.gwd/agent/extensions/gwd/ where the
     // relative path resolves to ~/.gwd/agent/resource-loader.js which doesn't exist.

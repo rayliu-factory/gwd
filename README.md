@@ -5,12 +5,12 @@
 GWD is a standalone CLI built on the Pi SDK. It manages project state, agent sessions, workflow tools, model routing, git isolation, recovery, and verification from one command-line entry point.
 
 ```bash
-npm install -g gwd-pi@latest
+npm install -g @appfiex-rayliu/gwd@latest
 gwd
 ```
 
-[![npm version](https://img.shields.io/npm/v/gwd-pi?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/gwd-pi)
-[![npm downloads](https://img.shields.io/npm/dm/gwd-pi?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/gwd-pi)
+[![npm version](https://img.shields.io/npm/v/@appfiex-rayliu/gwd?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@appfiex-rayliu/gwd)
+[![npm downloads](https://img.shields.io/npm/dm/@appfiex-rayliu/gwd?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@appfiex-rayliu/gwd)
 [![GitHub stars](https://img.shields.io/github/stars/rayliu-factory/gwd?style=for-the-badge&logo=github&color=181717)](https://github.com/rayliu-factory/gwd)
 [![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/nKXTsAcmbT)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
@@ -151,7 +151,7 @@ Step mode is the on-ramp. Auto mode is the highway.
 ### Install
 
 ```bash
-npm install -g gwd-pi
+npm install -g @appfiex-rayliu/gwd
 ```
 
 ### Log in to a provider
@@ -671,6 +671,6 @@ Use expensive models where quality matters (planning, complex execution) and che
 
 **Get Work Done with one CLI.**
 
-**`npm install -g gwd-pi && gwd`**
+**`npm install -g @appfiex-rayliu/gwd && gwd`**
 
 </div>

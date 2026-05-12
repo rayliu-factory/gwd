@@ -6,7 +6,7 @@
  * Bug: https://github.com/rayliu-factory/gwd/issues/3131
  *
  * ~/.gwd/agent/extensions/ is reserved for bundled extensions synced from
- * the gwd-pi package. Community/user extensions must use ~/.pi/agent/extensions/.
+ * the @appfiex-rayliu/gwd package. Community/user extensions must use ~/.pi/agent/extensions/.
  */
 
 import test from "node:test";

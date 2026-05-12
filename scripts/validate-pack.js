@@ -46,6 +46,10 @@ function formatBytes(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function packageInstallPath(root, packageName) {
+  return join(root, 'node_modules', ...packageName.split('/'));
+}
+
 try {
   npmCacheDir = mkdtempSync(join(tmpdir(), 'validate-pack-npm-cache-'));
   mkdirSync(npmCacheDir, { recursive: true });
@@ -155,7 +159,8 @@ try {
   // Checks every package with `gwd.linkable: true` — not just a hand-picked subset —
   // so any future addition is automatically covered.
   console.log('==> Verifying workspace package resolution (every linkable package)...');
-  const installedRoot = join(installDir, 'node_modules', 'gwd-pi');
+  const rootPackage = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
+  const installedRoot = packageInstallPath(installDir, rootPackage.name);
   let resolutionFailed = false;
   for (const pkg of getLinkablePackages()) {
     const pkgPath = join(installedRoot, 'node_modules', pkg.scope, pkg.name);

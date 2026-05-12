@@ -73,13 +73,17 @@ function runNpmQuiet(args: string[], sandbox: NpmSandbox): void {
 
 function packTarball(sandbox: NpmSandbox): string {
   const pkg = JSON.parse(readFileSync(join(projectRoot, "package.json"), "utf-8"));
-  const safeName = pkg.name.replace(/^@[^/]+\//, "").replace(/\//g, "-");
+  const safeName = pkg.name.replace(/^@/, "").replace(/\//g, "-");
   const tarball = `${safeName}-${pkg.version}.tgz`;
   const packDestination = join(sandbox.rootDir, "pack-output");
 
   mkdirSync(packDestination, { recursive: true });
   runNpmQuiet(["pack", "--pack-destination", packDestination], sandbox);
   return join(packDestination, tarball);
+}
+
+function installedPackageRoot(prefix: string): string {
+  return join(prefix, "node_modules", "@appfiex-rayliu", "gwd");
 }
 
 /** List file paths inside a .tgz using Node built-ins only (no tar CLI or npm package). */
@@ -167,7 +171,7 @@ test("tarball installs and gwd binary resolves", async (t) => {
   assert.ok(existsSync(installedBin), `gwd binary exists in node_modules/.bin/ (${binName})`);
 
   // Verify loader.js is executable (has shebang)
-  const installedLoader = join(sandbox.installPrefix, "node_modules", "gwd-pi", "dist", "loader.js");
+  const installedLoader = join(installedPackageRoot(sandbox.installPrefix), "dist", "loader.js");
   const loaderContent = readFileSync(installedLoader, "utf-8");
   if (process.platform !== "win32") {
     assert.ok(loaderContent.startsWith("#!/usr/bin/env node"), "loader.js has node shebang");
@@ -177,7 +181,8 @@ test("tarball installs and gwd binary resolves", async (t) => {
   const installedGwdExt = join(
     sandbox.installPrefix,
     "node_modules",
-    "gwd-pi",
+    "@appfiex-rayliu",
+    "gwd",
     "src",
     "resources",
     "extensions",
@@ -284,6 +289,6 @@ test("gwd exits early with a clear message when synced resources are newer than 
 
   assert.equal(result.code, 1, "startup exits with code 1 on version skew");
   assert.match(result.stderr, /Version mismatch detected/, "prints a friendly skew header");
-  assert.match(result.stderr, /npm install -g gwd-pi@latest|gwd update/, "prints upgrade guidance");
+  assert.match(result.stderr, /npm install -g @appfiex-rayliu\/gwd@latest|gwd update/, "prints upgrade guidance");
   assert.doesNotMatch(result.stderr, /\[gwd\] Extension load error/, "fails before extension loading");
 });

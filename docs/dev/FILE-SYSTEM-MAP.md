@@ -98,7 +98,7 @@
 | src/startup-timings.ts | CLI, Build System | Optional startup timing instrumentation |
 | src/tool-bootstrap.ts | Loader/Bootstrap | Manages fd/rg availability, falls back to built-in |
 | src/update-check.ts | CLI | Checks npm registry for new versions (cached) |
-| src/update-cmd.ts | CLI | Executes npm install to update gwd-pi package |
+| src/update-cmd.ts | CLI | Executes npm install to update @appfiex-rayliu/gwd package |
 | src/web-mode.ts | Web Mode | Launches/manages web server process (PID tracking, browser) |
 | src/welcome-screen.ts | CLI | Welcome panel — logo, version, model info |
 | src/wizard.ts | Onboarding, Config | Loads env keys from auth.json → hydrates process.env |

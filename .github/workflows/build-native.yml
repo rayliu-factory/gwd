@@ -223,7 +223,7 @@ jobs:
         run: |
           unset NODE_AUTH_TOKEN
           # --ignore-scripts: skip prepublishOnly since we built explicitly above
-          OUTPUT=$(npm publish --ignore-scripts ${{ steps.version-check.outputs.tag_flag }} 2>&1) && echo "$OUTPUT" || {
+          OUTPUT=$(npm publish --access public --ignore-scripts ${{ steps.version-check.outputs.tag_flag }} 2>&1) && echo "$OUTPUT" || {
             if echo "$OUTPUT" | grep -q "cannot publish over the previously published\|You cannot publish over"; then
               echo "Already published, skipping"
             else
@@ -240,16 +240,16 @@ jobs:
           npm init -y > /dev/null 2>&1
 
           # Wait for npm registry with exponential backoff (5s, 10s, 20s, 30s, 30s, 30s, 30s — max ~155s vs fixed 5min)
-          echo "Waiting for gwd-pi@${VERSION} to appear on npm..."
+          echo "Waiting for @appfiex-rayliu/gwd@${VERSION} to appear on npm..."
           DELAY=5
           for attempt in $(seq 1 8); do
-            PUBLISHED=$(npm view "gwd-pi@${VERSION}" version 2>/dev/null || echo "")
+            PUBLISHED=$(npm view "@appfiex-rayliu/gwd@${VERSION}" version 2>/dev/null || echo "")
             if [ "${PUBLISHED}" = "${VERSION}" ]; then
               echo "  ✓ Version ${VERSION} visible on npm (attempt ${attempt})"
               break
             fi
             if [ "$attempt" = "8" ]; then
-              echo "::warning::gwd-pi@${VERSION} not visible on npm after 8 attempts — skipping smoke test"
+              echo "::warning::@appfiex-rayliu/gwd@${VERSION} not visible on npm after 8 attempts — skipping smoke test"
               exit 0
             fi
             echo "  Attempt ${attempt}: not yet visible, retrying in ${DELAY}s..."
@@ -259,12 +259,12 @@ jobs:
           done
 
           # Install and verify with backoff (5s, 10s, 20s)
-          echo "Installing gwd-pi@${VERSION}..."
+          echo "Installing @appfiex-rayliu/gwd@${VERSION}..."
           DELAY=5
           for attempt in 1 2 3; do
-            if npm install "gwd-pi@${VERSION}" 2>&1 | tee /tmp/install-output.txt; then
+            if npm install "@appfiex-rayliu/gwd@${VERSION}" 2>&1 | tee /tmp/install-output.txt; then
               echo "  ✓ Install succeeded"
-              RAW=$(node node_modules/gwd-pi/dist/loader.js --version 2>&1 || echo "FAILED")
+              RAW=$(node node_modules/@appfiex-rayliu/gwd/dist/loader.js --version 2>&1 || echo "FAILED")
               ACTUAL=$(echo "$RAW" | sed 's/\x1b\[[0-9;]*m//g' | grep -oE "^${VERSION}$" | head -1)
               if [ "$ACTUAL" = "$VERSION" ]; then
                 echo "  ✓ gwd --version = ${VERSION}"
@@ -281,7 +281,7 @@ jobs:
             sleep "$DELAY"
             DELAY=$((DELAY * 2))
           done
-          echo "::error::Smoke test failed — gwd-pi@${VERSION} not installable"
+          echo "::error::Smoke test failed — @appfiex-rayliu/gwd@${VERSION} not installable"
           exit 1
 
       - name: Verify dist-tag after publish
@@ -291,7 +291,7 @@ jobs:
           echo "Verifying npm dist-tag 'latest' points to ${VERSION}..."
           DELAY=5
           for attempt in $(seq 1 6); do
-            LATEST=$(npm view gwd-pi dist-tags.latest 2>/dev/null || echo "")
+            LATEST=$(npm view "@appfiex-rayliu/gwd" dist-tags.latest 2>/dev/null || echo "")
             if [ "${LATEST}" = "${VERSION}" ]; then
               echo "  ✓ npm dist-tags.latest = ${VERSION}"
               exit 0
@@ -301,5 +301,5 @@ jobs:
             DELAY=$((DELAY * 2))
             if [ "$DELAY" -gt 30 ]; then DELAY=30; fi
           done
-          echo "::error::dist-tags.latest is '${LATEST}' but expected '${VERSION}' — run: npm dist-tag add gwd-pi@${VERSION} latest"
+          echo "::error::dist-tags.latest is '${LATEST}' but expected '${VERSION}' — run: npm dist-tag add @appfiex-rayliu/gwd@${VERSION} latest"
           exit 1

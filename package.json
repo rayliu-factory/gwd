@@ -1,5 +1,5 @@
 {
-  "name": "gwd-pi",
+  "name": "@appfiex-rayliu/gwd",
   "version": "0.0.1",
   "description": "GWD — Get Work Done coding agent",
   "license": "MIT",
@@ -17,8 +17,7 @@
     "extensions/*"
   ],
   "bin": {
-    "gwd": "dist/loader.js",
-    "gwd-pi": "scripts/install.js"
+    "gwd": "dist/loader.js"
   },
   "files": [
     "dist",

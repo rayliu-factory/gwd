@@ -12,7 +12,7 @@ metadata:
       bins: [gwd]
     install:
       kind: node
-      package: gwd-pi
+      package: @appfiex-rayliu/gwd
       bins: [gwd]
 ---
 

@@ -84,11 +84,11 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           VERSION=$(node -e 'process.stdout.write(require("./package.json").version)')
-          if npm view "gwd-pi@${VERSION}" version 2>/dev/null; then
+          if npm view "@appfiex-rayliu/gwd@${VERSION}" version 2>/dev/null; then
             echo "Version ${VERSION} already published — moving @next tag"
-            npm dist-tag add "gwd-pi@${VERSION}" next
+            npm dist-tag add "@appfiex-rayliu/gwd@${VERSION}" next
           else
-            npm publish --tag next
+            npm publish --access public --tag next
           fi
 
   next-verify:
@@ -106,16 +106,16 @@ jobs:
           registry-url: https://registry.npmjs.org
           cache: 'npm'
 
-      - name: Install published gwd-pi@next globally (with registry propagation retry)
+      - name: Install published @appfiex-rayliu/gwd@next globally (with registry propagation retry)
         env:
           NEXT_VERSION: ${{ needs.next-publish.outputs.next-version }}
         run: |
           for i in 1 2 3 4 5 6; do
-            npm install -g "gwd-pi@${NEXT_VERSION}" && exit 0
+            npm install -g "@appfiex-rayliu/gwd@${NEXT_VERSION}" && exit 0
             echo "Attempt $i failed — waiting 10s for npm registry propagation..."
             sleep 10
           done
-          echo "::error::Failed to install gwd-pi@${NEXT_VERSION} after 6 attempts. The @next tag may point at a broken artifact — deprecate it with: npm deprecate gwd-pi@${NEXT_VERSION} 'broken build'"
+          echo "::error::Failed to install @appfiex-rayliu/gwd@${NEXT_VERSION} after 6 attempts. The @next tag may point at a broken artifact — deprecate it with: npm deprecate @appfiex-rayliu/gwd@${NEXT_VERSION} 'broken build'"
           exit 1
 
       - name: Run smoke tests (against installed binary)
@@ -138,6 +138,6 @@ jobs:
         env:
           NEXT_VERSION: ${{ needs.next-publish.outputs.next-version }}
         run: |
-          echo "::error::Post-publish verification failed for gwd-pi@${NEXT_VERSION}. The @next tag still points at this version on npm."
-          echo "::error::Recommended actions: (1) investigate the failing step above, (2) deprecate the broken version with 'npm deprecate gwd-pi@${NEXT_VERSION} \"broken build; see Actions run\"', (3) cut a fix and re-run Next Publish."
+          echo "::error::Post-publish verification failed for @appfiex-rayliu/gwd@${NEXT_VERSION}. The @next tag still points at this version on npm."
+          echo "::error::Recommended actions: (1) investigate the failing step above, (2) deprecate the broken version with 'npm deprecate @appfiex-rayliu/gwd@${NEXT_VERSION} \"broken build; see Actions run\"', (3) cut a fix and re-run Next Publish."
           exit 1

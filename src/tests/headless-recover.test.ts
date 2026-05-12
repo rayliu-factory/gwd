@@ -1,4 +1,4 @@
-// gwd-pi · headless recover wiring
+// @appfiex-rayliu/gwd · headless recover wiring
 //
 // Regression test for the headless recover entrypoint introduced to make
 // `gwd headless recover` available to non-TTY callers (CI, automation, the

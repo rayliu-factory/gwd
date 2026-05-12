@@ -11,7 +11,7 @@ description: Create, debug, and iterate on GWD extensions (TypeScript modules th
 - Global: `~/.pi/agent/extensions/*.ts` or `~/.pi/agent/extensions/*/index.ts`
 - Project-local: `.gwd/extensions/*.ts` or `.gwd/extensions/*/index.ts`
 
-Note: `~/.gwd/agent/extensions/` is reserved for bundled extensions synced from the gwd-pi package. Community extensions placed there are silently ignored by the loader.
+Note: `~/.gwd/agent/extensions/` is reserved for bundled extensions synced from the @appfiex-rayliu/gwd package. Community extensions placed there are silently ignored by the loader.
 
 **The three primitives:**
 1. **Events** — Listen and react (`pi.on("event", handler)`). Can block tool calls, modify messages, inject context.

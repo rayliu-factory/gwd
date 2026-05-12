@@ -2,7 +2,7 @@
 /**
  * Sync pkg/package.json version with the installed @mariozechner/pi-coding-agent version.
  *
- * gwd-pi sets PI_PACKAGE_DIR=pkg/ so that pi's config.js reads piConfig from
+ * @appfiex-rayliu/gwd sets PI_PACKAGE_DIR=pkg/ so that pi's config.js reads piConfig from
  * pkg/package.json (for branding: name="gwd", configDir=".gwd"). However, config.js
  * also reads `version` from that same file and uses it for the update check
  * (comparing against npm registry). If pkg/package.json has a stale version,

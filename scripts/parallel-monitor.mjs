@@ -284,7 +284,7 @@ function findGwdLoader() {
   try {
     const globalRoot = execSync('npm root -g', { encoding: 'utf-8', timeout: 3000 }).trim();
     const candidates = [
-      path.join(globalRoot, 'gwd-pi', 'dist', 'loader.js'),
+      path.join(globalRoot, '@appfiex-rayliu', 'gwd', 'dist', 'loader.js'),
     ];
     for (const c of candidates) {
       if (fs.existsSync(c)) return c;

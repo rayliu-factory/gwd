@@ -3,7 +3,7 @@ import { compareSemver } from "../update-check.ts"
 import { GWD_VERSION_ENV, PRODUCT_PACKAGE_NAME } from "../namespace.ts"
 
 const NPM_PACKAGE_NAME = PRODUCT_PACKAGE_NAME
-const REGISTRY_URL = `https://registry.npmjs.org/${NPM_PACKAGE_NAME}/latest`
+const REGISTRY_URL = `https://registry.npmjs.org/${encodeURIComponent(NPM_PACKAGE_NAME)}/latest`
 const FETCH_TIMEOUT_MS = 5000
 const NPM_COMMAND = process.platform === "win32" ? "npm.cmd" : "npm"
 
@@ -60,7 +60,7 @@ export function getUpdateStatus(): UpdateState {
 }
 
 /**
- * Triggers an async global npm install of gwd-pi@latest.
+ * Triggers an async global npm install of @appfiex-rayliu/gwd@latest.
  * Returns `true` if the update was started, `false` if one is already running.
  * The child process runs in the background; poll `getUpdateStatus()` for progress.
  */

@@ -38,7 +38,7 @@ Community extensions must be in auto-discovery paths:
 - `.gwd/extensions/*.ts`
 - `.gwd/extensions/*/index.ts`
 
-Note: `~/.gwd/agent/extensions/` is reserved for bundled extensions synced from the gwd-pi package.
+Note: `~/.gwd/agent/extensions/` is reserved for bundled extensions synced from the @appfiex-rayliu/gwd package.
 
 The file must `export default function(pi: ExtensionAPI) { ... }`.
 

@@ -52,7 +52,7 @@ test("resolveInstallCommand returns bun command when running under Bun (#4145)",
   const orig = (process.versions as Record<string, string | undefined>).bun;
   try {
     (process.versions as Record<string, string | undefined>).bun = "1.0.0";
-    assert.equal(resolveInstallCommand("gwd-pi@latest"), "bun add -g gwd-pi@latest");
+    assert.equal(resolveInstallCommand("@appfiex-rayliu/gwd@latest"), "bun add -g @appfiex-rayliu/gwd@latest");
   } finally {
     if (orig === undefined) {
       delete (process.versions as Record<string, string | undefined>).bun;
@@ -67,7 +67,7 @@ test("resolveInstallCommand returns npm command when not running under Bun (#414
   const orig = (process.versions as Record<string, string | undefined>).bun;
   try {
     delete (process.versions as Record<string, string | undefined>).bun;
-    assert.equal(resolveInstallCommand("gwd-pi@latest"), "npm install -g gwd-pi@latest");
+    assert.equal(resolveInstallCommand("@appfiex-rayliu/gwd@latest"), "npm install -g @appfiex-rayliu/gwd@latest");
   } finally {
     if (orig !== undefined) {
       (process.versions as Record<string, string | undefined>).bun = orig;
@@ -104,7 +104,7 @@ test("/gwd update handler fetches latest version through the registry endpoint (
     }
   }
 
-  assert.deepEqual(fetchUrls, ["https://registry.npmjs.org/gwd-pi/latest"]);
+  assert.deepEqual(fetchUrls, ["https://registry.npmjs.org/%40appfiex-rayliu%2Fgwd/latest"]);
   assert.ok(notifications.some((notification) => notification.message.includes("Already up to date")));
 });
 
@@ -130,7 +130,7 @@ test("isBunInstall detects bun install via argv[1] even when process.versions.bu
 
     // Non-bun path must NOT match
     delete process.env.BUN_INSTALL;
-    process.argv[1] = "/usr/local/lib/node_modules/gwd-pi/dist/loader.js";
+    process.argv[1] = "/usr/local/lib/node_modules/@appfiex-rayliu/gwd/dist/loader.js";
     assert.equal(isBunInstall(), false, "npm global install path should not match");
 
     // Prefix false-positive guard: /.bun/bin-other should not match /.bun/bin
@@ -158,7 +158,7 @@ test("isBunInstall returns true when running under Bun runtime (#4145)", async (
   try {
     (process.versions as Record<string, string | undefined>).bun = "1.0.0";
     // Even with a non-bun argv[1], runtime detection wins
-    process.argv[1] = "/usr/local/lib/node_modules/gwd-pi/dist/loader.js";
+    process.argv[1] = "/usr/local/lib/node_modules/@appfiex-rayliu/gwd/dist/loader.js";
     assert.equal(isBunInstall(), true);
   } finally {
     if (orig === undefined) {

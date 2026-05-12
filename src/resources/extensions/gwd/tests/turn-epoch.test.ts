@@ -1,4 +1,4 @@
-// Project: gwd-pi — Tests for the auto/turn-epoch stale-write guard.
+// Project: @appfiex-rayliu/gwd — Tests for the auto/turn-epoch stale-write guard.
 
 import test from "node:test";
 import assert from "node:assert/strict";

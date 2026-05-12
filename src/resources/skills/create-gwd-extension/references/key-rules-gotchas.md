@@ -32,6 +32,6 @@ Non-negotiable rules and common gotchas when building GWD extensions.
 - Project-local: `.gwd/extensions/*.ts`
 - Project-local (subdir): `.gwd/extensions/*/index.ts`
 
-Note: `~/.gwd/agent/extensions/` is reserved for bundled extensions synced from the gwd-pi package.
+Note: `~/.gwd/agent/extensions/` is reserved for bundled extensions synced from the @appfiex-rayliu/gwd package.
 Community extensions placed there are silently ignored by the loader.
 </gwd_paths>
