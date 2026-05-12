@@ -452,6 +452,78 @@ ollama pull qwen2.5-coder:7b
 
 model `id` 必须与 `vllm serve` 启动时传入的 `--model` 参数完全一致。
 
+#### Apple Silicon vLLM Metal TurboQuant Qwen3.6 配置
+
+在 48GB Apple Silicon 机器上，GWD auto-mode 可以自动发现本机 `vllm-metal` 服务，并为启用了 TurboQuant KV cache 压缩的 Qwen3.6 使用 196608 token 的有效上下文目标。GWD 不会启动 `vllm-metal`，也不会在单次请求里开启 TurboQuant；TurboQuant 必须在 server 启动命令中启用。
+
+启动默认 27B executor，使用端口 `8000`：
+
+```bash
+VLLM_METAL_USE_PAGED_ATTENTION=1 vllm serve Qwen/Qwen3.6-27B-FP8 \
+  --host 127.0.0.1 \
+  --port 8000 \
+  --max-model-len 196608 \
+  --reasoning-parser qwen3 \
+  --additional-config '{"turboquant": true, "k_quant": "q8_0", "v_quant": "q3_0"}'
+```
+
+当 GWD 在 `http://127.0.0.1:8000/v1` 或 `http://localhost:8000/v1` 看到 `Qwen/Qwen3.6-27B*` 时，auto-mode 会使用 196608 token 的有效上下文，并把 27B 用于 light、standard 和默认 heavy 工作。
+
+如果你单独启动 35B-A3B endpoint，它只会用于 heavy phase：
+
+```bash
+VLLM_METAL_USE_PAGED_ATTENTION=1 vllm serve Qwen/Qwen3.6-35B-A3B-FP8 \
+  --host 127.0.0.1 \
+  --port 8001 \
+  --max-model-len 196608 \
+  --reasoning-parser qwen3 \
+  --additional-config '{"turboquant": true, "k_quant": "q8_0", "v_quant": "q3_0"}'
+```
+
+同时运行两个 endpoint 是支持的，但 48GB 机器的默认建议是只运行 27B endpoint。如果 35B-A3B 因本机资源或 model load 失败，GWD 会在当前 auto run 中暂时 suppress 35B-A3B，并把中断的 unit 重试到 27B。
+
+GWD 会自动 probe 这些本机 OpenAI-compatible base URL：
+
+- `http://127.0.0.1:8000/v1`
+- `http://localhost:8000/v1`
+- `http://127.0.0.1:8001/v1`
+- `http://localhost:8001/v1`
+
+如果使用自定义端口，请在 `~/.gwd/agent/models.json` 中显式配置 provider：
+
+```json
+{
+  "providers": {
+    "vllm-metal-27b": {
+      "baseUrl": "http://127.0.0.1:8100/v1",
+      "api": "openai-completions",
+      "apiKey": "vllm",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsUsageInStreaming": false,
+        "thinkingFormat": "qwen"
+      },
+      "models": [
+        {
+          "id": "Qwen/Qwen3.6-27B-FP8",
+          "contextWindow": 196608,
+          "maxTokens": 16384
+        }
+      ]
+    }
+  }
+}
+```
+
+请让 `contextWindow` 与 server 的 `--max-model-len` 保持一致。如果因为内存压力用更低上下文启动 `vllm-metal`，请降低 model entry，或设置 project override：
+
+```md
+---
+context_window_override: 131072
+---
+```
+
 <a id="sglang"></a>
 ### SGLang
 
@@ -549,7 +621,7 @@ gwd config
 }
 ```
 
-如果该 server 要求 `chat_template_kwargs.enable_thinking`，请改用 `"qwen-chat-template"`。
+GWD 目前通过 `"qwen"` 支持 Qwen-compatible server 的顶层 `enable_thinking`。
 
 关于 `compat` 字段、`modelOverrides`、值解析和高级配置的完整说明，见 [自定义模型](./custom-models.md)。
 

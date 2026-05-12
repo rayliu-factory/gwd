@@ -5,6 +5,7 @@ Add custom providers and models (Ollama, vLLM, LM Studio, proxies) via `~/.gwd/a
 ## Table of Contents
 
 - [Minimal Example](#minimal-example)
+- [vLLM Metal Qwen3.6 TurboQuant on Apple Silicon](#vllm-metal-qwen36-turboquant-on-apple-silicon)
 - [Full Example](#full-example)
 - [Supported APIs](#supported-apis)
 - [Provider Configuration](#provider-configuration)
@@ -59,6 +60,106 @@ You can set `compat` at the provider level to apply to all models, or at the mod
     }
   }
 }
+```
+
+<a id="vllm-metal-qwen36-turboquant-on-apple-silicon"></a>
+## vLLM Metal Qwen3.6 TurboQuant on Apple Silicon
+
+For the default 48GB Apple Silicon profile, start `vllm-metal` on port `8000` and GWD will auto-detect `Qwen/Qwen3.6-27B*`:
+
+```bash
+VLLM_METAL_USE_PAGED_ATTENTION=1 vllm serve Qwen/Qwen3.6-27B-FP8 \
+  --host 127.0.0.1 \
+  --port 8000 \
+  --max-model-len 196608 \
+  --reasoning-parser qwen3 \
+  --additional-config '{"turboquant": true, "k_quant": "q8_0", "v_quant": "q3_0"}'
+```
+
+GWD uses the 27B endpoint as the default executor. If you run a separate 35B-A3B endpoint, auto-mode routes only heavy phases to it and falls back to 27B after local resource or model-load failures.
+
+If you use custom ports, define providers explicitly in `~/.gwd/agent/models.json`:
+
+```json
+{
+  "providers": {
+    "vllm-metal-27b": {
+      "baseUrl": "http://127.0.0.1:8100/v1",
+      "api": "openai-completions",
+      "apiKey": "vllm",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsUsageInStreaming": false,
+        "thinkingFormat": "qwen"
+      },
+      "models": [
+        {
+          "id": "Qwen/Qwen3.6-27B-FP8",
+          "name": "Qwen3.6 27B FP8 (vLLM Metal TurboQuant)",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 196608,
+          "maxTokens": 16384,
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 }
+        }
+      ]
+    }
+  }
+}
+```
+
+To route heavy phases to a separate 35B-A3B server, add a second provider:
+
+```json
+{
+  "providers": {
+    "vllm-metal-27b": {
+      "baseUrl": "http://127.0.0.1:8100/v1",
+      "api": "openai-completions",
+      "apiKey": "vllm",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsUsageInStreaming": false,
+        "thinkingFormat": "qwen"
+      },
+      "models": [
+        {
+          "id": "Qwen/Qwen3.6-27B-FP8",
+          "contextWindow": 196608,
+          "maxTokens": 16384
+        }
+      ]
+    },
+    "vllm-metal-35b": {
+      "baseUrl": "http://127.0.0.1:8101/v1",
+      "api": "openai-completions",
+      "apiKey": "vllm",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsUsageInStreaming": false,
+        "thinkingFormat": "qwen"
+      },
+      "models": [
+        {
+          "id": "Qwen/Qwen3.6-35B-A3B-FP8",
+          "contextWindow": 196608,
+          "maxTokens": 16384
+        }
+      ]
+    }
+  }
+}
+```
+
+GWD does not start `vllm-metal` for you. TurboQuant must be enabled when you launch the server. Keep `contextWindow` aligned with the server's `--max-model-len`, or override it per project:
+
+```md
+---
+context_window_override: 131072
+---
 ```
 
 ## Full Example
@@ -300,12 +401,12 @@ For providers with partial OpenAI compatibility, use the `compat` field.
 | `requiresToolResultName` | Include `name` on tool result messages |
 | `requiresAssistantAfterToolResult` | Insert an assistant message before a user message after tool results |
 | `requiresThinkingAsText` | Convert thinking blocks to plain text |
-| `thinkingFormat` | Use `reasoning_effort`, `zai`, `qwen`, or `qwen-chat-template` thinking parameters |
+| `thinkingFormat` | Use `reasoning_effort`, `zai`, or `qwen` thinking parameters |
 | `supportsStrictMode` | Include the `strict` field in tool definitions |
 | `openRouterRouting` | OpenRouter routing config passed to OpenRouter for model/provider selection |
 | `vercelGatewayRouting` | Vercel AI Gateway routing config for provider selection (`only`, `order`) |
 
-`qwen` uses top-level `enable_thinking`. Use `qwen-chat-template` for local Qwen-compatible servers that require `chat_template_kwargs.enable_thinking`.
+`qwen` uses top-level `enable_thinking` for Qwen-compatible servers.
 
 Example:
 
