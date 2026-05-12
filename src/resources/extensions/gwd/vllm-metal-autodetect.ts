@@ -20,6 +20,7 @@ interface DiscoverInput {
   fetchImpl?: FetchLike;
   timeoutMs?: number;
   registerProvider: (name: string, config: ProviderConfig) => void;
+  unregisterProvider?: (name: string) => void;
 }
 
 function providerNameForModel(id: string): string | undefined {
@@ -27,6 +28,9 @@ function providerNameForModel(id: string): string | undefined {
   if (matchesVllmMetalQwen36_35BA3B(id)) return "vllm-metal-35b";
   return undefined;
 }
+
+const MANAGED_PROVIDER_NAMES = ["vllm-metal-27b", "vllm-metal-35b"] as const;
+const registeredManagedProviders = new Set<string>();
 
 async function fetchModels(baseUrl: string, fetchImpl: FetchLike, timeoutMs: number): Promise<string[]> {
   const controller = new AbortController();
@@ -53,13 +57,21 @@ export async function discoverAndRegisterVllmMetalQwen36Providers(input: Discove
   const fetchImpl = input.fetchImpl ?? fetch;
   const timeoutMs = input.timeoutMs ?? 350;
   const registeredNames = new Set<string>();
+  const discoveredNames = new Set<string>();
 
-  for (const baseUrl of baseUrls) {
-    const modelIds = await fetchModels(baseUrl, fetchImpl, timeoutMs);
+  const discoveries = await Promise.all(
+    baseUrls.map(async (baseUrl) => ({
+      baseUrl,
+      modelIds: await fetchModels(baseUrl, fetchImpl, timeoutMs),
+    })),
+  );
+
+  for (const { baseUrl, modelIds } of discoveries) {
     for (const id of modelIds) {
       const providerName = providerNameForModel(id);
       if (!providerName || registeredNames.has(providerName)) continue;
       registeredNames.add(providerName);
+      discoveredNames.add(providerName);
       input.registerProvider(providerName, {
         authMode: "apiKey",
         apiKey: "vllm",
@@ -77,10 +89,19 @@ export async function discoverAndRegisterVllmMetalQwen36Providers(input: Discove
             supportsDeveloperRole: false,
             supportsReasoningEffort: false,
             supportsUsageInStreaming: false,
-            thinkingFormat: "qwen-chat-template" as any,
+            thinkingFormat: "qwen",
           },
         }],
       });
+      registeredManagedProviders.add(providerName);
     }
+  }
+
+  if (!input.unregisterProvider) return;
+
+  for (const providerName of MANAGED_PROVIDER_NAMES) {
+    if (!registeredManagedProviders.has(providerName) || discoveredNames.has(providerName)) continue;
+    input.unregisterProvider(providerName);
+    registeredManagedProviders.delete(providerName);
   }
 }

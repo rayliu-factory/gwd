@@ -338,6 +338,7 @@ async function applyVllmMetalQwen36Autodiscovery(ctx: ExtensionContext): Promise
     const { discoverAndRegisterVllmMetalQwen36Providers } = await import("../vllm-metal-autodetect.js");
     await discoverAndRegisterVllmMetalQwen36Providers({
       registerProvider: (name, config) => ctx.modelRegistry.registerProvider(name, config),
+      unregisterProvider: (name) => ctx.modelRegistry.unregisterProvider(name),
     });
   } catch (err) {
     safetyLogWarning(
