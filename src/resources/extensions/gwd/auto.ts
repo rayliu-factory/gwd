@@ -187,6 +187,7 @@ import { initRegistry, convertDispatchRules } from "./rule-registry.js";
 import { emitJournalEvent as _emitJournalEvent, type JournalEntry } from "./journal.js";
 import { isClosedStatus } from "./status-guards.js";
 import { clearOllamaAppleSiliconRuntimeSuppressions } from "./ollama-apple-silicon-profile.js";
+import { clearVllmMetalQwen36RuntimeSuppressions } from "./vllm-metal-qwen36-profile.js";
 import {
   type AutoDashboardData,
   updateProgressWidget as _updateProgressWidget,
@@ -1544,6 +1545,7 @@ export async function stopAuto(
     // changes the user made between sessions (#4959 / CodeRabbit).
     if (pi) clearToolBaseline(pi);
     clearOllamaAppleSiliconRuntimeSuppressions();
+    clearVllmMetalQwen36RuntimeSuppressions();
 
     try {
       await s.orchestration?.stop(reason ?? "stop");
@@ -2079,6 +2081,7 @@ export async function startAuto(
   if (!s.paused) {
     clearToolBaseline(pi);
     clearOllamaAppleSiliconRuntimeSuppressions();
+    clearVllmMetalQwen36RuntimeSuppressions();
   }
 
   const requestedStepMode = options?.step ?? false;

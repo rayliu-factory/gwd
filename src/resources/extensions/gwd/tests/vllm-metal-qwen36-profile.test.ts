@@ -1,5 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { RoutingDecision } from "../model-router.ts";
 
 import {
@@ -233,4 +236,18 @@ test("resource failure classification is narrow to local 35B-A3B models", () => 
     VLLM_METAL_QWEN36_27B_FP8,
     "out of memory",
   ), false);
+});
+
+test("auto lifecycle clears vllm-metal runtime suppressions beside Ollama suppressions", () => {
+  const testDir = dirname(fileURLToPath(import.meta.url));
+  const source = readFileSync(join(testDir, "../auto.ts"), "utf-8");
+
+  assert.match(
+    source,
+    /clearOllamaAppleSiliconRuntimeSuppressions\(\);\s+clearVllmMetalQwen36RuntimeSuppressions\(\);/,
+  );
+  assert.equal(
+    source.match(/clearVllmMetalQwen36RuntimeSuppressions\(\);/g)?.length,
+    2,
+  );
 });
