@@ -252,6 +252,17 @@ export async function selectAndApplyModel(
         autoModeStartModel,
         currentProvider: ctx.model?.provider,
       });
+  if (vllmMetalQwen36Preset?.missingHeavyModel && verbose) {
+    ctx.ui.notify(
+      "vLLM Metal Qwen3.6 profile: 35B-A3B endpoint is not available; heavy work will use Qwen3.6 27B.",
+      "info",
+    );
+  } else if (vllmMetalQwen36Preset?.heavySuppressed) {
+    ctx.ui.notify(
+      "vLLM Metal Qwen3.6 profile: 35B-A3B is suppressed for this run after a local resource failure; heavy work will use Qwen3.6 27B.",
+      "warning",
+    );
+  }
   const modelConfig = effectiveSessionModelOverride
     ? undefined
     : (
@@ -340,6 +351,9 @@ export async function selectAndApplyModel(
           unitType,
           taskMetadata: taskMetadataForPolicy,
           currentProvider: ctx.model?.provider,
+          // The vLLM Metal profile exposes 27B and 35B as separate local
+          // provider IDs because each endpoint has its own base URL. Treat
+          // those profile endpoints as one local routing group for policy.
           allowCrossProvider: vllmMetalQwen36Preset ? true : routingConfig.cross_provider !== false,
           requiredTools,
         },
