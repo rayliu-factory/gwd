@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rayliu-factory/gwd.git"
+    "url": "git+https://github.com/rayliu-factory/gwd.git"
   },
   "homepage": "https://github.com/rayliu-factory/gwd#readme",
   "bugs": {
@@ -153,11 +153,11 @@
   },
   "optionalDependencies": {
     "@anthropic-ai/claude-agent-sdk": "0.2.83",
-    "@gwd-build/engine-darwin-arm64": "0.0.1",
-    "@gwd-build/engine-darwin-x64": "0.0.1",
-    "@gwd-build/engine-linux-arm64-gnu": "0.0.1",
-    "@gwd-build/engine-linux-x64-gnu": "0.0.1",
-    "@gwd-build/engine-win32-x64-msvc": "0.0.1",
+    "@appfiex-rayliu/gwd-engine-darwin-arm64": "0.0.1",
+    "@appfiex-rayliu/gwd-engine-darwin-x64": "0.0.1",
+    "@appfiex-rayliu/gwd-engine-linux-arm64-gnu": "0.0.1",
+    "@appfiex-rayliu/gwd-engine-linux-x64-gnu": "0.0.1",
+    "@appfiex-rayliu/gwd-engine-win32-x64-msvc": "0.0.1",
     "fsevents": "~2.3.3",
     "koffi": "^2.9.0",
     "sharp": "^0.34.5"
