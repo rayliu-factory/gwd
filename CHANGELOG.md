@@ -1,10 +1,15 @@
 # Changelog
 
-All notable changes to GSD are documented in this file.
+All notable changes to GWD are documented in this file.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+## [0.0.5] - 2026-05-13
+
+### Added
+- add vLLM Metal Qwen3.6 TurboQuant setup helper and README for 48GB Apple Silicon machines
 
 ## [0.0.4] - 2026-05-13
 
@@ -4347,7 +4352,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - License updated to MIT
 
-[Unreleased]: https://github.com/gsd-build/gsd-2/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/rayliu-factory/gwd/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/rayliu-factory/gwd/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/gsd-build/gsd-2/compare/v2.81.0...v0.0.4
 [2.81.0]: https://github.com/gsd-build/gsd-2/compare/v2.80.0...v2.81.0
 [2.80.0]: https://github.com/gsd-build/gsd-2/compare/v2.79.0...v2.80.0

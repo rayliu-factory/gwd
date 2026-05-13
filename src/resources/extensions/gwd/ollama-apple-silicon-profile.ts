@@ -70,23 +70,36 @@ export function applyOllamaAppleSiliconContextOverride<T extends OllamaAppleSili
   };
 }
 
+function hasBurnMaxDefaultRouting(prefs: GWDPreferences | undefined): boolean {
+  const routing = prefs?.dynamic_routing;
+  if (prefs?.token_profile !== "burn-max" || !routing) return false;
+  const keys = Object.keys(routing).filter((key) => (routing as Record<string, unknown>)[key] !== undefined);
+  return keys.length === 1 && routing.enabled === false;
+}
+
+function hasModelOverride(prefs: GWDPreferences | undefined): boolean {
+  return !!prefs?.models && Object.keys(prefs.models).length > 0;
+}
+
 function hasRoutingOverride(prefs: GWDPreferences | undefined): boolean {
-  return prefs?.models !== undefined || prefs?.dynamic_routing !== undefined;
+  return hasModelOverride(prefs) ||
+    (prefs?.dynamic_routing !== undefined && !hasBurnMaxDefaultRouting(prefs));
 }
 
 function hasExplicitModelRouting(input: OllamaAppleSiliconPresetInput): boolean {
+  if (hasRoutingOverride(input.prefs)) {
+    return true;
+  }
+
   if (input.basePath !== undefined) {
     const globalPrefs = loadGlobalGWDPreferences()?.preferences;
     const projectPrefs = loadProjectGWDPreferences(input.basePath)?.preferences;
     if (hasRoutingOverride(globalPrefs) || hasRoutingOverride(projectPrefs)) {
       return true;
     }
-    if (globalPrefs || projectPrefs) {
-      return false;
-    }
   }
 
-  return hasRoutingOverride(input.prefs);
+  return false;
 }
 
 function isSuppressed(provider: string, id: string): boolean {

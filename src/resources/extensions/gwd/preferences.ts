@@ -390,6 +390,12 @@ function mergePreferences(base: GWDPreferences, override: GWDPreferences): GWDPr
     budget_enforcement: override.budget_enforcement ?? base.budget_enforcement,
     context_pause_threshold: override.context_pause_threshold ?? base.context_pause_threshold,
     context_window_override: override.context_window_override ?? base.context_window_override,
+    context_management: (base.context_management || override.context_management)
+      ? { ...(base.context_management ?? {}), ...(override.context_management ?? {}) }
+      : undefined,
+    context_mode: (base.context_mode || override.context_mode)
+      ? { ...(base.context_mode ?? {}), ...(override.context_mode ?? {}) }
+      : undefined,
     notifications: (base.notifications || override.notifications)
       ? { ...(base.notifications ?? {}), ...(override.notifications ?? {}) }
       : undefined,

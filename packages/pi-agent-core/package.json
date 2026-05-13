@@ -1,6 +1,6 @@
 {
   "name": "@gwd/pi-agent-core",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "General-purpose agent core (vendored from pi-mono)",
   "type": "module",
   "gwd": {
