@@ -1,6 +1,6 @@
 {
   "name": "@gwd-build/mcp-server",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "MCP server exposing GWD orchestration tools for Claude Code, Cursor, and other MCP clients",
   "license": "MIT",
   "gwd": {
@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@gwd-build/contracts": "^0.0.1",
-    "@gwd-build/rpc-client": "^0.0.1",
+    "@gwd-build/rpc-client": "^0.0.4",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "zod": "^4.0.0"
   },

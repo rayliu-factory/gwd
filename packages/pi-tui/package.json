@@ -1,6 +1,6 @@
 {
   "name": "@gwd/pi-tui",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "Terminal User Interface library (vendored from pi-mono)",
   "type": "module",
   "gwd": {

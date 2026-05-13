@@ -1,6 +1,6 @@
 {
   "name": "@glittercowboy/gwd",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "piConfig": {
     "name": "gwd",
     "configDir": ".gwd"

@@ -6,6 +6,12 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.4] - 2026-05-13
+
+### Fixed
+- fall back to github token for prod release
+- publish native packages under appfiex scope
+
 ## [2.81.0] - 2026-05-09
 
 ### Added
@@ -4341,7 +4347,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - License updated to MIT
 
-[Unreleased]: https://github.com/gsd-build/gsd-2/compare/v2.81.0...HEAD
+[Unreleased]: https://github.com/gsd-build/gsd-2/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/gsd-build/gsd-2/compare/v2.81.0...v0.0.4
 [2.81.0]: https://github.com/gsd-build/gsd-2/compare/v2.80.0...v2.81.0
 [2.80.0]: https://github.com/gsd-build/gsd-2/compare/v2.79.0...v2.80.0
 [2.79.0]: https://github.com/gsd-build/gsd-2/compare/v2.78.1...v2.79.0

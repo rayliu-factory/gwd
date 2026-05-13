@@ -1,6 +1,6 @@
 {
   "name": "@gwd/pi-ai",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "Unified LLM API (vendored from pi-mono)",
   "type": "module",
   "gwd": {
