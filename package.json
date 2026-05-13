@@ -29,6 +29,8 @@
     "scripts/install.js",
     "scripts/link-workspace-packages.cjs",
     "scripts/ensure-workspace-builds.cjs",
+    "scripts/setup-vllm-metal-qwen36-turboquant.mjs",
+    "scripts/README-vllm-metal-qwen36-turboquant.md",
     "scripts/lib/workspace-manifest.cjs",
     "package.json",
     "README.md"
@@ -87,6 +89,7 @@
     "build:native:dev": "node native/scripts/build.js --dev",
     "dev": "node scripts/dev.js",
     "gwd": "node scripts/dev-cli.js",
+    "setup:vllm-metal-qwen36": "node scripts/setup-vllm-metal-qwen36-turboquant.mjs",
     "postinstall": "node scripts/install.js",
     "pi:install-global": "node scripts/install-pi-global.js",
     "pi:uninstall-global": "node scripts/uninstall-pi-global.js",
