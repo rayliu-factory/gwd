@@ -275,6 +275,7 @@ On first run, GWD launches a branded setup wizard that walks you through LLM pro
 | `Ctrl+Alt+B`            | Show background shell processes                                               |
 | `Alt+V`                 | Paste clipboard image (macOS)                                                 |
 | `gwd config`            | Re-run the setup wizard (LLM provider + tool keys)                            |
+| `gwd setup vllm-metal-qwen36` | Print or start the vLLM Metal TurboQuant Qwen3.6 setup helper          |
 | `gwd update`            | Update GWD to the latest version                                              |
 | `gwd headless [cmd]`    | Run `/gwd` commands without TUI (CI, cron, scripts)                           |
 | `gwd headless query`    | Instant JSON snapshot — state, next dispatch, costs (no LLM)                  |

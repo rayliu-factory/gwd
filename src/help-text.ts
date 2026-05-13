@@ -22,6 +22,20 @@ const SUBCOMMAND_HELP: Record<string, string> = {
     'Equivalent to: npm install -g @appfiex-rayliu/gwd@latest',
   ].join('\n'),
 
+  setup: [
+    'Usage: gwd setup <command> [options]',
+    '',
+    'Run packaged setup helpers for local providers and tools.',
+    '',
+    'Commands:',
+    '  vllm-metal-qwen36    Print or start the vLLM Metal TurboQuant Qwen3.6 profile helper',
+    '',
+    'Examples:',
+    '  gwd setup vllm-metal-qwen36',
+    '  gwd setup vllm-metal-qwen36 --model both --models-json',
+    '  gwd setup vllm-metal-qwen36 --start 27b',
+  ].join('\n'),
+
   sessions: [
     'Usage: gwd sessions',
     '',
@@ -194,6 +208,7 @@ export function printHelp(version: string): void {
   process.stdout.write('  remove <source>          Remove an installed package source\n')
   process.stdout.write('  list                     List installed package sources\n')
   process.stdout.write('  update                   Update GWD to the latest version\n')
+  process.stdout.write('  setup <cmd>              Run packaged setup helpers\n')
   process.stdout.write('  sessions                 List and resume a past session\n')
   process.stdout.write('  worktree <cmd>           Manage worktrees (list, merge, clean, remove)\n')
   process.stdout.write('  auto [args]              Run auto-mode without TUI (pipeable)\n')

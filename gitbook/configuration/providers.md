@@ -221,10 +221,10 @@ The file reloads each time you open `/model` — no restart needed.
 
 On a 48GB Apple Silicon machine, GWD auto-mode can detect a local `vllm-metal` server running Qwen3.6 with TurboQuant KV cache compression. GWD does not start `vllm-metal` and does not enable TurboQuant per request; TurboQuant is part of the server startup command.
 
-From a source checkout, print the recommended startup commands and optional `models.json` shape with:
+Print the recommended startup commands and optional `models.json` shape with:
 
 ```bash
-npm run setup:vllm-metal-qwen36 -- --model both --models-json
+gwd setup vllm-metal-qwen36 --model both --models-json
 ```
 
 See [the helper README](../../scripts/README-vllm-metal-qwen36-turboquant.md) for custom ports, lower context targets, and `--start` usage.

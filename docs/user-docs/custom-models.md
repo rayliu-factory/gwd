@@ -67,10 +67,10 @@ You can set `compat` at the provider level to apply to all models, or at the mod
 
 For the default 48GB Apple Silicon profile, start `vllm-metal` on port `8000` and GWD will auto-detect `Qwen/Qwen3.6-27B*`:
 
-From a source checkout, the helper can print this command plus the optional 35B-A3B setup:
+The helper can print this command plus the optional 35B-A3B setup:
 
 ```bash
-npm run setup:vllm-metal-qwen36 -- --model both --models-json
+gwd setup vllm-metal-qwen36 --model both --models-json
 ```
 
 See [the helper README](../../scripts/README-vllm-metal-qwen36-turboquant.md) for custom ports, lower context targets, and `--start` usage.
