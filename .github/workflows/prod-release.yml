@@ -26,7 +26,7 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-          token: ${{ secrets.RELEASE_PAT }}
+          token: ${{ secrets.RELEASE_PAT || github.token }}
 
       - uses: actions/setup-node@v6
         with:
@@ -161,7 +161,7 @@ jobs:
 
       - name: Open back-merge PR main→next if behind
         env:
-          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+          GH_TOKEN: ${{ secrets.RELEASE_PAT || github.token }}
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
           if ! git ls-remote --exit-code --heads origin next >/dev/null 2>&1; then
