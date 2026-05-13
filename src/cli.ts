@@ -153,6 +153,10 @@ const isPrintMode = cliFlags.print || cliFlags.mode !== undefined
 if (process.argv.includes('--help') || process.argv.includes('-h')) {
   const helpSubcommand = cliFlags.messages[0]
   const version = process.env[GWD_VERSION_ENV] || '0.0.0'
+  if (helpSubcommand === 'setup' && cliFlags.messages[1] === 'vllm-metal-qwen36') {
+    const { extractSetupCommandArgs, runSetupCommand } = await import('./setup-command.js')
+    process.exit(await runSetupCommand(extractSetupCommandArgs(process.argv)))
+  }
   if (!helpSubcommand || !printSubcommandHelp(helpSubcommand, version)) {
     printHelp(version)
   }
@@ -293,6 +297,12 @@ if (cliFlags.messages[0] === 'graph') {
     process.exit(1)
   }
   process.exit(0)
+}
+
+// `gwd setup <command>` — packaged setup helpers for local providers/tools.
+if (cliFlags.messages[0] === 'setup') {
+  const { extractSetupCommandArgs, runSetupCommand } = await import('./setup-command.js')
+  process.exit(await runSetupCommand(extractSetupCommandArgs(process.argv)))
 }
 
 exitIfManagedResourcesAreNewer(agentDir)

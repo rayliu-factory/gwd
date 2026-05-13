@@ -17,22 +17,22 @@ https://docs.vllm.ai/projects/vllm-metal/en/latest/installation/
 
 ## Quick Start
 
-From the repository root, print the default 27B startup command:
+Print the default 27B startup command:
 
 ```bash
-npm run setup:vllm-metal-qwen36
+gwd setup vllm-metal-qwen36
 ```
 
 Print both the default 27B endpoint and the optional 35B-A3B heavy endpoint:
 
 ```bash
-npm run setup:vllm-metal-qwen36 -- --model both
+gwd setup vllm-metal-qwen36 --model both
 ```
 
 Print both commands plus a `~/.gwd/agent/models.json` example:
 
 ```bash
-npm run setup:vllm-metal-qwen36 -- --model both --models-json
+gwd setup vllm-metal-qwen36 --model both --models-json
 ```
 
 ## Start the 27B Default Endpoint
@@ -40,7 +40,7 @@ npm run setup:vllm-metal-qwen36 -- --model both --models-json
 Use 27B as the default endpoint on a 48GB machine:
 
 ```bash
-npm run setup:vllm-metal-qwen36 -- --start 27b
+gwd setup vllm-metal-qwen36 --start 27b
 ```
 
 This starts:
@@ -61,7 +61,7 @@ GWD auto-detects this endpoint at `http://127.0.0.1:8000/v1` or `http://localhos
 Run the 35B-A3B endpoint only when you want a separate heavy-phase server. Start it in a separate terminal:
 
 ```bash
-npm run setup:vllm-metal-qwen36 -- --start 35b
+gwd setup vllm-metal-qwen36 --start 35b
 ```
 
 This starts:
@@ -82,13 +82,13 @@ GWD auto-mode uses 27B for light and standard work. If a local 35B-A3B endpoint 
 Use `--port` for a single selected model:
 
 ```bash
-npm run setup:vllm-metal-qwen36 -- --model 27b --port 8100
+gwd setup vllm-metal-qwen36 --model 27b --port 8100
 ```
 
 Use `--port27` and `--port35` when printing both endpoints:
 
 ```bash
-npm run setup:vllm-metal-qwen36 -- --model both --port27 8100 --port35 8101 --models-json
+gwd setup vllm-metal-qwen36 --model both --port27 8100 --port35 8101 --models-json
 ```
 
 If you use custom ports, add the printed provider entries to `~/.gwd/agent/models.json` so GWD can find those endpoints.
@@ -98,7 +98,7 @@ If you use custom ports, add the printed provider entries to `~/.gwd/agent/model
 The default profile uses a 196608-token context target. If the machine is under memory pressure, lower the server context and keep GWD aligned:
 
 ```bash
-npm run setup:vllm-metal-qwen36 -- --model 27b --max-model-len 131072
+gwd setup vllm-metal-qwen36 --model 27b --max-model-len 131072
 ```
 
 Then either use the matching `models.json` output or set the project preference:

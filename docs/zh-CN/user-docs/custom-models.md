@@ -68,6 +68,12 @@
 
 对于默认的 48GB Apple Silicon 配置，先在端口 `8000` 启动 `vllm-metal`，GWD 会自动发现 `Qwen/Qwen3.6-27B*`：
 
+可以用 helper 打印推荐的启动命令，以及可选的 35B-A3B 配置：
+
+```bash
+gwd setup vllm-metal-qwen36 --model both --models-json
+```
+
 ```bash
 VLLM_METAL_USE_PAGED_ATTENTION=1 vllm serve Qwen/Qwen3.6-27B-FP8 \
   --host 127.0.0.1 \

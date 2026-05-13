@@ -276,6 +276,7 @@ The following commands are sent directly in your **Telegram chat** to a configur
 | `gwd sessions` | Interactive session picker — list all saved sessions for the current directory and choose one to resume |
 | `gwd --debug` | Enable structured JSONL diagnostic logging for troubleshooting dispatch and state issues |
 | `gwd config` | Set up global API keys for search and docs tools (saved to `~/.gwd/agent/auth.json`, applies to all projects). See [Global API Keys](./configuration.md#global-api-keys-gwd-config). |
+| `gwd setup vllm-metal-qwen36` | Print or start the vLLM Metal TurboQuant Qwen3.6 setup helper |
 | `gwd update` | Update GWD to the latest version |
 | `gwd headless new-milestone` | Create a new milestone from a context file (headless — no TUI required) |
 

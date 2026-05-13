@@ -29,6 +29,7 @@ export const MODEL_PROFILES = {
 };
 
 const USAGE = `Usage:
+  gwd setup vllm-metal-qwen36 [options]
   node scripts/setup-vllm-metal-qwen36-turboquant.mjs [options]
   npm run setup:vllm-metal-qwen36 -- [options]
 
@@ -48,6 +49,9 @@ Options:
   --help                   Show this help.
 
 Examples:
+  gwd setup vllm-metal-qwen36
+  gwd setup vllm-metal-qwen36 --model both --models-json
+  gwd setup vllm-metal-qwen36 --start 27b
   npm run setup:vllm-metal-qwen36
   npm run setup:vllm-metal-qwen36 -- --model both --models-json
   npm run setup:vllm-metal-qwen36 -- --start 27b
