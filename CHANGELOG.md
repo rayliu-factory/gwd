@@ -6,6 +6,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.6] - 2026-05-13
+
+### Added
+- add `gwd setup vllm-metal-qwen36` as a packaged CLI entry point for the vLLM Metal Qwen3.6 helper
+
 ## [0.0.5] - 2026-05-13
 
 ### Added
@@ -4352,7 +4357,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - License updated to MIT
 
-[Unreleased]: https://github.com/rayliu-factory/gwd/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/rayliu-factory/gwd/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/rayliu-factory/gwd/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/rayliu-factory/gwd/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/gsd-build/gsd-2/compare/v2.81.0...v0.0.4
 [2.81.0]: https://github.com/gsd-build/gsd-2/compare/v2.80.0...v2.81.0

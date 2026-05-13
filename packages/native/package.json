@@ -1,6 +1,6 @@
 {
   "name": "@gwd/native",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Native Rust bindings for GWD — high-performance native modules via N-API",
   "type": "commonjs",
   "gwd": {

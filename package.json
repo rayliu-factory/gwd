@@ -1,6 +1,6 @@
 {
   "name": "@appfiex-rayliu/gwd",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "GWD — Get Work Done coding agent",
   "license": "MIT",
   "repository": {
@@ -156,11 +156,11 @@
   },
   "optionalDependencies": {
     "@anthropic-ai/claude-agent-sdk": "0.2.83",
-    "@appfiex-rayliu/gwd-engine-darwin-arm64": "0.0.5",
-    "@appfiex-rayliu/gwd-engine-darwin-x64": "0.0.5",
-    "@appfiex-rayliu/gwd-engine-linux-arm64-gnu": "0.0.5",
-    "@appfiex-rayliu/gwd-engine-linux-x64-gnu": "0.0.5",
-    "@appfiex-rayliu/gwd-engine-win32-x64-msvc": "0.0.5",
+    "@appfiex-rayliu/gwd-engine-darwin-arm64": "0.0.6",
+    "@appfiex-rayliu/gwd-engine-darwin-x64": "0.0.6",
+    "@appfiex-rayliu/gwd-engine-linux-arm64-gnu": "0.0.6",
+    "@appfiex-rayliu/gwd-engine-linux-x64-gnu": "0.0.6",
+    "@appfiex-rayliu/gwd-engine-win32-x64-msvc": "0.0.6",
     "fsevents": "~2.3.3",
     "koffi": "^2.9.0",
     "sharp": "^0.34.5"

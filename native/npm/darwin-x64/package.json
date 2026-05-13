@@ -1,6 +1,6 @@
 {
   "name": "@appfiex-rayliu/gwd-engine-darwin-x64",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "GWD native engine binary for macOS Intel",
   "os": [
     "darwin"
