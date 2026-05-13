@@ -44,10 +44,24 @@ for (const platform of platformPackages) {
   }
 }
 
-// Skip updating root optionalDependencies — they use a >=2.10.2 range
-// intentionally so that npm can fall back to the latest available
-// platform binary when the exact version hasn't been published yet
-// (e.g. main package published before native CI finishes).
-console.log("  root optionalDependencies: using range specifiers (not updating)");
+// Keep the root package pointed at the matching native package versions. npm ci
+// requires these optional dependencies to be represented in package-lock.json.
+let rootChanged = false;
+rootPkg.optionalDependencies ??= {};
+for (const platform of platformPackages) {
+  const pkgPath = path.join(npmDir, platform, "package.json");
+  if (!fs.existsSync(pkgPath)) continue;
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+  if (rootPkg.optionalDependencies[pkg.name] !== version) {
+    console.log(`  root optionalDependency ${pkg.name}: ${rootPkg.optionalDependencies[pkg.name] ?? "missing"} -> ${version}`);
+    rootPkg.optionalDependencies[pkg.name] = version;
+    rootChanged = true;
+  }
+}
+if (rootChanged) {
+  fs.writeFileSync(rootPkgPath, JSON.stringify(rootPkg, null, 2) + "\n");
+} else {
+  console.log("  root optionalDependencies: already synced");
+}
 
 console.log("[sync-platform-versions] Done.");
