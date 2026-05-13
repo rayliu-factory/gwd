@@ -143,21 +143,22 @@ jobs:
             echo "Stable release: ${VERSION} → publishing with --tag latest (default)"
           fi
 
-      - name: Verify npm trusted publishing source
+      - name: Verify npm publish source
         run: |
           if [ "${GITHUB_REPOSITORY}" != "rayliu-factory/gwd" ]; then
-            echo "::error::npm trusted publishing is configured for rayliu-factory/gwd, got ${GITHUB_REPOSITORY}"
+            echo "::error::npm publishing is configured for rayliu-factory/gwd, got ${GITHUB_REPOSITORY}"
             exit 1
           fi
-          echo "Using npm trusted publishing source ${GITHUB_REPOSITORY}/${GITHUB_WORKFLOW}"
+          echo "Using npm publish source ${GITHUB_REPOSITORY}/${GITHUB_WORKFLOW}"
 
       - name: Publish platform packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          unset NODE_AUTH_TOKEN
           for platform in darwin-arm64 darwin-x64 linux-x64-gnu linux-arm64-gnu win32-x64-msvc; do
             echo "Publishing @appfiex-rayliu/gwd-engine-${platform}..."
             cd "native/npm/${platform}"
-            OUTPUT=$(npm publish --access public ${{ steps.version-check.outputs.tag_flag }} 2>&1) && echo "$OUTPUT" || {
+            OUTPUT=$(npm publish --access public --provenance ${{ steps.version-check.outputs.tag_flag }} 2>&1) && echo "$OUTPUT" || {
               if echo "$OUTPUT" | grep -q "cannot publish over the previously published"; then
                 echo "Already published, skipping"
               else
@@ -220,10 +221,11 @@ jobs:
         run: npm run validate-pack
 
       - name: Publish main package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          unset NODE_AUTH_TOKEN
           # --ignore-scripts: skip prepublishOnly since we built explicitly above
-          OUTPUT=$(npm publish --access public --ignore-scripts ${{ steps.version-check.outputs.tag_flag }} 2>&1) && echo "$OUTPUT" || {
+          OUTPUT=$(npm publish --access public --ignore-scripts --provenance ${{ steps.version-check.outputs.tag_flag }} 2>&1) && echo "$OUTPUT" || {
             if echo "$OUTPUT" | grep -q "cannot publish over the previously published\|You cannot publish over"; then
               echo "Already published, skipping"
             else
