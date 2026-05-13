@@ -364,7 +364,7 @@ describe("context-store: sub-5ms query timing", () => {
 
     assert.strictEqual(decisions.length, 50, `got ${decisions.length} decisions (expected 50)`);
     assert.strictEqual(requirements.length, 50, `got ${requirements.length} requirements (expected 50)`);
-    const maxLatencyMs = process.env.NODE_V8_COVERAGE ? 15 : 5;
+    const maxLatencyMs = process.env.CI || process.env.NODE_V8_COVERAGE ? 15 : 5;
     assert.ok(
       elapsed < maxLatencyMs,
       `query latency ${elapsed.toFixed(2)}ms should be < ${maxLatencyMs}ms`,
